@@ -122,7 +122,7 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
 	            }
 	        }, '-', {
 	            text: 'Delete',
-	            iconCls: 'icon-add',
+	            iconCls: 'icon-delete',
 	            handler:function(btn, ev){
 	            	
 	            	var rec = gridFields.getSelectionModel().getSelected();
