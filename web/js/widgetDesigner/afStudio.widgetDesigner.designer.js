@@ -35,7 +35,7 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 		
 		//Simple grid
 		var grid = new Ext.grid.GridPanel({			
-			flex: 1,			
+			flex: 3,			
 			frame: true,
 			border: true,
 			autoScroll: true,
@@ -61,7 +61,7 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 		});
 		
 		var propsGrid = new Ext.grid.PropertyGrid({	        
-	        width: 300,
+	        flex: 1,
 	        frame: true,
 	        autoHeight: true,
 	        propertyNames: {
