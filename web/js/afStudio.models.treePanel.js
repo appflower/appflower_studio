@@ -240,9 +240,11 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,editModel:function(node)
 	{
 		//afStudio.vp.layout.center.panel.body.mask('Loading, please Wait...', 'x-mask-loading');
-		
-		var fieldsGrid=new afStudio.models.gridFieldsPanel({'title':'Editing '+this.getModel(node),'renderTo':afStudio.vp.layout.center.panel.items.items[0].getEl(),model:this.getModel(node),schema:this.getSchema(node)});
-		
+
+		var fieldsGrid=new afStudio.models.gridFieldsPanel({'title':'Editing '+this.getModel(node),model:this.getModel(node),schema:this.getSchema(node)});		
+
+		afStudio.vp.addToPortal(fieldsGrid, true);
+		//var fieldsGrid=new afStudio.models.gridFieldsPanel({'title':'Editing '+this.getModel(node),'renderTo':afStudio.vp.layout.center.panel.items.items[0].getEl(),model:this.getModel(node),schema:this.getSchema(node)});		
 	}
 }); 
 
