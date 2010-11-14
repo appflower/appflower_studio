@@ -61,7 +61,7 @@ $afStudioJsExtensions=sfFinder::type('file')->name('afStudio.*.js')->in($appFlow
 foreach ($afStudioJsExtensions as $afStudioJsExtension)
 {
 ?>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/<?php echo basename($afStudioJsExtension); ?>"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/<?php echo strstr($afStudioJsExtension, 'js'); ?>"></script>
 <?php }?>
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
