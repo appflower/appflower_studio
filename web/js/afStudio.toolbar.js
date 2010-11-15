@@ -66,7 +66,49 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 							}]
 						}, true);	
 					}
+				},
+				
+				{
+					text: 'Database Connection Settings',
+					handler: function (b, e) {
+						var form = new Ext.FormPanel({
+						    url: '', defaultType: 'textfield', width: 450, frame: true, 
+							labelWidth: 100, title: false,
+							items: [
+								{xtype: 'panel', layout: 'column',
+									items: [
+										{xtype: 'panel', columnWidth: 1, layout: 'form', style: 'margin-right: 5px;',
+											items: [{xtype: 'textfield', fieldLabel: 'Database Host', name: 'database', anchor: '92%', allowBlank: false}]
+										},
+										{xtype: 'panel', width: 150, layout: 'form', labelWidth: 35,
+											items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '88%', allowBlank: false}]
+										}
+									]
+								},
+								{xtype:'textfield', fieldLabel: 'Username', anchor: '96%', name: 'username', allowBlank: false},
+								{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false},
+								{xtype: 'checkbox', hideLabel: true, boxLabel: 'Persistent', name: 'persistent'},
+								{xtype: 'checkbox', hideLabel: true, boxLabel: 'Pooling', name: 'pooling'}
+							]
+						});
+								
+						var wnd = new Ext.Window({
+							title: 'Database Connection Settings', width: 463,
+							autoHeight: true, closable: true,
+				            draggable: true, plain:true,
+				            modal: true, resizable: false,
+				            bodyBorder: false, border: false,
+				            items: form,
+							buttons: [
+								{text: 'Save'},
+								{text: 'Cancel', handler: function(){wnd.close}}
+							],
+							buttonAlign: 'center'
+						});
+						wnd.show()
+					}
 				},				
+				
 				{
 					xtype: "tbfill"
 				},
