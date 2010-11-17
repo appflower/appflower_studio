@@ -179,6 +179,10 @@ class afStudioModelsCommand
 				    	
 				    	$k++;
 				    }
+				    //!!!
+				    if (empty($this->result['rows'])) {
+				   		 $this->result['rows'] = array(); 	
+				    }				     
 				    $this->result['success']=true;
 				    $this->result['totalCount']=count($this->result['rows']);
 					break;

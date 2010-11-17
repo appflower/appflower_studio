@@ -1,3 +1,5 @@
+Ext.ns('afStudio');
+
 afStudio.toolbar = Ext.extend(Ext.Toolbar, { 
 
 	initComponent: function(){

@@ -1,78 +1,147 @@
 Ext.ns('afStudio.models');
 
+/**
+ * Models TreeEditor
+ * @class afStudio.models.treeEditor
+ * @extends Ext.tree.TreeEditor
+ */
+afStudio.models.treeEditor = Ext.extend(Ext.tree.TreeEditor, {	
+	 //prevent dbclick editing
+	 beforeNodeClick : function(node, e) {
+	 }
+});
+
+
+/**
+ * Models TreePanel
+ * @class afStudio.models.treePanel
+ * @extends Ext.tree.TreePanel
+ */
 afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
-	initComponent: function() {
+	/**
+	 * Initializes component
+	 * @return {Object} The config object
+	 * @private
+	 */
+	_initCmp : function() {
+		var _this = this;
 		
-		var config = {			
-			title: 'Models'
-			,iconCls: 'icon-models'
-			,url: '/appFlowerStudio/models'
-			,method: 'post'
-			,reallyWantText: 'Do you really want to'
-		    ,root:new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false})
-			,rootVisible:false
-			,tools: [{
-				id: 'plus',
-				qtip: 'Add Model',
-				handler: function(e, toolEl, p, tc) {
-					
-				}
-			}]
-			,bbar: {
-				items: [
-					'->',
-					{
-						text: 'Add Model',
-						iconCls: 'icon-add',
-						handler: function(b, e) {
-							
-						}
-					}
-				]
-			}
-		};
-		
-		// apply config
-		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		
-		if(!this.loader) {
-			this.loader = new Ext.tree.TreeLoader({
-				 url:this.url
-				,baseParams:{cmd:'get'}
-			});
-		}
-
-		// setup loading mask if configured
-		this.loader.on({
-			 beforeload:function (loader,node,clb){
-			 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
-			 }
-			,load:function (loader,node,resp){
-				node.getOwnerTree().body.unmask();
-			}
-			,loadexception:function(loader,node,resp){
-				node.getOwnerTree().body.unmask();
-			}
+		var rootNode = new Ext.tree.AsyncTreeNode({
+			path:'root',
+			text: 'ModelRoot', 
+			draggable: false
 		});
 		
-		this.treeEditor = new Ext.tree.TreeEditor(this, {
-				 cancelOnEsc:true
-				,completeOnEnter:true
-				,ignoreNoChange:true
+		var bottomToolBar = new Ext.Toolbar({
+			items: [
+			'->',
+			{
+				text: 'Add Model',
+				iconCls: 'icon-models-add',
+				handler: function(b, e) {
+					
+					var root = _this.getRootNode(),
+						newNode = {text: 'NewModel'};
+					
+					if (root.hasChildNodes()) {
+						//console.log(root.childNodes[0].attributes);
+						
+						Ext.applyIf(newNode, root.childNodes[0].attributes);
+						delete newNode.id;
+					}
+					
+					var addedNode = _this.getRootNode().appendChild(
+						new Ext.tree.TreeNode(newNode)
+					);
+					var path = addedNode.getPath();
+					
+					_this.selectPath(path);
+					
+					_this.treeEditor.triggerEdit(addedNode);
+				}
+			}]			
+		}); 
+		
+		return {			
+			title: 'Models',
+			iconCls: 'icon-models',
+			autoScroll: true,
+			url: '/appFlowerStudio/models',
+			method: 'post',
+			reallyWantText: 'Do you really want to',
+		    root: rootNode,
+			rootVisible: false,
+			bbar: bottomToolBar
+		};
+	} //eo _initCmp
+
+	
+	/**
+	 * Template method
+	 * @private
+	 */	
+	,initComponent: function() {		
+		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));		
+		
+		if (!this.loader) {
+			this.loader = new Ext.tree.TreeLoader({
+				url: this.url,
+				baseParams: {cmd:'get'}
+			});
+		}
+		
+		this.treeEditor = new afStudio.models.treeEditor(this, {
+			cancelOnEsc: true,
+			completeOnEnter: true,
+			ignoreNoChange: true
+		});		
+		
+		afStudio.models.treePanel.superclass.initComponent.apply(this, arguments);	
+		
+		this._initEvents();
+	} //eo initComponent
+	
+	/**
+	 * Initializes events
+	 * @private
+	 */
+	,_initEvents : function() {
+		var _this = this;			
+		
+		// setup loading mask if configured
+		_this.loader.on({
+			 beforeload: function(loader,node,clb) {
+			 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
+			 }
+			 ,load: function(loader,node,resp) {
+				node.getOwnerTree().body.unmask();
+			 }
+			 ,loadexception: function(loader,node,resp) {
+				node.getOwnerTree().body.unmask();
+			 }
 		});
 		
 		//renaming model
-		this.treeEditor.on({
-			complete: function(editor,newValue,oldValue)
-			{
-				if(newValue!=oldValue)
-				editor.editNode.getOwnerTree().renameModel(editor.editNode,newValue,oldValue);
-			}
+		_this.treeEditor.on({
+			complete: function(editor, newValue, oldValue) {
+				if (newValue != oldValue) {
+					editor.editNode.getOwnerTree().renameModel(editor.editNode, newValue, oldValue);
+				}
+			}			
+//			,canceledit : function(editor, newValue, oldValue) {
+//				console.log('canceledit', newValue, oldValue);
+//			}
+//			,beforestartedit : function(editor, boundEl, value) {
+//				console.log('beforestartedit');
+//			}
+//			,startedit : function(boundEl, value) {
+//				console.log('startedit', boundEl);
+//			}
 		});
 		
 		//showing context menu for each node
-		this.on({
+		_this.on({
 			contextmenu: function(node, e) {
 	            node.select();
 	            var c = node.getOwnerTree().contextMenu;
@@ -80,11 +149,13 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	            c.showAt(e.getXY());
 	        }
 		});
-		
-		afStudio.models.treePanel.superclass.initComponent.apply(this, arguments);	
-	} //eo initComponent
+	}
 	
-	,onRender:function() {
+	/**
+	 * Template method
+	 * @private
+	 */
+	,onRender: function() {
 		// call parent
 		afStudio.models.treePanel.superclass.onRender.apply(this, arguments);
 		
@@ -92,44 +163,54 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		// prevent default browser context menu to appear 
 		this.el.on({
-			contextmenu:{fn:function(){return false;},stopEvent:true}
+			contextmenu: {
+				fn: function() { return false; },
+				stopEvent: true
+			}
 		});
 
 	} // eo function onRender
 	
 	,contextMenu: new Ext.menu.Menu({
-	        items: [{
-			            id: 'delete-model'
-			            ,text: 'Delete Model'
-			            ,iconCls: 'icon-models-delete'
-	        		}
-	        		,{
-			            id: 'edit-model'
-			            ,text: 'Edit Model'
-			            ,iconCls: 'icon-models-edit'
-			        }
-	        ],
+	        items: [
+	        {
+	       		id: 'delete-model',
+	            text: 'Delete model',
+	            iconCls: 'icon-models-delete'
+	        },{
+	            id: 'edit-model',
+	            text: 'Edit model',
+	            iconCls: 'icon-models-edit'
+			},{
+	            id: 'rename-model',
+	            text: 'Change model name',
+	            iconCls: 'icon-models-edit'				
+			}],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
 	                    case 'delete-model':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().deleteModel(node);
-	                        break;
+                        	break;
 	                    case 'edit-model':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().editModel(node);
 	                        break;
+	                    case 'rename-model':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().treeEditor.triggerEdit(node);	                    	
+	                        break;	                        
 	                }
 	            }
 	        }
 	})
 	
-    ,getModel:function(node) {
+    ,getModel: function(node) {
 		var model;
 
 		// get path for non-root node
-		if(node !== this.root) {
+		if (node !== this.root) {
 			model = node.text;
 		}
 		// path for root node is it's path attribute
@@ -140,11 +221,11 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		return model;
 	}
 	
-	,getSchema:function(node) {
+	,getSchema: function(node) {
 		return node.attributes.schema || '';
 	}
 	
-	,deleteModel:function(node)
+	,deleteModel: function(node)
 	{
 		Ext.Msg.show({
 			 title:'Delete'
@@ -181,9 +262,10 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	afStudio.vp.layout.west.items[0].root.reload();
 				      	
 				      	if(response.console)
-				      	{
-				      		afStudio.vp.layout.south.panel.body.dom.innerHTML+=response.console;
-							afStudio.vp.layout.south.panel.body.scroll( "bottom", 1000000, true );
+				      	{	
+				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
+				      		console.body.dom.innerHTML += response.console;
+							console.body.scroll("bottom", 1000000, true );				      		
 				      	}				      	
 				      }
 				      else
@@ -203,16 +285,16 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}
 	
-	,renameModel:function(node,newValue,oldValue)
+	,renameModel: function(node, newValue, oldValue) 
 	{
 		Ext.Msg.show({
-			 title:'Rename'
-			,msg:this.reallyWantText + ' rename model\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
-			,icon:Ext.Msg.WARNING
-			,buttons:Ext.Msg.YESNO
-			,width:400
-			,scope:this
-			,fn:function(response) {
+			title:'Rename'
+			,msg: this.reallyWantText + ' rename model\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
+			,icon: Ext.Msg.WARNING
+			,buttons: Ext.Msg.YESNO
+			,width: 400
+			,scope: this
+			,fn: function(response) {
 				// do nothing if answer is not yes
 				if('yes' !== response) {
 					node.setText(oldValue);
@@ -221,12 +303,12 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				}
 				// setup request options
 				var options = {
-					 url:this.url
-					,method:this.method
-					,scope:this
+					url: this.url
+					,method: this.method
+					,scope: this
 					//,callback:this.cmdCallback
-					,node:node
-					,params:{
+					,node: node
+					,params: {
 						 cmd:'rename'
 						,model:oldValue
 						,renamedModel:newValue
@@ -241,8 +323,9 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	
 				      	if(response.console)
 				      	{
-				      		afStudio.vp.layout.south.panel.body.dom.innerHTML+=response.console;
-							afStudio.vp.layout.south.panel.body.scroll( "bottom", 1000000, true );
+				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
+				      		console.body.dom.innerHTML+=response.console;
+							console.body.scroll( "bottom", 1000000, true );
 				      	}
 				      }
 				      else
@@ -263,8 +346,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}
 	
-	,editModel:function(node)
-	{
+	,editModel: function(node) {
 		//afStudio.vp.layout.center.panel.body.mask('Loading, please Wait...', 'x-mask-loading');
 		Ext.Ajax.request({
 		   scope:this,
@@ -274,7 +356,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			   model: this.getModel(node),
 			   schema: this.getSchema(node)
 		   },
-		   success: function(result,request){
+		   success: function(result, request) {
 			   var data = Ext.decode(result.responseText);
 			   	var fieldsGrid=new afStudio.models.gridFieldsPanel({
 			   		'title':'Editing '+this.getModel(node),
@@ -293,10 +375,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				});
 				afStudio.vp.addToPortal(editTab, true);
 		   }
-		});
-		
-		//var fieldsGrid=new afStudio.models.gridFieldsPanel({'title':'Editing '+this.getModel(node),'renderTo':afStudio.vp.layout.center.panel.items.items[0].getEl(),model:this.getModel(node),schema:this.getSchema(node)});		
-	}
+		});		
+	}	
 }); 
 
 // register xtype

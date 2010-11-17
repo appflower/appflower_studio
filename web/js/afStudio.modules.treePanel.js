@@ -10,23 +10,15 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			,url: '/appFlowerStudio/modules'
 			,method: 'post'
 			,reallyWantText: 'Do you really want to'
-		    ,root:new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false})
+		    ,root: new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false})
 			,rootVisible:false
-			,tools: [{
-				id: 'plus',
-				qtip: 'Add Module',
-				handler: function(e, toolEl, p, tc) {
-					
-				}
-			}]
 			,bbar: {
 				items: [
 					'->',
 					{
 						text: 'Add Module',
 						iconCls: 'icon-add',
-						handler: function(b, e) {
-							
+						handler: function(b, e) {							
 						}
 					}
 				]
@@ -98,17 +90,16 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	} // eo function onRender
 	
 	,contextMenu: new Ext.menu.Menu({
-	        items: [{
-			            id: 'delete-module'
-			            ,text: 'Delete Module'
-			            ,iconCls: 'icon-models-delete'
-	        		}
-	        		,{
-			            id: 'edit-module'
-			            ,text: 'Edit Module'
-			            ,iconCls: 'icon-models-edit'
-			        }
-	        ],
+	        items: [
+	        {
+	       		id: 'delete-module',
+	            text: 'Delete module',
+	            iconCls: 'icon-models-delete'
+	        },{
+	            id: 'edit-module',
+	            text: 'Edit module',
+	            iconCls: 'icon-models-edit'
+			}],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
