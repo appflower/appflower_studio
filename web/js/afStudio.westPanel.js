@@ -16,8 +16,9 @@ afStudio.westPanel = Ext.extend(Ext.Panel, {
 			layout: "accordion",
 			listeners: {"beforerender": function(){this.activeItem = this.findById("models")}},
 			items: [
-				new afStudio.models.treePanel({id:'models'})
-			    ,{
+				new afStudio.models.treePanel({id:'models'}),
+			    new afStudio.modules.treePanel({id:'modules'}),
+			    {
 					id: "profile",
 					title: "My Profile",
 					autoHeight: true,
