@@ -234,9 +234,81 @@ class afStudioModelsCommand
 	
 	public function end()
 	{	
-		$this->result=json_encode($this->result);
+		//$this->result=json_encode($this->result);
+		//return $this->result;
+		//return $this->realRoot;
+		$datas = array(); 		
+		$appFolders = $this->getApplicationFolders($this->realRoot."/apps/");
+	
+		foreach($appFolders as $appFolder)
+		{
+			$appname = $appFolder["text"];
+			$modules = array();
+			$modules[0]["text"] = "modules";
+			$moduleFolders = $this->getApplicationFolders($this->realRoot."/apps/".$appname."/modules/");
+			
+			$k=0;
+			$mod_datas=array();
+			foreach($moduleFolders as $moduleFolder)
+			{
+				$modulename = $moduleFolder["text"];
+				$modname_arr = array();
+				$modname_arr[0]["text"] = "actions";
+				$modname_arr[1]["text"] = "config";
+				$actionfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/actions/", ".php");			
+				$modname_arr[0]["children"] = $actionfiles;
+				$configfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/config/", ".xml");
+				$modname_arr[1]["children"] = $configfiles;
+				$moduleFolder["children"] = $modname_arr;
+				$k++;	
+				array_push($mod_datas,$moduleFolder);
+			}
+			
+			
+			$modules[0]["children"] = $mod_datas;
+			$appFolder["children"] = $modules;
+			
+			array_push($datas,$appFolder);
+		}
 		
-		return $this->result;
+		return json_encode($datas);
+	}
+	
+	private function getApplicationFolders ($dir)
+	{
+		$folders = array();
+		
+		if(is_dir($dir))
+		{
+			$handler = opendir($dir);
+			$i=0;
+			while(($f = readdir($handler))!==false)
+			{
+				if($f !="." && $f !=".." && $f!=".svn" && is_dir($dir.$f))
+				{
+					$folders[$i]["text"] = $f;
+					$i++;
+				}
+			}
+		}
+		return $folders;
+	}
+	
+	private function getApplicationFiles($dir, $pro_name)
+	{
+		$files = array();
+		$handler = opendir($dir);
+		$i=0;
+		while(($f = readdir($handler))!==false)
+		{
+			if(!is_dir($dir.$f) && strpos($f,$pro_name)>0)
+			{
+				$files[$i]["text"] = $f;
+				$files[$i]["leaf"] = true;
+				$i++;
+			}
+		}
+		return $files;
 	}
 }
 ?>
