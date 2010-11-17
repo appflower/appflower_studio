@@ -2,7 +2,7 @@ Ext.ns('afStudio.models');
 
 afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
-	initComponent: function(){
+	initComponent: function() {
 		
 		var config = {			
 			title: 'Models'
@@ -12,6 +12,25 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			,reallyWantText: 'Do you really want to'
 		    ,root:new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false})
 			,rootVisible:false
+			,tools: [{
+				id: 'plus',
+				qtip: 'Add Model',
+				handler: function(e, toolEl, p, tc) {
+					
+				}
+			}]
+			,bbar: {
+				items: [
+					'->',
+					{
+						text: 'Add Model',
+						iconCls: 'icon-add',
+						handler: function(b, e) {
+							
+						}
+					}
+				]
+			}
 		};
 		
 		// apply config
@@ -63,7 +82,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 		
 		afStudio.models.treePanel.superclass.initComponent.apply(this, arguments);	
-	}
+	} //eo initComponent
+	
 	,onRender:function() {
 		// call parent
 		afStudio.models.treePanel.superclass.onRender.apply(this, arguments);
@@ -76,6 +96,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 
 	} // eo function onRender
+	
 	,contextMenu: new Ext.menu.Menu({
 	        items: [{
 			            id: 'delete-model'
@@ -103,6 +124,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	            }
 	        }
 	})
+	
     ,getModel:function(node) {
 		var model;
 
@@ -117,9 +139,11 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		return model;
 	}
+	
 	,getSchema:function(node) {
 		return node.attributes.schema || '';
 	}
+	
 	,deleteModel:function(node)
 	{
 		Ext.Msg.show({
@@ -178,6 +202,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 	}
+	
 	,renameModel:function(node,newValue,oldValue)
 	{
 		Ext.Msg.show({
@@ -237,6 +262,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 	}
+	
 	,editModel:function(node)
 	{
 		//afStudio.vp.layout.center.panel.body.mask('Loading, please Wait...', 'x-mask-loading');

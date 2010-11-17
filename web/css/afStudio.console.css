@@ -1,3 +1,9 @@
 .afStudio_command_user {
 	color:yellow;
 }
+
+/* Ext.ux.grid.RowEditor plugin hack 
+   To prevent overlay modal Ext.Window mask */
+.x-row-editor {
+	z-index: 9000 !important;
+}

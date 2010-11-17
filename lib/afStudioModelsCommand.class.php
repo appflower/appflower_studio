@@ -9,7 +9,7 @@ class afStudioModelsCommand
 							
 	public function __construct()
 	{		
-		$this->request=sfContext::getInstance()->getRequest();
+		$this->request=sfContext::getInstance()->getRequest();		
 		
 		$this->realRoot=afStudioUtil::getRootDir();
 		
@@ -109,7 +109,7 @@ class afStudioModelsCommand
 						{
 							foreach ($array['classes'] as $phpName=>$attributes)
 							{
-								$this->result[]=array('text'=>$phpName,'leaf'=>true,'schema'=>$schemaFile);
+								$this->result[]=array('text'=>$phpName,'leaf'=>true,'schema'=>$schemaFile, 'iconCls'=>'icon-model');
 							}
 						}
 					}
@@ -233,7 +233,7 @@ class afStudioModelsCommand
 	}
 	
 	public function end()
-	{		
+	{	
 		$this->result=json_encode($this->result);
 		
 		return $this->result;

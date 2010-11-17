@@ -3,6 +3,7 @@
  * afStudio south region panel
  * @class afStudio.southPanel
  * @extends Ext.Panel
+ * @author Nikolai
  */
 afStudio.southPanel = Ext.extend(Ext.Panel, { 
 

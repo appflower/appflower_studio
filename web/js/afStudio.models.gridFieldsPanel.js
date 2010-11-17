@@ -66,12 +66,32 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
 		    {header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})}
 		    ,{header: "Type", width: 100, sortable: true, dataIndex: 'type', editor: new Ext.form.TextField({})}
 		    ,{header: "Size", width: 50, sortable: true, dataIndex: 'size', editor: new Ext.form.TextField({})}
-		    ,{header: "Primary Key", width: 50, sortable: true, dataIndex: 'primary_key', editor: new Ext.form.TextField({})}
-		    ,{header: "Required", width: 50, sortable: true, dataIndex: 'required', editor: new Ext.form.TextField({})}
+		    ,{header: "Primary Key", width: 50, sortable: true, dataIndex: 'primary_key', editor: new Ext.form.TextField({})}		    
 		    ,{header: "Autoincrement", width: 50, sortable: true, dataIndex: 'autoincrement', editor: new Ext.form.TextField({})}
 		    ,{header: "Default value", width: 100, sortable: true, dataIndex: 'default_value', editor: new Ext.form.TextField({})}
-		     ,{header: "Foreign table", width: 100, sortable: true, dataIndex: 'foreign_table', editor: new Ext.form.TextField({})}
-		      ,{header: "Foreign key", width: 50, sortable: true, dataIndex: 'foreign_key', editor: new Ext.form.TextField({})}
+		    
+		    //TODO make a separate component to prevent code cluttering 
+		    ,{header: "Relation", width: 150, sortable: true, dataIndex: 'foreign_table', 
+			      editor: new Ext.form.TextField({		      	
+			      	listeners: {
+			      		focus: function(field) {
+			      			if (!field.picker) {
+				      			field.picker = new afStudio.models.relationPicker({
+				      				closable: true,
+                					closeAction: 'hide',
+				      				listeners: {
+				      					relationpicked : function(relation) {
+				      						field.setValue(relation);
+				      					}
+				      				}
+				      			});
+			      			}
+			      			field.picker.show();
+			      		}
+			      	}
+		      	})
+		     }
+		    ,{header: "Required", width: 50, sortable: true, dataIndex: 'required', editor: new Ext.form.Checkbox({})}
 		];
 		
 		var editor = new Ext.ux.grid.RowEditor({
@@ -80,7 +100,7 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
 		
 		var config = {			
 			iconCls: 'icon-grid',
-	        frame: true,
+	        //frame: true,
 	        //closable:true,
 	        autoScroll: true,
 	        height: 300,
@@ -88,48 +108,59 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
 	        plugins: [editor],
 	        columns : columns,
 	        style: 'padding-bottom:10px;',
-	        tbar: [{
-	            text: 'Insert after',
-	            iconCls: 'icon-add',
+	        tbar: [
+	        {
+	            text: 'Save',
+	            iconCls: 'icon-save',
 	            handler:function(btn, ev){
-	            	var rec = gridFields.getSelectionModel().getSelected();
-	            	var index=rec?gridFields.store.indexOf(rec)+1 : 0;
-	            	
-	            	var u = new gridFields.store.recordType({
-			            name : '',
-			            type: 'INT',
-			            size : '11'
-			        });
-			        editor.stopEditing();
-			        gridFields.store.insert(index, u);
-			        editor.startEditing(index);
 	            }
-	        }, '-',{
-	            text: 'Insert before',
+	        }, '-', {	        	
+	            text: 'Insert',
 	            iconCls: 'icon-add',
-	            handler:function(btn, ev){
-	            	var rec = gridFields.getSelectionModel().getSelected();
-	            	var index=rec?gridFields.store.indexOf(rec) : 0;
-	            	
-	            	var u = new gridFields.store.recordType({
-			            name : '',
-			            type: 'INT',
-			            size : '11'
-			        });
-			        editor.stopEditing();
-			        gridFields.store.insert(index, u);
-			        editor.startEditing(index);
+	            menu: {
+	            	items: [
+	            	{
+	            		text: 'Insert after',
+			            handler:function(btn, ev){
+			            	var rec = gridFields.getSelectionModel().getSelected();
+			            	var index=rec?gridFields.store.indexOf(rec)+1 : 0;
+			            	
+			            	var u = new gridFields.store.recordType({
+					            name : '',
+					            type: 'INT',
+					            size : '11'
+					        });
+					        editor.stopEditing();
+					        gridFields.store.insert(index, u);
+					        editor.startEditing(index);
+			            }	            		
+	            	},{
+	            		text: 'Insert before',
+			            handler:function(btn, ev){
+			            	var rec = gridFields.getSelectionModel().getSelected();
+			            	var index=rec?gridFields.store.indexOf(rec) : 0;
+			            	
+			            	var u = new gridFields.store.recordType({
+					            name : '',
+					            type: 'INT',
+					            size : '11'
+					        });
+					        editor.stopEditing();
+					        gridFields.store.insert(index, u);
+					        editor.startEditing(index);
+			            }	            		
+	            	}]
 	            }
+	            
 	        }, '-', {
 	            text: 'Delete',
 	            iconCls: 'icon-delete',
-	            handler:function(btn, ev){
-	            	
-	            	var rec = gridFields.getSelectionModel().getSelected();
-			        if (!rec) {
+	            handler: function(btn, ev){	            	
+	            	var records = gridFields.getSelectionModel().getSelections();	            	
+			        if (records.length < 0) {
 			            return false;
 			        }
-			        gridFields.store.remove(rec);
+			        gridFields.store.remove(records);
 	            }
 	        }, '-'],
 	        viewConfig: {
