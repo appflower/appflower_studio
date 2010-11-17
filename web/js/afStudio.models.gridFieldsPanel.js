@@ -40,7 +40,7 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
 		var store = new Ext.data.Store({
 		    id: 'user'
 		    ,restful: false
-		    ,proxy: proxy
+		    //,proxy: proxy
 		    ,reader: reader
 		    ,writer: writer
 		    ,baseParams: {
@@ -50,7 +50,7 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
 		});
 		
 		// load the store immeditately
-		store.load();
+		store.loadData(gridFields._data);
 		
 		store.on({
 			beforewrite: function(proxy,action,rs,options,arg){
@@ -336,6 +336,60 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				var visibleCount = cm.getColumnCount(true);
 				if(visibleCount>2) cm.setHidden(index, true);
 				break;
+			case 'cchoice':
+				var cstore = [];
+				var store = this.grid.store;
+				for(var i=0;i<store.getCount();i++){
+					var record = store.getAt(i);
+					var value = record.get(cm.getDataIndex(index));
+					if(value=="")continue;
+					var flag=true;
+					for(var j=0;j<cstore.length;j++){
+						if(cstore[j]==value){
+							flag = false;
+							break;
+						}
+					}
+					if(flag)cstore.push(value);
+				}
+				var editor=this.grid.createEditer(
+					new Ext.form.ComboBox({
+						typeAhead: true,
+						triggerAction: 'all',
+						lazyRender:true,
+						mode: 'local',
+						store: cstore,
+					}));
+				
+				cm.config[index].editor = editor;
+				break;
+			case 'cdate':
+				var editor=this.grid.createEditer(new Ext.form.DateField());
+				cm.config[index].editor = editor;
+				break;
+			case 'cnumber':
+				var editor=this.grid.createEditer(new Ext.form.NumberField());
+				cm.config[index].editor = editor;
+				break; 
+			case 'ccurrency':
+				var editor=this.grid.createEditer(new Ext.form.NumberField());
+				cm.config[index].editor = editor;
+				cm.config[index].renderer = Ext.util.Format['usMoney'];
+				break; 
+			case 'cdate':
+				var editor = this.grid.createEditer(
+					new Ext.form.DateField({
+						getValue:function(){
+							return "12/12/2010";
+						}
+					})
+				);
+				editor.getValue=function(){
+					alert(1);
+					return 1;
+				}
+				cm.config[index].editor = editor;
+				cm.config[index].renderer = Ext.util.Format.dateRenderer('m/d/Y');
 			default:
 				alert(item.itemId);
 		}
@@ -385,6 +439,23 @@ var _modelEditerEnterFlag=0;
 afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	maxColumns:20,
 	defautHeaderTitle:'new field',
+	createEditer:function(fd){
+		var fmfield=null;
+		if(fd)fmfield=fd; else fmfield = new Ext.form.TextField();
+		return	new Ext.grid.GridEditor(
+					fmfield,{
+						completeOnEnter:false,
+						listeners:{
+							specialkey :function(field,e){
+								if(e.getKey() == e.ENTER){
+									_modelEditerEnterFlag=1;
+									 this.completeEdit();
+								}
+							}
+						}
+					}
+				);
+	},
 	beforeInit: function(){
 		var columns=[new Ext.grid.RowNumberer()];
 		var fields=[];
@@ -469,49 +540,22 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 
 //model grid is extended from excel grid
 afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
-	createEditer:function(){
-		return	new Ext.grid.GridEditor(
-					new Ext.form.TextField(),{
-						completeOnEnter:false,
-						listeners:{
-							specialkey :function(field,e){
-								if(e.getKey() == e.ENTER){
-									_modelEditerEnterFlag=1;
-									 this.completeEdit();
-								}
-							}
-						}
-					}
-				);
-	},
+	
 	beforeInit:function(){
 		var gridFields=this;
-		var columns = [
-				new Ext.grid.RowNumberer()
-				,{header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: this.createEditer()}
-				,{header: "Type", width: 100, sortable: true, dataIndex: 'type', editor: this.createEditer()}
-				,{header: "Size", width: 50, sortable: true, dataIndex: 'size', editor: this.createEditer()}
-				,{header: "Primary Key", width: 100, sortable: true, dataIndex: 'primary_key', editor: this.createEditer()}
-				,{header: "Required", width: 80, sortable: true, dataIndex: 'required', editor: this.createEditer()}
-				,{header: "Autoincrement", width: 80, sortable: true, dataIndex: 'autoincrement', editor: this.createEditer()}
-				,{header: "Default value", width: 100, sortable: true, dataIndex: 'default_value', editor: this.createEditer()}
-				,{header: "Foreign table", width: 100, sortable: true, dataIndex: 'foreign_table', editor: this.createEditer()}
-				,{header: "Foreign key", width: 80, sortable: true, dataIndex: 'foreign_key', editor: this.createEditer()}
-			];
-		
-		var fields = [
-				{name: 'id', allowBlank: false}
-				,{name: 'name', allowBlank: false}
-				,{name: 'type', allowBlank: false}
-				,{name: 'size', allowBlank: true}
-				,{name: 'primary_key', allowBlank: true}
-				,{name: 'required', allowBlank: true}
-				,{name: 'autoincrement', allowBlank: true}
-				,{name: 'default_value', allowBlank: true}
-				,{name: 'foreign_table', allowBlank: true}
-				,{name: 'foreign_key', allowBlank: true}
-			];
-			
+		var fields = [];
+		var data = gridFields._data.rows;
+		var columns = [new Ext.grid.RowNumberer()];
+		for(var i=0;i<data.length;i++){
+			columns.push({
+				header : data[i].name,
+				dataIndex : 'c'+i,
+				width : 80,hidden:false,
+				editor : this.createEditer()
+			});
+			fields.push({name:'c'+i})
+		}
+ 
 		for(var i=columns.length-1;i<=this.maxColumns;i++){
 			columns.push({
 				header : this.defautHeaderTitle,
@@ -522,29 +566,12 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 			fields.push({name:'c'+i});
 		}
 		
-		var proxy = new Ext.data.HttpProxy({
-		    url: '/appFlowerStudio/models'
-		});
-		
-		var reader = new Ext.data.JsonReader({
-		    totalProperty: 'totalCount',
-		    successProperty: 'success',
-		    idProperty: 'id',
-		    root: 'rows',
-		    messageProperty: 'message' 
-		}, fields);
-
-		
 		this.store = new Ext.data.Store({
-		    proxy: proxy
-		    ,reader: reader
-		    ,baseParams: {
-		    	xaction:'read',
-		    	model: gridFields.model
-		    	,schema: gridFields.schema
-		    }
+			reader: new Ext.data.JsonReader({
+			    idProperty: 'id',
+			}, fields)
 		});
-		this.store.load();
+		this.store.add([new Ext.data.Record()]);
 		this.columns = columns;
 		
 		afStudio.models.modelGridPanel.superclass.beforeInit.apply(this, arguments);

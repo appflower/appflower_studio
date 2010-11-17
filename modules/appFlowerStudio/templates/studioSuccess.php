@@ -54,6 +54,7 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 </script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
 <?php 
 $appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';

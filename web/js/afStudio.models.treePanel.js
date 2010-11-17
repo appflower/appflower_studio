@@ -266,18 +266,35 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,editModel:function(node)
 	{
 		//afStudio.vp.layout.center.panel.body.mask('Loading, please Wait...', 'x-mask-loading');
-
-		var fieldsGrid=new afStudio.models.gridFieldsPanel({'title':'Editing '+this.getModel(node),model:this.getModel(node),schema:this.getSchema(node)});		
-		var modelGrid = new afStudio.models.modelGridPanel({
-			title:'ModelGrid '+this.getModel(node),
-			model:this.getModel(node),
-			schema:this.getSchema(node)
+		Ext.Ajax.request({
+		   scope:this,
+		   url: '/appFlowerStudio/models',
+		   params: { 
+			   xaction:'read',
+			   model: this.getModel(node),
+			   schema: this.getSchema(node)
+		   },
+		   success: function(result,request){
+			   var data = Ext.decode(result.responseText);
+			   	var fieldsGrid=new afStudio.models.gridFieldsPanel({
+			   		'title':'Editing '+this.getModel(node),
+			   		_data:data,
+			   		model: this.getModel(node),
+					schema: this.getSchema(node)
+			   	});		
+			   	
+				var modelGrid = new afStudio.models.modelGridPanel({
+					title:'ModelGrid '+this.getModel(node),
+					_data:data
+				});
+				var editTab = new Ext.TabPanel({
+					activeTab: 0,
+					items:[modelGrid,fieldsGrid]
+				});
+				afStudio.vp.addToPortal(editTab, true);
+		   }
 		});
-		var editTab = new Ext.TabPanel({
-			activeTab: 0,
-			items:[modelGrid,fieldsGrid]
-		});
-		afStudio.vp.addToPortal(editTab, true);
+		
 		//var fieldsGrid=new afStudio.models.gridFieldsPanel({'title':'Editing '+this.getModel(node),'renderTo':afStudio.vp.layout.center.panel.items.items[0].getEl(),model:this.getModel(node),schema:this.getSchema(node)});		
 	}
 }); 
