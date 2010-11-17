@@ -247,17 +247,13 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				items:[{
 					itemId:"ccheckbox",text:'Checkbox'
 				},{
-					itemId:"cchoice",text:'Choice'
+					itemId:"cchoice",text:'Select'
 				},{
 					itemId:"ccurrency",text:'Currency'
 				},{
 					itemId:"cdate",text:'Date'
 				},{
-					itemId:"cduration",text:'Duration'
-				},{
 					itemId:"cemail",text:'Email Address'
-				},{
-					itemId:"cimaccount",text:'IM Account'
 				},{
 					itemId:"cnumber",text:'Number'
 				},{
@@ -267,7 +263,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				},{
 					itemId:"ctime",text:'Time'
 				},{
-					itemId:"curl",text:'URL'
+					itemId:"crelation",text:'Relation'
 				}]
 			});
 			this.colMenu.on({
@@ -289,8 +285,6 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 					menu:this.colMenu
 				},{
 					itemId:'deletef',text: 'Delete Field'
-				},'-',{
-					itemId:'hidef',text: 'Hidden Field'
 				}
 			);
 			this.hmenu.on("itemclick", this.handleHdMenuClick, this);
@@ -390,6 +384,17 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				}
 				cm.config[index].editor = editor;
 				cm.config[index].renderer = Ext.util.Format.dateRenderer('m/d/Y');
+				break;
+			case 'cemail':
+				var editor = this.grid.createEditer(
+						new Ext.form.TextField({vtype:'email' })
+					);
+				cm.config[index].editor = editor;
+				break;
+			case 'cphonenumber':
+				var editor = this.grid.createEditer(new Ext.form.NumberField({maxLength:12}));
+				cm.config[index].editor = editor;
+				break;
 			default:
 				alert(item.itemId);
 		}
