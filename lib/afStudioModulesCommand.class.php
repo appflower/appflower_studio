@@ -1,96 +1,19 @@
 <?php
 /**
- * afStudioModels tree panel Command
+ * afStudioModules tree panel Command
  *
  */
-class afStudioModelsCommand
+class afStudioModulesCommand
 {
-	public $request=null,$result=null,$realRoot=null,$dbSchema=null,$propelSchemaArray=null,$originalSchemaArray=null,$tableName=null,$modelName=null,$configuration=null,$schemaFile=null,$propelModel=null;
+	public $request=null,$result=null,$realRoot=null,$dbSchema=null;
 							
 	public function __construct()
 	{		
 		$this->request=sfContext::getInstance()->getRequest();		
 		
 		$this->realRoot=afStudioUtil::getRootDir();
-		
-		$this->dbSchema = new sfPropelDatabaseSchema();
-	    
-		$this->loadSchemas();
-		
-	    if($this->request->getParameterHolder()->has('model'))
-	    {
-	    	$this->modelName = $this->request->getParameterHolder()->get('model');
-	    	$this->schemaFile = $this->request->getParameterHolder()->get('schema');
-	    	$this->tableName = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]['tableName'];
-	    	$this->propelModel = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName];
-	    }
-		
+				
 		$this->start();
-	}
-	
-	public function loadSchemas()
-	{
-		$this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
-		$finder = sfFinder::type('file')->name('*schema.yml')->prune('doctrine');
-    	$dirs = array_merge(array(sfConfig::get('sf_config_dir')), $this->configuration->getPluginSubPaths('/config'));
-    	foreach ($dirs as $k=>$dir)
-    	{
-    		if(substr_count($dir,'appFlower')>0||substr_count($dir,'sfPropelPlugin')>0||substr_count($dir,'sfProtoculousPlugin')>0)
-    		{
-    			unset($dirs[$k]);
-    		}
-    	}
-    	$dirs=array_values($dirs);
-    	
-    	$schemas = $finder->in($dirs);
-    	
-    	foreach ($schemas as $schema)
-	    {
-	      $this->originalSchemaArray[$schema] = sfYaml::load($schema);
-	
-	      if (!is_array($this->originalSchemaArray[$schema]))
-	      {
-	      	$this->originalSchemaArray[$schema];
-	        continue; // No defined schema here, skipping
-	      }
-	
-	      if (!isset($this->originalSchemaArray[$schema]['classes']))
-	      {
-	        // Old schema syntax: we convert it
-	        $this->propelSchemaArray[$schema] = $this->dbSchema->convertOldToNewYaml($this->originalSchemaArray[$schema]);
-	      }
-	
-	      $customSchemaFilename = str_replace(array(
-	        str_replace(DIRECTORY_SEPARATOR, '/', sfConfig::get('sf_root_dir')).'/',
-	        'plugins/',
-	        'config/',
-	        '/',
-	        'schema.yml'
-	      ), array('', '', '', '_', 'schema.custom.yml'), $schema);
-	      $customSchemas = sfFinder::type('file')->name($customSchemaFilename)->in($dirs);
-	
-	      foreach ($customSchemas as $customSchema)
-	      {
-	      	$this->originalSchemaArray[$customSchema] = sfYaml::load($customSchema);
-	        if (!isset($this->originalSchemaArray[$customSchema]['classes']))
-	        {
-	          // Old schema syntax: we convert it
-	          $this->propelSchemaArray[$customSchema] = $this->dbSchema->convertOldToNewYaml($this->originalSchemaArray[$customSchema]);
-	        }
-	      }
-	    }
-	}
-	
-	public function saveSchema()
-	{
-		$dump=sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3);
-		
-		if(file_put_contents($this->schemaFile,$dump)>0){
-			return true;
-		}
-		else {
-			return false;
-		}
 	}
 	
 	public function start()
@@ -102,16 +25,43 @@ class afStudioModelsCommand
 		{	
 			switch ($cmd)
 			{
-				case "get":			
-					if(count($this->propelSchemaArray)>0)
+				case "get":	
+					$datas = array(); 		
+					$appFolders = $this->getApplicationFolders($this->realRoot."/apps/");
+				
+					foreach($appFolders as $appFolder)
 					{
-						foreach ($this->propelSchemaArray as $schemaFile=>$array)
+						$appname = $appFolder["text"];
+						$modules = array();
+						$modules[0]["text"] = "modules";
+						$moduleFolders = $this->getApplicationFolders($this->realRoot."/apps/".$appname."/modules/");
+						
+						$k=0;
+						$mod_datas=array();
+						foreach($moduleFolders as $moduleFolder)
 						{
-							foreach ($array['classes'] as $phpName=>$attributes)
-							{
-								$this->result[]=array('text'=>$phpName,'leaf'=>true,'schema'=>$schemaFile, 'iconCls'=>'icon-model');
-							}
+							$modulename = $moduleFolder["text"];
+							$modname_arr = array();
+							$modname_arr[0]["text"] = "actions";
+							$modname_arr[1]["text"] = "config";
+							$actionfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/actions/", ".php");			
+							$modname_arr[0]["children"] = $actionfiles;
+							$configfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/config/", ".xml");
+							$modname_arr[1]["children"] = $configfiles;
+							$moduleFolder["children"] = $modname_arr;
+							$k++;	
+							array_push($mod_datas,$moduleFolder);
 						}
+						
+						
+						$modules[0]["children"] = $mod_datas;
+						$appFolder["children"] = $modules;
+						
+						array_push($datas,$appFolder);
+					}		
+					if(count($datas)>0)
+					{
+						$this->result = $datas;
 					}
 					else
 					$this->result = array('success' => true);
@@ -209,33 +159,47 @@ class afStudioModelsCommand
 		}
 	}
 	
-	public function reconstructTableField($params)
-	{
-		$retparams=array();
-		
-		if(isset($params['type'])&&$params['type']!='')
-		{
-			$retparams['type']=$params['type'];
-		}
-		if(isset($params['size'])&&$params['size']!='')
-		{
-			$retparams['size']=$params['size'];
-		}
-		if(isset($params['required']))
-    	{
-    		$retparams['required']=$params['required'];
-    	}
-    	if(isset($params['default_value']))
-    	{
-    		$retparams['default']=$params['default_value'];
-    	}
-		return $retparams;
-	}
-	
 	public function end()
 	{	
 		$this->result=json_encode($this->result);
 		return $this->result;
+	}
+	
+	private function getApplicationFolders ($dir)
+	{
+		$folders = array();
+		
+		if(is_dir($dir))
+		{
+			$handler = opendir($dir);
+			$i=0;
+			while(($f = readdir($handler))!==false)
+			{
+				if($f !="." && $f !=".." && $f!=".svn" && is_dir($dir.$f))
+				{
+					$folders[$i]["text"] = $f;
+					$i++;
+				}
+			}
+		}
+		return $folders;
+	}
+	
+	private function getApplicationFiles($dir, $pro_name)
+	{
+		$files = array();
+		$handler = opendir($dir);
+		$i=0;
+		while(($f = readdir($handler))!==false)
+		{
+			if(!is_dir($dir.$f) && strpos($f,$pro_name)>0)
+			{
+				$files[$i]["text"] = $f;
+				$files[$i]["leaf"] = true;
+				$i++;
+			}
+		}
+		return $files;
 	}
 }
 ?>
