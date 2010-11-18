@@ -357,7 +357,11 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			   schema: this.getSchema(node)
 		   },
 		   success: function(result, request) {
-			   var data = Ext.decode(result.responseText);
+			   try{
+				   var data = Ext.decode(result.responseText);
+			   }catch(e){
+				   var data = {rows:[],totalCount:0}
+			   }
 			   	var fieldsGrid=new afStudio.models.gridFieldsPanel({
 			   		'title':'Editing '+this.getModel(node),
 			   		_data:data,

@@ -40,7 +40,7 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
 		var store = new Ext.data.Store({
 		    id: 'user'
 		    ,restful: false
-		    //,proxy: proxy
+		    ,proxy: proxy
 		    ,reader: reader
 		    ,writer: writer
 		    ,baseParams: {

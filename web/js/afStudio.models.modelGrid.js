@@ -11,6 +11,21 @@ Ext.override(Ext.form.Field,{
 });
 
 afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
+	 beforeColMenuShow : function(){
+        var cm = this.cm,  colCount = cm.getColumnCount();
+        this.colMenu.removeAll();
+        for(var i = 0; i < colCount; i++){
+            if(cm.config[i].fixed !== true && cm.config[i].hideable !== false && !cm.config[i].uninit){
+                this.colMenu.add(new Ext.menu.CheckItem({
+                    itemId: "col-"+cm.getColumnId(i),
+                    text: cm.getColumnHeader(i),
+                    checked: !cm.isHidden(i),
+                    hideOnClick:false,
+                    disabled: cm.config[i].hideable === false
+                }));
+            }
+        }
+    },
 	renderUI : function(){
 		var header = this.renderHeaders();
 		var body = this.templates.body.apply({rows:'&#160;'});
@@ -50,8 +65,8 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 
 		if(g.enableHdMenu !== false){
 			this.hmenu = new Ext.menu.Menu({id: g.id + "-hctx"});
-			this.colMenu = new Ext.menu.Menu({
-				id:g.id + "-hcols-menu",
+			this.changetoMenu = new Ext.menu.Menu({
+				id:g.id + "-hchangeto-menu",
 				items:[{
 					itemId:"ccheckbox",text:'Checkbox'
 				},{
@@ -74,11 +89,14 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 					itemId:"crelation",text:'Relation'
 				}]
 			});
-			this.colMenu.on({
+			this.changetoMenu.on({
 				scope: this,
 				itemclick: this.handleHdMenuClick
 			});
-
+			this.colMenu = new Ext.menu.Menu({id:g.id + "-hcols-menu"});
+			this.colMenu.on("beforeshow", this.beforeColMenuShow, this);
+			this.colMenu.on("itemclick", this.columnMenuClick, this);
+			
 			this.hmenu.add(
 				{itemId:"asc", text: this.sortAscText, cls: "xg-hmenu-sort-asc"},
 				{itemId:"desc", text: this.sortDescText, cls: "xg-hmenu-sort-desc"},
@@ -90,7 +108,13 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				{itemId:"editb", text: 'Edit Field ...'},
 				{
 					itemId:"changeto", text: 'Change to',
-					menu:this.colMenu
+					menu:this.changetoMenu
+				},{
+                    itemId:"columns",
+                    hideOnClick: false,
+                    text: this.columnsText,
+                    menu: this.colMenu,
+                    iconCls: 'x-cols-icon'
 				},{
 					itemId:'deletef',text: 'Delete Field'
 				}
@@ -114,7 +138,30 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 
 		this.updateHeaderSortState();
 	},
-
+	
+	columnMenuClick : function(item){
+		var index = this.hdCtxIndex;
+		var cm = this.cm, ds = this.ds;
+	    index = cm.getIndexById(item.itemId.substr(4));
+	    if(index != -1){
+	        if(item.checked && cm.getColumnsBy(this.isHideableColumn, this).length <= 1){
+	            this.onDenyColumnHide();
+	            return false;
+	        }
+	        cm.setHidden(index, item.checked);
+	    }
+		return true;
+	},
+	getUninitColumn : function(){
+		for(var i=0;i<this.cm.config.length;i++){
+			var column = this.cm.config[i];
+			if(column.uninit){
+				return i;
+			}
+		}
+		return 0;
+	},
+	
 	handleHdMenuClick : function(item){
 		var index = this.hdCtxIndex;
 		var cm = this.cm, ds = this.ds;
@@ -125,18 +172,28 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			case "desc":
 				ds.sort(cm.getDataIndex(index), "DESC");
 				break;
-			case 'hidef':
-				var visibleCount = cm.getColumnCount(true);
-				/*for(var i=0;i<cm.getColumnCount();i++){
-					if(!cm.isHidden(i) && cm.isCellEditable(i,0) ){
-						visibleCount++;
-					}
-				}*/
-				if(visibleCount>2) cm.setHidden(index, true);
+			case 'addfa':
+				var _index = this.getUninitColumn();
+				this.cm.config[_index].uninit=false;
+				this.cm.config[_index].uninit=false;
+				this.cm.moveColumn(_index,index+1);
+				this.cm.setHidden(index+1,false);
+				break;
+			case 'addfb':
+				var _index = this.getUninitColumn();
+				this.cm.config[_index].uninit=false;
+				this.cm.config[_index].uninit=false;
+				this.cm.moveColumn(_index,index);
+				this.cm.setHidden(index,false);
 				break;
 			case 'deletef':
 				var visibleCount = cm.getColumnCount(true);
-				if(visibleCount>2) cm.setHidden(index, true);
+				if(visibleCount>2) {
+					cm.setHidden(index, true);
+					cm.config[index].uninit=true;
+					cm.config[index].header=this.grid.defautHeaderTitle;
+				}
+				
 				break;
 			case 'cchoice':
 				var cstore = [];
@@ -160,7 +217,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 						triggerAction: 'all',
 						lazyRender:true,
 						mode: 'local',
-						store: cstore,
+						store: cstore
 					}));
 				
 				cm.config[index].editor = editor;
@@ -186,10 +243,6 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 						}
 					})
 				);
-				editor.getValue=function(){
-					alert(1);
-					return 1;
-				}
 				cm.config[index].editor = editor;
 				cm.config[index].renderer = Ext.util.Format.dateRenderer('m/d/Y');
 				break;
@@ -211,8 +264,10 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 
 	showNextColumn:function(index){
 		var cm = this.cm;
-		if(index<=this.grid.maxColumns)
+		if(index<=this.grid.maxColumns){
 			cm.setHidden(index+1,false);
+			cm.config[index+1].uninit=false;
+		}
 	},
 	headEditComplete : function(ed,v,sv){
 		var index = ed._index;
@@ -242,7 +297,14 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				complete: this.headEditComplete
 			});
 			ed.startEdit(hd.firstChild,  this.cm.getColumnHeader(index));
-			this.showNextColumn(index);
+			var showFlag = true;
+			for(var i=index+1;i<this.grid.maxColumns;i++){
+				if(!this.cm.isHidden(i)){
+					showFlag=false;
+					break;
+				}
+			}
+			if(showFlag) this.showNextColumn(index);
 		}
 	}
 });
@@ -358,34 +420,37 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		var gridFields=this;
 		var fields = [];
 		var data = gridFields._data.rows;
-		var columns = [new Ext.grid.RowNumberer()];
-		for(var i=0;i<data.length;i++){
-			columns.push({
-				header : data[i].name,
-				dataIndex : 'c'+i,
-				width : 80,hidden:false,
-				editor : this.createEditer()
+		if(data.length>0){
+			var columns = [new Ext.grid.RowNumberer()];
+			for(var i=0;i<data.length;i++){
+				columns.push({
+					header : data[i].name,
+					dataIndex : 'c'+i,
+					width : 80,hidden:false,
+					editor : this.createEditer()
+				});
+				fields.push({name:'c'+i})
+			}
+	 
+			for(var i=columns.length-1;i<=this.maxColumns;i++){
+				columns.push({
+					header : this.defautHeaderTitle,
+					dataIndex : 'c'+i,
+					uninit:true,
+					width : 80,hidden:true,
+					editor : this.createEditer()
+				});
+				fields.push({name:'c'+i});
+			}
+			
+			this.store = new Ext.data.Store({
+				reader: new Ext.data.JsonReader({
+				    idProperty: 'id',
+				}, fields)
 			});
-			fields.push({name:'c'+i})
+			this.store.add([new Ext.data.Record()]);
+			this.columns = columns;
 		}
- 
-		for(var i=columns.length-1;i<=this.maxColumns;i++){
-			columns.push({
-				header : this.defautHeaderTitle,
-				dataIndex : 'c'+i,
-				width : 80,hidden:true,
-				editor : this.createEditer()
-			});
-			fields.push({name:'c'+i});
-		}
-		
-		this.store = new Ext.data.Store({
-			reader: new Ext.data.JsonReader({
-			    idProperty: 'id',
-			}, fields)
-		});
-		this.store.add([new Ext.data.Record()]);
-		this.columns = columns;
 		
 		afStudio.models.modelGridPanel.superclass.beforeInit.apply(this, arguments);
 		
