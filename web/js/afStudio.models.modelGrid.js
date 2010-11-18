@@ -151,12 +151,12 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 		this.updateHeaderSortState();
 	},
 	
-	columnMenuClick : function(item){
+	columnMenuClick : function(item){		
 		var index = this.hdCtxIndex;
 		var cm = this.cm, ds = this.ds;
 	    index = cm.getIndexById(item.itemId.substr(4));
 	    if(index != -1){
-	        if(item.checked && cm.getColumnsBy(this.isHideableColumn, this).length <= 1){
+	        if(item.checked && cm.getColumnsBy(this.isHideableColumn, this).length <= 2 ){
 	            this.onDenyColumnHide();
 	            return false;
 	        }
@@ -235,6 +235,10 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 					cm.config[index].header=this.grid.defautHeaderTitle;
 				}
 				break;
+			case 'ccheckbox':
+				var editor=this.grid.createEditer(new Ext.form.Checkbox());
+				cm.config[index].editor = editor;
+				break;
 			case 'cchoice':
 				var cstore = [];
 				var store = this.grid.store;
@@ -268,11 +272,13 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				break;
 			case 'cnumber':
 				var editor=this.grid.createEditer(new Ext.form.NumberField());
+				cm.config[index].align = "right";
 				cm.config[index].editor = editor;
 				break; 
 			case 'ccurrency':
 				var editor=this.grid.createEditer(new Ext.form.NumberField());
 				cm.config[index].editor = editor;
+				cm.config[index].align = "right";
 				cm.config[index].renderer = Ext.util.Format['usMoney'];
 				break; 
 			case 'cdate':
@@ -286,6 +292,10 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				cm.config[index].editor = editor;
 				cm.config[index].renderer = Ext.util.Format.dateRenderer('m/d/Y');
 				break;
+			case 'ctime':
+				var editor = this.grid.createEditer( new Ext.form.TimeField() );
+				cm.config[index].editor = editor;
+				break;
 			case 'cemail':
 				var editor = this.grid.createEditer(
 						new Ext.form.TextField({vtype:'email' })
@@ -295,6 +305,8 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			case 'cphonenumber':
 				var editor = this.grid.createEditer(new Ext.form.NumberField({maxLength:12}));
 				cm.config[index].editor = editor;
+				break;
+			case 'crate':
 				break;
 			default:
 				alert(item.itemId);
@@ -384,6 +396,7 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 				header : this.defautHeaderTitle,
 				dataIndex : 'c'+i,
 				width : 80,hidden:hidden,
+				uninit:hidden,
 				editor : new Ext.grid.GridEditor(
 					new Ext.form.TextField(),{
 						completeOnEnter:false,
