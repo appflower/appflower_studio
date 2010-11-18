@@ -64,7 +64,19 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 		}
 
 		if(g.enableHdMenu !== false){
-			this.hmenu = new Ext.menu.Menu({id: g.id + "-hctx"});
+			this.hmenu = new Ext.menu.Menu({
+				id: g.id + "-hctx",
+				show : function(el, pos, parentMenu){
+			        this.parentMenu = parentMenu;
+			        if(!this.el){
+			            this.render();
+			        }
+			        this.fireEvent("beforeshow", this);
+			        this._el=el;
+			        this.showAt(this.el.getAlignToXY(el, pos || this.defaultAlign), parentMenu, false);
+			    }
+			});
+			
 			this.changetoMenu = new Ext.menu.Menu({
 				id:g.id + "-hchangeto-menu",
 				items:[{
@@ -107,6 +119,8 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				{itemId:"dupb", text: 'Duplicate Field'},
 				{itemId:"editb", text: 'Edit Field ...'},
 				{
+					itemId:'deletef',text: 'Delete Field'
+				},'-',{
 					itemId:"changeto", text: 'Change to',
 					menu:this.changetoMenu
 				},{
@@ -115,8 +129,6 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
                     text: this.columnsText,
                     menu: this.colMenu,
                     iconCls: 'x-cols-icon'
-				},{
-					itemId:'deletef',text: 'Delete Field'
 				}
 			);
 			this.hmenu.on("itemclick", this.handleHdMenuClick, this);
@@ -152,6 +164,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 	    }
 		return true;
 	},
+	
 	getUninitColumn : function(){
 		for(var i=0;i<this.cm.config.length;i++){
 			var column = this.cm.config[i];
@@ -160,6 +173,21 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			}
 		}
 		return 0;
+	},
+	
+	createDupheader : function(header){
+		for(var i=1;i<=this.cm.config.length;i++){
+			var h = header + i;
+			var flag = true;
+			for(var j=0;j<this.cm.config.length;j++){
+				if(h==this.cm.getColumnHeader(j)){
+					flag=false;
+					break;
+				}
+			}
+			if(flag) return h;
+		}
+		return header+(this.cm.config+1);
 	},
 	
 	handleHdMenuClick : function(item){
@@ -186,6 +214,19 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				this.cm.moveColumn(_index,index);
 				this.cm.setHidden(index,false);
 				break;
+			case 'dupb':
+				var _index = this.getUninitColumn();
+				this.cm.config[_index].uninit=false;
+				this.cm.config[_index].uninit=false;
+				this.cm.moveColumn(_index,index+1);
+				var header = this.cm.getColumnHeader(index);
+				this.cm.setColumnHeader(index+1,this.createDupheader(header));
+				this.cm.setHidden(index+1,false);
+				break;
+			case 'editb':
+				var hd = this.findHeaderCell(item.parentMenu._el);
+				this.editHeadColumn(hd.firstChild,index);
+				break;
 			case 'deletef':
 				var visibleCount = cm.getColumnCount(true);
 				if(visibleCount>2) {
@@ -193,7 +234,6 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 					cm.config[index].uninit=true;
 					cm.config[index].header=this.grid.defautHeaderTitle;
 				}
-				
 				break;
 			case 'cchoice':
 				var cstore = [];
@@ -274,6 +314,23 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 		var cm = this.cm;
 		cm.setColumnHeader(index,v);
 	},
+	editHeadColumn : function(el,index){
+		var ed = new Ext.grid.GridEditor(new Ext.form.TextField());
+		ed._index = index;
+		ed.on({
+			scope: this,
+			complete: this.headEditComplete
+		});
+		ed.startEdit(el,  this.cm.getColumnHeader(index));
+		var showFlag = true;
+		for(var i=index+1;i<this.grid.maxColumns;i++){
+			if(!this.cm.isHidden(i)){
+				showFlag=false;
+				break;
+			}
+		}
+		if(showFlag) this.showNextColumn(index);
+	},
 	handleHdDown : function(e, t){
 		var hd = this.findHeaderCell(t);
 		if(!hd)return;
@@ -290,21 +347,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			}, this, {single:true});
 			this.hmenu.show(t, "tl-bl?");
 		}else{
-			var ed = new Ext.grid.GridEditor(new Ext.form.TextField());
-			ed._index = index;
-			ed.on({
-				scope: this,
-				complete: this.headEditComplete
-			});
-			ed.startEdit(hd.firstChild,  this.cm.getColumnHeader(index));
-			var showFlag = true;
-			for(var i=index+1;i<this.grid.maxColumns;i++){
-				if(!this.cm.isHidden(i)){
-					showFlag=false;
-					break;
-				}
-			}
-			if(showFlag) this.showNextColumn(index);
+			this.editHeadColumn(hd.firstChild,index);
 		}
 	}
 });
@@ -445,7 +488,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 			
 			this.store = new Ext.data.Store({
 				reader: new Ext.data.JsonReader({
-				    idProperty: 'id',
+				    idProperty: 'id'
 				}, fields)
 			});
 			this.store.add([new Ext.data.Record()]);
