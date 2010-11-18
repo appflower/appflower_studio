@@ -1,18 +1,18 @@
 Ext.ns('afStudio.models');
 
 Ext.override(Ext.form.Field,{
-	initEvents : function(){
-        this.mon(this.el, Ext.isIE || Ext.isSafari3 || Ext.isChrome ? "keydown" : "keypress", this.fireKey,  this);
-                this.mon(this.el, 'focus', this.onFocus, this);
+    initEvents : function(){
+        this.mon(this.el, Ext.EventManager.getKeyEvent(), this.fireKey,  this);
+        this.mon(this.el, 'focus', this.onFocus, this);
 
-        // fix weird FF/Win editor issue when changing OS window focus
-        var o = this.inEditor && Ext.isWindows && Ext.isGecko ? {buffer:10} : null;
-        this.mon(this.el, 'blur', this.onBlur, this, o);
+        // standardise buffer across all browsers + OS-es for consistent event order.
+        // (the 10ms buffer for Editors fixes a weird FF/Win editor issue when changing OS window focus)
+        this.mon(this.el, 'blur', this.onBlur, this, this.inEditor ? {buffer:10} : null);
     }
 });
 
 afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
-	 beforeColMenuShow : function(){
+    beforeColMenuShow : function(){
         var cm = this.cm,  colCount = cm.getColumnCount();
         this.colMenu.removeAll();
         for(var i = 0; i < colCount; i++){
@@ -27,44 +27,32 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
             }
         }
     },
-	renderUI : function(){
-		var header = this.renderHeaders();
-		var body = this.templates.body.apply({rows:'&#160;'});
+	afterRenderUI: function() {
+		var grid = this.grid;
+        this.initElements();
 
+        // get mousedowns early
+        Ext.fly(this.innerHd).on('click', this.handleHdDown, this);
 
-		var html = this.templates.master.apply({
-			body: body,
-			header: header,
-			ostyle: 'width:'+this.getOffsetWidth()+';',
-			bstyle: 'width:'+this.getTotalWidth()+';'
-		});
+        this.mainHd.on({
+            scope    : this,
+            mouseover: this.handleHdOver,
+            mouseout : this.handleHdOut,
+            mousemove: this.handleHdMove
+        });
 
-		var g = this.grid;
+        this.scroller.on('scroll', this.syncScroll,  this);
+        
+        if (grid.enableColumnResize !== false) {
+            this.splitZone = new Ext.grid.GridView.SplitDragZone(grid, this.mainHd.dom);
+        }
 
-		g.getGridEl().dom.innerHTML = html;
-
-		this.initElements();
-
-		// get mousedowns early
-		Ext.fly(this.innerHd).on("click", this.handleHdDown, this);
-		this.mainHd.on({
-			scope: this,
-			mouseover: this.handleHdOver,
-			mouseout: this.handleHdOut,
-			mousemove: this.handleHdMove
-		});
-
-		this.scroller.on('scroll', this.syncScroll,  this);
-		if(g.enableColumnResize !== false){
-			this.splitZone = new Ext.grid.GridView.SplitDragZone(g, this.mainHd.dom);
-		}
-
-		if(g.enableColumnMove){
-			this.columnDrag = new Ext.grid.GridView.ColumnDragZone(g, this.innerHd);
-			this.columnDrop = new Ext.grid.HeaderDropZone(g, this.mainHd.dom);
-		}
-
-		if(g.enableHdMenu !== false){
+        if (grid.enableColumnMove) {
+            this.columnDrag = new Ext.grid.GridView.ColumnDragZone(grid, this.innerHd);
+            this.columnDrop = new Ext.grid.HeaderDropZone(grid, this.mainHd.dom);
+        }
+        var g=grid;
+        if(g.enableHdMenu !== false){
 			this.hmenu = new Ext.menu.Menu({
 				id: g.id + "-hctx",
 				show : function(el, pos, parentMenu){
@@ -135,21 +123,22 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			this.hmenu.on("itemclick", this.handleHdMenuClick, this);
 		}
 
-		if(g.trackMouseOver){
-			this.mainBody.on({
-				scope: this,
-				mouseover: this.onRowOver,
-				mouseout: this.onRowOut
-			});
-		}
+        if (grid.trackMouseOver) {
+            this.mainBody.on({
+                scope    : this,
+                mouseover: this.onRowOver,
+                mouseout : this.onRowOut
+            });
+        }
 
-		if(g.enableDragDrop || g.enableDrag){
-			this.dragZone = new Ext.grid.GridDragZone(g, {
-				ddGroup : g.ddGroup || 'GridDD'
-			});
-		}
+        if (grid.enableDragDrop || grid.enableDrag) {
+            this.dragZone = new Ext.grid.GridDragZone(grid, {
+                ddGroup : grid.ddGroup || 'GridDD'
+            });
+        }
 
-		this.updateHeaderSortState();
+        this.updateHeaderSortState();
+
 	},
 	
 	columnMenuClick : function(item){		
