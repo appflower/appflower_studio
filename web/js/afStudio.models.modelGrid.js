@@ -307,6 +307,10 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				cm.config[index].editor = editor;
 				break;
 			case 'crate':
+				var editor = this.grid.createEditer(new Ext.form.SliderField({
+					minValue:0,maxValue:5
+				}));
+				cm.config[index].editor = editor;
 				break;
 			default:
 				alert(item.itemId);
