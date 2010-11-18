@@ -19,5 +19,3 @@ var afStudio = function () {
 		}
 	}
 }();
-
-//Ext.onReady(afStudio.init, afStudio);

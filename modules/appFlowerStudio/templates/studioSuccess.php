@@ -89,3 +89,7 @@ foreach ($afStudioCssExtensions as $afStudioCssExtension)
 ?>
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/<?php echo basename($afStudioCssExtension); ?>" />
 <?php }?>
+
+<script type="text/javascript">
+Ext.onReady(afStudio.init, afStudio);
+</script>
