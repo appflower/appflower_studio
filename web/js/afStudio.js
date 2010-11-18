@@ -20,4 +20,4 @@ var afStudio = function () {
 	}
 }();
 
-Ext.onReady(afStudio.init, afStudio);
+//Ext.onReady(afStudio.init, afStudio);

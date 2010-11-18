@@ -1,3 +1,4 @@
+Ext.ns('afStudio.models');
 
 Ext.override(Ext.form.Field,{
 	initEvents : function(){
