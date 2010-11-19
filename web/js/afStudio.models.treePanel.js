@@ -20,11 +20,49 @@ afStudio.models.treeEditor = Ext.extend(Ext.tree.TreeEditor, {
 afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
+	 * Models context menu
+	 */
+	contextMenu: new Ext.menu.Menu({
+	        items: [
+	        {
+	       		id: 'delete-model',
+	            text: 'Delete model',
+	            iconCls: 'icon-models-delete'
+	        },{
+	            id: 'edit-model',
+	            text: 'Edit model',
+	            iconCls: 'icon-models-edit'
+			},{
+	            id: 'rename-model',
+	            text: 'Change model name',
+	            iconCls: 'icon-models-edit'				
+			}],
+	        listeners: {
+	            itemclick: function(item) {
+	                switch (item.id) {
+	                    case 'delete-model':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().deleteModel(node);
+                        	break;
+	                    case 'edit-model':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().editModel(node);
+	                        break;
+	                    case 'rename-model':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().treeEditor.triggerEdit(node);	                    	
+	                        break;	                        
+	                }
+	            }
+	        }
+	})
+	
+	/**
 	 * Initializes component
 	 * @return {Object} The config object
 	 * @private
 	 */
-	_initCmp : function() {
+	,_initCmp : function() {
 		var _this = this;
 		
 		var rootNode = new Ext.tree.AsyncTreeNode({
@@ -39,27 +77,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			{
 				text: 'Add Model',
 				iconCls: 'icon-models-add',
-				handler: function(b, e) {
-					
-					var root = _this.getRootNode(),
-						newNode = {text: 'NewModel'};
-					
-					if (root.hasChildNodes()) {
-						//console.log(root.childNodes[0].attributes);
-						
-						Ext.applyIf(newNode, root.childNodes[0].attributes);
-						delete newNode.id;
-					}
-					
-					var addedNode = _this.getRootNode().appendChild(
-						new Ext.tree.TreeNode(newNode)
-					);
-					var path = addedNode.getPath();
-					
-					_this.selectPath(path);
-					
-					_this.treeEditor.triggerEdit(addedNode);
-				}
+				handler: Ext.util.Functions.createDelegate(_this.onAddNode, _this)
 			}]			
 		}); 
 		
@@ -67,7 +85,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			title: 'Models',
 			iconCls: 'icon-models',
 			autoScroll: true,
-			url: '/appFlowerStudio/models',
+			url: '/appFlowerStudio/models',			
 			method: 'post',
 			reallyWantText: 'Do you really want to',
 		    root: rootNode,
@@ -109,7 +127,20 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,_initEvents : function() {
 		var _this = this;			
 		
-		// setup loading mask if configured
+		_this.addEvents(
+			/**
+			 * @event <u>modelcreated</u> Fires after a new model was created 
+			 * @param {Ext.tree.TreeNode} node The created Model's node
+			 */
+			'modelcreated',
+			
+			/**
+			 * @event <u>modeldeleted</u> Fires after a model was deleted
+			 */
+			'modeldeleted'
+		);
+		
+		//TreeLoader Events
 		_this.loader.on({
 			 beforeload: function(loader,node,clb) {
 			 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
@@ -120,34 +151,24 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			 ,loadexception: function(loader,node,resp) {
 				node.getOwnerTree().body.unmask();
 			 }
-		});
+		});		
 		
-		//renaming model
+		//TreeEditor events
 		_this.treeEditor.on({
-			complete: function(editor, newValue, oldValue) {
-				if (newValue != oldValue) {
-					editor.editNode.getOwnerTree().renameModel(editor.editNode, newValue, oldValue);
-				}
-			}			
-//			,canceledit : function(editor, newValue, oldValue) {
-//				console.log('canceledit', newValue, oldValue);
-//			}
-//			,beforestartedit : function(editor, boundEl, value) {
-//				console.log('beforestartedit');
-//			}
-//			,startedit : function(boundEl, value) {
-//				console.log('startedit', boundEl);
-//			}
-		});
-		
-		//showing context menu for each node
+			complete: Ext.util.Functions.createDelegate(_this.onComplete, _this),
+			canceledit: Ext.util.Functions.createDelegate(_this.onCancelEdit, _this)			
+		});		
+
+		//Model Tree events
 		_this.on({
+			//showing context menu for each node
 			contextmenu: function(node, e) {
 	            node.select();
 	            var c = node.getOwnerTree().contextMenu;
 	            c.contextNode = node;
 	            c.showAt(e.getXY());
-	        }
+	        },
+	        dblclick : Ext.util.Functions.createDelegate(_this.onModelDbClick, _this)
 		});
 	}
 	
@@ -169,42 +190,95 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 
-	} // eo function onRender
+	} // eo function onRender	
 	
-	,contextMenu: new Ext.menu.Menu({
-	        items: [
-	        {
-	       		id: 'delete-model',
-	            text: 'Delete model',
-	            iconCls: 'icon-models-delete'
-	        },{
-	            id: 'edit-model',
-	            text: 'Edit model',
-	            iconCls: 'icon-models-edit'
-			},{
-	            id: 'rename-model',
-	            text: 'Change model name',
-	            iconCls: 'icon-models-edit'				
-			}],
-	        listeners: {
-	            itemclick: function(item) {
-	                switch (item.id) {
-	                    case 'delete-model':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().deleteModel(node);
-                        	break;
-	                    case 'edit-model':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().editModel(node);
-	                        break;
-	                    case 'rename-model':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().treeEditor.triggerEdit(node);	                    	
-	                        break;	                        
-	                }
-	            }
-	        }
-	})
+	/**
+	 * Reloads models tree 
+	 * @param {Function} callback The callback to run after reloading
+	 */
+	,reloadModels : function(callback) {
+		Ext.isFunction(callback) ? this.getRootNode().reload(callback) 
+		: this.getRootNode().reload(); 
+	}
+	
+	/**
+	 * Selects Model
+	 * @param {Ext.tree.TreeNode} node The Model's node
+	 */
+	,selectModel : function(node) {		
+		this.selectPath(node.getPath());
+	}
+	
+	,selectModelNode : function(node) {
+		var _this = this;
+		Ext.each(this.getRootNode().childNodes, function(n){
+			if (n.text == node.text) {
+				_this.getSelectionModel().select(n);
+				return false;	
+			}
+		});		
+	}
+	
+	/**
+	 * Models Tree <u>dbclick</u> event listener
+	 * @param {Node} node The Model dbclicked
+	 * @param {Ext.EventObject} e
+	 */
+	,onModelDbClick : function(node,  e) {
+		this.editModel(node);
+	}
+	
+	/**
+	 * "Add Model" button <u>click</u> event listener
+	 */
+	,onAddNode : function() {
+		var _this = this,
+			 root = _this.getRootNode(),
+			 node = {text: 'NewModel', leaf: true, NEW_NODE: true};
+		
+		if (root.hasChildNodes()) {
+			Ext.applyIf(node, {
+				iconCls: root.childNodes[0].attributes.iconCls
+			});						
+		}
+		
+		var newNode = _this.getRootNode().appendChild(new Ext.tree.TreeNode(node));
+		_this.selectModel(newNode);
+		_this.treeEditor.triggerEdit(newNode);		
+	}
+	
+	/**
+	 * <u>complete</u> event listener
+	 * @param {Ext.Editor} editor
+	 * @param {String} newValue
+	 * @param {String} oldValue
+	 */
+	,onComplete : function(editor, newValue, oldValue) {
+		var _this = this,
+			node = editor.editNode; 
+		
+		if (node.attributes.NEW_NODE) {
+			node.setText(newValue);
+			_this.addModel(node); 
+		} else {
+			if (newValue != oldValue) {
+				_this.renameModel(node, newValue, oldValue);
+			}
+		}
+	}
+	
+	/**
+	 * <u>canceledit</u> event listener
+	 * look at {@link Ext.tree.TreePanel#canceledit}
+	 * @param {Editor} editor
+	 * @param {String} value
+	 * @param {String} startValue 
+	 */
+	,onCancelEdit : function (editor, value, startValue) {		
+		if (editor.editNode.attributes.NEW_NODE) {
+			editor.editNode.remove();
+		}
+	}
 	
     ,getModel: function(node) {
 		var model;
@@ -224,6 +298,51 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,getSchema: function(node) {
 		return node.attributes.schema || '';
 	}
+	
+	/**
+	 * Adds Model - new node to the Models tree.
+	 * @param {Ext.tree.TreeNode} node
+	 */
+	,addModel : function(node) {
+		var _this = this;
+		
+		Ext.Ajax.request({
+			url: _this.url,
+			method: _this.method,			
+			node: node,
+			params: {
+				cmd: 'add',
+				model: _this.getModel(node),
+				schema: _this.getSchema(node)
+			},
+			success: function(response, opts) {
+		    	var response = Ext.decode(response.responseText);
+		      
+		        if (response.success) {
+		        	delete node.attributes.NEW_NODE;
+		        	var path = node.getPath();
+					_this.reloadModels(function(){_this.selectModelNode(node);});
+					
+		      		if (response.console) {	
+			      		var console = afStudio.vp.layout.south.panel.getComponent('console');
+			      		console.body.dom.innerHTML += response.console;
+						console.body.scroll("bottom", 1000000, true );				      		
+			      	}
+			      	
+			      	_this.editModel(node);
+			      	
+			      	_this.fireEvent('modelcreated', node);
+			    }
+			      
+		      	Ext.Msg.show({
+				  title: response.success ? 'Success' : 'Failure',
+				  msg: response.message,
+				  buttons: Ext.Msg.OK,
+				  width: 400
+		      	});		      	
+		    }
+		});				
+	} //eo addModel
 	
 	,deleteModel: function(node)
 	{
@@ -255,21 +374,21 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
 				      
-				      if(response.success)
-				      {
-				      	node.remove();
+				      if (response.success) {
+				      	 node.remove();
 				      	
-				      	afStudio.vp.layout.west.items[0].root.reload();
+				      	 this.fireEvent('modeldeleted');
+				      	 
+				      	 afStudio.vp.clearPortal();
+				      	 
+				      	 this.reloadModels();
 				      	
-				      	if(response.console)
-				      	{	
+				      	 if (response.console) {	
 				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
 				      		console.body.dom.innerHTML += response.console;
 							console.body.scroll("bottom", 1000000, true );				      		
-				      	}				      	
-				      }
-				      else
-				      {
+				      	 }
+				      	 
 				      }
 				      
 				      Ext.Msg.show({
@@ -286,7 +405,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	}
 	
 	,renameModel: function(node, newValue, oldValue) 
-	{
+	{	var _this = this;
+		
 		Ext.Msg.show({
 			title:'Rename'
 			,msg: this.reallyWantText + ' rename model\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
@@ -319,7 +439,10 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      
 				      if(response.success)
 				      {
-				      	afStudio.vp.layout.west.items[0].root.reload();
+				      	_this.reloadModels(function(){_this.selectModelNode(node);});
+				      	
+				      	//update Model's Grids editor 
+				      	_this.editModel(node);
 				      	
 				      	if(response.console)
 				      	{

@@ -92,7 +92,7 @@ class appFlowerStudioActions extends sfActions
 	
 	public function executeModels()
 	{
-		$models_command=new afStudioModelsCommand();		
+		$models_command = new afStudioModelsCommand();		
 		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
 		
 		return $this->renderText($models_command->end());

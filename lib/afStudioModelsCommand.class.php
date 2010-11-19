@@ -6,23 +6,45 @@
 class afStudioModelsCommand
 {
 	public $request=null,$result=null,$realRoot=null,$dbSchema=null,$propelSchemaArray=null,$originalSchemaArray=null,$tableName=null,$modelName=null,$configuration=null,$schemaFile=null,$propelModel=null;
-							
+
+	public $cmd;	
+	public $xaction;
+	
+	protected $defaultSchema;
+	
 	public function __construct()
 	{		
-		$this->request=sfContext::getInstance()->getRequest();		
+		$this->request = sfContext::getInstance()->getRequest();		
 		
-		$this->realRoot=afStudioUtil::getRootDir();
+		$this->realRoot = afStudioUtil::getRootDir();
 		
 		$this->dbSchema = new sfPropelDatabaseSchema();
 	    
-		$this->loadSchemas();
+		$this->defaultSchema = $this->realRoot . '/config/schema.yml';
 		
-	    if($this->request->getParameterHolder()->has('model'))
+		$this->loadSchemas();		
+		
+		$this->cmd = $this->request->getParameterHolder()->has('cmd') ? $this->request->getParameterHolder()->get('cmd') : null;
+		$this->xaction = $this->request->getParameterHolder()->has('xaction') ? $this->request->getParameterHolder()->get('xaction') : null;		
+		
+	    if ($this->request->getParameterHolder()->has('model'))
 	    {
 	    	$this->modelName = $this->request->getParameterHolder()->get('model');
-	    	$this->schemaFile = $this->request->getParameterHolder()->get('schema');
-	    	$this->tableName = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]['tableName'];
-	    	$this->propelModel = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName];
+	    	$this->schemaFile = $this->request->getParameterHolder()->get('schema') ? $this->request->getParameterHolder()->get('schema') : $this->defaultSchema;
+	    	
+	    	if ($this->cmd == 'add') {
+		    	$this->tableName = strtolower($this->modelName);
+		    	$this->propelModel = $this->modelName;
+	    	} else {
+				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]) 
+				|| !isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {
+			    	$this->result = array('success'=>false, 'message'=>'Table doesn\'t exists');	
+			    	return false;	    			
+				}
+	    		
+		    	$this->tableName = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]['tableName'];
+		    	$this->propelModel = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName];	    		
+	    	}
 	    }
 		
 		$this->start();
@@ -94,13 +116,10 @@ class afStudioModelsCommand
 	}
 	
 	public function start()
-	{
-		$cmd = $this->request->getParameterHolder()->has('cmd')?$this->request->getParameterHolder()->get('cmd'):null;
-		$xaction = $this->request->getParameterHolder()->has('xaction')?$this->request->getParameterHolder()->get('xaction'):null;
-			
-		if($cmd!=null)
+	{		
+		if( $this->cmd != null)
 		{	
-			switch ($cmd)
+			switch ($this->cmd)
 			{
 				case "get":			
 					if(count($this->propelSchemaArray)>0)
@@ -115,7 +134,21 @@ class afStudioModelsCommand
 					}
 					else
 					$this->result = array('success' => true);
-					break;
+				break;
+				
+				case "add":
+					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;				
+					
+					if ($this->saveSchema()) {			
+						$afConsole = new afStudioConsole();
+						$consoleResult = $afConsole->execute('sf propel:build-model');
+						
+						$this->result = array('success' => true, 'message'=>'Added model <b>'.$this->modelName.'</b>!', 'console'=>$consoleResult);						
+					} else {						
+						$this->result = array('success' => false, 'message'=>'Can\'t add model <b>' + $this->modelName + '</b>!');
+					}
+				break;				
+				
 				case "delete":
 					unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]);
 					
@@ -128,11 +161,12 @@ class afStudioModelsCommand
 					}
 					else
 					$this->result = array('success' => false,'message'=>'Can\'t delete model <b>'.$this->modelName.'</b>!');
-					break;
+				break;
+				
 				case "rename":
-					$renamedModelName = $this->request->getParameterHolder()->get('renamedModel');
+					$renamedModelName = $this->request->getParameterHolder()->get('renamedModel');					
 					
-					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName']=$renamedModelName;
+					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $renamedModelName;
 					
 					if($this->saveSchema())
 					{			
@@ -143,16 +177,17 @@ class afStudioModelsCommand
 					}
 					else
 					$this->result = array('success' => false,'message'=>'Can\'t rename model\'s phpName from <b>' + $this->modelName + '</b> to <b>' + $renamedModelName + '</b>!');
-					break;
+				break;
+				
 				default:
 					$this->result = array('success' => true);
-					break;
+				break;
 			}
 		}
 		
-		if($xaction!=null)
+		if($this->xaction != null)
 		{
-			switch ($xaction)
+			switch ($this->xaction)
 			{
 				case "read":	
 					$k=0;						    
@@ -178,14 +213,16 @@ class afStudioModelsCommand
 				    	}
 				    	
 				    	$k++;
-				    }
-				    //!!!
-				    if (empty($this->result['rows'])) {
+				    }					
+
+				    if (empty($this->result['rows'])) 
+				    {
 				   		 $this->result['rows'] = array(); 	
 				    }				     
-				    $this->result['success']=true;
-				    $this->result['totalCount']=count($this->result['rows']);
-					break;
+				    $this->result['success'] = true;
+				    $this->result['totalCount'] = count($this->result['rows']);
+				break;
+					
 				case "update":	
 					$rows = $this->request->getParameterHolder()->has('rows')?$this->request->getParameterHolder()->get('rows'):null;
 					if($rows!=null)
@@ -205,10 +242,11 @@ class afStudioModelsCommand
 						$this->result = array('success' => false,'message'=>'Can\'t update model <b>' + $this->modelName + '</b>!');
 					}
 				    $this->result['success']=true;
-					break;
+				break;
+					
 				default:
 					$this->result = array('success' => true);
-					break;
+				break;
 			}
 		}
 	}
@@ -238,8 +276,11 @@ class afStudioModelsCommand
 	
 	public function end()
 	{	
-		$this->result=json_encode($this->result);
+		$this->result = json_encode($this->result);
 		return $this->result;
 	}
+	
+	
+	 
 }
 ?>

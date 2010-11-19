@@ -60,4 +60,12 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 		portalColumn.add(component);
 		portalColumn.doLayout();    
 	}
+	
+	,clearPortal : function() {
+		var cp = Ext.getCmp('center_panel');		    
+		    
+		cp.items.each(function(column, index, colNumber){
+			column.removeAll(true);
+		});			
+	}
 });
