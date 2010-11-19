@@ -235,7 +235,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				for(var i=0;i<store.getCount();i++){
 					var record = store.getAt(i);
 					var value = record.get(cm.getDataIndex(index));
-					if(value=="")continue;
+					if(value=="" || value==null)continue;
 					var flag=true;
 					for(var j=0;j<cstore.length;j++){
 						if(cstore[j]==value){
@@ -258,6 +258,10 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				break;
 			case 'cdate':
 				var editor=this.grid.createEditer(new Ext.form.DateField());
+				editor.getValue=function(){
+			    	var v = this.field.getValue();
+			    	return v.format("Y-m-d");
+			    }
 				cm.config[index].editor = editor;
 				break;
 			case 'cnumber':
@@ -271,17 +275,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				cm.config[index].align = "right";
 				cm.config[index].renderer = Ext.util.Format['usMoney'];
 				break; 
-			case 'cdate':
-				var editor = this.grid.createEditer(
-					new Ext.form.DateField({
-						getValue:function(){
-							return "12/12/2010";
-						}
-					})
-				);
-				cm.config[index].editor = editor;
-				cm.config[index].renderer = Ext.util.Format.dateRenderer('m/d/Y');
-				break;
+			
 			case 'ctime':
 				var editor = this.grid.createEditer( new Ext.form.TimeField() );
 				cm.config[index].editor = editor;
@@ -521,7 +515,34 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		        }]
 			};
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-	}
+	},
+	onEditComplete : function(ed, value, startValue){
+        this.editing = false;
+        this.lastActiveEditor = this.activeEditor;
+        this.activeEditor = null;
+
+        var r = ed.record,
+            field = this.colModel.getDataIndex(ed.col);
+        value = this.postEditValue(value, startValue, r, field);
+        if(this.forceValidation === true || String(value) !== String(startValue)){
+            var e = {
+                grid: this,
+                record: r,
+                field: field,
+                originalValue: startValue,
+                value: value,
+                row: ed.row,
+                column: ed.col,
+                cancel:false
+            };
+            if(this.fireEvent("validateedit", e) !== false && !e.cancel && String(value) !== String(startValue)){
+                r.set(field, e.value);
+                delete e.cancel;
+                this.fireEvent("afteredit", e);
+            }
+        }
+        this.view.focusCell(ed.row, ed.col);
+    }
 });
 
 Ext.reg('modelGridPanel', afStudio.models.modelGridPanel);
