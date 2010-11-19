@@ -6,7 +6,12 @@ class afStudioUtil
   {
     return sfConfig::get('sf_root_dir');
   }
-  
+
+  public static function getConfigDir()
+  {
+    return sfConfig::get('sf_config_dir');
+  }
+
   /*
    * remove sfConfig::get('sf_root_dir') from path
    */

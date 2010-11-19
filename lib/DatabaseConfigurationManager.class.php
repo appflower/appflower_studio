@@ -43,8 +43,8 @@ class DatabaseConfigurationManager {
     private $params;
 
 
-    public function __construct($databaseFilePath) {
-        $this->databaseConfFilePath = $databaseFilePath;
+    public function __construct() {
+        $this->databaseConfFilePath = afStudioUtil::getConfigDir() . '/' . 'databases.yml';
     }
 
     public function setDatabaseConnectionParams($params)
@@ -85,8 +85,9 @@ class DatabaseConfigurationManager {
         $param['persistent'] = (isset($this->params['persistent']) ? 'true' : 'false');
         $param['pooling']    = (isset($this->params['pooling']) ? 'true' : 'false');
 
-        //$this->databaseConfFilePath
-        $result = @file_put_contents('/tmp/new.yml', $this->dumpYaml($confData, 0));
+        //temporary commented, modiefies project config/databases.yml
+        // I'm not sure if it ok, beacause if someone changes settings we could have problem with login
+        $result = false;//@file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
 
         return $result;
     }

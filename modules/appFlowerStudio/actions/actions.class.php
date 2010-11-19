@@ -121,9 +121,8 @@ class appFlowerStudioActions extends sfActions
 	}
 
         public function executeConfigureDatabase(sfWebRequest $request)
-        {
-            $databaseFilePath = '/tmp/databases.yml';  //path will be changed of course
-            $dcm = new DatabaseConfigurationManager($databaseFilePath);
+        {           
+            $dcm = new DatabaseConfigurationManager();
             $dcm->setDatabaseConnectionParams($request->getPostParameters());
             $result = $dcm->save();
 
