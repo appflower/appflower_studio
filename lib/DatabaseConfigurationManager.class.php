@@ -50,7 +50,6 @@ class DatabaseConfigurationManager {
     public function setDatabaseConnectionParams($params)
     {
         $this->params = $params;
-        $this->params['host'] = 'localhost'; // mayby this should be configurable
     }
 
     private function loadYaml($filePath)

@@ -127,13 +127,14 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
                                                         url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, frame: true,
                                                         labelWidth: 100, title: false,
 							items: [
+                                                                {xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false},
 								{xtype: 'panel', layout: 'column',
 									items: [
 										{xtype: 'panel', columnWidth: 1, layout: 'form', style: 'margin-right: 5px;',
-											items: [{xtype: 'textfield', fieldLabel: 'Database Host', name: 'database', anchor: '92%', allowBlank: false}]
+											items: [{xtype: 'textfield', fieldLabel: 'Host', name: 'host', anchor: '92%', allowBlank: false}]
 										},
-										{xtype: 'panel', width: 150, layout: 'form', labelWidth: 35,
-											items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '88%', allowBlank: false}]
+										{xtype: 'panel', width: 100, layout: 'form', labelWidth: 35,
+											items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '82%', allowBlank: false}]
 										}
 									]
 								},
