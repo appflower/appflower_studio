@@ -6,12 +6,24 @@ Ext.ns('afStudio');
 var afStudio = function () { 
 
 	return {
-		init: function () { 
+		
+		initAjaxRedirect : function() {			
+			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
+				var response = Ext.decode(xhr.responseText);				
+				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
+					location.href = response.redirect;
+				}
+			});
+		}		
+		
+		,init: function () { 
 		    Ext.QuickTips.init();
 		    Ext.apply(Ext.QuickTips.getQuickTip(), {
 			    trackMouse: true
 			});
 			Ext.form.Field.prototype.msgTarget = 'side';
+			
+			this.initAjaxRedirect();
 			
 			this.tb=new afStudio.toolbar();
 			this.tb.init();
