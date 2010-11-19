@@ -119,4 +119,25 @@ class appFlowerStudioActions extends sfActions
 	{
 		 return $this->renderText(json_encode($result));
 	}
+
+        public function executeConfigureDatabase(sfWebRequest $request)
+        {
+            $databaseFilePath = '/tmp/databases.yml';  //path will be changed of course
+            $dcm = new DatabaseConfigurationManager($databaseFilePath);
+            $dcm->setDatabaseConnectionParams($request->getPostParameters());
+            $result = $dcm->save();
+
+            if($result) {
+                $success = true;
+                $message = 'Database Connection Settings saved successfully';
+            } else {
+                $success = false;
+                $message =  'Error while saving file to disk!';
+            }
+            
+            $info=array('success'=>$success, "message"=>$message, 'redirect'=>$this->getRequest()->getReferer());
+            $info=json_encode($info);
+
+            return $this->renderText($info);
+        }
 }

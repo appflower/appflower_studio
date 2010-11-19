@@ -124,8 +124,8 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 					text: 'Database Connection Settings',
 					handler: function (b, e) {
 						var form = new Ext.FormPanel({
-						    url: '', defaultType: 'textfield', width: 450, frame: true, 
-							labelWidth: 100, title: false,
+                                                        url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, frame: true,
+                                                        labelWidth: 100, title: false,
 							items: [
 								{xtype: 'panel', layout: 'column',
 									items: [
@@ -142,18 +142,53 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 								{xtype: 'checkbox', hideLabel: true, boxLabel: 'Persistent', name: 'persistent'},
 								{xtype: 'checkbox', hideLabel: true, boxLabel: 'Pooling', name: 'pooling'}
 							]
+
 						});
 								
 						var wnd = new Ext.Window({
-							title: 'Database Connection Settings', width: 463,
+							title: 'Database Connection Settings',
+                                                        width: 463,
 							autoHeight: true, closable: true,
-				            draggable: true, plain:true,
-				            modal: true, resizable: false,
-				            bodyBorder: false, border: false,
-				            items: form,
+                                                        draggable: true, plain:true,
+                                                        modal: true, resizable: false,
+                                                        bodyBorder: false, border: false,
+                                                        items: form,
 							buttons: [
-								{text: 'Save'},
-								{text: 'Cancel', handler: function(){wnd.close}}
+								{
+                                                                    text: 'Save',
+                                                                    handler: function()
+                                                                    {
+                                                                        form.getForm().submit({
+                                                                            failure:function(form,action){
+                                                                                    if(action.result)
+                                                                                    {
+                                                                                        if(action.result.message)
+                                                                                        {
+                                                                                            Ext.Msg.alert("Failure", action.result.message, function(){
+                                                                                                    if(action.result.redirect){
+                                                                                                            window.location.href=action.result.redirect;
+                                                                                                    }
+                                                                                            });
+                                                                                        }
+                                                                                    }
+                                                                            },
+                                                                            success:function(form,action){
+                                                                                    if(action.result)
+                                                                                    {
+                                                                                        if(action.result.message)
+                                                                                        {
+                                                                                            Ext.Msg.alert("Success", action.result.message, function(){
+                                                                                                    if(action.result.redirect){
+                                                                                                            window.location.href=action.result.redirect;
+                                                                                                    }
+                                                                                            });
+                                                                                        }
+                                                                                    }
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                },
+								{text: 'Cancel', handler: function(){wnd.close()}}
 							],
 							buttonAlign: 'center'
 						});
