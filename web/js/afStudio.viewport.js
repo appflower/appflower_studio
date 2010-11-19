@@ -24,20 +24,67 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 			style: "padding-right:5px;"
 		});
 		
+		var westPanel = new afStudio.westPanel(),
+			southPanel = new afStudio.southPanel();
+		
+		this.viewRegions = {
+			north: northPanel,
+			center: centerPanel,
+			west: westPanel,
+			south: southPanel
+		};		
+		
 		var config = {
 			layout: "border",
 			id: "viewport",
 			items: [
 				northPanel,
-				new afStudio.westPanel(),
+				westPanel,
 				centerPanel,
-				new afStudio.southPanel()
+				southPanel	
 			]
-		};
+		};	
 		
 		// apply config
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		afStudio.viewport.superclass.initComponent.apply(this, arguments);	
+		afStudio.viewport.superclass.initComponent.apply(this, arguments);
+	}
+	
+	/**
+	 * Puts a mask over afStudio.viewport or its region to disable user interaction.
+	 * @param {String/Object} opt (optional) if
+	 * opt striing -  message,
+	 * opt {msg: 'message', region: 'region to mask'}
+	 * (defaults to mask all viewport)  
+	 */
+	,mask : function(opt) {		
+		var maskMessage = Ext.isString(opt) ? opt : 'Loading, please Wait...',
+			region;
+		
+		if (Ext.isObject(opt)) {
+			maskMessage = opt.msg ? opt.msg : maskMessage;
+			region = opt.region ? opt.region : undefined;
+		}		  
+		
+		if (['center', 'west', 'north', 'south'].indexOf(region) != -1) {			
+			this.viewRegions[region].body.mask(maskMessage, 'x-mask-loading');
+		} else {
+			if (!this.loadMask) {
+				this.loadMask = new Ext.LoadMask(this.el, {msg: maskMessage});
+			}
+			this.loadMask.show();
+		}
+	}
+	
+	/**
+	 * Removes mask from afStudio.viewport
+	 * @param {String} region The region to unmask
+	 */
+	,unmask : function(region) {
+		if (['center', 'west', 'north', 'south'].indexOf(region) != -1) {			
+			this.viewRegions[region].body.unmask();
+		}
+		this.loadMask ? this.loadMask.hide() : null;
 	}
 	
 	/**
@@ -61,6 +108,9 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 		portalColumn.doLayout();    
 	}
 	
+	/**
+	 * Clears center region of afStudio 
+	 */
 	,clearPortal : function() {
 		var cp = Ext.getCmp('center_panel');		    
 		    

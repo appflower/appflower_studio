@@ -192,6 +192,14 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 	} // eo function onRender	
 	
+	,maskModelTree : function(message) {
+		this.body.mask(message ? message : 'Loading, please Wait...', 'x-mask-loading');
+	}
+	
+	,unmaskModelTree : function() {
+		this.body.unmask();
+	}
+	
 	/**
 	 * Reloads models tree 
 	 * @param {Function} callback The callback to run after reloading
@@ -306,6 +314,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,addModel : function(node) {
 		var _this = this;
 		
+		_this.maskModelTree('Processing request...');
+		
 		Ext.Ajax.request({
 			url: _this.url,
 			method: _this.method,			
@@ -315,10 +325,12 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				model: _this.getModel(node),
 				schema: _this.getSchema(node)
 			},
-			success: function(response, opts) {
-		    	var response = Ext.decode(response.responseText);
+			callback: function(opts, success, response) {
+				_this.unmaskModelTree();
+				
+				var response = Ext.decode(response.responseText);
 		      
-		        if (response.success) {
+		        if (response.success && success) {
 		        	delete node.attributes.NEW_NODE;
 		        	var path = node.getPath();
 					_this.reloadModels(function(){_this.selectModelNode(node);});
@@ -344,133 +356,132 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});				
 	} //eo addModel
 	
-	,deleteModel: function(node)
-	{
+	,deleteModel: function(node) {
+		
+		var _this = this;
+		
 		Ext.Msg.show({
-			 title:'Delete'
-			,msg:this.reallyWantText + ' delete <b>' + this.getModel(node) + '</b> model?'
-			,icon:Ext.Msg.WARNING
-			,buttons:Ext.Msg.YESNO
-			,width:400
-			,scope:this
-			,fn:function(response) {
+			title: 'Delete',
+			msg: this.reallyWantText + ' delete <b>' + this.getModel(node) + '</b> model?',
+			icon: Ext.Msg.WARNING,
+			buttons: Ext.Msg.YESNO,
+			width: 400,			
+			fn: function(response) {
 				// do nothing if answer is not yes
 				if('yes' !== response) {
-					this.getEl().dom.focus();
+					_this.getEl().dom.focus();
 					return;
 				}
-				// setup request options
-				var options = {
-					 url:this.url
-					,method:this.method
-					,scope:this
-					//,callback:this.cmdCallback
-					,node:node
-					,params:{
-						 cmd:'delete'
-						,model:this.getModel(node)
-						,schema:this.getSchema(node)
+				
+				_this.maskModelTree('Processing request...');
+				
+				Ext.Ajax.request({
+					url: _this.url,
+					method: _this.method,					
+					node: node,
+					params: {
+						cmd: 'delete',
+						model: _this.getModel(node),
+						schema: _this.getSchema(node)
 					},
 					success: function(response, opts) {
+					  _this.unmaskModelTree();
+					  
 				      var response = Ext.decode(response.responseText);
 				      
 				      if (response.success) {
-				      	 node.remove();
+				      	  node.remove();
 				      	
-				      	 this.fireEvent('modeldeleted');
+				      	  _this.fireEvent('modeldeleted');
 				      	 
-				      	 afStudio.vp.clearPortal();
+				      	  afStudio.vp.clearPortal();
 				      	 
-				      	 this.reloadModels();
+				      	  _this.reloadModels();
 				      	
 				      	 if (response.console) {	
 				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
 				      		console.body.dom.innerHTML += response.console;
 							console.body.scroll("bottom", 1000000, true );				      		
 				      	 }
-				      	 
 				      }
 				      
 				      Ext.Msg.show({
-						 title:response.success?'Success':'Failure'
-						,msg:response.message
-						,buttons:Ext.Msg.OK
-						,width:400
+						 title: response.success ? 'Success' : 'Failure',
+						 msg: response.message,
+						 buttons: Ext.Msg.OK,
+						 width: 400
 				      });
 				    }
-				};
-				Ext.Ajax.request(options);
+				});				
 			}
 		});
-	}
+	}//eo deleteModel
 	
-	,renameModel: function(node, newValue, oldValue) 
-	{	var _this = this;
+	,renameModel: function(node, newValue, oldValue) { 
+		var _this = this;
 		
 		Ext.Msg.show({
-			title:'Rename'
-			,msg: this.reallyWantText + ' rename model\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
-			,icon: Ext.Msg.WARNING
-			,buttons: Ext.Msg.YESNO
-			,width: 400
-			,scope: this
-			,fn: function(response) {
+			title: 'Rename',
+			msg: _this.reallyWantText + ' rename model\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?',
+			icon: Ext.Msg.WARNING,
+			buttons: Ext.Msg.YESNO,
+			width: 400,			
+			fn: function(response) {
 				// do nothing if answer is not yes
-				if('yes' !== response) {
+				if ('yes' !== response) {
 					node.setText(oldValue);
-					this.getEl().dom.focus();
+					_this.getEl().dom.focus();
 					return;
 				}
-				// setup request options
-				var options = {
-					url: this.url
-					,method: this.method
-					,scope: this
-					//,callback:this.cmdCallback
-					,node: node
-					,params: {
-						 cmd:'rename'
-						,model:oldValue
-						,renamedModel:newValue
-						,schema:this.getSchema(node)
+
+				_this.maskModelTree('Processing request...');
+				
+				Ext.Ajax.request({
+					url: _this.url,
+					method: _this.method,					
+					node: node,
+					params: {
+						cmd: 'rename',
+						model: oldValue,
+						renamedModel: newValue,
+						schema: _this.getSchema(node)
 					},
 					success: function(response, opts) {
+					  _this.unmaskModelTree();	
+					  
 				      var response = Ext.decode(response.responseText);
 				      
-				      if(response.success)
-				      {
+				      if (response.success) {
 				      	_this.reloadModels(function(){_this.selectModelNode(node);});
 				      	
 				      	//update Model's Grids editor 
 				      	_this.editModel(node);
 				      	
-				      	if(response.console)
-				      	{
+				      	if (response.console) {
 				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
-				      		console.body.dom.innerHTML+=response.console;
+				      		console.body.dom.innerHTML += response.console;
 							console.body.scroll( "bottom", 1000000, true );
 				      	}
-				      }
-				      else
-				      {
+				      } else {
 				      	node.setText(oldValue);
 				      }
 				      
 				      Ext.Msg.show({
-						 title:response.success?'Success':'Failure'
-						,msg:response.message
-						,buttons:Ext.Msg.OK
-						,width:400
+						title: response.success ? 'Success' : 'Failure',
+					    msg: response.message,
+						buttons: Ext.Msg.OK,
+						width: 400
 				      });
 				    }
-				};
-				Ext.Ajax.request(options);
+				});				
 			}
 		});
-	}
+	}//eo renameModel
 	
 	,editModel: function(node) {
-		//afStudio.vp.layout.center.panel.body.mask('Loading, please Wait...', 'x-mask-loading');
+		
+		afStudio.vp.mask({region:'center'});
+		
 		Ext.Ajax.request({
 		   scope:this,
 		   url: '/appFlowerStudio/models',
@@ -501,6 +512,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					items:[modelGrid,fieldsGrid]
 				});
 				afStudio.vp.addToPortal(editTab, true);
+				
+		       afStudio.vp.unmask('center');
 		   }
 		});		
 	}	
