@@ -230,45 +230,60 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				cm.config[index].editor = editor;
 				break;
 			case 'cchoice':
-				var cstore = [];
-				var store = this.grid.store;
-				for(var i=0;i<store.getCount();i++){
-					var record = store.getAt(i);
-					var value = record.get(cm.getDataIndex(index));
-					if(value=="" || value==null)continue;
-					var flag=true;
-					for(var j=0;j<cstore.length;j++){
-						if(cstore[j]==value){
-							flag = false;
-							break;
-						}
-					}
-					if(flag)cstore.push(value);
-				}
 				var editor=this.grid.createEditer(
 					new Ext.form.ComboBox({
 						typeAhead: true,
 						triggerAction: 'all',
 						lazyRender:true,
 						mode: 'local',
-						store: cstore
+						valueField:'field',
+						displayField:'field',
+						store:  new Ext.data.ArrayStore({
+					        fields: [ 'field'],
+					        data: []
+						})
 					}));
-				
+				editor.on('beforestartedit',function(editor,el,value){
+					var cstore = editor.field.store;
+					var store = this.grid.store;
+					cstore.removeAll();
+					var rs = [];
+					for(var i=0;i<store.getCount();i++){
+						var record = store.getAt(i);
+						var value = record.get(cm.getDataIndex(index));
+						if(value=="" || value==null)continue;
+						var flag=true;
+						for(var j=0;j<rs.length;j++){
+							if(rs[j][0]==value){
+								flag = false;
+								break;
+							}
+						}
+						if(flag){
+							rs.push([value]);
+						}
+					}
+					cstore.loadData(rs);
+					//editor.field.store = cstore;
+					return true;
+				},this);
 				cm.config[index].editor = editor;
 				break;
 			case 'cdate':
 				var editor=this.grid.createEditer(new Ext.form.DateField());
 				editor.getValue=function(){
 			    	var v = this.field.getValue();
-			    	return v.format("Y-m-d");
-			    }
+			    	return v.format("m/d/Y");
+				}
 				cm.config[index].editor = editor;
 				break;
+				
 			case 'cnumber':
 				var editor=this.grid.createEditer(new Ext.form.NumberField());
 				cm.config[index].align = "right";
 				cm.config[index].editor = editor;
 				break; 
+				
 			case 'ccurrency':
 				var editor=this.grid.createEditer(new Ext.form.NumberField());
 				cm.config[index].editor = editor;
