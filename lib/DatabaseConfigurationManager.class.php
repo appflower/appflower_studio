@@ -63,7 +63,7 @@ class DatabaseConfigurationManager {
     private function dumpYaml($data)
     {
         $sfYaml = new sfYaml();
-        $yamlData = $sfYaml->dump($data);
+        $yamlData = $sfYaml->dump($data, 4);
 
         return $yamlData;
     }
