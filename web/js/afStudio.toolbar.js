@@ -123,77 +123,7 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 				{
 					text: 'Database Connection Settings',
 					handler: function (b, e) {
-						var form = new Ext.FormPanel({
-                                                        url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, frame: true,
-                                                        labelWidth: 100, title: false,
-							items: [
-                                                                {xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false},
-								{xtype: 'panel', layout: 'column',
-									items: [
-										{xtype: 'panel', columnWidth: 1, layout: 'form', style: 'margin-right: 5px;',
-											items: [{xtype: 'textfield', fieldLabel: 'Host', name: 'host', anchor: '92%', allowBlank: false}]
-										},
-										{xtype: 'panel', width: 100, layout: 'form', labelWidth: 35,
-											items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '82%', allowBlank: false}]
-										}
-									]
-								},
-								{xtype:'textfield', fieldLabel: 'Username', anchor: '96%', name: 'username', allowBlank: false},
-								{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false},
-								{xtype: 'checkbox', hideLabel: true, boxLabel: 'Persistent', name: 'persistent'},
-								{xtype: 'checkbox', hideLabel: true, boxLabel: 'Pooling', name: 'pooling'}
-							]
-
-						});
-								
-						var wnd = new Ext.Window({
-							title: 'Database Connection Settings',
-                                                        width: 463,
-							autoHeight: true, closable: true,
-                                                        draggable: true, plain:true,
-                                                        modal: true, resizable: false,
-                                                        bodyBorder: false, border: false,
-                                                        items: form,
-							buttons: [
-								{
-                                                                    text: 'Save',
-                                                                    handler: function()
-                                                                    {
-                                                                        form.getForm().submit({
-                                                                            failure:function(form,action){
-                                                                                    if(action.result)
-                                                                                    {
-                                                                                        if(action.result.message)
-                                                                                        {
-                                                                                            Ext.Msg.alert("Failure", action.result.message, function(){
-                                                                                                    if(action.result.redirect){
-                                                                                                            window.location.href=action.result.redirect;
-                                                                                                    }
-                                                                                            });
-                                                                                        }
-                                                                                    }
-                                                                            },
-                                                                            success:function(form,action){
-                                                                                    if(action.result)
-                                                                                    {
-                                                                                        if(action.result.message)
-                                                                                        {
-                                                                                            Ext.Msg.alert("Success", action.result.message, function(){
-                                                                                                    if(action.result.redirect){
-                                                                                                            window.location.href=action.result.redirect;
-                                                                                                    }
-                                                                                            });
-                                                                                        }
-                                                                                    }
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                },
-								{text: 'Cancel', handler: function(){wnd.close()}}
-							],
-							buttonAlign: 'center'
-						});
-						wnd.show()
+						var dcs = new afStudio.databaseConnectionSettings();
 					}
 				},				
 				

@@ -25,8 +25,9 @@ afStudio.databaseConnectionSettings = Ext.extend(Ext.Window, {
 	},
 	
 	createForm: function(){
+/***
 		this.form = new Ext.FormPanel({
-		    url: '', defaultType: 'textfield', width: 450, frame: true, 
+		    url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, frame: true, 
 			labelWidth: 100, title: false,
 			items: [
 				{xtype: 'panel', layout: 'column',
@@ -45,6 +46,29 @@ afStudio.databaseConnectionSettings = Ext.extend(Ext.Window, {
 				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Pooling', name: 'f[pooling]'}
 			]
 		});		
+*/		
+		
+		this.form =  new Ext.FormPanel({
+			url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, frame: true,
+	        labelWidth: 100, title: false,
+			items: [
+	        	{xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false},
+				{xtype: 'panel', layout: 'column',
+					items: [
+						{xtype: 'panel', columnWidth: 1, layout: 'form', style: 'margin-right: 5px;',
+							items: [{xtype: 'textfield', fieldLabel: 'Host', name: 'host', anchor: '92%', allowBlank: false}]
+						},
+						{xtype: 'panel', width: 100, layout: 'form', labelWidth: 35,
+							items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '82%', allowBlank: false}]
+						}
+					]
+				},
+				{xtype:'textfield', fieldLabel: 'Username', anchor: '96%', name: 'username', allowBlank: false},
+				{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false},
+				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Persistent', name: 'persistent'},
+				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Pooling', name: 'pooling'}
+			]
+		});
 	},
 	
 	saveDatabaseSettings: function(){
