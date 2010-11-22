@@ -27,9 +27,9 @@ class DatabaseConfigurationManager {
                 'class' => 'sfPropelDatabase',
                 'param' => array(
                     'classname'  => 'PropelPDO',
-                    'dsn'        => 'mysql:dbname=_DBNAME_;host=_HOST_;port=_PORT_',
-                    'username'   => '_USERNAME_',
-                    'password'   => '_PASSWORD_',
+                    'dsn'        => 'mysql:dbname=;host=;port=',
+                    'username'   => '',
+                    'password'   => '',
                     'encoding'   => 'utf8',
                     'persistent' => 'true',
                     'pooling'    => 'true'
@@ -40,16 +40,46 @@ class DatabaseConfigurationManager {
     );
 
     private $databaseConfFilePath;
+    private $databaseConfTemplate;
     private $params;
 
 
     public function __construct() {
-        $this->databaseConfFilePath = afStudioUtil::getConfigDir() . '/' . 'databases.yml';
+        $this->databaseConfFilePath = afStudioUtil::getConfigDir() . '/' . 'databasess.yml';
+
+        $this->setDatabaseConfTemplate();
     }
+
+    private function setDatabaseConfTemplate()
+    {
+        if(file_exists($this->databaseConfFilePath)) {
+            // maybe add check if yml file
+            $this->databaseConfTemplate = $this->loadYaml($this->databaseConfFilePath);
+        } else {
+            $this->databaseConfTemplate = self::$defaultDatabaseTemplate;
+        }
+    }
+
 
     public function setDatabaseConnectionParams($params)
     {
         $this->params = $params;
+    }
+
+    public function getDatabaseConnectionParams()
+    {
+        $param = $this->databaseConfTemplate['all']['propel']['param'];
+
+        $data = array(
+          'username'   => $param['username'],
+          'password'   => $param['password'],
+          'persistent' => $param['persistent'],
+          'pooling'    => $param['pooling']
+        );
+
+        $this->getDsnParams($param['dsn'], $data);
+
+        return $data;
     }
 
     private function loadYaml($filePath)
@@ -70,12 +100,7 @@ class DatabaseConfigurationManager {
 
     public function save()
     {
-        if(file_exists($this->databaseConfFilePath)) {
-            // maybe add check if yml file
-            $confData = $this->loadYaml($this->databaseConfFilePath);
-        } else {
-            $confData = self::$defaultDatabaseTemplate;
-        }    
+        $confData = $this->databaseConfTemplate;
 
         $param = &$confData['all']['propel']['param'];
 
@@ -85,11 +110,31 @@ class DatabaseConfigurationManager {
         $param['persistent'] = (isset($this->params['persistent']) ? 'true' : 'false');
         $param['pooling']    = (isset($this->params['pooling']) ? 'true' : 'false');
 
-        //temporary commented, modiefies project config/databases.yml
-        // I'm not sure if it ok, beacause if someone changes settings we could have problem with login
-        $result = false;//@file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
-
+        //temporary commented, modifies project config/databases.yml
+        // I'm not sure if it is ok, beacause if someone changes settings we could have problem with login to application
+//        $result = false;//@file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
+$result = @file_put_contents('/tmp/new.yml', $this->dumpYaml($confData));
         return $result;
+    }
+
+    private function getDsnParams($dsn, &$data)
+    {
+        $dsnTemp = explode(';', $dsn);
+        foreach($dsnTemp as $dsnPart) {
+            $parameter = explode('=', $dsnPart);
+
+            if(strpos($parameter[0], 'dbname') !== false) {
+                $data['database'] = $parameter[1];
+            }
+
+            if(strpos($parameter[0], 'host') !== false) {
+                $data['host'] = $parameter[1];
+            }
+
+            if(strpos($parameter[0], 'port') !== false) {
+                $data['port'] = $parameter[1];
+            }
+        }
     }
 
     private function buildDsn($dsn)
@@ -98,9 +143,10 @@ class DatabaseConfigurationManager {
         foreach($dsnTemp as $dsnPart) {
             $parameter = explode('=', $dsnPart);
 
-            if(preg_match('/dbname/', $parameter[0])) {
+            if(strpos($parameter[0], 'dbname') !== false) {
                 $dbnameKey = $parameter[0]; //f.e: mysql:dbname
             }
+
             $dsnParams[$parameter[0]] = $parameter[1];
         }
 

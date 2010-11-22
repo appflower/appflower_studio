@@ -120,8 +120,19 @@ class appFlowerStudioActions extends sfActions
 		 return $this->renderText(json_encode($result));
 	}
 
+        public function executeLoadDatabaseConnectionSettings(sfWebRequest $request)
+        {
+            $dcm = new DatabaseConfigurationManager();
+            $data = $dcm->getDatabaseConnectionParams();
+
+            $info=array('success'=>true, 'data' => $data );
+            $info=json_encode($info);
+
+            return $this->renderText($info);
+        }
+
         public function executeConfigureDatabase(sfWebRequest $request)
-        {           
+        {
             $dcm = new DatabaseConfigurationManager();
             $dcm->setDatabaseConnectionParams($request->getPostParameters());
             $result = $dcm->save();

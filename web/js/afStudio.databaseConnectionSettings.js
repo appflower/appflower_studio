@@ -69,6 +69,14 @@ afStudio.databaseConnectionSettings = Ext.extend(Ext.Window, {
 				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Pooling', name: 'pooling'}
 			]
 		});
+
+                this.form.getForm().load({
+                    url: 'appFlowerStudio/loadDatabaseConnectionSettings',
+
+                    failure: function(form, action) {
+                        Ext.Msg.alert("Load failed", 'Error while getting data');
+                    }
+                });
 	},
 	
 	saveDatabaseSettings: function(){
