@@ -25,40 +25,30 @@ class afStudioModulesCommand
 		{	
 			switch ($cmd)
 			{
-				case "get":	
-					$datas = array(); 		
+				case "get":
+					$datas = array();
 					$appFolders = $this->getApplicationFolders($this->realRoot."/apps/");
-				
+
 					foreach($appFolders as $appFolder)
 					{
 						$appname = $appFolder["text"];
-						$modules = array();
-						$modules[0]["text"] = "modules";
 						$moduleFolders = $this->getApplicationFolders($this->realRoot."/apps/".$appname."/modules/");
-						
+
 						$k=0;
 						$mod_datas=array();
 						foreach($moduleFolders as $moduleFolder)
 						{
 							$modulename = $moduleFolder["text"];
-							$modname_arr = array();
-							$modname_arr[0]["text"] = "actions";
-							$modname_arr[1]["text"] = "config";
-							$actionfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/actions/", ".php");			
-							$modname_arr[0]["children"] = $actionfiles;
 							$configfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/config/", ".xml");
-							$modname_arr[1]["children"] = $configfiles;
-							$moduleFolder["children"] = $modname_arr;
-							$k++;	
+							$moduleFolder["children"] = $configfiles;
+							$k++;
 							array_push($mod_datas,$moduleFolder);
 						}
-						
-						
-						$modules[0]["children"] = $mod_datas;
-						$appFolder["children"] = $modules;
-						
+
+						$appFolder["children"] = $mod_datas;
+
 						array_push($datas,$appFolder);
-					}		
+					}
 					if(count($datas)>0)
 					{
 						$this->result = $datas;
