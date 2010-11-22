@@ -27,7 +27,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		return {
 			itemId: 'widget-designer',
-			height: 400,
+			height: 450,
 			activeTab: 0,
 			defaults: {
 				layout: 'fit'

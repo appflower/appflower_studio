@@ -60,41 +60,28 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 			}
 		});
 		
-		var propsGrid = new Ext.grid.PropertyGrid({	        
-	        flex: 1,
-	        frame: true,
-	        autoHeight: true,
-	        propertyNames: {
-	            tested: 'QA',
-	            borderWidth: 'Border Width'
-	        },
-	        source: {
-	            '(name)': 'Properties Grid',
-	            grouping: false,
-	            autoFitColumns: true,
-	            productionQuality: false,
-	            created: new Date(Date.parse('10/15/2006')),
-	            tested: false,
-	            version: 0.01,
-	            borderWidth: 1
-	        },
-	        viewConfig : {
-	            forceFit: true,
-	            scrollOffset: 2 // the grid will never have scrollbars
-	        }
-    	});
-		
-		
 		return {
 			itemId: 'designer',	
 			defaults: {
 				style: 'padding:4px;'
 			},
-			items: [grid, propsGrid]
+			items: [
+				grid, 
+				{
+					xtype: 'panel', flex: 1, 
+					layout: 'vbox',
+					layoutConfig: {
+						align: 'stretch'
+					},
+					items: [
+						{xtype: 'afStudio.widgetDesigner.inspector'}
+					]
+				}
+			]
 		}
-	}// eo _initCmp
+	},
 	
-	,_initEvents : function() {
+	_initEvents : function() {
 		var _this = this;				
 	}// eo _initEvents
 	
