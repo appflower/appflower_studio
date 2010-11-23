@@ -7,32 +7,34 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	
 	,insertAfterField : function(b, e) {
 		var _this = this,		
-    		rec = _this.getSelectionModel().getSelected(),
-    		index = rec ? _this.store.indexOf(rec) + 1 : 0; 
+    		cell = _this.getSelectionModel().getSelectedCell(),
+    		index = cell ? cell[0] + 1 : 0; 
     	
     	var u = new _this.store.recordType({
             name : '',
             type: 'INT',
-            size : '11'
+            size : '11',
+            required: false
         });
-        //editor.stopEditing();
+        _this.stopEditing();
         _this.store.insert(index, u);
-        //editor.startEditing(index);		
+		_this.startEditing(index , cell ? cell[1] : 0);		
 	}
 	
 	,insertBeforeField : function() {
 		var _this = this,
-    		rec = _this.getSelectionModel().getSelected(),
-    		index = rec ? _this.store.indexOf(rec) : 0; 
+    		cell = _this.getSelectionModel().getSelectedCell(),
+    		index = cell ? cell[0] : 0; 
     	
     	var u = new _this.store.recordType({
             name : '',
             type: 'INT',
-            size : '11'
+            size : '11',
+            required: false
         });
-        //editor.stopEditing();
+        _this.stopEditing();
         _this.store.insert(index, u);
-    	//editor.startEditing(index);		
+		_this.startEditing(index, cell ? cell[1] : 0);		
 	}
 	
 	/**
@@ -40,11 +42,11 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	 */
 	,deleteField : function() {
 		var _this = this,
-			records = _this.getSelectionModel().getSelections();	            	
-	    if (records.length < 0) {
-	        return false;
-	    }
-	    _this.store.remove(records);		
+			cell = _this.getSelectionModel().getSelectedCell();			
+	    if (cell) {
+	    	var r = _this.store.getAt(cell[0]);
+	    	_this.store.remove(r);	        
+	    }	    		
 	}
 	
 	/**
