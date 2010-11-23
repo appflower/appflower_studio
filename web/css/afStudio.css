@@ -5,7 +5,22 @@
 .icon-models-edit{background:url('/appFlowerStudioPlugin/images/table_edit.png') no-repeat center left !important;}
 .icon-console{background:url('/appFlowerStudioPlugin/images/application_xp_terminal.png') no-repeat center left !important;}
 .icon-add{background:url('/appFlowerStudioPlugin/images/add.png') no-repeat center left !important;}
+.icon-edit{background:url('/appFlowerStudioPlugin/images/pencil.png') no-repeat center left !important;}
 .icon-delete{background:url('/appFlowerStudioPlugin/images/delete.png') no-repeat center left !important;}
+
+.icon-obj{background: url('/appFlowerStudioPlugin/images/application.png') no-repeat 0 0 !important;}
+
+.icon-data{background: url('/appFlowerStudioPlugin/images/database.png') no-repeat 0 0 !important;}
+.icon-data-add{background: url('/appFlowerStudioPlugin/images/database_add.png') no-repeat 0 0 !important;}
+
+.icon-field{background: url('/appFlowerStudioPlugin/images/textfield.png') no-repeat 0 0 !important;}
+.icon-field-add{background: url('/appFlowerStudioPlugin/images/textfield_add.png') no-repeat 0 0 !important;}
+
+.icon-action{background: url('/appFlowerStudioPlugin/images/package_green.png') no-repeat 0 0 !important;}
+
+.icon-validator{background: url('/appFlowerStudioPlugin/images/tag_blue.png') no-repeat 0 0 !important;}
+.icon-validator-add{background: url('/appFlowerStudioPlugin/images/tag_blue_add.png') no-repeat 0 0 !important;}
+
 .icon-table-relationship{background:url('/appFlowerStudioPlugin/images/table_relationship.png') no-repeat center left !important;}
 .table-key{background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat center left !important;}
 
@@ -14,4 +29,4 @@
 	background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat center left !important;
 	padding-left:20px;
 	display:inline;	
-}	
+}

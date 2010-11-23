@@ -99,16 +99,22 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			frame: true,
 			title: 'Widget Inspector',
 			
+			style: 'padding-bottom: 4px;',
+			
+			split: true,
+			
 		    contextMenu: new Ext.menu.Menu({
 		        items: [
-		        	{iconCls: 'icon-add', id: 'add-field', text: 'Add Field'},
-					{iconCls: 'icon-add', id: 'add-validator', text: 'Add Validator'},
-					{iconCls: 'icon-add', id: 'add-param', text: 'Add Datasource Param'},
+		        	{iconCls: 'icon-field-add', id: 'add-field', text: 'Add Field'},
+					{iconCls: 'icon-validator-add', id: 'add-validator', text: 'Add Validator'},
+					{iconCls: 'icon-data-add', id: 'add-param', text: 'Add Datasource Param'},
+					{iconCls: 'icon-edit', id: 'edit-title', text: 'Edit Item Name'},
 					{iconCls: 'icon-delete', id: 'delete-node', text: 'Delete Item'}
 		        ],
 		        listeners: {
 		            'itemclick': function(item) {
 		            	// Example of path is: '/widgetinspector/xnode-157/...';
+		            	
 		            	var path_arr = item.parentMenu.contextNode.getPath().split('/');
 		            	var obj_id = path_arr[2];
 		            	
@@ -117,6 +123,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		                switch (item.id) {
 							case 'add-field': {
 								var param = 'object';
+								var iconCls = 'icon-field';
 								var itemId = 'field';
 								var name = 'New Field';
 								break;
@@ -124,6 +131,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 							
 							case 'add-validator': {
 								var param = 'field';
+								var iconCls = 'icon-validator';
 								var itemId = 'validator';
 								var name = 'New Validator';
 								break;
@@ -131,8 +139,17 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 							
 							case 'add-param':{
 								var param = 'datasource';
+								var iconCls = 'field';
 								var itemId = 'param';
 								var name = 'New Method Parametr';
+								break;
+							}
+							
+							case 'edit-title': {
+								var node = item.parentMenu.contextNode;
+								this.treeEditor.editNode = node;
+			                    this.treeEditor.startEdit(node.ui.textNode);			                	
+								
 								break;
 							}
 							
@@ -147,10 +164,15 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		                
 		                if(param){
     						var node = new Ext.tree.TreeNode({
-	        					text: name, itemId: itemId, leaf: true,
+	        					text: name, itemId: itemId, leaf: true, iconCls: iconCls
     						});
     						
-    						var obj_node = root.findChild('itemId', param, true);
+    						if('validator' == itemId){
+    							var obj_node = item.parentMenu.contextNode;
+    							obj_node.leaf = false;
+    						} else {
+	    						var obj_node = root.findChild('itemId', param, true);
+    						}
     						obj_node.expand();
     						obj_node.appendChild(node);
     						
@@ -169,9 +191,44 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
             listeners: {
 		        'contextmenu': function(node, e) {
 	            	if('widgetinspector' != node.id){
-	            		
+
+						var unnecessaryMenuItems = [];
+						var necessaryMenuItems = [];
+						
 	            		switch(node.attributes.itemId){
+	            			case 'object':{
+	            				var unnecessaryMenuItems = ['add-validator', 'delete-node'];
+	            				var necessaryMenuItems = ['add-field', 'add-param', 'edit-title'];
+	            				break;
+	            			}
+	            			
+	            			case 'field':{
+	            				var unnecessaryMenuItems = ['add-field'];
+	            				var necessaryMenuItems = ['add-validator', 'add-param', 'edit-title', 'delete-node'];
+	            				break;
+	            			}
+	            			
+	            			case 'validator': {
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param'];
+	            				var necessaryMenuItems = ['edit-title', 'delete-node'];
+	            				break;
+	            			}
+	            			
+	            			case 'datasource': {
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator'];
+	            				var necessaryMenuItems = ['add-param', 'edit-title', 'delete-node'];
+	            				break;
+	            			}
+	            			
+	            			case 'param': {
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param'];
+	            				var necessaryMenuItems = ['edit-title', 'delete-node'];
+	            				break;
+	            			}	            			
+	            			
 	            			case 'action': {
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param'];
+	            				var necessaryMenuItems = ['edit-title', 'delete-node'];
 	            				break;
 	            			}
 	            		}
@@ -179,6 +236,14 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			            node.select();
 			            var c = node.getOwnerTree().contextMenu;
 			            c.contextNode = node;
+			            
+			            for(var i = 0, l = unnecessaryMenuItems.length; i<l; i++){
+			            	c.items.map[unnecessaryMenuItems[i]].hide();
+			            }
+			            for(var i = 0, l = necessaryMenuItems.length; i<l; i++){
+			            	c.items.map[necessaryMenuItems[i]].show();
+			            }
+			            
 			            c.showAt(e.getXY());
 	            	}
 			    },
@@ -199,9 +264,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
             			}
             			
             			case 'field':{
-
             				this.propertiesGrid.setSource({
-							    'Name': 'Field Name',
+							    'Name': node.text,
 							    'Label': 'Label',
 							    'Sortable': false,
 							    'Grouping': 'Grouping Value',
@@ -227,7 +291,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
             },			
 			
             containerScroll: true, 
-//            rootVisible: false,
+            rootVisible: false,
             layout: 'fit'
         });
         
@@ -238,66 +302,73 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			id: 'widgetinspector',
             children: [
             	{
-            		text: 'Object 1', leaf: false,
-            		itemId: 'object', expanded: true,
+            		text: 'editWidget.xml', leaf: false,
+            		itemId: 'object', expanded: true, iconCls: 'icon-obj',
             		children: [
 			           	{
 			        		text: 'Field 1', leaf: false, expanded: true,
-			        		itemId: 'field',
+			        		itemId: 'field', iconCls: 'icon-field',
 			        		children: [
-			        			{text: 'Validator 1', itemId: 'validator', leaf: true},
-			        			{text: 'Validator 2', itemId: 'validator', leaf: true}
+			        			{text: 'Validator 1', itemId: 'validator', iconCls: 'icon-validator', leaf: true},
+			        			{text: 'Validator 2', itemId: 'validator', iconCls: 'icon-validator', leaf: true}
 			        		]
 			        	}, 
-			        	{text: 'Action 3', itemId: 'action', leaf: true},
 			        	{
 			        		text: 'Datasource', leaf: false, expanded: true,
-			        		itemId: 'datasource',
+			        		itemId: 'datasource', iconCls: 'icon-data',
 			        		children: [
 			        			{text: 'Param 1', itemId: 'param', leaf: true}
 			        		]
 			        	},
-						{text: 'Action 1', itemId: 'action', leaf: true},
-						{text: 'Action 2', itemId: 'action', leaf: true}            
-            		]
-            	},
-            	
-            	{
-            		text: 'Object 2', leaf: false, expanded: true,
-            		itemId: 'object',
-            		children: [
-			           	{text: 'Field 1', leaf: true, itemId: 'field'}, 
-			        	{
-			        		text: 'Datasource', leaf: false, expanded: true,
-			        		itemId: 'datasource',
+			           	{
+			        		text: 'Actions', leaf: false, expanded: true,
+			        		itemId: 'action', //iconCls: 'icon-field',
 			        		children: [
-			        			{text: 'Param 1', itemId: 'param', leaf: true},
-			        			{text: 'Param 2', itemId: 'param',  leaf: true}
+								{text: 'Action 1', itemId: 'action', iconCls: 'icon-action', leaf: true},
+								{text: 'Action 2', itemId: 'action', iconCls: 'icon-action', leaf: true},
+					        	{text: 'Action 3', itemId: 'action', iconCls: 'icon-action', leaf: true}
 			        		]
-			        	},
-						{text: 'Action 1', itemId: 'action', leaf: true},
-						{text: 'Action 2', itemId: 'action', leaf: true}            
+			        	}
             		]
-            	}            	
+            	}         	
             ]
         });
+        new Ext.tree.TreeSorter(this.widgetInspectorTree, {folderSort:true});
 		this.widgetInspectorTree.setRootNode(root);
 		
 		this.treeEditor = new Ext.tree.TreeEditor(this.widgetInspectorTree, {}, {
 	        allowBlank:false,
-	        blankText: 'A name is required',
-	        selectOnFocus:true
+	        blankText: 'A field is required',
+	        selectOnFocus:true,
+	        
+	        listeners: {
+	        	'complete': function(editor, value, startValue){
+	        		var node = editor.tree.getSelectionModel().getSelectedNode();
+	        		if(node && ('field' == node.attributes.itemId) ){
+	        			node.text = value;
+	        			editor.tree.fireEvent('click', node);
+	        		}
+	        	}
+	        }
 	    });
 		
 		return {
+//			xtype: 'tabpanel', activeTab: 0,
 			itemId: 'inspector',	
-			defaults: {
-				style: 'padding:4px;'
-			},
-			items: [
-				this.widgetInspectorTree,
-				this.propertiesGrid
-			]
+//			defaults: {
+//				layout: 'fit'
+//			},
+//			items: [
+//				{
+//					title: 'Widget Inspector', 
+//					html: 'terte'
+					items: [
+						this.widgetInspectorTree,
+						this.propertiesGrid
+					]
+//				},
+//				{html: 'trest', title: 'Test'}
+//			]
 		}
 	}
 });

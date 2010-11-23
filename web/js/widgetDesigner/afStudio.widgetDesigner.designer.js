@@ -68,11 +68,9 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 			items: [
 				grid, 
 				{
-					xtype: 'panel', flex: 1, 
-					layout: 'vbox',
-					layoutConfig: {
-						align: 'stretch'
-					},
+					xtype: 'panel', flex: 1, layout: 'vbox',
+					style: 'padding:4px 4px 4px 2px;',
+					layoutConfig: {align: 'stretch'},
 					items: [
 						{xtype: 'afStudio.widgetDesigner.inspector'}
 					]
