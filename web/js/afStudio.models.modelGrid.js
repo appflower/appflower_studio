@@ -509,16 +509,18 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 				});
 				fields.push({name:'c'+i});
 			}
-			
-			this.store = new Ext.data.Store({
-				reader: new Ext.data.JsonReader({
-				    idProperty: 'id'
-				}, fields),
-				url: gridFields.storeUrl
-			});
-			this.store.add([new Ext.data.Record()]);
-			this.columns = columns;
+
 		}
+
+		this.store = new Ext.data.Store({
+			reader: new Ext.data.JsonReader({
+				root: 'rows',
+			    idProperty: 'id'
+			}, fields),
+			url: gridFields.storeUrl
+		});
+		this.store.add([new Ext.data.Record()]);
+		this.columns = columns;
 		
 		afStudio.models.modelGridPanel.superclass.beforeInit.apply(this, arguments);
 		
@@ -526,7 +528,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 				iconCls: 'icon-grid',
 		        height: 300,
 		        plugins: [Ext.ux.grid.DataDrop],
-		        tbar: [{
+		        tbar: [{ 
 		            text: 'Save',
 		            iconCls: 'icon-save',
 		            handler:function(btn, ev){
