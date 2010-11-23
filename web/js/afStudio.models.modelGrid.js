@@ -513,7 +513,8 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 			this.store = new Ext.data.Store({
 				reader: new Ext.data.JsonReader({
 				    idProperty: 'id'
-				}, fields)
+				}, fields),
+				url: gridFields.storeUrl
 			});
 			this.store.add([new Ext.data.Record()]);
 			this.columns = columns;
