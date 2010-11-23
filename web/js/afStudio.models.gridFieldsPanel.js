@@ -1,193 +1,183 @@
 Ext.ns('afStudio.models');
 
-afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.GridPanel, {
+afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {	
 	
-	initComponent: function(){
+	saveModel : function(b, e) {		
+	}
+	
+	,insertAfterField : function(b, e) {
+		var _this = this,		
+    		rec = _this.getSelectionModel().getSelected(),
+    		index = rec ? _this.store.indexOf(rec) + 1 : 0; 
+    	
+    	var u = new _this.store.recordType({
+            name : '',
+            type: 'INT',
+            size : '11'
+        });
+        //editor.stopEditing();
+        _this.store.insert(index, u);
+        //editor.startEditing(index);		
+	}
+	
+	,insertBeforeField : function() {
+		var _this = this,
+    		rec = _this.getSelectionModel().getSelected(),
+    		index = rec ? _this.store.indexOf(rec) : 0; 
+    	
+    	var u = new _this.store.recordType({
+            name : '',
+            type: 'INT',
+            size : '11'
+        });
+        //editor.stopEditing();
+        _this.store.insert(index, u);
+    	//editor.startEditing(index);		
+	}
+	
+	/**
+	 * Deletes field (row) from the grid
+	 */
+	,deleteField : function() {
+		var _this = this,
+			records = _this.getSelectionModel().getSelections();	            	
+	    if (records.length < 0) {
+	        return false;
+	    }
+	    _this.store.remove(records);		
+	}
+	
+	/**
+	 * Initializes component
+	 * @return {Object} The config object
+	 * @private
+	 */
+	,_initCmp : function() {
+		var _this = this;
 		
-		var gridFields=this;
-		
-		// Create a standard HttpProxy instance.
-		var proxy = new Ext.data.HttpProxy({
-		    url: '/appFlowerStudio/models'
-		});
-		
-		// Typical JsonReader.  Notice additional meta-data params for defining the core attributes of your json-response
-		var reader = new Ext.data.JsonReader({
-		    totalProperty: 'totalCount',
-		    successProperty: 'success',
-		    idProperty: 'id',
+		var store = new Ext.data.JsonStore({
+			autoLoad: false,
+			url: '/appFlowerStudio/models',
+		    baseParams: {
+		    	model: _this.model,
+		    	schema: _this.schema
+		    },			
 		    root: 'rows',
-		    messageProperty: 'message'  // <-- New "messageProperty" meta-data
-		}, [
-			{name: 'id', allowBlank: false}
-		    ,{name: 'name', allowBlank: false}
-		    ,{name: 'type', allowBlank: false}
-		    ,{name: 'size', allowBlank: true}
-		    ,{name: 'primary_key', allowBlank: true}
-		    ,{name: 'required', allowBlank: true}
-		    ,{name: 'autoincrement', allowBlank: true}
-		    ,{name: 'default_value', allowBlank: true}
-		    ,{name: 'foreign_table', allowBlank: true}
-		    ,{name: 'foreign_key', allowBlank: true}
-		]);
-		
-		// The new DataWriter component.
-		var writer = new Ext.data.JsonWriter({
-		    encode: true   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
-		    ,writeAllFields: true
+		    idProperty: 'id',
+		    fields: [		    
+				{name: 'id'},
+			    {name: 'name'},
+			    {name: 'type'},
+			    {name: 'size'},
+			    {name: 'primary_key'},
+			    {name: 'required'},
+			    {name: 'autoincrement'},
+			    {name: 'default_value'},
+			    {name: 'foreign_table'},
+			    {name: 'foreign_key'}		    
+		    ]
 		});
+		store.loadData(_this._data);
 		
-		var store = new Ext.data.Store({
-		    id: 'user'
-		    ,restful: false
-		    ,proxy: proxy
-		    ,reader: reader
-		    ,writer: writer
-		    ,baseParams: {
-		    	model: gridFields.model
-		    	,schema: gridFields.schema
-		    }
-		});
-		
-		// load the store immeditately
-		store.loadData(gridFields._data);
-		
-		store.on({
-			beforewrite: function(proxy,action,rs,options,arg){
-				options.oldName=rs.fields.items[1].name;
+		var selModel = new  Ext.grid.CheckboxSelectionModel({});
 				
-				console.log(options);
-			}
-		});
+		var columnModel = new Ext.grid.ColumnModel({
+			defaults: {
+				sortable: true
+			},
+			columns: [
+				selModel,				
+				{header: '<div class="model-pk-hd">Key</div>', width: 50, dataIndex: 'primary_key', 
+					editor: new Ext.form.ComboBox({
+						typeAhead: true,
+						triggerAction: 'all',
+						lazyRender: true,
+						editable: false,
+						mode: 'local',
+						valueField: 'field',
+						displayField: 'field',
+						store: ['unique', 'primary key']
+					})
+				},
+			    {header: "Name", width: 100, dataIndex: 'name', editor: new Ext.form.TextField({})},
+			    {header: "Type", width: 100, dataIndex: 'type', editor: new Ext.form.TextField({})},
+			    {header: "Size", width: 50, dataIndex: 'size', editor: new Ext.form.TextField({})},			    		    
+			    {header: "Autoincrement", width: 50, dataIndex: 'autoincrement', editor: new Ext.form.TextField({})},
+			    {header: "Default value", width: 100, dataIndex: 'default_value', editor: new Ext.form.TextField({})},
+			    //TODO make a separate component to prevent code cluttering 
+			    {header: "Relation", width: 150, sortable: true, dataIndex: 'foreign_table', 
+				      editor: new Ext.form.TextField({		      	
+				      	listeners: {
+				      		focus: function(field) {
+				      			if (!field.picker) {
+					      			field.picker = new afStudio.models.relationPicker({
+					      				closable: true,
+	                					closeAction: 'hide',
+					      				listeners: {
+					      					relationpicked : function(relation) {
+					      						field.setValue(relation);
+					      					}
+					      				}
+					      			});
+				      			}
+				      			field.picker.show();
+				      		}
+				      	}
+			      	})
+			    },
+			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', editor: new Ext.form.Checkbox({})}
+			]
+		});	
 		
-		Ext.util.Observable.capture(store, function(e){console.info(e)});
-				
-		var columns =  [
-		    {header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})}
-		    ,{header: "Type", width: 100, sortable: true, dataIndex: 'type', editor: new Ext.form.TextField({})}
-		    ,{header: "Size", width: 50, sortable: true, dataIndex: 'size', editor: new Ext.form.TextField({})}
-		    ,{header: "Primary Key", width: 50, sortable: true, dataIndex: 'primary_key', editor: new Ext.form.TextField({})}		    
-		    ,{header: "Autoincrement", width: 50, sortable: true, dataIndex: 'autoincrement', editor: new Ext.form.TextField({})}
-		    ,{header: "Default value", width: 100, sortable: true, dataIndex: 'default_value', editor: new Ext.form.TextField({})}
-		    
-		    //TODO make a separate component to prevent code cluttering 
-		    ,{header: "Relation", width: 150, sortable: true, dataIndex: 'foreign_table', 
-			      editor: new Ext.form.TextField({		      	
-			      	listeners: {
-			      		focus: function(field) {
-			      			if (!field.picker) {
-				      			field.picker = new afStudio.models.relationPicker({
-				      				closable: true,
-                					closeAction: 'hide',
-				      				listeners: {
-				      					relationpicked : function(relation) {
-				      						field.setValue(relation);
-				      					}
-				      				}
-				      			});
-			      			}
-			      			field.picker.show();
-			      		}
-			      	}
-		      	})
-		     }
-		    ,{header: "Required", width: 50, sortable: true, dataIndex: 'required', editor: new Ext.form.Checkbox({})}
-		];
-		
-		var editor = new Ext.ux.grid.RowEditor({
-	        saveText: 'Update'
-	    });
-		
-		var config = {			
-			iconCls: 'icon-grid',
-	        //frame: true,
-	        //closable:true,
-	        autoScroll: true,
-	        height: 300,
-	        store: store,
-	        plugins: [editor],
-	        columns : columns,
-	        style: 'padding-bottom:10px;',
-	        tbar: [
+		var topToolbar = new Ext.Toolbar({
+			items: [
 	        {
 	            text: 'Save',
 	            iconCls: 'icon-save',
-	            handler:function(btn, ev){
-	            }
-	        }, '-', {	        	
+	            handler: Ext.util.Functions.createDelegate(_this.saveModel, _this)
+	        },'-',{	        	
 	            text: 'Insert',
 	            iconCls: 'icon-add',
 	            menu: {
 	            	items: [
 	            	{
 	            		text: 'Insert after',
-			            handler:function(btn, ev){
-			            	var rec = gridFields.getSelectionModel().getSelected();
-			            	var index=rec?gridFields.store.indexOf(rec)+1 : 0;
-			            	
-			            	var u = new gridFields.store.recordType({
-					            name : '',
-					            type: 'INT',
-					            size : '11'
-					        });
-					        editor.stopEditing();
-					        gridFields.store.insert(index, u);
-					        editor.startEditing(index);
-			            }	            		
+			            handler: Ext.util.Functions.createDelegate(_this.insertAfterField, _this) 
 	            	},{
 	            		text: 'Insert before',
-			            handler:function(btn, ev){
-			            	var rec = gridFields.getSelectionModel().getSelected();
-			            	var index=rec?gridFields.store.indexOf(rec) : 0;
-			            	
-			            	var u = new gridFields.store.recordType({
-					            name : '',
-					            type: 'INT',
-					            size : '11'
-					        });
-					        editor.stopEditing();
-					        gridFields.store.insert(index, u);
-					        editor.startEditing(index);
-			            }	            		
+			            handler: Ext.util.Functions.createDelegate(_this.insertBeforeField, _this)
 	            	}]
-	            }
-	            
-	        }, '-', {
+	            }	            
+	        },'-',{
 	            text: 'Delete',
 	            iconCls: 'icon-delete',
-	            handler: function(btn, ev){	            	
-	            	var records = gridFields.getSelectionModel().getSelections();	            	
-			        if (records.length < 0) {
-			            return false;
-			        }
-			        gridFields.store.remove(records);
-	            }
-	        }, '-'],
+	            handler: Ext.util.Functions.createDelegate(_this.deleteField, _this)
+	        }]
+		});		
+		
+		return {
+			itemId: 'model-fields',
+			clicksToEdit: 1,
+	        store: store,
+	        colModel: columnModel,
+	        selModel: selModel,
+			iconCls: 'icon-grid',
+	        autoScroll: true,
+	        height: 300,
+	        tbar: topToolbar,
 	        viewConfig: {
 	            forceFit: true
-	        }/*,
-	        tools:[{
-        		id:'close'
-        		,handler:function(e,te,p,tc){
-        			p.destroy();
-        		}
-        	}]*/
-		};
-		
-		// apply config
-		Ext.apply(this, Ext.apply(this.initialConfig, config));
-				
+	        }			
+		}
+	}//eo _initCmp
+	 
+	//@private
+	,initComponent: function() {
+		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));				
 		afStudio.models.gridFieldsPanel.superclass.initComponent.apply(this, arguments);	
 	}
-	,onRender:function() {
-		// call parent
-		afStudio.models.gridFieldsPanel.superclass.onRender.apply(this, arguments);
-
-	} // eo function onRender
+	
 }); 
 
-// register xtype
+//register xtype
 Ext.reg('afStudio.models.gridFieldsPanel', afStudio.models.gridFieldsPanel);
-
-// eof
-

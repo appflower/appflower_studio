@@ -7,3 +7,11 @@
 .icon-add{background:url('/appFlowerStudioPlugin/images/add.png') no-repeat center left !important;}
 .icon-delete{background:url('/appFlowerStudioPlugin/images/delete.png') no-repeat center left !important;}
 .icon-table-relationship{background:url('/appFlowerStudioPlugin/images/table_relationship.png') no-repeat center left !important;}
+.table-key{background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat center left !important;}
+
+/* Model Edit Grid */
+.model-pk-hd {
+	background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat center left !important;
+	padding-left:20px;
+	display:inline;	
+}	
