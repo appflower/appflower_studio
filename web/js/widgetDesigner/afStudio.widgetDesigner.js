@@ -70,10 +70,14 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		codeEditorTab.on({
 			beforerender : function(cmp) {
-				cmp.add({					
-					xtype: 'textarea',
-					autoScroll: true					
-				});
+				path = 'root/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/config/test.xml';
+				
+				cmp.add(new Ext.ux.CodePress({title:'test',
+															closable:true,
+															path:path,
+															tabTip:path,
+															file:path,
+															/*tabPanel:tabPanel*/}));
 			}
 		});	
 				

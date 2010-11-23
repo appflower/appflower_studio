@@ -10,7 +10,8 @@ class appFlowerStudioActions extends sfActions
 {
 	public function preExecute()
 	{
-		
+		$this->realRoot=sfConfig::get('sf_root_dir');
+		$this->immExtjs=ImmExtjs::getInstance();
 	}	
 		
 	public function executeIndex()
@@ -68,10 +69,12 @@ class appFlowerStudioActions extends sfActions
 				$file=str_replace('root',$this->realRoot,$file);
 				
 				$file_content=@file_get_contents($file);
+				
+				$data = array('response'=>$file_content);
 			
 				if($file_content)
 				{
-					return $this->renderText($file_content);
+					return $this->renderText(json_encode($data));
 				}
 				else {
 					$this->redirect404();
@@ -120,34 +123,34 @@ class appFlowerStudioActions extends sfActions
 		 return $this->renderText(json_encode($result));
 	}
 
-        public function executeLoadDatabaseConnectionSettings(sfWebRequest $request)
-        {
-            $dcm = new DatabaseConfigurationManager();
-            $data = $dcm->getDatabaseConnectionParams();
+    public function executeLoadDatabaseConnectionSettings(sfWebRequest $request)
+    {
+        $dcm = new DatabaseConfigurationManager();
+        $data = $dcm->getDatabaseConnectionParams();
 
-            $info=array('success'=>true, 'data' => $data );
-            $info=json_encode($info);
+        $info=array('success'=>true, 'data' => $data );
+        $info=json_encode($info);
 
-            return $this->renderText($info);
+        return $this->renderText($info);
+    }
+
+    public function executeConfigureDatabase(sfWebRequest $request)
+    {
+        $dcm = new DatabaseConfigurationManager();
+        $dcm->setDatabaseConnectionParams($request->getPostParameters());
+        $result = $dcm->save();
+
+        if($result) {
+            $success = true;
+            $message = 'Database Connection Settings saved successfully';
+        } else {
+            $success = false;
+            $message =  'Error while saving file to disk!';
         }
+        
+        $info=array('success'=>$success, "message"=>$message, 'redirect'=>$this->getRequest()->getReferer());
+        $info=json_encode($info);
 
-        public function executeConfigureDatabase(sfWebRequest $request)
-        {
-            $dcm = new DatabaseConfigurationManager();
-            $dcm->setDatabaseConnectionParams($request->getPostParameters());
-            $result = $dcm->save();
-
-            if($result) {
-                $success = true;
-                $message = 'Database Connection Settings saved successfully';
-            } else {
-                $success = false;
-                $message =  'Error while saving file to disk!';
-            }
-            
-            $info=array('success'=>$success, "message"=>$message, 'redirect'=>$this->getRequest()->getReferer());
-            $info=json_encode($info);
-
-            return $this->renderText($info);
-        }
+        return $this->renderText($info);
+    }
 }
