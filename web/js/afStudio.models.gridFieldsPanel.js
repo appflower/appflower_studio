@@ -78,16 +78,13 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		    ]
 		});
 		store.loadData(_this._data);
-		
-		var selModel = new  Ext.grid.CheckboxSelectionModel({});
 				
 		var columnModel = new Ext.grid.ColumnModel({
 			defaults: {
 				sortable: true
 			},
 			columns: [
-				selModel,				
-				{header: '<div class="model-pk-hd">Key</div>', width: 50, dataIndex: 'primary_key', 
+				{header: '<div class="model-pk-hd">&#160;</div>', width: 25, dataIndex: 'primary_key', 
 					editor: new Ext.form.ComboBox({
 						typeAhead: true,
 						triggerAction: 'all',
@@ -96,8 +93,19 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 						mode: 'local',
 						valueField: 'field',
 						displayField: 'field',
-						store: ['unique', 'primary key']
-					})
+						store: [['unique', 'unique'], ['pk', 'primary key']]
+					}), renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+						var html = '';
+						switch(value) {
+							case 'pk':
+								html = '<div class="pk-cell">&#160;</div>';
+							break;
+							case 'unique':
+								html = '<div class="unique-cell">&#160;</div>';
+							break;							
+						};
+						return  html;
+					}
 				},
 			    {header: "Name", width: 100, dataIndex: 'name', editor: new Ext.form.TextField({})},
 			    {header: "Type", width: 100, dataIndex: 'type', editor: new Ext.form.TextField({})},
@@ -160,7 +168,6 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 			clicksToEdit: 1,
 	        store: store,
 	        colModel: columnModel,
-	        selModel: selModel,
 			iconCls: 'icon-grid',
 	        autoScroll: true,
 	        height: 300,

@@ -24,9 +24,18 @@
 .icon-table-relationship{background:url('/appFlowerStudioPlugin/images/table_relationship.png') no-repeat center left !important;}
 .table-key{background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat center left !important;}
 
-/* Model Edit Grid */
+/* ModelDetailedEditing Grid */
 .model-pk-hd {
-	background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat center left !important;
-	padding-left:20px;
-	display:inline;	
+	background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat !important;
+	padding:2px 0 4px 14px;
+	display: inline;	
+}
+.pk-cell, .unique-cell {
+	height: 16px;
+}
+.pk-cell {
+	background:url('/appFlowerStudioPlugin/images/key.png') no-repeat center center !important;
+}
+.unique-cell {
+	background:url('/appFlowerStudioPlugin/images/unique-index.png') no-repeat center center !important;	
 }
