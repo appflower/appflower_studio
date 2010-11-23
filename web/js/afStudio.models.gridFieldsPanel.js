@@ -84,6 +84,9 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 				sortable: true
 			},
 			columns: [
+//				{header: '<input type="checkbox" />', width: 20, menuDisabled: true,
+//			    	renderer : function(v, p, record) {return '<input type="checkbox"  />';}
+//				},
 				{header: '<div class="model-pk-hd">&#160;</div>', width: 25, dataIndex: 'primary_key', 
 					editor: new Ext.form.ComboBox({
 						typeAhead: true,
@@ -94,7 +97,8 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 						valueField: 'field',
 						displayField: 'field',
 						store: [['unique', 'unique'], ['pk', 'primary key']]
-					}), renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+					}), 
+					renderer : function(value, metaData, record, rowIndex, colIndex, store) {
 						var html = '';
 						switch(value) {
 							case 'pk':
@@ -114,26 +118,32 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 			    {header: "Default value", width: 100, dataIndex: 'default_value', editor: new Ext.form.TextField({})},
 			    //TODO make a separate component to prevent code cluttering 
 			    {header: "Relation", width: 150, sortable: true, dataIndex: 'foreign_table', 
-				      editor: new Ext.form.TextField({		      	
-				      	listeners: {
-				      		focus: function(field) {
-				      			if (!field.picker) {
-					      			field.picker = new afStudio.models.relationPicker({
-					      				closable: true,
-	                					closeAction: 'hide',
-					      				listeners: {
-					      					relationpicked : function(relation) {
-					      						field.setValue(relation);
-					      					}
-					      				}
-					      			});
-				      			}
-				      			field.picker.show();
-				      		}
-				      	}
+				      editor: new Ext.form.TextField({
+//				      	listeners: {
+//				      		focus: function(field) {
+//				      			if (!field.picker) {
+//					      			field.picker = new afStudio.models.relationPicker({
+//					      				closable: true,
+//	                					closeAction: 'hide',
+//					      				listeners: {
+//					      					relationpicked : function(relation) {
+//					      						field.setValue(relation);
+//					      					}
+//					      				}
+//					      			});
+//				      			}
+//				      			field.picker.show();
+//				      		}
+//				      	}
 			      	})
 			    },
-			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', editor: new Ext.form.Checkbox({})}
+			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', align:'center',
+			    	renderer : function(v, p, record) {
+					    return new Ext.XTemplate('<input type="checkbox" <tpl if="this.isRequired(required)">checked="checked"</tpl> />',{
+					    	isRequired : function(v) {return v == true}
+					    }).apply(record.data);
+					}
+			    }
 			]
 		});	
 		
@@ -181,8 +191,37 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	//@private
 	,initComponent: function() {
 		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));				
-		afStudio.models.gridFieldsPanel.superclass.initComponent.apply(this, arguments);	
+		afStudio.models.gridFieldsPanel.superclass.initComponent.apply(this, arguments);
+		this._initEvents();
 	}
+	
+	,_initEvents : function() {
+		var _this = this,
+			store = _this.getStore();
+		
+		_this.on({
+			afteredit: function(e) {
+				e.record.commit();
+				var row = e.row + 1;
+				var count = this.store.getCount();
+				if (count == row) {
+					var newId = store.getAt(e.row).get('id') + 1;
+					var record = new store.recordType({
+						'id': newId,
+			    		'name': '',			    
+			    		'required': false,
+			    		'autoincrement': false								
+					});
+					store.add([record]);
+				}
+				var column = e.column;
+				var task = new Ext.util.DelayedTask(function(row,column) {
+				    this.startEditing(row,column);
+				},this,[row,column]);
+				task.delay(100);
+			}			
+		});		
+	}//eo _initEvents
 	
 }); 
 

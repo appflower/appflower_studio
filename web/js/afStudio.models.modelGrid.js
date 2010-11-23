@@ -517,9 +517,16 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 				root: 'rows',
 			    idProperty: 'id'
 			}, fields),
-			url: gridFields.storeUrl
-		});
-		this.store.add([new Ext.data.Record()]);
+			url: gridFields.storeUrl,
+			listeners : {				
+				load : function(store, records) {
+					//adds one line if the result set is empty
+					if (Ext.isEmpty(records)) {
+						store.add([new Ext.data.Record()]);						
+					}
+				}
+			}
+		});		
 		this.columns = columns;
 		
 		afStudio.models.modelGridPanel.superclass.beforeInit.apply(this, arguments);
