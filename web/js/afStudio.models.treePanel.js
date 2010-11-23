@@ -156,7 +156,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		//TreeEditor events
 		_this.treeEditor.on({
 			complete: Ext.util.Functions.createDelegate(_this.onComplete, _this),
-			canceledit: Ext.util.Functions.createDelegate(_this.onCancelEdit, _this)			
+			canceledit: Ext.util.Functions.createDelegate(_this.onCancelEdit, _this),
+			beforecomplete: Ext.util.Functions.createDelegate(_this.onBeforeComplete, _this)
 		});		
 
 		//Model Tree events
@@ -198,6 +199,15 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	,unmaskModelTree : function() {
 		this.body.unmask();
+	}
+	
+	/**
+	 * Validates Model name
+	 * @param {String} modelName
+	 * @return {Boolean} true if name is valid otherwise false
+	 */
+	,isValidModelName : function(modelName) {
+		return /^[^\d]\w*$/im.test(modelName) ? true : false;
 	}
 	
 	/**
@@ -255,6 +265,14 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		_this.treeEditor.triggerEdit(newNode);		
 	}
 	
+	,onBeforeComplete : function(editor, newValue, oldValue) {
+		var _this = this;
+		//validates model
+		if (!_this.isValidModelName(newValue)) {			
+			return false;			
+		}
+	}
+	
 	/**
 	 * <u>complete</u> event listener
 	 * @param {Ext.Editor} editor
@@ -263,13 +281,13 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,onComplete : function(editor, newValue, oldValue) {
 		var _this = this,
-			node = editor.editNode; 
-		
+			node = editor.editNode;		
+			
 		if (node.attributes.NEW_NODE) {
 			node.setText(newValue);
 			_this.addModel(node); 
 		} else {
-			if (newValue != oldValue) {
+			if (newValue != oldValue) {				
 				_this.renameModel(node, newValue, oldValue);
 			}
 		}
@@ -418,7 +436,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	}//eo deleteModel
 	
 	,renameModel: function(node, newValue, oldValue) { 
-		var _this = this;
+		var _this = this;		
 		
 		Ext.Msg.show({
 			title: 'Rename',

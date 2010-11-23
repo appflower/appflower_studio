@@ -38,7 +38,7 @@ class afStudioModelsCommand
 	    	} else {
 				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]) 
 				|| !isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {
-			    	$this->result = array('success'=>false, 'message'=>'Table doesn\'t exists');	
+			    	$this->result = array('success'=>false, 'message'=>'Model doesn\'t exists');	
 			    	return false;	    			
 				}
 	    		
@@ -140,7 +140,12 @@ class afStudioModelsCommand
 					}
 				break;
 				
-				case "add":
+				case "add":					
+					if (!$this->isValidModelName($this->modelName)) {
+						$this->result = array('success'=>false, 'message'=>'Model name can only consist from alphabetical characters and begins from letter or "_"');
+						return false;						
+					}	
+					
 					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;				
 					
 					if ($this->saveSchema()) {			
@@ -170,17 +175,20 @@ class afStudioModelsCommand
 				case "rename":
 					$renamedModelName = $this->request->getParameterHolder()->get('renamedModel');					
 					
+					if (!$this->isValidModelName($renamedModelName)) {
+						$this->result = array('success'=>false, 'message'=>'Model name can only consist from alphabetical characters and begins from letter or "_"');
+						return false;						
+					}	
+									
 					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $renamedModelName;
 					
-					if($this->saveSchema())
-					{			
-						$afConsole=new afStudioConsole();
-						$consoleResult=$afConsole->execute('sf propel:build-model');
-						
+					if ($this->saveSchema()) {			
+						$afConsole = new afStudioConsole();
+						$consoleResult = $afConsole->execute('sf propel:build-model');						
 						$this->result = array('success' => true,'message'=>'Renamed model\'s phpName from <b>'.$this->modelName.'</b> to <b>'.$renamedModelName.'</b>!','console'=>$consoleResult);
+					} else {
+						$this->result = array('success' => false,'message'=>'Can\'t rename model\'s phpName from <b>' + $this->modelName + '</b> to <b>' + $renamedModelName + '</b>!');
 					}
-					else
-					$this->result = array('success' => false,'message'=>'Can\'t rename model\'s phpName from <b>' + $this->modelName + '</b> to <b>' + $renamedModelName + '</b>!');
 				break;
 				
 				default:
@@ -321,6 +329,11 @@ class afStudioModelsCommand
 		} else {
 			return 0;
 		}
+	}	
+	
+	private function isValidModelName($name) 
+	{
+		return preg_match("/^[^\d]\w*$/i", $name);
 	}
 
 }
