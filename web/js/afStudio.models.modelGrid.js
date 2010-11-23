@@ -69,6 +69,8 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			this.changetoMenu = new Ext.menu.Menu({
 				id:g.id + "-hchangeto-menu",
 				items:[{
+					itemId:"cpassword",text:'password'
+				},{
 					itemId:"ccheckbox",text:'Checkbox'
 				},{
 					itemId:"cchoice",text:'Select'
@@ -277,7 +279,13 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				}
 				cm.config[index].editor = editor;
 				break;
-				
+			case 'cpassword':
+				var editor=this.grid.createEditer(new Ext.form.TextField({inputType : 'password'}));
+				cm.config[index].editor = editor;
+				cm.config[index].renderer=function(v){
+					return "XXXX";
+				}
+				break;
 			case 'cnumber':
 				var editor=this.grid.createEditer(new Ext.form.NumberField());
 				cm.config[index].align = "right";

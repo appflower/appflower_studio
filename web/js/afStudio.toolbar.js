@@ -102,6 +102,22 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 										}										
 									]
 								}
+							},'-',
+							{
+								text: 'DB Query',
+								handler: function (b, e) {
+									(new afStudio.DBQuery()).show();
+								}
+							},{
+								text:'Logs',
+								handler:function(b,e){
+									(new afStudio.Logs()).show();
+								}
+							},'-',{
+								text:'Help',
+								handler:function(b,e){
+									(new afStudio.Help()).show();
+								}
 							}
 						]
 					}
@@ -125,8 +141,7 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 					handler: function (b, e) {
 						var dcs = new afStudio.databaseConnectionSettings();
 					}
-				},				
-				
+				},		
 				{
 					xtype: "tbfill"
 				},
