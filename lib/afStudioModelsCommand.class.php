@@ -50,7 +50,7 @@ class afStudioModelsCommand
 		$this->start();
 	}
 	
-	public function loadSchemas()
+	private function loadSchemas()
 	{
 		$this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
 		$finder = sfFinder::type('file')->name('*schema.yml')->prune('doctrine');
@@ -124,16 +124,20 @@ class afStudioModelsCommand
 				case "get":			
 					if(count($this->propelSchemaArray)>0)
 					{
+						$models = array();
 						foreach ($this->propelSchemaArray as $schemaFile=>$array)
 						{
 							foreach ($array['classes'] as $phpName=>$attributes)
 							{
-								$this->result[]=array('text'=>$phpName,'leaf'=>true,'schema'=>$schemaFile, 'iconCls'=>'icon-model');
+								$models[] = array('text'=>$phpName,'leaf'=>true,'schema'=>$schemaFile, 'iconCls'=>'icon-model');
 							}
 						}
+
+						$models = $this->sortModels($models);
+						$this->result = $models;
+					} else {
+						$this->result = array('success' => true);
 					}
-					else
-					$this->result = array('success' => true);
 				break;
 				
 				case "add":
@@ -279,8 +283,25 @@ class afStudioModelsCommand
 		$this->result = json_encode($this->result);
 		return $this->result;
 	}
-	
-	
-	 
+
+	private function sortModels($models)
+	{
+		usort($models, array($this, 'compareModelNames'));
+		return $models;
+	}
+
+	private function compareModelNames($model1, $model2)
+	{
+		$model1Name = strtolower($model1['text']);
+		$model2Name = strtolower($model2['text']);
+		if ($model1Name > $model2Name) {
+			return 1;
+		} else if ($model1Name < $model2Name) {
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+
 }
 ?>
