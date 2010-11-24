@@ -108,3 +108,42 @@ afStudio.Help = Ext.extend(Ext.Window, {
 		this.close();
 	}
 });
+
+
+afStudio.LayoutDesigner=Ext.extend(Ext.Window, { 
+	form: [{
+		xtype:'tabpanel',
+		 activeTab: 0,
+		    items: [{
+		        title: 'Layout Designer',
+		        html: 'A simple tab',
+		        buttons: [
+	  				{text: 'add new widgets', handler: this.cancel, scope: this}
+	  			],
+	  			buttonAlign: 'center'
+		    },{
+		        title: 'Preview',
+		        html: 'Another one'
+		    }]
+
+	}],
+	initComponent: function(){
+		var config = {
+			title: 'Layout Designer', width:720,height:600,
+			closable: true,
+	        draggable: true, plain:true,
+	        modal: true, resizable: false,
+	        bodyBorder: false, border: false,
+	        items:this.form,layout:'fit'
+			
+		};
+				
+		// apply config
+		Ext.apply(this, Ext.apply(this.initialConfig, config));
+		afStudio.Help.superclass.initComponent.apply(this, arguments);	
+
+	},
+	cancel:function(){
+		this.close();
+	}
+});

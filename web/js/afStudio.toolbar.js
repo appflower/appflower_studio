@@ -141,6 +141,11 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 					handler: function (b, e) {
 						var dcs = new afStudio.databaseConnectionSettings();
 					}
+				},{
+					text: 'Layout Designer',
+					handler: function (b, e) {
+						(new afStudio.LayoutDesigner()).show();
+					}
 				},		
 				{
 					xtype: "tbfill"
