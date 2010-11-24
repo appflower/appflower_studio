@@ -5,12 +5,12 @@
  */
 afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	
-	xtype: 'panel', flex: 1, 
-	layout: 'vbox',
-	layoutConfig: {
-		align: 'stretch'
-	},
-	
+	xtype: 'panel', 
+//	flex: 1, 
+//	layout: 'vbox',
+
+	layout: 'accordion',
+
 	/**
 	 * @var {Object} widgetInspectorTree
 	 * Ext.TreePanel component
@@ -46,10 +46,13 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	,_initCmp : function() {
     
 		this.propertiesGrid = new Ext.grid.PropertyGrid({
-	        flex: 1,
-	        title: 'Properties',
-	        frame: true,
-		
+			region: 'south',
+			split: true,
+//	        flex: 1,
+//	        title: 'Properties',
+//	        frame: true,
+			style: 'border-top: 1px solid #99BBE8',
+			height: 150,
 	        propertyNames: {
 	            wtype: 'Widget Type',
 	            maxperpage: 'Maximum per page'
@@ -83,6 +86,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        	}))
 	        },
 	        
+	        layout: 'fit',
+	        
 	        source: {},
 	        viewConfig : {
 	            forceFit: true,
@@ -94,14 +99,13 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		//Create widget inspector tree item
 		var scope = this;
 		this.widgetInspectorTree = new Ext.tree.TreePanel({
+			region: 'center',
             animate:true, autoScroll:true, 
-			flex: 1,
-			frame: true,
-			title: 'Widget Inspector',
+//			flex: 1,
+//			frame: true,
+//			title: 'Widget Inspector',
 			
 			style: 'padding-bottom: 4px;',
-			
-			split: true,
 			
 		    contextMenu: new Ext.menu.Menu({
 		        items: [
@@ -352,9 +356,29 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        }
 	    });
 		
+
+
+
+
+
+	        var item1 = new Ext.Panel({
+                title: 'Code Browser',
+                html: 'Code Browser Panel'
+            });
+
+            var item2 = new Ext.Panel({
+                title: 'Widget Inspector',
+                layout: 'border',
+                items:[
+                this.widgetInspectorTree, this.propertiesGrid
+                ]
+            });
+
+		
 		return {
 //			xtype: 'tabpanel', activeTab: 0,
 			itemId: 'inspector',	
+//			layout:'accordion',
 //			defaults: {
 //				layout: 'fit'
 //			},
@@ -363,8 +387,9 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 //					title: 'Widget Inspector', 
 //					html: 'terte'
 					items: [
-						this.widgetInspectorTree,
-						this.propertiesGrid
+					item2, item1
+//						this.widgetInspectorTree,
+//						this.propertiesGrid
 					]
 //				},
 //				{html: 'trest', title: 'Test'}
