@@ -233,7 +233,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Ext.EventObject} e
 	 */
 	,onpluginDbClick : function(node,  e) {
-		this.editplugin(node);
+
 	}
 	
 	/**

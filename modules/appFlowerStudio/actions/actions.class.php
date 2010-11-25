@@ -108,6 +108,13 @@ class appFlowerStudioActions extends sfActions
 		return $this->renderText($modules_command->end());
 	}
 
+	public function executePlugins()
+	{
+		$modules_command=new afStudioPluginsCommand();
+
+		return $this->renderText($modules_command->end());
+	}
+
 	public function executeConsole(sfWebRequest $request)
 	{
 		$command = trim($request->getParameter("command"));
