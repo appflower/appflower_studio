@@ -6,10 +6,10 @@
 	var ua = navigator.userAgent;
 		
 	if(ua.match('MSIE')) engine = 'msie';
-	else if(ua.match('KHTML')) engine = 'khtml'; 
+	else if(ua.match('KHTML')) engine = 'gecko'; 
 	else if(ua.match('Opera')) engine = 'opera'; 
 	else if(ua.match('Gecko')) engine = 'gecko';
-
+		
 	document.write('<scr'+'ipt type="text/javascript" src="<?php echo $codepress_path; ?>engines/'+engine+'.js?ts=<?php echo time(); ?>"></scr'+'ipt>');
 	</script>
 	
