@@ -518,6 +518,10 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 			    idProperty: 'id'
 			}, fields),
 			url: gridFields.storeUrl,
+            proxy: gridFields.storeProxy,
+            writer: new Ext.data.JsonWriter({encode: false}),
+            autoLoad: true,
+            autoSave: false,
 			listeners : {				
 				load : function(store, records) {
 					//adds one line if the result set is empty

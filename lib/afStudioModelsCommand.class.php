@@ -255,27 +255,6 @@ class afStudioModelsCommand
 					}
 				    $this->result['success']=true;
 				break;
-
-				case "getData":
-					$query = new ModelCriteria(null, $this->modelName);
-					$query->setFormatter(ModelCriteria::FORMAT_ARRAY);
-					$data = $query->find();
-					$data = $data->toArray();
-					$data2 = array();
-					foreach ($data as $key => $row) {
-						$tmp = array();
-						$col = 0;
-						foreach ($row as $key2 => $value) {
-							$tmp["c{$col}"] = $value;
-							$col++;
-						}
-						$data2[] = $tmp;
-					}
-					$this->result['rows'] = $data2;
-					$this->result['results'] = count($data2);
-				    $this->result['success']=true;
-				break;
-					
 				default:
 					$this->result = array('success' => true);
 				break;

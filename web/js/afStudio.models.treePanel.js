@@ -524,7 +524,14 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				var modelGrid = new afStudio.models.modelGridPanel({
 					title:'ModelGrid '+this.getModel(node),
 					_data:data,
-					storeUrl: '/appFlowerStudio/models?xaction=getData&model='+this.getModel(node)+'&schema='+this.getSchema(node)
+                    storeProxy: new Ext.data.HttpProxy({
+                        api: {
+                            read: '/appFlowerStudio/modelsDataRead?model='+this.getModel(node),
+                            create: '/appFlowerStudio/modelsDataCreate?model='+this.getModel(node),
+                            update: '/appFlowerStudio/modelsDataUpdate?model='+this.getModel(node),
+                            destroy: '/appFlowerStudio/modelsDataDestroy?model='+this.getModel(node)
+                        }
+                    })
 				});
 				var editTab = new Ext.TabPanel({
 					activeTab: 0,
@@ -533,7 +540,6 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				afStudio.vp.addToPortal(editTab, true);
 				
 		       afStudio.vp.unmask('center');
-			   modelGrid.store.load();
 		   }
 		});		
 	}
