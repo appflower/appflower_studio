@@ -82,7 +82,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		}); 
 		
 		return {			
-			title: 'plugins',
+			title: 'Plugins',
 			iconCls: 'icon-models',
 			autoScroll: true,
 			url: '/appFlowerStudio/plugins',			

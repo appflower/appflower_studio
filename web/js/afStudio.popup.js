@@ -116,7 +116,52 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		 activeTab: 0,
 		    items: [{
 		        title: 'Layout Designer',
-		        html: 'A simple tab',
+		        layout:'border',
+		        items:[{
+		        	title:'Layouts',
+		        	id:'layouttree',
+		        	region:'west',
+		        	xtype:'treepanel',
+		        	split:true,
+					margins: '2 0 5 5',
+			        width: 250,
+			        minSize: 100,
+			        maxSize: 500,
+			        root: {
+			            nodeType: 'async',
+			            text: 'Layouts',
+			            draggable: false,
+			            id: 'source',
+			            expanded:true,
+			            children:[{
+			            	text:'1 column',leaf:true,columns:1
+			            },{
+			            	text:'2 column',leaf:true,columns:2
+			            },{
+			            	text:'3 column',leaf:true,columns:3
+			            },{
+			            	text:'4 column',leaf:true,columns:4
+			            }]
+			        },
+			        listeners1:{
+			        	click:function(n){
+			        		
+			        	},
+			        	scope:this
+			        }
+		        },{
+		        	id: 'details-panel',
+		            title: 'Details',
+		            region: 'center',
+		            bodyStyle: 'padding-bottom:15px;background:#eee;',
+		    		autoScroll: true,
+		    		layout:'fit',
+		    		items:[{
+		    			html: '<p class="details-info">When you select a layout from the tree, additional details will display here.</p>',
+		    			border:false
+		    		}]
+
+		        }],
 		        buttons: [
 	  				{text: 'add new widgets', handler: this.cancel, scope: this}
 	  			],
@@ -127,6 +172,42 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		    }]
 
 	}],
+	addLayout:function(detailp,columns){
+		var portItems = [];
+		var columnwidth = 1/columns;
+		for(var i =0;i<columns;i++){
+			portItems.push({	
+				title:'xxxxx',
+				columnWidth: columnwidth,
+				style: "padding:10px 0 10px 10px;",
+				items: [{
+					title:'widget1'+i,
+					height:300
+				},{
+					title:'widget2'+i,
+					height:300
+				},{
+					title:'widget3'+i,
+					height:300
+				}]
+			});
+		}
+		detailp.add(
+			new Ext.ux.Portal ({
+				items: portItems,
+				style: "padding-right:5px;"
+			})
+		);
+		detailp.doLayout();
+	},
+	onTreeClick:function(n){
+		if(n.leaf){
+			var columns = n.attributes.columns;
+			var detailP = Ext.getCmp('details-panel');
+			detailP.removeAll(true);
+			this.addLayout(detailP,columns)
+		}
+	},
 	initComponent: function(){
 		var config = {
 			title: 'Layout Designer', width:720,height:600,
@@ -134,7 +215,13 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 	        draggable: true, plain:true,
 	        modal: true, resizable: false,
 	        bodyBorder: false, border: false,
-	        items:this.form,layout:'fit'
+	        items:this.form,layout:'fit',
+	        listeners:{
+	        	afterrender:function(){
+	        		var treep = Ext.getCmp('layouttree');
+	        		treep.on('click',this.onTreeClick,this);
+	        	}
+	        }
 			
 		};
 				
