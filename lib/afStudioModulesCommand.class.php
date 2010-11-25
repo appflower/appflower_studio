@@ -26,34 +26,52 @@ class afStudioModulesCommand
 			switch ($cmd)
 			{
 				case "get":
-					$datas = array();
-					$appFolders = $this->getApplicationFolders($this->realRoot."/apps/");
-
-					foreach($appFolders as $appFolder)
+					$data = array();
+					$apps = afStudioUtil::getDirectories($this->realRoot."/apps/",true);
+										
+					$i=0;
+					
+					foreach($apps as $app)
 					{
-						$appname = $appFolder["text"];
-						$moduleFolders = $this->getApplicationFolders($this->realRoot."/apps/".$appname."/modules/");
-
-						$mod_datas=array();
-						foreach($moduleFolders as $moduleFolder)
+						$data[$i]['text']=$app;
+																		
+						$modules = afStudioUtil::getDirectories($this->realRoot."/apps/".$app."/modules/",true);
+						
+						$j=0;
+						
+						foreach($modules as $module)
 						{
-							$modulename = $moduleFolder["text"];
-							$configfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/config/", ".xml");
+							$data[$i]['children'][$j]['text']=$module;
+							
+							$xmlNames = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
+							$xmlPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", false, "xml");
+							$k=0;
 
-							if (count($configfiles) > 0) {
-								$moduleFolder["children"] = $configfiles;
-								array_push($mod_datas,$moduleFolder);
+							if (count($xmlNames) > 0) 
+							{	
+								$data[$i]['children'][$j]['leaf']=false;
+								
+								foreach ($xmlNames as $xk=>$xmlName)
+								{
+									$data[$i]['children'][$j]['children'][$k]['text']=$xmlName;
+									$data[$i]['children'][$j]['children'][$k]['path']=$xmlPaths[$xk];
+									$data[$i]['children'][$j]['children'][$k]['leaf']=true;
+									
+									$k++;
+								}
 							}
+							else {
+								$data[$i]['children'][$j]['leaf']=true;
+							}
+							
+							$j++;
 						}
-
-						if (count($mod_datas) > 0 ) {
-							$appFolder["children"] = $mod_datas;
-							array_push($datas,$appFolder);
-						}
+						
+						$i++;
 					}
-					if(count($datas)>0)
+					if(count($data)>0)
 					{
-						$this->result = $datas;
+						$this->result = $data;
 					}
 					else
 					$this->result = array('success' => true);
@@ -155,43 +173,6 @@ class afStudioModulesCommand
 	{	
 		$this->result=json_encode($this->result);
 		return $this->result;
-	}
-	
-	private function getApplicationFolders ($dir)
-	{
-		$folders = array();
-		
-		if(is_dir($dir))
-		{
-			$handler = opendir($dir);
-			$i=0;
-			while(($f = readdir($handler))!==false)
-			{
-				if($f !="." && $f !=".." && $f!=".svn" && is_dir($dir.$f))
-				{
-					$folders[$i]["text"] = $f;
-					$i++;
-				}
-			}
-		}
-		return $folders;
-	}
-	
-	private function getApplicationFiles($dir, $pro_name)
-	{
-		$files = array();
-		$handler = opendir($dir);
-		$i=0;
-		while(($f = readdir($handler))!==false)
-		{
-			if(!is_dir($dir.$f) && strpos($f,$pro_name)>0)
-			{
-				$files[$i]["text"] = $f;
-				$files[$i]["leaf"] = true;
-				$i++;
-			}
-		}
-		return $files;
 	}
 }
 ?>

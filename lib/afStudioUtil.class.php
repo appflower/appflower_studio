@@ -120,4 +120,57 @@ class afStudioUtil
 		
 		return $object;
 	}
+	
+	/**
+	 * get the first directories under a path
+	 * @author radu
+	 */
+	public static function getDirectories($path, $justNames=false)
+	{
+		$directories = sfFinder::type('directory')->maxdepth(0)->ignore_version_control()->in($path);
+		
+		if(!$justNames)
+		{
+			return $directories;
+		}
+		else {
+			foreach ($directories as $k=>$directory)
+			{
+				$directories[$k]=basename($directory);
+			}
+			return $directories;
+		}
+	}
+	
+	/**
+	 * get the first files under a path
+	 * @author radu
+	 */
+	public static function getFiles($path, $justNames = false, $extension = false)
+	{
+		$files = sfFinder::type('file')->maxdepth(0)->ignore_version_control()->in($path);
+		
+		if($extension)
+		{
+			foreach ($files as $k=>$file)
+			{
+				if(strtolower(substr(strrchr($file,"."),1))!=$extension)
+				{
+					unset($files[$k]);
+				}
+			}
+		}
+		
+		if(!$justNames)
+		{
+			return $files;
+		}
+		else {
+			foreach ($files as $k=>$file)
+			{
+				$files[$k]=basename($file);
+			}
+			return $files;
+		}
+	}
 }
