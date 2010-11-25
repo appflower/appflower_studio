@@ -124,7 +124,7 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		        	xtype:'treepanel',
 		        	split:true,
 					margins: '2 0 5 5',
-			        width: 250,
+			        width: 150,
 			        minSize: 100,
 			        maxSize: 500,
 			        root: {
@@ -142,12 +142,6 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 			            },{
 			            	text:'4 column',leaf:true,columns:4
 			            }]
-			        },
-			        listeners1:{
-			        	click:function(n){
-			        		
-			        	},
-			        	scope:this
 			        }
 		        },{
 		        	id: 'details-panel',
@@ -155,6 +149,31 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		            region: 'center',
 		            bodyStyle: 'padding-bottom:15px;background:#eee;',
 		    		autoScroll: true,
+		    		tools:[{
+		    			id:'gear',
+		    	        handler: function(){
+		    	        	var detailp=Ext.getCmp('details-panel');
+		    	        	var columns = detailp.columns;
+		    	        	detailp.resizer=[];
+		    	        	for(var i=1;i<columns;i++){
+			    	    		var resizer = new Ext.Resizable('portColumn'+(i-1), {
+			    	    			 width: 200,
+			    	                 minWidth:100,
+			    	                 minHeight:50
+			    	    		})
+			    	    		detailp.resizer.push(resizer);
+		    	        	}
+		    	        }
+		    		},{
+		    			id:'refresh',
+		    	        handler: function(){
+		    	        	var detailp=Ext.getCmp('details-panel');
+		    	        	var resizers = detailp.resizer;
+		    	        	for(var i=0;i<resizers.length;i++){
+		    	        		resizers[i].destroy();
+		    	        	}
+		    	        }
+		    		}],
 		    		layout:'fit',
 		    		items:[{
 		    			html: '<p class="details-info">When you select a layout from the tree, additional details will display here.</p>',
@@ -177,7 +196,7 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		var columnwidth = 1/columns;
 		for(var i =0;i<columns;i++){
 			portItems.push({	
-				title:'xxxxx',
+				id:'portColumn'+i,
 				columnWidth: columnwidth,
 				style: "padding:10px 0 10px 10px;",
 				items: [{
@@ -192,6 +211,7 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 				}]
 			});
 		}
+		detailp.columns=columns;
 		detailp.add(
 			new Ext.ux.Portal ({
 				items: portItems,
@@ -213,7 +233,7 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 			title: 'Layout Designer', width:720,height:600,
 			closable: true,
 	        draggable: true, plain:true,
-	        modal: true, resizable: false,
+	        modal: true, 
 	        bodyBorder: false, border: false,
 	        items:this.form,layout:'fit',
 	        listeners:{
