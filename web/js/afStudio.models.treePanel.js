@@ -524,8 +524,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				var modelGrid = new afStudio.models.modelGridPanel({
 					title:'ModelGrid '+this.getModel(node),
 					_data:data,
-					storeUrl: '/appFlowerStudio/models?xaction=getData&model='+this.getModel(node)+'&schema='+this.getSchema(node),
-					storeWriter: new Ext.data.JsonWriter({encode: false})
+					storeUrl: '/appFlowerStudio/models?xaction=getData&model='+this.getModel(node)+'&schema='+this.getSchema(node)
 				});
 				var editTab = new Ext.TabPanel({
 					activeTab: 0,
