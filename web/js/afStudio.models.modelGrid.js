@@ -539,7 +539,9 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		            text: 'Save',
 		            iconCls: 'icon-save',
 		            handler:function(btn, ev){
-		            }
+		            	this.getStore().save();
+		            },
+		            scope:this
 		        }, '-',{
 		            text: 'Export to Fixtures',
 		            iconCls: 'icon-view-tile',
