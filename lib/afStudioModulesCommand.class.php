@@ -34,20 +34,22 @@ class afStudioModulesCommand
 						$appname = $appFolder["text"];
 						$moduleFolders = $this->getApplicationFolders($this->realRoot."/apps/".$appname."/modules/");
 
-						$k=0;
 						$mod_datas=array();
 						foreach($moduleFolders as $moduleFolder)
 						{
 							$modulename = $moduleFolder["text"];
 							$configfiles = $this->getApplicationFiles($this->realRoot."/apps/".$appname."/modules/".$modulename."/config/", ".xml");
-							$moduleFolder["children"] = $configfiles;
-							$k++;
-							array_push($mod_datas,$moduleFolder);
+
+							if (count($configfiles) > 0) {
+								$moduleFolder["children"] = $configfiles;
+								array_push($mod_datas,$moduleFolder);
+							}
 						}
 
-						$appFolder["children"] = $mod_datas;
-
-						array_push($datas,$appFolder);
+						if (count($mod_datas) > 0 ) {
+							$appFolder["children"] = $mod_datas;
+							array_push($datas,$appFolder);
+						}
 					}
 					if(count($datas)>0)
 					{
