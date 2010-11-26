@@ -59,7 +59,19 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			complete: function(editor,newValue,oldValue)
 			{
 				if(newValue!=oldValue)
-				editor.editNode.getOwnerTree().renameModel(editor.editNode,newValue,oldValue);
+				{
+					switch (editor.editNode.attributes.type) {
+						case "app":
+		            		editor.editNode.getOwnerTree().renameApp(editor.editNode,newValue,oldValue);
+		            		break;
+		            	case "module":
+		            		editor.editNode.getOwnerTree().renameModule(editor.editNode,newValue,oldValue);
+		            		break;
+		            	case "xml":
+		            		editor.editNode.getOwnerTree().renameXml(editor.editNode,newValue,oldValue);
+		            		break;	
+		            }
+				}
 			}
 		});
 		
@@ -67,9 +79,23 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.on({
 			contextmenu: function(node, e) {
 	            node.select();
-	            var c = node.getOwnerTree().contextMenu;
-	            c.contextNode = node;
-	            c.showAt(e.getXY());
+	            switch (node.attributes.type) {
+	            	case "app":
+	            		var c = node.getOwnerTree().contextMenuApp;
+	            		break;
+	            	case "module":
+	            		var c = node.getOwnerTree().contextMenuModule;
+	            		break;
+	            	case "xml":
+	            		var c = node.getOwnerTree().contextMenuXml;
+	            		break;	
+	            }
+	            
+	            if(c)
+	            {
+	            	c.contextNode = node;
+	            	c.showAt(e.getXY());
+	            }
 	        }
 		});
 		
@@ -88,58 +114,132 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 
 	} // eo function onRender
-	
-	,contextMenu: new Ext.menu.Menu({
+		
+	,contextMenuApp: new Ext.menu.Menu({
 	        items: [
 	        {
-	       		id: 'delete-module',
-	            text: 'Delete module',
-	            iconCls: 'icon-models-delete'
-	        },{
-	            id: 'edit-module',
-	            text: 'Edit module',
-	            iconCls: 'icon-models-edit'
-			}],
+	       		id: 'add-module',
+	            text: 'Add module',
+	            iconCls: 'icon-modules-add'
+	        }],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
-	                    case 'delete-module':
+	                    case 'add-module':
 	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().deleteModel(node);
-	                        break;
-	                    case 'edit-module':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().editModel(node);
+	                    	node.getOwnerTree().addModule(node);
 	                        break;
 	                }
 	            }
 	        }
 	})
-	
-    ,getModel:function(node) {
-		var model;
+	,contextMenuModule: new Ext.menu.Menu({
+	        items: [
+	        {
+	       		id: 'delete-module',
+	            text: 'Delete module',
+	            iconCls: 'icon-models-delete'
+	        }],
+	        listeners: {
+	            itemclick: function(item) {
+	                switch (item.id) {
+	                    case 'delete-module':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().deleteModule(node);
+	                        break;
+	                }
+	            }
+	        }
+	})
+	,contextMenuXml: new Ext.menu.Menu({
+	        items: [
+	        {
+	       		id: 'delete-xml',
+	            text: 'Delete xml configuration',
+	            iconCls: 'icon-models-delete'
+	        },{
+	            id: 'edit-xml',
+	            text: 'Edit xml configuration',
+	            iconCls: 'icon-models-edit'
+			}],
+	        listeners: {
+	            itemclick: function(item) {
+	                switch (item.id) {
+	                    case 'delete-xml':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().deleteXml(node);
+	                        break;
+	                    case 'edit-xml':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().editXml(node);
+	                        break;
+	                }
+	            }
+	        }
+	})
+    ,getModule:function(node) {
+		var module;
 
-		// get path for non-root node
-		if(node !== this.root) {
-			model = node.text;
-		}
-		// path for root node is it's path attribute
-		else {
-			model = node.attributes.path || '';
-		}
+		switch (node.attributes.type) {
+			case "app":
+        		module = false;
+        		break;
+        	case "module":
+        		module = node.text;
+        		break;
+        	case "xml":
+        		module = node.attributes.module;
+        		break;	
+        }
 
-		return model;
+		return module;
 	}
 	
-	,getSchema:function(node) {
-		return node.attributes.schema || '';
+	,getPath:function(node) {
+		var path;
+
+		switch (node.attributes.type) {
+			case "app":
+        		path = false;
+        		break;
+        	case "module":
+        		path = false;
+        		break;
+        	case "xml":
+        		path = node.attributes.path;
+        		break;	
+        }
+
+		return path;
 	}
 	
-	,deleteModel:function(node)
+	,getType:function(node) {
+		return node.attributes.type || '';
+	}
+	
+	,getApp:function(node) {
+		var app;
+
+		switch (node.attributes.type) {
+			case "app":
+        		app = false;
+        		break;
+        	case "module":
+        		app = node.attributes.app;
+        		break;
+        	case "xml":
+        		module = node.attributes.app;
+        		break;	
+        }
+
+		return app;
+	}
+	
+	,deleteModule:function(node)
 	{
 		Ext.Msg.show({
 			 title:'Delete'
-			,msg:this.reallyWantText + ' delete <b>' + this.getModel(node) + '</b> model?'
+			,msg:this.reallyWantText + ' delete <b>' + this.getModule(node) + '</b> module?'
 			,icon:Ext.Msg.WARNING
 			,buttons:Ext.Msg.YESNO
 			,width:400
@@ -158,9 +258,9 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					//,callback:this.cmdCallback
 					,node:node
 					,params:{
-						 cmd:'delete'
-						,model:this.getModel(node)
-						,schema:this.getSchema(node)
+						 cmd:'deleteModule'
+						,module:this.getModule(node)
+						,app:this.getApp(node)
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
@@ -169,7 +269,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      {
 				      	node.remove();
 				      	
-				      	afStudio.vp.layout.west.items[0].root.reload();
+				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
 				      	if(response.console)
 				      	{
@@ -194,11 +294,11 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}
 	
-	,renameModel:function(node,newValue,oldValue)
+	,renameModule:function(node,newValue,oldValue)
 	{
 		Ext.Msg.show({
 			 title:'Rename'
-			,msg:this.reallyWantText + ' rename model\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
+			,msg:this.reallyWantText + ' rename module\'s name from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
 			,icon:Ext.Msg.WARNING
 			,buttons:Ext.Msg.YESNO
 			,width:400
@@ -218,17 +318,17 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					//,callback:this.cmdCallback
 					,node:node
 					,params:{
-						 cmd:'rename'
-						,model:oldValue
-						,renamedModel:newValue
-						,schema:this.getSchema(node)
+						 cmd:'renameModule'
+						,module:oldValue
+						,renamedModule:newValue
+						,app:this.getApp(node)
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
 				      
 				      if(response.success)
 				      {
-				      	afStudio.vp.layout.west.items[0].root.reload();
+				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
 				      	if(response.console)
 				      	{
@@ -253,40 +353,22 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 	}
-	
-	,editModel:function(node)
-	{
-		//afStudio.vp.layout.center.panel.body.mask('Loading, please Wait...', 'x-mask-loading');
-		Ext.Ajax.request({
-		   scope:this,
-		   url: '/appFlowerStudio/models',
-		   params: { 
-			   xaction:'read',
-			   model: this.getModel(node),
-			   schema: this.getSchema(node)
-		   },
-		   success: function(result,request){
-			   var data = Ext.decode(result.responseText);
-			   	var fieldsGrid=new afStudio.models.gridFieldsPanel({
-			   		'title':'Editing '+this.getModel(node),
-			   		_data:data,
-			   		model: this.getModel(node),
-					schema: this.getSchema(node)
-			   	});		
-			   	
-				var modelGrid = new afStudio.models.modelGridPanel({
-					title:'ModelGrid '+this.getModel(node),
-					_data:data
-				});
-				var editTab = new Ext.TabPanel({
-					activeTab: 0,
-					items:[modelGrid,fieldsGrid]
-				});
-				afStudio.vp.addToPortal(editTab, true);
-		   }
-		});
 		
-		//var fieldsGrid=new afStudio.models.gridFieldsPanel({'title':'Editing '+this.getModel(node),'renderTo':afStudio.vp.layout.center.panel.items.items[0].getEl(),model:this.getModel(node),schema:this.getSchema(node)});		
+	,editXml:function(node)
+	{
+		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});				
+		mask.show();
+		
+		afStudio.vp.addToPortal({
+							title: 'Widget Designer',
+							collapsible: false,
+							draggable: false,
+							items: [{
+								xtype: 'afStudio.widgetDesigner',
+								path: this.getPath(node),
+								mask: mask
+							}]
+						}, true);
 	}
 }); 
 

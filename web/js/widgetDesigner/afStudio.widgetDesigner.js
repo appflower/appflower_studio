@@ -9,10 +9,15 @@ N = afStudio.widgetDesigner;
  */
 N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {	
 	/**
+	* path to xml configuration file
+	*/
+	path: false
+	,mask: false
+	/**
 	 * ExtJS template method
 	 * @private
 	 */
-	initComponent : function() {
+	,initComponent : function() {
 		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
 		afStudio.widgetDesigner.DesignerTabPanel.superclass.initComponent.apply(this, arguments);
 		this._initEvents();
@@ -70,16 +75,19 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		codeEditorTab.on({
 			beforerender : function(cmp) {
-				path = 'root/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/config/test.xml';
-				
 				cmp.add(new Ext.ux.CodePress({title:'test',
 															closable:true,
-															path:path,
-															tabTip:path,
-															file:path,
+															path:_this.path,
+															tabTip:_this.path,
+															file:_this.path,
 															/*tabPanel:tabPanel*/}));
 			}
 		});	
+		
+		if(this.mask)
+		{
+			this.mask.hide.defer(1000,this.mask);
+		}
 				
 	}// eo _initEvents
 	

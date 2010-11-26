@@ -34,6 +34,7 @@ class afStudioModulesCommand
 					foreach($apps as $app)
 					{
 						$data[$i]['text']=$app;
+						$data[$i]['type']='app';
 																		
 						$modules = afStudioUtil::getDirectories($this->realRoot."/apps/".$app."/modules/",true);
 						
@@ -46,6 +47,9 @@ class afStudioModulesCommand
 							$xmlNames = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
 							$xmlPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", false, "xml");
 							$k=0;
+							
+							$data[$i]['children'][$j]['type']='module';
+							$data[$i]['children'][$j]['app']=$app;
 
 							if (count($xmlNames) > 0) 
 							{	
@@ -53,6 +57,9 @@ class afStudioModulesCommand
 								
 								foreach ($xmlNames as $xk=>$xmlName)
 								{
+									$data[$i]['children'][$j]['children'][$k]['app']=$app;
+									$data[$i]['children'][$j]['children'][$k]['module']=$module;
+									$data[$i]['children'][$j]['children'][$k]['type']='xml';
 									$data[$i]['children'][$j]['children'][$k]['text']=$xmlName;
 									$data[$i]['children'][$j]['children'][$k]['path']=$xmlPaths[$xk];
 									$data[$i]['children'][$j]['children'][$k]['leaf']=true;
@@ -62,6 +69,7 @@ class afStudioModulesCommand
 							}
 							else {
 								$data[$i]['children'][$j]['leaf']=true;
+								$data[$i]['children'][$j]['iconCls']='icon-folder';
 							}
 							
 							$j++;

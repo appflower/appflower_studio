@@ -42,8 +42,6 @@ class appFlowerStudioActions extends sfActions
   		{
   			if($file&&$code)
   			{
-  				$file=str_replace('root',$this->realRoot,$file);
-  				
   				if(is_writable($file))
   				{
   					if(@file_put_contents($file,$code))
@@ -66,8 +64,6 @@ class appFlowerStudioActions extends sfActions
 		
 			if($file)
 			{
-				$file=str_replace('root',$this->realRoot,$file);
-				
 				$file_content=@file_get_contents($file);
 				
 				$data = array('response'=>$file_content);
