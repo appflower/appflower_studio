@@ -1,6 +1,6 @@
 Ext.ns('afStudio.models');
 
-afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {	
+afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {	
 	
 	saveModel : function(b, e) {		
 	}
@@ -121,30 +121,13 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 			    
 			    {header: "Relation", width: 150, sortable: true, dataIndex: 'foreign_table', 
 				      editor: new afStudio.models.RelationCombo({
-				      	relationUrl: '/appFlowerStudio/models'
-				      }) 
-//				      new Ext.form.TextField({
-//				      	listeners: {
-//				      		focus: function(field) {
-//				      			if (!field.picker) {
-//					      			field.picker = new afStudio.models.relationPicker({
-//					      				closable: true,
-//	                					closeAction: 'hide',
-//					      				listeners: {
-//					      					relationpicked : function(relation) {
-//					      						field.setValue(relation);
-//					      					}
-//					      				}
-//					      			});
-//				      			}
-//				      			field.picker.show();
-//				      		}
-//				      	}
-//			      	})
+				      	relationUrl: '/appFlowerStudio/models',
+				      	fieldsGrid: _this
+				      })
 			    },
 			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', align:'center', 
 			    	editor: new Ext.form.Checkbox({}),
-					renderer : function(v, p, record){
+					renderer : function(v, p, record) {
 					    p.css += ' x-grid3-check-col-td'; 
 					    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
 					}					
@@ -198,7 +181,7 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	//@private
 	,initComponent: function() {
 		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));				
-		afStudio.models.gridFieldsPanel.superclass.initComponent.apply(this, arguments);
+		afStudio.models.FieldsGrid.superclass.initComponent.apply(this, arguments);
 		this._initEvents();
 	}
 	
@@ -227,10 +210,11 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 //				},this,[row,column]);
 //				task.delay(100);
 //			}			
-//		});		
+//		});
+
 	}//eo _initEvents
 	
 }); 
 
 //register xtype
-Ext.reg('afStudio.models.gridFieldsPanel', afStudio.models.gridFieldsPanel);
+Ext.reg('afStudio.models.fieldsGrid', afStudio.models.FieldsGrid);

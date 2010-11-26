@@ -2,12 +2,15 @@ Ext.ns('afStudio.models');
 
 /**
  * Relation Picker 
- * @class afStudio.models.relationPicker
+ * @class afStudio.models.RelationPicker
  * @extends Ext.Window
  * @author Nikolai
  */
-afStudio.models.relationPicker = Ext.extend(Ext.Window, {	
+afStudio.models.RelationPicker = Ext.extend(Ext.Window, {	
 	
+	/**
+	 * Closes Picker
+	 */
 	closePicker : function() {
 		if (this.closeAction == 'hide') {
 			this.hide();
@@ -22,7 +25,7 @@ afStudio.models.relationPicker = Ext.extend(Ext.Window, {
 	 */
 	,initComponent: function() {
 		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
-		afStudio.models.relationPicker.superclass.initComponent.apply(this, arguments);
+		afStudio.models.RelationPicker.superclass.initComponent.apply(this, arguments);
 		this._initEvents();		
 	}
 
@@ -44,23 +47,22 @@ afStudio.models.relationPicker = Ext.extend(Ext.Window, {
 			plain: true,
 			layout: 'border',
 			items: [
-				{
-					region: 'west',
-					layout: 'fit',
-					width: 220,
-					items: [
-						new afStudio.models.treePanel({id:'models-picker', autoScroll:true})
-					]
-				},{	
-					region: 'center',					
-					items: [{ border:false, html: "<h1>Here will be model's columns</h1>" }]
-				
+			{
+				region: 'west',
+				layout: 'fit',
+				width: 220,
+				items: [
+					new afStudio.models.treePanel({id:'models-picker', autoScroll:true})
+				]
+			},{	
+				region: 'center',
+				items: [{ border:false, html: "<h1>Here will be model's columns</h1>" }]				
 			}],
 			buttons: [{
-				text: 'OK',
+				text: 'ok',
 				handler: function() {
-					_this.fireEvent('relationpicked', 'testModel:testField');
 					_this.closePicker();
+					_this.fireEvent('relationpicked', undefined);					
 				}
 			}]
 		}		

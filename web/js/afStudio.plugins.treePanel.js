@@ -496,7 +496,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			   } catch(e) {
 				   var data = {rows:[], totalCount:0}
 			   }
-			   	var fieldsGrid=new afStudio.plugins.gridFieldsPanel({
+			   	var fieldsGrid=new afStudio.plugins.FieldsGrid({
 			   		'title':'Editing '+this.getplugin(node),
 			   		_data:data,
 			   		plugin: this.getplugin(node),
