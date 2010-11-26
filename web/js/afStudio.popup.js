@@ -150,8 +150,20 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		            bodyStyle: 'padding-bottom:15px;background:#eee;',
 		    		autoScroll: true,
 		    		resizerHandler:function(resizer,width,height,e){
+		    			var id = resizer.el.id;
+		    			var index = id.substr(10,1);
+		    			index = parseInt(index);
+		    			index++;
+		    			//var el = Ext.fly(resizer.el);
+		    			//var w = el.getWidth();
+		    			var w = resizer._width;
+		    			w = width -w;
 		    			
-		    			alert(this.getWidth());
+		    			Ext.getCmp(id).doLayout();
+		    			var nextcolumn = Ext.getCmp('portColumn'+index);
+		    			var ww  = nextcolumn.getWidth();
+		    			nextcolumn.setWidth(ww-w);
+		    			nextcolumn.doLayout();
 		    		},
 		    		tools:[{
 		    			id:'gear',
@@ -165,6 +177,10 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 			    	                 minWidth:100,
 			    	                 minHeight:50,
 			    	                 listeners:{
+			    	                	 beforeresize :function(resizer,e){
+			    	                		 var el = Ext.fly(resizer.el);
+			    	                		 resizer._width = Ext.fly(el).getWidth();
+			    	                	 },
 			    	                	 resize:function(resizer,width,height,e){
 			    	                		 detailp.resizerHandler(resizer,width,height,e);
 			    	                	 }
