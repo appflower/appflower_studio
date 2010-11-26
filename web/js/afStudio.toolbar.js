@@ -54,7 +54,7 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 								}
 							},
 							{
-								text: 'New button',
+								text: 'Project',
 								menu: {
 									items: [
 										{
@@ -102,7 +102,20 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 										}										
 									]
 								}
-							},'-',
+							},
+							{
+								text: 'Settings',
+								handler: function(){
+									(new afStudio.Settings()).show();
+								}
+							}, 
+							{
+								text: 'Template Selector',
+								handler: function(){
+									(new afStudio.TemplateSelector()).show();
+								}
+							}, 							
+							'-',
 							{
 								text: 'DB Query',
 								handler: function (b, e) {
@@ -137,11 +150,6 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 				},
 				
 				{
-					text: 'Database Connection Settings',
-					handler: function (b, e) {
-						var dcs = new afStudio.databaseConnectionSettings();
-					}
-				},{
 					text: 'Layout Designer',
 					handler: function (b, e) {
 						(new afStudio.LayoutDesigner()).show();

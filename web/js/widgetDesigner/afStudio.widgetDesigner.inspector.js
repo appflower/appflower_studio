@@ -6,11 +6,9 @@
 afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	
 	xtype: 'panel', 
-//	flex: 1, 
-//	layout: 'vbox',
 
 	layout: 'accordion',
-
+	style: 'border-top: 1px solid #99BBE8',
 	/**
 	 * @var {Object} widgetInspectorTree
 	 * Ext.TreePanel component
@@ -34,7 +32,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	 * @private
 	 */
 	initComponent : function() {
-		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));		
+		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
 		afStudio.widgetDesigner.inspector.superclass.initComponent.apply(this, arguments);		
 	}	
 	
@@ -48,10 +46,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		this.propertiesGrid = new Ext.grid.PropertyGrid({
 			region: 'south',
 			split: true,
-//	        flex: 1,
-//	        title: 'Properties',
-//	        frame: true,
-			style: 'border-top: 1px solid #99BBE8',
+	        frame: true,
 			height: 150,
 	        propertyNames: {
 	            wtype: 'Widget Type',
@@ -101,11 +96,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		this.widgetInspectorTree = new Ext.tree.TreePanel({
 			region: 'center',
             animate:true, autoScroll:true, 
-//			flex: 1,
-//			frame: true,
-//			title: 'Widget Inspector',
-			
-			style: 'padding-bottom: 4px;',
+			frame: true,
 			
 		    contextMenu: new Ext.menu.Menu({
 		        items: [
@@ -356,44 +347,25 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        }
 	    });
 		
+        var item1 = new Ext.Panel({
+            title: 'Code Browser',
+            html: 'Code Browser Panel'
+        });
 
-
-
-
-
-	        var item1 = new Ext.Panel({
-                title: 'Code Browser',
-                html: 'Code Browser Panel'
-            });
-
-            var item2 = new Ext.Panel({
-                title: 'Widget Inspector',
-                layout: 'border',
-                items:[
-                this.widgetInspectorTree, this.propertiesGrid
-                ]
-            });
+        var item2 = new Ext.Panel({
+            title: 'Widget Inspector',
+            layout: 'border',
+            items:[
+            	this.widgetInspectorTree, this.propertiesGrid
+            ]
+        });
 
 		
 		return {
-//			xtype: 'tabpanel', activeTab: 0,
 			itemId: 'inspector',	
-//			layout:'accordion',
-//			defaults: {
-//				layout: 'fit'
-//			},
-//			items: [
-//				{
-//					title: 'Widget Inspector', 
-//					html: 'terte'
-					items: [
-					item2, item1
-//						this.widgetInspectorTree,
-//						this.propertiesGrid
-					]
-//				},
-//				{html: 'trest', title: 'Test'}
-//			]
+			items: [
+				item2, item1
+			]
 		}
 	}
 });
