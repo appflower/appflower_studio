@@ -451,7 +451,8 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 						var row = e.row+1;
 						var count = this.store.getCount();
 						if(count == row){
-							store.add([new  Ext.data.Record()]);
+							var rec = store.recordType;
+							store.add([new rec()]);
 						}
 						var column = e.column;
 						if(this.getColumnModel().getColumnCount(true)==(column+1) &&  column<this.maxColumns){
