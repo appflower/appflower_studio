@@ -447,7 +447,7 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		        view:new afStudio.models.modelGridView(),
 		        listeners:{
 					afteredit:function(e){
-						e.record.commit();
+						//e.record.commit();
 						var row = e.row+1;
 						var count = this.store.getCount();
 						if(count == row){
