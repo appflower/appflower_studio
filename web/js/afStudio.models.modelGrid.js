@@ -485,7 +485,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
 	beforeInit:function(){
 		var gridFields=this;
-		var fields = [];
+		var fields = ['id'];
 		var data = gridFields._data.rows;
 		if(data.length>0){
 			var columns = [new Ext.grid.RowNumberer()];
@@ -526,7 +526,8 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 				load : function(store, records) {
 					//adds one line if the result set is empty
 					if (Ext.isEmpty(records)) {
-						store.add([new Ext.data.Record()]);						
+						 var rec = store.recordType;
+						store.add([new rec()]);						
 					}
 				}
 			}
@@ -540,6 +541,25 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		        height: 300,
 		        plugins: [Ext.ux.grid.DataDrop],
 		        tbar: [{ 
+		            text: 'Add',
+		            iconCls: 'icon-add',
+		            handler:function(btn, ev){
+		            	 var rec = this.getStore().recordType;
+		            	this.getStore().add([new rec()]);
+		            },
+		            scope:this
+		        },'-',{ 
+		            text: 'Delete',
+		            iconCls: 'icon-delete',
+		            handler:function(btn, ev){
+		            	var cell = this.getSelectionModel().getSelectedCell();			
+		        	    if (cell) {
+		        	    	var r = this.store.getAt(cell[0]);
+		        	    	this.store.remove(r);	        
+		        	    }	 
+		            },
+		            scope:this
+		        },'-',{ 
 		            text: 'Save',
 		            iconCls: 'icon-save',
 		            handler:function(btn, ev){
