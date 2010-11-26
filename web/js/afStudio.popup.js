@@ -154,11 +154,8 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		    			var index = id.substr(10,1);
 		    			index = parseInt(index);
 		    			index++;
-		    			//var el = Ext.fly(resizer.el);
-		    			//var w = el.getWidth();
 		    			var w = resizer._width;
 		    			w = width -w;
-		    			
 		    			Ext.getCmp(id).doLayout();
 		    			var nextcolumn = Ext.getCmp('portColumn'+index);
 		    			var ww  = nextcolumn.getWidth();
@@ -256,10 +253,10 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 	},
 	initComponent: function(){
 		var config = {
-			title: 'Layout Designer', width:720,height:600,
+			title: 'Layout Designer', width:820,height:600,
 			closable: true,
 	        draggable: true, plain:true,
-	        modal: true, maximizable :true,
+	        modal: true, resizable: false,
 	        bodyBorder: false, border: false,
 	        items:this.form,layout:'fit',
 	        listeners:{
