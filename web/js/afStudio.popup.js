@@ -256,7 +256,7 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 			title: 'Layout Designer', width:820,height:600,
 			closable: true,
 	        draggable: true, plain:true,
-	        modal: true, resizable: false,
+	        modal: true,// resizable: false,
 	        bodyBorder: false, border: false,
 	        items:this.form,layout:'fit',
 	        listeners:{
