@@ -118,9 +118,12 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 			    {header: "Size", width: 50, dataIndex: 'size', editor: new Ext.form.TextField({})},			    		    
 			    {header: "Autoincrement", width: 50, dataIndex: 'autoincrement', editor: new Ext.form.TextField({})},
 			    {header: "Default value", width: 100, dataIndex: 'default_value', editor: new Ext.form.TextField({})},
-			    //TODO make a separate component to prevent code cluttering 
+			    
 			    {header: "Relation", width: 150, sortable: true, dataIndex: 'foreign_table', 
-				      editor: new Ext.form.TextField({
+				      editor: new afStudio.models.RelationCombo({
+				      	relationUrl: '/appFlowerStudio/models'
+				      }) 
+//				      new Ext.form.TextField({
 //				      	listeners: {
 //				      		focus: function(field) {
 //				      			if (!field.picker) {
@@ -137,15 +140,16 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 //				      			field.picker.show();
 //				      		}
 //				      	}
-			      	})
+//			      	})
 			    },
-			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', align:'center',
-			    	renderer : function(v, p, record) {
-					    return new Ext.XTemplate('<input type="checkbox" <tpl if="this.isRequired(required)">checked="checked"</tpl> />',{
-					    	isRequired : function(v) {return v == true}
-					    }).apply(record.data);
-					}
-			    }
+			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', align:'center', 
+			    	editor: new Ext.form.Checkbox({}),
+					renderer : function(v, p, record){
+					    p.css += ' x-grid3-check-col-td'; 
+					    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
+					}					
+				}
+
 			]
 		});	
 		
@@ -177,9 +181,10 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		
 		return {
 			itemId: 'model-fields',
-			clicksToEdit: 1,
+			clicksToEdit: 1,			
 	        store: store,
 	        colModel: columnModel,
+	        columnLines: true,
 			iconCls: 'icon-grid',
 	        autoScroll: true,
 	        height: 300,
@@ -201,28 +206,28 @@ afStudio.models.gridFieldsPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		var _this = this,
 			store = _this.getStore();
 		
-		_this.on({
-			afteredit: function(e) {
-				e.record.commit();
-				var row = e.row + 1;
-				var count = this.store.getCount();
-				if (count == row) {
-					var newId = store.getAt(e.row).get('id') + 1;
-					var record = new store.recordType({
-						'id': newId,
-			    		'name': '',			    
-			    		'required': false,
-			    		'autoincrement': false								
-					});
-					store.add([record]);
-				}
-				var column = e.column;
-				var task = new Ext.util.DelayedTask(function(row,column) {
-				    this.startEditing(row,column);
-				},this,[row,column]);
-				task.delay(100);
-			}			
-		});		
+//		_this.on({
+//			afteredit: function(e) {
+//				//e.record.commit();
+//				var row = e.row + 1;
+//				var count = this.store.getCount();
+//				if (count == row) {
+//					var newId = store.getAt(e.row).get('id') + 1;
+//					var record = new store.recordType({
+//						'id': newId,
+//			    		'name': '',			    
+//			    		'required': false,
+//			    		'autoincrement': false								
+//					});
+//					store.add([record]);
+//				}
+//				var column = e.column;
+//				var task = new Ext.util.DelayedTask(function(row,column) {
+//				    this.startEditing(row,column);
+//				},this,[row,column]);
+//				task.delay(100);
+//			}			
+//		});		
 	}//eo _initEvents
 	
 }); 

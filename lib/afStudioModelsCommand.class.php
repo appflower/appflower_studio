@@ -255,6 +255,11 @@ class afStudioModelsCommand
 					}
 				    $this->result['success']=true;
 				break;
+				
+				case 'readrelation':
+					$this->result = array('success' => true, 'data' => $this->buildRelationComboModels());
+				break;
+				
 				default:
 					$this->result = array('success' => true);
 				break;
@@ -310,9 +315,92 @@ class afStudioModelsCommand
 		}
 	}	
 	
+	/**
+	 * Validates Model's name
+	 * @param string $name
+	 */
 	private function isValidModelName($name) 
 	{
 		return preg_match("/^[^\d]\w*$/i", $name);
+	}
+	
+	/**
+	 * Returns array of models narrowed by mask	 
+	 * @param string $mask
+	 * @return array of models
+	 */
+	private function getModelsByMask($mask) 
+	{												
+		$models = array();
+		foreach ($this->propelSchemaArray as $schemaFile => $array) {
+			foreach ($array['classes'] as $model => $attributes) {
+				if (empty($mask)) {					
+					$models[] = $model;
+				} else if (stripos($model, $mask) === 0) {
+					$models[] = $model;
+				}			
+			}
+		}
+		return $models;
+	}
+	
+	/**
+	 * Returns path to schema of specified model
+	 * @param string $model
+	 * @return string schema path
+	 */
+	private function getSchemaByModel($model) 
+	{
+		foreach ($this->propelSchemaArray as $schemaFile => $array) {
+			foreach ($array['classes'] as $phpName => $attributes) {
+				if ($model == $phpName) {
+					return $schemaFile;																
+				}		
+			}
+		}		
+		return null;		
+	}
+	
+	private function buildRelationComboModels()
+	{
+		$models = array();
+		
+		if (count($this->propelSchemaArray) > 0) {
+			$query = $this->request->getParameter('query');			
+			$relation = explode('.', trim($query));
+			
+			if (count($relation) > 1) {				
+				$modelName  = $relation[0];
+				$modelField = $relation[1];
+				
+				if (!empty($modelName)) {
+					$schema = $this->getSchemaByModel($modelName);					
+					if (!empty($schema)) {
+						$propelModel = $this->propelSchemaArray[$schema]['classes'][$modelName];
+						
+  						foreach ($propelModel['columns'] as $name => $params) {
+							if (empty($modelField)) {
+								$models[] = array('id' => $modelName.'.'.$name, 'value' => $modelName.'.'.$name);											
+							} else if (stripos($name, $modelField) === 0) {
+								$models[] = array('id' => $modelName.'.'.$name, 'value' => $modelName.'.'.$name);
+							}  														    					
+	    				}
+					}					
+				} else {
+					$m = $this->getModelsByMask($modelName);
+					for ($i = 0, $len = count($m); $i < $len; $i++) {
+						$models[] = array('id' => $m[$i], 'value' => $m[$i]);
+					}
+				}							
+			} else {
+				$modelName = $relation[0];
+				$m = $this->getModelsByMask($modelName);
+				for ($i = 0, $len = count($m); $i < $len; $i++) {
+					$models[] = array('id' => $m[$i], 'value' => $m[$i]);
+				}				
+			}			
+		}
+		return $models;		
 	}
 
 }

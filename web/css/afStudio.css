@@ -39,3 +39,8 @@
 .unique-cell {
 	background:url('/appFlowerStudioPlugin/images/unique-index.png') no-repeat center center !important;	
 }
+
+.x-form-relation-trigger {
+	background:url('/appFlowerStudioPlugin/images/table_relationship.png') no-repeat center center !important;
+	border-width: 1px;
+}
