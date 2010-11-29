@@ -11,48 +11,6 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 					text: "File",
 					menu: {
 						items: [
-							{ 
-								text: "Model",
-								menu: {
-									items: [
-										{
-											text: "Add",
-											handler: function (b,e)
-											{
-												
-											}
-										},
-										{
-											text: "Refresh",
-											handler: function (b,e)
-											{
-												afStudio.vp.layout.west.items[0].root.reload();
-											}
-										}
-									]
-								}
-							},
-							{ 
-								text: "Module",
-								menu: {
-									items: [
-										{
-											text: "Add",
-											handler: function (b,e)
-											{
-												
-											}
-										},
-										{
-											text: "Refresh",
-											handler: function (b,e)
-											{
-												afStudio.vp.layout.west.items[1].root.reload();
-											}
-										}
-									]
-								}
-							},
 							{
 								text: 'Project',
 								menu: {
@@ -109,24 +67,8 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 									(new afStudio.Settings()).show();
 								}
 							}, 
-							{
-								text: 'Template Selector',
-								handler: function(){
-									(new afStudio.TemplateSelector()).show();
-								}
-							}, 							
-							'-',
-							{
-								text: 'DB Query',
-								handler: function (b, e) {
-									(new afStudio.DBQuery()).show();
-								}
-							},{
-								text:'Logs',
-								handler:function(b,e){
-									(new afStudio.Logs()).show();
-								}
-							},'-',{
+							
+							'-',{
 								text:'Help',
 								handler:function(b,e){
 									(new afStudio.Help()).show();
@@ -137,11 +79,42 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 				},
 				
 				{
-					text: 'Layout Designer',
-					handler: function (b, e) {
-						(new afStudio.LayoutDesigner()).show();
+					text: 'Layout',
+					menu: {
+						items: [
+							{
+								text: 'Template Selector',
+								handler: function(){
+									(new afStudio.TemplateSelector()).show();
+								}
+							}, 						
+							{
+								text: 'Layout Designer',
+								handler: function (b, e) {
+									(new afStudio.LayoutDesigner()).show();
+								}
+							}
+						]
 					}
-				},		
+				},
+				
+				{xtype: 'tbseparator'},
+				{
+					text: 'DB Query',
+					iconCls: 'icon-dbquery',
+					handler: function (b, e) {
+						(new afStudio.DBQuery()).show();
+					}
+				},
+				{xtype: 'tbseparator'},
+				{
+					text:'Logs',
+					iconCls: 'icon-logs',
+					handler:function(b,e){
+						(new afStudio.Logs()).show();
+					}
+				},				
+				
 				{
 					xtype: "tbfill"
 				},

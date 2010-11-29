@@ -3,15 +3,20 @@ Ext.ns('afStudio.modules');
 afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	initComponent: function() {
-		
+		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
 		var config = {			
 			title: 'Modules'
 			,iconCls: 'icon-models'
 			,url: '/appFlowerStudio/modules'
 			,method: 'post'
 			,reallyWantText: 'Do you really want to'
-		    ,root: new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false})
+		    ,root: rootNode
 			,rootVisible:false
+			,tools:[{id:'refresh', 
+				handler:function(){
+					this.loader.load(rootNode);
+				}, scope: this
+			}]
 			,bbar: {
 				items: [
 					'->',

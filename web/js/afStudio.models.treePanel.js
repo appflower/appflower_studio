@@ -90,6 +90,11 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			reallyWantText: 'Do you really want to',
 		    root: rootNode,
 			rootVisible: false,
+			tools:[{id:'refresh', 
+				handler:function(){
+					this.loader.load(rootNode);
+				}, scope: this
+			}],
 			bbar: bottomToolBar
 		};
 	} //eo _initCmp

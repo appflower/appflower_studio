@@ -205,7 +205,7 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 
 		        }],
 		        buttons: [
-	  				{text: 'add new widgets', handler: this.cancel, scope: this}
+	  				{text: 'Add New Widgets', disabled: true, id: 'add-widget-btn'}
 	  			],
 	  			buttonAlign: 'center'
 		    },{
@@ -214,6 +214,21 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 		    }]
 
 	}],
+	
+	/**
+	 * Create dummy widget in the panel
+	 */
+	addNewWidget: function(){
+		var detailP = Ext.getCmp('details-panel');
+		var tt = 1;
+		
+		var portal = detailP.items.itemAt(0);
+		var leftcolumn = portal.items.itemAt(0);
+		
+		leftcolumn.add({xtype: 'panel', html: 'this is a test panel', height: 100, width: 100, title: 'Test panel', frame: true, style: 'margin: 5px;'});
+		detailP.doLayout();
+	},
+	
 	addLayout:function(detailp,columns){
 		var portItems = [];
 		var columnwidth = 1/columns;
@@ -221,17 +236,17 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 			portItems.push({	
 				id:'portColumn'+i,
 				columnWidth: columnwidth,
-				style: "padding:10px 0 10px 10px;",
-				items: [{
-					title:'widget1'+i,
-					height:300
-				},{
-					title:'widget2'+i,
-					height:300
-				},{
-					title:'widget3'+i,
-					height:300
-				}]
+				style: "padding:10px 0 10px 10px;"
+//				items: [{
+//					title:'widget1'+i,
+//					height:300
+//				},{
+//					title:'widget2'+i,
+//					height:300
+//				},{
+//					title:'widget3'+i,
+//					height:300
+//				}]
 			});
 		}
 		detailp.columns=columns;
@@ -245,6 +260,7 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 	},
 	onTreeClick:function(n){
 		if(n.leaf){
+			Ext.getCmp('add-widget-btn').enable();
 			var columns = n.attributes.columns;
 			var detailP = Ext.getCmp('details-panel');
 			detailP.removeAll(true);
@@ -263,6 +279,9 @@ afStudio.LayoutDesigner=Ext.extend(Ext.Window, {
 	        	afterrender:function(){
 	        		var treep = Ext.getCmp('layouttree');
 	        		treep.on('click',this.onTreeClick,this);
+	        		
+	        		var addWigetsBtn = Ext.getCmp('add-widget-btn');
+	        		addWigetsBtn.on('click', this.addNewWidget, this);
 	        	}
 	        }
 			

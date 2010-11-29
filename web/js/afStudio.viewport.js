@@ -13,16 +13,22 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 		var centerPanel = new Ext.ux.Portal ({
 			id: 'center_panel',
 			region: "center",
+			
+			layout: 'fit',
+			
 			title: "Dashboard",
 			items: [
 			{				
 				columnWidth: 1,
+				layout: 'fit',
 				style: "padding:10px 0 10px 10px;",
 				items: [				
 				]
 			}],
 			style: "padding-right:5px;"
 		});
+		
+		
 		
 		var westPanel = new afStudio.westPanel(),
 			southPanel = new afStudio.southPanel();

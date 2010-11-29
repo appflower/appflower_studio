@@ -42,8 +42,8 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				itemId: 'designer',
 				title: 'Widget Designer'
 			},{
-				itemId: 'preview',
-				title: 'Preview'
+				itemId: 'security',
+				title: 'Security'
 			},{
 				itemId: 'code-editor',
 				title: 'Code Editor'
@@ -54,7 +54,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	,_initEvents : function() {
 		var _this = this,
 			designerTab = _this.getComponent('designer'),
-			previewTab = _this.getComponent('preview'),
+			securityTab = _this.getComponent('security'),
 			codeEditorTab = _this.getComponent('code-editor');
 		
 		designerTab.on({
@@ -65,7 +65,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			}
 		});
 
-		previewTab.on({
+		securityTab.on({
 			beforerender : function(cmp) {
 				cmp.add({
 					html: 'Widget Preview'

@@ -11,6 +11,9 @@
 .icon-folder-open{background: url('/appFlowerStudioPlugin/images/folder-open.pgif') no-repeat 0 0 !important;}
 .icon-obj{background: url('/appFlowerStudioPlugin/images/application.png') no-repeat 0 0 !important;}
 
+.icon-dbquery{background: url('/appFlowerStudioPlugin/images/computer.png') no-repeat 0 0 !important;}
+.icon-logs{background: url('/appFlowerStudioPlugin/images/chart_line.png') no-repeat 0 0 !important;}
+
 .icon-data{background: url('/appFlowerStudioPlugin/images/database.png') no-repeat 0 0 !important;}
 .icon-data-add{background: url('/appFlowerStudioPlugin/images/database_add.png') no-repeat 0 0 !important;}
 
@@ -18,6 +21,7 @@
 .icon-field-add{background: url('/appFlowerStudioPlugin/images/textfield_add.png') no-repeat 0 0 !important;}
 
 .icon-action{background: url('/appFlowerStudioPlugin/images/package_green.png') no-repeat 0 0 !important;}
+.icon-action-add{background: url('/appFlowerStudioPlugin/images/package_add.png') no-repeat 0 0 !important;}
 
 .icon-validator{background: url('/appFlowerStudioPlugin/images/tag_blue.png') no-repeat 0 0 !important;}
 .icon-validator-add{background: url('/appFlowerStudioPlugin/images/tag_blue_add.png') no-repeat 0 0 !important;}

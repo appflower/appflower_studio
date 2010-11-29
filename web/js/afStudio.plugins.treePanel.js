@@ -89,6 +89,13 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			method: 'post',
 			reallyWantText: 'Do you really want to',
 		    root: rootNode,
+			
+			tools:[{id:'refresh', 
+				handler:function(){
+					this.loader.load(rootNode);
+				}, scope: this
+			}],
+			
 			rootVisible: false,
 			bbar: bottomToolBar
 		};

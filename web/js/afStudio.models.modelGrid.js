@@ -68,29 +68,19 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			
 			this.changetoMenu = new Ext.menu.Menu({
 				id:g.id + "-hchangeto-menu",
-				items:[{
-					itemId:"cpassword",text:'password'
-				},{
-					itemId:"ccheckbox",text:'Checkbox'
-				},{
-					itemId:"cchoice",text:'Select'
-				},{
-					itemId:"ccurrency",text:'Currency'
-				},{
-					itemId:"cdate",text:'Date'
-				},{
-					itemId:"cemail",text:'Email Address'
-				},{
-					itemId:"cnumber",text:'Number'
-				},{
-					itemId:"cphonenumber",text:'Phone Number'
-				},{
-					itemId:"crate",text:'Rate'
-				},{
-					itemId:"ctime",text:'Time'
-				},{
-					itemId:"crelation",text:'Relation'
-				}]
+				items:[
+					{itemId:"ccheckbox",	text:'Checkbox'},
+					{itemId:"ccurrency",	text:'Currency'},
+					{itemId:"cdate",		text:'Date'},
+					{itemId:"cemail",		text:'Email Address'},
+					{itemId:"cnumber",		text:'Number'},
+					{itemId:"cpassword",	text:'Password'},					
+					{itemId:"cphonenumber",	text:'Phone Number'},
+					{itemId:"crate",		text:'Rate'},
+					{itemId:"crelation",	text:'Relation'},
+					{itemId:"cchoice", 		text:'Select'},
+					{itemId:"ctime",		text:'Time'}
+				]
 			});
 			this.changetoMenu.on({
 				scope: this,

@@ -102,6 +102,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		        items: [
 		        	{iconCls: 'icon-field-add', id: 'add-field', text: 'Add Field'},
 					{iconCls: 'icon-validator-add', id: 'add-validator', text: 'Add Validator'},
+					{iconCls: 'icon-action-add', id: 'add-action', text: 'Add Action'},
 					{iconCls: 'icon-data-add', id: 'add-param', text: 'Add Datasource Param'},
 					{iconCls: 'icon-edit', id: 'edit-title', text: 'Edit Item Name'},
 					{iconCls: 'icon-delete', id: 'delete-node', text: 'Delete Item'}
@@ -129,6 +130,14 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 								var iconCls = 'icon-validator';
 								var itemId = 'validator';
 								var name = 'New Validator';
+								break;
+							}
+							
+							case 'add-action': {
+								var param = 'actions';
+								var iconCls = 'icon-action';
+								var itemId = 'action';
+								var name = 'New Action';
 								break;
 							}
 							
@@ -192,38 +201,51 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 						
 	            		switch(node.attributes.itemId){
 	            			case 'object':{
-	            				var unnecessaryMenuItems = ['add-validator', 'delete-node'];
-	            				var necessaryMenuItems = ['add-field', 'add-param', 'edit-title'];
+	            				var editTitleMenuName = 'Rename Widget';
+	            				var unnecessaryMenuItems = ['add-validator', 'add-param', 'delete-node', 'add-action'];
+	            				var necessaryMenuItems = ['add-field', 'edit-title'];
 	            				break;
 	            			}
 	            			
 	            			case 'field':{
-	            				var unnecessaryMenuItems = ['add-field'];
-	            				var necessaryMenuItems = ['add-validator', 'add-param', 'edit-title', 'delete-node'];
-	            				break;
-	            			}
-	            			
-	            			case 'validator': {
-	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param'];
-	            				var necessaryMenuItems = ['edit-title', 'delete-node'];
+	            				var editTitleMenuName = 'Rename Field';
+	            				var unnecessaryMenuItems = ['add-field', 'add-param', 'add-action'];
+	            				var necessaryMenuItems = ['add-validator', 'edit-title', 'delete-node'];
 	            				break;
 	            			}
 	            			
 	            			case 'datasource': {
-	            				var unnecessaryMenuItems = ['add-field', 'add-validator'];
+	            				var editTitleMenuName = 'Rename Datasource';
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-action'];
 	            				var necessaryMenuItems = ['add-param', 'edit-title', 'delete-node'];
 	            				break;
 	            			}
 	            			
-	            			case 'param': {
-	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param'];
+	            			case 'param':{
+	            				var editTitleMenuName = 'Rename Method';
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param', 'add-action'];
 	            				var necessaryMenuItems = ['edit-title', 'delete-node'];
 	            				break;
-	            			}	            			
+	            			} 
 	            			
 	            			case 'action': {
-	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param'];
+	            				var editTitleMenuName = 'Rename Action';
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param', 'add-action'];
 	            				var necessaryMenuItems = ['edit-title', 'delete-node'];
+	            				break;
+	            			}
+	            			
+	            			case 'validator': {
+	            				var editTitleMenuName = 'Rename Validator';
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param', 'add-action'];
+	            				var necessaryMenuItems = ['edit-title', 'delete-node'];
+	            				break;
+	            			}
+	            			
+	            			case 'actions': {
+	            				var editTitleMenuName = 'Rename Action';
+	            				var unnecessaryMenuItems = ['add-field', 'add-validator', 'add-param'];
+	            				var necessaryMenuItems = ['add-action', 'edit-title', 'delete-node'];
 	            				break;
 	            			}
 	            		}
@@ -231,6 +253,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			            node.select();
 			            var c = node.getOwnerTree().contextMenu;
 			            c.contextNode = node;
+			            
+			            Ext.getCmp('edit-title').setText(editTitleMenuName);
 			            
 			            for(var i = 0, l = unnecessaryMenuItems.length; i<l; i++){
 			            	c.items.map[unnecessaryMenuItems[i]].hide();
@@ -317,7 +341,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			        	},
 			           	{
 			        		text: 'Actions', leaf: false, expanded: true,
-			        		itemId: 'action', //iconCls: 'icon-field',
+			        		itemId: 'actions', //iconCls: 'icon-field',
 			        		children: [
 								{text: 'Action 1', itemId: 'action', iconCls: 'icon-action', leaf: true},
 								{text: 'Action 2', itemId: 'action', iconCls: 'icon-action', leaf: true},
