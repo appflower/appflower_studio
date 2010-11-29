@@ -17,17 +17,6 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					this.loader.load(rootNode);
 				}, scope: this
 			}]
-			,bbar: {
-				items: [
-					'->',
-					{
-						text: 'Add Module',
-						iconCls: 'icon-add',
-						handler: function(b, e) {							
-						}
-					}
-				]
-			}
 		};
 		
 		// apply config
@@ -61,21 +50,57 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		//renaming model
 		this.treeEditor.on({
-			complete: function(editor,newValue,oldValue)
+			canceledit : function(editor, newValue, oldValue) {
+				var node = editor.editNode,
+					tree = node.getOwnerTree();	
+			
+				if (node.attributes.NEW_NODE) {
+					node.remove();
+				}
+			}
+			,beforecomplete : function(editor, newValue, oldValue) {
+				var node = editor.editNode,
+					tree = node.getOwnerTree();
+					
+				//validates module
+				if (!tree.isValidModuleName(newValue)) {			
+					return false;			
+				}
+			}
+			,complete: function(editor,newValue,oldValue)
 			{
-				if(newValue!=oldValue)
-				{
-					switch (editor.editNode.attributes.type) {
-						case "app":
-		            		editor.editNode.getOwnerTree().renameApp(editor.editNode,newValue,oldValue);
-		            		break;
-		            	case "module":
-		            		editor.editNode.getOwnerTree().renameModule(editor.editNode,newValue,oldValue);
+				var node = editor.editNode,
+					tree = node.getOwnerTree();
+										
+				if (node.attributes.NEW_NODE) {
+					
+					node.setText(newValue);
+			
+					switch (node.attributes.type) {
+						case "module":
+		            		tree.addModule(node);
 		            		break;
 		            	case "xml":
-		            		editor.editNode.getOwnerTree().renameXml(editor.editNode,newValue,oldValue);
+		            		tree.addXml(node);
 		            		break;	
 		            }
+				}
+				else
+				{
+					if(newValue!=oldValue)
+					{
+						switch (node.attributes.type) {
+							case "app":
+			            		tree.renameApp(node,newValue,oldValue);
+			            		break;
+			            	case "module":
+			            		tree.renameModule(node,newValue,oldValue);
+			            		break;
+			            	case "xml":
+			            		tree.renameXml(node,newValue,oldValue);
+			            		break;	
+			            }
+					}
 				}
 			}
 		});
@@ -132,7 +157,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                switch (item.id) {
 	                    case 'add-module':
 	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().addModule(node);
+	                    	node.getOwnerTree().onAddModule(node);
 	                        break;
 	                }
 	            }
@@ -227,7 +252,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		switch (node.attributes.type) {
 			case "app":
-        		app = false;
+        		app = node.text;
         		break;
         	case "module":
         		app = node.attributes.app;
@@ -238,6 +263,88 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
         }
 
 		return app;
+	}
+	
+	 /*
+	 * Validates Module name
+	 * @param {String} moduleName
+	 * @return {Boolean} true if name is valid otherwise false
+	 */
+	,isValidModuleName : function(moduleName) {
+		return /^[^\d]\w*$/im.test(moduleName) ? true : false;
+	}
+	
+	/**
+	 * Selects Module
+	 * @param {Ext.tree.TreeNode} node The Module's node
+	 */
+	,selectModule : function(node) {		
+		this.selectPath(node.getPath());
+	}
+	
+	,onAddModule : function(node) {
+
+		node.expand();
+	
+		var newNodeAttributes = {text: 'newmodule', type: 'module', app: this.getApp(node), leaf: true, NEW_NODE: true, iconCls: 'icon-folder'};
+		
+		var newNode = node.appendChild(new Ext.tree.TreeNode(newNodeAttributes));
+		this.selectModule(newNode);
+		this.treeEditor.triggerEdit(newNode);		
+	}
+	
+	,addModule:function(node)
+	{
+		Ext.Msg.show({
+			 title:'Add'
+			,msg:this.reallyWantText + ' add module <b>' + this.getModule(node) + '</b>?'
+			,icon:Ext.Msg.WARNING
+			,buttons:Ext.Msg.YESNO
+			,width:400
+			,scope:this
+			,fn:function(response) {
+				// do nothing if answer is not yes
+				if('yes' !== response) {
+					node.remove();
+					return;
+				}
+				// setup request options
+				var options = {
+					 url:this.url
+					,method:this.method
+					,scope:this
+					//,callback:this.cmdCallback
+					,node:node
+					,params:{
+						 cmd:'addModule'
+						,moduleName:this.getModule(node)
+						,app:this.getApp(node)
+					},
+					success: function(response, opts) {
+				      var response = Ext.decode(response.responseText);
+				      
+				      if(response.success)
+				      {
+				      	afStudio.vp.layout.west.items[1].root.reload();
+				      	
+				      	afStudio.setConsole(response.console);
+				      }
+				      else
+				      {
+				      	node.remove();
+				      }
+				      
+				      Ext.Msg.show({
+						 title:response.success?'Success':'Failure'
+						,msg:response.message
+						,buttons:Ext.Msg.OK
+						,width:400
+				      });
+				    }
+				};
+				Ext.Ajax.request(options);
+			}
+		});
 	}
 	
 	,deleteModule:function(node)
@@ -264,7 +371,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					,node:node
 					,params:{
 						 cmd:'deleteModule'
-						,module:this.getModule(node)
+						,moduleName:this.getModule(node)
 						,app:this.getApp(node)
 					},
 					success: function(response, opts) {
@@ -276,11 +383,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	if(response.console)
-				      	{
-				      		afStudio.vp.layout.south.panel.body.dom.innerHTML+=response.console;
-							afStudio.vp.layout.south.panel.body.scroll( "bottom", 1000000, true );
-				      	}				      	
+				      	afStudio.setConsole(response.console);				      	
 				      }
 				      else
 				      {
@@ -324,7 +427,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					,node:node
 					,params:{
 						 cmd:'renameModule'
-						,module:oldValue
+						,moduleName:oldValue
 						,renamedModule:newValue
 						,app:this.getApp(node)
 					},
@@ -335,11 +438,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      {
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	if(response.console)
-				      	{
-				      		afStudio.vp.layout.south.panel.body.dom.innerHTML+=response.console;
-							afStudio.vp.layout.south.panel.body.scroll( "bottom", 1000000, true );
-				      	}
+				      	afStudio.setConsole(response.console);
 				      }
 				      else
 				      {

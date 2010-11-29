@@ -5,21 +5,27 @@
  */
 class afStudioModulesCommand
 {
-	public $request=null,$result=null,$realRoot=null,$dbSchema=null;
+	public $request=null,$result=null,$realRoot=null,$app,$moduleName;
 							
 	public function __construct()
 	{		
 		$this->request=sfContext::getInstance()->getRequest();		
 		
 		$this->realRoot=afStudioUtil::getRootDir();
-				
+		
+		$this->afConsole=new afStudioConsole();
+		
+		$this->filesystem = new sfFileSystem();
+
+		$this->app = $this->request->hasParameter('app')?$this->request->getParameter('app'):false;
+		$this->moduleName = $this->request->hasParameter('moduleName')?$this->request->getParameter('moduleName'):false;
+		
 		$this->start();
 	}
 	
 	public function start()
 	{
 		$cmd = $this->request->getParameterHolder()->has('cmd')?$this->request->getParameterHolder()->get('cmd'):null;
-		$xaction = $this->request->getParameterHolder()->has('xaction')?$this->request->getParameterHolder()->get('xaction'):null;
 			
 		if($cmd!=null)
 		{	
@@ -84,91 +90,50 @@ class afStudioModulesCommand
 					else
 					$this->result = array('success' => true);
 					break;
-				case "delete":
-					unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]);
-					
-					if($this->saveSchema())
-					{	
-						$afConsole=new afStudioConsole();
-						$consoleResult=$afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));		
-						
-						$this->result = array('success' => true,'message'=>'Deleted model <b>'.$this->modelName.'</b>!','console'=>$consoleResult);
-					}
-					else
-					$this->result = array('success' => false,'message'=>'Can\'t delete model <b>'.$this->modelName.'</b>!');
-					break;
-				case "rename":
-					$renamedModelName = $this->request->getParameterHolder()->get('renamedModel');
-					
-					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName']=$renamedModelName;
-					
-					if($this->saveSchema())
-					{			
-						$afConsole=new afStudioConsole();
-						$consoleResult=$afConsole->execute('sf propel:build-model');
-						
-						$this->result = array('success' => true,'message'=>'Renamed model\'s phpName from <b>'.$this->modelName.'</b> to <b>'.$renamedModelName.'</b>!','console'=>$consoleResult);
-					}
-					else
-					$this->result = array('success' => false,'message'=>'Can\'t rename model\'s phpName from <b>' + $this->modelName + '</b> to <b>' + $renamedModelName + '</b>!');
-					break;
-				default:
-					$this->result = array('success' => true);
-					break;
-			}
-		}
-		
-		if($xaction!=null)
-		{
-			switch ($xaction)
-			{
-				case "read":	
-					$k=0;						    
-				    foreach ($this->propelModel['columns'] as $name=>$params)
-				    {
-				    	$this->result['rows'][$k]['id']=$k;
-				    	$this->result['rows'][$k]['name']=$name;
-				    	if(isset($params['type']))
-				    	{
-				    		$this->result['rows'][$k]['type']=$params['type'];
-				    	}
-				    	if(isset($params['size']))
-				    	{
-				    		$this->result['rows'][$k]['size']=$params['size'];
-				    	}
-				    	if(isset($params['required']))
-				    	{
-				    		$this->result['rows'][$k]['required']=$params['required'];
-				    	}
-				    	if(isset($params['default']))
-				    	{
-				    		$this->result['rows'][$k]['default_value']=$params['default'];
-				    	}
-				    	
-				    	$k++;
-				    }
-				    $this->result['success']=true;
-				    $this->result['totalCount']=count($this->result['rows']);
-					break;
-				case "update":	
-					$rows = $this->request->getParameterHolder()->has('rows')?$this->request->getParameterHolder()->get('rows'):null;
-					if($rows!=null)
+				case "addModule":					
+					if($this->app && $this->moduleName)
 					{
-						$rows=json_decode($rows);print_r($rows);die();
-						//$rows=afStudioUtil::objectToArray($rows);
-						//$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$rows->name]=$this->reconstructTableField($rows);
+						$consoleResult=$this->afConsole->execute(array('afs generate-module '.$this->app.' '.$this->moduleName,'sf cc'));		
 						
-						if($this->saveSchema())
-						{			
-							$afConsole=new afStudioConsole();
-							$consoleResult=$afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
-							
-							$this->result = array('success' => true,'message'=>'Updated model <b>'.$this->modelName.'</b> !','console'=>$consoleResult);
-						}
-						else
-						$this->result = array('success' => false,'message'=>'Can\'t update model <b>' + $this->modelName + '</b>!');
+						$this->result = array('success' => true,'message'=>'Created module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
 					}
-				    $this->result['success']=true;
+					else {
+						$this->result = array('success' => false,'message'=>'Can\'t create new module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!');
+					}
+					break;
+				case "deleteModule":
+					$moduleDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$this->moduleName.'/';
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+										
+					$consoleResult.=$this->afConsole->execute('rm -rf '.$moduleDir);
+					
+					if(!file_exists($moduleDir)){	
+						$consoleResult.=$this->afConsole->execute(array('sf cc'));		
+						
+						$this->result = array('success' => true,'message'=>'Deleted module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t delete module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!');
+					break;
+				case "renameModule":
+					$renamedModuleName = $this->request->getParameter('renamedModule');
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+					
+					$oldModuleDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$this->moduleName.'/';
+					$newModuleDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$renamedModuleName.'/';
+					
+					$this->filesystem->rename($oldModuleDir,$newModuleDir);
+					
+					if(!file_exists($oldModuleDir)&&file_exists($newModuleDir))
+					{			
+						$consoleResult.=$this->afConsole->execute('sf cc');
+						
+						$this->result = array('success' => true,'message'=>'Renamed module from <b>'.$this->moduleName.'</b> to <b>'.$renamedModuleName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t rename module from <b>' + $this->moduleName + '</b> to <b>' + $renamedModuleName + '</b> inside <b>'.$this->app.'</b> application!');
 					break;
 				default:
 					$this->result = array('success' => true);

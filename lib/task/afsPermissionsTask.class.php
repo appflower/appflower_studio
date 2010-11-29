@@ -7,14 +7,14 @@
  * @subpackage task
  * @author     radu
  */
-class afStudioPermissionsTask extends sfBaseTask
+class afsPermissionsTask extends sfBaseTask
 {
   /**
    * @see sfTask
    */
   protected function configure()
   {
-    $this->namespace = 'afStudio';
+    $this->namespace = 'afs';
     $this->name = 'fix-perms';
     $this->briefDescription = 'Fixes af Studio permissions';
 
@@ -56,5 +56,16 @@ EOF;
       {
       	$this->getFilesystem()->chmod($customSchema, 0777);
       }
+      
+      /**
+       * fixing perms on modules
+       */
+      $modules = sfFinder::type('any')->in(sfConfig::get('sf_root_dir').'/apps/');
+      
+      foreach ($modules as $module)
+      {
+      	$this->getFilesystem()->chmod($module, 0777);
+	  }
+      
   }
 }

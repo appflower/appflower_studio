@@ -7,7 +7,7 @@ var afStudio = function () {
 
 	return {
 		
-		initAjaxRedirect : function() {			
+		initAjaxRedirect: function() {			
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
 				var response = Ext.decode(xhr.responseText);				
 				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
@@ -16,6 +16,15 @@ var afStudio = function () {
 			});
 		}		
 		
+		,setConsole: function(content)
+		{
+			if(content)
+			{
+				this.console.body.dom.innerHTML += content;
+				this.console.body.scroll("bottom", 1000000, true );
+			}
+		}
+				
 		,init: function () { 
 		    Ext.QuickTips.init();
 		    Ext.apply(Ext.QuickTips.getQuickTip(), {
@@ -28,6 +37,8 @@ var afStudio = function () {
 			this.tb=new afStudio.toolbar();
 			this.tb.init();
 			this.vp=new afStudio.viewport();
+			
+			this.console = this.vp.layout.south.panel.getComponent('console');
 		}
 	}
 }();

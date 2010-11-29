@@ -6,7 +6,7 @@
 class afStudioConsole
 {
 	public static
-    $defaultCommands = 'sf batch man ll ls pwd cat mkdir rm cp mv touch chmod free df find clear php';
+    $defaultCommands = 'sf afs batch man ll ls pwd cat mkdir rm cp mv touch chmod free df find clear php';
 	
 	public function __construct()
 	{
@@ -69,6 +69,12 @@ class afStudioConsole
 				{
 				  $prefix='symfony ';
 				  $command = substr($command, 3);
+				  $exec = sprintf('%s "%s" %s', sfToolkit::getPhpCli(), afStudioUtil::getRootDir().'/symfony', $command);
+				}
+				elseif (substr($command, 0, 3) == "afs")
+				{
+				  $prefix='symfony ';
+				  $command = 'afs:'.substr($command, 4);
 				  $exec = sprintf('%s "%s" %s', sfToolkit::getPhpCli(), afStudioUtil::getRootDir().'/symfony', $command);
 				}
 				elseif (substr($command, 0, 5) == "batch")
@@ -137,6 +143,7 @@ class afStudioConsole
     		$result[]='<li>'."Commands Available :".'</li>';
     		$result[]='<li>'."<strong>".self::getCommands(false)."</strong>".'</li>';
     		$result[]='<li>'."Symfony commands can be run by prefixing with sf<br />Example: sf cc ( clear cache )".'</li>';
+    		$result[]='<li>'."AppFlower Studio tasks commands can be run by prefixing with afs<br />Example 1: afs generate-module appname modulename ( generate a skeleton modulename inside appname )<br />Example 2: afs fix-perms ( fixes the permissions needed by the Studio )".'</li>';
     		$result[]='<li>'.str_repeat("-", 20).'</li>';
 		}
 		
