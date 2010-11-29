@@ -2,6 +2,12 @@ Ext.ns('afStudio.models');
 
 N = afStudio.models;
 
+/**
+ * RelationCombo
+ * @class afStudio.models.RelationCombo
+ * @extends Ext.form.ComboBox
+ * @author Nick
+ */
 N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 	/**
 	 * @cfg {String} relationUrl required
@@ -66,6 +72,7 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
             return false;
         };
         
+        //handles enter press
         this.keyNav.enter = function(e) {        	
         	 var rawValue =	this.getRawValue(),
   			        index = this.view.getSelectedIndexes()[0],

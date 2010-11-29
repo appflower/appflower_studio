@@ -51,9 +51,11 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 				region: 'west',
 				layout: 'fit',
 				width: 220,
-				items: [
-					new afStudio.models.treePanel({id:'models-picker', autoScroll:true})
-				]
+				items: [{
+					id: 'models-picker',
+					xtype: 'afStudio.models.modelTree',
+					border: false
+				}]
 			},{	
 				region: 'center',
 				items: [{ border:false, html: "<h1>Here will be model's columns</h1>" }]				
