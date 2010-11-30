@@ -1,5 +1,11 @@
 Ext.ns('afStudio.models');
 
+/**
+ * Models FieldsGrid responsible for manipulations 
+ * with Model's structure  
+ * @class afStudio.models.FieldsGrid
+ * @extends Ext.grid.EditorGridPanel
+ */
 afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {	
 	
 	saveModel : function(b, e) {		
@@ -49,15 +55,59 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	    }	    		
 	}
 	
+	//private
+	,booleanEditor : {
+    	editor: new Ext.form.ComboBox({
+			typeAhead: true,
+			triggerAction: 'all',
+			lazyRender: true,
+			editable: false,
+			mode: 'local',
+			valueField: 'field',
+			displayField: 'field',
+			store : [[true, 'true'], [false, 'false']]
+    	}),
+		renderer: function(v, p, record) {
+		    p.css += ' x-grid3-check-col-td'; 
+		    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
+		}
+	}
+	
+	//private
+	,typeEditor : {
+		editor: new Ext.ux.form.GroupingComboBox({
+			typeAhead: true,
+			forceSelection: true,
+			lazyRender: true,
+			displayField: 'text',
+			groupField: 'group',
+			store: new Ext.data.SimpleStore({
+				fields: ['group', 'text'],
+				data: [
+					['TEXT', 'char'],        ['TEXT', 'varchar'],     ['TEXT', 'longvarchar'],	['TEXT', 'clob'],
+					['NUMBERS', 'numeric'],  ['NUMBERS', 'decimal'],  ['NUMBERS', 'tinyint'],					
+					['NUMBERS', 'smallint'], ['NUMBERS', 'integer'],  ['NUMBERS', 'bigint'],
+					['NUMBERS', 'real'],	 ['NUMBERS', 'float'],    ['NUMBERS', 'double'],
+					['BINRAY', 'binary'],	 ['BINRAY', 'varbinary'], ['BINRAY', 'longvarbinary'], ['BINRAY', 'blob'],
+					['TEMPORA DATE/TIME', 'date'],	 
+					['TEMPORA DATE/TIME', 'time'], 
+					['TEMPORA DATE/TIME', 'timestamp'], 
+					['TEMPORA DATE/TIME', 'integer']
+				]
+			}),
+			mode: 'local'
+		}) 
+	}
+	
 	/**
 	 * Initializes component
-	 * @return {Object} The config object
+	 * @return {Object} The configuration object
 	 * @private
 	 */
-	,_initCmp : function() {
+	,_beforeInitComponent : function() {
 		var _this = this;
 		
-		var store = new Ext.data.JsonStore({
+		var fieldsStore = new Ext.data.JsonStore({
 			autoLoad: false,
 			url: '/appFlowerStudio/models',
 		    baseParams: {
@@ -79,65 +129,80 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			    {name: 'foreign_key'}		    
 		    ]
 		});
-		store.loadData(_this._data);
+		fieldsStore.loadData(_this._data);
 				
 		var columnModel = new Ext.grid.ColumnModel({
 			defaults: {
 				sortable: true
 			},
 			columns: [
-//				{header: '<input type="checkbox" />', width: 20, menuDisabled: true,
-//			    	renderer : function(v, p, record) {return '<input type="checkbox"  />';}
-//				},
-				{header: '<div class="model-pk-hd">&#160;</div>', width: 25, dataIndex: 'primary_key', 
-					editor: new Ext.form.ComboBox({
-						typeAhead: true,
-						triggerAction: 'all',
-						lazyRender: true,
-						editable: false,
-						mode: 'local',
-						valueField: 'field',
-						displayField: 'field',
-						store: [['unique', 'unique'], ['pk', 'primary key']]
-					}), 
-					renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-						var html = '';
-						switch(value) {
-							case 'pk':
-								html = '<div class="pk-cell">&#160;</div>';
-							break;
-							case 'unique':
-								html = '<div class="unique-cell">&#160;</div>';
-							break;							
-						};
-						return  html;
-					}
-				},
-			    {header: "Name", width: 100, dataIndex: 'name', editor: new Ext.form.TextField({})},
-			    {header: "Type", width: 100, dataIndex: 'type', editor: new Ext.form.TextField({})},
-			    {header: "Size", width: 50, dataIndex: 'size', editor: new Ext.form.TextField({})},			    		    
-			    {header: "Autoincrement", width: 50, dataIndex: 'autoincrement', editor: new Ext.form.TextField({})},
-			    {header: "Default value", width: 100, dataIndex: 'default_value', editor: new Ext.form.TextField({})},
-			    
-			    {header: "Relation", width: 150, sortable: true, dataIndex: 'foreign_table', 
-				      editor: new afStudio.models.RelationCombo({
-				      	relationUrl: '/appFlowerStudio/models',
-				      	fieldsGrid: _this
-				      })
-			    },
-			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', align:'center', 
-			    	editor: new Ext.form.ComboBox({
-			    		store : [[true, 'true'], [false, 'false']],			    		
-			    		editable: false,
-			    		mode: 'local'
-			    	}),
-					renderer : function(v, p, record) {
-					    p.css += ' x-grid3-check-col-td'; 
-					    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
-					}					
+			{	//PrimaryKey				
+				header: '<div class="model-pk-hd">&#160;</div>', 
+				width: 25, 
+				dataIndex: 'primary_key',					
+				editor: new Ext.form.ComboBox({
+					typeAhead: true,
+					triggerAction: 'all',
+					lazyRender: true,
+					editable: false,
+					mode: 'local',
+					valueField: 'field',
+					displayField: 'field',
+					store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']]
+				}),
+				renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+					var html = '';
+					switch(value) {
+						case 'primary': html = '<div class="pk-cell">&#160;</div>';	    break;
+						case 'index':	html = '<div class="index-cell">&#160;</div>';	break;
+						case 'unique':	html = '<div class="unique-cell">&#160;</div>';	break;
+					};
+					return  html;
 				}
-
-			]
+			},{
+				header: "Name",
+				width: 100,
+				dataIndex: 'name',
+				editor: new Ext.form.TextField()
+			},{
+				header: "Type",
+				width: 100,
+				dataIndex: 'type',
+				editor: _this.typeEditor.editor
+			},{
+				header: "Size",
+				width: 50,
+				dataIndex: 'size',
+				editor: new Ext.form.TextField()
+			},{
+				header: "Autoincrement",
+				width: 50,
+				dataIndex: 'autoincrement',
+				editor: _this.booleanEditor.editor,
+				renderer: _this.booleanEditor.renderer
+			},{
+				header: "Default value",
+				width: 100,
+				dataIndex: 'default_value',
+				editor: new Ext.form.TextField()
+			},{
+				header: "Relation",
+				width: 150,
+				sortable: true,
+				dataIndex: 'foreign_table',
+				editor: new afStudio.models.RelationCombo({
+					relationUrl: '/appFlowerStudio/models',
+					fieldsGrid: _this
+				})
+			},{
+				header: "Required",
+				width: 50,
+				sortable: true,
+				dataIndex: 'required',
+				align: 'center', 
+				editor: _this.booleanEditor.editor,
+				renderer: _this.booleanEditor.renderer
+			}]
 		});	
 		
 		var topToolbar = new Ext.Toolbar({
@@ -169,27 +234,29 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		return {
 			itemId: 'model-fields',
 			clicksToEdit: 1,			
-	        store: store,
+	        store: fieldsStore,
 	        colModel: columnModel,
 	        columnLines: true,
 			iconCls: 'icon-grid',
 	        autoScroll: true,
-	        height: 300,
+	        //height: 300,
 	        tbar: topToolbar,
 	        viewConfig: {
 	            forceFit: true
 	        }			
 		}
-	}//eo _initCmp
+	}//eo _beforeInitComponent
 	 
-	//@private
+	//private
 	,initComponent: function() {
-		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));				
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, this._beforeInitComponent())
+		);				
 		afStudio.models.FieldsGrid.superclass.initComponent.apply(this, arguments);
-		this._initEvents();
+		this._afterInitComponent();
 	}
 	
-	,_initEvents : function() {
+	,_afterInitComponent : function() {
 		var _this = this,
 			store = _this.getStore();
 		
@@ -216,9 +283,11 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 //			}			
 //		});
 
-	}//eo _initEvents
+	}//eo _afterInitComponent
 	
 }); 
 
-//register xtype
+/**
+ * @type 'afStudio.models.fieldsGrid'
+ */
 Ext.reg('afStudio.models.fieldsGrid', afStudio.models.FieldsGrid);

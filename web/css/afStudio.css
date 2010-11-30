@@ -36,7 +36,7 @@
 	padding:2px 0 4px 14px;
 	display: inline;	
 }
-.pk-cell, .unique-cell {
+.pk-cell, .unique-cell, .index-cell {
 	height: 16px;
 }
 .pk-cell {
@@ -45,8 +45,22 @@
 .unique-cell {
 	background:url('/appFlowerStudioPlugin/images/unique-index.png') no-repeat center center !important;	
 }
+.index-cell {
+	background:url('/appFlowerStudioPlugin/images/application_lightning.png') no-repeat center center !important;
+}
 
+/* RelationCombo */
 .x-form-relation-trigger {
 	background:url('/appFlowerStudioPlugin/images/table_relationship.png') no-repeat center center !important;
 	border-width: 1px;
+}
+
+/* GroupingComboBox */
+.x-combo-list-group	{
+	font: bold 12px tahoma,arial,helvetica,sans-serif;
+	padding: 2px;
+	border: 1px solid #fff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

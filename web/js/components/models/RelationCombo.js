@@ -13,6 +13,12 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 	 * @cfg {String} relationUrl required
 	 * store Url 
 	 */	
+
+	/**
+	 * @cfg {afStudio.models.FieldsGrid} fieldsGrid required
+	 * reference to hosting FieldsGrid
+	 */	
+	
 	
 	/**
 	 * Initializes component
