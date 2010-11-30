@@ -56,47 +56,51 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	}
 	
 	//private
-	,booleanEditor : {
-    	editor: new Ext.form.ComboBox({
-			typeAhead: true,
-			triggerAction: 'all',
-			lazyRender: true,
-			editable: false,
-			mode: 'local',
-			valueField: 'field',
-			displayField: 'field',
-			store : [[true, 'true'], [false, 'false']]
-    	}),
-		renderer: function(v, p, record) {
-		    p.css += ' x-grid3-check-col-td'; 
-		    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
+	,booleanEditorBuilder : function() {
+		return {
+	    	editor: new Ext.form.ComboBox({
+				typeAhead: true,
+				triggerAction: 'all',
+				lazyRender: true,
+				editable: false,
+				mode: 'local',
+				valueField: 'field',
+				displayField: 'field',
+				store : [[true, 'true'], [false, 'false']]
+	    	}),
+			renderer: function(v, p, record) {
+			    p.css += ' x-grid3-check-col-td'; 
+			    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
+			}
 		}
 	}
 	
 	//private
-	,typeEditor : {
-		editor: new Ext.ux.form.GroupingComboBox({
-			typeAhead: true,
-			forceSelection: true,
-			lazyRender: true,
-			displayField: 'text',
-			groupField: 'group',
-			store: new Ext.data.SimpleStore({
-				fields: ['group', 'text'],
-				data: [
-					['TEXT', 'char'],        ['TEXT', 'varchar'],     ['TEXT', 'longvarchar'],	['TEXT', 'clob'],
-					['NUMBERS', 'numeric'],  ['NUMBERS', 'decimal'],  ['NUMBERS', 'tinyint'],					
-					['NUMBERS', 'smallint'], ['NUMBERS', 'integer'],  ['NUMBERS', 'bigint'],
-					['NUMBERS', 'real'],	 ['NUMBERS', 'float'],    ['NUMBERS', 'double'],
-					['BINRAY', 'binary'],	 ['BINRAY', 'varbinary'], ['BINRAY', 'longvarbinary'], ['BINRAY', 'blob'],
-					['TEMPORA DATE/TIME', 'date'],	 
-					['TEMPORA DATE/TIME', 'time'], 
-					['TEMPORA DATE/TIME', 'timestamp'], 
-					['TEMPORA DATE/TIME', 'integer']
-				]
-			}),
-			mode: 'local'
-		}) 
+	,typeEditorBuilder : function() {
+		return {
+			editor: new Ext.ux.form.GroupingComboBox({
+				typeAhead: true,
+				forceSelection: true,
+				lazyRender: true,
+				displayField: 'text',
+				groupField: 'group',
+				store: new Ext.data.SimpleStore({
+					fields: ['group', 'text'],
+					data: [
+						['TEXT', 'char'],        ['TEXT', 'varchar'],     ['TEXT', 'longvarchar'],	['TEXT', 'clob'],
+						['NUMBERS', 'numeric'],  ['NUMBERS', 'decimal'],  ['NUMBERS', 'tinyint'],					
+						['NUMBERS', 'smallint'], ['NUMBERS', 'integer'],  ['NUMBERS', 'bigint'],
+						['NUMBERS', 'real'],	 ['NUMBERS', 'float'],    ['NUMBERS', 'double'],
+						['BINRAY', 'binary'],	 ['BINRAY', 'varbinary'], ['BINRAY', 'longvarbinary'], ['BINRAY', 'blob'],
+						['TEMPORA DATE/TIME', 'date'],	 
+						['TEMPORA DATE/TIME', 'time'], 
+						['TEMPORA DATE/TIME', 'timestamp'], 
+						['TEMPORA DATE/TIME', 'integer']
+					]
+				}),
+				mode: 'local'
+			})		
+		}
 	}
 	
 	/**
@@ -168,7 +172,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				header: "Type",
 				width: 100,
 				dataIndex: 'type',
-				editor: _this.typeEditor.editor
+				editor: _this.typeEditorBuilder().editor
 			},{
 				header: "Size",
 				width: 50,
@@ -178,8 +182,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				header: "Autoincrement",
 				width: 50,
 				dataIndex: 'autoincrement',
-				editor: _this.booleanEditor.editor,
-				renderer: _this.booleanEditor.renderer
+				editor: _this.booleanEditorBuilder().editor,
+				renderer: _this.booleanEditorBuilder().renderer
 			},{
 				header: "Default value",
 				width: 100,
@@ -200,8 +204,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				sortable: true,
 				dataIndex: 'required',
 				align: 'center', 
-				editor: _this.booleanEditor.editor,
-				renderer: _this.booleanEditor.renderer
+				editor: _this.booleanEditorBuilder().editor,
+				renderer: _this.booleanEditorBuilder().renderer
 			}]
 		});	
 		
