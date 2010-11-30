@@ -231,7 +231,11 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,selectModel : function(node) {		
 		this.selectPath(node.getPath());
 	}
-	
+
+	/**
+	 * Walks throuth models and selects model by text
+	 * @param {Ext.Node} node
+	 */	
 	,selectModelNode : function(node) {
 		var _this = this;
 		Ext.each(this.getRootNode().childNodes, function(n){

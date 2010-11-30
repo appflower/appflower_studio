@@ -361,6 +361,11 @@ class afStudioModelsCommand
 		return null;		
 	}
 	
+	/**
+	 * Creates Relation ModelName.ModelField
+	 * based on "query" parameter
+	 * @return array the relation
+	 */
 	private function buildRelationComboModels()
 	{
 		$models = array();

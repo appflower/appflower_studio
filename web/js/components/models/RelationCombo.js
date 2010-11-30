@@ -93,16 +93,15 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 	//private
 	,createRelationPicker : function() {
 		var _this = this;
-		this.relationPicker = new afStudio.models.RelationPicker({
+		
+		_this.relationPicker = new afStudio.models.RelationPicker({
+			modelsUrl: '/appFlowerStudio/models',
+			fieldsUrl: '/appFlowerStudio/models',
 			closable: true,
 			closeAction: 'hide',
 			listeners: {
 				relationpicked : function(relation) {
 					var cell = _this.fieldsGrid.getSelectionModel().getSelectedCell();
-//					var c = _this.fieldsGrid.getView().getCell(cell[0], cell[1]);
-//					console.log(c);
-//					Ext.get(c).update('go');
-//					_this.fieldsGrid.getView().getCell(cell[0], cell[1]).firstChild.innerHTML = relation;					
 					_this.fieldsGrid.startEditing(cell[0], cell[1]);
 					if (relation) {_this.setValue(relation);}
 					_this.fieldsGrid.stopEditing();					
@@ -129,7 +128,10 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 			this.createRelationPicker();
 		}		
 		this.fieldsGrid.stopEditing();
-		this.relationPicker.show();
+		var _this = this;
+		this.relationPicker.show(null, function() {
+			this.initialRelationPick(_this.getRawValue() || _this.getValue());
+		});
     }
 	
 });

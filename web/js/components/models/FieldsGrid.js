@@ -126,7 +126,11 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				      })
 			    },
 			    {header: "Required", width: 50, sortable: true, dataIndex: 'required', align:'center', 
-			    	editor: new Ext.form.Checkbox({}),
+			    	editor: new Ext.form.ComboBox({
+			    		store : [[true, 'true'], [false, 'false']],			    		
+			    		editable: false,
+			    		mode: 'local'
+			    	}),
 					renderer : function(v, p, record) {
 					    p.css += ' x-grid3-check-col-td'; 
 					    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';

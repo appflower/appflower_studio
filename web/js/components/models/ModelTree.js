@@ -47,16 +47,20 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 		this.selectPath(node.getPath());
 	}
 	
+	,findModelByName : function(name) {
+		return this.getRootNode().findChild('text', name);
+	}
+	
 	/**
 	 * Reloads models tree 
 	 * @param {Function} callback The callback function to be run after reloading
 	 */
-	,reloadModels : function(callback) {
+	,reloadModels : function(callback) {		
 		if (Ext.isFunction(callback)) {
 			 this.getRootNode().reload(callback)
 		} else {
 			this.getRootNode().reload();
-		}  
+		}
 	}
 	
 	/**
@@ -69,7 +73,21 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,refreshModels : function(e, toolEl, p, tc) {
 		this.reloadModels();
-	}	
+	}
+	
+	/**
+	 * Returns <u>schema</u> attribute of Model
+	 * @param {Ext.tree.TreeNode} node
+	 * @return {String} schema
+	 */
+	,getSchema: function(node) {
+		return node.attributes.schema || undefined;
+	}
+	
+    ,getModel: function(node) {
+		return node.text;
+	}
+	
 	
 	/**
 	 * ModelTree <u>click</u> event listener
@@ -77,7 +95,7 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Ext.EventObject} e
 	 */
 	,onModelClick : function(node, e) {
-		console.log('yeah!');
+		//console.log('yeah!');
 	}
 	
 	/**
@@ -108,6 +126,7 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,onLoaderLoad : function(loader, node, response) {
 		this.unmaskModelTree();
+		this.fireEvent('modelsload', loader, response);
 	}
 	
 	/**
@@ -141,7 +160,7 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 		}];
 		
 		var modelLoader = new Ext.tree.TreeLoader({
-			url: this.url,
+			url: this.modelsUrl || this.url,
 			baseParams: {
 				cmd: 'get'
 			}
@@ -178,11 +197,13 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	,_initEvents : function() {
 		var _this = this;
 		
+		_this.addEvents(
+			'modelsload'
+		);
+		
 		//ModelTree events
 		_this.on({
-			dblclick : Ext.util.Functions.createDelegate(_this.onModelDbClick, _this),
-			
-			click : Ext.util.Functions.createDelegate(_this.onModelClick, _this), 
+			dblclick : Ext.util.Functions.createDelegate(_this.onModelDbClick, _this), 
 			
 			afterrender : function() {
 				
