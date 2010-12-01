@@ -37,19 +37,6 @@ class afsModelGridDataActions extends sfActions
     }
 
     /**
-     * When modified rows are sended they have different format when only one row has changed
-     * I'm fixing this assuming that every row contains 'id' key
-     */
-    private function fetchModifiedRows()
-    {
-        $rows = $this->fetchRows();
-        if (isset($rows['id'])) {
-            $rows = array($rows);
-        }
-
-        return $rows;
-    }
-    /**
      * This method decodes rows data sended by ExtJS
      */
     private function fetchRows()
@@ -106,7 +93,7 @@ class afsModelGridDataActions extends sfActions
     {
         $query = $this->getModelQuery();
 
-        $rows = $this->fetchModifiedRows();
+        $rows = $this->fetchRows();
         $rowsIndexed = array();
         foreach ($rows as $row) {
             $rowsIndexed[$row['id']] = $row;
