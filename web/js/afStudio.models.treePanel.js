@@ -529,16 +529,17 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			   		model: this.getModel(node),
 					schema: this.getSchema(node)
 			   	});		
-			   	
+
+                var apiUrlModule = '/afsModelGridData';
 				var modelGrid = new afStudio.models.modelGridPanel({
 					title:'ModelGrid '+this.getModel(node),
 					_data:data,
                     storeProxy: new Ext.data.HttpProxy({
                         api: {
-                            read: '/appFlowerStudio/modelsDataRead?model='+this.getModel(node),
-                            create: '/appFlowerStudio/modelsDataCreate?model='+this.getModel(node),
-                            update: '/appFlowerStudio/modelsDataUpdate?model='+this.getModel(node),
-                            destroy: '/appFlowerStudio/modelsDataDestroy?model='+this.getModel(node)
+                            read: apiUrlModule + '/read?model='+this.getModel(node),
+                            create: apiUrlModule + '/create?model='+this.getModel(node),
+                            update: apiUrlModule + '/update?model='+this.getModel(node),
+                            destroy: apiUrlModule + '/delete?model='+this.getModel(node)
                         }
                     })
 				});
