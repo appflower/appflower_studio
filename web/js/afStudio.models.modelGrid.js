@@ -504,7 +504,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		}
 
 		this.store = new Ext.data.Store({
-			reader: new Ext.data.JsonReader({
+			reader: new afStudio.models.modelGridPanelReader({
 				root: 'rows',
 			    idProperty: 'id'
 			}, fields),
@@ -592,6 +592,27 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
             }
         }
         this.view.focusCell(ed.row, ed.col);
+    }
+});
+
+
+afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
+    realize: function(record, data) {
+        if (Ext.isArray(record)) {
+            var newRecord = [];
+            var newData = [];
+
+            for(i=0;i<record.length;i++) {
+                if (data[i]['id'] != null) {
+                    newRecord.push(record[i]);
+                    newData.push(data[i]);
+                }
+            }
+
+            return afStudio.models.modelGridPanelReader.superclass.realize.call(this, newRecord, newData);
+        } else {
+            return afStudio.models.modelGridPanelReader.superclass.realize.call(this, record, data);
+        }
     }
 });
 

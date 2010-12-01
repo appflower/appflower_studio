@@ -100,27 +100,33 @@ class afsModelGridDataActions extends sfActions
         }
         $ids = array_keys($rowsIndexed);
         $objects = $query->filterByPrimaryKeys($ids)->find();
+
+        $result = array(
+            'success' => true,
+            'rows' => array()
+        );
+
         try {
-                foreach ($objects as $object) {
-                        $peer = $object->getPeer();
-                        $objectData = $rowsIndexed[$object->getPrimaryKey()];
-                        unset($objectData['id']);
-                        foreach ($objectData as $col => $value) {
-                                $colNr = str_replace('c', '', $col);
-                                $colPhpName = $peer->translateFieldName($colNr, BasePeer::TYPE_NUM, BasePeer::TYPE_PHPNAME);
-                                $colSetterMethod = "set{$colPhpName}";
-                                $object->$colSetterMethod($value);
-                        }
-                        $object->save();
-                }
+            foreach ($objects as $object) {
+                    $peer = $object->getPeer();
+                    $objectData = $rowsIndexed[$object->getPrimaryKey()];
+                    unset($objectData['id']);
+                    foreach ($objectData as $col => $value) {
+                            $colNr = str_replace('c', '', $col);
+                            $colPhpName = $peer->translateFieldName($colNr, BasePeer::TYPE_NUM, BasePeer::TYPE_PHPNAME);
+                            $colSetterMethod = "set{$colPhpName}";
+                            $object->$colSetterMethod($value);
+                    }
+                    $object->save();
+                    $result['rows'][] = $this->getModelObjectData($object);
+            }
         } catch (Exception $e) {
-                return array(
-                    'success' => false,
-                    'error' => $e->getMessage()
-            );
+            $result['success'] = false;
+            $result['error'] = $e->getMessage();
+            return $result;
         }
 
-        return array('success' => true);
+        return $result;
     }
 
     /**
@@ -137,7 +143,6 @@ class afsModelGridDataActions extends sfActions
         foreach ($rows as $row) {
             $object = new $this->modelName;
             $peer = $object->getPeer();
-            unset($row['id']);
             foreach ($row as $colId => $value) {
                 $colId = str_replace('c', '', $colId);
                 $object->setByPosition($colId, $value);
@@ -151,6 +156,8 @@ class afsModelGridDataActions extends sfActions
             }
             if (!$object->isNew()) {
                 $result['rows'][] = $this->getModelObjectData($object);
+            } else {
+                $result['rows'][] = $row;
             }
         }
 
@@ -174,6 +181,6 @@ class afsModelGridDataActions extends sfActions
         $query = $this->getModelQuery();
         $query->filterByPrimaryKeys($rows)
             ->delete();
-        return array('success' => true);
+        return array('success' => true,'message' => 'Rows deleted succesfully');
     }
 }
