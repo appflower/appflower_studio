@@ -37,9 +37,9 @@ class afStudioModelsCommand
 		    	$this->propelModel = $this->modelName;
 	    	} else {
 				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]) 
-				|| !isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {
-			    	$this->result = array('success'=>false, 'message'=>'Model doesn\'t exists');	
-			    	return false;	    			
+				|| !isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {					
+			    	$this->result = array('success'=>false, 'message'=>"Model doesn't exists");	
+			    	return false;
 				}
 	    		
 		    	$this->tableName = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]['tableName'];
@@ -201,38 +201,13 @@ class afStudioModelsCommand
 		{
 			switch ($this->xaction)
 			{
-				case "read":	
-					$k=0;						    
-				    foreach ($this->propelModel['columns'] as $name=>$params)
-				    {
-				    	$this->result['rows'][$k]['id']=$k;
-				    	$this->result['rows'][$k]['name']=$name;
-				    	if(isset($params['type']))
-				    	{
-				    		$this->result['rows'][$k]['type']=$params['type'];
-				    	}
-				    	if(isset($params['size']))
-				    	{
-				    		$this->result['rows'][$k]['size']=$params['size'];
-				    	}
-				    	if(isset($params['required']))
-				    	{
-				    		$this->result['rows'][$k]['required']=$params['required'];
-				    	}
-				    	if(isset($params['default']))
-				    	{
-				    		$this->result['rows'][$k]['default_value']=$params['default'];
-				    	}
-				    	
-				    	$k++;
-				    }					
-
-				    if (empty($this->result['rows'])) 
-				    {
-				   		 $this->result['rows'] = array(); 	
-				    }				     
-				    $this->result['success'] = true;
-				    $this->result['totalCount'] = count($this->result['rows']);
+				case "read":
+					$rows = $this->readModelFields($this->propelModel);
+					$this->result = array(
+						'success' => true,
+						'rows' => $rows,
+						'totalCount' => count($rows)
+					);					
 				break;
 					
 				case "update":	
@@ -316,12 +291,66 @@ class afStudioModelsCommand
 	}	
 	
 	/**
+	 * Reads Models fields(columns)
+	 * @param array $propelModel the model definition
+	 * @return array of model's fields 
+	 */
+	private function readModelFields($propelModel) 
+	{
+		$fields = array();
+				
+		$k = 0;
+	    foreach ($propelModel['columns'] as $name => $column) {	
+	    	$fields[$k]['id'] = $k;
+	    	$fields[$k]['name'] = $name;
+	    		    	
+	    	if (is_array($column)) {
+		    	foreach ($column as $property => $value) {
+		    		switch ($property) {
+		    			case 'type':
+		    				$value = strtolower($value);
+	    				break;
+		    			case 'foreignTable':
+		    				$fields[$k]['foreignModel'] = $this->getModelByTableName($value);
+	    				break;	
+		    		}		    		
+			    	$fields[$k][$property] = $value;
+		    	}
+	    	} else if (isset($column)) {
+	    		$fields[$k]['type'] = $column;
+	    	}
+	    	
+	    	$k++;
+	    }	    
+	    return $fields;
+	}
+	
+	/**
 	 * Validates Model's name
 	 * @param string $name
 	 */
 	private function isValidModelName($name) 
 	{
 		return preg_match("/^[^\d]\w*$/i", $name);
+	}
+	
+	/**
+	 * Returns Model name by its table name
+	 * @param string $table
+	 * @return string model name if model was found otherwise null 
+	 */
+	private function getModelByTableName($table) 
+	{	
+		$found = false;
+		foreach ($this->propelSchemaArray as $schema) {
+			foreach ($schema['classes'] as $modelName => $model) {
+				if ($model['tableName'] == $table) {
+					$found = true;
+					break 2;
+				}				
+			}
+		}
+		return $found ? $modelName : null;
 	}
 	
 	/**

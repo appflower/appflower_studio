@@ -79,7 +79,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	,typeEditorBuilder : function() {
 		return {
 			editor: new Ext.ux.form.GroupingComboBox({
-				typeAhead: true,
+				triggerAction: 'all',
 				forceSelection: true,
 				lazyRender: true,
 				displayField: 'text',
@@ -111,6 +111,13 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	,_beforeInitComponent : function() {
 		var _this = this;
 		
+		function keyConverter(v, rec) {
+			return rec.primaryKey ? 'primary' : (rec.index == 'unique' ? 'unique' : (rec.index ? 'index' : null));
+		}		
+		function relationConverter(v, rec) {
+			return (rec.foreignModel && rec.foreignReference) ? rec.foreignModel + '.' + rec.foreignReference : null;
+		}
+		
 		var fieldsStore = new Ext.data.JsonStore({
 			autoLoad: false,
 			url: '/appFlowerStudio/models',
@@ -122,15 +129,20 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		    idProperty: 'id',
 		    fields: [		    
 				{name: 'id'},
+				{name: 'key', mapping: 'id', convert: keyConverter}, //fake field
+				{name: 'relation', mapping: 'id', convert: relationConverter}, //fake field 
+				{name: 'autoIncrement'},
+				{name: 'primaryKey'},
+				{name: 'index'},
 			    {name: 'name'},
 			    {name: 'type'},
 			    {name: 'size'},
-			    {name: 'primary_key'},
-			    {name: 'required'},
-			    {name: 'autoincrement'},
-			    {name: 'default_value'},
-			    {name: 'foreign_table'},
-			    {name: 'foreign_key'}		    
+			    {name: 'required'},			    
+			    {name: 'default'},
+			    {name: 'foreignTable'},
+			    {name: 'foreignModel'},
+			    {name: 'foreignReference'},
+			    {name: 'onDelete'}
 		    ]
 		});
 		fieldsStore.loadData(_this._data);
@@ -140,10 +152,10 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				sortable: true
 			},
 			columns: [
-			{	//PrimaryKey				
+			{	//Key				
 				header: '<div class="model-pk-hd">&#160;</div>', 
 				width: 25, 
-				dataIndex: 'primary_key',					
+				dataIndex: 'key',					
 				editor: new Ext.form.ComboBox({
 					typeAhead: true,
 					triggerAction: 'all',
@@ -180,20 +192,20 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				editor: new Ext.form.TextField()
 			},{
 				header: "Autoincrement",
-				width: 50,
-				dataIndex: 'autoincrement',
+				width: 55,
+				dataIndex: 'autoIncrement',
 				editor: _this.booleanEditorBuilder().editor,
 				renderer: _this.booleanEditorBuilder().renderer
 			},{
 				header: "Default value",
 				width: 100,
-				dataIndex: 'default_value',
+				dataIndex: 'default',
 				editor: new Ext.form.TextField()
 			},{
 				header: "Relation",
 				width: 150,
 				sortable: true,
-				dataIndex: 'foreign_table',
+				dataIndex: 'relation',
 				editor: new afStudio.models.RelationCombo({
 					relationUrl: '/appFlowerStudio/models',
 					fieldsGrid: _this
@@ -206,6 +218,13 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				align: 'center', 
 				editor: _this.booleanEditorBuilder().editor,
 				renderer: _this.booleanEditorBuilder().renderer
+			},{
+				header: "On Delete",
+				width: 50,
+				sortable: true,
+				dataIndex: 'onDelete',
+				align: 'center', 
+				editor: new Ext.form.TextField()
 			}]
 		});	
 		
