@@ -3,7 +3,18 @@ Ext.ns('afStudio.modules');
 afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	initComponent: function() {
+		var _this = this;	
+	
 		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
+		var bottomToolBar = new Ext.Toolbar({
+			items: [
+			'->',
+			{
+				text: 'Add Module',
+				iconCls: 'icon-models-add',
+				handler: Ext.util.Functions.createDelegate(_this.onAddModule, _this)
+			}]			
+		});
 		var config = {			
 			title: 'Modules'
 			,iconCls: 'icon-models'
@@ -17,6 +28,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					this.loader.load(rootNode);
 				}, scope: this
 			}]
+			,bbar: bottomToolBar
 		};
 		
 		// apply config
@@ -150,7 +162,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        {
 	       		id: 'add-module',
 	            text: 'Add module',
-	            iconCls: 'icon-modules-add'
+	            iconCls: 'icon-models-add'
 	        }],
 	        listeners: {
 	            itemclick: function(item) {
@@ -284,6 +296,24 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	,onAddModule : function(node) {
 
+		var root = this.getRootNode();
+		
+		if(node.getXType()=='button')
+		{
+			//if node is selected search it's node app
+			node = this.getSelectionModel().getSelectedNode();
+						
+			//if no node is selected the select first child of root
+			if(!node)
+			{				
+				node = root.firstChild;
+			}
+			else
+			{
+				node = root.findChild('text',node.attributes.app);
+			}
+		}
+		
 		node.expand();
 	
 		var newNodeAttributes = {text: 'newmodule', type: 'module', app: this.getApp(node), leaf: true, NEW_NODE: true, iconCls: 'icon-folder'};
