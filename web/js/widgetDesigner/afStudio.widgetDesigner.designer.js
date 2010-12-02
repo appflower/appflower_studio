@@ -50,13 +50,12 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 			viewConfig: {
 				forceFit: true
 			},
-			bbar: {
+			tbar: {
 				items: [
-				'->',
-				{
-					text: 'Add Field',
-					iconCls: 'icon-add'
-				}]
+					{text: 'Save', iconCls: 'icon-save'},
+					{xtype: 'tbseparator'},
+					{text: 'Add Field', iconCls: 'icon-add'}
+				]
 			}
 		});
 		

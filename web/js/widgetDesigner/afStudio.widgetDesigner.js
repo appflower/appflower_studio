@@ -32,7 +32,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		return {
 			itemId: 'widget-designer',
-			height: 450,
+//			height: 400,
 			activeTab: 0,
 			defaults: {
 				layout: 'fit'
@@ -43,7 +43,10 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				title: 'Widget Designer'
 			},{
 				itemId: 'security',
-				title: 'Security'
+				title: 'Security',
+				tbar: [
+					{text: 'Preview', iconCls: 'icon-preview', handler: function(){alert('Preview button clicked')}}
+				]
 			},{
 				itemId: 'code-editor',
 				title: 'Code Editor'
@@ -79,8 +82,8 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 															closable:true,
 															path:_this.path,
 															tabTip:_this.path,
-															file:_this.path,
-															/*tabPanel:tabPanel*/}));
+															file:_this.path/*,
+															tabPanel:tabPanel*/}));
 			}
 		});	
 		

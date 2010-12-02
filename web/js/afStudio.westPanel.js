@@ -17,8 +17,12 @@ afStudio.westPanel = Ext.extend(Ext.Panel, {
 			listeners: {"beforerender": function(){this.activeItem = this.findById("models")}},
 			defaults: {
 				border: false
+			},			
+			defaults: {
+				border: false
 			},
 			items: [
+				new afStudio.layoutDesigner.treePanel({id:'layoutdesigner'}),
 				new afStudio.models.treePanel({id:'models'}),
 			    new afStudio.modules.treePanel({id:'modules'}),
 			    new afStudio.plugins.treePanel({id:'plugins'}),

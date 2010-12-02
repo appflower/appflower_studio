@@ -79,7 +79,7 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 				},
 				
 				{
-					text: 'Layout',
+					text: 'Theme',
 					menu: {
 						items: [
 							{
@@ -89,15 +89,29 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 								}
 							}, 						
 							{
-								text: 'Layout Designer',
+								text: 'CSS Editor',
 								handler: function (b, e) {
-									(new afStudio.LayoutDesigner()).show();
+									(new afStudio.CssEditor()).show();
 								}
 							}
 						]
 					}
 				},
 				
+				{
+					text: 'Widget Designer',
+					handler: function (b, e) {
+						afStudio.vp.addToPortal({
+							title: 'Widget Designer',
+							collapsible: false,
+							draggable: false,
+							items: [{
+								xtype: 'afStudio.widgetDesigner'
+							}]
+						}, true);	
+					}
+				},
+								
 				{xtype: 'tbseparator'},
 				{
 					text: 'DB Query',
@@ -113,11 +127,12 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 					handler:function(b,e){
 						(new afStudio.Logs()).show();
 					}
-				},				
-				
-				{
-					xtype: "tbfill"
 				},
+				
+				{xtype: 'tbseparator'},
+				{text: 'Users', iconCls: 'icon-users'},
+				
+				{xtype: "tbfill"},
 				{
 					text: "<img src=\"\/images\/famfamfam\/user_go.png\" border=\"0\">",
 					handler: function () { window.location.href="/logout"; },

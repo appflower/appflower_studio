@@ -6,7 +6,8 @@
  * @author Radu
  * reedit by Nikolai
  */
-afStudio.console = Ext.extend(Ext.Panel, {	
+//afStudio.console = Ext.extend(Ext.Panel, {	
+afStudio.console = Ext.extend(Ext.TabPanel, {	
 	
 	/**
 	 * Loads console
@@ -28,7 +29,12 @@ afStudio.console = Ext.extend(Ext.Panel, {
 					Ext.Msg.alert('Server-side failure with status code: ' + response.status);
 				}
 				var response = Ext.decode(response.responseText);
-		      	_this.body.dom.innerHTML += response.console;
+				
+//				var textContent = Ext.getCmp('ext-comp-1053-console-tab').getEl().dom.textContent;
+		      	var textContent = Ext.getCmp(_this.id + '-console-tab').body.dom.textContent;
+		      	Ext.getCmp(_this.id + '-console-tab').update(textContent + response.console);
+//		      	_this.body.dom.innerHTML += response.console;
+
 		      	_this.body.scroll("bottom", 1000000, true );				
 			}
 			
@@ -60,13 +66,16 @@ afStudio.console = Ext.extend(Ext.Panel, {
 					callback: function(options, success, response) {
 				    	var response = Ext.decode(response.responseText);				     					
 				      	afStudio.vp.layout.west.items[0].root.reload();				      	     
-				      	_this.body.unmask();				      
-				      	_this.body.dom.innerHTML += response.console;
+				      	_this.body.unmask();
+				      	
+
+						var textContent = Ext.getCmp('ext-comp-1053-console-tab').getEl().dom.textContent;
+				      	Ext.getCmp(_this.id + '-console-tab').update(textContent + response.console);
 				      	_this.body.scroll("bottom", 1000000, true );
 				    }					
 				});
 			} else if(fieldValue == 'clear') {
-				_this.body.dom.innerHTML = '';
+		      	Ext.getCmp(_this.id + '-console-tab').update('');
 				_this.body.scroll("bottom", 1000000, true);
 			}
 		}
@@ -96,6 +105,27 @@ afStudio.console = Ext.extend(Ext.Panel, {
 		
 		var console_cmd_display = new Ext.form.DisplayField({value: '<span style="margin-left:10px;"><b>cmds:</b> ' + afStudioConsoleCommands + '</span>'});
 		
+//		var config = {
+//			itemId: 'console',
+//			title: "Console",
+//			iconCls: 'icon-console',
+//			height: 200,
+//			minHeight: 0,
+//			autoScroll: true,
+//			tbar: {
+//				items:[
+//					console_cmd_label,
+//					console_cmd_field,
+//					console_cmd_display
+//				]
+//			},
+//			html: '',
+//			method: 'post',
+//			consoleUrl: '/appFlowerStudio/console',
+//			bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
+//			plugins: new Ext.ux.MaximizeTool()
+//		};
+		
 		var config = {
 			itemId: 'console',
 			title: "Console",
@@ -103,20 +133,27 @@ afStudio.console = Ext.extend(Ext.Panel, {
 			height: 200,
 			minHeight: 0,
 			autoScroll: true,
-			tbar: {
-				items:[
-					console_cmd_label,
-					console_cmd_field,
-					console_cmd_display
-				]
-			},
-			html: '',
+			activeTab: 0,
+			items: [
+				{
+					xtype: 'panel', iconCls: 'icon-console', title: 'Console', 
+					tbar: {
+						items:[
+							console_cmd_label,
+							console_cmd_field,
+							console_cmd_display
+						]
+					},
+					id: this.id + '-console-tab', 
+					bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
+					html: ''
+				},
+				{xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: ''}
+			],
 			method: 'post',
-			consoleUrl: '/appFlowerStudio/console',
-			bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
+			consoleUrl: '/appFlowerStudio/console', 
 			plugins: new Ext.ux.MaximizeTool()
-		};
-		
+		}
 		return config;
 	} //eo _initCmp
 	
@@ -127,7 +164,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
 	 */
 	,_initEvents : function() {
 		var _this = this,
-			consoleCmdField = _this.getTopToolbar().getComponent('console_cmd');
+			consoleCmdField = Ext.getCmp(this.id + '-console-tab').getTopToolbar().getComponent('console_cmd');
 			
 		_this.on({
 			afterrender: function() {

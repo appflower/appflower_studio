@@ -261,6 +261,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	        colModel: columnModel,
 	        columnLines: true,
 			iconCls: 'icon-grid',
+			loadMask: true,
 	        autoScroll: true,
 	        //height: 300,
 	        tbar: topToolbar,

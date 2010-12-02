@@ -99,6 +99,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			frame: true,
 			
 		    contextMenu: new Ext.menu.Menu({
+		    	id: 'widget-inspector-menu',
 		        items: [
 		        	{iconCls: 'icon-field-add', id: 'add-field', text: 'Add Field'},
 					{iconCls: 'icon-validator-add', id: 'add-validator', text: 'Add Validator'},
@@ -361,6 +362,12 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        selectOnFocus:true,
 	        
 	        listeners: {
+	        	'beforestartedit': function(editor, boundEl, value){
+	        		var cmp = Ext.getCmp('widget-inspector-menu');
+	        		if(!cmp.isVisible()){
+	        			return false;
+	        		}
+	        	},
 	        	'complete': function(editor, value, startValue){
 	        		var node = editor.tree.getSelectionModel().getSelectedNode();
 	        		if(node && ('field' == node.attributes.itemId) ){

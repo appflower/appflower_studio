@@ -387,6 +387,7 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 					}
 				);
 	},
+	
 	beforeInit: function(){
 		var columns=[new Ext.grid.RowNumberer()];
 		var fields=[];
@@ -526,20 +527,43 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		this.columns = columns;
 		
 		afStudio.models.modelGridPanel.superclass.beforeInit.apply(this, arguments);
+		var _this = this;
 		
 		var config = {			
-				iconCls: 'icon-grid',
-		        height: 300,
+			iconCls: 'icon-grid',
+//			height: 300,
+		    loadMask: true,
+		    clicksToEdit: 1,
+	        columnLines: true,
+	        autoScroll: true,
+	        //height: 300,
+
+	        viewConfig: {
+	            forceFit: true
+	        },
+		        
 		        plugins: [Ext.ux.grid.DataDrop],
 		        tbar: [{ 
-		            text: 'Add',
-		            iconCls: 'icon-add',
+		            text: 'Save',
+		            iconCls: 'icon-save',
 		            handler:function(btn, ev){
-		            	 var rec = this.getStore().recordType;
-		            	this.getStore().add([new rec()]);
+		            	this.getStore().save();
 		            },
 		            scope:this
-		        },'-',{ 
+		        }, '-',{	        	
+	            	text: 'Insert',
+	            	iconCls: 'icon-add',
+		            menu: {
+		            	items: [
+		            	{
+		            		text: 'Insert after',
+				            handler: Ext.util.Functions.createDelegate(_this.insertAfterField, _this) 
+		            	},{
+		            		text: 'Insert before',
+				            handler: Ext.util.Functions.createDelegate(_this.insertBeforeField, _this)
+		            	}]
+		            }	            
+	        	},'-',{ 
 		            text: 'Delete',
 		            iconCls: 'icon-delete',
 		            handler:function(btn, ev){
@@ -550,14 +574,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		        	    }	 
 		            },
 		            scope:this
-		        },'-',{ 
-		            text: 'Save',
-		            iconCls: 'icon-save',
-		            handler:function(btn, ev){
-		            	this.getStore().save();
-		            },
-		            scope:this
-		        }, '-',{
+		        },'-',{
 		            text: 'Export to Fixtures',
 		            iconCls: 'icon-view-tile',
 		            handler:function(btn, ev){
@@ -566,6 +583,43 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 			};
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 	},
+	
+	insertAfterField : function(b, e) {
+		
+//		var rec = this.getStore().recordType;
+//		this.getStore().add([new rec()]);
+		
+		var _this = this,		
+    		cell = _this.getSelectionModel().getSelectedCell(),
+    		index = cell ? cell[0] + 1 : 0; 
+    	
+    	var u = new _this.store.recordType({
+            name : '',
+            type: 'INT',
+            size : '11',
+            required: false
+        });
+        _this.stopEditing();
+        _this.store.insert(index, u);
+		_this.startEditing(index , cell ? cell[1] : 0);		
+	},
+	
+	insertBeforeField : function() {
+		var _this = this,
+    		cell = _this.getSelectionModel().getSelectedCell(),
+    		index = cell ? cell[0] : 0; 
+    	
+    	var u = new _this.store.recordType({
+            name : '',
+            type: 'INT',
+            size : '11',
+            required: false
+        });
+        _this.stopEditing();
+        _this.store.insert(index, u);
+        _this.startEditing(index , cell ? cell[1] : 0);	
+	},	
+	
 	onEditComplete : function(ed, value, startValue){
         this.editing = false;
         this.lastActiveEditor = this.activeEditor;
