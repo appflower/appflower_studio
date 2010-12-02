@@ -19,15 +19,6 @@ afStudio.layoutDesigner.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			
             animate:true, autoScroll:true, 
             containerScroll: true, 
-//            rootVisible: false,
-            layout: 'fit',
-            
-//            listeners: {
-//				'itemclick': function(node, e){
-//
-//					
-//				}, scope: this
-//            },
             
 			bbar: {
 				items: [
@@ -50,15 +41,16 @@ afStudio.layoutDesigner.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.on({
 			//showing context menu for each node
 			dblclick: function(node, e) {
-	            var page = item_id = node.attributes.page || 1;
-				alert(page)
+	            var page = node.attributes.page || 1;
 				afStudio.vp.addToPortal({
 					title: 'Layout Designer',
-					collapsible: false,
+					collapsible: false, 
+
+					//DO NOT REMOVE
+					layout: 'fit',
+					
 					draggable: false,
-					items: [{
-						xtype: 'afStudio.layoutDesigner'
-					}]
+					items: [{xtype: 'afStudio.layoutDesigner', page: page}]
 				}, true);
 	        }
 		});		

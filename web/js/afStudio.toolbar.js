@@ -105,9 +105,10 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 							title: 'Widget Designer',
 							collapsible: false,
 							draggable: false,
-							items: [{
-								xtype: 'afStudio.widgetDesigner'
-							}]
+							layout: 'fit',
+							items: [
+								{xtype: 'afStudio.widgetDesigner'}
+							]
 						}, true);	
 					}
 				},
