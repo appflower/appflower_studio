@@ -3,15 +3,22 @@ Ext.ns('afStudio.models');
 /**
  * Models FieldsGrid responsible for manipulations 
  * with Model's structure  
+ * 
  * @class afStudio.models.FieldsGrid
  * @extends Ext.grid.EditorGridPanel
  */
 afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {	
 	
-	saveModel : function(b, e) {		
+	/**
+	 * Saves Model
+	 */
+	saveModel : function() {		
 	}
 	
-	,insertAfterField : function(b, e) {
+	/**
+	 * Inserts row after the selection
+	 */
+	,insertAfterField : function() {
 		var _this = this,		
     		cell = _this.getSelectionModel().getSelectedCell(),
     		index = cell ? cell[0] + 1 : 0; 
@@ -27,6 +34,9 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		_this.startEditing(index , cell ? cell[1] : 0);		
 	}
 	
+	/**
+	 * Inserts row before the selection
+	 */
 	,insertBeforeField : function() {
 		var _this = this,
     		cell = _this.getSelectionModel().getSelectedCell(),
@@ -91,6 +101,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 						['NUMBERS', 'numeric'],  ['NUMBERS', 'decimal'],  ['NUMBERS', 'tinyint'],					
 						['NUMBERS', 'smallint'], ['NUMBERS', 'integer'],  ['NUMBERS', 'bigint'],
 						['NUMBERS', 'real'],	 ['NUMBERS', 'float'],    ['NUMBERS', 'double'],
+						['NUMBERS', 'boolean'],
 						['BINRAY', 'binary'],	 ['BINRAY', 'varbinary'], ['BINRAY', 'longvarbinary'], ['BINRAY', 'blob'],
 						['TEMPORA DATE/TIME', 'date'],	 
 						['TEMPORA DATE/TIME', 'time'], 
@@ -118,13 +129,14 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			return (rec.foreignModel && rec.foreignReference) ? rec.foreignModel + '.' + rec.foreignReference : null;
 		}
 		
-		var fieldsStore = new Ext.data.JsonStore({
-			autoLoad: false,
+		var fieldsStore = new Ext.data.JsonStore({			
 			url: '/appFlowerStudio/models',
+			autoLoad: false,
 		    baseParams: {
 		    	model: _this.model,
 		    	schema: _this.schema
-		    },			
+		    },
+		    storeId: 'model-fields-st', 
 		    root: 'rows',
 		    idProperty: 'id',
 		    fields: [		    
@@ -144,8 +156,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			    {name: 'foreignReference'},
 			    {name: 'onDelete'}
 		    ]
-		});
-		fieldsStore.loadData(_this._data);
+		});		
 				
 		var columnModel = new Ext.grid.ColumnModel({
 			defaults: {
@@ -189,7 +200,10 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				header: "Size",
 				width: 50,
 				dataIndex: 'size',
-				editor: new Ext.form.TextField()
+				editor: new Ext.form.NumberField({
+					allowDecimals: false,
+					allowNegative: false
+				})
 			},{
 				header: "Autoincrement",
 				width: 55,
@@ -224,7 +238,17 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				sortable: true,
 				dataIndex: 'onDelete',
 				align: 'center', 
-				editor: new Ext.form.TextField()
+				editor: new Ext.form.ComboBox({
+					typeAhead: true,
+					triggerAction: 'all',
+					lazyRender: true,
+					editable: false,
+					mode: 'local',
+					valueField: 'field',
+					displayField: 'field',
+					value: 'none',
+					store : [['cascade', 'cascade'], ['setnull', 'setnull'], ['restrict', 'restrict'], ['none', 'none']]    
+	    		})
 			}]
 		});	
 		
@@ -263,15 +287,18 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			iconCls: 'icon-grid',
 			loadMask: true,
 	        autoScroll: true,
-	        //height: 300,
 	        tbar: topToolbar,
 	        viewConfig: {
 	            forceFit: true
-	        }			
+	        },
+	        plugins: ['cellEditorBuilder']
 		}
 	}//eo _beforeInitComponent
 	 
-	//private
+	/**
+	 * Template method
+	 * @private
+	 */
 	,initComponent: function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
@@ -280,33 +307,16 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		this._afterInitComponent();
 	}
 	
+	/**
+	 * Initializes events
+	 * @private
+	 */
 	,_afterInitComponent : function() {
 		var _this = this,
-			store = _this.getStore();
-		
-//		_this.on({
-//			afteredit: function(e) {
-//				//e.record.commit();
-//				var row = e.row + 1;
-//				var count = this.store.getCount();
-//				if (count == row) {
-//					var newId = store.getAt(e.row).get('id') + 1;
-//					var record = new store.recordType({
-//						'id': newId,
-//			    		'name': '',			    
-//			    		'required': false,
-//			    		'autoincrement': false								
-//					});
-//					store.add([record]);
-//				}
-//				var column = e.column;
-//				var task = new Ext.util.DelayedTask(function(row,column) {
-//				    this.startEditing(row,column);
-//				},this,[row,column]);
-//				task.delay(100);
-//			}			
-//		});
+			store = _this.getStore(),
+			   cm = _this.getColumnModel();
 
+		store.loadData(_this._data);		
 	}//eo _afterInitComponent
 	
 }); 

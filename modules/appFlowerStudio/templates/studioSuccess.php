@@ -62,6 +62,7 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/RelationCombo.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/FieldsGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/ModelTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/DependencyCellEditorBuilder.js"></script>
 <?php 
 $appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
 
