@@ -422,6 +422,10 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	 
 		if(this.store){
 			var store = this.store;
+			if(this.store.getCount()==0){
+				 var rec = this.store.recordType;
+				 this.store.add([new rec()]);		
+			}
 		}else{
 			var store =  new Ext.data.SimpleStore({
 				fields: fields,data : [['']]

@@ -46,47 +46,53 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 */
 	addLayout:function(detailp, columns){
 		var portItems = [];
-		var columnwidth = 1/columns;
-		for(var i =0;i<columns;i++){
-			portItems.push({	
-				id:'portColumn'+i,
-				columnWidth: columnwidth,
-
-				defaults: {
-					style: 'padding-right: 5px;'
-				},
-
-				items: [
-				{
-					title:'widget1'+i,
-					height:50,
-					width:50,
-					getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-				},{
-					title:'widget2'+i,
-					height:50,
-					width:50,
-					getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-				},{
-					title:'widget3'+i,
-					height:50,
-					width:50,
-					getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-				}
+		if(columns<10){
+			var columnwidth = 1/columns;
+			for(var i =0;i<columns;i++){
+				portItems.push({	
+					id:'portColumn'+i,
+					columnWidth: columnwidth,
+	
+					defaults: {
+						style: 'padding-right: 5px;'
+					},
+	
+					items: [
+					{
+						title:'widget1'+i,
+						height:50,
+						width:50,
+						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+					},{
+						title:'widget2'+i,
+						height:50,
+						width:50,
+						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+					},{
+						title:'widget3'+i,
+						height:50,
+						width:50,
+						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+					}
+					
+					]
+				});
+			}
+			detailp.columns=columns;
+			detailp.add(
+				new Ext.ux.Portal ({
+					id: this.id + '-layout-designer-portal',
+					autoScroll: true,
+					items: portItems,
+					bodyStyle: 'padding: 5px;',
+					style: "padding-right:5px;"
+				})
+			);
+		}else{
+			if(columns==22){
 				
-				]
-			});
+			}
 		}
-		detailp.columns=columns;
-		detailp.add(
-			new Ext.ux.Portal ({
-				id: this.id + '-layout-designer-portal',
-				autoScroll: true,
-				items: portItems,
-				bodyStyle: 'padding: 5px;',
-				style: "padding-right:5px;"
-			})
-		);
 		detailp.doLayout();
 	},	
 	
@@ -131,7 +137,7 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 						items: [
     						{
 								xtype: 'combo', triggerAction: 'all', mode: 'local', emptyText: 'Select an item...',
-								store: [[1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns']],
+								store: [[1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns'],[22,'2 X 2']],
 								listeners: {
 									'select': function(cmp){
 										var detailP = Ext.getCmp('details-panel');
@@ -158,7 +164,7 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 		
 		return [
-			{id: 'details-panel', title: 'Details', layout: 'fit',
+			{id: 'details-panel', title: 'Details', layout: 'vbox',
 				tbar: tb, autoScroll: true,
 		            bodyStyle: 'padding-bottom:15px;background:#eee;',
 		    		
