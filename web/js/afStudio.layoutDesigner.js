@@ -89,9 +89,41 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				})
 			);
 		}else{
-			if(columns==22){
-				
+			var _layout=[];
+			if(columns==22)
+				_layout=[2,2];
+			
+			var layoutitems = [];
+			for(var i=0;i<_layout[0];i++){
+				portItems=[];
+				for(var j=0;j<_layout[1];j++){
+					portItems.push({		
+						defaults: {
+							style: 'padding-right: 5px;'
+						},
+						columnWidth: 1/_layout[1],
+						id:"portColumn"+i+j,
+						items: [{
+							title:'widget'+i+j,
+							height:50,
+							width:50,
+							getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+						}]
+					});
+				}
+			
+				layoutitems.push(
+						new Ext.ux.Portal ({
+							autoHeight:true,
+							id: this.id + '-layout-designer-portal'+i,
+							//autoScroll: true,
+							items: portItems,
+							bodyStyle: 'padding: 5px;',
+							style: "padding-right:5px;"
+						})
+					);
 			}
+			detailp.add(layoutitems);
 		}
 		detailp.doLayout();
 	},	
@@ -164,7 +196,11 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 		
 		return [
-			{id: 'details-panel', title: 'Details', layout: 'vbox',
+			{id: 'details-panel', title: 'Details', 
+				layout:{
+					type: 'vbox',
+					align:'stretch'
+				},
 				tbar: tb, autoScroll: true,
 		            bodyStyle: 'padding-bottom:15px;background:#eee;',
 		    		

@@ -537,7 +537,8 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 			listeners : {				
 				load : function(store, records) {
 					//adds one line if the result set is empty
-					if (Ext.isEmpty(records)) {
+					//if (Ext.isEmpty(records))
+					{
 						 var rec = store.recordType;
 						store.add([new rec()]);						
 					}
@@ -611,7 +612,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		
 		var _this = this,		
     		cell = _this.getSelectionModel().getSelectedCell(),
-    		index = cell ? cell[0] + 1 : 0; 
+    		index = cell ? cell[0] + 1 : this.store.getCount(); 
     	
     	var u = new _this.store.recordType({
             name : '',
