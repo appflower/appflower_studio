@@ -73,17 +73,18 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 					group: 'type'
 				},
 				items:[
-					{itemId:"ccheckbox",	text:'Checkbox'},
-					{itemId:"ccurrency",	text:'Currency'},
-					{itemId:"cdate",		text:'Date'},
-					{itemId:"cemail",		text:'Email Address'},
-					{itemId:"cnumber",		text:'Number'},
-					{itemId:"cpassword",	text:'Password'},					
-					{itemId:"cphonenumber",	text:'Phone Number'},
-					{itemId:"crate",		text:'Rate'},
-					{itemId:"crelation",	text:'Relation'},
-					{itemId:"cchoice", 		text:'Select'},
-					{itemId:"ctime",		text:'Time'}
+					{itemId: "ctext",	     text: 'Text', checked: true},
+					{itemId: "ccheckbox",	 text: 'Checkbox'},
+					{itemId: "ccurrency",	 text: 'Currency'},
+					{itemId: "cdate",		 text: 'Date'},
+					{itemId: "cemail",		 text: 'Email Address'},
+					{itemId: "cnumber",		 text: 'Number'},
+					{itemId: "cpassword",	 text: 'Password'},					
+					{itemId: "cphonenumber", text: 'Phone Number'},
+					{itemId: "crate",		 text: 'Rate'},
+					{itemId: "crelation",	 text: 'Relation'},
+					{itemId: "cchoice", 	 text: 'Select'},
+					{itemId: "ctime",		 text: 'Time'}
 				]
 			});
 			this.changetoMenu.on({
@@ -210,11 +211,11 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				this.cm.setColumnHeader(index+1,this.createDupheader(header));
 				this.cm.setHidden(index+1,false);
 				break;
-			case 'editb':
+			case 'renameb':
 				var hd = this.findHeaderCell(item.parentMenu._el);
 				this.editHeadColumn(hd.firstChild,index);
 				break;
-			case 'renameb':
+			case 'editb':
 				/*
 				this.changetoMenu.items.each(function(i, idx, length){
 					if (i.checked) {						
@@ -233,6 +234,10 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 					cm.config[index].header=this.grid.defautHeaderTitle;
 				}
 				break;
+			case 'ctext':
+				var editor=this.grid.createEditer();
+				cm.config[index].editor = editor;			
+				break;				
 			case 'ccheckbox':
 				var editor=this.grid.createEditer(new Ext.form.Checkbox());
 				cm.config[index].editor = editor;
