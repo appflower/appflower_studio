@@ -68,6 +68,10 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			
 			this.changetoMenu = new Ext.menu.Menu({
 				id:g.id + "-hchangeto-menu",
+				defaults: {
+					xtype: 'menucheckitem',
+					group: 'type'
+				},
 				items:[
 					{itemId:"ccheckbox",	text:'Checkbox'},
 					{itemId:"ccurrency",	text:'Currency'},
@@ -99,6 +103,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				'-',
 				{itemId:"dupb", text: 'Duplicate Field'},
 				{itemId:"editb", text: 'Edit Field ...'},
+				{itemId:"renameb", text: 'Rename Field'},				
 				{
 					itemId:'deletef',text: 'Delete Field'
 				},'-',{
@@ -209,6 +214,17 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				var hd = this.findHeaderCell(item.parentMenu._el);
 				this.editHeadColumn(hd.firstChild,index);
 				break;
+			case 'renameb':
+				/*
+				this.changetoMenu.items.each(function(i, idx, length){
+					if (i.checked) {						
+					}
+				});*/
+				if (!item.renameWindow) {
+					item.renameWindow = new afStudio.models.EditFieldWindow();
+				}
+				item.renameWindow.show();
+				break;				
 			case 'deletef':
 				var visibleCount = cm.getColumnCount(true);
 				if(visibleCount>2) {
