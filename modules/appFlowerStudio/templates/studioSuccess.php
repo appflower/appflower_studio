@@ -58,11 +58,11 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/GroupingComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/RelationPicker.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/RelationCombo.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/FieldsGrid.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/ModelTree.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/DependencyCellEditorBuilder.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationPicker.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationCombo.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/ModelTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/FieldsGrid.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/DependencyCellEditorBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/EditFieldWindow.js"></script>
 <?php 
 $appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
