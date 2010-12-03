@@ -18,6 +18,10 @@ afStudio.southPanel = Ext.extend(Ext.Panel, {
 			region: "south",
 			layout: 'fit',
 			height: 200,
+
+//			title: 'Console',
+//			plugins: new Ext.ux.MaximizeTool(),
+			
 			split: true,			
 			collapseMode: 'mini',
 			items: [

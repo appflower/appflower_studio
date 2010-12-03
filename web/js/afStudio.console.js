@@ -6,8 +6,8 @@
  * @author Radu
  * reedit by Nikolai
  */
-//afStudio.console = Ext.extend(Ext.Panel, {	
-afStudio.console = Ext.extend(Ext.TabPanel, {	
+afStudio.console = Ext.extend(Ext.Panel, {
+//afStudio.console = Ext.extend(Ext.TabPanel, {	
 	
 	/**
 	 * Loads console
@@ -128,30 +128,38 @@ afStudio.console = Ext.extend(Ext.TabPanel, {
 		
 		var config = {
 			itemId: 'console',
+			
 			title: "Console",
-			iconCls: 'icon-console',
+			
+//			iconCls: 'icon-console',
 			height: 200,
 			minHeight: 0,
 			autoScroll: true,
-			activeTab: 0,
+			layout: 'fit',
 			items: [
-				{
-					xtype: 'panel', iconCls: 'icon-console', title: 'Console', 
-					tbar: {
-						items:[
-							console_cmd_label,
-							console_cmd_field,
-							console_cmd_display
-						]
-					},
-					id: this.id + '-console-tab', 
-					bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
-					html: ''
-				},
-				{xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: ''}
+				new Ext.TabPanel({
+					activeTab: 0,
+					items: [
+						{
+							xtype: 'panel', iconCls: 'icon-console', title: 'Console', 
+							tbar: {
+								items:[
+									console_cmd_label,
+									console_cmd_field,
+									console_cmd_display
+								]
+							},
+							id: this.id + '-console-tab', 
+							bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
+							html: ''
+						},
+						{xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: ''}
+					]
+				})
 			],
 			method: 'post',
-			consoleUrl: '/appFlowerStudio/console', 
+			consoleUrl: '/appFlowerStudio/console'
+			, 
 			plugins: new Ext.ux.MaximizeTool()
 		}
 		return config;

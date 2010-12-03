@@ -368,13 +368,28 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
     focus : function(){},
 
   
+	/**
+	 * Function showMask
+	 * Mask owner element
+	 */
+	showMask: function(){
+		Ext.get(this.tabId).mask('Loading...');		
+	},
+	
+	
+	/**
+	 * Function hideMask
+	 * Unmask owner element
+	 */
+	hideMask: function(){
+		Ext.get(this.tabId).unmask();		
+	},
 
    /**
 
     * @private Initialize the editor
 
-    */
-
+    */	
    initialize : function() {
 
       if(Ext.isIE){
@@ -396,7 +411,9 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
       this.editor.body = this.doc.getElementsByTagName('body')[0];
 
       if(this.fileContentUrl){
-
+		
+		this.showMask();
+		
         Ext.Ajax.request({
 
           url: this.fileContentUrl+'/?file='+this.file
@@ -404,20 +421,18 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
           , method:'get'
 
           , success:function(response, options){
-
+			
+			this.hideMask();
+			
           	var r = Ext.decode(response.responseText);
-          	
           	var code = r.response;
-            
             this.code = code;
-
             this.editor.setCode(this.code);
-            
             this.editor.syntaxHighlight('init');
-            
           }.createDelegate(this)
           
           ,	failure: function() {
+				this.hideMask();
 			    Ext.Msg.alert("","The server can't read '"+this.file+"' !");
 			    
 			    //this.tabPanel.remove(this);

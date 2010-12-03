@@ -78,11 +78,13 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		codeEditorTab.on({
 			beforerender : function(cmp) {
-				cmp.add(new Ext.ux.CodePress({title:'test',
-															closable:true,
-															path:_this.path,
-															tabTip:_this.path,
-															file:_this.path/*,
+				cmp.add(new Ext.ux.CodePress({
+					title:'test',
+					closable:true,
+					path:_this.path,
+					tabTip:_this.path,
+					tabId: codeEditorTab.getId(),
+					file:_this.path/*,
 															tabPanel:tabPanel*/}));
 			}
 		});	

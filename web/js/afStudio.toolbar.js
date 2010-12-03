@@ -98,21 +98,6 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 					}
 				},
 				
-				{
-					text: 'Widget Designer',
-					handler: function (b, e) {
-						afStudio.vp.addToPortal({
-							title: 'Widget Designer',
-							collapsible: false,
-							draggable: false,
-							layout: 'fit',
-							items: [
-								{xtype: 'afStudio.widgetDesigner'}
-							]
-						}, true);	
-					}
-				},
-								
 				{xtype: 'tbseparator'},
 				{
 					text: 'DB Query',
