@@ -47,6 +47,7 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 */
 	addLayout:function(detailp, columns, additionalColumns){
 		var portItems = [];
+		detailp.columns=columns;
 		if(columns<10){
 			var columnwidth = 1/columns;
 			for(var i =0;i<columns;i++){
@@ -95,20 +96,23 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				portItems[0].items.push(this.getNewWidgetCfg());
 			}
 			
-			detailp.columns=columns;
 			detailp.add(
 				new Ext.ux.Portal ({
 					id: this.id + '-layout-designer-portal',
 					autoScroll: true,
 					items: portItems,
 					bodyStyle: 'padding: 5px;',
-					style: "padding-right:5px;"
+					style: "padding-right:5px;padding-left:5px;"
 				})
 			);
 		}else{
 			var _layout=[];
 			if(columns==22)
 				_layout=[2,2];
+			else if(columns==33)
+				_layout=[3,3];
+			else if(columns==44)
+				_layout=[4,4];
 			
 			var layoutitems = [];
 			for(var i=0;i<_layout[0];i++){
@@ -132,14 +136,17 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				layoutitems.push(
 						new Ext.ux.Portal ({
 							autoHeight:true,
+							//height:100,
+							//title:'xxx'+i,
 							id: this.id + '-layout-designer-portal'+i,
 							//autoScroll: true,
 							items: portItems,
 							bodyStyle: 'padding: 5px;',
-							style: "padding-right:5px;"
+							style: "padding-right:5px;padding-left:5px;"
 						})
 					);
 			}
+			detailp._layout=_layout;
 			detailp.add(layoutitems);
 		}
 		detailp.doLayout();
@@ -154,23 +161,49 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
     	var detailp=Ext.getCmp('details-panel');
     	var columns = detailp.columns;
     	detailp.resizer=[];
-    	for(var i=1;i<columns;i++){
-    		var resizer = new Ext.Resizable('portColumn'+(i-1), {
-    			 width: 200,
-                 minWidth:100,
-                 minHeight:50,
-                 listeners:{
-                	 beforeresize :function(resizer,e){
-                		 var el = Ext.fly(resizer.el);
-                		 resizer._width = Ext.fly(el).getWidth();
-                	 },
-                	 resize:function(resizer,width,height,e){
-                		 detailp.resizerHandler(resizer,width,height,e);
-                	 }
-                 }
-    		})
-    		//resizer.on('resize', detailp.resizerHandler,detailp);
-    		detailp.resizer.push(resizer);
+    	if(columns<10){
+	    	for(var i=1;i<columns;i++){
+	    		var resizer = new Ext.Resizable('portColumn'+(i-1), {
+	    			 width: 200,
+	                 minWidth:100,
+	                 minHeight:50,
+	                 listeners:{
+	                	 beforeresize :function(resizer,e){
+	                		 var el = Ext.fly(resizer.el);
+	                		 resizer._width = Ext.fly(el).getWidth();
+	                	 },
+	                	 resize:function(resizer,width,height,e){
+	                		 detailp.resizerHandler(resizer,width,height,e);
+	                	 }
+	                 }
+	    		})
+	    		//resizer.on('resize', detailp.resizerHandler,detailp);
+	    		detailp.resizer.push(resizer);
+	    	}
+    	}else{
+    		var _layout = detailp._layout;
+    		if(_layout){
+    			for(var i=0;i<_layout[0];i++){
+    				for(var j=0;j<_layout[1];j++){
+	    	    		var resizer = new Ext.Resizable('portColumn'+i+j, {
+	    	    			 width: 200,
+	    	                 minWidth:100,
+	    	                 minHeight:50,
+	    	                 listeners:{
+	    	                	 beforeresize :function(resizer,e){
+	    	                		 var el = Ext.fly(resizer.el);
+	    	                		 resizer._width = Ext.fly(el).getWidth();
+	    	                	 },
+	    	                	 resize:function(resizer,width,height,e){
+	    	                		 detailp.resizerHandler(resizer,width,height,e);
+	    	                	 }
+	    	                 }
+	    	    		})
+	    	    		//resizer.on('resize', detailp.resizerHandler,detailp);
+	    	    		detailp.resizer.push(resizer);
+    				}
+    	    	}
+    		}
     	}
 	},
 	
@@ -186,7 +219,10 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 						items: [
     						{
 								xtype: 'combo', triggerAction: 'all', mode: 'local', emptyText: 'Select an item...',
-								store: [[1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns'],[22,'2 X 2']],
+								store: [
+								        [1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns'],
+								        [22,'2 X 2'],[33,'3 X 3'],[44,'4 X 4']
+								 ],
 								listeners: {
 									'select': function(cmp){
 										var els = Ext.DomQuery.select('DIV[class*="layout-designer-widget"]', 'details-panel');
@@ -219,27 +255,28 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			{id: 'details-panel', title: 'Details', 
 
 //				layout: 'vbox',
-				layout: 'fit',
-//				layout:{
-//					type: 'vbox',
-//					align:'stretch'
-//				},
+//				layout: 'fit',
+				layout:{
+					type: 'vbox',
+					padding:'5',
+					align:'stretch'
+				},
 				tbar: tb, autoScroll: true,
-		            bodyStyle: 'padding-bottom:15px;background:#eee;',
+		       // bodyStyle: 'padding-bottom:5px;background:#eee;',
 		    		
-		    		resizerHandler:function(resizer,width,height,e){
-		    			var id = resizer.el.id;
-		    			var index = id.substr(10,1);
-		    			index = parseInt(index);
-		    			index++;
-		    			var w = resizer._width;
-		    			w = width -w;
-		    			Ext.getCmp(id).doLayout();
-		    			var nextcolumn = Ext.getCmp('portColumn'+index);
-		    			var ww  = nextcolumn.getWidth();
-		    			nextcolumn.setWidth(ww-w);
-		    			nextcolumn.doLayout();
-		    		}
+	    		resizerHandler:function(resizer,width,height,e){
+	    			var id = resizer.el.id;
+	    			var index = id.substr(id.length-1,1);
+	    			index = parseInt(index);
+	    			index++;
+	    			var w = resizer._width;
+	    			w = width -w;
+	    			Ext.getCmp(id).doLayout();
+	    			var nextcolumn = Ext.getCmp(id.substr(0,id.length-1)+index);
+	    			var ww  = nextcolumn.getWidth();
+	    			nextcolumn.setWidth(ww-w);
+	    			nextcolumn.doLayout();
+	    		}
 			},
 			{title: 'Preview', html: 'Another one'}
 		];
