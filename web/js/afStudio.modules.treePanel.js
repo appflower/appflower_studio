@@ -6,6 +6,24 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		var _this = this;	
 	
 		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
+
+
+//       var rootNode = new Ext.tree.AsyncTreeNode({
+//            expanded: true,
+//            text: 'Databases',
+//			id: 'database',
+//            children: [
+//            	{
+//            		text: 'Database 1', leaf: false, type: 'xml',
+//            		expanded: true, iconCls: 'icon-tree-db',
+//            		children: [
+//	        			{text: 'Table 1', iconCls: 'icon-tree-table', type: 'app', leaf: true},
+//	        			{text: 'Table 2', iconCls: 'icon-tree-table', type: 'module', leaf: true}
+//            		]
+//            	}
+//            ]
+//        });
+
 		var bottomToolBar = new Ext.Toolbar({
 			items: [
 			'->',
@@ -138,6 +156,13 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	            	c.contextNode = node;
 	            	c.showAt(e.getXY());
 	            }
+	        },
+	        
+	        dblclick: function(node, e){
+	        	if('app' == node.attributes.type){
+					var path = this.getPath(node);
+					this.addWidgetDesigner(path);
+	        	}
 	        }
 		});
 		
@@ -490,19 +515,25 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 	,editXml:function(node)
 	{
-		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});				
+		var path = this.getPath(node);
+		this.addWidgetDesigner(path);
+	}
+	
+	,addWidgetDesigner: function(path){
+		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});
 		mask.show();
 		
 		afStudio.vp.addToPortal({
-							title: 'Widget Designer',
-							collapsible: false,
-							draggable: false,
-							items: [{
-								xtype: 'afStudio.widgetDesigner',
-								path: this.getPath(node),
-								mask: mask
-							}]
-						}, true);
+			title: 'Widget Designer',
+			collapsible: false,
+			draggable: false,
+			layout: 'fit',
+			items: [{
+				xtype: 'afStudio.widgetDesigner',
+				path: path,
+				mask: mask
+			}]
+		}, true);		
 	}
 }); 
 

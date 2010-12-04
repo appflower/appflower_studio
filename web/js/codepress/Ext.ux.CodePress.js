@@ -412,7 +412,7 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 
       if(this.fileContentUrl){
 		
-		this.showMask();
+//		this.showMask();
 		
         Ext.Ajax.request({
 

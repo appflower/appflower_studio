@@ -153,6 +153,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
 							bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
 							html: ''
 						},
+						{xtype: 'panel', iconCls: 'icon-notifications', title: 'Notifications', html: ''},
 						{xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: ''}
 					]
 				})

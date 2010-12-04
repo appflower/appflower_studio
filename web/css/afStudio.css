@@ -5,6 +5,8 @@
 .icon-models-edit{background:url('/appFlowerStudioPlugin/images/table_edit.png') no-repeat center left !important;}
 .icon-console{background:url('/appFlowerStudioPlugin/images/application_xp_terminal.png') no-repeat center left !important;}
 .icon-debug{background:url('/appFlowerStudioPlugin/images/bug.png') no-repeat center left !important;}
+.icon-notifications{background:url('/appFlowerStudioPlugin/images/information.png') no-repeat center left !important;}
+
 .icon-add{background:url('/appFlowerStudioPlugin/images/add.png') no-repeat center left !important;}
 .icon-edit{background:url('/appFlowerStudioPlugin/images/pencil.png') no-repeat center left !important;}
 .icon-delete{background:url('/appFlowerStudioPlugin/images/delete.png') no-repeat center left !important;}
@@ -14,6 +16,11 @@
 
 .icon-users{background: url('/appFlowerStudioPlugin/images/user_green.png') no-repeat 0 0 !important;}
 .icon-dbquery{background: url('/appFlowerStudioPlugin/images/computer.png') no-repeat 0 0 !important;}
+
+.icon-sql{background: url('/appFlowerStudioPlugin/images/script_code.png') no-repeat 0 0 !important;}
+.icon-tree-table{background: url('/appFlowerStudioPlugin/images/table.png') no-repeat 0 0 !important;}
+.icon-tree-db{background: url('/appFlowerStudioPlugin/images/server_database.png') no-repeat 0 0 !important;}
+
 .icon-logs{background: url('/appFlowerStudioPlugin/images/chart_line.png') no-repeat 0 0 !important;}
 .icon-preview{background: url('/appFlowerStudioPlugin/images/zoom.png') no-repeat 0 0 !important;}
 .icon-format{background: url('/appFlowerStudioPlugin/images/layout_content.png') no-repeat 0 0 !important;}

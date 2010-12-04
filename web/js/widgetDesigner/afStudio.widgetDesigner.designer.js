@@ -54,7 +54,9 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 				items: [
 					{text: 'Save', iconCls: 'icon-save'},
 					{xtype: 'tbseparator'},
-					{text: 'Add Field', iconCls: 'icon-add'}
+					{text: 'Add Field', iconCls: 'icon-add'},
+					{xtype: 'tbseparator'},
+					{text: 'Preview', iconCls: 'icon-preview', handler: function(){alert('Preview button clicked')}}					
 				]
 			}
 		});

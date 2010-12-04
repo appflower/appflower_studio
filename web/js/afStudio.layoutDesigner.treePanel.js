@@ -19,6 +19,11 @@ afStudio.layoutDesigner.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			
             animate:true, autoScroll:true, 
             containerScroll: true, 
+			tools:[{id:'refresh', 
+				handler:function(){
+					alert('refresh tool was clicked')
+				}, scope: this
+			}],
             
 			bbar: {
 				items: [

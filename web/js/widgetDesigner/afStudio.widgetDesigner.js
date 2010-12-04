@@ -43,10 +43,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				title: 'Widget Designer'
 			},{
 				itemId: 'security',
-				title: 'Security',
-				tbar: [
-					{text: 'Preview', iconCls: 'icon-preview', handler: function(){alert('Preview button clicked')}}
-				]
+				title: 'Security'
 			},{
 				itemId: 'code-editor',
 				title: 'Code Editor'
@@ -55,10 +52,21 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	}// eo _initCmp
 	
 	,_initEvents : function() {
+		
 		var _this = this,
 			designerTab = _this.getComponent('designer'),
 			securityTab = _this.getComponent('security'),
 			codeEditorTab = _this.getComponent('code-editor');
+
+		this.codeEditor = new Ext.ux.CodePress({
+			title:'test',
+			closable:true,
+			path:_this.path,
+			tabTip:_this.path,
+			tabId: codeEditorTab.getId(),
+			file:_this.path
+			/*,tabPanel:tabPanel*/
+		});
 		
 		designerTab.on({
 			beforerender : function(cmp) {
@@ -78,22 +86,21 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		codeEditorTab.on({
 			beforerender : function(cmp) {
-				cmp.add(new Ext.ux.CodePress({
-					title:'test',
-					closable:true,
-					path:_this.path,
-					tabTip:_this.path,
-					tabId: codeEditorTab.getId(),
-					file:_this.path/*,
-															tabPanel:tabPanel*/}));
-			}
+				cmp.add(this.codeEditor);
+			}, scope: this
 		});	
 		
 		if(this.mask)
 		{
 			this.mask.hide.defer(1000,this.mask);
 		}
-				
+		
+		this.on('tabchange', function(panel, tab){
+			if('code-editor' == tab.itemId){
+				this.codeEditor.showMask();
+			}
+		}, this);
+		
 	}// eo _initEvents
 	
 });

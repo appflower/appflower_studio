@@ -92,9 +92,9 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			}
 			
 			//TODO: add to the left column
-			for(var i = 0; i < additionalColumns; i++ ) {
-				portItems[0].items.push(this.getNewWidgetCfg());
-			}
+//			for(var i = 0; i < additionalColumns; i++ ) {
+//				portItems[0].items.push(this.getNewWidgetCfg());
+//			}
 			
 			detailp.add(
 				new Ext.ux.Portal ({
@@ -254,13 +254,12 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		return [
 			{id: 'details-panel', title: 'Details', 
 
-//				layout: 'vbox',
-//				layout: 'fit',
-				layout:{
-					type: 'vbox',
-					padding:'5',
-					align:'stretch'
-				},
+				layout: 'fit',
+//				layout:{
+//					type: 'vbox',
+//					padding:'5',
+//					align:'stretch'
+//				},
 				tbar: tb, autoScroll: true,
 		       // bodyStyle: 'padding-bottom:5px;background:#eee;',
 		    		
@@ -299,7 +298,7 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 * @return {Object} New widget cfg
 	 */
 	getNewWidgetCfg : function(){
-		return {html: 'this is a test portlet', title: 'Test panel', frame: true,
+		return {html: '<br><center>Widget <Name></b><i>Click to edit Widget<i></center><br>', title: '"Widget (Name)"', frame: true,
 			bodyCssClass: 'layout-designer-widget',
 			tools:[
 				{id: 'close', handler: this.removeWidget, scope: this}
