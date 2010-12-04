@@ -323,7 +323,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		var root = this.getRootNode();
 		
-		if(node.getXType()=='button')
+		if(!node.ownerTree)
 		{
 			//if node is selected search it's node app
 			node = this.getSelectionModel().getSelectedNode();
@@ -335,6 +335,7 @@ afStudio.modules.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 			else
 			{
+				if(node.attributes.type!='app')	
 				node = root.findChild('text',node.attributes.app);
 			}
 		}
