@@ -141,13 +141,21 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 							id: this.id + '-layout-designer-portal'+i,
 							//autoScroll: true,
 							items: portItems,
-							bodyStyle: 'padding: 5px;',
+							//bodyStyle: 'padding: 5px;',
 							style: "padding-right:5px;padding-left:5px;"
 						})
 					);
 			}
 			detailp._layout=_layout;
-			detailp.add(layoutitems);
+			detailp.add({
+				layout:{
+					type: 'vbox',
+					padding:'5',
+					align:'stretch'
+				},
+				items:layoutitems
+			});
+			
 		}
 		detailp.doLayout();
 	},	
@@ -255,13 +263,13 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			{id: 'details-panel', title: 'Details', 
 
 				layout: 'fit',
-//				layout:{
-//					type: 'vbox',
-//					padding:'5',
-//					align:'stretch'
-//				},
+				/*layout:{
+					type: 'vbox',
+					padding:'5',
+					align:'stretch'
+				},*/
 				tbar: tb, autoScroll: true,
-		       // bodyStyle: 'padding-bottom:5px;background:#eee;',
+		        bodyStyle: 'padding-bottom:5px;background:#eee;',
 		    		
 	    		resizerHandler:function(resizer,width,height,e){
 	    			var id = resizer.el.id;
