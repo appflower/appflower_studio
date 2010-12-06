@@ -24,7 +24,7 @@ afStudio.westPanel = Ext.extend(Ext.Panel, {
 			items: [
 				new afStudio.layoutDesigner.treePanel({id:'layoutdesigner'}),
 				new afStudio.models.treePanel({id:'models'}),
-			    new afStudio.modules.treePanel({id:'modules'}),
+			    new afStudio.widgets.treePanel({id:'widgets'}),
 			    new afStudio.plugins.treePanel({id:'plugins'}),
 			    
 			    {

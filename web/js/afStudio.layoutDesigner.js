@@ -113,6 +113,8 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				_layout=[3,3];
 			else if(columns==44)
 				_layout=[4,4];
+			else if(columns==12)
+				_layout=[2,1];
 			
 			var layoutitems = [];
 			for(var i=0;i<_layout[0];i++){
@@ -228,8 +230,8 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
     						{
 								xtype: 'combo', triggerAction: 'all', mode: 'local', emptyText: 'Select an item...',
 								store: [
-								        [1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns'],
-								        [22,'2 X 2'],[33,'3 X 3'],[44,'4 X 4']
+								        //[1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns'],
+								        [12,'1 columns'],[22,'2 columns'],[33,'3 columns'],[44,'4 columns']
 								 ],
 								listeners: {
 									'select': function(cmp){
