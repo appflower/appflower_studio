@@ -562,8 +562,6 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		    clicksToEdit: 1,
 	        columnLines: true,
 	        autoScroll: true,
-	        //height: 300,
-
 	        viewConfig: {
 	            forceFit: true
 	        },
@@ -591,7 +589,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		            }	            
 	        	},'-',{ 
 		            text: 'Delete',
-		            iconCls: 'icon-delete',
+		            iconCls: 'afs-icon-delete',
 		            handler:function(btn, ev){
 		            	var cell = this.getSelectionModel().getSelectedCell();			
 		        	    if (cell) {

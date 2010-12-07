@@ -106,7 +106,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 					{iconCls: 'icon-action-add', id: 'add-action', text: 'Add Action'},
 					{iconCls: 'icon-data-add', id: 'add-param', text: 'Add Datasource Param'},
 					{iconCls: 'icon-edit', id: 'edit-title', text: 'Edit Item Name'},
-					{iconCls: 'icon-delete', id: 'delete-node', text: 'Delete Item'}
+					{iconCls: 'afs-icon-delete', id: 'delete-node', text: 'Delete Item'}
 		        ],
 		        listeners: {
 		            'itemclick': function(item) {

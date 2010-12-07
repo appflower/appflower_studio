@@ -273,7 +273,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	            }	            
 	        },'-',{
 	            text: 'Delete',
-	            iconCls: 'icon-delete',
+	            iconCls: 'afs-icon-delete',
 	            handler: Ext.util.Functions.createDelegate(_this.deleteField, _this)
 	        }]
 		});		
