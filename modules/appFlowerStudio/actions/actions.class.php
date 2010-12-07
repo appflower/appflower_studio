@@ -84,7 +84,7 @@ class appFlowerStudioActions extends sfActions
 	
 	public function executeFiletree()
 	{
-		$filetree_command=new ImmExtjsFileTreeCommand($this->realRoot);
+		$filetree_command=new afStudioFileTreeCommand($this->realRoot);
 		
 		return $this->renderText($filetree_command->end());
 	}

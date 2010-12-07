@@ -378,12 +378,23 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        }
 	    });
 		
-        var item1 = new Ext.Panel({
-            title: 'Code Browser',
-            html: 'Code Browser Panel'
-        });
+        var codeBrowser = new Ext.ux.FileTreePanel({
+			 height:400
+			,url:'/appFlowerStudio/filetree'
+			,autoWidth:true
+			,id:'ftp'
+			,title:'Code Browser'
+			,rootPath:'root'
+			,rootVisible:true
+			,rootText:'Home'
+			,maxFileSize:524288*2*10
+			,topMenu:false
+			,autoScroll:true
+			,enableProgress:false
+			,singleUpload:true
+		});
 
-        var item2 = new Ext.Panel({
+        var widgetInspector = new Ext.Panel({
             title: 'Widget Inspector',
             layout: 'border',
             items:[
@@ -395,7 +406,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		return {
 			itemId: 'inspector',	
 			items: [
-				item2, item1
+				widgetInspector, codeBrowser
 			]
 		}
 	}

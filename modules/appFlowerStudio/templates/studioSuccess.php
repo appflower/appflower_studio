@@ -64,6 +64,13 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/FieldsGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/DependencyCellEditorBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/EditFieldWindow.js"></script>
+
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreePanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreeMenu.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.form.BrowseButton.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileUploader.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
+
 <?php 
 $appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
 
@@ -88,6 +95,11 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/examples/grid/Ext.ux.grid.RowEditor.css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/afStudio.css" />
+
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetype.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetree.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/icons.css" />
+
 <?php 
 $appFlowerStudioPluginCssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
 
