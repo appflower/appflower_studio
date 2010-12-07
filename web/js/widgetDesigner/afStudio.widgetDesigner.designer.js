@@ -26,12 +26,71 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 		this._initEvents();
 	}	
 	
+	,runwidgetTask : function(){
+		var task = new Ext.util.DelayedTask(function(){
+		    var count = this.grid.store.getCount();
+		    for(var k=0;k<this.grid.getColumnModel().config.length;k++){
+		    	var config = this.grid.getColumnModel().config[k];
+		    	if(!config.showWidget) continue;
+			    for(var i=0;i<count;i++){
+			    	var p = new Ext.Panel({
+			    		renderTo:'field_'+i+"_"+k,
+			    		border:false,
+			    		items:[
+			    			new Ext.form.TextField({
+			    				length:20
+			    			})
+			    		]
+			    	});
+			    }
+		    }
+		},this);
+		task.delay(100); 
+	}
+	
+	,addField : function(){
+		this.grid.getColumnModel().setHidden(2,false);
+		this.runwidgetTask();
+	}
+	
+	,renderField: function(v,meta,record,rowIndex,i,store){
+		return "<div id='field_"+rowIndex+"_"+i+"'></div>";
+	}
+	
 	/**
 	 * Initialises component
 	 * @return {Object} the component initial literal
 	 * @private
 	 */
 	,_initCmp : function() {
+		var columnsMenu = {
+			items: [
+				{text: 'Columns', 
+					menu: {
+						items: [
+    						{
+								xtype: 'combo', triggerAction: 'all', mode: 'local', emptyText: 'Select an item...',
+								store: [
+								        //[1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns'],
+								        [12,'1 columns'],[22,'2 columns'],[33,'3 columns'],[44,'4 columns']
+								 ],
+								listeners: {
+									'select': function(cmp){
+										var els = Ext.DomQuery.select('DIV[class*="layout-designer-widget"]', 'details-panel');
+										
+										var detailP = Ext.getCmp('details-panel');
+										detailP.removeAll(true);
+										
+						        		this.addLayout(detailP, cmp.getValue(), els.length);
+									}, scope: this
+								}
+							}
+						]
+					}
+				},
+				{text: 'Re-size', handler: this.resizeItems, scope: this}
+			]
+		};
 		
 		//Simple grid
 		var grid = new Ext.grid.GridPanel({			
@@ -41,11 +100,13 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 			autoScroll: true,
 			store: new Ext.data.JsonStore({
 				root: 'data',
-				fields: ['field', 'group']
+				fields: ['field', 'group'],
+				data:{data:[{field:'field',group:'group'}]}
 			}),			
 			columns: [
 				{header: 'Field', dataIndex: 'field'},
-				{header: 'Group', dataIndex: 'group'}
+				{header: 'Group', dataIndex: 'group'},
+				{header: 'Field1', dataIndex: 'group',showWidget:true,renderer:this.renderField,hidden:true}
 			],
 			viewConfig: {
 				forceFit: true
@@ -54,13 +115,18 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 				items: [
 					{text: 'Save', iconCls: 'icon-save'},
 					{xtype: 'tbseparator'},
-					{text: 'Add Field', iconCls: 'icon-add'},
+					{text: 'Add Field', iconCls: 'icon-add',handler:this.addField,scope:this},
 					{xtype: 'tbseparator'},
-					{text: 'Preview', iconCls: 'icon-preview', handler: function(){alert('Preview button clicked')}}					
+					{text: 'Preview', iconCls: 'icon-preview', handler: function(){alert('Preview button clicked')}},
+					{xtype: 'tbseparator'},
+					{text: 'Format', iconCls: 'icon-format', menu: columnsMenu}
 				]
 			}
 		});
-		
+		this.grid=grid;
+		this.grid.on('columnmove',function(oldIndex,newIndex){
+					this.runwidgetTask();
+				},this)
 		return {
 			itemId: 'designer',	
 			defaults: {
