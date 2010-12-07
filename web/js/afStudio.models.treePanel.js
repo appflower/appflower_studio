@@ -531,7 +531,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			   	});		
 
                 var apiUrlModule = '/afsModelGridData';
-				var modelGrid = new afStudio.models.modelGridPanel({
+				var modelGrid = new afStudio.models.ModelGrid({
 					title:'ModelGrid '+this.getModel(node),
 					_data:data,
                     storeProxy: new Ext.data.HttpProxy({

@@ -510,7 +510,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					schema: this.getSchema(node)
 			   	});		
 			   	
-				var pluginGrid = new afStudio.model.modelGridPanel({
+				var pluginGrid = new afStudio.model.ModelGrid({
 					title:'pluginGrid '+this.getplugin(node),
 					_data:data
 				});

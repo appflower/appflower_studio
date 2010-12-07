@@ -498,7 +498,7 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 
 
 //model grid is extended from excel grid
-afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
+afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
 	beforeInit:function(){
 		var gridFields=this;
@@ -552,7 +552,7 @@ afStudio.models.modelGridPanel = Ext.extend(afStudio.models.ExcelGridPanel, {
 		});		
 		this.columns = columns;
 		
-		afStudio.models.modelGridPanel.superclass.beforeInit.apply(this, arguments);
+		afStudio.models.ModelGrid.superclass.beforeInit.apply(this, arguments);
 		var _this = this;
 		
 		var config = {			
@@ -694,4 +694,4 @@ afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
     }
 });
 
-Ext.reg('modelGridPanel', afStudio.models.modelGridPanel);
+Ext.reg('afStudio.models.modelGrid', afStudio.models.ModelGrid);
