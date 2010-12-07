@@ -11,14 +11,15 @@ N = afStudio.models;
 N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 	/**
 	 * @cfg {String} relationUrl required
-	 * store Url 
+	 * store's url 
 	 */	
 
 	/**
-	 * @cfg {afStudio.models.FieldsGrid} fieldsGrid required
-	 * reference to hosting FieldsGrid
+	 * @cfg {afStudio.models.FieldsGrid} (optional) fieldsGrid  
+	 * The reference to hosting {@link Ext.grid.EditorGridPanel}.
+	 * If this config property isn't specified relationcombo is working 
+	 * as a common combobox. 
 	 */	
-	
 	
 	/**
 	 * Initializes component
@@ -106,11 +107,17 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 			closable: true,
 			closeAction: 'hide',
 			listeners: {
-				relationpicked : function(relation) {
-					var cell = _this.fieldsGrid.getSelectionModel().getSelectedCell();
-					_this.fieldsGrid.startEditing(cell[0], cell[1]);
-					if (relation) {_this.setValue(relation);}
-					_this.fieldsGrid.stopEditing();					
+				relationpicked : function(relation) {					
+					if (_this.fieldsGrid) {						
+						var cell = _this.fieldsGrid.getSelectionModel().getSelectedCell();
+						_this.fieldsGrid.startEditing(cell[0], cell[1]);
+						if (relation) {
+							_this.setValue(relation);
+						}
+						_this.fieldsGrid.stopEditing();
+					} else {
+						_this.setValue(relation);
+					}
 				}
 			}
   		});
@@ -133,7 +140,9 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 		if (!this.relationPicker) {
 			this.createRelationPicker();
 		}		
-		this.fieldsGrid.stopEditing();
+		if (this.fieldsGrid) {
+			this.fieldsGrid.stopEditing();
+		}
 		var _this = this;
 		this.relationPicker.show(null, function() {
 			this.initialRelationPick(_this.getRawValue() || _this.getValue());

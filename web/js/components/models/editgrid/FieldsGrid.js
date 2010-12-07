@@ -88,29 +88,9 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	//private
 	,typeEditorBuilder : function() {
 		return {
-			editor: new Ext.ux.form.GroupingComboBox({
-				triggerAction: 'all',
-				forceSelection: true,
-				lazyRender: true,
-				displayField: 'text',
-				groupField: 'group',
-				store: new Ext.data.SimpleStore({
-					fields: ['group', 'text'],
-					data: [
-						['TEXT', 'char'],        ['TEXT', 'varchar'],     ['TEXT', 'longvarchar'],	['TEXT', 'clob'],
-						['NUMBERS', 'numeric'],  ['NUMBERS', 'decimal'],  ['NUMBERS', 'tinyint'],					
-						['NUMBERS', 'smallint'], ['NUMBERS', 'integer'],  ['NUMBERS', 'bigint'],
-						['NUMBERS', 'real'],	 ['NUMBERS', 'float'],    ['NUMBERS', 'double'],
-						['NUMBERS', 'boolean'],
-						['BINRAY', 'binary'],	 ['BINRAY', 'varbinary'], ['BINRAY', 'longvarbinary'], ['BINRAY', 'blob'],
-						['TEMPORA DATE/TIME', 'date'],	 
-						['TEMPORA DATE/TIME', 'time'], 
-						['TEMPORA DATE/TIME', 'timestamp'], 
-						['TEMPORA DATE/TIME', 'integer']
-					]
-				}),
-				mode: 'local'
-			})		
+			editor: new afStudio.models.TypeComboBox({
+				lazyRender: true
+			})
 		}
 	}
 	
@@ -299,7 +279,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * Template method
 	 * @private
 	 */
-	,initComponent: function() {
+	,initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);				
