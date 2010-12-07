@@ -236,10 +236,11 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				var fd = cm.config[index].fieldDefinition || {};
 				if (!item.renameWindow) {
 					item.renameWindow = new afStudio.models.EditFieldWindow({
-						fieldDefinition: fd
+						gridView: this
 					});
-				}
-				item.renameWindow.show();
+				}				
+				item.renameWindow.fieldDefinition = fd; 
+				item.renameWindow.show(item.el);
 				break;
 				
 			case 'deletef':

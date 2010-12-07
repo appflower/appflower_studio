@@ -8,29 +8,82 @@ Ext.ns('afStudio.models');
  */
 afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	
-//1) option"Rename Field" and make "edit field" open popup window. Which contains the field type (if of time, checkbox, password and so forth) and then specific settings for that field type. So for relation you could add place to add the relation like you did in editing <model> 
-//dit Field options 
-//
 //A) String should have size in the 
 //B) Relation should have relation picker and auto-suggestion 
 //C) Select should have a set of selectable options, which means it should be possible to add selectable items to a list (just dummy code) 
-//D) Currency to select what type of currency to be default 
-//
-//And maybe all field types has the default value visible in the popup as well.. 	
+//D) Currency to select what type of currency to be default
+
+	/**
+	 * @cfg {Object} fieldDefinition required
+	 * Contains a edit field definition 
+	 */
+	fieldDefinition : null
+	
+	/**
+	 * @cfg {Ext.grid.GridView} gridView required
+	 * The edit field's grid view 
+	 */
+	,gridView : null
+
+
+	/**
+	 * "Save" button handler.
+	 * Saves field definition updates
+	 */
+	,saveUpdates : function() {
+		
+	}
+
+	/**
+	 * "Cancel" button handler.
+	 * Closes this window
+	 */
+	,cancelEditing :  function() {
+		this.hide();	
+	}
+
+	/**
+	 * Loads field definition in the "fieldForm" (ref=fieldForm)
+	 */
+	,loadFieldData : function() {
+		var _this = this,
+			   fd = _this.fieldDefinition,
+			   gv = _this.gridView,
+			   fm = _this.fieldForm.getForm();
+
+		//load general fields	   
+		fm.loadRecord(new Ext.data.Record(fd));	   
+		
+		if (fd.foreignModel) {
+			fm.findField('relation').setValue(fd.foreignModel + '.' + fd.foreignReference);
+		}		
+		fm.findField('key').setValue(
+			fd.primaryKey ? 'primary' : (fd.index == 'unique' ? 'unique' : (fd.index ? 'index' : ''))
+		);		
+//		console.log('fieldDefinition', fd);
+//		console.log('gridView', gv);
+//		console.log('field def. form', _this.fieldForm);
+	}
+
+	/**
+	 * This <u>show</u> event listener
+	 */
+	,onShowEvent : function() {
+		this.fieldForm.getForm().reset();
+		this.loadFieldData();
+	}	
 	
 	/**
 	 * Initializes component
 	 * @return {Object} The configuration object
+	 * @private
 	 */
-	_beforeInitComponent : function() {
-		var _this = this,
-			   fd = _this.fieldDefinition;
+	,_beforeInitComponent : function() {
+		var _this = this;
 		
-		//console.log('fieldDefinition', _this.fieldDefinition);	   
-			   
 		return {
 			title: 'Edit Field',
-			closeAction: 'hide',
+			closeAction: 'hide', //mapped to "cancelEditing"
 			modal: true,
 			frame: true,
 			width: 360,
@@ -40,6 +93,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			items: [
 			{
 				xtype: 'form',
+				ref: 'fieldForm',				
 				baseCls: 'x-plain',
 				style: 'padding: 5px',
 				border: false,
@@ -51,6 +105,17 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 					xtype: 'textfield',
 					fieldLabel: 'Name',
 					name: 'name'
+				},{
+					xtype: 'combo',
+					fieldLabel: 'Key',
+					typeAhead: true,
+					triggerAction: 'all',					
+					editable: false,
+					mode: 'local',
+					valueField: 'field',
+					displayField: 'field',
+					store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']],
+					name: 'key'
 				},{
 					xtype: 'afStudio.models.typeCombo',
 					fieldLabel: 'Type',
@@ -91,18 +156,29 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 					name: 'onDelete'
 				}],
 				buttons: [{
-					text: 'Save'
+					text: 'Save',
+					handler: Ext.util.Functions.createDelegate(_this.saveUpdates, _this)
 				},{
-					text: 'Cancel'
+					text: 'Cancel',
+					handler: Ext.util.Functions.createDelegate(_this.cancelEditing, _this) 
 				}]
 			}]			
 		}
-	}
+	}//eo _beforeInitComponent
 	
 	//private
 	,initComponent : function() {
 		Ext.apply(this, Ext.applyIf(this.initialConfig, this._beforeInitComponent()));
-		afStudio.models.EditFieldWindow.superclass.initComponent.apply(this, arguments);		
+		afStudio.models.EditFieldWindow.superclass.initComponent.apply(this, arguments);
+		this._afterInitComponent();
 	}
+	
+	,_afterInitComponent : function() {
+		var _this = this;
+		
+		_this.on({
+			'show': Ext.util.Functions.createDelegate(_this.onShowEvent, _this)
+		});		
+	}//eo _afterInitComponent	
 	
 });
