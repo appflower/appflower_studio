@@ -50,6 +50,10 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	
 	,addField : function(){
 		this.grid.getColumnModel().setHidden(2,false);
+		var store = this.grid.store;
+		 var rec = store.recordType;
+		store.add([new rec()]);	
+		this.grid.getView().refresh();
 		this.runwidgetTask();
 	}
 	
@@ -100,8 +104,7 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 			autoScroll: true,
 			store: new Ext.data.JsonStore({
 				root: 'data',
-				fields: ['field', 'group'],
-				data:{data:[{field:'field',group:'group'}]}
+				fields: ['field', 'group']
 			}),			
 			columns: [
 				{header: 'Field', dataIndex: 'field'},
