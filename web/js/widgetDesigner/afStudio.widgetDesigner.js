@@ -46,7 +46,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				title: 'Security'
 			},{
 				itemId: 'code-editor',
-				title: 'Code Editor'
+				title: 'Action Code'
 			}]
 		}
 	}// eo _initCmp

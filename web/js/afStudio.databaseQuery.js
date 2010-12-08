@@ -33,7 +33,7 @@ afStudio.DBQuery = Ext.extend(Ext.Window, {
 			region:'north', layout:'form', height:128, frame:true,
 			iconCls: 'icon-sql', margins: '0 5 5 5', title: 'SQL',
 			items:[
-				{xtype:'combo', fieldLabel: 'Query type', anchor:'100%', triggerAction: 'all', store: [[1, 'SQL'], [2, 'Propel']]},
+				{xtype:'combo', fieldLabel: 'Query type', anchor:'100%', triggerAction: 'all', value: 1, store: [[1, 'SQL'], [2, 'Propel']]},
 				{xtype:'textarea', hideLabel: true, height:64, anchor:'100%'}
 			]
 		};

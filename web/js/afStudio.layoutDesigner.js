@@ -3,9 +3,9 @@ Ext.namespace('afStudio.layoutDesigner');
 /**
  * Layout Designer
  * @class afStudio.layoutDesigner
- * @extends Ext.TabPanel
+ * @extends Ext.Panel
  */
-afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {	
+afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.Panel, {	
 
 	/**
 	 * ExtJS basic method
@@ -22,7 +22,8 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 */
 	_initCmp : function() {
 		return {
-			activeTab: 0,
+//			activeTab: 0,
+layout: 'fit',
 	        bodyBorder: false, border: false,
 	        items: this.getTabs(),
 	        listeners:{
@@ -48,6 +49,7 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	addLayout:function(detailp, columns, additionalColumns){
 		var portItems = [];
 		detailp.columns=columns;
+		
 		if(columns<10){
 			var columnwidth = 1/columns;
 			for(var i =0;i<columns;i++){
@@ -56,37 +58,37 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 					columnWidth: columnwidth,
 	
 					defaults: {
-						style: 'padding-right: 5px;'
-//						bodyCssClass: 'layout-designer-widget'
+						style: 'padding-right: 5px;',
+						bodyCssClass: 'layout-designer-widget'
 					},
 	
 					items: [
-					{
-						title:'widget1'+i,
-						height:50,
-						width:50,
-						tools:[
-							{id: 'close', handler: this.removeWidget, scope: this}
-						],						
-						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-					},{
-						title:'widget2'+i,
-						height:50,
-						width:50,
-						tools:[
-							{id: 'close', handler: this.removeWidget, scope: this}
-						],						
-						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-					},{
-						title:'widget3'+i,
-						height:50,
-						width:50,
-						tools:[
-							{id: 'close', handler: this.removeWidget, scope: this}
-						],						
-						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-					}
-					
+//					{
+//						title:'widget1'+i,
+//						height:50,
+//						width:50,
+//						tools:[
+//							{id: 'close', handler: this.removeWidget, scope: this}
+//						],						
+//						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+//					},{
+//						title:'widget2'+i,
+//						height:50,
+//						width:50,
+//						tools:[
+//							{id: 'close', handler: this.removeWidget, scope: this}
+//						],						
+//						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+//					},{
+//						title:'widget3'+i,
+//						height:50,
+//						width:50,
+//						tools:[
+//							{id: 'close', handler: this.removeWidget, scope: this}
+//						],						
+//						getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+//					}
+//					
 					]
 				});
 			}
@@ -126,6 +128,7 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 						},
 						columnWidth: 1/_layout[1],
 						id:"portColumn"+i+j,
+						
 						items: [{
 							title:'widget'+i+j,
 							height:50,
@@ -218,6 +221,25 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	},
 	
 	/**
+	 * function autoAdjust
+	 * Auto-Adjust button handler
+	 */
+	autoAdjust: function(){
+		var els = Ext.DomQuery.select('DIV[class*="x-portlet"]', 'details-panel');
+//		var els = Ext.DomQuery.select('DIV[id*="portColum"]', 'details-panel');
+		for(var i=0, l=els.length; i<l; i++ ){
+			var cmp = Ext.getCmp(els[i].id);
+			var w = cmp.ownerCt.getWidth();
+			
+			cmp.setWidth(w);
+			Ext.get(els[i]).setWidth(w);
+			
+			cmp.doLayout();
+			cmp.ownerCt.doLayout();
+		}
+	},
+	
+	/**
 	 * Function getTabs
 	 * @return {Array} array of items
 	 */
@@ -247,7 +269,8 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 						]
 					}
 				},
-				{text: 'Re-size', handler: this.resizeItems, scope: this}
+				{text: 'Re-size', handler: this.resizeItems, scope: this},
+				{text: 'Auto-Adjust', handler: this.autoAdjust, scope: this}
 			]
 		};
 		
@@ -258,11 +281,14 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	        	{text: 'New Widget', iconCls: 'icon-add', handler: this.addNewWidget, scope: this},
 	        	{xtype: 'tbseparator'},
 	        	{text: 'Format', iconCls: 'icon-format', menu: columnsMenu},
+	        	{xtype: 'tbseparator'},
+	        	{text: 'Preview', iconCls: 'icon-preview'}
 	        ]			
 		});
 		
 		return [
-			{id: 'details-panel', title: 'Details', 
+			{id: 'details-panel', 
+//			title: 'Details', 
 
 				layout: 'fit',
 				/*layout:{
@@ -286,8 +312,7 @@ afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	    			nextcolumn.setWidth(ww-w);
 	    			nextcolumn.doLayout();
 	    		}
-			},
-			{title: 'Preview', html: 'Another one'}
+			}
 		];
 	},
 	

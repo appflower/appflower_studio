@@ -10,15 +10,15 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 //       var rootNode = new Ext.tree.AsyncTreeNode({
 //            expanded: true,
-//            text: 'Databases',
-//			id: 'database',
+//            text: 'XML',
+//			id: 'xml',
 //            children: [
 //            	{
-//            		text: 'Database 1', leaf: false, type: 'xml',
+//            		text: 'XML 1', leaf: false, type: 'xml',
 //            		expanded: true, iconCls: 'icon-tree-db',
 //            		children: [
-//	        			{text: 'Table 1', iconCls: 'icon-tree-table', type: 'app', leaf: true},
-//	        			{text: 'Table 2', iconCls: 'icon-tree-table', type: 'module', leaf: true}
+//	        			{text: 'APP', iconCls: 'icon-tree-table', type: 'app', leaf: true},
+//	        			{text: 'MODULE', iconCls: 'icon-tree-table', type: 'module', leaf: true}
 //            		]
 //            	}
 //            ]
@@ -159,7 +159,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        },
 	        
 	        dblclick: function(node, e){
-	        	if('app' == node.attributes.type){
+	        	if('xml' == node.attributes.type){
 					var path = this.getPath(node);
 					this.addWidgetDesigner(path);
 	        	}
@@ -228,6 +228,10 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	            id: 'edit-xml',
 	            text: 'Edit xml configuration',
 	            iconCls: 'icon-models-edit'
+			},{
+	            id: 'rename-xml',
+	            text: 'Rename xml',
+	            iconCls: 'icon-edit'
 			}],
 	        listeners: {
 	            itemclick: function(item) {
@@ -240,6 +244,15 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().editXml(node);
 	                        break;
+						case 'rename-xml':
+							var node = item.parentMenu.contextNode;
+//							node.ownerTree.treeEditor.editNode = node;
+//							node.ownerTree.treeEditor.startEdit(node.ui.textNode);	
+							
+							
+									node.ownerTree.treeEditor.triggerEdit(node);		
+							
+							break;	                        
 	                }
 	            }
 	        }
@@ -513,6 +526,66 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 	}
+	
+	,renameXml:function(node,newValue,oldValue)
+	{
+		Ext.Msg.show({
+			 title:'Rename'
+			,msg:this.reallyWantText + ' rename xml\'s name from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
+			,icon:Ext.Msg.WARNING
+			,buttons:Ext.Msg.YESNO
+			,width:400
+			,scope:this
+			,fn:function(response) {
+
+				return false;
+				
+				// do nothing if answer is not yes
+				if('yes' !== response) {
+					node.setText(oldValue);
+					this.getEl().dom.focus();
+					return;
+				}
+				// setup request options
+				var options = {
+					 url:this.url
+					,method:this.method
+					,scope:this
+					//,callback:this.cmdCallback
+					,node:node
+					,params:{
+						 cmd:'renameModule'
+						,moduleName:oldValue
+						,renamedModule:newValue
+						,app:this.getApp(node)
+					},
+					success: function(response, opts) {
+				      var response = Ext.decode(response.responseText);
+				      
+				      if(response.success)
+				      {
+				      	afStudio.vp.layout.west.items[1].root.reload();
+				      	
+				      	afStudio.setConsole(response.console);
+				      }
+				      else
+				      {
+				      	node.setText(oldValue);
+				      }
+				      
+				      Ext.Msg.show({
+						 title:response.success?'Success':'Failure'
+						,msg:response.message
+						,buttons:Ext.Msg.OK
+						,width:400
+				      });
+				    }
+				};
+				Ext.Ajax.request(options);
+			}
+		});
+	}
+	
 		
 	,editXml:function(node)
 	{

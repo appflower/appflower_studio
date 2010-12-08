@@ -126,6 +126,9 @@ afStudio.console = Ext.extend(Ext.Panel, {
 //			plugins: new Ext.ux.MaximizeTool()
 //		};
 		
+		var debugStore = [[1, 'First'], [2, 'Second'], [3, 'Third']];
+		var notificationStore = [[1, 'First'], [2, 'Second'], [3, 'Third']];
+		
 		var config = {
 			itemId: 'console',
 			
@@ -153,8 +156,28 @@ afStudio.console = Ext.extend(Ext.Panel, {
 							bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
 							html: ''
 						},
-						{xtype: 'panel', iconCls: 'icon-notifications', title: 'Notifications', html: ''},
-						{xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: ''}
+
+						{xtype: 'panel', iconCls: 'icon-notifications', title: 'Notifications', html: '',
+							bbar: new Ext.PagingToolbar({
+        						store: notificationStore,
+						        displayInfo: true,
+        						pageSize: 10
+						    })
+						},
+						
+						{xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: '', 
+							tbar: [
+								{text: 'Logfile1'},
+								{xtype: 'tbseparator'},
+								{text: 'Logfile2'}
+							],
+							
+							bbar: new Ext.PagingToolbar({
+        						store: debugStore,
+						        displayInfo: true,
+        						pageSize: 10
+						    })
+						}
 					]
 				})
 			],
