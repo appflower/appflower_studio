@@ -221,18 +221,18 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,contextMenuXml: new Ext.menu.Menu({
 	        items: [
 	        {
-	       		id: 'delete-xml',
-	            text: 'Delete xml configuration',
-	            iconCls: 'icon-models-delete'
-	        },{
 	            id: 'edit-xml',
-	            text: 'Edit xml configuration',
+	            text: 'Edit Widget',
 	            iconCls: 'icon-models-edit'
 			},{
 	            id: 'rename-xml',
-	            text: 'Rename xml',
+	            text: 'Rename Widget',
 	            iconCls: 'icon-edit'
-			}],
+			},{
+	       		id: 'delete-xml',
+	            text: 'Delete Widget',
+	            iconCls: 'icon-models-delete'
+	        }],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
