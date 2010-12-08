@@ -51,7 +51,8 @@ class afStudioModulesCommand
 							$data[$i]['children'][$j]['text']=$module;
 							
 							$xmlNames = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
-							$xmlPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", false, "xml");
+//							$xmlPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", false, "xml"); /*comment Rydzyk*/
+                                                        $actionPath = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/actions/", false, "php"); /*added Rydzyk*/
 							$k=0;
 							
 							$data[$i]['children'][$j]['type']='module';
@@ -67,7 +68,8 @@ class afStudioModulesCommand
 									$data[$i]['children'][$j]['children'][$k]['module']=$module;
 									$data[$i]['children'][$j]['children'][$k]['type']='xml';
 									$data[$i]['children'][$j]['children'][$k]['text']=$xmlName;
-									$data[$i]['children'][$j]['children'][$k]['path']=$xmlPaths[$xk];
+//									$data[$i]['children'][$j]['children'][$k]['path']=$xmlPaths[$xk]; /*comment Rydzyk*/
+                                                                        $data[$i]['children'][$j]['children'][$k]['path']=$actionPath; /*added Rydzyk*/
 									$data[$i]['children'][$j]['children'][$k]['leaf']=true;
 									
 									$k++;
