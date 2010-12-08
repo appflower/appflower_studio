@@ -308,9 +308,11 @@ layout: 'fit',
 	    			w = width -w;
 	    			Ext.getCmp(id).doLayout();
 	    			var nextcolumn = Ext.getCmp(id.substr(0,id.length-1)+index);
-	    			var ww  = nextcolumn.getWidth();
-	    			nextcolumn.setWidth(ww-w);
-	    			nextcolumn.doLayout();
+	    			if(nextcolumn){
+		    			var ww  = nextcolumn.getWidth();
+		    			nextcolumn.setWidth(ww-w);
+		    			nextcolumn.doLayout();
+	    			}
 	    		}
 			}
 		];

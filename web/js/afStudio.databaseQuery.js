@@ -108,20 +108,20 @@ afStudio.DBQuery = Ext.extend(Ext.Window, {
 			id: 'database',
             children: [
             	{
-            		text: 'Database 1', leaf: false,
+            		text: 'Database 1 (2)', leaf: false,
             		expanded: true, iconCls: 'icon-tree-db',
             		children: [
 	        			{text: 'Table 1', iconCls: 'icon-tree-table', leaf: true},
 	        			{text: 'Table 2', iconCls: 'icon-tree-table', leaf: true}
             		]
             	}, {
-            		text: 'Database 2', leaf: false,
+            		text: 'Database 2 (2)', leaf: false,
             		expanded: true, iconCls: 'icon-tree-db',
             		children: [
 	        			{text: 'Table 1', iconCls: 'icon-tree-table', leaf: true},
 	        			{text: 'Table 2', iconCls: 'icon-tree-table', leaf: true}            		]
             	}, {
-            		text: 'Database 3', leaf: false,
+            		text: 'Database 3 (2)', leaf: false,
             		expanded: true, iconCls: 'icon-tree-db',
             		children: [
 	        			{text: 'Table 1', iconCls: 'icon-tree-table', leaf: true},
