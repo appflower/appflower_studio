@@ -104,16 +104,16 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			this.colMenu.on("itemclick", this.columnMenuClick, this);
 			
 			this.hmenu.add(
-				{itemId:"asc", text: this.sortAscText, cls: "xg-hmenu-sort-asc"},
-				{itemId:"desc", text: this.sortDescText, cls: "xg-hmenu-sort-desc"},
+				{itemId: "asc",  text: this.sortAscText, cls: "xg-hmenu-sort-asc"},
+				{itemId: "desc", text: this.sortDescText, cls: "xg-hmenu-sort-desc"},
 				'-',
-				{itemId:"addfb", text: 'Add Field Before'},
-				{itemId:"addfa", text: 'Add Field After'},
+				{itemId: "addfb", text: 'Add Field Before'},
+				{itemId: "addfa", text: 'Add Field After'},
 				'-',
-				{itemId:"dupb", text: 'Duplicate Field'},
-				{itemId:"editb", text: 'Edit Field ...'},
-				{itemId:"renameb", text: 'Rename Field'},				
-				{itemId:'deletef',text: 'Delete Field'},
+				{itemId: "dupb",    text: 'Duplicate Field'},
+				{itemId: "editb",   text: 'Edit Field ...'},
+				{itemId: "renameb", text: 'Rename Field'},				
+				{itemId: 'deletef', text: 'Delete Field'},
 				'-',
 				//{itemId:"changeto", text: 'Change to', menu:this.changetoMenu},
 				{
@@ -229,7 +229,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				
 			case 'renameb':
 				var hd = this.findHeaderCell(item.parentMenu._el);
-				this.editHeadColumn(hd.firstChild,index);
+				this.editHeadColumn(hd.firstChild, index);
 				break;
 				
 			case 'editb':
@@ -239,7 +239,8 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 						gridView: this
 					});
 				}				
-				item.renameWindow.fieldDefinition = fd; 
+				item.renameWindow.fieldDefinition = fd;
+				item.renameWindow.fieldIndex = index;
 				item.renameWindow.show(item.el);
 				break;
 				
@@ -377,7 +378,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 		cm.setColumnHeader(index,v);
 	},
 	
-	editHeadColumn : function(el,index){
+	editHeadColumn : function(el, index) {
 		var ed = new Ext.grid.GridEditor(new Ext.form.TextField());
 		ed._index = index;
 		ed.on({

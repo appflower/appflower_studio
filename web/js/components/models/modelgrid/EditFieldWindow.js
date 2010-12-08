@@ -17,21 +17,35 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	 * @cfg {Object} fieldDefinition required
 	 * Contains a edit field definition 
 	 */
-	fieldDefinition : null
+
+	/**
+	 * @cfg {Number} fieldIndex required
+	 * The field's index inside ColumnModel 
+	 */	 
 	
 	/**
 	 * @cfg {Ext.grid.GridView} gridView required
 	 * The edit field's grid view 
 	 */
-	,gridView : null
 
 
 	/**
 	 * "Save" button handler.
 	 * Saves field definition updates
 	 */
-	,saveUpdates : function() {
+	saveUpdates : function() {
+		var _this = this,
+			   fd = _this.fieldDefinition,
+			   cm = _this.gridView.cm,
+			   fm = _this.fieldForm.getForm();
+			   
 		
+		if (fm.isValid()) {
+			var fv = fm.getFieldValues();
+			cm.setColumnHeader(_this.fieldIndex, fv.name);
+			
+			_this.hide();
+		}		
 	}
 
 	/**
@@ -86,10 +100,9 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			closeAction: 'hide', //mapped to "cancelEditing"
 			modal: true,
 			frame: true,
-			width: 360,
-			height: 310,
+			width: 360,			
+			autoHeight: true,
 			resizable: false,
-			layout: 'fit',
 			items: [
 			{
 				xtype: 'form',
@@ -99,11 +112,13 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 				border: false,
 				labelWidth: 100,
 				defaults: {
-					width: 225
+					width: 225,
+					msgTarget: 'qtip'
 				},
 				items: [{
 					xtype: 'textfield',
 					fieldLabel: 'Name',
+					allowBlank: false,
 					name: 'name'
 				},{
 					xtype: 'combo',
@@ -157,9 +172,11 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 				}],
 				buttons: [{
 					text: 'Save',
+					iconCls: 'icon-accept',
 					handler: Ext.util.Functions.createDelegate(_this.saveUpdates, _this)
 				},{
 					text: 'Cancel',
+					iconCls: 'afs-icon-cancel',
 					handler: Ext.util.Functions.createDelegate(_this.cancelEditing, _this) 
 				}]
 			}]			

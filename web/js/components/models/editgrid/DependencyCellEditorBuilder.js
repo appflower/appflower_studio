@@ -38,7 +38,7 @@ afStudio.models.DependencyCellEditorBuilder = Ext.extend(Ext.util.Observable, {
 	 * @param {String} key The model data type
 	 * @return {Ext.Editor}
 	 */
-	,createEditer : function(key) {
+	,createEditor : function(key) {
 		var editor = null;
 		
 		switch(key) {
@@ -91,7 +91,7 @@ afStudio.models.DependencyCellEditorBuilder = Ext.extend(Ext.util.Observable, {
 		}
 				
 		return editor ? new Ext.grid.GridEditor(editor) : null;
-	}//eo createEditer
+	}//eo createEditor
 
 	/**
 	 * <u>beforeedit</u> event listener
@@ -113,7 +113,7 @@ afStudio.models.DependencyCellEditorBuilder = Ext.extend(Ext.util.Observable, {
 				cm.config[columnIndex].editor = this.defaultEditor;
 			}
 			
-			editor = _this.createEditer(type);
+			editor = _this.createEditor(type);
 			
 			this.defaultEditor = cm.config[columnIndex].editor;
 			cm.config[columnIndex].editor = editor ? editor : this.defaultEditor;
