@@ -1,6 +1,10 @@
 .icon-models{background:url('/appFlowerStudioPlugin/images/application_view_tile.png') no-repeat center left !important;}
 .icon-model{background:url('/appFlowerStudioPlugin/images/table.png') no-repeat center left !important;}
+
 .icon-models-add{background:url('/appFlowerStudioPlugin/images/table_add.png') no-repeat center left !important;}
+.icon-pages-add{background:url('/appFlowerStudioPlugin/images/page_white_add.png') no-repeat center left !important;}
+.icon-widgets-add{background:url('/appFlowerStudioPlugin/images/brick_add.png') no-repeat center left !important;}
+
 .icon-models-delete{background:url('/appFlowerStudioPlugin/images/table_delete.png') no-repeat center left !important;}
 .icon-models-edit{background:url('/appFlowerStudioPlugin/images/table_edit.png') no-repeat center left !important;}
 .icon-console{background:url('/appFlowerStudioPlugin/images/application_xp_terminal.png') no-repeat center left !important;}

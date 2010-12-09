@@ -127,14 +127,16 @@ layout: 'fit',
 							style: 'padding-right: 5px;'
 						},
 						columnWidth: 1/_layout[1],
-						id:"portColumn"+i+j,
-						
-						items: [{
-							title:'widget'+i+j,
-							height:50,
-							width:50,
-							getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-						}]
+						id:"portColumn"+i+j
+
+//TODO: not need now. Do not forget to remove						
+//						,
+//						items: [{
+//							title:'widget'+i+j,
+//							height:50,
+//							width:50,
+//							getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
+//						}]
 					});
 				}
 			
@@ -323,7 +325,14 @@ layout: 'fit',
 	 */
 	addNewWidget: function(){
 		var component = this.getNewWidgetCfg();
-		var cp = Ext.getCmp(this.id + '-layout-designer-portal');
+		//TODO: Quick fix
+		var qty_columns = Ext.getCmp('details-panel').columns;
+		if(qty_columns < 10){
+			var cp = Ext.getCmp(this.id + '-layout-designer-portal');
+		} else {
+			var cp = Ext.getCmp(this.id + '-layout-designer-portal0');
+		}
+		
 		var clnNum = 0;
 		var portalColumn = cp.items.itemAt(clnNum);
 		portalColumn.add(component);

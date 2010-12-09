@@ -30,7 +30,7 @@ afStudio.layoutDesigner.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					'->',
 					{
 						text: 'Add Page',
-						iconCls: 'icon-add',
+						iconCls: 'icon-pages-add',
 						handler: function(b, e) {}
 					}
 				]
