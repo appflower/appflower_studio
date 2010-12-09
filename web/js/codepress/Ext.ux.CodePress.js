@@ -505,7 +505,7 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
   	
   	if(this.file)
   	{
-	  	var atmp=this.file.split('.');
+  		var atmp=this.file.split('.');
 	  	var possible_extension='';
 	  	if(atmp[atmp.length-1])
 	  	possible_extension=atmp[atmp.length-1];
