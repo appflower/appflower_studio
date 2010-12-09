@@ -160,7 +160,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        
 	        dblclick: function(node, e){
 	        	if('xml' == node.attributes.type){
-					var path = this.getPath(node);
+					var path = this.getActionPath(node);
 					this.addWidgetDesigner(path);
 	        	}
 	        }
@@ -275,7 +275,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		return module;
 	}
 	
-	,getPath:function(node) {
+	,getXmlPath:function(node) {
 		var path;
 
 		switch (node.attributes.type) {
@@ -286,7 +286,25 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
         		path = false;
         		break;
         	case "xml":
-        		path = node.attributes.path;
+        		path = node.attributes.xmlPath;
+        		break;	
+        }
+
+		return path;
+	}
+	
+	,getActionPath:function(node) {
+		var path;
+
+		switch (node.attributes.type) {
+			case "app":
+        		path = false;
+        		break;
+        	case "module":
+        		path = false;
+        		break;
+        	case "xml":
+        		path = node.attributes.actionPath;
         		break;	
         }
 
@@ -589,7 +607,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 	,editXml:function(node)
 	{
-		var path = this.getPath(node);
+		var path = this.getActionPath(node);
 		this.addWidgetDesigner(path);
 	}
 	
