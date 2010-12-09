@@ -23,8 +23,6 @@
 
 Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	
-	tabPanelId:'center_panel'
-
 	// config variables overridable from outside
 	// {{{
 	/**
@@ -35,7 +33,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * @cfg {String} confirmText Text to display as title of confirmation message box
 	 */
-	 ,confirmText:'Confirm'
+	 confirmText:'Confirm'
 
 	/**
 	 * @cfg {Boolean} containerScroll true to register 
@@ -923,11 +921,11 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	* open the file into a tab from the center tabpanel
 	*/
-	,openFile:function(node,path) {
+	,openFile:function(node,path) {		
 		
 		var id = Ext.id();
 		
-		var tabPanel=Ext.getCmp(this.tabPanelId);
+		var tabPanel=this.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt;
 		var currentTabs=tabPanel.items.items;
 		var fileName=this.getFileName(path);
 		
@@ -941,20 +939,12 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		}
 		else{
 		
-			//find if No file tab is activated
-			var no_file_tabs=tabPanel.find('title','No file');
-			
 			var new_tab=tabPanel.add(new Ext.ux.CodePress({title:fileName,
 															closable:true,
 															path:path,
 															tabTip:path,
 															file:path,
-															tabPanel:tabPanel})).show();
-			
-			for(var tab in no_file_tabs)
-			{
-				tabPanel.remove(tab);
-			}		
+															tabPanel:tabPanel})).show();	
 		}
 	}
 	// }}}

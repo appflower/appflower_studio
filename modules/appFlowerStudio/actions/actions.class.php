@@ -38,6 +38,8 @@ class appFlowerStudioActions extends sfActions
 		$file=$this->hasRequestParameter('file')?$this->getRequestParameter('file'):false;
 		$code=$this->hasRequestParameter('code')?$this->getRequestParameter('code'):false;
 				
+		$file=(substr($file,0,4)=='root')?str_replace('root',$this->realRoot,substr($file,0,4)).substr($file,4):$file;
+		
 		if($this->getRequest()->getMethod()==sfRequest::POST)
   		{
   			if($file&&$code)
@@ -46,18 +48,18 @@ class appFlowerStudioActions extends sfActions
   				{
   					if(@file_put_contents($file,$code))
 					{
-						return $this->renderText('');
+						return $this->renderText(json_encode(array('success'=>true)));
 					}
 					else {
-						$this->redirect404();
+						return $this->renderText(json_encode(array('success'=>false)));
 					}
   				}
   				else {
-					$this->redirect404();
+					return $this->renderText(json_encode(array('success'=>false)));
 				}
   			}
   			else {
-				$this->redirect404();
+				return $this->renderText(json_encode(array('success'=>false)));
 			}  			
   		}
   		else {
@@ -66,18 +68,16 @@ class appFlowerStudioActions extends sfActions
 			{
 				$file_content=@file_get_contents($file);
 				
-				$data = array('response'=>$file_content);
-			
 				if($file_content)
 				{
-					return $this->renderText(json_encode($data));
+					return $this->renderText(json_encode(array('response'=>$file_content)));
 				}
 				else {
-					$this->redirect404();
+					return $this->renderText(json_encode(array('success'=>false)));
 				}
 			}
 			else {
-				$this->redirect404();
+				return $this->renderText(json_encode(array('success'=>false)));
 			}		
   		}
 	}

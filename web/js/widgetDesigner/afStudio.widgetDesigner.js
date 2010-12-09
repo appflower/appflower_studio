@@ -29,14 +29,18 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 * @private
 	 */
 	,_initCmp : function() {
+		var _this = this;
 		
 		return {
 			itemId: 'widget-designer',
+			enableTabScroll:true,
 //			height: 400,
 			activeTab: 0,
 			defaults: {
-				layout: 'fit'
+				layout: 'fit',
+				autoScroll: true
 			},
+			plugins: new Ext.ux.TabMenu(),
 			items: [
 			{
 				itemId: 'designer',
@@ -44,10 +48,14 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			},{
 				itemId: 'security',
 				title: 'Security'
-			},{
-				itemId: 'code-editor',
-				title: 'Action Code'
-			}]
+			},new Ext.ux.CodePress({
+				title: 'Action Code',
+				closable:true,
+				path:_this.path,
+				tabTip:_this.path,
+				file:_this.path,
+				tabPanel:_this
+			})]
 		}
 	}// eo _initCmp
 	
@@ -55,18 +63,14 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		var _this = this,
 			designerTab = _this.getComponent('designer'),
-			securityTab = _this.getComponent('security'),
-			codeEditorTab = _this.getComponent('code-editor');
+			securityTab = _this.getComponent('security');
 
-		this.codeEditor = new Ext.ux.CodePress({
-			title:'test',
-			closable:true,
-			path:_this.path,
-			tabTip:_this.path,
-			tabId: codeEditorTab.getId(),
-			file:_this.path
-			/*,tabPanel:tabPanel*/
-		});
+		/**
+		* load inital Action Code
+		*
+		* @author radu
+		*/
+		this.codeEditor = 
 		
 		designerTab.on({
 			beforerender : function(cmp) {
@@ -83,21 +87,18 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				});
 			}
 		});
-		
-		codeEditorTab.on({
-			beforerender : function(cmp) {
-				cmp.add(this.codeEditor);
-			}, scope: this
-		});	
-		
+				
 		if(this.mask)
 		{
 			this.mask.hide.defer(1000,this.mask);
 		}
 		
-		this.on('tabchange', function(panel, tab){
-			if('code-editor' == tab.itemId){
-				this.codeEditor.showMask();
+		this.on('beforetabchange', function(tabPanel,newTab,oldTab){
+			if(oldTab&&oldTab.iframe){
+				oldTab.toggleIframe();
+			}
+			if(newTab&&newTab.iframe){
+				newTab.toggleIframe();
 			}
 		}, this);
 		

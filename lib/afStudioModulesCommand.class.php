@@ -73,8 +73,8 @@ class afStudioModulesCommand
 									$data[$i]['children'][$j]['children'][$k]['module']=$module;
 									$data[$i]['children'][$j]['children'][$k]['type']='xml';
 									$data[$i]['children'][$j]['children'][$k]['text']=$xmlName;
-									$data[$i]['children'][$j]['children'][$k]['xmlPath']=$xmlPaths[$xk];
-                                    $data[$i]['children'][$j]['children'][$k]['actionPath']=$actionPath;
+									$data[$i]['children'][$j]['children'][$k]['xmlPath']=str_replace($this->realRoot,'root',$xmlPaths[$xk]);
+                                    $data[$i]['children'][$j]['children'][$k]['actionPath']=str_replace($this->realRoot,'root',$actionPath);
 									$data[$i]['children'][$j]['children'][$k]['leaf']=true;
 									
 									$k++;

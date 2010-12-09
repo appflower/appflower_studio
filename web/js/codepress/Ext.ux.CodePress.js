@@ -373,7 +373,12 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 	 * Mask owner element
 	 */
 	showMask: function(){
-		Ext.get(this.tabId).mask('Loading...');		
+		if(!this.tabId)
+		{
+			this.tabId = this.ownerCt.activeTab.id;
+		}
+		
+		Ext.get(this.tabId).mask('Loading...');
 	},
 	
 	
@@ -382,6 +387,11 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 	 * Unmask owner element
 	 */
 	hideMask: function(){
+		if(!this.tabId)
+		{
+			this.tabId = this.ownerCt.activeTab.id;
+		}
+		
 		Ext.get(this.tabId).unmask();		
 	},
 
@@ -412,7 +422,7 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 
       if(this.fileContentUrl){
 		
-//		this.showMask();
+		this.showMask();
 		
         Ext.Ajax.request({
 
@@ -435,7 +445,7 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 				this.hideMask();
 			    Ext.Msg.alert("","The server can't read '"+this.file+"' !");
 			    
-			    //this.tabPanel.remove(this);
+			    this.tabPanel.remove(this);
 			    
 		  }.createDelegate(this)
 

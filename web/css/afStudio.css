@@ -80,3 +80,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+.icon-file-save{background: url('/appFlowerStudioPlugin/images/script_save.png') no-repeat 0 0 !important;}
+.icon-file-close{background: url('/appFlowerStudioPlugin/images/script_go.png') no-repeat 0 0 !important;}
+.icon-file-close-others{background: url('/appFlowerStudioPlugin/images/script_lightning.png') no-repeat 0 0 !important;}
