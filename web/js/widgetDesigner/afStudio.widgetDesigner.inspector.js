@@ -381,6 +381,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
         this.codeBrowserTree = new Ext.ux.FileTreePanel({
 			url:'/appFlowerStudio/filetree'
 			,width:248
+			,height:500
 			,id:'ftp'
 			,rootPath:'root'
 			,rootVisible:true
