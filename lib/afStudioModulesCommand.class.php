@@ -51,14 +51,11 @@ class afStudioModulesCommand
 							$data[$i]['children'][$j]['text']=$module;
 							
 							$xmlNames = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
-							$xmlPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", false, "xml");
-                            $actionPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/actions/", false, "php");
-                            $actionPath = false;
-                            if(isset($actionPaths[0]))
-                            {
-                            	$actionPath = $actionPaths[0];
-                            }
-							$k=0;
+                                                        $xmlPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", false, "xml");
+                                                        
+                                                        $securityPath = $this->realRoot."/apps/".$app."/modules/".$module."/config/security.yml";
+                                                        $actionPath = $this->realRoot."/apps/".$app."/modules/".$module."/actions/actions.class.php";
+                                                        $k=0;
 							
 							$data[$i]['children'][$j]['type']='module';
 							$data[$i]['children'][$j]['app']=$app;
@@ -73,8 +70,10 @@ class afStudioModulesCommand
 									$data[$i]['children'][$j]['children'][$k]['module']=$module;
 									$data[$i]['children'][$j]['children'][$k]['type']='xml';
 									$data[$i]['children'][$j]['children'][$k]['text']=$xmlName;
-									$data[$i]['children'][$j]['children'][$k]['xmlPath']=str_replace($this->realRoot,'root',$xmlPaths[$xk]);
-                                    $data[$i]['children'][$j]['children'][$k]['actionPath']=str_replace($this->realRoot,'root',$actionPath);
+                                                                        $data[$i]['children'][$j]['children'][$k]['path_security']=$securityPath;
+                                                                        $data[$i]['children'][$j]['children'][$k]['path']=$actionPath;
+									$data[$i]['children'][$j]['children'][$k]['xmlPath']=$xmlPaths[$xk];
+                                                                        $data[$i]['children'][$j]['children'][$k]['actionPath']=$actionPath;
 									$data[$i]['children'][$j]['children'][$k]['leaf']=true;
 									
 									$k++;

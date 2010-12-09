@@ -286,7 +286,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
         		path = false;
         		break;
         	case "xml":
-        		path = node.attributes.xmlPath;
+                        path = node.attributes.xmlPath;
         		break;	
         }
 
@@ -304,8 +304,10 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
         		path = false;
         		break;
         	case "xml":
-        		path = node.attributes.actionPath;
-        		break;	
+        		path = new Array();
+                        path['action'] = node.attributes.path;
+                        path['security'] = node.attributes.path_security;
+        		break;
         }
 
 		return path;
