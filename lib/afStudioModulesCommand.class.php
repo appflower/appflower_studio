@@ -53,7 +53,11 @@ class afStudioModulesCommand
 							$xmlNames = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
 //							$xmlPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", false, "xml");
                             $actionPaths = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/actions/", false, "php");
-                            $actionPath = $actionPaths[0];
+                            $actionPath = false;
+                            if(isset($actionPaths[0]))
+                            {
+                            	$actionPath = $actionPaths[0];
+                            }
 							$k=0;
 							
 							$data[$i]['children'][$j]['type']='module';
