@@ -93,10 +93,10 @@ layout: 'fit',
 				});
 			}
 			
-			//TODO: add to the left column
-//			for(var i = 0; i < additionalColumns; i++ ) {
-//				portItems[0].items.push(this.getNewWidgetCfg());
-//			}
+			//TODO: add existed widgets to the left column
+			for(var i = 0; i < additionalColumns; i++ ) {
+				portItems[0].items.push(this.getNewWidgetCfg());
+			}
 			
 			detailp.add(
 				new Ext.ux.Portal ({
@@ -127,8 +127,8 @@ layout: 'fit',
 							style: 'padding-right: 5px;'
 						},
 						columnWidth: 1/_layout[1],
-						id:"portColumn"+i+j
-
+						id:"portColumn"+i+j,
+						items: []
 //TODO: not need now. Do not forget to remove						
 //						,
 //						items: [{
@@ -139,6 +139,11 @@ layout: 'fit',
 //						}]
 					});
 				}
+
+			//TODO: add existed widgets to the left column
+			for(var i = 0; i < additionalColumns; i++ ) {
+				portItems[0].items.push(this.getNewWidgetCfg());
+			}
 			
 				layoutitems.push(
 						new Ext.ux.Portal ({

@@ -75,12 +75,6 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			items: [
 			'->',
 			{
-				text: 'Add Widget',
-				iconCls: 'icon-widgets-add',
-				handler: Ext.util.Functions.createDelegate(_this.onAddWidget, _this)
-			},
-			{xtype: 'tbseparator'},
-			{
 				text: 'Add Model',
 				iconCls: 'icon-models-add',
 				handler: Ext.util.Functions.createDelegate(_this.onAddNode, _this)
@@ -278,46 +272,6 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		var newNode = _this.getRootNode().appendChild(new Ext.tree.TreeNode(node));
 		_this.selectModel(newNode);
 		_this.treeEditor.triggerEdit(newNode);		
-	}
-	
-	,onAddWidget: function(){
-		var form = new Ext.FormPanel({
-		    url: '', defaultType: 'textfield', width: 450, frame: true, 
-			labelWidth: 100, title: false,
-			items: [
-				{xtype:'textfield', fieldLabel: 'Widget name', anchor: '96%', name: 'widget_name', allowBlank: false},
-				{xtype:'textfield', fieldLabel: 'Path to prohect', anchor: '96%', name: 'project_path', allowBlank: false}
-			]
-		});
-				
-				//TYPES: List, Grid, Edit or Show
-				
-/**
-* 3. Clicked "add widget", a popup will appear, which will ask
-* 3.1) Name of widget, and under which model to place it.
-* 3.2) which fields to pre-select for the widget. 
-* Almost like the relational picker except, you can add multiple fields across multiple models. 
-* That means i might select 3 fields from sfGuardUser and 2 fields from sfGuardGroup.
-*/
-				
-		var wnd = new Ext.Window({
-			title: 'Add new widget', width: 463,
-			autoHeight: true, closable: true,
-            draggable: true, plain:true,
-            modal: true, resizable: false,
-            bodyBorder: false, border: false,
-            items: form,
-			buttons: [
-				{text: 'Add widget'},
-				{text: 'Cancel', handler: function(){wnd.close}}
-			],
-			buttonAlign: 'center'
-		});
-		wnd.show();
-		
-//		var wb = new afStudio.widgetsBuilder();
-//		wb.show()
-		
 	}
 	
 	,onBeforeComplete : function(editor, newValue, oldValue) {
