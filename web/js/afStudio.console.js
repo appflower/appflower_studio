@@ -141,6 +141,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
 			layout: 'fit',
 			items: [
 				new Ext.TabPanel({
+				    id: 'console-tabs',
 					activeTab: 0,
 					items: [
 						{
@@ -165,16 +166,20 @@ afStudio.console = Ext.extend(Ext.Panel, {
 						    })
 						},
 						
-						{xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: '', 
-                            tbar: [
-                                {
-                                    id: this.id + '-console-debug-frontend',
-                                    itemId: 'debug_frontend',
-                                    text: 'Frontend'
-                                },
-                                {xtype: 'tbseparator'},
-                                {text: 'Logfile2'}
-                            ],
+						{
+						    xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: '', 
+                            tbar: {
+                                id: 'debug-toolbar'
+                            /*    items: [
+                                    {
+                                        id: this.id + '-console-debug-frontend',
+                                        itemId: 'debug_frontend',
+                                        text: 'Frontend'
+                                    },
+                                    {xtype: 'tbseparator'},
+                                    {text: 'Logfile2'}
+                                ]*/
+                            },
                             
                             bbar: new Ext.PagingToolbar({
                                 store: debugStore,
@@ -200,26 +205,74 @@ afStudio.console = Ext.extend(Ext.Panel, {
 	
 	,consoleDebugClickListener : function(e, t) {      
         var _this = this;
+        
+        _this.body.mask('Loading, please Wait...', 'x-mask-loading');
+        
+        Ext.Ajax.request({
+            url: _this.debugUrl,
+            method: _this.method,
+            params: {
+                file_name: e.id
+            },
+            callback: function(options, success, response) {                
+                _this.body.unmask();
+                var response = Ext.decode(response.responseText);
+                Ext.getCmp(_this.id + '-debug-tab').update(response.debug);
+                _this.body.scroll("bottom", 1000000, true );    
+            }
+        });
+          
 
-        switch (e.id) {
-            case _this.id + '-console-debug-frontend':
-                _this.body.mask('Loading, please Wait...', 'x-mask-loading');
-
-                Ext.Ajax.request({
-                    url: _this.debugUrl,
-                    method: _this.method,
-                    
-                    callback: function(options, success, response) {                
-                        _this.body.unmask();
-                        var response = Ext.decode(response.responseText);
-                        Ext.getCmp(_this.id + '-debug-tab').update(response.debug);
-                        _this.body.scroll("bottom", 1000000, true );    
-                    }
-                });
-                break;
-        } //eo consoleDebugClickListener
-
-    } //eo consoleCommandFieldKeyListener
+    } //eo consoleDebugClickListener
+	
+	
+	/**
+     * Update debug tab information
+     */
+    ,updateDebugTab: function () {
+        var _this = this;
+        
+        _this.body.mask('Loading, please Wait...', 'x-mask-loading');
+        
+        Ext.Ajax.request({
+            url: _this.debugUrl,
+            method: _this.method,
+            params: {
+                command: 'main'
+            },
+            callback: function(options, success, response) {                
+                _this.body.unmask();
+                var response = Ext.decode(response.responseText);
+                Ext.getCmp(_this.id + '-debug-tab').update(response.debug);
+                _this.body.scroll("bottom", 1000000, true );  
+                
+                var tb = Ext.getCmp(_this.id + '-debug-tab').getTopToolbar();
+                tb.removeAll();
+                
+                var files_count = response.files.length;
+                if (files_count > 0) {
+                    Ext.each(response.files, function(file_name, index) {        
+                        tb.addButton({
+                            text: file_name, 
+                            id: file_name,
+                            itemId: file_name,
+                            // handler: _this.consoleDebugClickListener
+                        });
+                        tb.getComponent(file_name).on({
+                            click: _this.consoleDebugClickListener.createDelegate(_this)
+                        })
+                        
+                        if (index != files_count - 1) {
+                            tb.add('-');
+                        }
+                    });
+                }
+                
+                tb.doLayout();
+            }
+        });
+        
+    }
 	
 	/**
 	 * Initializes events
@@ -227,8 +280,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
 	 */
 	,_initEvents : function() {
 		var _this = this,
-			consoleCmdField = Ext.getCmp(this.id + '-console-tab').getTopToolbar().getComponent('console_cmd'),
-			consoleDebugFrontend = Ext.getCmp(this.id + '-debug-tab').getTopToolbar().getComponent('debug_frontend');
+			consoleCmdField = Ext.getCmp(this.id + '-console-tab').getTopToolbar().getComponent('console_cmd');
 			
 		_this.on({
 			afterrender: function() {
@@ -240,8 +292,18 @@ afStudio.console = Ext.extend(Ext.Panel, {
 			keyup : _this.consoleCommandFieldKeyListener.createDelegate(_this)
 		});
 		
-		consoleDebugFrontend.on({
-            click : _this.consoleDebugClickListener.createDelegate(_this)
+        // Changing tab event
+        var consoleTab = Ext.getCmp('console-tabs');
+        consoleTab.on({
+            tabchange: function(tabPanel, tab) {
+                
+                switch (tab.id) {
+                    case _this.id + '-debug-tab':
+                        _this.updateDebugTab();
+                        break;
+                }
+
+            }
         });
         
 	} //eo _initEvents

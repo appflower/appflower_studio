@@ -162,39 +162,32 @@ class appFlowerStudioActions extends sfActions
      */
     public function executeDebug(sfWebRequest $request)
     {
-        $nLastSymbols = 4094;
+        $command = $this->getRequestParameter('command');
+        $file_name = $this->getRequestParameter('file_name');
         
-        $result = '';
+        $aResponse = array();
         
-        $file_name = $this->realRoot . '/log/frontend_dev.log';
-        if (file_exists($file_name) && is_readable ($file_name)) {
-            $file_size = filesize($file_name);
-            if ($file_size) {
-                $fh = fopen($file_name, "rb");
-
-                if ($file_size > $nLastSymbols) {
-                    fseek($fh, $file_size - $nLastSymbols);
-                    $result = trim(fread($fh, $nLastSymbols));
+        switch ($command) {
+            case 'main':
+                $aResponse['files'] = afStudioDebug::get_files();
+                if (!empty($aResponse['files'])) {
+                    $aResponse['debug'] = afStudioDebug::get_content($aResponse['files'][0]);
                 } else {
-                    $result = fread($fh, $file_size);
+                    $aResponse['debug'] = 'no logos';
                 }
+                
+                break;
             
-                fclose($fh);
-            } else {
-                $result = 'Frontend log empty';
-            }
-        } else { 
-            $result = "Frontend log doesn't exists";
+            default:
+                $aResponse['debug'] = afStudioDebug::get_content($file_name);
+                break;
         }
         
-        $current_encoding = mb_detect_encoding($result, "UTF-8, ASCII, ISO-8859-1");
-        if ($current_encoding != 'UTF-8') {
-            $result = iconv($current_encoding, 'UTF-8', $result);
-        }
-        
-        $result = nl2br($result);
-        
-        return $this->renderJson(array('debug' => $result));
+        return $this->renderJson($aResponse);
         
     }
+
+    
+    
+    
 }
