@@ -1,0 +1,10 @@
+propel:
+  _attributes:    { package: plugins.appFlowerStudioPlugin.lib.model }
+
+  afs_notification: 
+    _attributes: { phpName: afsNotification }
+    message: { type: VARCHAR, size: 255, required: true }
+    message_type: { type: VARCHAR, size: 2, required: true, default: 0 }
+    user_id: { type: INTEGER, required: true, default: 0, foreignTable: af_guard_user, foreignReference: id }
+    ip: { type: VARCHAR, size: 2, required: true }
+    created_at:
