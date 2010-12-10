@@ -22,9 +22,10 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 				columnWidth: 1,
 				layout: 'fit',
 				style: "padding:10px 0 10px 10px;",
-				items: [				
+				items: [
 				]
 			}],
+			bodyStyle: 'background-image: url(/appFlowerStudioPlugin/images/bg/backgrond_3.6.2.jpg);background-position: 50% 50%;background-repeat: no-repeat;',
 			style: "padding-right:5px;"
 		});
 		
