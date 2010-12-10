@@ -497,11 +497,10 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	        autoScroll: true,
 	        store: store,
 	        cm : cm,
-			columnLines:true,
-	        clicksToEdit : 1,
-	        style: 'padding-bottom:10px;',
-	        view:new afStudio.models.modelGridView(),
-	        listeners:{
+			columnLines: true,
+	        clicksToEdit: 1,	        
+	        view: new afStudio.models.modelGridView(),
+	        listeners: {
 				afteredit:function(e){
 					//e.record.commit();
 					var row = e.row+1;
@@ -599,12 +598,11 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 		afStudio.models.ModelGrid.superclass.beforeInit.apply(this, arguments);
 		
 		var config = {			
-			iconCls: 'icon-grid',
+			iconCls: 'icon-tree-table',
 //			height: 300,
 		    loadMask: true,
 		    clicksToEdit: 1,
-	        columnLines: true,
-	        autoScroll: true,
+	        columnLines: true,	        
 	        viewConfig: {
 	            forceFit: true
 	        },

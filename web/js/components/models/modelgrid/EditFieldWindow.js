@@ -27,33 +27,38 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	 * @cfg {Ext.grid.GridView} gridView required
 	 * The edit field's grid view 
 	 */
-
+	
+	/**
+	 * Closes this window
+	 */
+	closeEditFieldWindow : function() {
+		this.hide();
+	}
 
 	/**
 	 * "Save" button handler.
 	 * Saves field definition updates
 	 */
-	saveUpdates : function() {
+	,saveUpdates : function() {
 		var _this = this,
 			   fd = _this.fieldDefinition,
 			   cm = _this.gridView.cm,
-			   fm = _this.fieldForm.getForm();
-			   
+			   fm = _this.fieldForm.getForm();		   
 		
 		if (fm.isValid()) {
 			var fv = fm.getFieldValues();
+			
 			cm.setColumnHeader(_this.fieldIndex, fv.name);
 			
-			_this.hide();
+			_this.closeEditFieldWindow();
 		}		
 	}
 
 	/**
 	 * "Cancel" button handler.
-	 * Closes this window
 	 */
 	,cancelEditing :  function() {
-		this.hide();	
+		this.closeEditFieldWindow();
 	}
 
 	/**
@@ -83,8 +88,12 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	 * This <u>show</u> event listener
 	 */
 	,onShowEvent : function() {
-		this.fieldForm.getForm().reset();
-		this.loadFieldData();
+		var _this = this,
+			    f = this.fieldForm;
+			    
+		f.getForm().reset();
+		f.getComponent('fields-tab').setActiveTab(0);		
+		_this.loadFieldData();
 	}	
 	
 	/**
@@ -93,7 +102,113 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	 * @private
 	 */
 	,_beforeInitComponent : function() {
-		var _this = this;
+		var _this = this;		
+		
+		var fields = new Ext.FormPanel({
+			ref: 'fieldForm',				
+			baseCls: 'x-plain',
+			style: 'padding: 5px',
+			border: false,
+			labelWidth: 100,
+			defaults: {
+				width: 230,
+				msgTarget: 'qtip'
+			},
+			items: [
+			{
+				xtype: 'textfield',
+				fieldLabel: 'Name',
+				allowBlank: false,
+				name: 'name'
+			},{
+				xtype: 'afStudio.models.typeCombo',
+				fieldLabel: 'Type',
+				name: 'type'
+			},{
+				xtype: 'textfield',
+				fieldLabel: 'Size',
+				name: 'size'
+			},{
+				xtype: 'tabpanel',
+				itemId: 'fields-tab',
+				width: 336,
+				height: 120,
+				style: 'margin-top: 10px;',
+				activeTab: 0,				
+				defaults: {
+					layout: 'form',
+					frame: true
+				},
+				items: [{
+					title: 'Key',
+					defaults: {
+						width: 215
+					},
+					items: [
+					{
+						xtype: 'combo',
+						fieldLabel: 'Key',
+						typeAhead: true,
+						triggerAction: 'all',					
+						editable: false,
+						mode: 'local',
+						valueField: 'field',
+						displayField: 'field',
+						store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']],
+						name: 'key'
+					},{
+						xtype: 'checkbox',
+						fieldLabel: 'Autoincrement',
+						name: 'autoIncrement'					
+					},{
+						xtype: 'relationcombo',
+						relationUrl: '/appFlowerStudio/models',
+						listWidth: 250,
+						fieldLabel: 'Relation',
+						name: 'relation'
+					}]	
+				},{
+					title: 'Behavior',
+					defaults: {
+						width: 215
+					},					
+					items: [
+					{
+						xtype: 'textfield',
+						fieldLabel: 'Default value',
+						name: 'default'
+					},{
+						xtype: 'checkbox',
+						fieldLabel: 'Required',
+						name: 'required'
+					},{
+						xtype: 'combo',
+						fieldLabel: 'On Delete',
+						typeAhead: true,
+						triggerAction: 'all',					
+						editable: false,
+						mode: 'local',
+						valueField: 'field',
+						displayField: 'field',
+						store: [['cascade', 'cascade'], ['setnull', 'setnull'], ['restrict', 'restrict'], ['none', 'none']],
+						hiddenName: 'onDelete',
+						name: 'onDelete'
+					}]
+				}]//eo tabs					
+			},{
+				xtype: 'spacer',
+				height: 10
+			}],
+			buttons: [{
+				text: 'Save',
+				iconCls: 'icon-accept',
+				handler: Ext.util.Functions.createDelegate(_this.saveUpdates, _this)
+			},{
+				text: 'Cancel',
+				iconCls: 'afs-icon-cancel',
+				handler: Ext.util.Functions.createDelegate(_this.cancelEditing, _this) 
+			}]			
+		});
 		
 		return {
 			title: 'Edit Field',
@@ -103,83 +218,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			width: 360,			
 			autoHeight: true,
 			resizable: false,
-			items: [
-			{
-				xtype: 'form',
-				ref: 'fieldForm',				
-				baseCls: 'x-plain',
-				style: 'padding: 5px',
-				border: false,
-				labelWidth: 100,
-				defaults: {
-					width: 225,
-					msgTarget: 'qtip'
-				},
-				items: [{
-					xtype: 'textfield',
-					fieldLabel: 'Name',
-					allowBlank: false,
-					name: 'name'
-				},{
-					xtype: 'combo',
-					fieldLabel: 'Key',
-					typeAhead: true,
-					triggerAction: 'all',					
-					editable: false,
-					mode: 'local',
-					valueField: 'field',
-					displayField: 'field',
-					store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']],
-					name: 'key'
-				},{
-					xtype: 'afStudio.models.typeCombo',
-					fieldLabel: 'Type',
-					name: 'type'
-				},{
-					xtype: 'textfield',
-					fieldLabel: 'Size',
-					name: 'size'
-				},{
-					xtype: 'checkbox',
-					fieldLabel: 'Autoincrement',
-					name: 'autoIncrement'					
-				},{
-					xtype: 'textfield',
-					fieldLabel: 'Default value',
-					name: 'default'
-				}, {
-					xtype: 'relationcombo',
-					relationUrl: '/appFlowerStudio/models',
-					listWidth: 250,
-					fieldLabel: 'Relation',
-					name: 'relation'
-				},{
-					xtype: 'checkbox',
-					fieldLabel: 'Required',
-					name: 'required'
-				},{
-					xtype: 'combo',
-					fieldLabel: 'On Delete',
-					typeAhead: true,
-					triggerAction: 'all',					
-					editable: false,
-					mode: 'local',
-					valueField: 'field',
-					displayField: 'field',
-					store: [['cascade', 'cascade'], ['setnull', 'setnull'], ['restrict', 'restrict'], ['none', 'none']],
-					hiddenName: 'onDelete',
-					name: 'onDelete'
-				}],
-				buttons: [{
-					text: 'Save',
-					iconCls: 'icon-accept',
-					handler: Ext.util.Functions.createDelegate(_this.saveUpdates, _this)
-				},{
-					text: 'Cancel',
-					iconCls: 'afs-icon-cancel',
-					handler: Ext.util.Functions.createDelegate(_this.cancelEditing, _this) 
-				}]
-			}]			
+			items: [fields]			
 		}
 	}//eo _beforeInitComponent
 	

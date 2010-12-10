@@ -1,6 +1,6 @@
 afStudio.viewport = Ext.extend(Ext.Viewport, { 
 
-	initComponent: function(){
+	initComponent : function() {
 		
 		var northPanel = new Ext.Panel ({
 			id: "north_panel",
@@ -12,24 +12,20 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 						
 		var centerPanel = new Ext.ux.Portal ({
 			id: 'center_panel',
-			region: "center",
-			
-			layout: 'fit',
-			
+			region: "center",			
+			layout: 'fit',			
 			title: "Dashboard",
 			items: [
 			{				
 				columnWidth: 1,
 				layout: 'fit',
-				style: "padding:10px 0 10px 10px;",
+				style: "padding: 10px;",
 				items: [
 				]
 			}],
 			bodyStyle: 'background-image: url(/appFlowerStudioPlugin/images/bg/backgrond_3.6.2.jpg);background-position: 50% 50%;background-repeat: no-repeat;',
 			style: "padding-right:5px;"
 		});
-		
-		
 		
 		var westPanel = new afStudio.westPanel(),
 			southPanel = new afStudio.southPanel();
@@ -60,7 +56,7 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 	/**
 	 * Puts a mask over afStudio.viewport or its region to disable user interaction.
 	 * @param {String/Object} opt (optional) if
-	 * opt striing -  message,
+	 * opt string -  message,
 	 * opt {msg: 'message', region: 'region to mask'}
 	 * (defaults to mask all viewport)  
 	 */

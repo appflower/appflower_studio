@@ -35,7 +35,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			},{
 	            id: 'rename-model',
 	            text: 'Change model name',
-	            iconCls: 'icon-models-edit'				
+	            iconCls: 'icon-edit'				
 			}],
 	        listeners: {
 	            itemclick: function(item) {
