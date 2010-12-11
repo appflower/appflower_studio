@@ -50,6 +50,12 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 	* file content url, from where to get the file content
 	*/
 	fileContentUrl:'/appFlowerStudio/filecontent',
+	
+	/**
+	 * delayedStart - set to ttrue in config if you do not want to load data after initialization..
+	 */
+	delayedStart: false,
+	
 	/**
 	* file
 	*/
@@ -375,7 +381,11 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 	showMask: function(){
 		if(!this.tabId)
 		{
-			this.tabId = this.ownerCt.activeTab.id;
+			try {
+				this.tabId = this.ownerCt.activeTab.id;
+			} catch (e) {
+				this.tabId = this.ownerCt.id;
+			}
 		}
 		
 		Ext.get(this.tabId).mask('Loading...');
@@ -389,9 +399,12 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 	hideMask: function(){
 		if(!this.tabId)
 		{
-			this.tabId = this.ownerCt.activeTab.id;
+			try {
+				this.tabId = this.ownerCt.activeTab.id;
+			} catch (e) {
+				this.tabId = this.ownerCt.id;
+			}
 		}
-		
 		Ext.get(this.tabId).unmask();		
 	},
 
@@ -420,10 +433,11 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 
       this.editor.body = this.doc.getElementsByTagName('body')[0];
 
-      if(this.fileContentUrl){
+      if(this.fileContentUrl && !this.delayedStart){
+
+		//TODO: move to separate function?
 		
 		this.showMask();
-		
         Ext.Ajax.request({
 
           url: this.fileContentUrl+'/?file='+this.file
@@ -476,8 +490,39 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
       this.resize();
 
    },
-
-  
+	
+	/**
+	 * Function loadFile
+	 * Loads file content manually into editor
+	 * @param {string} file path
+	 */
+	
+	loadFile: function(file){
+		this.file = file;
+		
+		this.setLanguage();
+		this.edit();
+		
+		this.showMask();
+        Ext.Ajax.request({
+          url: this.fileContentUrl+'/?file='+this.file, 
+          method:'get', 
+          success:function(response, options){
+			this.hideMask();
+			var r = Ext.decode(response.responseText);
+          	var code = r.response;
+            this.code = code;
+            this.editor.setCode(this.code);
+        	this.editor.syntaxHighlight('init');
+	        }.createDelegate(this),	
+	        failure: function() {
+				this.hideMask();
+				Ext.Msg.alert("","The server can't read '"+this.file+"' !");
+				this.tabPanel.remove(this);
+			}.createDelegate(this)
+        });
+        
+	},
 
    /**
 

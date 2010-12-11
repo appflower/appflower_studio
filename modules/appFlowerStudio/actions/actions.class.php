@@ -67,7 +67,6 @@ class appFlowerStudioActions extends sfActions
 			if($file)
 			{
 				$file_content=@file_get_contents($file);
-				
 				if($file_content)
 				{
 					return $this->renderText(json_encode(array('response'=>$file_content)));
@@ -91,6 +90,9 @@ class appFlowerStudioActions extends sfActions
 	
 	public function executeModels()
 	{
+		//TODO: debug only
+//		return $this->renderJson(array('console'=>'test'));
+		
 		$models_command = new afStudioModelsCommand();		
 		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
 		
@@ -99,6 +101,9 @@ class appFlowerStudioActions extends sfActions
 	
 	public function executeModules()
 	{
+		//TODO: debug only
+		return $this->renderJson(array('console'=>'test'));
+		
 		$modules_command=new afStudioModulesCommand();
 		
 		return $this->renderText($modules_command->end());
@@ -106,13 +111,28 @@ class appFlowerStudioActions extends sfActions
 
 	public function executePlugins()
 	{
+		//TODO: debug only
+//		return $this->renderJson(array('console'=>'test'));
+		
 		$modules_command=new afStudioPluginsCommand();
 
 		return $this->renderText($modules_command->end());
 	}
 
+	public function executeCssfilestree(){
+		$nodes = array(
+			array('text' => 'afStudio.console.css', 'id' => 'css/afStudio.console.css', 'leaf' => true),
+			array('text' => 'afStudio.css', 'id' => 'css/afStudio.css', 'leaf' => true),
+			array('text' => 'afStudio.tplSelector.css', 'id' => 'css/afStudio.tplSelector.css', 'leaf' => true)
+		);
+		return $this->renderJson($nodes);
+	}
+	
 	public function executeConsole(sfWebRequest $request)
 	{
+		//TODO: debug only
+//		return $this->renderJson(array('console'=>'test'));
+		
 		$command = trim($request->getParameter("command"));
 		
 		$afConsole=new afStudioConsole();

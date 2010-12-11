@@ -140,11 +140,13 @@ layout: 'fit',
 					});
 				}
 
-			//TODO: add existed widgets to the left column
-			for(var i = 0; i < additionalColumns; i++ ) {
-				portItems[0].items.push(this.getNewWidgetCfg());
-			}
-			
+				//TODO: add existed widgets to the left column
+				if(0 ==i) {
+					for(var j = 0; j < additionalColumns; j++ ) {
+						portItems[0].items.push(this.getNewWidgetCfg());
+					}
+				}
+				
 				layoutitems.push(
 						new Ext.ux.Portal ({
 							autoHeight:true,
