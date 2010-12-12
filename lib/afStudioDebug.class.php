@@ -14,14 +14,30 @@ class afStudioDebug
             $file_size = filesize($file_name);
             if ($file_size) {
                 $fh = fopen($file_name, "rb");
-
+                
                 if ($file_size > $nLastSymbols) {
-                    fseek($fh, $file_size - $nLastSymbols);
-                    $result = trim(fread($fh, $nLastSymbols));
+                    
+                    $file_log_begin = $file_size - $nLastSymbols;
+                    fseek($fh, $file_log_begin);
+                    
+                    $result = fread($fh, $nLastSymbols);
+                    
+                    if ($result[0] != "\n") {
+                        
+                        while ($result[0] != "\n") {
+                            $file_log_begin -= 1;
+                            $nLastSymbols += 1;
+                            fseek($fh, $file_log_begin);
+                            $result = fread($fh, $nLastSymbols);
+                        }
+                    }
+                    
+                    $result = trim($result);
+                    
                 } else {
                     $result = fread($fh, $file_size);
                 }
-            
+                
                 fclose($fh);
             } else {
                 $result = 'log empty';
