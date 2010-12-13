@@ -41,4 +41,19 @@ class afsNotificationPeer extends BaseafsNotificationPeer {
 		$afsNotification->setIp(myToolkit::getIP());
 		$afsNotification->save();
 	}
+	
+	public static function getAll()
+	{
+		$c=new Criteria();
+		$c->addDescendingOrderByColumn(self::CREATED_AT);
+		$objs = self::doSelect($c);
+		
+		if(count($objs)>0)
+		{
+			return $objs;
+		}
+		else {
+			return false;
+		}
+	}
 } // afsNotificationPeer

@@ -207,7 +207,10 @@ class appFlowerStudioActions extends sfActions
         
     }
 
-    
-    
-    
+    public function executeNotifications()
+	{
+		$notifications_command=new afStudioNotificationsCommand($this->realRoot);
+		
+		return $this->renderText($notifications_command->end());
+	}    
 }

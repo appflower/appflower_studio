@@ -24,6 +24,34 @@ var afStudio = function () {
 				this.console.body.scroll("bottom", 1000000, true );
 			}
 		}
+		
+		,log: function(message, messageType)
+		{
+			messageType = messageType || false;
+			
+			Ext.Ajax.request({
+				url: '/appFlowerStudio/notifications',
+				method: 'POST',
+				params: {
+					cmd: 'set',
+					message: message,
+					messageType: messageType
+				},
+				callback: function(options, success, response) {				
+					
+					response = Ext.decode(response.responseText);
+					
+					if (!success) {
+						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
+					}
+					else
+					{
+						Ext.Msg.alert('Success',response.message);
+					}
+				}
+				
+			});		
+		}
 				
 		,init: function () { 
 		    Ext.QuickTips.init();

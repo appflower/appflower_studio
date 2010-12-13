@@ -195,8 +195,8 @@ afStudio.console = Ext.extend(Ext.Panel, {
 			],
 			method: 'post',
 			consoleUrl: '/appFlowerStudio/console',
-			debugUrl: '/appFlowerStudio/debug'
-			, 
+			debugUrl: '/appFlowerStudio/debug',
+			notificationsUrl: '/appFlowerStudio/notifications', 
 			plugins: new Ext.ux.MaximizeTool()
 		}
 		return config;
