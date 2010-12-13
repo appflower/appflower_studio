@@ -24,41 +24,39 @@ class afStudioNotificationsCommand
 	{
 		$cmd = $this->request->getParameterHolder()->has('cmd')?$this->request->getParameterHolder()->get('cmd'):null;
 			
-		if($cmd!=null)
-		{	
-			switch ($cmd)
-			{
-				case "set":
-					$message = $this->request->getParameter('message');
-					$messageType = $this->request->getParameter('messageType');
-					$messageType = $messageType!='false'?$messageType:'notification';
-					afsNotificationPeer::log($message, $messageType);
-					$this->result = array('success' => true,'message' => 'Saved notification!');
-					break;
-				case "get":
-				default:
-					$notifications = afsNotificationPeer::getAll();
-					$data = array();
-					if($notifications)
+		switch ($cmd)
+		{
+			case "set":
+				$message = $this->request->getParameter('message');
+				$messageType = $this->request->getParameter('messageType');
+				$messageType = $messageType!='false'?$messageType:'notification';
+				afsNotificationPeer::log($message, $messageType);
+				$this->result = array('success' => true,'message' => 'Saved notification!');
+				break;
+			case "get":
+			case null:
+			default:
+				$notifications = afsNotificationPeer::getAll();
+				$data = array();
+				if($notifications)
+				{
+					foreach ($notifications as $notification)
 					{
-						foreach ($notifications as $notification)
+						switch ($notification->getUser())
 						{
-							switch ($notification->getUser())
-							{
-								case 0:
-									$user = 'Guest';
-									break;
-								default:
-									$user = afGuardUserPeer::retrieveByPK($notification->getUser());
-									$user = $user->getUsername();
-									break;
-							}
-							$data[] = array('message'=>$notification->getMessage(),'messageType'=>$notification->getMessageType(),$user);
+							case 0:
+								$user = 'Guest';
+								break;
+							default:
+								$user = afGuardUserPeer::retrieveByPK($notification->getUser());
+								$user = $user->getUsername();
+								break;
 						}
+						$data[] = array('message'=>$notification->getMessage(),'messageType'=>$notification->getMessageType(),$user);
 					}
-					$this->result = array('success' => true,'totalCount' => count($data),'rows' => $data);					
-					break;
-			}
+				}
+				$this->result = array('success' => true,'totalCount' => count($data),'rows' => $data);					
+				break;
 		}
 	}
 	
