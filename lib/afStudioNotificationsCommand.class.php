@@ -39,11 +39,24 @@ class afStudioNotificationsCommand
 				default:
 					$notifications = afsNotificationPeer::getAll();
 					$data = array();
-					foreach ($notifications as $notification)
+					if($notifications)
 					{
-						$data[] = $notification->toArray(BasePeer::TYPE_FIELDNAME);
+						foreach ($notifications as $notification)
+						{
+							switch ($notification->getUser())
+							{
+								case 0:
+									$user = 'Guest';
+									break;
+								default:
+									$user = afGuardUserPeer::retrieveByPK($notification->getUser());
+									$user = $user->getUsername();
+									break;
+							}
+							$data[] = array('message'=>$notification->getMessage(),'messageType'=>$notification->getMessageType(),$user);
+						}
 					}
-					$this->result = array('success' => true,'totalCount' => count($data),'rows' => $data);
+					$this->result = array('success' => true,'totalCount' => count($data),'rows' => $data);					
 					break;
 			}
 		}
