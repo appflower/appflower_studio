@@ -21,9 +21,9 @@ afStudio.westPanel = Ext.extend(Ext.Panel, {
 			defaults: {
 				border: false
 			},
-			items: [
-				new afStudio.layoutDesigner.treePanel({id:'layoutdesigner'}),
+			items: [				
 				new afStudio.models.treePanel({id:'models'}),
+				new afStudio.layoutDesigner.treePanel({id:'layoutdesigner'}),
 			    new afStudio.widgets.treePanel({id:'widgets'}),
 			    new afStudio.plugins.treePanel({id:'plugins'}),
 			    

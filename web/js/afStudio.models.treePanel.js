@@ -83,7 +83,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		return {			
 			title: 'Models',
-			iconCls: 'icon-models',
+			iconCls: 'icon-databases',
 			autoScroll: true,
 			url: '/appFlowerStudio/models',			
 			method: 'post',

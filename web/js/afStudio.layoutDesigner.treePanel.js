@@ -6,15 +6,15 @@ afStudio.layoutDesigner.treePanel = Ext.extend(Ext.tree.TreePanel, {
             text: 'Pages',
 			id: 'pages',
             children: [
-				{text: 'Page 1', leaf: true, page: 1},
-			    {text: 'Page 2', leaf: true, page: 2},
-			    {text: 'Page 3', leaf: true, page: 3},
-			    {text: 'Page 3', leaf: true, page: 4}
+				{text: 'Page 1', leaf: true, page: 1,iconCls:'icon-layout'},
+			    {text: 'Page 2', leaf: true, page: 2,iconCls:'icon-layout'},
+			    {text: 'Page 3', leaf: true, page: 3,iconCls:'icon-layout'},
+			    {text: 'Page 3', leaf: true, page: 4,iconCls:'icon-layout'}
             ]
         });
 		var config = {			
 			title: 'Layout',
-			iconCls: 'icon-models',
+			iconCls: 'icon-layout_content',
 			root: rootNode,
 			
             animate:true, autoScroll:true, 

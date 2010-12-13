@@ -83,7 +83,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		return {			
 			title: 'Plugins',
-			iconCls: 'icon-models',
+			iconCls: 'icon-bricks',
 			autoScroll: true,
 			url: '/appFlowerStudio/plugins',			
 			method: 'post',
@@ -253,7 +253,8 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		if (root.hasChildNodes()) {
 			Ext.applyIf(node, {
-				iconCls: root.childNodes[0].attributes.iconCls
+				//iconCls: root.childNodes[0].attributes.iconCls
+				iconCls: 'icon-model'
 			});						
 		}
 		

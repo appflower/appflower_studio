@@ -106,7 +106,7 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 						(new afStudio.DBQuery()).show();
 					}
 				},
-				{xtype: 'tbseparator'},
+				/*{xtype: 'tbseparator'},
 				{
 					text:'Logs',
 					iconCls: 'icon-logs',
@@ -114,7 +114,7 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 						(new afStudio.Logs()).show();
 					}
 				},
-				
+				*/
 				{xtype: 'tbseparator'},
 				{text: 'Users', iconCls: 'icon-users'},
 				
