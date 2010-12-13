@@ -38,9 +38,9 @@ class afsNotificationTableMap extends TableMap {
 		$this->setUseIdGenerator(true);
 		// columns
 		$this->addColumn('MESSAGE', 'Message', 'VARCHAR', true, 255, null);
-		$this->addColumn('MESSAGE_TYPE', 'MessageType', 'VARCHAR', true, 2, '0');
-		$this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'af_guard_user', 'ID', true, null, 0);
-		$this->addColumn('IP', 'Ip', 'VARCHAR', true, 2, null);
+		$this->addColumn('MESSAGE_TYPE', 'MessageType', 'VARCHAR', true, 255, null);
+		$this->addColumn('USER', 'User', 'INTEGER', true, 11, 0);
+		$this->addColumn('IP', 'Ip', 'VARCHAR', true, 255, null);
 		$this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		// validators
@@ -51,7 +51,6 @@ class afsNotificationTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
-    $this->addRelation('afGuardUser', 'afGuardUser', RelationMap::MANY_TO_ONE, array('user_id' => 'id', ), null, null);
 	} // buildRelations()
 
 	/**

@@ -5,6 +5,6 @@ propel:
     _attributes: { phpName: afsNotification }
     message: { type: VARCHAR, size: 255, required: true }
     message_type: { type: VARCHAR, size: 255, required: true }
-    user_id: { type: INTEGER, required: true, default: 0, foreignTable: af_guard_user, foreignReference: id }
+    user: { type: INTEGER, size: 11, required: true, default: 0 }
     ip: { type: VARCHAR, size: 255, required: true }
     created_at:

@@ -32,17 +32,16 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 
 	/**
 	 * The value for the message_type field.
-	 * Note: this column has a database default value of: '0'
 	 * @var        string
 	 */
 	protected $message_type;
 
 	/**
-	 * The value for the user_id field.
+	 * The value for the user field.
 	 * Note: this column has a database default value of: 0
 	 * @var        int
 	 */
-	protected $user_id;
+	protected $user;
 
 	/**
 	 * The value for the ip field.
@@ -61,11 +60,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	 * @var        int
 	 */
 	protected $id;
-
-	/**
-	 * @var        afGuardUser
-	 */
-	protected $aafGuardUser;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -89,8 +83,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	 */
 	public function applyDefaultValues()
 	{
-		$this->message_type = '0';
-		$this->user_id = 0;
+		$this->user = 0;
 	}
 
 	/**
@@ -124,13 +117,13 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Get the [user_id] column value.
+	 * Get the [user] column value.
 	 * 
 	 * @return     int
 	 */
-	public function getUserId()
+	public function getUser()
 	{
-		return $this->user_id;
+		return $this->user;
 	}
 
 	/**
@@ -223,7 +216,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 			$v = (string) $v;
 		}
 
-		if ($this->message_type !== $v || $this->isNew()) {
+		if ($this->message_type !== $v) {
 			$this->message_type = $v;
 			$this->modifiedColumns[] = afsNotificationPeer::MESSAGE_TYPE;
 		}
@@ -232,28 +225,24 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	} // setMessageType()
 
 	/**
-	 * Set the value of [user_id] column.
+	 * Set the value of [user] column.
 	 * 
 	 * @param      int $v new value
 	 * @return     afsNotification The current object (for fluent API support)
 	 */
-	public function setUserId($v)
+	public function setUser($v)
 	{
 		if ($v !== null) {
 			$v = (int) $v;
 		}
 
-		if ($this->user_id !== $v || $this->isNew()) {
-			$this->user_id = $v;
-			$this->modifiedColumns[] = afsNotificationPeer::USER_ID;
-		}
-
-		if ($this->aafGuardUser !== null && $this->aafGuardUser->getId() !== $v) {
-			$this->aafGuardUser = null;
+		if ($this->user !== $v || $this->isNew()) {
+			$this->user = $v;
+			$this->modifiedColumns[] = afsNotificationPeer::USER;
 		}
 
 		return $this;
-	} // setUserId()
+	} // setUser()
 
 	/**
 	 * Set the value of [ip] column.
@@ -354,11 +343,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
-			if ($this->message_type !== '0') {
-				return false;
-			}
-
-			if ($this->user_id !== 0) {
+			if ($this->user !== 0) {
 				return false;
 			}
 
@@ -386,7 +371,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 
 			$this->message = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
 			$this->message_type = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->user_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+			$this->user = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
 			$this->ip = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->created_at = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->id = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
@@ -421,9 +406,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
-		if ($this->aafGuardUser !== null && $this->user_id !== $this->aafGuardUser->getId()) {
-			$this->aafGuardUser = null;
-		}
 	} // ensureConsistency
 
 	/**
@@ -463,7 +445,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 
 		if ($deep) {  // also de-associate any related objects?
 
-			$this->aafGuardUser = null;
 		} // if (deep)
 	}
 
@@ -614,18 +595,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
-			// We call the save method on the following object(s) if they
-			// were passed to this object by their coresponding set
-			// method.  This object relates to these object(s) by a
-			// foreign key reference.
-
-			if ($this->aafGuardUser !== null) {
-				if ($this->aafGuardUser->isModified() || $this->aafGuardUser->isNew()) {
-					$affectedRows += $this->aafGuardUser->save($con);
-				}
-				$this->setafGuardUser($this->aafGuardUser);
-			}
-
 			if ($this->isNew() ) {
 				$this->modifiedColumns[] = afsNotificationPeer::ID;
 			}
@@ -639,11 +608,11 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 					}
 
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows += 1;
+					$affectedRows = 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows += afsNotificationPeer::doUpdate($this, $con);
+					$affectedRows = afsNotificationPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -715,18 +684,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 			$failureMap = array();
 
 
-			// We call the validate method on the following object(s) if they
-			// were passed to this object by their coresponding set
-			// method.  This object relates to these object(s) by a
-			// foreign key reference.
-
-			if ($this->aafGuardUser !== null) {
-				if (!$this->aafGuardUser->validate($columns)) {
-					$failureMap = array_merge($failureMap, $this->aafGuardUser->getValidationFailures());
-				}
-			}
-
-
 			if (($retval = afsNotificationPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
@@ -772,7 +729,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 				return $this->getMessageType();
 				break;
 			case 2:
-				return $this->getUserId();
+				return $this->getUser();
 				break;
 			case 3:
 				return $this->getIp();
@@ -799,26 +756,20 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = afsNotificationPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getMessage(),
 			$keys[1] => $this->getMessageType(),
-			$keys[2] => $this->getUserId(),
+			$keys[2] => $this->getUser(),
 			$keys[3] => $this->getIp(),
 			$keys[4] => $this->getCreatedAt(),
 			$keys[5] => $this->getId(),
 		);
-		if ($includeForeignObjects) {
-			if (null !== $this->aafGuardUser) {
-				$result['afGuardUser'] = $this->aafGuardUser->toArray($keyType, $includeLazyLoadColumns, true);
-			}
-		}
 		return $result;
 	}
 
@@ -856,7 +807,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 				$this->setMessageType($value);
 				break;
 			case 2:
-				$this->setUserId($value);
+				$this->setUser($value);
 				break;
 			case 3:
 				$this->setIp($value);
@@ -893,7 +844,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 
 		if (array_key_exists($keys[0], $arr)) $this->setMessage($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setMessageType($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setUserId($arr[$keys[2]]);
+		if (array_key_exists($keys[2], $arr)) $this->setUser($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setIp($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setId($arr[$keys[5]]);
@@ -910,7 +861,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 
 		if ($this->isColumnModified(afsNotificationPeer::MESSAGE)) $criteria->add(afsNotificationPeer::MESSAGE, $this->message);
 		if ($this->isColumnModified(afsNotificationPeer::MESSAGE_TYPE)) $criteria->add(afsNotificationPeer::MESSAGE_TYPE, $this->message_type);
-		if ($this->isColumnModified(afsNotificationPeer::USER_ID)) $criteria->add(afsNotificationPeer::USER_ID, $this->user_id);
+		if ($this->isColumnModified(afsNotificationPeer::USER)) $criteria->add(afsNotificationPeer::USER, $this->user);
 		if ($this->isColumnModified(afsNotificationPeer::IP)) $criteria->add(afsNotificationPeer::IP, $this->ip);
 		if ($this->isColumnModified(afsNotificationPeer::CREATED_AT)) $criteria->add(afsNotificationPeer::CREATED_AT, $this->created_at);
 		if ($this->isColumnModified(afsNotificationPeer::ID)) $criteria->add(afsNotificationPeer::ID, $this->id);
@@ -977,7 +928,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	{
 		$copyObj->setMessage($this->message);
 		$copyObj->setMessageType($this->message_type);
-		$copyObj->setUserId($this->user_id);
+		$copyObj->setUser($this->user);
 		$copyObj->setIp($this->ip);
 		$copyObj->setCreatedAt($this->created_at);
 
@@ -1024,62 +975,13 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Declares an association between this object and a afGuardUser object.
-	 *
-	 * @param      afGuardUser $v
-	 * @return     afsNotification The current object (for fluent API support)
-	 * @throws     PropelException
-	 */
-	public function setafGuardUser(afGuardUser $v = null)
-	{
-		if ($v === null) {
-			$this->setUserId(0);
-		} else {
-			$this->setUserId($v->getId());
-		}
-
-		$this->aafGuardUser = $v;
-
-		// Add binding for other direction of this n:n relationship.
-		// If this object has already been added to the afGuardUser object, it will not be re-added.
-		if ($v !== null) {
-			$v->addafsNotification($this);
-		}
-
-		return $this;
-	}
-
-
-	/**
-	 * Get the associated afGuardUser object
-	 *
-	 * @param      PropelPDO Optional Connection object.
-	 * @return     afGuardUser The associated afGuardUser object.
-	 * @throws     PropelException
-	 */
-	public function getafGuardUser(PropelPDO $con = null)
-	{
-		if ($this->aafGuardUser === null && ($this->user_id !== null)) {
-			$this->aafGuardUser = afGuardUserQuery::create()->findPk($this->user_id, $con);
-			/* The following can be used additionally to
-				 guarantee the related object contains a reference
-				 to this object.  This level of coupling may, however, be
-				 undesirable since it could result in an only partially populated collection
-				 in the referenced object.
-				 $this->aafGuardUser->addafsNotifications($this);
-			 */
-		}
-		return $this->aafGuardUser;
-	}
-
-	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
 	{
 		$this->message = null;
 		$this->message_type = null;
-		$this->user_id = null;
+		$this->user = null;
 		$this->ip = null;
 		$this->created_at = null;
 		$this->id = null;
@@ -1106,7 +1008,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 		if ($deep) {
 		} // if ($deep)
 
-		$this->aafGuardUser = null;
 	}
 
 	/**

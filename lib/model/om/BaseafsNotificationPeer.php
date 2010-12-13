@@ -37,8 +37,8 @@ abstract class BaseafsNotificationPeer {
 	/** the column name for the MESSAGE_TYPE field */
 	const MESSAGE_TYPE = 'afs_notification.MESSAGE_TYPE';
 
-	/** the column name for the USER_ID field */
-	const USER_ID = 'afs_notification.USER_ID';
+	/** the column name for the USER field */
+	const USER = 'afs_notification.USER';
 
 	/** the column name for the IP field */
 	const IP = 'afs_notification.IP';
@@ -72,11 +72,11 @@ abstract class BaseafsNotificationPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Message', 'MessageType', 'UserId', 'Ip', 'CreatedAt', 'Id', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('message', 'messageType', 'userId', 'ip', 'createdAt', 'id', ),
-		BasePeer::TYPE_COLNAME => array (self::MESSAGE, self::MESSAGE_TYPE, self::USER_ID, self::IP, self::CREATED_AT, self::ID, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('MESSAGE', 'MESSAGE_TYPE', 'USER_ID', 'IP', 'CREATED_AT', 'ID', ),
-		BasePeer::TYPE_FIELDNAME => array ('message', 'message_type', 'user_id', 'ip', 'created_at', 'id', ),
+		BasePeer::TYPE_PHPNAME => array ('Message', 'MessageType', 'User', 'Ip', 'CreatedAt', 'Id', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('message', 'messageType', 'user', 'ip', 'createdAt', 'id', ),
+		BasePeer::TYPE_COLNAME => array (self::MESSAGE, self::MESSAGE_TYPE, self::USER, self::IP, self::CREATED_AT, self::ID, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('MESSAGE', 'MESSAGE_TYPE', 'USER', 'IP', 'CREATED_AT', 'ID', ),
+		BasePeer::TYPE_FIELDNAME => array ('message', 'message_type', 'user', 'ip', 'created_at', 'id', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
@@ -87,11 +87,11 @@ abstract class BaseafsNotificationPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Message' => 0, 'MessageType' => 1, 'UserId' => 2, 'Ip' => 3, 'CreatedAt' => 4, 'Id' => 5, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('message' => 0, 'messageType' => 1, 'userId' => 2, 'ip' => 3, 'createdAt' => 4, 'id' => 5, ),
-		BasePeer::TYPE_COLNAME => array (self::MESSAGE => 0, self::MESSAGE_TYPE => 1, self::USER_ID => 2, self::IP => 3, self::CREATED_AT => 4, self::ID => 5, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('MESSAGE' => 0, 'MESSAGE_TYPE' => 1, 'USER_ID' => 2, 'IP' => 3, 'CREATED_AT' => 4, 'ID' => 5, ),
-		BasePeer::TYPE_FIELDNAME => array ('message' => 0, 'message_type' => 1, 'user_id' => 2, 'ip' => 3, 'created_at' => 4, 'id' => 5, ),
+		BasePeer::TYPE_PHPNAME => array ('Message' => 0, 'MessageType' => 1, 'User' => 2, 'Ip' => 3, 'CreatedAt' => 4, 'Id' => 5, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('message' => 0, 'messageType' => 1, 'user' => 2, 'ip' => 3, 'createdAt' => 4, 'id' => 5, ),
+		BasePeer::TYPE_COLNAME => array (self::MESSAGE => 0, self::MESSAGE_TYPE => 1, self::USER => 2, self::IP => 3, self::CREATED_AT => 4, self::ID => 5, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('MESSAGE' => 0, 'MESSAGE_TYPE' => 1, 'USER' => 2, 'IP' => 3, 'CREATED_AT' => 4, 'ID' => 5, ),
+		BasePeer::TYPE_FIELDNAME => array ('message' => 0, 'message_type' => 1, 'user' => 2, 'ip' => 3, 'created_at' => 4, 'id' => 5, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
@@ -166,14 +166,14 @@ abstract class BaseafsNotificationPeer {
 		if (null === $alias) {
 			$criteria->addSelectColumn(afsNotificationPeer::MESSAGE);
 			$criteria->addSelectColumn(afsNotificationPeer::MESSAGE_TYPE);
-			$criteria->addSelectColumn(afsNotificationPeer::USER_ID);
+			$criteria->addSelectColumn(afsNotificationPeer::USER);
 			$criteria->addSelectColumn(afsNotificationPeer::IP);
 			$criteria->addSelectColumn(afsNotificationPeer::CREATED_AT);
 			$criteria->addSelectColumn(afsNotificationPeer::ID);
 		} else {
 			$criteria->addSelectColumn($alias . '.MESSAGE');
 			$criteria->addSelectColumn($alias . '.MESSAGE_TYPE');
-			$criteria->addSelectColumn($alias . '.USER_ID');
+			$criteria->addSelectColumn($alias . '.USER');
 			$criteria->addSelectColumn($alias . '.IP');
 			$criteria->addSelectColumn($alias . '.CREATED_AT');
 			$criteria->addSelectColumn($alias . '.ID');
@@ -473,264 +473,6 @@ abstract class BaseafsNotificationPeer {
 		}
 		return array($obj, $col);
 	}
-
-	/**
-	 * Returns the number of rows matching criteria, joining the related afGuardUser table
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinafGuardUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(afsNotificationPeer::TABLE_NAME);
-
-		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->setDistinct();
-		}
-
-		if (!$criteria->hasSelectClause()) {
-			afsNotificationPeer::addSelectColumns($criteria);
-		}
-		
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
-
-		if ($con === null) {
-			$con = Propel::getConnection(afsNotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-		}
-
-		$criteria->addJoin(afsNotificationPeer::USER_ID, afGuardUserPeer::ID, $join_behavior);
-
-		// symfony_behaviors behavior
-		foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-		{
-		  call_user_func($sf_hook, 'BaseafsNotificationPeer', $criteria, $con);
-		}
-
-		$stmt = BasePeer::doCount($criteria, $con);
-
-		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$count = (int) $row[0];
-		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
-		$stmt->closeCursor();
-		return $count;
-	}
-
-
-	/**
-	 * Selects a collection of afsNotification objects pre-filled with their afGuardUser objects.
-	 * @param      Criteria  $criteria
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of afsNotification objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinafGuardUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		$criteria = clone $criteria;
-
-		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
-		}
-
-		afsNotificationPeer::addSelectColumns($criteria);
-		$startcol = (afsNotificationPeer::NUM_COLUMNS - afsNotificationPeer::NUM_LAZY_LOAD_COLUMNS);
-		afGuardUserPeer::addSelectColumns($criteria);
-
-		$criteria->addJoin(afsNotificationPeer::USER_ID, afGuardUserPeer::ID, $join_behavior);
-
-		// symfony_behaviors behavior
-		foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-		{
-		  call_user_func($sf_hook, 'BaseafsNotificationPeer', $criteria, $con);
-		}
-
-		$stmt = BasePeer::doSelect($criteria, $con);
-		$results = array();
-
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = afsNotificationPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = afsNotificationPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
-
-				$cls = afsNotificationPeer::getOMClass(false);
-
-				$obj1 = new $cls();
-				$obj1->hydrate($row);
-				afsNotificationPeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
-			$key2 = afGuardUserPeer::getPrimaryKeyHashFromRow($row, $startcol);
-			if ($key2 !== null) {
-				$obj2 = afGuardUserPeer::getInstanceFromPool($key2);
-				if (!$obj2) {
-
-					$cls = afGuardUserPeer::getOMClass(false);
-
-					$obj2 = new $cls();
-					$obj2->hydrate($row, $startcol);
-					afGuardUserPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
-
-				// Add the $obj1 (afsNotification) to $obj2 (afGuardUser)
-				$obj2->addafsNotification($obj1);
-
-			} // if joined row was not null
-
-			$results[] = $obj1;
-		}
-		$stmt->closeCursor();
-		return $results;
-	}
-
-
-	/**
-	 * Returns the number of rows matching criteria, joining all related tables
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(afsNotificationPeer::TABLE_NAME);
-
-		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->setDistinct();
-		}
-
-		if (!$criteria->hasSelectClause()) {
-			afsNotificationPeer::addSelectColumns($criteria);
-		}
-		
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
-
-		if ($con === null) {
-			$con = Propel::getConnection(afsNotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-		}
-
-		$criteria->addJoin(afsNotificationPeer::USER_ID, afGuardUserPeer::ID, $join_behavior);
-
-		// symfony_behaviors behavior
-		foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-		{
-		  call_user_func($sf_hook, 'BaseafsNotificationPeer', $criteria, $con);
-		}
-
-		$stmt = BasePeer::doCount($criteria, $con);
-
-		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$count = (int) $row[0];
-		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
-		$stmt->closeCursor();
-		return $count;
-	}
-
-	/**
-	 * Selects a collection of afsNotification objects pre-filled with all related objects.
-	 *
-	 * @param      Criteria  $criteria
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of afsNotification objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		$criteria = clone $criteria;
-
-		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
-		}
-
-		afsNotificationPeer::addSelectColumns($criteria);
-		$startcol2 = (afsNotificationPeer::NUM_COLUMNS - afsNotificationPeer::NUM_LAZY_LOAD_COLUMNS);
-
-		afGuardUserPeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + (afGuardUserPeer::NUM_COLUMNS - afGuardUserPeer::NUM_LAZY_LOAD_COLUMNS);
-
-		$criteria->addJoin(afsNotificationPeer::USER_ID, afGuardUserPeer::ID, $join_behavior);
-
-		// symfony_behaviors behavior
-		foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-		{
-		  call_user_func($sf_hook, 'BaseafsNotificationPeer', $criteria, $con);
-		}
-
-		$stmt = BasePeer::doSelect($criteria, $con);
-		$results = array();
-
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = afsNotificationPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = afsNotificationPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
-				$cls = afsNotificationPeer::getOMClass(false);
-
-				$obj1 = new $cls();
-				$obj1->hydrate($row);
-				afsNotificationPeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-			// Add objects for joined afGuardUser rows
-
-			$key2 = afGuardUserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-			if ($key2 !== null) {
-				$obj2 = afGuardUserPeer::getInstanceFromPool($key2);
-				if (!$obj2) {
-
-					$cls = afGuardUserPeer::getOMClass(false);
-
-					$obj2 = new $cls();
-					$obj2->hydrate($row, $startcol2);
-					afGuardUserPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 loaded
-
-				// Add the $obj1 (afsNotification) to the collection in $obj2 (afGuardUser)
-				$obj2->addafsNotification($obj1);
-			} // if joined row not null
-
-			$results[] = $obj1;
-		}
-		$stmt->closeCursor();
-		return $results;
-	}
-
 	/**
 	 * Returns the TableMap related to this peer.
 	 * This method is not needed for general use but a specific application could have a need.

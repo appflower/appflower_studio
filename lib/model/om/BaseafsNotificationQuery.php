@@ -8,14 +8,14 @@
  *
  * @method     afsNotificationQuery orderByMessage($order = Criteria::ASC) Order by the message column
  * @method     afsNotificationQuery orderByMessageType($order = Criteria::ASC) Order by the message_type column
- * @method     afsNotificationQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     afsNotificationQuery orderByUser($order = Criteria::ASC) Order by the user column
  * @method     afsNotificationQuery orderByIp($order = Criteria::ASC) Order by the ip column
  * @method     afsNotificationQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     afsNotificationQuery orderById($order = Criteria::ASC) Order by the id column
  *
  * @method     afsNotificationQuery groupByMessage() Group by the message column
  * @method     afsNotificationQuery groupByMessageType() Group by the message_type column
- * @method     afsNotificationQuery groupByUserId() Group by the user_id column
+ * @method     afsNotificationQuery groupByUser() Group by the user column
  * @method     afsNotificationQuery groupByIp() Group by the ip column
  * @method     afsNotificationQuery groupByCreatedAt() Group by the created_at column
  * @method     afsNotificationQuery groupById() Group by the id column
@@ -24,23 +24,19 @@
  * @method     afsNotificationQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     afsNotificationQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     afsNotificationQuery leftJoinafGuardUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the afGuardUser relation
- * @method     afsNotificationQuery rightJoinafGuardUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the afGuardUser relation
- * @method     afsNotificationQuery innerJoinafGuardUser($relationAlias = null) Adds a INNER JOIN clause to the query using the afGuardUser relation
- *
  * @method     afsNotification findOne(PropelPDO $con = null) Return the first afsNotification matching the query
  * @method     afsNotification findOneOrCreate(PropelPDO $con = null) Return the first afsNotification matching the query, or a new afsNotification object populated from the query conditions when no match is found
  *
  * @method     afsNotification findOneByMessage(string $message) Return the first afsNotification filtered by the message column
  * @method     afsNotification findOneByMessageType(string $message_type) Return the first afsNotification filtered by the message_type column
- * @method     afsNotification findOneByUserId(int $user_id) Return the first afsNotification filtered by the user_id column
+ * @method     afsNotification findOneByUser(int $user) Return the first afsNotification filtered by the user column
  * @method     afsNotification findOneByIp(string $ip) Return the first afsNotification filtered by the ip column
  * @method     afsNotification findOneByCreatedAt(string $created_at) Return the first afsNotification filtered by the created_at column
  * @method     afsNotification findOneById(int $id) Return the first afsNotification filtered by the id column
  *
  * @method     array findByMessage(string $message) Return afsNotification objects filtered by the message column
  * @method     array findByMessageType(string $message_type) Return afsNotification objects filtered by the message_type column
- * @method     array findByUserId(int $user_id) Return afsNotification objects filtered by the user_id column
+ * @method     array findByUser(int $user) Return afsNotification objects filtered by the user column
  * @method     array findByIp(string $ip) Return afsNotification objects filtered by the ip column
  * @method     array findByCreatedAt(string $created_at) Return afsNotification objects filtered by the created_at column
  * @method     array findById(int $id) Return afsNotification objects filtered by the id column
@@ -198,24 +194,24 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 	}
 
 	/**
-	 * Filter the query on the user_id column
+	 * Filter the query on the user column
 	 * 
-	 * @param     int|array $userId The value to use as filter.
+	 * @param     int|array $user The value to use as filter.
 	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
 	 */
-	public function filterByUserId($userId = null, $comparison = null)
+	public function filterByUser($user = null, $comparison = null)
 	{
-		if (is_array($userId)) {
+		if (is_array($user)) {
 			$useMinMax = false;
-			if (isset($userId['min'])) {
-				$this->addUsingAlias(afsNotificationPeer::USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
+			if (isset($user['min'])) {
+				$this->addUsingAlias(afsNotificationPeer::USER, $user['min'], Criteria::GREATER_EQUAL);
 				$useMinMax = true;
 			}
-			if (isset($userId['max'])) {
-				$this->addUsingAlias(afsNotificationPeer::USER_ID, $userId['max'], Criteria::LESS_EQUAL);
+			if (isset($user['max'])) {
+				$this->addUsingAlias(afsNotificationPeer::USER, $user['max'], Criteria::LESS_EQUAL);
 				$useMinMax = true;
 			}
 			if ($useMinMax) {
@@ -225,7 +221,7 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 				$comparison = Criteria::IN;
 			}
 		}
-		return $this->addUsingAlias(afsNotificationPeer::USER_ID, $userId, $comparison);
+		return $this->addUsingAlias(afsNotificationPeer::USER, $user, $comparison);
 	}
 
 	/**
@@ -296,70 +292,6 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 			$comparison = Criteria::IN;
 		}
 		return $this->addUsingAlias(afsNotificationPeer::ID, $id, $comparison);
-	}
-
-	/**
-	 * Filter the query by a related afGuardUser object
-	 *
-	 * @param     afGuardUser $afGuardUser  the related object to use as filter
-	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-	 *
-	 * @return    afsNotificationQuery The current query, for fluid interface
-	 */
-	public function filterByafGuardUser($afGuardUser, $comparison = null)
-	{
-		return $this
-			->addUsingAlias(afsNotificationPeer::USER_ID, $afGuardUser->getId(), $comparison);
-	}
-
-	/**
-	 * Adds a JOIN clause to the query using the afGuardUser relation
-	 * 
-	 * @param     string $relationAlias optional alias for the relation
-	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-	 *
-	 * @return    afsNotificationQuery The current query, for fluid interface
-	 */
-	public function joinafGuardUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-	{
-		$tableMap = $this->getTableMap();
-		$relationMap = $tableMap->getRelation('afGuardUser');
-		
-		// create a ModelJoin object for this join
-		$join = new ModelJoin();
-		$join->setJoinType($joinType);
-		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-		if ($previousJoin = $this->getPreviousJoin()) {
-			$join->setPreviousJoin($previousJoin);
-		}
-		
-		// add the ModelJoin to the current object
-		if($relationAlias) {
-			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-			$this->addJoinObject($join, $relationAlias);
-		} else {
-			$this->addJoinObject($join, 'afGuardUser');
-		}
-		
-		return $this;
-	}
-
-	/**
-	 * Use the afGuardUser relation afGuardUser object
-	 *
-	 * @see       useQuery()
-	 * 
-	 * @param     string $relationAlias optional alias for the relation,
-	 *                                   to be used as main alias in the secondary query
-	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-	 *
-	 * @return    afGuardUserQuery A secondary query class using the current class as primary query
-	 */
-	public function useafGuardUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-	{
-		return $this
-			->joinafGuardUser($relationAlias, $joinType)
-			->useQuery($relationAlias ? $relationAlias : 'afGuardUser', 'afGuardUserQuery');
 	}
 
 	/**

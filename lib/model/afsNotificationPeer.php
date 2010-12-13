@@ -15,12 +15,29 @@
  */
 class afsNotificationPeer extends BaseafsNotificationPeer {
 	
-	public static function log($message, $messageType = 'notification', $afGuardUser=false)
+	/**
+	 * Log the notification messages in db
+	 *
+	 * @param string $message
+	 * @param string $messageType
+	 * @param $user: 0=Guest || 1-n=afGuardUser with id 1-n || instanceof afGuardUser class, 0 is default
+	 * @author radu
+	 */
+	public static function log($message, $messageType = 'notification', $user=0)
 	{
+		if(sfContext::getInstance()->getUser()->isAuthenticated())
+		{
+			$user = sfContext::getInstance()->getUser()->getGuardUser()->getId();
+		}
+		elseif ($user instanceof afGuardUser)
+		{
+			$user = $afGuardUser->getId();
+		}	
+		
 		$afsNotification = new afsNotification();
 		$afsNotification->setMessage($message);
 		$afsNotification->setMessageType($messageType);
-		$afsNotification->setUserId(($afGuardUser?$afGuardUser->getId():sfContext::getInstance()->getUser()->getGuardUser()->getId()));
+		$afsNotification->setUser($user);
 		$afsNotification->setIp(myToolkit::getIP());
 		$afsNotification->save();
 	}
