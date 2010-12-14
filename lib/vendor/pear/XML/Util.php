@@ -176,7 +176,7 @@ class XML_Util
      * @static
      * @see reverseEntities()
      */
-    function replaceEntities($string, $replaceEntities = XML_UTIL_ENTITIES_XML,
+    static function replaceEntities($string, $replaceEntities = XML_UTIL_ENTITIES_XML,
         $encoding = 'ISO-8859-1')
     {
         switch ($replaceEntities) {
@@ -286,7 +286,7 @@ class XML_Util
      * @static
      * @uses attributesToString() to serialize the attributes of the XML declaration
      */
-    function getXMLDeclaration($version = '1.0', $encoding = null, 
+    static function getXMLDeclaration($version = '1.0', $encoding = null,
         $standalone = null)
     {
         $attributes = array(
@@ -380,7 +380,7 @@ class XML_Util
      * @uses replaceEntities() to replace XML entities in attribute values
      * @todo allow sort also to be an options array
      */
-    function attributesToString($attributes, $sort = true, $multiline = false, 
+    static function attributesToString($attributes, $sort = true, $multiline = false,
         $indent = '    ', $linebreak = "\n", $entities = XML_UTIL_ENTITIES_XML)
     {
         /*
@@ -584,7 +584,7 @@ class XML_Util
      * @uses createCDataSection()
      * @uses raiseError()
      */
-    function createTagFromArray($tag, $replaceEntities = XML_UTIL_REPLACE_ENTITIES,
+    static function createTagFromArray($tag, $replaceEntities = XML_UTIL_REPLACE_ENTITIES,
         $multiline = false, $indent = '_auto', $linebreak = "\n", 
         $sortAttributes = true)
     {
@@ -868,7 +868,7 @@ class XML_Util
      * @todo support for other charsets
      * @todo PEAR CS - unable to avoid 85-char limit on second preg_match
      */
-    function isValidName($string)
+    static function isValidName($string)
     {
         // check for invalid chars
         if (!preg_match('/^[[:alpha:]_]$/', $string{0})) {
@@ -902,9 +902,8 @@ class XML_Util
      * @static
      * @todo PEAR CS - should this use include_once instead?
      */
-    function raiseError($msg, $code)
+    static function raiseError($msg, $code)
     {
-        require_once 'PEAR.php';
         return PEAR::raiseError($msg, $code);
     }
 }

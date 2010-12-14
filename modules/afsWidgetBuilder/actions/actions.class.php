@@ -14,6 +14,8 @@ class afsWidgetBuilderActions extends sfActions
             $afsWBW = new afsWidgetBuilderWidget($request->getParameter('uri'));
             $afsWBW->loadXml();
 
+//            file_put_contents('/tmp/afGuardUserListWidgetJson', $afsWBW->getDefinitionAsJSON());
+
             return array(
                 'success' => true,
                 'data' => $afsWBW->getDefinitionAsJSON()
@@ -32,7 +34,10 @@ class afsWidgetBuilderActions extends sfActions
         try {
             $afsWBW = new afsWidgetBuilderWidget($request->getParameter('uri'));
             $data = $request->getParameter('data');
+            $data = file_get_contents('/tmp/afGuardUserListWidgetJson');
+
             $afsWBW->setDefinitionFromJSON($data);
+            $afsWBW->validateAndSaveXml();
 
             return array(
                 'success' => true,

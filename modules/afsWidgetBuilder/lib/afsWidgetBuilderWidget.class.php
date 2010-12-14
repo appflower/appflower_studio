@@ -38,7 +38,13 @@ class afsWidgetBuilderWidget {
 
         $options = array(
             'parseAttributes' => true
+//            ,'attributesArray' => '_attributes'
+//            ,'defaultClass' => 'UnserializerComplexType'
+//            ,'complexType'=>'object'
+//            ,'tagMap' => array('i:datasource' => 'dupa')
+//            ,'ignoreKeys' => array('name')
         );
+
         $unserializer = new XML_Unserializer($options);
         $status = $unserializer->unserialize($path, true);
 
@@ -47,6 +53,9 @@ class afsWidgetBuilderWidget {
         }
 
         $this->definition = $unserializer->getUnserializedData();
+//        echo '<pre>';
+//        print_r($this->definition);
+//        echo '</pre>';
     }
 
     function getDefinitionAsJSON()
@@ -56,8 +65,50 @@ class afsWidgetBuilderWidget {
 
     function setDefinitionFromJSON($data)
     {
-        $data = json_decode($data);
-        // SAVE XML to temporary location, validate it and save into original path
+        $this->definition = json_decode($data, true);
+    }
+
+    function validateAndSaveXml()
+    {
+        class_exists('Xml_Util');
+        $options = array(
+            'parseAttributes' => true,
+            'addDecl' => true,
+            'encoding' => 'UTF-8',
+            'indent' => '    ',
+            'rootName' => 'i:view'
+//            ,'defaultTagName' => 'dupa'
+//            ,'mode' => 'simplexml'
+//            ,'scalarAsAttributes' => true
+        );
+//        $rootAttributes = array(
+//            'xmlns:xsi' => $this->definition['xmlns:xsi'],
+//            'xsi:schemaLocation' => $this->definition['xsi:schemaLocation'],
+//            'xmlns:i' => $this->definition['xmlns:i'],
+//            'type' => $this->definition['type']
+//        );
+//        $options['rootAttributes'] = $rootAttributes;
+        echo '<pre>';
+        print_r($this->definition);
+        echo '</pre>';
+//        unset($this->definition['xmlns:xsi']);
+//        unset($this->definition['xsi:schemaLocation']);
+//        unset($this->definition['xmlns:i']);
+//        unset($this->definition['type']);
+
+
+        $serializer = new XML_Serializer($options);
+        $status = $serializer->serialize($this->definition);
+
+        if ($status !== true) {
+            throw new Exception($status->getMessage());
+        }
+
+        $xml = $serializer->getSerializedData();
+        echo "<pre>";
+        echo htmlspecialchars($xml);
+        echo '</pre>';
+        
     }
 }
 ?>
