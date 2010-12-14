@@ -31,6 +31,26 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 */
 	,_initCmp : function() {
 
+		var _this = this;
+		
+		this.codeEditorAction = new Ext.ux.CodePress({
+			title:'Code editor - actions.class.php',
+			closable:true,
+			path:_this.actionPath,
+			tabTip:_this.actionPath,
+			file:_this.actionPath,
+			tabPanel:_this
+		});
+
+		this.codeEditorSecurity = new Ext.ux.CodePress({
+			title:'Code editor - security.yml',
+			closable:true,
+			path:_this.securityPath,
+			tabTip:_this.securityPath,
+			file:_this.securityPath,
+			tabPanel:_this
+		});
+		
 		return {
 			itemId: 'widget-designer',
 //			height: 400,
@@ -42,42 +62,18 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			{
 				itemId: 'designer',
 				title: 'Widget Designer'
-			},{
-				itemId: 'security',
-				title: 'Security'
-			},{
-				itemId: 'code-editor',
-				title: 'Action Code'
-			}]
+			}
+			,this.codeEditorSecurity
+			,this.codeEditorAction
+			],
+			plugins: new Ext.ux.TabMenu()
 		}
 	}// eo _initCmp
 
 	,_initEvents : function() {
 
 		var _this = this,
-			designerTab = _this.getComponent('designer'),
-			securityTab = _this.getComponent('security'),
-			codeEditorTab = _this.getComponent('code-editor');
-
-		this.codeEditor = new Ext.ux.CodePress({
-			title:'Code editor - actions.class.php',
-			closable:true,
-			path:_this.actionPath,
-			tabTip:_this.actionPath,
-			tabId: codeEditorTab.getId(),
-			file:_this.actionPath
-			/*,tabPanel:tabPanel*/
-		});
-
-		this.codeEditorSecurity = new Ext.ux.CodePress({
-			title:'Code editor - security.yml',
-			closable:true,
-			path:_this.securityPath,
-			tabTip:_this.securityPath,
-			tabId: securityTab.getId(),
-			file:_this.securityPath
-			/*,tabPanel:tabPanel*/
-		});
+			designerTab = _this.getComponent('designer');		
 
 		designerTab.on({
 			beforerender : function(cmp) {
@@ -85,18 +81,6 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 					xtype: 'afStudio.widgetDesigner.designer'
 				});
 			}
-		});
-
-		securityTab.on({
-			beforerender : function(cmp) {
-				cmp.add(this.codeEditorSecurity);
-			}, scope: this
-		});
-
-		codeEditorTab.on({
-			beforerender : function(cmp) {
-				cmp.add(this.codeEditor);
-			}, scope: this
 		});
 
 		if(this.mask)
