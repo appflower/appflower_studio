@@ -36,7 +36,17 @@ class afStudioNotificationsCommand
 			case "get":
 			case null:
 			default:
-				$notifications = afsNotificationPeer::getAll();
+				$start = $this->request->hasParameter('start')?$this->request->getParameter('start'):0;
+				$limit = $this->request->hasParameter('limit')?$this->request->getParameter('limit'):20;
+				$page=($start==0)?1:(ceil($start/$limit)+1);
+  		
+				// pager
+				$pager = new sfPropelPager('afsNotification', $limit);
+				$pager->setPage($page);
+				$pager->setCriteria(afsNotificationPeer::getAllCriteria());
+				$pager->init();
+				
+				$notifications = $pager->getResults();
 				$data = array();
 				if($notifications)
 				{
@@ -52,10 +62,10 @@ class afStudioNotificationsCommand
 								$user = $user->getUsername();
 								break;
 						}
-						$data[] = array('message'=>$notification->getMessage(),'messageType'=>$notification->getMessageType(),$user);
+						$data[] = array('id'=>$notification->getId(),'message'=>$notification->getMessage(),'messageType'=>$notification->getMessageType(),'user'=>$user,'ip'=>$notification->getIp(),'created_at'=>$notification->getCreatedAt('d/m/Y H:i'));
 					}
 				}
-				$this->result = array('success' => true,'totalCount' => count($data),'rows' => $data);					
+				$this->result = array('success' => true,'totalCount' => $pager->getNbResults(),'rows' => $data);					
 				break;
 		}
 	}

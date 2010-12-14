@@ -42,18 +42,11 @@ class afsNotificationPeer extends BaseafsNotificationPeer {
 		$afsNotification->save();
 	}
 	
-	public static function getAll()
+	public static function getAllCriteria()
 	{
 		$c=new Criteria();
 		$c->addDescendingOrderByColumn(self::CREATED_AT);
-		$objs = self::doSelect($c);
 		
-		if(count($objs)>0)
-		{
-			return $objs;
-		}
-		else {
-			return false;
-		}
+		return $c;		
 	}
 } // afsNotificationPeer

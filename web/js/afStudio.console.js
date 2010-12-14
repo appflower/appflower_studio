@@ -105,30 +105,167 @@ afStudio.console = Ext.extend(Ext.Panel, {
 		
 		var console_cmd_display = new Ext.form.DisplayField({value: '<span style="margin-left:10px;"><b>cmds:</b> ' + afStudioConsoleCommands + '</span>'});
 		
-//		var config = {
-//			itemId: 'console',
-//			title: "Console",
-//			iconCls: 'icon-console',
-//			height: 200,
-//			minHeight: 0,
-//			autoScroll: true,
-//			tbar: {
-//				items:[
-//					console_cmd_label,
-//					console_cmd_field,
-//					console_cmd_display
-//				]
-//			},
-//			html: '',
-//			method: 'post',
-//			consoleUrl: '/appFlowerStudio/console',
-//			bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
-//			plugins: new Ext.ux.MaximizeTool()
-//		};
+		var notificationsReader = new Ext.data.JsonReader ({
+			fields: [
+			{
+				name: "id"
+			},
+			{
+				name: "message",
+				sortType: "asText"
+			},
+			{
+				name: "messageType",
+				sortType: "asText"
+			},
+			{
+				name: "user",
+				sortType: "asText"
+			},
+			{
+				name: "ip",
+				sortType: "asText"
+			},
+			{
+				name: "created_at",
+				sortType: "asDate"
+			},
+			{
+				name: "redirect"
+			},
+			{
+				name: "load"
+			},
+			{
+				name: "_color",
+				type: "auto"
+			},
+			{
+				name: "_cell_color",
+				type: "auto"
+			}
+			],
+			totalProperty: "totalCount",
+			root: "rows",
+			properties: "properties"
+		});
+
+		var notificationsStore = new Ext.data.GroupingStore ({
+			sortInfo: {
+				field: "created_at",
+				direction: "DESC"
+			},
+			reader: notificationsReader,
+			remoteSort: true,
+			proxy: new Ext.data.HttpProxy ({
+				url: "/appFlowerStudio/notifications",
+				method: "GET",
+			})
+		});
+
+		var notificationsPt = new Ext.PagingToolbar ({
+			store: notificationsStore,
+			displayInfo: true,
+			pageSize: 5,
+		});
 		
-		var debugStore = [[1, 'First'], [2, 'Second'], [3, 'Third']];
-		var notificationStore = [[1, 'First'], [2, 'Second'], [3, 'Third']];
+		var notificationsGrid = new Ext.grid.GridPanel ({
+			iconCls: 'icon-notifications', 
+			title: 'Notifications',
+		    loadMask: true,
+			frame: false,
+			bodyStyle: "border: 1px solid #8db2e3;",
+			stripeRows: true,
+			autoHeight: true,
+			clearGrouping: true,
+			canMask: function () { return !Ext.isIE&&!grid_A84GD0ln115AA18s.disableLoadMask&&!Ext.get('loading'); },
+			view: new Ext.ux.GroupingColorView ({
+				forceFit: true,
+				groupTextTpl: " {text} ({[values.rs.length]} {[values.rs.length > 1 ? \"Items\" : \"Item\"]})"
+			}),
+			columns: [
+			{
+				dataIndex: "id",
+				sortType: "asText",
+				header: "ID",
+				sortable: true,
+				width: 10,
+				hidden: true,
+				hideable: true,
+				id: "id"
+			},
+			{
+				dataIndex: "message",
+				sortType: "asText",
+				header: "Message",
+				sortable: true,
+				width: 40,
+				hidden: false,
+				hideable: true,
+				id: "message"
+			},
+			{
+				dataIndex: "messageType",
+				sortType: "asText",
+				header: "Message Type",
+				sortable: true,
+				width: 10,
+				hidden: false,
+				hideable: true,
+				id: "messageType"
+			},
+			{
+				dataIndex: "ip",
+				sortType: "asText",
+				header: "IP",
+				sortable: true,
+				width: 10,
+				hidden: false,
+				hideable: true,
+				id: "ip"
+			},
+			{
+				dataIndex: "user",
+				sortType: "asText",
+				header: "User",
+				sortable: true,
+				width: 10,
+				hidden: false,
+				hideable: true,
+				id: "user"
+			},
+			{
+				dataIndex: "created_at",
+				sortType: "asDate",
+				header: "Created At",
+				sortable: true,
+				width: 20,
+				hidden: false,
+				hideable: true,
+				id: "created_at"
+			}
+			],
+			store: notificationsStore,
+			bbar: notificationsPt
+			});
+
+		/*
+		* load every 60 seconds the notifications store
+		*/
 		
+		var task = {
+		    run: function(){
+		        notificationsStore.load({
+					params:{
+						start:0, 
+						limit:5
+					}
+				});
+		    },
+		    interval: 60*1000 //60 seconds
+		}
+		Ext.TaskMgr.start(task);
+			
 		var config = {
 			itemId: 'console',
 			
@@ -158,13 +295,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
 							html: ''
 						},
 
-						{xtype: 'panel', iconCls: 'icon-notifications', title: 'Notifications', html: '',
-							bbar: new Ext.PagingToolbar({
-        						store: notificationStore,
-						        displayInfo: true,
-        						pageSize: 10
-						    })
-						},
+						notificationsGrid,
 						
 						{
 						    xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', html: '', 
@@ -180,12 +311,6 @@ afStudio.console = Ext.extend(Ext.Panel, {
                                     {text: 'Logfile2'}
                                 ]*/
                             },
-                            
-                            bbar: new Ext.PagingToolbar({
-                                store: debugStore,
-                                displayInfo: true,
-                                pageSize: 10
-                            }),
                             id: this.id + '-debug-tab',
                             autoScroll: true, 
                             bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;'
