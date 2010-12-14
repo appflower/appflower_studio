@@ -166,8 +166,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        
 	        dblclick: function(node, e){
 	        	if('xml' == node.attributes.type){
-					var path = this.getActionPath(node);
-					this.addWidgetDesigner(path);
+					this.addWidgetDesigner(this.getActionPath(node),this.getSecurityPath(node));
 	        	}
 	        }
 		});
@@ -292,7 +291,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
         		path = false;
         		break;
         	case "xml":
-                        path = node.attributes.xmlPath;
+                path = node.attributes.xmlPath;
         		break;	
         }
 
@@ -310,9 +309,25 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
         		path = false;
         		break;
         	case "xml":
-        		path = new Array();
-                        path['action'] = node.attributes.path;
-                        path['security'] = node.attributes.path_security;
+        		path = node.attributes.actionPath;
+        		break;
+        }
+
+		return path;
+	}
+	
+	,getSecurityPath:function(node) {
+		var path;
+
+		switch (node.attributes.type) {
+			case "app":
+        		path = false;
+        		break;
+        	case "module":
+        		path = false;
+        		break;
+        	case "xml":
+        		path = node.attributes.securityPath;
         		break;
         }
 
@@ -678,11 +693,10 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 	,editXml:function(node)
 	{
-		var path = this.getActionPath(node);
-		this.addWidgetDesigner(path);
+		this.addWidgetDesigner(this.getActionPath(node),this.getSecurityPath(node));
 	}
 	
-	,addWidgetDesigner: function(path){
+	,addWidgetDesigner: function(actionPath, securityPath){
 		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});
 		mask.show();
 		
@@ -693,7 +707,8 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			layout: 'fit',
 			items: [{
 				xtype: 'afStudio.widgetDesigner',
-				path: path,
+				actionPath: actionPath,
+				securityPath: securityPath,
 				mask: mask
 			}]
 		}, true);		

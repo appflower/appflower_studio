@@ -9,9 +9,10 @@ N = afStudio.widgetDesigner;
  */
 N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	/**
-	* path to xml configuration file
+	* paths
 	*/
-	path: false
+	actionPath: false
+	,securityPath: false
 	,mask: false
 	/**
 	 * ExtJS template method
@@ -61,20 +62,20 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		this.codeEditor = new Ext.ux.CodePress({
 			title:'Code editor - actions.class.php',
 			closable:true,
-			path:_this.path['action'],
-			tabTip:_this.path['action'],
+			path:_this.actionPath,
+			tabTip:_this.actionPath,
 			tabId: codeEditorTab.getId(),
-			file:_this.path['action']
+			file:_this.actionPath
 			/*,tabPanel:tabPanel*/
 		});
 
 		this.codeEditorSecurity = new Ext.ux.CodePress({
 			title:'Code editor - security.yml',
 			closable:true,
-			path:_this.path['security'],
-			tabTip:_this.path['security'],
+			path:_this.securityPath,
+			tabTip:_this.securityPath,
 			tabId: securityTab.getId(),
-			file:_this.path['security']
+			file:_this.securityPath
 			/*,tabPanel:tabPanel*/
 		});
 
@@ -103,13 +104,13 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			this.mask.hide.defer(1000,this.mask);
 		}
 
-                this.on('beforetabchange', function(tabPanel,newTab,oldTab){
-                    if(oldTab&&oldTab.iframe){
-                            oldTab.toggleIframe();
-                    }
-                    if(newTab&&newTab.iframe){
-                            newTab.toggleIframe();
-                    }
+        this.on('beforetabchange', function(tabPanel,newTab,oldTab){
+            if(oldTab&&oldTab.iframe){
+                 oldTab.toggleIframe();
+            }
+            if(newTab&&newTab.iframe){
+                 newTab.toggleIframe();
+            }
 		}, this);
 
 	}// eo _initEvents
