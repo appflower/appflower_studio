@@ -38,11 +38,6 @@ class afsWidgetBuilderWidget {
 
         $options = array(
             'parseAttributes' => true
-//            ,'attributesArray' => '_attributes'
-//            ,'defaultClass' => 'UnserializerComplexType'
-//            ,'complexType'=>'object'
-//            ,'tagMap' => array('i:datasource' => 'dupa')
-//            ,'ignoreKeys' => array('name')
         );
 
         $unserializer = new XML_Unserializer($options);
@@ -78,23 +73,26 @@ class afsWidgetBuilderWidget {
             'indent' => '    ',
             'rootName' => 'i:view'
 //            ,'defaultTagName' => 'dupa'
-//            ,'mode' => 'simplexml'
+            ,'mode' => 'simplexml'
+//            ,'classAsTagName' => 'dupa'
+//            ,'typeHints' => true
 //            ,'scalarAsAttributes' => true
+            ,'cdata' => '_content'
         );
-//        $rootAttributes = array(
-//            'xmlns:xsi' => $this->definition['xmlns:xsi'],
-//            'xsi:schemaLocation' => $this->definition['xsi:schemaLocation'],
-//            'xmlns:i' => $this->definition['xmlns:i'],
-//            'type' => $this->definition['type']
-//        );
-//        $options['rootAttributes'] = $rootAttributes;
+        $rootAttributes = array(
+            'xmlns:xsi' => $this->definition['xmlns:xsi'],
+            'xsi:schemaLocation' => $this->definition['xsi:schemaLocation'],
+            'xmlns:i' => $this->definition['xmlns:i'],
+            'type' => $this->definition['type']
+        );
+        $options['rootAttributes'] = $rootAttributes;
         echo '<pre>';
         print_r($this->definition);
         echo '</pre>';
-//        unset($this->definition['xmlns:xsi']);
-//        unset($this->definition['xsi:schemaLocation']);
-//        unset($this->definition['xmlns:i']);
-//        unset($this->definition['type']);
+        unset($this->definition['xmlns:xsi']);
+        unset($this->definition['xsi:schemaLocation']);
+        unset($this->definition['xmlns:i']);
+        unset($this->definition['type']);
 
 
         $serializer = new XML_Serializer($options);
