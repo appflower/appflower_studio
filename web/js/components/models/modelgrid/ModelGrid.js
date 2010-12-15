@@ -373,9 +373,13 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 	},
 	
 	headEditComplete : function(ed, v, sv) {
-		var index = ed._index;
-		var cm = this.cm;
-		cm.setColumnHeader(index,v);
+		var index = ed._index,
+			   cm = this.cm;
+			   
+		cm.setColumnHeader(index, v);
+		if (cm.config[index].fieldDefinition) {
+			cm.config[index].fieldDefinition.name = v;
+		}
 	},
 	
 	editHeadColumn : function(el, index) {
@@ -555,7 +559,10 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					width: 80,
 					hidden: false,					 
 					editor: this.createEditer(),
-					fieldDefinition: data[i] //custom property
+					/**
+					 * custom property used with {@link afStudio.models.EditFieldWindow} field editor
+					 */
+					fieldDefinition: data[i] 
 				});
 				fields.push({name:'c'+i});
 			}
@@ -567,7 +574,10 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					uninit: true,
 					width: 80,
 					hidden: true,
-					editor: this.createEditer()
+					editor: this.createEditer(),
+					fieldDefinition: {
+						name: _this.defautHeaderTitle
+					}
 				});
 				fields.push({name:'c'+i});
 			}

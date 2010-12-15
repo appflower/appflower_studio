@@ -47,7 +47,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		
 		if (fm.isValid()) {
 			var fv = fm.getFieldValues();
-			
+			//update header
 			cm.setColumnHeader(_this.fieldIndex, fv.name);
 			
 			_this.closeEditFieldWindow();
@@ -129,23 +129,44 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 				fieldLabel: 'Size',
 				name: 'size'
 			},{
+			// TabPanel 
 				xtype: 'tabpanel',
 				itemId: 'fields-tab',
 				width: 336,
-				height: 120,
+				height: 100,
 				style: 'margin-top: 10px;',
 				activeTab: 0,				
 				defaults: {
 					layout: 'form',
-					frame: true
+					frame: true					
 				},
-				items: [{
-					title: 'Key',
+				items: [
+				{
+					title: 'Attributes',
 					defaults: {
 						width: 215
 					},
 					items: [
 					{
+						xtype: 'checkbox',
+						fieldLabel: 'Required',
+						name: 'required'
+					},{
+						xtype: 'textfield',
+						fieldLabel: 'Default value',
+						name: 'default'
+					}]
+				},{
+					title: 'Key',
+					defaults: {
+						width: 215
+					},					
+					items: [
+					{
+						xtype: 'checkbox',
+						fieldLabel: 'Autoincrement',
+						name: 'autoIncrement'					
+					},{
 						xtype: 'combo',
 						fieldLabel: 'Key',
 						typeAhead: true,
@@ -156,31 +177,19 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 						displayField: 'field',
 						store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']],
 						name: 'key'
-					},{
-						xtype: 'checkbox',
-						fieldLabel: 'Autoincrement',
-						name: 'autoIncrement'					
-					},{
-						xtype: 'relationcombo',
-						relationUrl: '/appFlowerStudio/models',
-						listWidth: 250,
-						fieldLabel: 'Relation',
-						name: 'relation'
 					}]	
 				},{
-					title: 'Behavior',
+					title: 'Relation',
 					defaults: {
 						width: 215
 					},					
 					items: [
 					{
-						xtype: 'textfield',
-						fieldLabel: 'Default value',
-						name: 'default'
-					},{
-						xtype: 'checkbox',
-						fieldLabel: 'Required',
-						name: 'required'
+						xtype: 'relationcombo',
+						relationUrl: '/appFlowerStudio/models',
+						listWidth: 250,
+						fieldLabel: 'Relation',
+						name: 'relation'
 					},{
 						xtype: 'combo',
 						fieldLabel: 'On Delete',
@@ -194,6 +203,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 						hiddenName: 'onDelete',
 						name: 'onDelete'
 					}]
+					
 				}]//eo tabs					
 			},{
 				xtype: 'spacer',
