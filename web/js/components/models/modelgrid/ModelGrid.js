@@ -546,8 +546,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
 	beforeInit: function() {
 		var _this = this,
-			 data = _this._data.rows;
-		   fields = ['id'];			  
+			 data = _this._data.rows,
+		   fields = ['id'];		  
 		
 		if (data.length > 0) {
 			var columns = [new Ext.grid.RowNumberer()];
@@ -557,8 +557,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					header: data[i].name,
 					dataIndex: 'c'+i,
 					width: 80,
-					hidden: false,					 
-					editor: this.createEditer(),
+					hidden: false,					
+					editor: afStudio.models.TypeBuilder.createEditor(data[i].type, data[i].size, data[i]['default']),
 					/**
 					 * custom property used with {@link afStudio.models.EditFieldWindow} field editor
 					 */
@@ -574,7 +574,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					uninit: true,
 					width: 80,
 					hidden: true,
-					editor: this.createEditer(),
+					editor: afStudio.models.TypeBuilder.createEditor('varchar'),
 					fieldDefinition: {
 						name: _this.defautHeaderTitle
 					}

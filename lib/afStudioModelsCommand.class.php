@@ -300,9 +300,10 @@ class afStudioModelsCommand
 		$fields = array();
 				
 		$k = 0;
-	    foreach ($propelModel['columns'] as $name => $column) {	
+	    foreach ($propelModel['columns'] as $name => $column) {
 	    	$fields[$k]['id'] = $k;
 	    	$fields[$k]['name'] = $name;
+	    	$fields[$k]['type'] = 'bigint';
 	    		    	
 	    	if (is_array($column)) {
 		    	foreach ($column as $property => $value) {

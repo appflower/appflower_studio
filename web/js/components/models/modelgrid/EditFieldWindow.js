@@ -42,13 +42,33 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	,saveUpdates : function() {
 		var _this = this,
 			   fd = _this.fieldDefinition,
+			  idx = _this.fieldIndex, 
 			   cm = _this.gridView.cm,
 			   fm = _this.fieldForm.getForm();		   
 		
 		if (fm.isValid()) {
 			var fv = fm.getFieldValues();
-			//update header
-			cm.setColumnHeader(_this.fieldIndex, fv.name);
+			
+			//header
+			cm.setColumnHeader(idx, fv.name);			
+			
+			//editor
+			cm.config[idx].editor = afStudio.models.TypeBuilder.createEditor(
+				fv.type, 
+				Ext.util.Format.trim(fv.size), 
+				fv['default']
+			);
+			
+			//reflect changes
+			cm.config[idx].fieldDefinition.name = fv['name'];			
+			cm.config[idx].fieldDefinition.type = fv.type;		
+			cm.config[idx].fieldDefinition.size = Ext.util.Format.trim(fv.size);
+			cm.config[idx].fieldDefinition.required = fv['required'];
+			cm.config[idx].fieldDefinition['default'] = fv['default'];			
+			cm.config[idx].fieldDefinition.autoIncrement = fv['autoIncrement'];
+			cm.config[idx].fieldDefinition.key = fv['key'];
+			cm.config[idx].fieldDefinition.relation = fv['relation'];
+			cm.config[idx].fieldDefinition.onDelete = fv['onDelete'];
 			
 			_this.closeEditFieldWindow();
 		}		
@@ -71,17 +91,21 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			   fm = _this.fieldForm.getForm();
 
 		//load general fields	   
-		fm.loadRecord(new Ext.data.Record(fd));	   
+		fm.loadRecord(new Ext.data.Record(fd));
 		
+		//relation
 		if (fd.foreignModel) {
 			fm.findField('relation').setValue(fd.foreignModel + '.' + fd.foreignReference);
-		}		
-		fm.findField('key').setValue(
-			fd.primaryKey ? 'primary' : (fd.index == 'unique' ? 'unique' : (fd.index ? 'index' : ''))
-		);		
-//		console.log('fieldDefinition', fd);
-//		console.log('gridView', gv);
-//		console.log('field def. form', _this.fieldForm);
+		}
+		
+		//key
+		var key = '';
+		if (fd.key) {
+			key = fd.key;
+		} else if (fd.primaryKey || fd.index || fd.index) {
+			key =  fd.primaryKey ? 'primary' : (fd.index == 'unique' ? 'unique' : (fd.index ? 'index' : ''));
+		}
+		fm.findField('key').setValue(key);		
 	}
 
 	/**
@@ -123,6 +147,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			},{
 				xtype: 'afStudio.models.typeCombo',
 				fieldLabel: 'Type',
+				allowBlank: false,
 				name: 'type'
 			},{
 				xtype: 'textfield',
@@ -176,6 +201,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 						valueField: 'field',
 						displayField: 'field',
 						store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']],
+						hiddenName: 'key',
 						name: 'key'
 					}]	
 				},{
