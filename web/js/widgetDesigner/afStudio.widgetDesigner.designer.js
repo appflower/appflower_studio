@@ -49,12 +49,41 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	}
 	
 	,addField : function(){
-		this.grid.getColumnModel().setHidden(2,false);
-		var store = this.grid.store;
-		 var rec = store.recordType;
-		store.add([new rec()]);	
-		this.grid.getView().refresh();
-		this.runwidgetTask();
+		var length = this.panel.items.length;
+		if(length==0){
+			this.panel.add({
+				xtype:'panel',
+				layout:'form',
+				frame: true,width:this.panel.getWidth()-20,
+				border: true,id:'wcontainer'+length
+				
+			})
+			length++;
+		}
+		this.panel.add({
+			xtype:'panel',
+			layout:'form',
+			id:'wcontainer'+length,
+			items:[{
+				fieldLabel:'testField'+(length+1),
+				xtype:'textfield',anchor:"100%"
+			}]
+		});
+		this.panel.doLayout();
+		var resizer = new Ext.Resizable('wcontainer'+length, {
+			width: 200,
+            minWidth:100,
+            minHeight:50,
+            listeners:{
+				 beforeresize :function(resizer,e){
+				 },
+				 resize:function(resizer,width,height,e){
+					 var id = resizer.el.id;
+					 Ext.getCmp(id).doLayout();
+				 }
+            }
+		})
+		
 	}
 	
 	,renderField: function(v,meta,record,rowIndex,i,store){
@@ -97,23 +126,12 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 		};
 		
 		//Simple grid
-		var grid = new Ext.grid.GridPanel({			
+		var panel = new Ext.Panel({			
 			flex: 3,			
 			frame: true,
 			border: true,
 			autoScroll: true,
-			store: new Ext.data.JsonStore({
-				root: 'data',
-				fields: ['field', 'group']
-			}),			
-			columns: [
-				{header: 'Field', dataIndex: 'field'},
-				{header: 'Group', dataIndex: 'group'},
-				{header: 'Field1', dataIndex: 'group',showWidget:true,renderer:this.renderField,hidden:true}
-			],
-			viewConfig: {
-				forceFit: true
-			},
+			layout: 'vbox',
 			tbar: {
 				items: [
 					{text: 'Save', iconCls: 'icon-save'},
@@ -126,17 +144,17 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 				]
 			}
 		});
-		this.grid=grid;
-		this.grid.on('columnmove',function(oldIndex,newIndex){
+		this.panel=panel;
+		/*this.grid.on('columnmove',function(oldIndex,newIndex){
 					this.runwidgetTask();
-				},this)
+				},this)*/
 		return {
 			itemId: 'designer',	
 			defaults: {
 				style: 'padding:4px;'
 			},
 			items: [
-				grid, 
+				panel, 
 				{
 					xtype: 'panel', flex: 1, layout: 'fit',
 					items: [
