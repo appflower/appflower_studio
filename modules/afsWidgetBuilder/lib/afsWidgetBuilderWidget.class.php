@@ -48,9 +48,6 @@ class afsWidgetBuilderWidget {
         }
 
         $this->definition = $unserializer->getUnserializedData();
-//        echo '<pre>';
-//        print_r($this->definition);
-//        echo '</pre>';
     }
 
     function getDefinitionAsJSON()
@@ -65,48 +62,8 @@ class afsWidgetBuilderWidget {
 
     function validateAndSaveXml()
     {
-        class_exists('Xml_Util');
-        $options = array(
-            'parseAttributes' => true,
-            'addDecl' => true,
-            'encoding' => 'UTF-8',
-            'indent' => '    ',
-            'rootName' => 'i:view'
-//            ,'defaultTagName' => 'dupa'
-            ,'mode' => 'simplexml'
-//            ,'classAsTagName' => 'dupa'
-//            ,'typeHints' => true
-//            ,'scalarAsAttributes' => true
-            ,'cdata' => '_content'
-        );
-        $rootAttributes = array(
-            'xmlns:xsi' => $this->definition['xmlns:xsi'],
-            'xsi:schemaLocation' => $this->definition['xsi:schemaLocation'],
-            'xmlns:i' => $this->definition['xmlns:i'],
-            'type' => $this->definition['type']
-        );
-        $options['rootAttributes'] = $rootAttributes;
-        echo '<pre>';
-        print_r($this->definition);
-        echo '</pre>';
-        unset($this->definition['xmlns:xsi']);
-        unset($this->definition['xsi:schemaLocation']);
-        unset($this->definition['xmlns:i']);
-        unset($this->definition['type']);
-
-
-        $serializer = new XML_Serializer($options);
-        $status = $serializer->serialize($this->definition);
-
-        if ($status !== true) {
-            throw new Exception($status->getMessage());
-        }
-
-        $xml = $serializer->getSerializedData();
-        echo "<pre>";
-        echo htmlspecialchars($xml);
-        echo '</pre>';
-        
+        $xmlBuilder = new afsXmlBuilder($this->definition);
+        $xmlBuilder->getXml();
     }
 }
 ?>
