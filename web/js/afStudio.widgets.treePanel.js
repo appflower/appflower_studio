@@ -500,7 +500,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      {
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	afStudio.setConsole(response.console);
+				      	afStudio.updateConsole(response.console);
 				      }
 				      else
 				      {
@@ -556,7 +556,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	afStudio.setConsole(response.console);				      	
+				      	afStudio.updateConsole(response.console);				      	
 				      }
 				      else
 				      {
@@ -611,7 +611,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      {
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	afStudio.setConsole(response.console);
+				      	afStudio.updateConsole(response.console);
 				      }
 				      else
 				      {
@@ -670,7 +670,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      {
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	afStudio.setConsole(response.console);
+				      	afStudio.updateConsole(response.console);
 				      }
 				      else
 				      {

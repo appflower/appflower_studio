@@ -20,6 +20,15 @@ var afStudio = function () {
 		{
 			if(content)
 			{
+				this.console.body.dom.innerHTML = content;
+				this.console.body.scroll("bottom", 1000000, true );
+			}
+		}
+		
+		,updateConsole: function(content)
+		{
+			if(content)
+			{
 				this.console.body.dom.innerHTML += content;
 				this.console.body.scroll("bottom", 1000000, true );
 			}
@@ -62,7 +71,7 @@ var afStudio = function () {
 			this.tb.init();
 			this.vp=new afStudio.viewport();
 			
-			this.console = this.vp.layout.south.panel.getComponent('console');
+			this.console = Ext.getCmp('console-console-tab');
 		}
 	}
 }();
