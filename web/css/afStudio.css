@@ -52,6 +52,8 @@
 .icon-layout{background:url('/appFlowerStudioPlugin/images/layout.gif') no-repeat center left !important;}
 .icon-layout_content{background:url('/appFlowerStudioPlugin/images/layout_content.gif') no-repeat center left !important;}
 
+.icon-table-gear{background:url('/appFlowerStudioPlugin/images/table_gear.png') no-repeat center left !important;}
+.icon-database-table{background:url('/appFlowerStudioPlugin/images/database_table.png') no-repeat center left !important;}
 
 /* ModelDetailedEditing Grid */
 .model-pk-hd {

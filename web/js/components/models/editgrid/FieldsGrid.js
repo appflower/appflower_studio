@@ -260,11 +260,12 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		
 		return {
 			itemId: 'model-fields',
+			title: 'Model Config',
+			iconCls: 'icon-table-gear',			
 			clicksToEdit: 1,			
 	        store: fieldsStore,
 	        colModel: columnModel,
-	        columnLines: true,
-			iconCls: 'icon-tree-table',
+	        columnLines: true,			
 			loadMask: true,
 	        autoScroll: true,
 	        tbar: topToolbar,

@@ -608,8 +608,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 		afStudio.models.ModelGrid.superclass.beforeInit.apply(this, arguments);
 		
 		var config = {			
-			iconCls: 'icon-tree-table',
-//			height: 300,
+			iconCls: 'icon-database-table',			
 		    loadMask: true,
 		    clicksToEdit: 1,
 	        columnLines: true,	        
