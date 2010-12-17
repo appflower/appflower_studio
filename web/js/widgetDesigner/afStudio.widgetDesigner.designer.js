@@ -28,66 +28,140 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	
 	,runwidgetTask : function(){
 		var task = new Ext.util.DelayedTask(function(){
-		    var count = this.grid.store.getCount();
-		    for(var k=0;k<this.grid.getColumnModel().config.length;k++){
-		    	var config = this.grid.getColumnModel().config[k];
-		    	if(!config.showWidget) continue;
-			    for(var i=0;i<count;i++){
-			    	var p = new Ext.Panel({
-			    		renderTo:'field_'+i+"_"+k,
-			    		border:false,
-			    		items:[
-			    			new Ext.form.TextField({
-			    				length:20
-			    			})
-			    		]
-			    	});
-			    }
-		    }
+		    this.changeLayout(2);
 		},this);
 		task.delay(100); 
 	}
 	
+	//add a field in the widget designer 
 	,addField : function(){
 		var length = this.panel.items.length;
 		if(length==0){
 			this.panel.add({
 				xtype:'panel',
-				layout:'form',
-				frame: true,width:this.panel.getWidth()-20,
-				border: true,id:'wcontainer'+length
-				
-			})
-			length++;
+				layout:'vbox',
+				width:(this.panel.getWidth()-20)
+			});
+			this.panel.doLayout();
 		}
-		this.panel.add({
+		
+		this.addFieldToActive();
+	}
+	
+	//when a subitem in the designer container selected, the actived items should contain the new added field
+	, addFieldToActive : function(){	
+		var body = Ext.fly(this._activePanelbody);
+		var cmp = body.findParent('DIV[class*="x-box-item"]',5);
+		var _panel = Ext.getCmp(cmp.id);
+		if(_panel.items.length==0){
+			_panel.add({
+				width:(_panel.getWidth()-20),
+				height:5
+			});
+			_panel.doLayout();
+		}
+		length=_panel.items.length;
+		var columns = _panel.columns;
+		_panel.add({
 			xtype:'panel',
 			layout:'form',
-			id:'wcontainer'+length,
+			//frame:true,border:true,
+			width:(_panel.getWidth()-50),
+			id:'wcontainer'+(columns+"")+length,
 			items:[{
-				fieldLabel:'testField'+(length+1),
+				fieldLabel:'testField'+(columns+"")+(length+1),
 				xtype:'textfield',anchor:"100%"
 			}]
 		});
-		this.panel.doLayout();
-		var resizer = new Ext.Resizable('wcontainer'+length, {
+		_panel.doLayout();
+		var resizer = new Ext.Resizable('wcontainer'+(columns+"")+length, {
 			width: 200,
             minWidth:100,
             minHeight:50,
             listeners:{
-				 beforeresize :function(resizer,e){
-				 },
 				 resize:function(resizer,width,height,e){
 					 var id = resizer.el.id;
-					 Ext.getCmp(id).doLayout();
+					 var box = Ext.getCmp(id);
+					 box.setWidth(width-5)
+					 box.items.get(0).setWidth(width-10);
+					 box.doLayout();
 				 }
             }
 		})
+	}
+	
+	,containerPanelRender:function(){
+		this.runwidgetTask();
+	}
+	,columnSelect:function(cmp){
+		var columns = cmp.getValue();
+		this.changeLayout(columns);
+	}
+	,changeLayout:function(columns){
+		this.panel.removeAll(true);
+		var items=[];
+		for(var i=0;i<columns;i++){
+			items.push({
+				border:true,
+				frame:false,
+				columns:i,
+				width:(this.panel.getWidth()/columns -10),
+				bodyCfg: {
+			        cls: 'greenborder'
+			    },
+				listeners:{
+					afterrender:function(cmp){
+						var self=this;
+						cmp.body.on('click',function(e,t,o){
+							var els = Ext.DomQuery.select('DIV[class*="redborder"]', 'widget-designer-panel');
+							for(var i=0, l=els.length; i<l; i++ ){
+								var ell = Ext.fly(els[i]);
+								ell.removeClass("redborder");
+								ell.addClass('greenborder'); 
+							}
+							var el = Ext.fly(t);
+							el.removeClass("greenborder");
+							el.addClass('redborder'); 
+							self._activePanelbody = t;
+						});
+						
+						if(cmp.columns==0){
+							cmp.body.removeClass("greenborder");
+							cmp.body.addClass('redborder');
+							this._activePanelbody=cmp.body.dom;
+						}
+					},
+					scope:this
+				}
+			})
+		}
+		var _panel = new Ext.Panel({
+			layout:'hbox',
+			layoutConfig: {
+			    align: 'stretch',
+			    pack: 'start'
+			},
+			items:items
+		});
+		this.panel.add(_panel);
+		this.panel.doLayout();
+		_panel.doLayout();
 		
 	}
 	
-	,renderField: function(v,meta,record,rowIndex,i,store){
-		return "<div id='field_"+rowIndex+"_"+i+"'></div>";
+	//remove all the border on preview
+	,preview: function(){
+		var els = Ext.DomQuery.select('DIV[class*="redborder"]', 'widget-designer-panel');
+		for(var i=0, l=els.length; i<l; i++ ){
+			var ell = Ext.fly(els[i]);
+			ell.removeClass("redborder");
+		}
+		
+		var els = Ext.DomQuery.select('DIV[class*="greenborder"]', 'widget-designer-panel');
+		for(var i=0, l=els.length; i<l; i++ ){
+			var ell = Ext.fly(els[i]);
+			ell.removeClass("greenborder");
+		}
 	}
 	
 	/**
@@ -105,17 +179,10 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 								xtype: 'combo', triggerAction: 'all', mode: 'local', emptyText: 'Select an item...',
 								store: [
 								        //[1, '1 column'], [2, '2 columns'], [3, '3 columns'], [4, '4 columns'],
-								        [12,'1 columns'],[22,'2 columns'],[33,'3 columns'],[44,'4 columns']
+								        [1,'1 columns'],[2,'2 columns'],[3,'3 columns'],[4,'4 columns']
 								 ],
 								listeners: {
-									'select': function(cmp){
-										var els = Ext.DomQuery.select('DIV[class*="layout-designer-widget"]', 'details-panel');
-										
-										var detailP = Ext.getCmp('details-panel');
-										detailP.removeAll(true);
-										
-						        		this.addLayout(detailP, cmp.getValue(), els.length);
-									}, scope: this
+									select: this.columnSelect, scope: this
 								}
 							}
 						]
@@ -125,23 +192,28 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 			]
 		};
 		
-		//Simple grid
-		var panel = new Ext.Panel({			
+		//the container panel for the widget designer
+		var panel = new Ext.Panel({		
+			id:'widget-designer-panel',
 			flex: 3,			
 			frame: true,
 			border: true,
 			autoScroll: true,
-			layout: 'vbox',
+			layout: 'fit',
 			tbar: {
 				items: [
 					{text: 'Save', iconCls: 'icon-save'},
 					{xtype: 'tbseparator'},
 					{text: 'Add Field', iconCls: 'icon-add',handler:this.addField,scope:this},
 					{xtype: 'tbseparator'},
-					{text: 'Preview', iconCls: 'icon-preview', handler: function(){alert('Preview button clicked')}},
+					{text: 'Preview', iconCls: 'icon-preview', handler: this.preview,scope:this},
 					{xtype: 'tbseparator'},
 					{text: 'Format', iconCls: 'icon-format', menu: columnsMenu}
 				]
+			},
+			listeners:{
+				afterrender:this.containerPanelRender,
+				scope:this
 			}
 		});
 		this.panel=panel;

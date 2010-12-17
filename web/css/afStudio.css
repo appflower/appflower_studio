@@ -90,6 +90,14 @@
 	text-overflow: ellipsis;
 }
 
+.redborder{
+	border: 1px solid red;
+}
+
+.greenborder{
+	border: 1px solid green;
+}
+
 .icon-file-save{background: url('/appFlowerStudioPlugin/images/script_save.png') no-repeat 0 0 !important;}
 .icon-file-close{background: url('/appFlowerStudioPlugin/images/script_go.png') no-repeat 0 0 !important;}
 .icon-file-close-others{background: url('/appFlowerStudioPlugin/images/script_lightning.png') no-repeat 0 0 !important;}
