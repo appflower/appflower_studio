@@ -185,26 +185,70 @@ class appFlowerStudioActions extends sfActions
         $command = $this->getRequestParameter('command');
         $file_name = $this->getRequestParameter('file_name');
         
+        $start = $this->getRequestParameter('start', 0);
+        
+        $limit = $this->getRequestParameter('limit', 1);
+        $limit *= 4094;
+        
         $aResponse = array();
         
         switch ($command) {
-            case 'main':
-                $aResponse['files'] = afStudioDebug::get_files();
-                if (!empty($aResponse['files'])) {
-                    $aResponse['debug'] = afStudioDebug::get_content($aResponse['files'][0]);
+            case 'file':
+                if (!empty($file_name)) {
+                    $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($file_name), 
+                                                            $start, 
+                                                            $limit);
+                    $aResponse['total'] = $oDebugPager->getLastPage();
+                    $aResponse['data'][] = array('text' => afStudioDebug::get_content(  $file_name, 
+                                                                                        $oDebugPager->getPage() * 4094, 
+                                                                                        $oDebugPager->getNext()* 4094
+                                                                                     )
+                                                           );
+                    
                 } else {
-                    $aResponse['debug'] = 'no logos';
+                    $aResponse['data'][] = array('text' => 'file not checked');
+                    $aResponse['total'] = 1;
                 }
                 
                 break;
             
+            case 'last':
+                if (empty($file_name)) {
+                    $aFiles = afStudioDebug::get_files();
+                    $file_name = $aFiles[0];
+                }
+                $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($file_name), 
+                                                        0, 
+                                                        4094);
+                $aResponse['last_page'] = $oDebugPager->getLastPage() - 1;
+                
+                break;
+            
             default:
-                $aResponse['debug'] = afStudioDebug::get_content($file_name);
+                $aResponse['files'] = afStudioDebug::get_files();
+                
+                if (!empty($aResponse['files'])) {
+                    
+                    $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($aResponse['files'][0]), 
+                                                            $start, 
+                                                            $limit);
+                    
+                    $aResponse['total'] = $oDebugPager->getLastPage();
+                    
+                    $aResponse['data'][] = array('text' => afStudioDebug::get_content(  $aResponse['files'][0], 
+                                                                                        $oDebugPager->getPage() * 4094, 
+                                                                                        $oDebugPager->getNext()* 4094
+                                                                                     )
+                                                );
+                } else {
+                    $aResponse['data'][] = array('text' => 'no logs');
+                    $aResponse['total'] = 1;
+                }
+                
                 break;
         }
-        
+
         return $this->renderJson($aResponse);
-        
     }
 
     public function executeNotifications()

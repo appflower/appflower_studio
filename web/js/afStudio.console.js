@@ -151,7 +151,38 @@ afStudio.console = Ext.extend(Ext.Panel, {
 		});
 		
 		var console_cmd_display = new Ext.form.DisplayField({value: '<span style="margin-left:10px;"><b>cmds:</b> ' + afStudioConsoleCommands + '</span>'});
-			
+		
+		_this.debugStore = new Ext.data.Store({
+            autoLoad: {params:{start: 0, limit: 1}},
+            
+            url: '/appFlowerStudio/debug',
+            id: 'debug_store',
+            
+            reader: new Ext.data.JsonReader({
+                root: 'data',
+                totalProperty: 'total',
+                fields: ['text'],
+            }),
+            
+        });
+        
+        var tpl = new Ext.XTemplate(
+            '<tpl for=".">',
+                '<div class="thumb-wrap">',
+                '{text}',
+                '<div class="x-clear"></div>',
+                '</div>' +
+               '</tpl>'
+        );
+        
+        var debugDataView = new Ext.DataView({
+                                            store: _this.debugStore,
+                                            tpl: tpl,
+                                            autoHeight: true,
+                                            forceFit: true,
+                        });
+        
+		
 		var config = {
 			itemId: 'console',
 			title: "Console",			
@@ -188,13 +219,35 @@ afStudio.console = Ext.extend(Ext.Panel, {
 						
 						{
 						    xtype: 'panel', iconCls: 'icon-debug', title: 'Debug', 
-						    tbar : {
-						    	id: 'debug-toolbar'
-						    },
+						    items: [debugDataView], 
+                            tbar: {
+                                id: 'debug-toolbar'
+                            },
+                            bbar: new Ext.PagingToolbar({
+                                store: _this.debugStore,
+                                displayInfo: true,
+                                pageSize: 1,
+                                listeners: {
+                                    render: function(cmp){
+                                        cmp.moveLast();
+                                    },
+                                    load: function(cmp){
+                                        cmp.bindStore(_this.debugStore);
+                                    },
+                                    unbind : function(ds){
+                                        ds.un("beforeload", this.beforeLoad, this);
+                                        ds.un("load", this.onLoad, this);
+                                        ds.un("loadexception", this.onLoadError, this);
+                                        this.ds = undefined;
+                                    },
+
+                                },
+                                id: 'debug-bbar'
+                                // activeItem: 1
+                            }),
                             id: this.id + '-debug-tab',
-                            bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;',
-                            html: '', 
-                            autoScroll: true
+                            autoScroll: true, 
+                            bodyStyle: 'background-color:black;font-family: monospace;font-size: 11px;color: #88ff88;'
                         }
 					]
 				})
@@ -210,24 +263,22 @@ afStudio.console = Ext.extend(Ext.Panel, {
 	
 	
 	,consoleDebugClickListener : function(e, t) {      
-        var _this = this;
+         var _this = this;
         
         _this.body.mask('Loading, please Wait...', 'x-mask-loading');
+
+        _this.debugStore.reload({params:{   
+                                    start:0, 
+                                    limit:1, 
+                                    command: 'file',
+                                    file_name: e.id
+                                }});
+        _this.body.unmask();
         
-        Ext.Ajax.request({
-            url: _this.debugUrl,
-            method: _this.method,
-            params: {
-                file_name: e.id
-            },
-            callback: function(options, success, response) {                
-                _this.body.unmask();
-                var response = Ext.decode(response.responseText);
-                Ext.getCmp(_this.id + '-debug-tab').update(response.debug);
-                _this.body.scroll("bottom", 1000000, true );    
-            }
-        });
-          
+        // Ext.getCmp('debug-bbar').moveLast();
+        
+        // Ext.getCmp('debug-bbar').bind(_this.debugStore);
+        // Ext.getCmp('debug-bbar').bindStore(_this.debugStore);
 
     } //eo consoleDebugClickListener
 	
@@ -249,7 +300,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
             callback: function(options, success, response) {                
                 _this.body.unmask();
                 var response = Ext.decode(response.responseText);
-                Ext.getCmp(_this.id + '-debug-tab').update(response.debug);
+                // Ext.getCmp(_this.id + '-debug-tab').update(response.debug);
                 _this.body.scroll("bottom", 1000000, true );  
                 
                 var tb = Ext.getCmp(_this.id + '-debug-tab').getTopToolbar();

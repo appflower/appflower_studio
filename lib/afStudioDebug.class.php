@@ -1,12 +1,16 @@
 <?php
 
+/**
+ * Debug manipulation class
+ */
 class afStudioDebug 
 {
     
-    public static function get_content($file)
+    /**
+     * Get file content using limits "start" and "end"
+     */    
+    public static function get_content($file, $start = 0, $end = 0)
     {
-        $nLastSymbols = 4094;
-        
         $result = '';
         
         $file_name = sfConfig::get('sf_root_dir') . '/log/' . $file;
@@ -15,19 +19,25 @@ class afStudioDebug
             if ($file_size) {
                 $fh = fopen($file_name, "rb");
                 
-                if ($file_size > $nLastSymbols) {
+                if ($start < $file_size ) {
                     
-                    $file_log_begin = $file_size - $nLastSymbols;
-                    fseek($fh, $file_log_begin);
+                    $nLastSymbols = $end - $start;
+                    
+                    fseek($fh, $start);
                     
                     $result = fread($fh, $nLastSymbols);
                     
                     if ($result[0] != "\n") {
                         
-                        while ($result[0] != "\n") {
-                            $file_log_begin -= 1;
+                        while ($start > 0 && $result[0] != "\n") {
+                            $start -= 1;
                             $nLastSymbols += 1;
-                            fseek($fh, $file_log_begin);
+                            fseek($fh, $start);
+                            $result = fread($fh, $nLastSymbols);
+                        }
+                        
+                        if ($start == 0) {
+                            fseek($fh, $start);
                             $result = fread($fh, $nLastSymbols);
                         }
                     }
@@ -56,6 +66,10 @@ class afStudioDebug
         return $result;
     }
 
+    
+    /**
+     * Get file names existed in log folder
+     */
     public static function get_files()
     {
         $dir = sfConfig::get('sf_root_dir') . '/log/';
@@ -79,6 +93,14 @@ class afStudioDebug
         } else {
             return false;
         }
+    }
+    
+    /**
+     * Get log-file length
+     */
+    public static function get_file_len($file_name)
+    {
+        return strlen(file_get_contents(sfConfig::get('sf_root_dir') . '/log/' . $file_name));
     }
     
 }
