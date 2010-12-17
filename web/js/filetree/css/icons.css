@@ -85,8 +85,10 @@
 	background-image:url(../img/silk/icons/page_white.png) ! important;
 }
 .icon-plus {
-	background-image:url(../img/silk/icons/add.png) ! important;
+	/*background-image:url(../img/silk/icons/add.png) ! important;*/
+	background: url(../img/silk/icons/add.png) no-repeat 0 0 !important;
 }
+
 .icon-minus {
 	background-image:url(../img/silk/icons/delete.png) ! important;
 }
