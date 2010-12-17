@@ -58,6 +58,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        	'afteredit': function(e){
 	        		//Create tooltip for edited row.
 	        		this.onGridRefresh(e.grid.getView());
+	        		var node = this.widgetInspectorTree.getSelectionModel().getSelectedNode();
+	        		this.rootNode.attributes.setPropertyField(node, e.record);
 	        	}, scope: this
 	        },
 	        
@@ -105,6 +107,10 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			region: 'center',
             animate:true, autoScroll:true, 
 			frame: true,
+			
+			bbar: [
+				{text: 'Buil JSON', handler: this.buildJSONString, scope: this}
+			],
 			
 		    contextMenu: new Ext.menu.Menu({
 		    	id: 'widget-inspector-menu',
@@ -415,6 +421,32 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
     		}
 		}
 	},	
+	
+	buildJSONString: function(){
+function Dump(d,l) {
+    if (l == null) l = 1;
+    var s = '';
+    if (typeof(d) == "object" && typeof(d) != "function") {
+        s += typeof(d) + " {\n";
+        for (var k in d) {
+            for (var i=0; i<l; i++) s += "  ";
+            s += k+": " + Dump(d[k],l+1);
+        }
+        for (var i=0; i<l-1; i++) s += "  ";
+        s += "}\n"
+    } else {
+    	if(typeof(d) != "function")
+	        s += "" + d + "\n";
+    }
+    return s;
+}
+		
+		var root = this.rootNode.getOwnerTree().getRootNode();
+		var fields = this.rootNode.attributes.getModifiedFields(root);
+		
+		var s = Dump(fields, 10);
+		alert(s)
+	},
 	
 	/**
 	 * Function _initEvents
