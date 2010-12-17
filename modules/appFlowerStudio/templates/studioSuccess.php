@@ -80,7 +80,7 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 <?php 
 $appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
 
-$afStudioJsExtensions=sfFinder::type('file')->name('afStudio.*.js')->in($appFlowerStudioPluginJsPath);
+$afStudioJsExtensions=sfFinder::type('file')->name('afStudio.*.js')->sort_by_name()->in($appFlowerStudioPluginJsPath);
 foreach ($afStudioJsExtensions as $afStudioJsExtension)
 {
 ?>
