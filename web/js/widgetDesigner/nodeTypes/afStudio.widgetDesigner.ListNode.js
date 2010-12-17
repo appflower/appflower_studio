@@ -10,31 +10,6 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	 * @param {Object} data - response data
 	 */
 	constructor: function(data){
-		var root = this.createRootNode(data);
-		
-        var config = {
-            expanded: true,
-            text: 'Widget Inspector',
-			id: 'widgetinspector',
-            children: [
-            	{
-            		text: 'editWidget.xml - II', leaf: false,
-            		
-            		expanded: true, 
-            		children: [
-			           	{
-			        		text: 'Field 1 - II', leaf: false, expanded: true,
-			        		itemId: 'field', iconCls: 'icon-field',
-			        		children: [
-			        			{text: 'Validator 1 - II', itemId: 'validator', iconCls: 'icon-validator', leaf: true},
-			        			{text: 'Validator 2 - II', itemId: 'validator', iconCls: 'icon-validator', leaf: true}
-			        		]
-			        	}
-            		]
-            	}         	
-            ]
-        };
-
 	    this.createRootNode(data);
 	    return new Ext.tree.AsyncTreeNode(this.config);
 	},
@@ -47,6 +22,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	
 	createRootNode: function(data){
 		this.config = {
+			getPropertiesFields: this.getPropertiesFields,
 			expanded: true,
 			text: 'Widget Inspector', 
 			id: 'widgetinspector',
@@ -56,7 +32,12 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 					qtip: data['i:description'] || 'Default QTip',
 					leaf: false, 
 					expanded: false,
-					itemId: 'object', iconCls: 'icon-obj'
+					itemId: 'object', iconCls: 'icon-obj',
+				
+					data: [
+						{name: 'wtype', value: data.type},
+						{name: 'maxperpage', value: data.maximumperpage}
+					]
 				}
 			]
 		}
@@ -84,8 +65,13 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 					var n = {
 						leaf: true, expanded: false,
 						itemId: 'action', iconCls: a[i].iconCls|| 'icon-field',
-						text: a[i].name || 'Default action name'
-						//condition, url..
+						text: a[i].name || 'Default action name',
+						data: [
+							{name: 'Name', value: a[i].name},
+							{name: 'Condition', value: a[i].condition},
+							{name: 'Icon Class', value: a[i].iconCls},
+							{name: 'URL', value: a[i].url}
+						]
 					}
 					node.children.push(n);
 				}
@@ -104,9 +90,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 			var node = {
 				expanded: true, text: 'Datasource',
 				
-				itemId: 'datasource', iconCls: 'icon-data',
-				
-				type: ds.type
+				itemId: 'datasource', iconCls: 'icon-data'
 			};
 			
 			if(method = ds['i:method']){
@@ -128,10 +112,31 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 			if(c = fields['i:column']){
 				this.setRootExpanded(true);
 				for(var i=0, l=c.length; i<l; i++){
+					
+					alert(c[i].editable)
+					
 					var node = {
 						leaf: true, expanded: false,
 						itemId: 'field', iconCls: 'icon-field',
-						text: c[i].label || 'Default field name'
+						text: c[i].label || 'Default field name',
+						
+						
+						
+						data: [
+							{name: 'Editable', value: c[i].editable, type: 'bool'},
+							{name: 'Filter', value: c[i].filter},
+							{name: 'Label', value: c[i].label},
+							{name: 'Name', value: c[i].name},
+							{name: 'Resizable', value: c[i].resizable, type: 'bool'},
+							{name: 'Sortable', value: c[i].sortable, type: 'bool'},
+							{name: 'Style', value: c[i].style},
+							
+							{name: 'Grouping', value: c[i].grouping},
+							{name: 'Cache', value: c[i].cache},
+							{name: 'Icon Class', value: c[i].iconCls},
+							{name: 'Tooltip', value: c[i].tooltip},
+							{name: 'Condition', value: c[i].condition}
+						]
 					}
 					this.addNodeToRoot(node);					
 				}
@@ -167,6 +172,28 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 		} else {
 			this.config.children[0].children = [node];
 		}
+	},
+	
+	/**
+	 * Function getPropertiesFields
+	 * Get list of node properties
+	 * @param {Object} node - selected node
+	 * @return {Object} values - list of pairs {name: value}
+	 */
+	getPropertiesFields: function(node){
+		var properties = {};
+		if(node.attributes && node.attributes.data){
+			var data = node.attributes.data;
+			for(var i=0, l=data.length; i<l; i++){
+
+				//TODO: manually convert to boolean. Editor combobox will be created
+				if(data[i].type && 'bool' == data[i].type){
+					data[i].value = (true == data[i].value)?true:false;
+				}
+				properties[data[i].name] = data[i].value;
+			}
+		}
+		return properties;
 	}
 });
 Ext.reg('afStudio.widgetDesigner.ListNode', afStudio.widgetDesigner.ListNode);
