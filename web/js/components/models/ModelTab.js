@@ -1,0 +1,161 @@
+Ext.ns('afStudio.models');
+
+/** 
+ * @class afStudio.models.ModelTab
+ * @extends Ext.TabPanel
+ * @author Nikolay
+ */
+afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
+
+	/**
+	 * @cfg {Object} fieldsStructure required
+	 * The fieldsStructure object contains model's fields structure information
+	 */
+	
+	/**
+	 * @cfg {String} modelName required
+	 */
+
+	/**
+	 * @cfg {String} schemaName required
+	 */
+	
+	/**
+	 * @cfg {String} modelGridDataUrl required (defaults to '/afsModelGridData')
+	 * Base URL for modelData grid 
+	 */
+	modelGridDataUrl : '/afsModelGridData'
+	
+	/**
+	 * @cfg {String} modelUrl required (defaults to '/appFlowerStudio/models')
+	 * Base URL for models 
+	 */
+	,modelUrl : '/appFlowerStudio/models'
+
+	/**
+	 * {@link afStudio.models.FieldsGrid} modelConfig's <u>altermodel</u> event listener
+	 * This event was relayed to the ModelTab
+	 */
+	,onAlterModel : function() {
+		var _this = this,
+			   md = _this._modelData;			
+		
+		afStudio.vp.mask({region:'center', msg:'Updating ' + _this.modelName + ' model...'});
+		
+		Ext.Ajax.request({
+		   url: _this.modelUrl,
+		   params: { 
+			   xaction: 'read',
+			   model: _this.modelName,
+			   schema: _this.schemaName
+		   },
+		   success: function(result, request) {
+		       afStudio.vp.unmask('center');
+		       var fData = Ext.decode(result.responseText);		   		
+		       _this.remove(md, true);		   		
+		       _this._modelData = _this.createModelDataGrid(fData);				
+		       _this.insert(0, _this._modelData);
+		       _this.doLayout();
+		   }
+		});		
+	}//eo onAlterModel
+	
+	/**
+	 * Creates modelConfig grid
+	 * @private
+	 * @param {Object} fData The fData object contains model's fields structure information
+	 * @return {afStudio.models.FieldsGrid} modelConfig grid
+	 */
+	,createModelConfigGrid : function(fData) {
+		var _this = this;
+		
+		return new afStudio.models.FieldsGrid({	   		
+			itemId: 'model-fields',
+			_data: fData,
+			model: _this.modelName,
+			schema: _this.schemaName
+		});		
+	}
+	
+	/**
+	 * Creates modelData grid
+	 * @private
+	 * @param {Object} fData The fData object contains model's fields structure information
+	 * @return {afStudio.models.ModelGrid} modelData grid
+	 */
+	,createModelDataGrid : function(fData) {
+		var _this = this,
+			  mdl = _this.modelName;
+			  
+	   	return new afStudio.models.ModelGrid({	   		
+			itemId: 'model-data',
+			title: mdl,
+			_data: fData,
+            storeProxy: new Ext.data.HttpProxy({
+                api: {
+                	read:    _this.modelGridDataUrl + '/read?model='   + mdl,
+                    create:  _this.modelGridDataUrl + '/create?model=' + mdl,
+                    update:  _this.modelGridDataUrl + '/update?model=' + mdl,
+                    destroy: _this.modelGridDataUrl + '/delete?model=' + mdl
+                }
+            })
+		});
+	}//eo createModelDataGrid
+	
+	/**
+	 * Initializes component
+	 * @private
+	 * @return {Object} The configuration object 
+	 */	
+	,_beforeInitComponent : function() {
+		var _this = this,
+			fData = _this.fieldsStructure,
+			  mdl = _this.modelName,
+			  shm = _this.schemaName;
+		
+	   	this._modelConfig = _this.createModelConfigGrid(fData);
+	   	this._modelData   = _this.createModelDataGrid(fData); 
+		
+		return {			
+			activeTab: 0,
+			items: [
+				_this._modelData,
+				_this._modelConfig
+			]
+		}		
+	}//eo _beforeInitComponent
+	
+	/**
+	 * Template method
+	 * @private
+	 */
+	,initComponent : function() {
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, this._beforeInitComponent())
+		);				
+		afStudio.models.ModelTab.superclass.initComponent.apply(this, arguments);
+		this._afterInitComponent();
+	}
+	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	,_afterInitComponent : function() {
+		var _this = this,
+		       mc = _this._modelConfig,
+		       md = _this._modelData;
+
+		this.relayEvents(mc, ['altermodel']);
+
+		_this.on({
+			'altermodel' : Ext.util.Functions.createDelegate(_this.onAlterModel, _this)
+		});		
+	}//eo _afterInitComponent
+	
+});
+
+/**
+ * @type 'afStudio.models.modelTab'
+ */
+Ext.reg('afStudio.models.modelTab', afStudio.models.ModelTab);

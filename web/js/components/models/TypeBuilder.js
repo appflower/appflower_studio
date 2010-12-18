@@ -20,9 +20,11 @@ afStudio.models.TypeBuilder = (function() {
 			var editor = null;
 			
 			//if data type contains size - cut it (i.e. varchar(128) - varchar)
-			var s = dataType.indexOf("(");
-			if (s != -1) {
-				dataType = dataType.substring(0, s);
+			if (dataType) {
+				var s = dataType.indexOf("(");
+				if (s != -1) {
+					dataType = dataType.substring(0, s);
+				}
 			}
 			
 			switch(dataType) {

@@ -504,54 +504,34 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 	}//eo renameModel
-	
+		
 	,editModel: function(node) {
+		var _this = this;
 		
 		afStudio.vp.mask({region:'center'});
 		
 		Ext.Ajax.request({
-		   scope:this,
 		   url: '/appFlowerStudio/models',
 		   params: { 
-			   xaction:'read',
-			   model: this.getModel(node),
-			   schema: this.getSchema(node)
+			   xaction: 'read',
+			   model: _this.getModel(node),
+			   schema: _this.getSchema(node)
 		   },
-		   success: function(result, request) {
-			   try {
-				   var data = Ext.decode(result.responseText);
-			   } catch(e) {
-				   var data = {rows:[], totalCount:0}
-			   }
-			   	var fieldsGrid = new afStudio.models.FieldsGrid({
-			   		_data: data,
-			   		model: this.getModel(node),
-					schema: this.getSchema(node)
-			   	});		
-
-                var apiUrlModule = '/afsModelGridData';
-				var modelGrid = new afStudio.models.ModelGrid({
-					title: this.getModel(node),
-					_data: data,
-                    storeProxy: new Ext.data.HttpProxy({
-                        api: {
-                            read:    apiUrlModule + '/read?model='   + this.getModel(node),
-                            create:  apiUrlModule + '/create?model=' + this.getModel(node),
-                            update:  apiUrlModule + '/update?model=' + this.getModel(node),
-                            destroy: apiUrlModule + '/delete?model=' + this.getModel(node)
-                        }
-                    })
-				});
-				var editTab = new Ext.TabPanel({
-					activeTab: 0,
-					items:[modelGrid,fieldsGrid]
-				});
-				afStudio.vp.addToPortal(editTab, true);
+		   success: function(result, request) {		   	
+		       var data = Ext.decode(result.responseText);
+		       
+			   var modelTab = new afStudio.models.ModelTab({
+			   		fieldsStructure: data,
+			   		modelName: _this.getModel(node),
+			   		schemaName: _this.getSchema(node)
+			   });
+               afStudio.vp.addToPortal(modelTab, true);
 				
 		       afStudio.vp.unmask('center');
 		   }
-		});		
-	}
+		});
+	}//eo editModel
+	
 }); 
 
 // register xtype

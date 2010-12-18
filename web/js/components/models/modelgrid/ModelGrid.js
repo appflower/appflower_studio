@@ -607,7 +607,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 		
 		afStudio.models.ModelGrid.superclass.beforeInit.apply(this, arguments);
 		
-		var config = {			
+		var config = {
 			iconCls: 'icon-database-table',			
 		    loadMask: true,
 		    clicksToEdit: 1,
@@ -699,7 +699,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
         var r = ed.record,
             field = this.colModel.getDataIndex(ed.col);
         value = this.postEditValue(value, startValue, r, field);
-        if(this.forceValidation === true || String(value) !== String(startValue)){
+        if (this.forceValidation === true || String(value) !== String(startValue)) {
             var e = {
                 grid: this,
                 record: r,
@@ -710,7 +710,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
                 column: ed.col,
                 cancel:false
             };
-            if(this.fireEvent("validateedit", e) !== false && !e.cancel && String(value) !== String(startValue)){
+            if (this.fireEvent("validateedit", e) !== false && !e.cancel && String(value) !== String(startValue)) {
                 r.set(field, e.value);
                 delete e.cancel;
                 this.fireEvent("afteredit", e);

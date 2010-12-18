@@ -36,12 +36,10 @@ class afStudioModelsCommand
 		    	$this->tableName = strtolower($this->modelName);
 		    	$this->propelModel = $this->modelName;
 	    	} else {
-				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]) 
-				|| !isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {					
-			    	$this->result = array('success'=>false, 'message'=>"Model doesn't exists");	
+				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {					
+			    	$this->result = array('success'=>false, 'message'=>"Model doesn't exists");
 			    	return false;
-				}
-	    		
+				}	    		
 		    	$this->tableName = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]['tableName'];
 		    	$this->propelModel = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName];	    		
 	    	}
@@ -105,12 +103,11 @@ class afStudioModelsCommand
 	
 	public function saveSchema()
 	{
-		$dump=sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3);
+		$dump = sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3);
 		
-		if(file_put_contents($this->schemaFile,$dump)>0){
+		if (file_put_contents($this->schemaFile, $dump) > 0) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -231,8 +228,27 @@ class afStudioModelsCommand
 				    $this->result['success']=true;
 				break;
 				
+				/**
+				 *  Serves RelationCombo ext component
+				 */
 				case 'readrelation':
 					$this->result = array('success' => true, 'data' => $this->buildRelationComboModels());
+				break;
+				
+				/**
+				 * Alters mode's structure
+				 */
+				case 'alterModel':
+					try {
+						$fields = json_decode($this->request->getParameter('fields'));										
+						$this->alterModel($fields);
+						$this->result = array(
+							'success' => true, 
+							'message' => $this->modelName . ' ' . 'structure was successfully updated'
+						);				
+			        } catch( Exception $e ) {
+			        	$this->result = array('success' => false, 'message' => $e->getMessage());
+			        }					
 				break;
 				
 				default:
@@ -303,7 +319,6 @@ class afStudioModelsCommand
 	    foreach ($propelModel['columns'] as $name => $column) {
 	    	$fields[$k]['id'] = $k;
 	    	$fields[$k]['name'] = $name;
-	    	$fields[$k]['type'] = 'bigint';
 	    		    	
 	    	if (is_array($column)) {
 		    	foreach ($column as $property => $value) {
@@ -338,7 +353,7 @@ class afStudioModelsCommand
 	/**
 	 * Returns Model name by its table name
 	 * @param string $table
-	 * @return string model name if model was found otherwise null 
+	 * @return string model name if table was found otherwise null 
 	 */
 	private function getModelByTableName($table) 
 	{	
@@ -355,7 +370,29 @@ class afStudioModelsCommand
 	}
 	
 	/**
-	 * Returns array of models narrowed by mask	 
+	 * Returns table name by the model
+	 * @param string $tableName
+	 * @return string table name if model was found otherwise null
+	 */
+	private function getTableNameByModel($model) 
+	{	
+		$tableName = null;
+		foreach ($this->propelSchemaArray as $schema) {
+			foreach ($schema['classes'] as $modelName => $m) {
+				if ($modelName == $model) {
+					$tableName = $m['tableName'];
+					break 2;
+				}				
+			}
+		}
+		return $tableName;
+	}
+	
+	/**
+	 * Returns array of models narrowed by mask.
+	 * Example: there are models "Users", "Units", "Group" and mask "u" returns two models 
+	 * "Users" and "Units". Case insensitive.
+	 * If mask is an empty string all Models are returned. 
 	 * @param string $mask
 	 * @return array of models
 	 */
@@ -392,7 +429,7 @@ class afStudioModelsCommand
 	}
 	
 	/**
-	 * Creates Relation ModelName.ModelField
+	 * Creates Relation modelName.modelField value
 	 * based on "query" parameter
 	 * @return array the relation
 	 */
@@ -436,7 +473,64 @@ class afStudioModelsCommand
 			}			
 		}
 		return $models;		
+	}	
+	
+	/**
+	 * Alters Model structure 
+	 * @param array $fields the new models fields 
+	 */
+	private function alterModel($fields)
+	{		
+		//remove previous table structure 		
+		foreach ($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName] as $k => $v) {
+			if ($k != '_attributes') {
+				unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$k]);
+			} 
+		}
+		//build new structure
+		foreach ($fields as $f) {
+			$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name] = array();
+			
+			if (!empty($f->type)) {
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['type'] = $f->type;
+			}
+			if (!empty($f->default)) {
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['default'] = $f->default;
+			}
+			if (!empty($f->autoIncrement)) {
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['autoIncrement'] = $f->autoIncrement;
+			}			
+			if (!empty($f->key)) {
+				switch ($f->key) {
+					case 'primary':
+						$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['primaryKey'] = true;
+					break;
+					case 'unique':
+						$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['index'] = 'unique';
+					break;
+					case 'index':
+						$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['index'] = true;
+					break;
+				}
+			}
+			if (!empty($f->required)) {
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['required'] = $f->required;
+			}
+			if (!empty($f->relation)) {
+				$ref = explode('.', $f->relation);
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['foreignTable'] 
+					= $this->getTableNameByModel($ref[0]);
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['foreignReference'] = $ref[1];
+			}			
+			if (!empty($f->size)) {
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['size'] = $f->size;
+			}			
+			if (!empty($f->onDelete)) {
+				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['onDelete'] = $f->onDelete;
+			}
+		}
+		
+		$this->saveSchema();
 	}
 
 }
-?>

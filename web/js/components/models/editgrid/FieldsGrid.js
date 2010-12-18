@@ -7,13 +7,50 @@ Ext.ns('afStudio.models');
  * @class afStudio.models.FieldsGrid
  * @extends Ext.grid.EditorGridPanel
  */
-afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {	
+afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	
 	/**
-	 * Saves Model
+	 * Saves Model structure
 	 */
-	saveModel : function() {		
-	}
+	saveModel : function() {
+		var _this = this,
+			    s = _this.getStore(),
+			  url = s.proxy.url,
+			   rs = s.getRange(),
+		 aRecords = [];
+				 
+		Ext.each(rs, function(i, idx){
+			aRecords.push(i.data);
+		});
+		
+		afStudio.vp.mask({region:'center', msg:'Altering ' + _this.model + ' model...'});
+		
+		Ext.Ajax.request({
+			url: url,
+			params: {
+				xaction: 'alterModel',
+				model: _this.model, 
+				schema: _this.schema,
+				fields: Ext.encode(aRecords)
+			},
+			success: function(xhr, opt) {
+				var response = Ext.decode(xhr.responseText);
+				afStudio.vp.unmask('center');
+				if (response.success) {					
+					s.commitChanges();					
+					_this.fireEvent('altermodel');
+				} else {
+					_this.fireEvent('altermodelexception', xhr);
+					Ext.Msg.alert('Warning', response.message);
+				}
+			},
+			failure: function(xhr, opt) {
+				afStudio.vp.unmask('center');
+				_this.fireEvent('altermodelfailure', xhr);				
+				Ext.Msg.alert('Failure', 'Status: ' + xhr.status);
+			}
+		});
+	}//eo saveModel
 	
 	/**
 	 * Inserts row after the selection
@@ -65,7 +102,11 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	    }	    		
 	}
 	
-	//private
+	/**
+	 * Creates Boolean Editor
+	 * @private
+	 * @return {Ext.form.ComboBox} editor 
+	 */
 	,booleanEditorBuilder : function() {
 		return {
 	    	editor: new Ext.form.ComboBox({
@@ -77,7 +118,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				valueField: 'field',
 				displayField: 'field',
 				store : [[true, 'true'], [false, 'false']]
-	    	}),
+	    	}),	    	
 			renderer: function(v, p, record) {
 			    p.css += ' x-grid3-check-col-td'; 
 			    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
@@ -85,11 +126,36 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		}
 	}
 	
-	//private
+	/**
+	 * Creates TypeComboBox Editor
+	 * @private
+	 * @return {afStudio.models.TypeComboBox} editor
+	 */
 	,typeEditorBuilder : function() {
 		return {
 			editor: new afStudio.models.TypeComboBox({
 				lazyRender: true
+			})
+		}
+	}
+	
+	/**
+	 * @private
+	 * @return {}
+	 */
+	,nameEditorBuilder : function() {
+		var _this = this,
+			names = [];
+//		Ext.each(_this._data.rows, function(i, idx){
+//			names.push(i.name);
+//		});		
+		return {						
+			editor: new Ext.form.TextField({
+				maskRe: /[\w]/,
+				validator: function(value) {
+					return /^[^\d]\w*$/im.test(value) ? true : 'Field name must contains only characters, digits or "_" and starts from "_" or character';
+//					return names.indexOf(value) != -1 ? 'Duplicate field name' : true;					
+				}
 			})
 		}
 	}
@@ -170,7 +236,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				header: "Name",
 				width: 100,
 				dataIndex: 'name',
-				editor: new Ext.form.TextField()
+				editor: _this.nameEditorBuilder().editor
 			},{
 				header: "Type",
 				width: 100,
@@ -258,8 +324,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	        }]
 		});		
 		
-		return {
-			itemId: 'model-fields',
+		return {			
 			title: 'Model Config',
 			iconCls: 'icon-table-gear',			
 			clicksToEdit: 1,			
@@ -289,7 +354,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	}
 	
 	/**
-	 * Initializes events
+	 * Initializes events & does post configuration
 	 * @private
 	 */
 	,_afterInitComponent : function() {
@@ -297,7 +362,31 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			store = _this.getStore(),
 			   cm = _this.getColumnModel();
 
-		store.loadData(_this._data);		
+		_this.addEvents(
+			/**
+			 * @event altermodel 
+			 * Fires after the model was successfully altered.
+			 */
+			'altermodel',
+			
+			/**
+			 * @event altermodelexception 
+			 * Fires if an error was happend during altering model.
+			 * @param {Object} The XMLHttpRequest object containing the response data.
+			 */
+			'altermodelexception',
+			
+			/**
+			 * @event altermodelfailure
+			 * Fires if an error HTTP status was returned from the server during altering model.
+			 * @param {Object} The XMLHttpRequest object containing the response data.
+			 */
+			'altermodelfailure'
+		);
+		
+		//Load Model structure
+		store.loadData(_this._data);
+		
 	}//eo _afterInitComponent
 	
 }); 
