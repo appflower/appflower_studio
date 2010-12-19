@@ -27,6 +27,7 @@ class afStudioDebug
                     
                     $result = fread($fh, $nLastSymbols);
                     
+                    // Display page content from string begining
                     if ($result[0] != "\n") {
                         
                         while ($start > 0 && $result[0] != "\n") {
@@ -40,6 +41,13 @@ class afStudioDebug
                             fseek($fh, $start);
                             $result = fread($fh, $nLastSymbols);
                         }
+                    }
+                    
+                    // Displaying full line to end
+                    while (substr($result, -1, 1) != "\n") {
+                        $nLastSymbols++;
+                        fseek($fh, $start);
+                        $result = fread($fh, $nLastSymbols);
                     }
                     
                     $result = trim($result);
