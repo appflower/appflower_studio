@@ -192,6 +192,7 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		
 		this.relationsGrid = new Ext.grid.GridPanel({
 			flex: 1, id: 'rel-grid',
+			width: 234,
 			ddGroup: 'widgetsBuilderRel', enableDragDrop: true,
 			store: new Ext.data.ArrayStore({
 			    idIndex: 0,  
@@ -245,12 +246,12 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 			bodyStyle: 'padding: 5px;', height: 70, width: 234
 		});
 		
-		var modelsCombo = new Ext.form.ComboBox({
-            fieldLabel: 'Model',
+		var modulesCombo = new Ext.form.ComboBox({
+            fieldLabel: 'Module Location',
 			loadingText: 'Please wait...',
-			emptyText: 'Please select the model...',
+			emptyText: 'Please select the module location...',
             store: new Ext.data.Store({
-	            proxy: new Ext.data.HttpProxy({url: '/appFlowerStudio/models'}),
+	            proxy: new Ext.data.HttpProxy({url: '/appFlowerStudio/modules'}),
 	            baseParams: {cmd: 'get'},
 	            reader: new Ext.data.JsonReader(
 	                {totalProperty: 'total', id: 'id'},
@@ -267,13 +268,17 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		
 		return {
 			title: 'Create new widget',
-			y: 150, width: 450, height: 150,
+			y: 150, 
+			
+			width: 450, height: 150,
+//			width: 850, height: 450,
+			
 			modal: true, 
 			tbar: {
 				xtype: 'toolbar',
 				id: this.id + 'help-toolbar', hidden: true,
 				items: [
-					'Please select the fields for each model you want to have displayed in your Widget. And drag each field to the Selected Widgets area.'
+					'Please select the fields for each model you want to have displayed in your Widget. And drag each field to the Selected fields area.'
 				]
 			},
 
@@ -286,14 +291,14 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 					hideBorders: true,
 					items: [
 						new Ext.FormPanel({
-							bodyStyle: 'padding: 5px;', labelWidth: 80,
+							bodyStyle: 'padding: 5px;', labelWidth: 100,
 							items: [
-								modelsCombo,
+								modulesCombo,
+								{xtype: 'textfield', fieldLabel: 'Widget Name', anchor: '100%'},
 								{xtype: 'combo', fieldLabel: 'Widget Type', triggerAction: 'all', anchor: '100%', 
 									store: [['list', 'List'], ['grid', 'Grid'], ['edit', 'Edit'], ['show', 'Show']],
 									value: 'list'
-								},
-								{xtype: 'textfield', fieldLabel: 'Widget Name', anchor: '100%'}
+								}
 							]
 						})
 					]
