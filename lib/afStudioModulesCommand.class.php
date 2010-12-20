@@ -141,6 +141,26 @@ class afStudioModulesCommand
 					else
 					$this->result = array('success' => false,'message'=>'Can\'t rename module from <b>' + $this->moduleName + '</b> to <b>' + $renamedModuleName + '</b> inside <b>'.$this->app.'</b> application!');
 					break;
+				case "getGrouped":
+					$data = array();
+					$apps = afStudioUtil::getDirectories($this->realRoot."/apps/",true);
+										
+					foreach($apps as $app)
+					{
+						$modules = afStudioUtil::getDirectories($this->realRoot."/apps/".$app."/modules/",true);
+						
+						foreach($modules as $module)
+						{
+							$data[] = array('value'=>$module,'text'=>$module,'group'=>$app);
+						}
+					}
+					if(count($data)>0)
+					{
+						$this->result = $data;
+					}
+					else
+					$this->result = array('success' => true);
+					break;
 				default:
 					$this->result = array('success' => true);
 					break;

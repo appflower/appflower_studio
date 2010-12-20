@@ -49,6 +49,8 @@
 
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/grid/Ext.ux.grid.RowEditor.js"></script>
 
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/form/groupingcombobox/Ext.ux.form.GroupingComboBox.js"></script>
+
 <script type="text/javascript">
 var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>';
 </script>
@@ -106,6 +108,8 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetype.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetree.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/icons.css" />
+
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/examples/form/groupingcombobox/Ext.ux.form.GroupingComboBox.css" />
 
 <?php 
 $appFlowerStudioPluginCssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';

@@ -246,20 +246,21 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 			bodyStyle: 'padding: 5px;', height: 70, width: 234
 		});
 		
-		var modulesCombo = new Ext.form.ComboBox({
+		var modulesCombo = new Ext.ux.form.GroupingComboBox({
             fieldLabel: 'Module Location',
 			loadingText: 'Please wait...',
 			emptyText: 'Please select the module location...',
             store: new Ext.data.Store({
 	            proxy: new Ext.data.HttpProxy({url: '/appFlowerStudio/modules'}),
-	            baseParams: {cmd: 'get'},
+	            baseParams: {cmd: 'getGrouped'},
 	            reader: new Ext.data.JsonReader(
-	                {totalProperty: 'total', id: 'id'},
-	                ['id', 'text']
+	                {totalProperty: 'total', id: 'value'},
+	                ['value', 'text', 'group']
 	        	),
                 remoteSort: true
             }),
-            displayField:'text',
+            displayField: 'text',
+			groupField: 'group',
             anchor: '100%',
 			minChars: 0,
             hiddenName: 'model'
