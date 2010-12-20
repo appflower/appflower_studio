@@ -77,7 +77,9 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 				for(var i =0, l= a.length; i<l; i++){
 					var n = {
 						leaf: true, expanded: false,
-						itemId: 'action', iconCls: a[i].iconCls|| 'icon-field',
+						itemId: 'action', 
+//						iconCls: a[i].iconCls|| 'icon-field',
+						iconCls: 'icon-field',
 						text: a[i].name || 'Default action name',
 						data: {
 							'Name': a[i].name,
