@@ -46,7 +46,8 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 				{xtype:'textfield', name: 'name', fieldLabel:'Project Name', anchor:'95%'},
 				{xtype:'textfield', name: 'path', fieldLabel:'Path to Project', anchor:'95%'},
 				{xtype:'label', html: 'Description:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},
-				{xtype:'textarea', hideLabel: true, anchor: '100%', name: 'description', height: 77, style: 'margin-top: 5px;'}
+				{xtype:'textarea', hideLabel: true, anchor: '100%', name: 'description', height: 57, style: 'margin-top: 5px;'},
+				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Auto-Deploy on Save', name: 'auto_deploy'}
 			]
 		});
 		

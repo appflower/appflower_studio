@@ -4,20 +4,18 @@
 
 Ext.override(Ext.grid.GridDragZone, {
 	afterRepair:function(){
-//		Ext.fly(this.DDM.currentTarget).parent('TABLE').frame('#8db2e3', 1);
 		Ext.fly(this.DDM.currentTarget).parent('TABLE').frame('#FFA7A7', 1);
 	    this.dragging = false;    
 	}
 });
 		    
-	        
 Ext.ns('afStudio');
 
 /**
  * WidgetsBuilder
  * @class afStudio.widgetsBuilder
  * @extends Ext.Window
- * @author Pavel
+ * @author PavelK
  */
 afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 	/**
@@ -55,7 +53,6 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
                     _this.relationsGrid.store.sort('name', 'ASC');
                     return true;
 				} else {
-//					Ext.fly(this.DDM.currentTarget).frame('#8db2e3', 1);
 					this.dragging = false;    
 				}
             }
@@ -207,7 +204,7 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 			viewConfig: {scrollOffset: 19, forceFit: true},
 			
 			columns : [
-				{header: 'Relation', sortable: true, width: 170, dataIndex: 'name'}
+				{header: 'Selected fields', sortable: true, width: 170, dataIndex: 'name'}
 			],
 			loadMask: true,
 			border: true,
@@ -244,71 +241,128 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		
 		this.basket = new Ext.Panel({
 			xtype: 'panel', id: 'widgets-basket', 
-			html: '<center><br>Drop Item and remove it <br>from Relation grid</br></center>', 
+			html: '<center><br>Drop Item here,<br> to remove it</br></center>', 
 			bodyStyle: 'padding: 5px;', height: 70, width: 234
 		});
 		
+		var modelsCombo = new Ext.form.ComboBox({
+            fieldLabel: 'Model',
+			loadingText: 'Please wait...',
+			emptyText: 'Please select the model...',
+            store: new Ext.data.Store({
+	            proxy: new Ext.data.HttpProxy({url: '/appFlowerStudio/models'}),
+	            baseParams: {cmd: 'get'},
+	            reader: new Ext.data.JsonReader(
+	                {totalProperty: 'total', id: 'id'},
+	                ['id', 'text']
+	        	),
+                remoteSort: true
+            }),
+            displayField:'text',
+            anchor: '100%',
+			minChars: 0,
+            hiddenName: 'model'
+		});		
+		
+		
 		return {
 			title: 'Create new widget',
-			width: 840, height: 450,
-			modal: true, maximizable: true,			
+			y: 150, width: 450, height: 150,
+			modal: true, 
+			tbar: {
+				xtype: 'toolbar',
+				id: this.id + 'help-toolbar', hidden: true,
+				items: [
+					'Please select the fields for each model you want to have displayed in your Widget. And drag each field to the Selected Widgets area.'
+				]
+			},
 
-			layout: 'border',
+			layout: 'card',
+			activeItem: 0,
+			
 			items: [
-				{region: 'north', margins: '5 5 0 5', height: 33,
-					layout: 'fit', border: false, bodyBorder: false,
-					defaults: {border: false, bodyBorder: false},
-//					hideBorders: true,
+				{
+					border: false, bodyBorder: false,
+					hideBorders: true,
 					items: [
-						{xtype: 'form', defaults: {border: false, bodyBorder: false},
+						new Ext.FormPanel({
+							bodyStyle: 'padding: 5px;', labelWidth: 80,
 							items: [
-								{xtype: 'panel', layout: 'column', defaults: {border: false, bodyBorder: false},
-									bodyStyle: 'padding: 5px;',
-									items: [
-										{columnWidth: .5, style: 'padding-right: 5px;', layout: 'form', labelWidth: 40,
-											items: [
-												{xtype: 'textfield', fieldLabel: 'Name', anchor: '100%'}
-											]
-										},
-										{columnWidth: .5, layout: 'form', labelWidth: 40,
-											items: [
-												{xtype: 'combo', fieldLabel: 'Type', triggerAction: 'all', anchor: '100%', 
-													store: [['list', 'List'], ['grid', 'Grid'], ['edit', 'Edit'], ['show', 'Show']],
-													value: 'list'
-												}
-											]
-										}
-									]
-								}
+								modelsCombo,
+								{xtype: 'combo', fieldLabel: 'Widget Type', triggerAction: 'all', anchor: '100%', 
+									store: [['list', 'List'], ['grid', 'Grid'], ['edit', 'Edit'], ['show', 'Show']],
+									value: 'list'
+								},
+								{xtype: 'textfield', fieldLabel: 'Widget Name', anchor: '100%'}
 							]
-						}
+						})
 					]
 				},
 				{
-					region: 'west', layout: 'fit',
-					margins: '5 5 5 5', width: 220,
-					items: [
-						{xtype: 'afStudio.models.modelTree', url: _this.modelsUrl, border: false, ref: '../modelsTree'}
-					]
-				}, {	
-					region: 'center', margins: '5 5 5 0', layout: 'fit',
-					items: this.fieldsGrid
-				},{	
-					region: 'east', margins: '5 5 5 0', 
-					width: 235, layout: 'vbox', 
 					border: false, bodyBorder: false,
-					bodyStyle: 'background-color: #DFE8F6',
-					items: [this.relationsGrid, this.basket]
+					xtype: 'panel',
+					layout: 'border',
+					items: [
+						{
+							region: 'west', layout: 'fit',
+							margins: '5 5 5 5', width: 220,
+							items: [
+								{xtype: 'afStudio.models.modelTree', url: _this.modelsUrl, border: false, ref: '../../modelsTree'}
+							]
+						}, {	
+							region: 'center', margins: '5 5 5 0', layout: 'fit',
+							items: this.fieldsGrid
+						},{	
+							region: 'east', margins: '5 5 5 0', 
+							width: 235, layout: 'vbox', 
+							border: false, bodyBorder: false,
+							bodyStyle: 'background-color: #DFE8F6',
+							items: [this.relationsGrid, this.basket]
+						}		
+					]
 				}
 			],
 			buttons: [
-				{text: 'Create widget', handler: this.create, scope: this},
-				{text: 'Cancel', handler: this.cancel, scope: this}
+				{text: 'Cancel', handler: this.cancel, scope: this},
+				'->',
+				{text: '&laquo; Back', handler: this.chStep.createDelegate(_this, [0]), id: this.id + '-back-btn', disabled: true},
+				{text: 'Next &raquo;', handler: this.chStep.createDelegate(_this, [1]), id: this.id + '-next-btn'},
+				{text: 'Save &raquo;', handler: this.create, scope: this, id: this.id + '-save-btn', hidden: true}
 			],
-			buttonAlign: 'center'
+			buttonAlign: 'left'
 		}		
 	},
 	
+	/**
+	 * Function chStep
+	 * Changes wizard step and prepares page UI
+	 * @param {Number}  stepNo - New step number
+	 */
+	chStep: function(stepNo){
+		var panel = Ext.getCmp(this.id);
+		if(1 == stepNo) {
+			var size = {width: 840, height: 450};
+			Ext.getCmp(this.id + '-save-btn').show();
+			Ext.getCmp(this.id + '-next-btn').hide();
+			Ext.getCmp(this.id + '-back-btn').enable();
+			Ext.getCmp(this.id + 'help-toolbar').show();
+		} else {
+			var size = {width: 450, height: 150};
+			Ext.getCmp(this.id + '-save-btn').hide();
+			Ext.getCmp(this.id + '-next-btn').show();
+			Ext.getCmp(this.id + '-back-btn').disable();
+			Ext.getCmp(this.id + 'help-toolbar').hide();
+		}
+		
+		this.setSize(size);
+		this.setPagePosition( (Ext.getBody().getWidth()-size.width)/2, 150);		
+		panel.getLayout().setActiveItem(stepNo);
+	},
+	
+	/**
+	 * Function create
+	 * Handler for "Create Widget" operation
+	 */
 	create: function(){
 		var items = [];
 		this.relationsGrid.getStore().each(function(rec){
@@ -317,6 +371,10 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		alert('Selected fields: ' + items.toString())
 	},
 	
+	/**
+	 * Function cancel
+	 * Close window
+	 */
 	cancel: function(){
 		this.close();
 	},

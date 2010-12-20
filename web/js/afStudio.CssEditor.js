@@ -1,5 +1,17 @@
+/**
+ * Css Editor
+ * Widget Designer
+ * @class afStudio.CssEditor
+ * @extends Ext.TabPanel
+ * @author PavelK
+ */
 afStudio.CssEditor = Ext.extend(Ext.Window, { 
 
+	/**
+	 * initComponent method
+	 * ExtJS template method
+	 * @private
+	 */
 	initComponent: function(){
 		this.createRegions();
 		var config = {
@@ -23,73 +35,21 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		afStudio.CssEditor.superclass.initComponent.apply(this, arguments);	
 	},
 	
+	/**
+	 * Function createRegions
+	 * This function creates west and center panels and needful components
+	 */
 	createRegions: function(){
-		
-		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
+		//Create TreeLoader component
+		this.loader = new Ext.tree.TreeLoader({
+			 dataUrl: '/appFlowerStudio/cssfilestree'
+		});
 
-
-//       var rootNode = new Ext.tree.AsyncTreeNode({
-//            expanded: true,
-//            text: 'XML',
-//			id: 'xml',
-//            children: [
-//            	{
-//            		text: 'XML 1', leaf: false, type: 'xml',
-//            		expanded: true, iconCls: 'icon-tree-db',
-//            		children: [
-//	        			{text: 'APP', iconCls: 'icon-tree-table', type: 'app', leaf: true},
-//	        			{text: 'MODULE', iconCls: 'icon-tree-table', type: 'module', leaf: true}
-//            		]
-//            	}
-//            ]
-//        });
-
-
-//            // yui-ext tree
-//            var tree = new Tree.TreePanel({
-//                animate:true, 
-//                autoScroll:true,
-//                loader: new Tree.TreeLoader({dataUrl:'get-nodes.php'}),
-//                enableDD:true,
-//                containerScroll: true,
-//                border: false,
-//                width: 250,
-//                height: 300,
-//                dropConfig: {appendOnly:true}
-//            });
-//            
-//            // add a tree sorter in folder mode
-//            new Tree.TreeSorter(tree, {folderSort:true});
-//            
-//            // set the root node
-//            var root = new Tree.AsyncTreeNode({
-//                text: 'Ext JS', 
-//                draggable:false, // disable root node dragging
-//                id:'src'
-//            });
-//            tree.setRootNode(root);
-//            
-//            // render the tree
-//            tree.render('tree');
-//            
-//            root.expand(false, /*no anim*/ false);
-
-		if(!this.loader) {
-			this.loader = new Ext.tree.TreeLoader({
-				 dataUrl: '/appFlowerStudio/cssfilestree'
-			});
-		}
-
+		//Create west region
 		this.westPanel = new Ext.tree.TreePanel( {
-			split: true,
-			title: 'Files', 
-			iconCls: 'icon-models',
+			split: true, title: 'Files',  iconCls: 'icon-models',
 			url: '/appFlowerStudio/cssfilestree',
-			method: 'post',
-			loader: this.loader,
-//			reallyWantText: 'Do you really want to'
-//		    ,root: rootNode
-//			,rootVisible:false,
+			loader: this.loader, method: 'post',
 			tools:[{id:'refresh', 
 				handler:function(){
 					this.loader.load(root);
@@ -119,40 +79,47 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 
 		// setup loading mask if configured
 		this.loader.on({
-			 beforeload:function (loader,node,clb){
-			 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
+			 beforeload:function (loader, node, clb){
+			 	(function(){
+				 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
+			 	}).defer(100);
 			 }
-			,load:function (loader,node,resp){
+			,load:function (loader, node, resp){
 				node.getOwnerTree().body.unmask();
 			}
-			,loadexception:function(loader,node,resp){
+			,loadexception:function(loader, node, resp){
 				node.getOwnerTree().body.unmask();
 			}
 		});
-				
 		
-//		this.westPanel = new Ext.Panel({
-//			layout: 'fit', region: 'west', html: 'west', split: true,
-//			width: 220
-//		});
-		
+		//Create CodePress element
 		this.codeEditor = new Ext.ux.CodePress({
-			delayedStart: true,
+			delayedStart: true, closable:true,
+			
+			//TODO: check this
 			title:'Code editor - actions.class.php',
-			closable:true,
 			path: 'appFlowerStudioPlugin/desktop.html',
 			tabTip: 'appFlowerStudioPlugin/desktop.html',
-//			tabId: codeEditorTab.getId(),
 			file: 'appFlowerStudioPlugin/desktop.html'
-			/*,tabPanel:tabPanel*/
 		});
 		
 		this.centerPanel = new Ext.Panel({
-			layout: 'fit', region: 'center', items: [this.codeEditor]
+			layout: 'fit', region: 'center', items: [this.codeEditor],
+			tbar: [
+				{text: 'Save', iconCls: 'icon-save', handler: this.save, scope: this}
+			]
 		})
 	},
 	
-	cancel:function(){
+	save: function(){
+		alert('Ssave button pressed')
+	},
+	
+	/**
+	 * Function cancel
+	 * Close active wimdow
+	 */
+	cancel: function(){
 		this.close();
 	}
 });
