@@ -117,6 +117,10 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 				*/
 				{xtype: 'tbseparator'},
 				{text: 'Users', iconCls: 'icon-users'},
+				{xtype: 'tbseparator'},
+				{text: 'Run', iconCls: 'icon-run', handler: function(){alert('Run button pressed')}},
+				{xtype: 'tbseparator'},
+				{text: 'Re-build', iconCls: 'icon-rebuild', handler: function(){alert('Re-build button pressed')}},
 				
 				{xtype: "tbfill"},
 				{

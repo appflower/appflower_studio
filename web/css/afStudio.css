@@ -19,6 +19,8 @@
 .icon-obj{background: url('/appFlowerStudioPlugin/images/application.png') no-repeat 0 0 !important;}
 
 .icon-users{background: url('/appFlowerStudioPlugin/images/user_green.png') no-repeat 0 0 !important;}
+.icon-run{background: url('/appFlowerStudioPlugin/images/user_green.png') no-repeat 0 0 !important;}
+.icon-rebuild{background: url('/appFlowerStudioPlugin/images/arrow_refresh.png') no-repeat 0 0 !important;}
 .icon-dbquery{background: url('/appFlowerStudioPlugin/images/computer.png') no-repeat 0 0 !important;}
 
 .icon-sql{background: url('/appFlowerStudioPlugin/images/script_code.png') no-repeat 0 0 !important;}
