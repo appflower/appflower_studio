@@ -231,19 +231,8 @@ afStudio.console = Ext.extend(Ext.Panel, {
                                     render: function(cmp){
                                         cmp.moveLast();
                                     },
-                                    load: function(cmp){
-                                        cmp.bindStore(_this.debugStore);
-                                    },
-                                    unbind : function(ds){
-                                        ds.un("beforeload", this.beforeLoad, this);
-                                        ds.un("load", this.onLoad, this);
-                                        ds.un("loadexception", this.onLoadError, this);
-                                        this.ds = undefined;
-                                    },
-
                                 },
                                 id: 'debug-bbar'
-                                // activeItem: 1
                             }),
                             id: this.id + '-debug-tab',
                             autoScroll: true, 
@@ -266,25 +255,24 @@ afStudio.console = Ext.extend(Ext.Panel, {
          var _this = this;
         
         _this.body.mask('Loading, please Wait...', 'x-mask-loading');
-
-        _this.debugStore.reload({params:{   
-                                    start:0, 
-                                    limit:1, 
+        
+        _this.debugStore.baseParams.file_name = e.id;
+        _this.debugStore.baseParams.command = "file";
+        
+        _this.debugStore.load({params:{   
+                                    start:0,
+                                    limit:1,
                                     command: 'file',
                                     file_name: e.id
                                 }});
         _this.body.unmask();
         
         // Ext.getCmp('debug-bbar').moveLast();
-        
-        // Ext.getCmp('debug-bbar').bind(_this.debugStore);
-        // Ext.getCmp('debug-bbar').bindStore(_this.debugStore);
-
     } //eo consoleDebugClickListener
 	
 	
 	/**
-     * Update debug tab information
+     * Update debug tab information 
      */
     ,updateDebugTab: function () {
         var _this = this;
@@ -332,7 +320,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
     }
 	
 	/**
-	 * Initializes events
+	 * Initializes events 
 	 * @private
 	 */
 	,_initEvents : function() {
