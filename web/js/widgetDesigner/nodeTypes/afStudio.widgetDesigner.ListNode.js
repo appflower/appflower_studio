@@ -15,11 +15,18 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	 * @param {Object} data - response data
 	 */
 	constructor: function(data){
-	    this.createRootNode(data);
-
-	    this.root = new Ext.tree.AsyncTreeNode(this.config);
-		this.root.on('render', this.root.expand, this);
 		
+		this.testNode = new afStudio.widgetDesigner.DatasourceNode(data);
+		
+	    this.createRootNode(data);
+	    this.root = new Ext.tree.AsyncTreeNode(this.config);
+		
+		this.root.on('render', this.root.expand, this);
+		this.root.on('expand', function(){
+			this.root.appendChild(this.testNode);
+		}, this);
+		
+//		this.root.appendChild(this.testNode);
 	    return this.root;
 	},
 	
@@ -56,7 +63,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 		}
 		
 		this.createActions(data);
-		this.createDataStore(data);
+//		this.createDataStore(data);
 		this.createFields(data);
 	},
 
