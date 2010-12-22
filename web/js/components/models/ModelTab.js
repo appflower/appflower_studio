@@ -33,12 +33,12 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	,modelUrl : '/appFlowerStudio/models'
 
 	/**
-	 * {@link afStudio.models.FieldsGrid} modelConfig's <u>altermodel</u> event listener
-	 * This event was relayed to the ModelTab
+	 * Runs altering process and updates model's grids
+	 * @private
+	 * @param {Function} action
 	 */
-	,onAlterModel : function() {
-		var _this = this,
-			   md = _this._modelData;			
+	,alterModelAction : function(action) {
+		var _this = this;
 		
 		afStudio.vp.mask({region:'center', msg:'Updating ' + _this.modelName + ' model...'});
 		
@@ -51,14 +51,43 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 		   },
 		   success: function(result, request) {
 		       afStudio.vp.unmask('center');
-		       var fData = Ext.decode(result.responseText);		   		
-		       _this.remove(md, true);		   		
-		       _this._modelData = _this.createModelDataGrid(fData);				
-		       _this.insert(0, _this._modelData);
-		       _this.doLayout();
+		       var fData = Ext.decode(result.responseText);
+			   action(fData);		       
 		   }
-		});		
+		});
+	}//eo alterModelAction
+	
+	/**
+	 * {@link afStudio.models.FieldsGrid} modelConfig's <u>altermodel</u> event listener
+	 * Updates modelData grid.
+	 * This event is relayed to the ModelTab.
+	 */
+	,onAlterModel : function() {
+		var _this = this,
+			   md = _this._modelData;
+			   
+		_this.alterModelAction(function(fData) {
+	       _this.remove(md, true);		   		
+	       _this._modelData = _this.createModelDataGrid(fData);				
+	       _this.insert(0, _this._modelData);
+	       _this.doLayout();
+		});
 	}//eo onAlterModel
+	
+	/**
+	 * {@link afStudio.models.ModelGrid} modelData's <u>alterfield</u> event listener
+	 * Updates modelConfig grid.
+	 * This event is relayed to the ModelTab. 
+	 */
+	,onAlterField : function() {
+		var _this = this,
+			   mc = _this._modelConfig;			
+			   
+		_this.alterModelAction(function(fData) {
+			mc.loadModelData(fData);
+		});
+		
+	}//eo onAlterField
 	
 	/**
 	 * Creates modelConfig grid
@@ -91,6 +120,8 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 			itemId: 'model-data',
 			title: mdl,
 			_data: fData,
+			model: _this.modelName,
+			schema: _this.schemaName,			
             storeProxy: new Ext.data.HttpProxy({
                 api: {
                 	read:    _this.modelGridDataUrl + '/read?model='   + mdl,
@@ -147,9 +178,11 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 		       md = _this._modelData;
 
 		this.relayEvents(mc, ['altermodel']);
-
+		this.relayEvents(md, ['alterfield']);
+		
 		_this.on({
-			'altermodel' : Ext.util.Functions.createDelegate(_this.onAlterModel, _this)
+			'altermodel' : Ext.util.Functions.createDelegate(_this.onAlterModel, _this),
+			'alterfield' : Ext.util.Functions.createDelegate(_this.onAlterField, _this)
 		});		
 	}//eo _afterInitComponent
 	

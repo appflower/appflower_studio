@@ -208,7 +208,7 @@ class afStudioModelsCommand
 				break;
 					
 				case "update":	
-					$rows = $this->request->getParameterHolder()->has('rows')?$this->request->getParameterHolder()->get('rows'):null;
+					$rows = $this->request->getParameterHolder()->has('rows') ? $this->request->getParameterHolder()->get('rows') : null;
 					if($rows!=null)
 					{
 						$rows=json_decode($rows);print_r($rows);die();
@@ -236,16 +236,64 @@ class afStudioModelsCommand
 				break;
 				
 				/**
-				 * Alters mode's structure
+				 * Alters model's structure
 				 */
 				case 'alterModel':
 					try {
 						$fields = json_decode($this->request->getParameter('fields'));										
-						$this->alterModel($fields);
+						if (($message = $this->alterModel($fields)) === true) {	
+							$success = true;
+							$message = $this->modelName . ' ' . 'structure was successfully updated';
+						} else {
+							$success = false;
+						}						
 						$this->result = array(
-							'success' => true, 
-							'message' => $this->modelName . ' ' . 'structure was successfully updated'
+							'success' => $success, 
+							'message' => $message
 						);				
+			        } catch( Exception $e ) {
+			        	$this->result = array('success' => false, 'message' => $e->getMessage());
+			        }					
+				break;
+				
+				/**
+				 * Alters model field's structure
+				 */
+				case 'alterModelUpdateField':
+					try {
+						$field = $this->request->getParameter('field');
+						$fieldDef = json_decode($this->request->getParameter('fieldDef'));																
+						if (($message = $this->alterModelField($field, $fieldDef)) === true) {							
+							$success = true;
+							$message = 'Field "' . $fieldDef->name . '" was successfully updated';
+						} else {
+							$success = false;
+						}
+						$this->result = array(
+							'success' => $success, 
+							'message' => $message
+						);				
+			        } catch( Exception $e ) {
+			        	$this->result = array('success' => false, 'message' => $e->getMessage());
+			        }
+				break;
+				
+				/**
+				 * Creates new model's field
+				 */				
+				case 'alterModelCreateField':
+					try {						
+						$fieldDef = json_decode($this->request->getParameter('fieldDef'));						
+						if (($message = $this->createModelField($fieldDef)) === true) {
+							$success = true;
+							$message = 'Field "' . $fieldDef->name . '" was successfully created';							
+						} else {
+							$success = false;
+						}
+						$this->result = array(
+							'success' => $success, 
+							'message' => $message
+						);
 			        } catch( Exception $e ) {
 			        	$this->result = array('success' => false, 'message' => $e->getMessage());
 			        }					
@@ -344,10 +392,37 @@ class afStudioModelsCommand
 	/**
 	 * Validates Model's name
 	 * @param string $name
+	 * @return boolean
 	 */
 	private function isValidModelName($name) 
 	{
 		return preg_match("/^[^\d]\w*$/i", $name);
+	}
+
+	/**
+	 * Validates Field uniqueness inside the Model	 
+	 * @param string $name
+	 * @return boolean
+	 */
+	private function isFieldNameUnique($name) 
+	{
+		return !array_key_exists($name, $this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]);
+	}
+	
+	/**
+	 * Verifies field name
+	 * @param string $fieldName
+	 * @return true on success otherwise error message
+	 */
+	private function modelFieldVerification($fieldName) 
+	{
+		if (!$this->isValidModelName($fieldName)) {
+			return "Field name \"{$fieldName}\" is not valid. Field name must contains only characters, digits or \"_\" and starts from \"_\" or character";
+		}
+		if (!$this->isFieldNameUnique($fieldName)) {
+			return "Field name \"{$fieldName}\" is duplicated";				
+		}
+		return true;
 	}
 	
 	/**
@@ -436,9 +511,9 @@ class afStudioModelsCommand
 	private function buildRelationComboModels()
 	{
 		$models = array();
-		
+
 		if (count($this->propelSchemaArray) > 0) {
-			$query = $this->request->getParameter('query');			
+			$query = $this->request->getParameter('query');
 			$relation = explode('.', trim($query));
 			
 			if (count($relation) > 1) {				
@@ -476,6 +551,54 @@ class afStudioModelsCommand
 	}	
 	
 	/**
+	 * Creates field definition from json decoded object
+	 * @param stdClass $f json decoded field definition
+	 * @return array field's definition 
+	 */
+	private function buildFieldDefinition($f) {
+		$definition = array();
+		
+		if (!empty($f->type)) {
+			$definition['type'] = $f->type;
+		}
+		if (!empty($f->default)) {
+			$definition['default'] = $f->default;
+		}
+		if (!empty($f->autoIncrement)) {
+			$definition['autoIncrement'] = $f->autoIncrement;
+		}
+		if (!empty($f->key)) {
+			switch ($f->key) {
+				case 'primary':
+					$definition['primaryKey'] = true;
+				break;
+				case 'unique':
+					$definition['index'] = 'unique';
+				break;
+				case 'index':
+					$definition['index'] = true;
+				break;
+			}
+		}
+		if (!empty($f->required)) {
+			$definition['required'] = $f->required;
+		}
+		if (!empty($f->relation)) {
+			$ref = explode('.', $f->relation);
+			$definition['foreignTable'] = $this->getTableNameByModel($ref[0]);
+			$definition['foreignReference'] = $ref[1];
+		}			
+		if (!empty($f->size)) {
+			$definition['size'] = intval($f->size);
+		}			
+		if (!empty($f->onDelete)) {
+			$definition['onDelete'] = $f->onDelete;
+		}
+
+		return $definition;
+	}
+	
+	/**
 	 * Alters Model structure 
 	 * @param array $fields the new models fields 
 	 */
@@ -489,48 +612,76 @@ class afStudioModelsCommand
 		}
 		//build new structure
 		foreach ($fields as $f) {
-			$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name] = array();
-			
-			if (!empty($f->type)) {
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['type'] = $f->type;
-			}
-			if (!empty($f->default)) {
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['default'] = $f->default;
-			}
-			if (!empty($f->autoIncrement)) {
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['autoIncrement'] = $f->autoIncrement;
+			if (($error = $this->modelFieldVerification($f->name)) !== true) {
+				return $error; 
 			}			
-			if (!empty($f->key)) {
-				switch ($f->key) {
-					case 'primary':
-						$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['primaryKey'] = true;
-					break;
-					case 'unique':
-						$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['index'] = 'unique';
-					break;
-					case 'index':
-						$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['index'] = true;
-					break;
-				}
-			}
-			if (!empty($f->required)) {
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['required'] = $f->required;
-			}
-			if (!empty($f->relation)) {
-				$ref = explode('.', $f->relation);
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['foreignTable'] 
-					= $this->getTableNameByModel($ref[0]);
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['foreignReference'] = $ref[1];
-			}			
-			if (!empty($f->size)) {
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['size'] = $f->size;
-			}			
-			if (!empty($f->onDelete)) {
-				$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name]['onDelete'] = $f->onDelete;
-			}
-		}
-		
+			$definition = $this->buildFieldDefinition($f);
+			$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name] = $definition;
+		}		
 		$this->saveSchema();
+		$this->deployOfSchemaChanges();
+	}
+	
+	/**
+	 * Alters model's field
+	 * @param string $field the field to update
+	 * @param stdClass $fieldData json decoded new field definition
+	 */
+	private function alterModelField($field, $fieldData)
+	{	
+		if (!$this->isValidModelName($fieldData->name)) {
+			return "Field name \"{$fieldData->name}\" is not valid. Field name must contains only characters, digits or \"_\" and starts from \"_\" or character";
+		}	
+		$fieldDefinition = $this->buildFieldDefinition($fieldData);
+		$this->arraySetKeyValue($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName], 
+				$field, $fieldData->name, $fieldDefinition);		
+		$this->saveSchema();
+		$this->deployOfSchemaChanges();
+		
+		return true;		
+	}
+	
+	/**
+	 * Creates model's field
+	 * @param stdClass $fieldData json decoded field definition
+	 */
+	private function createModelField($fieldData)
+	{
+		if (($error = $this->modelFieldVerification($fieldData->name)) !== true) {
+			return $error; 
+		}
+		$fieldDefinition = $this->buildFieldDefinition($fieldData);
+		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$fieldData->name] = $fieldDefinition;		
+		$this->saveSchema();
+		$this->deployOfSchemaChanges();
+		
+		return true;		
+	}
+	
+	private function deployOfSchemaChanges() {
+		//TODO should be correctly implemented
+		$afConsole = new afStudioConsole();
+		$consoleResult = $afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
+	}
+	
+	/**
+	 * Utility function.
+	 * Sets specified array key's value and changes its name if $newKey was specified.   
+	 * @param array $array the array to set key
+	 * @param string $key to set up
+	 * @param string $newKey the new key name 
+	 * @param mixed $value the key's value to be set
+	 */
+	private function arraySetKeyValue(&$array, $key, $newKey, $value) {
+		$initial = array();		
+		foreach ($array as $k => $v) {
+			if ($k != $key) {
+				$initial[$k] = $v;
+			} else {
+				empty($newKey) ? $initial[$key] = $value : $initial[$newKey] = $value;
+			}
+		}		
+		$array = $initial;
 	}
 
 }

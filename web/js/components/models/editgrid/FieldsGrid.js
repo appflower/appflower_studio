@@ -10,6 +10,16 @@ Ext.ns('afStudio.models');
 afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	
 	/**
+	 * @cfg {String} model required
+	 * This model name
+	 */
+	
+	/**
+	 * @cfg {String} schema required
+	 * This model's schema name
+	 */
+	
+	/**
 	 * Saves Model structure
 	 */
 	saveModel : function() {
@@ -146,18 +156,27 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	,nameEditorBuilder : function() {
 		var _this = this,
 			names = [];
-//		Ext.each(_this._data.rows, function(i, idx){
-//			names.push(i.name);
-//		});		
+		/*Ext.each(_this._data.rows, function(i, idx){
+			names.push(i.name);
+		});*/		
 		return {						
 			editor: new Ext.form.TextField({
+				allowBlank: false,
 				maskRe: /[\w]/,
 				validator: function(value) {
-					return /^[^\d]\w*$/im.test(value) ? true : 'Field name must contains only characters, digits or "_" and starts from "_" or character';
-//					return names.indexOf(value) != -1 ? 'Duplicate field name' : true;					
+					return /^[^\d]\w*$/im.test(value) ? true : afStudio.models.TypeBuilder.invalidFieldName;
+					//return names.indexOf(value) != -1 ? 'Duplicate field name' : true;					
 				}
 			})
 		}
+	}
+	
+	/**
+	 * Loads data inside grid
+	 * @param {Object} data
+	 */
+	,loadModelData : function(data) {
+		this.getStore().loadData(data);
 	}
 	
 	/**
@@ -179,6 +198,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			url: '/appFlowerStudio/models',
 			autoLoad: false,
 		    baseParams: {
+		    	xaction: 'read',
 		    	model: _this.model,
 		    	schema: _this.schema
 		    },
@@ -221,7 +241,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 					mode: 'local',
 					valueField: 'field',
 					displayField: 'field',
-					store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']]
+					store: [['', 'None'], ['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']]
 				}),
 				renderer : function(value, metaData, record, rowIndex, colIndex, store) {
 					var html = '';
@@ -385,7 +405,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		);
 		
 		//Load Model structure
-		store.loadData(_this._data);
+		_this.loadModelData(_this._data);
 		
 	}//eo _afterInitComponent
 	

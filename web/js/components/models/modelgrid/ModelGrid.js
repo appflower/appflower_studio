@@ -383,7 +383,13 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 	},
 	
 	editHeadColumn : function(el, index) {
-		var ed = new Ext.grid.GridEditor(new Ext.form.TextField());
+		var ed = new Ext.grid.GridEditor(new Ext.form.TextField({
+			allowBlank: false,
+			maskRe: /[\w]/,
+			validator: function(value) {
+				return /^[^\d]\w*$/im.test(value) ? true : afStudio.models.TypeBuilder.invalidFieldName;					
+			}
+		}));
 		ed._index = index;
 		ed.on({
 			scope: this,
@@ -456,13 +462,14 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		
 		for (var i = 0; i < this.maxColumns; i++) {
 			var hidden = true;
-			if (i==0) {
-				hidden=false;
+			if (i == 0) {
+				hidden = false;
 			}
 			columns.push({
 				header: this.defautHeaderTitle,
 				dataIndex: 'c'+i,
-				width: 80,hidden:hidden,
+				width: 80,
+				hidden: hidden,
 				uninit: hidden,
 				editor: new Ext.grid.GridEditor(new Ext.form.TextField(), {
 					completeOnEnter:false,
@@ -497,7 +504,7 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 			});
 		}
 		
-		var config = {			
+		var config = {		
 	        autoScroll: true,
 	        store: store,
 	        cm : cm,
@@ -505,24 +512,24 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	        clicksToEdit: 1,	        
 	        view: new afStudio.models.modelGridView(),
 	        listeners: {
-				afteredit:function(e){
+				afteredit: function(e){
 					//e.record.commit();
 					var row = e.row+1;
 					var count = this.store.getCount();
-					if(count == row){
+					if (count == row) {
 						var rec = store.recordType;
 						store.add([new rec()]);
 					}
 					var column = e.column;
-					if(this.getColumnModel().getColumnCount(true)==(column+1) &&  column<this.maxColumns){
+					if (this.getColumnModel().getColumnCount(true)==(column+1) &&  column<this.maxColumns) {
 						this.getView().showNextColumn(column);
 					}
 					//if(colum = this.)
-					if(_modelEditerEnterFlag){
-						var task = new Ext.util.DelayedTask(function(row,column){
+					if (_modelEditerEnterFlag) {
+						var task = new Ext.util.DelayedTask(function(row,column) {
 						    this.startEditing(row,column);
 						    _modelEditerEnterFlag=0;
-						},this,[row,column]);
+						}, this, [row,column]);
 						task.delay(100);
 					}
 				}
@@ -533,18 +540,36 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 	},
 	
+	afterInit: Ext.emptyFn,
+	
 	initComponent: function(){
 		this.beforeInit();		
 		afStudio.models.ExcelGridPanel.superclass.initComponent.apply(this, arguments);
+		this.afterInit();
 	}
 	
 });
 
 
-//model grid is extended from excel grid
+/**
+ * ModelGrid
+ * @class afStudio.models.ModelGrid
+ * @extends afStudio.models.ExcelGridPanel
+ */
 afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
-	beforeInit: function() {
+	/**
+	 * @cfg {String} model required
+	 * This model name
+	 */
+	
+	/**
+	 * @cfg {String} schema required
+	 * This model's schema name
+	 */	
+	
+	//private
+	beforeInit : function() {
 		var _this = this,
 			 data = _this._data.rows,
 		   fields = ['id'];		  
@@ -562,7 +587,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					/**
 					 * custom property used with {@link afStudio.models.EditFieldWindow} field editor
 					 */
-					fieldDefinition: data[i] 
+					fieldDefinition: Ext.apply(data[i], {exists: true}) 
 				});
 				fields.push({name:'c'+i});
 			}
@@ -574,9 +599,11 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					uninit: true,
 					width: 80,
 					hidden: true,
-					editor: afStudio.models.TypeBuilder.createEditor('varchar'),
+					//data type is not specified thus it is not possible to add field's data before it will be created
+					editor: afStudio.models.TypeBuilder.createEditor(),
 					fieldDefinition: {
-						name: _this.defautHeaderTitle
+						name: _this.defautHeaderTitle,
+						exists: false
 					}
 				});
 				fields.push({name:'c'+i});
@@ -648,18 +675,41 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	    }	 
 	            },
 	            scope:this
-	        },'-',{
-	            text: 'Export to Fixtures',
-	            iconCls: 'icon-view-tile',
-	            handler:function(btn, ev){
-	            }
 	        }]
 		};
 		
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-	},
+	}
 	
-	insertAfterField : function(b, e) {
+	//private
+	,afterInit : function() {
+		afStudio.models.ModelGrid.superclass.afterInit.apply(this, arguments);		
+		
+		this.addEvents(
+			/**
+			 * @event alterfield 
+			 * Fires after the field was successfully altered.
+			 */
+			'alterfield',
+			
+			/**
+			 * @event alterfieldexception 
+			 * Fires if an error was happend during altering field.
+			 * @param {Object} The XMLHttpRequest object containing the response data.
+			 */
+			'alterfieldexception',
+			
+			/**
+			 * @event alterfieldfailure
+			 * Fires if an error HTTP status was returned from the server during altering field.
+			 * @param {Object} The XMLHttpRequest object containing the response data.
+			 */
+			'alterfieldfailure'
+		);		
+		
+	}
+	
+	,insertAfterField : function(b, e) {
 		var _this = this,		
     		cell = _this.getSelectionModel().getSelectedCell(),
     		index = cell ? cell[0] + 1 : this.store.getCount(); 
@@ -673,9 +723,9 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
         _this.stopEditing();
         _this.store.insert(index, u);
 		_this.startEditing(index , cell ? cell[1] : 0);		
-	},
+	}
 	
-	insertBeforeField : function() {
+	,insertBeforeField : function() {
 		var _this = this,
     		cell = _this.getSelectionModel().getSelectedCell(),
     		index = cell ? cell[0] : 0; 
@@ -690,7 +740,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
         _this.store.insert(index, u);
         _this.startEditing(index , cell ? cell[1] : 0);	
 	},	
-	
+
+	//private
 	onEditComplete : function (ed, value, startValue) {
         this.editing = false;
         this.lastActiveEditor = this.activeEditor;
