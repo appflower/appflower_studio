@@ -1,38 +1,6 @@
-afStudio.widgetDesigner.DatasourceNode = function(data){
-	this.data = data;
-	this.loaded = this.loading = false;
-	
-	this.contextMenu =  new Ext.menu.Menu({
-        items: [
-        	{iconCls: 'icon-field-add', id: 'add-field', text: 'Add Field1'}
-		]
-	});
-	
-    var config = this.getNodeConfig(data);
-	afStudio.widgetDesigner.DatasourceNode.superclass.constructor.apply(this, [config]);
-	this._initEvents();
-};
-
-Ext.extend(afStudio.widgetDesigner.DatasourceNode, Ext.tree.AsyncTreeNode, {
+afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
 	getNodeConfig: function(data){
-		var node = {};
-		if(ds = data['i:datasource']){
-			Ext.apply(node, {
-				expanded: true, 
-				text: 'Datasource',
-				itemId: 'datasource', iconCls: 'icon-data',
-				
-				children: []
-			});
-			
-//			if(method = ds['i:method']){
-//				node.children = [
-//					new afStudio.widgetDesigner.DatasourceNodeChild(method)
-//				]
-//			}
-		}		
-		
-		return node;
+        return { text: 'Datasource' };
 	},
 	
 	onContextMenu: function(node, e){

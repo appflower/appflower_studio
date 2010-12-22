@@ -1,9 +1,4 @@
-afStudio.widgetDesigner.ActionsNode = function(){
-    var config = this.getNodeConfig();
-    this.createContextMenu();
-    afStudio.widgetDesigner.ActionsNode.superclass.constructor.apply(this, [config]);
-};
-Ext.extend(afStudio.widgetDesigner.ActionsNode, Ext.tree.TreeNode, {
+afStudio.widgetDesigner.ActionsNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [

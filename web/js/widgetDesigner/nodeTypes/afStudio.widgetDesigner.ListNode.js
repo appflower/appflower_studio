@@ -16,18 +16,11 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	 */
 	constructor: function(data){
 		
-		this.testNode = new afStudio.widgetDesigner.DatasourceNode(data);
-		
 	    this.createRootNode(data);
 		
-//		this.root.on('render', this.root.expand, this);
-//		this.root.on('expand', function(){
-//			this.root.appendChild(this.testNode);
-//		}, this);
-
 		this.createActions();
-		this.createDatasource(data);
-		this.createFields(data);
+		this.createDatasource();
+		this.createFields();
 
 	    return this.root;
 	},
@@ -69,12 +62,12 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
         this.root.appendChild(new afStudio.widgetDesigner.ActionsNode());
 	},
 
-	createDatasource: function(data){
-        this.root.appendChild(new afStudio.widgetDesigner.DatasourceNode(data));
+	createDatasource: function(){
+        this.root.appendChild(new afStudio.widgetDesigner.DatasourceNode());
 	},
 	
-	createFields: function(data){
-        this.root.appendChild(new afStudio.widgetDesigner.FieldsNode(data));
+	createFields: function(){
+        this.root.appendChild(new afStudio.widgetDesigner.FieldsNode());
 	},
 	
 	/**
