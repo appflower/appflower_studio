@@ -19,14 +19,16 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 		this.testNode = new afStudio.widgetDesigner.DatasourceNode(data);
 		
 	    this.createRootNode(data);
-	    this.root = new Ext.tree.AsyncTreeNode(this.config);
 		
-		this.root.on('render', this.root.expand, this);
-		this.root.on('expand', function(){
-			this.root.appendChild(this.testNode);
-		}, this);
-		
-//		this.root.appendChild(this.testNode);
+//		this.root.on('render', this.root.expand, this);
+//		this.root.on('expand', function(){
+//			this.root.appendChild(this.testNode);
+//		}, this);
+
+		this.createActions();
+		this.createDatasource(data);
+		this.createFields(data);
+
 	    return this.root;
 	},
 	
@@ -37,7 +39,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	 */		
 	
 	createRootNode: function(data){
-		this.config = {
+		this.root = new Ext.tree.TreeNode({
 			getModifiedFields: this.getModifiedFields,
 			getPropertiesFields: this.getPropertiesFields,
 			setPropertyField: this.setPropertyField,
@@ -60,106 +62,19 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 					}
 				}
 			]
-		}
-		
-		this.createActions(data);
-//		this.createDataStore(data);
-		this.createFields(data);
+		});
 	},
 
-	/**
-	 * Function createActions
-	 * Create Action node and actions nodes
-	 * @param {Object} data - response data
-	 */		
-	createActions: function(data){
-		if(actions = data['i:actions']){
-			if(a = actions['i:action']){
-				this.setRootExpanded(true);
-				
-				var node = {text: 'Actions', expanded: true, itemId: 'actions', leaf: false, children: []};
-				this.addNodeToRoot(node);
-				
-				
-				for(var i =0, l= a.length; i<l; i++){
-					var n = {
-						leaf: true, expanded: false,
-						itemId: 'action', 
-//						iconCls: a[i].iconCls|| 'icon-field',
-						iconCls: 'icon-field',
-						text: a[i].name || 'Default action name',
-						data: {
-							'Name': a[i].name,
-							'Condition': a[i].condition,
-							'Icon Class': a[i].iconCls,
-							'URL': a[i].url
-						}
-					}
-					node.children.push(n);
-				}
-			}
-		}
+	createActions: function(){
+        this.root.appendChild(new afStudio.widgetDesigner.ActionsNode());
 	},
 
-	/**
-	 * Function createDataStore
-	 * Create DataStore node and methods nodes
-	 * @param {Object} data - response data
-	 */	
-	createDataStore: function(data){
-		if(ds = data['i:datasource']){
-			this.setRootExpanded(true)
-			var node = {
-				expanded: true, text: 'Datasource',
-				
-				itemId: 'datasource', iconCls: 'icon-data'
-			};
-			
-			if(method = ds['i:method']){
-				node.children = [
-					{text: method.name, itemId: 'method', leaf: true}
-				]
-			}
-			this.addNodeToRoot(node);
-		}
+	createDatasource: function(data){
+        this.root.appendChild(new afStudio.widgetDesigner.DatasourceNode(data));
 	},
 	
-	/**
-	 * Function createFields
-	 * Create field nodes
-	 * @param {Object} data - response data
-	 */
 	createFields: function(data){
-		if(fields = data['i:fields']){
-			if(c = fields['i:column']){
-				this.setRootExpanded(true);
-				for(var i=0, l=c.length; i<l; i++){
-					
-					var node = {
-						leaf: true, expanded: false,
-						itemId: 'field', iconCls: 'icon-field',
-						text: c[i].label || 'Default field name',
-						
-						data: {
-							'Editable': c[i].editable,
-							'Filter': c[i].filter,
-							'Label': c[i].label,
-							'Name': c[i].name,
-							'Resizable': c[i].resizable,
-							'Sortable': c[i].sortable,
-							'Style': c[i].style,
-							
-							'Grouping': c[i].grouping,
-							'Cache': c[i].cache,
-							'Icon Class': c[i].iconCls,
-							'Tooltip': c[i].tooltip,
-							'Condition': c[i].condition
-						}
-					}
-					this.addNodeToRoot(node);					
-				}
-			}
-		}
+        this.root.appendChild(new afStudio.widgetDesigner.FieldsNode(data));
 	},
 	
 	/**
