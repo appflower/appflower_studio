@@ -51,12 +51,15 @@ class afsDatabaseQueryActions extends sfActions
             $aTables = afsDatabaseQuery::getTables($db_connection);
             
             // Generate list of databases and tables
-            $database = array();
-            $database['text'] = $aDsnInfo['dbname'] . ' (' . count($aTables) . ')';
+            $database = array(
+            	'text'    => $aDsnInfo['dbname'] . ' (' . count($aTables) . ')',
+            	'iconCls' => 'icon-tree-db',
+            	'expanded' => true
+            );
             
             $tables = array();
             foreach ((array)$aTables as $sTable) {
-                $tables[] = array('text' => $sTable, 'leaf' => true);
+                $tables[] = array('text' => $sTable, 'iconCls' => 'icon-tree-table', 'leaf' => true);
             }
             
             $database['children'] = $tables;

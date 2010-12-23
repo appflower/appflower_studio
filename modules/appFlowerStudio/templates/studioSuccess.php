@@ -62,6 +62,7 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 
+<!-- models -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationPicker.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationCombo.js"></script>
@@ -71,6 +72,12 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/EditFieldWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/DependencyCellEditorBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/ModelTab.js"></script>
+
+<!-- dbQuery -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/QueryForm.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/DBStructureTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/ContentPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/QueryWindow.js"></script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreePanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreeMenu.js"></script>

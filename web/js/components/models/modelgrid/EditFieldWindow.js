@@ -396,6 +396,9 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		this._afterInitComponent();
 	}
 	
+	/**
+	 * @private
+	 */
 	,_afterInitComponent : function() {
 		var _this = this;
 		

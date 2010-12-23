@@ -156,16 +156,12 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	,nameEditorBuilder : function() {
 		var _this = this,
 			names = [];
-		/*Ext.each(_this._data.rows, function(i, idx){
-			names.push(i.name);
-		});*/		
 		return {						
 			editor: new Ext.form.TextField({
 				allowBlank: false,
 				maskRe: /[\w]/,
 				validator: function(value) {
-					return /^[^\d]\w*$/im.test(value) ? true : afStudio.models.TypeBuilder.invalidFieldName;
-					//return names.indexOf(value) != -1 ? 'Duplicate field name' : true;					
+					return /^[^\d]\w*$/im.test(value) ? true : afStudio.models.TypeBuilder.invalidFieldName;					
 				}
 			})
 		}
