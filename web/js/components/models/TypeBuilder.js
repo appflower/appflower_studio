@@ -11,12 +11,14 @@ afStudio.models.TypeBuilder = (function() {
 	
 	return {
 		
+		invalidFieldName : 'Field name must contains only characters, digits or "_" and starts from "_" or character'
+		
 		/**
 		 * Creates editor depends on data type
 		 * @param {String} dataType The data type
 		 * @return {Ext.Editor}
 		 */
-		createEditor : function(dataType, size, defaultValue) {
+		,createEditor : function(dataType, size, defaultValue) {
 			var editor = null;
 			
 			//if data type contains size - cut it (i.e. varchar(128) - varchar)
