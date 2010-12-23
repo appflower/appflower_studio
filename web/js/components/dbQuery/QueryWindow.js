@@ -9,43 +9,17 @@ Ext.ns('afStudio.dbQuery');
  */
 afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	
-	onDBNodeClick : function(node, e, type) {
-		//console.log(node, e, type);
-//		if (node.leaf) {
-//			var grid = new Ext.grid.GridPanel({
-//				columns:[
-//					{header:'column1',width:100},
-//					{header:'column2',width:100},
-//					{header:'column3',width:100}
-//				],
-//				store:new Ext.data.ArrayStore({
-//		        	fields: [
-//		        		{name: 'company'},
-//		            	{name: 'price', type: 'float'},
-//		            	{name: 'change', type: 'float'},
-//		            	{name: 'pctChange', type: 'float'},
-//		            	{name: 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
-//		         	]
-//				}),
-//				viewConfig: {
-//					forceFit: true
-//				}
-//			});            			
-//			var tp = new Ext.TabPanel({
-//				activeTab: 0,
-//				items: [
-//					{xtype: 'panel', title: 'Content'},
-//					{xtype: 'panel', title: 'Settings', items: grid, layout: 'fit', hideBorders: true}
-//				]
-//			});
-//			
-//			this.centerPanel.body.unmask();
-//			
-//			this.centerPanel.removeAll(true);
-//			this.centerPanel.add(tp);
-//			this.centerPanel.doLayout();
-//		}		
+	onDBNodeClick : function(node, e, nodeType) {
+		var _this = this;
 		
+		switch (nodeType) {
+			case 'table':
+				_this.centerPanel.showTableData();	
+			break;
+			case 'database':
+				_this.centerPanel.showDatabaseTables(node.childNodes);
+			break;
+		}		
 	}//eo onDBNodeClick
 	
 	/**

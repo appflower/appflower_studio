@@ -7,7 +7,7 @@ Ext.ns('afStudio.dbQuery');
  * @extends Ext.tree.TreePanel
  * @author Nick
  */
-afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {	
+afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
 	 * @cfg {String} structureUrl required (defaults to "/afsDatabaseQuery/databaseList")
@@ -16,13 +16,44 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 	structureUrl : '/afsDatabaseQuery/databaseList'
 	
 	/**
+	 * Masks tree
+	 * @param {String} msg optional
+	 */
+	,maskTree : function(msg) {		
+		this.body.mask(msg ? msg : 'loading...');
+	}
+	
+	/**
+	 * Unmasks tree
+	 */
+	,unmaskTree : function() {
+		this.body.unmask();
+	}	
+	
+	/**
+	 * The {@link Ext.tree.TreeLoader} <u>beforeload</u> event listener
+	 * look at {@link Ext.tree.TreeLoader#beforeload} 
+	 */
+	,onBeforeLoad : function(loader, node, callback) {
+		this.maskTree.defer(10, this, ['loading...']);
+	}
+	
+	/**
+	 * The {@link Ext.tree.TreeLoader} <u>load</u> event listener
+	 * look at {@link Ext.tree.TreeLoader#load} 
+	 */
+	,onLoad : function(loader, node, xhr) {
+		this.unmaskTree();
+	}
+	
+	/**
 	 * <u>click</u> event listener, look at {@link Ext.tree.TreePanel#click} 
 	 * @param {Ext.data.Node} node
 	 * @param {Ext.EventObject} e
 	 */
 	,onNodeClick : function(node, e) {		
 		this.fireEvent('dbnodeclick', node, e, node.isLeaf() ? 'table' : 'database');
-	}
+	}	
 	
 	/**
 	 * Initializes component
@@ -61,11 +92,21 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 		this._afterInitComponent();
 	}	
 	
-	
+
+	/**
+	 * @private
+	 */
 	,_afterInitComponent : function() {
-		var _this = this;
+		var _this = this,
+		   loader = _this.getLoader();
 		
 		_this.addEvents(
+			/**
+			 * @event 'dbnodeclick' Fires when node is clicked
+			 * @param {Ext.data.node} node The clicked node
+			 * @param {Ext.EventObject} e This event object
+			 * @param {String} type The node's type - "table"/"database" 
+			 */
 			'dbnodeclick'
 		);
 		
@@ -73,8 +114,16 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 			folderSort: true
 		});
 		
+		//Tree Events
 		_this.on({
-			'click': Ext.util.Functions.createDelegate(_this.onNodeClick, _this)
+			click: _this.onNodeClick,
+			scope: _this
+		});
+		
+		loader.on({
+			beforeload: _this.onBeforeLoad,
+			load: _this.onLoad, 
+			scope: _this
 		});
 		
 	}//eo _afterInitComponent
