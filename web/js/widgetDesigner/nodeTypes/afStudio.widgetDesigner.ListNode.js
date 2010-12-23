@@ -21,6 +21,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 		this.createActions();
 		this.createDatasource();
 		this.createFields();
+		this.createColumns();
 
 	    return this.root;
 	},
@@ -68,6 +69,10 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	
 	createFields: function(){
         this.root.appendChild(new afStudio.widgetDesigner.FieldsNode());
+	},
+	
+	createColumns: function(){
+		this.root.appendChild(new afStudio.widgetDesigner.ColumnNode());
 	},
 	
 	/**

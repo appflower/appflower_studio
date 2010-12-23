@@ -22,6 +22,13 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.BaseNode
             'Tooltip': 'empty',
             'Condition': 'empty'
         };
-        return properties;
+        
+        var properties = [
+        	new afStudio.widgetDesigner.PropertyTypeString('Name', 'empty'),
+        	new afStudio.widgetDesigner.PropertyTypeBoolean('Resizable', false),
+        	new afStudio.widgetDesigner.PropertyTypeBoolean('Sortable', true)
+        ]
+        
+        return this.prepareProperties(properties);
     }
 });
