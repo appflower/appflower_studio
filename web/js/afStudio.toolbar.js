@@ -3,7 +3,6 @@ Ext.ns('afStudio');
 afStudio.toolbar = Ext.extend(Ext.Toolbar, { 
 
 	initComponent : function() {
-		
 		var config = {
 			id: "toolbar",
 			items: [
@@ -51,6 +50,11 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 								}
 							},{
 								text: 'Save project',
+								
+								menu: {
+									items: this.getRecentProjectsList()
+								},
+								
 								handler: function (b,e)
 								{
 									Ext.MessageBox.alert('Save project', 'Save project option')
@@ -138,6 +142,19 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 		afStudio.toolbar.superclass.initComponent.apply(this, arguments);
 		
 	}//eo initComponent
+	
+	/**
+	 * Function getRecentProjectsList
+	 * @return {Array} list of latest projects
+	 */
+	,getRecentProjectsList: function(){
+		try {
+			var recentProjects = Ext.decode(afStudioRecentProjects);
+		} catch (e){
+			var recentProjects = [];
+		}
+		return recentProjects;
+	}
 	
 	,init : function() {
 		this.render(document.body);

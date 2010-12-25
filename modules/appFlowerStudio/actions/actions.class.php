@@ -102,7 +102,7 @@ class appFlowerStudioActions extends sfActions
 	public function executeModules()
 	{
 		//TODO: debug only
-		//return $this->renderJson(array('console'=>'test'));
+//		return $this->renderJson(array('console'=>'test'));
 		
 		$modules_command=new afStudioModulesCommand();
 		
@@ -175,6 +175,21 @@ class appFlowerStudioActions extends sfActions
         $info=json_encode($info);
 
         return $this->renderText($info);
+    }
+    
+	/**
+	 * Function getRecentProjects
+	 */
+    public static function getRecentProjects(){
+        $projects = array(
+        	array('id' => '1', 'text' => 'Firt project'),
+        	array('id' => '2', 'text' => 'Second project'),
+        	array('id' => '3', 'text' => 'Third project'),
+        	array('id' => '4', 'text' => 'Fourth project'),
+        	array('id' => '5', 'text' => 'Fifth project')
+		);
+        $projects = json_encode($projects);    	
+    	return $projects;	
     }
     
     /**
