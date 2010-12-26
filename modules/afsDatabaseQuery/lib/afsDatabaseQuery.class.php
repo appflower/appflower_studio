@@ -2,12 +2,15 @@
 /**
  * Database Query class 
  * 
- * @author startsev
+ * @author startsev.sergey@gmail.com
  */
 class afsDatabaseQuery 
 {
     /**
-     * getting Adaptee class
+     * Getting Adaptee class
+     * 
+     * @param $connection_name db connection name
+     * @return object
      */
     public static function getAdapter($connection_name)
     {
@@ -21,6 +24,9 @@ class afsDatabaseQuery
 
     /**
      * Getting tables from adapter
+     * 
+     * @param $connection_name db connection name
+     * @return array
      */
     public static function getTables($connection_name)
     {
@@ -33,6 +39,9 @@ class afsDatabaseQuery
     
     /**
      * Getting generated name of table via table name in db
+     * 
+     * @param $schemaName Schema name 
+     * @return string
      */
     public static function getPhpName($schemaName)
     {
@@ -47,6 +56,9 @@ class afsDatabaseQuery
     
     /**
      * Parse dsn field
+     * 
+     * @param $dsn DSN string example:  mysql:dbname=studio;host=localhost
+     * @return string
      */
     public static function parseDSN($dsn)
     {
@@ -55,16 +67,27 @@ class afsDatabaseQuery
         
         if (isset($info['query'])) {
             $opts = explode(';', $info['query']);
-                 foreach ($opts as $opt) {
-                     list($key, $value) = explode('=', $opt);
-                     if (!isset($parsed[$key])) {
-                         $parsed[$key] = urldecode($value);
-                     }
-                 }
-         }
+                foreach ($opts as $opt) {
+                    list($key, $value) = explode('=', $opt);
+                    if (!isset($parsed[$key])) {
+                        $parsed[$key] = urldecode($value);
+                    }
+                }
+        }
  
-         return $parsed;
-     }
-  
+        return $parsed;
+    }
+    
+    /**
+     * Get peer name by table name
+     * 
+     * @param @table_name Table name
+     * @return string
+     */
+    public static function getPeerName($table_name)
+    {
+        return self::getPhpName($table_name) . 'Peer';
+    }
+
 }
 
