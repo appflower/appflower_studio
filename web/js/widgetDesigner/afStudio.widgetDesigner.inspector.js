@@ -44,7 +44,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	 */
 	,_initCmp : function() {
     
-		this.propertiesGrid = new Ext.grid.PropertyGrid({
+//		this.propertiesGrid = new Ext.grid.PropertyGrid({
+		this.propertiesGrid = new afStudio.widgetDesigner.PropertyGrid({
 			region: 'south',
 			split: true,
 	        frame: true,
@@ -94,11 +95,18 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        layout: 'fit',
 	        
 	        source: {},
-	        viewConfig : {
-	            forceFit: true,
-	            scrollOffset: 19
-	        }
+	       
+			view: new Ext.grid.GroupingView({
+				scrollOffset: 19,
+				forceFit:true,
+	            showGroupName: false,
+	            groupTextTpl: '{text}'
+	        })
     	});
+    	
+    	
+    	
+    	
 		this.propertiesGrid.getView().on('refresh', this.onGridRefresh, this);
 		
 		//Create widget inspector tree item
@@ -272,8 +280,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 				}
 				var data = Ext.decode(response.data);
 
-				
-				_this.rootNode = new afStudio.widgetDesigner.ListNode(data);
+				_this.rootNode = new afStudio.widgetDesigner.ListNode({initialData: data, treeEditor: _this.treeEditor});
         		_this.widgetInspectorTree.setRootNode(_this.rootNode);
 			}).defer(3000);
 		}

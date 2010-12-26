@@ -1,6 +1,6 @@
 (function(){
-	afStudio.widgetDesigner.PropertyTypeString = function(fieldLabel, value){
-		var config = {'fieldLabel': fieldLabel, 'value': value};
+	afStudio.widgetDesigner.PropertyTypeString = function(config){
+		config = config || {};
 		Ext.apply(this, config);
 	};
 })();

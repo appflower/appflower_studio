@@ -19,7 +19,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	    this.createRootNode(data);
 		
 		this.createActions();
-		this.createDatasource();
+		this.createDatasource(data);
 		this.createFields();
 		this.createColumns();
 
@@ -41,46 +41,27 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 			
 			expanded: true,
 			text: 'Widget Inspector', 
-			id: 'widgetinspector',
-			children: [
-				{
-					text: data['i:title'] || 'Object node',
-					qtip: data['i:description'] || 'Default QTip',
-					leaf: false, 
-					expanded: true,
-					itemId: 'object', iconCls: 'icon-obj',
-				
-					data: {
-						'wtype': data.type,
-						'maxperpage': data.maximumperpage
-					}
-				}
-			]
+			id: 'widgetinspector'
 		});
+		
+		this.objectNode = new afStudio.widgetDesigner.ObjectRootNode(data);
+		this.root.appendChild(this.objectNode);
 	},
 
 	createActions: function(){
-        this.root.appendChild(new afStudio.widgetDesigner.ActionsNode());
+        this.objectNode.appendChild(new afStudio.widgetDesigner.ActionsNode());
 	},
 
-	createDatasource: function(){
-        this.root.appendChild(new afStudio.widgetDesigner.DatasourceNode());
+	createDatasource: function(data){
+        this.objectNode.appendChild(new afStudio.widgetDesigner.DatasourcesNode(data));
 	},
 	
 	createFields: function(){
-        this.root.appendChild(new afStudio.widgetDesigner.FieldsNode());
+        this.objectNode.appendChild(new afStudio.widgetDesigner.FieldsNode());
 	},
 	
 	createColumns: function(){
-		this.root.appendChild(new afStudio.widgetDesigner.ColumnNode());
-	},
-	
-	/**
-	 * Function setRootExpanded
-	 * Set root node expanded
-	 */
-	setRootExpanded: function(is_expanded){
-//		this.config.expanded = is_expanded;		
+		this.objectNode.appendChild(new afStudio.widgetDesigner.ColumnNode());
 	},
 	
 	/**
@@ -183,7 +164,8 @@ afStudio.widgetDesigner.ListNode = Ext.extend(Ext.util.Observable, {
 	 */
 	setPropertyField: function(node, rec){
 		if(node.id){
-			node.attributes.data[rec.get('name')] = rec.get('value')
+//			TODO: refact
+//			node.attributes.data[rec.get('name')] = rec.get('value')
 		}
 	}
 });

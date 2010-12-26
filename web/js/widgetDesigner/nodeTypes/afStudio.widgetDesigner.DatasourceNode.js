@@ -1,34 +1,7 @@
-afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
-	getNodeConfig: function(data){
-        return { text: 'Datasource' };
-	},
-	
-	onContextMenu: function(node, e){
-		var c = this.contextMenu;
-		c.contextNode = node;
-		c.showAt(e.getXY());
-	},
-	
-	_initEvents: function(){
-		this.on('click', function(node, e){
-			
-		}, this);
-		this.on('expand', function(node){
-//			alert('beforeload!')
-//			var method = this.data['i:datasource']['i:method'];
-			var r = new afStudio.widgetDesigner.DatasourceNodeChild({name: 'TEst method', itemId: 'method', leaf: true});
-			node.appendChild(r);
-//			return false;
-		}, this);
-		this.on('contextmenu', this.onContextMenu, this);
-	}
-});
-
-
-
 /**
- * DatasourceNodeChild
+ * DatasourceNodeChild extended from async treenode
  */
+ /**
 afStudio.widgetDesigner.DatasourceNodeChild = function(data){
 	this.loaded = this.loading = false;
 	
@@ -64,5 +37,38 @@ Ext.extend(afStudio.widgetDesigner.DatasourceNodeChild, Ext.tree.AsyncTreeNode, 
 		this.on('render', function(){alert('rendered')}, this);
 		this.on('click', this.onClick, this);
 		this.on('contextmenu', this.onContextMenu, this);
+	}
+});
+*/
+
+afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+    createContextMenu: function(){
+        this.contextMenu = new Ext.menu.Menu({
+            items: [
+        		{iconCls: 'icon-edit', text: 'Rename Method'},
+				{iconCls: 'afs-icon-delete', text: 'Delete', handler: this.remove, scope: this}
+            ]
+        });
+    },
+    contextMenuHandler: function(node, e){
+        node.select();
+        this.contextMenu.showAt(e.getXY());
+    },
+	getNodeConfig: function(data){
+		
+		try {
+			var methodName = data['i:datasource']['i:method'].name;
+		} catch (e){
+			var methodName = 'New datasource method';
+		}
+		
+        var node = {
+            text: methodName,
+            itemId: 'method', leaf: true,
+            listeners: {
+                contextmenu: this.contextMenuHandler
+            }
+        };
+        return node;
 	}
 });
