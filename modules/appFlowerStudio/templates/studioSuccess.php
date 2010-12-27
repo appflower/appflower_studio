@@ -88,6 +88,7 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/afStudio.widgetDesigner.BaseNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/afStudio.widgetDesigner.ObjectRootNode.js"></script>
 <?php 
 $appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
 
