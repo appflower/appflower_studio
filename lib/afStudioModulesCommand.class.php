@@ -69,6 +69,7 @@ class afStudioModulesCommand
 								{
 									$data[$i]['children'][$j]['children'][$k]['app']=$app;
 									$data[$i]['children'][$j]['children'][$k]['module']=$module;
+									$data[$i]['children'][$j]['children'][$k]['widgetUri']=$module.'/'.str_replace('.xml', '', $xmlName);
 									$data[$i]['children'][$j]['children'][$k]['type']='xml';
 									$data[$i]['children'][$j]['children'][$k]['text']=$xmlName;
                                     $data[$i]['children'][$j]['children'][$k]['securityPath']=$securityPath;

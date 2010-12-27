@@ -230,7 +230,10 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 				{
 					xtype: 'panel', flex: 1, layout: 'fit',
 					items: [
-						{xtype: 'afStudio.widgetDesigner.inspector'}
+						{
+                            xtype: 'afStudio.widgetDesigner.inspector',
+                            widgetUri: this.widgetUri
+                        }
 					]
 				}
 			]

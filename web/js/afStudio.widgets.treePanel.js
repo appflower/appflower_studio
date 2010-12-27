@@ -166,7 +166,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        
 	        dblclick: function(node, e){
 	        	if('xml' == node.attributes.type){
-					this.addWidgetDesigner(this.getActionPath(node),this.getSecurityPath(node));
+					this.addWidgetDesigner(node);
 	        	}
 	        }
 		});
@@ -693,10 +693,14 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 	,editXml:function(node)
 	{
-		this.addWidgetDesigner(this.getActionPath(node),this.getSecurityPath(node));
+		this.addWidgetDesigner(node);
 	}
 	
-	,addWidgetDesigner: function(actionPath, securityPath){
+	,addWidgetDesigner: function(node){
+        var actionPath = this.getActionPath(node);
+        var securityPath = this.getSecurityPath(node);
+        var widgetUri = node.attributes.widgetUri;
+
 		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});
 		mask.show();
 		
@@ -709,6 +713,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				xtype: 'afStudio.widgetDesigner',
 				actionPath: actionPath,
 				securityPath: securityPath,
+                widgetUri: widgetUri,
 				mask: mask
 			}]
 		}, true);		

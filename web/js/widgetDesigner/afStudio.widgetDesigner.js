@@ -78,9 +78,11 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		designerTab.on({
 			beforerender : function(cmp) {
 				cmp.add({
-					xtype: 'afStudio.widgetDesigner.designer'
+					xtype: 'afStudio.widgetDesigner.designer',
+                    widgetUri: this.widgetUri
 				});
-			}
+			},
+            scope: this
 		});
 
 		if(this.mask)
