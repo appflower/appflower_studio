@@ -9,6 +9,12 @@ Ext.ns('afStudio.dbQuery');
  */
 afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	
+	/**
+	 * Relayed {@link afStudio.dbQuery.DBStructureTree#dbnodeclick} event listener
+ 	 * @param {Ext.data.node} node The clicked node
+	 * @param {Ext.EventObject} e This event object
+	 * @param {String} nodeType The node's type - "table"/"database"
+	 */
 	onDBNodeClick : function(node, e, nodeType) {
 		var _this = this;
 		
@@ -60,11 +66,14 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	        ],
 	        
 	        layout:'border',
-			buttons: [
-				{text: 'Query',  scope: this},
-				{text: 'Cancel', handler: this.cancel, scope: this}
-			],
-			buttonAlign: 'center'
+			buttons: [				
+			{
+				text: 'Cancel', 
+				iconCls: 'afs-icon-cancel',
+				handler: this.cancel, 
+				scope: this
+			}],
+			buttonAlign: 'right'
 		};		
 	}//eo _beforeInitComponent
 	

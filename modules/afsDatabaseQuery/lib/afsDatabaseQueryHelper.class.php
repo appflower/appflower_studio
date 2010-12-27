@@ -34,17 +34,16 @@ class afsDatabaseQueryHelper
             
             // Generate list of databases and tables
             $database = array(
-                'text'    => $aDsnInfo['dbname'] . ' (' . count($aTables) . ')',
-                'iconCls' => 'icon-tree-db',
-                'expanded' => true
+                'name' => $aDsnInfo['dbname'],
+            	'tables_num' => count($aTables)
             );
             
             $tables = array();
             foreach ((array)$aTables as $sTable) {
-                $tables[] = array('text' => $sTable, 'iconCls' => 'icon-tree-table', 'leaf' => true);
+                $tables[] = $sTable;
             }
             
-            $database['children'] = $tables;
+            $database['tables'] = $tables;
             
             $aDatabases[] = $database;
         }
@@ -71,5 +70,36 @@ class afsDatabaseQueryHelper
         var_dump($oTable->getColumns());
     }
     
+    /**
+     * Returns ExtJS data for DBStructureTree component
+     * @return array the tree structure
+     */
+    public function getExtDatabaseStructureTree()
+    {
+    	$tree = array();
+    	
+    	$dbList = $this->processDatabaseList();
+    	foreach ($dbList as $db) {
+    		$treeNode = array(
+                'text'    => $db['name'] . ' (' . $db['tables_num'] . ')',
+                'iconCls' => 'icon-tree-db',
+                'expanded' => true
+            );
+
+            $tables = array();
+            foreach ($db['tables'] as $t) {
+                $tables[] = array(
+                	'text' => $t, 
+                	'iconCls' => 'icon-tree-table', 
+                	'leaf' => true
+                );
+            }
+            
+    		$treeNode['children'] = $tables;    		
+    		$tree[] = $treeNode;
+    	}
+    	
+    	return $tree;
+    }
 }
 

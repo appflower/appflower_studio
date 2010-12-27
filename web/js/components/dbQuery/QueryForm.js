@@ -27,12 +27,32 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.Panel, {
 			title: 'SQL',
 			items: [
 			{
-				xtype: 'combo', 
-				fieldLabel: 'Query type', 
-				anchor: '100%', 
-				triggerAction: 'all', 
-				value: 1, 
-				store: [[1, 'SQL'], [2, 'Propel']]
+				layout: 'column',
+				border: false,				
+				defaults: {
+					border: false
+				},
+				items: [
+				{
+					layout: 'form',
+					columnWidth: 1,
+					style: 'margin-right: 5px;',
+					items: {
+						xtype: 'combo',
+						fieldLabel: 'Query type',						
+						anchor: '100%',
+						triggerAction: 'all',						
+						value: 1, 
+						store: [[1, 'SQL'], [2, 'Propel']]						
+					}
+				},{
+					items: {
+						xtype: 'button',
+						text: 'Query',
+						iconCls: 'icon-accept',
+						handler: function(){}
+					}
+				}]
 			},{
 				xtype: 'textarea', 
 				hideLabel: true, 

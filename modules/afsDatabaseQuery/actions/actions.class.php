@@ -32,7 +32,7 @@ class afsDatabaseQueryActions extends sfActions
      */
     public function executeDatabaseList(sfWebRequest $request)
     {
-        $aDatabases = $this->oDBQueryHelper->processDatabaseList();
+        $aDatabases = $this->oDBQueryHelper->getExtDatabaseStructureTree();
         return $this->renderJson($aDatabases);
     }
 
