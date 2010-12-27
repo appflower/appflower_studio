@@ -22,10 +22,10 @@ afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode
 	},
     getProperties: function(){
         var properties = [
-        	new afStudio.widgetDesigner.PropertyTypeString('name'),
-        	new afStudio.widgetDesigner.PropertyTypeString('iconCls'),
-        	new afStudio.widgetDesigner.PropertyTypeString('url'),
-        	new afStudio.widgetDesigner.PropertyTypeString('condition')
+        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Name', required: true}),
+        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Icon'}),
+        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Url', required: true}),
+        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Condition'})
         ];
 
         return this.prepareProperties(properties);

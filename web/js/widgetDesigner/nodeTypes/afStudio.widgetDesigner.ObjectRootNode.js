@@ -15,14 +15,12 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
         node.select();
         this.contextMenu.showAt(e.getXY());
     },
-	getNodeConfig: function(data){
+	getNodeConfig: function(){
         var config = {
-			text: data['i:title'] || 'Object node',
-			qtip: data['i:description'] || 'Default QTip',
-
-            itemId: 'object', iconCls: 'icon-obj',
-            leaf: false, expanded: true,
-            
+			text: 'Object node',
+            iconCls: 'icon-obj',
+            leaf: false,
+            expanded: true,
             listeners: {
                 contextmenu: this.contextMenuHandler
             }

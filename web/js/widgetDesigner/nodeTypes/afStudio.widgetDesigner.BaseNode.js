@@ -30,15 +30,12 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
 	 * @return {Object} object with properties which optimized for PropertyGrid
 	 */
 	prepareProperties: function(props){
-//		var properties = {};
-//		for(var i = 0, l = props.length; i<l; i++){
-//			var p = props[i];
-//			properties[p.fieldLabel] = p.value;
-//		}
-//		return properties;
-		
-		var properties = props;
-		return properties;
+		for(var i = 0, l = props.length; i<l; i++){
+            if (!props[i].value) {
+                props[i].value = '';
+            }
+		}
+		return props;
 	},
 	
     /**
