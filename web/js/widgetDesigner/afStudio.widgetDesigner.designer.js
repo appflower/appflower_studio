@@ -65,6 +65,7 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 		_panel.add({
 			xtype:'panel',
 			layout:'form',
+			plugins: new Ext.ux.WidgetFieldDragZone(),
 			//frame:true,border:true,
 			width:(_panel.getWidth()-50),
 			id:'wcontainer'+(columns+"")+length,
@@ -106,9 +107,8 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 				frame:false,
 				columns:i,
 				width:(this.panel.getWidth()/columns -10),
-				bodyCfg: {
-			        cls: 'greenborder'
-			    },
+				bodyCfg: {cls: 'greenborder'},
+			    plugins: new  Ext.ux.WidgetFieldDropZone(),
 				listeners:{
 					afterrender:function(cmp){
 						var self=this;
