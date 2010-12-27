@@ -227,6 +227,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
         		});
     		}
 		}
+		grid.hideMandatoryCheckers();
 	},	
 	
 //	buildJSONString: function(){

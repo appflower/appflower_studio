@@ -24,9 +24,10 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.BaseNode
         };
         
         var properties = [
-        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Name', value: 'empty', required: true}),
-        	new afStudio.widgetDesigner.PropertyTypeBoolean({fieldLabel: 'Resizable', value: false, required: true}),
-        	new afStudio.widgetDesigner.PropertyTypeBoolean({fieldLabel: 'Sortable', value: true, required: false})
+        	new afStudio.widgetDesigner.PropertyTypeString('name', 'Name').setValue('Test name'),
+			new afStudio.widgetDesigner.PropertyTypeString('style', 'Style').setValue('Test style var').setRequired(),
+        	new afStudio.widgetDesigner.PropertyTypeBoolean('is_resizable', 'Resizable').setRequired(),
+        	new afStudio.widgetDesigner.PropertyTypeBoolean('is_sortable', 'Sortable').setRequired().setValue(true)
         ]
         
         return this.prepareProperties(properties);

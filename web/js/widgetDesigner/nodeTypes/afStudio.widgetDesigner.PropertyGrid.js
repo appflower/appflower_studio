@@ -8,7 +8,7 @@
  */
 Ext.ns('afStudio.widgetDesigner');
 afStudio.widgetDesigner.PropertyRecord = Ext.data.Record.create([
-    {name:'name', type:'string'}, 'value', 'groupField'
+    {name:'name', type:'string'}, 'value', 'required'
 ]);
 
 /**
@@ -29,7 +29,7 @@ afStudio.widgetDesigner.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
         this.grid = grid;
         this.store = new Ext.data.GroupingStore({
             recordType : afStudio.widgetDesigner.PropertyRecord,
-            groupField:'groupField'
+            groupField:'required'
         });
         this.store.on('update', this.onUpdate,  this);
         if(source){
@@ -47,7 +47,7 @@ afStudio.widgetDesigner.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
         	if(this.isEditableValue(o[i].value)){
         		var required = (o[i].required)?'Mandatory':'Optional';
         		var r = new afStudio.widgetDesigner.PropertyRecord(
-        			{name: o[i].fieldLabel, value: o[i].value, groupField: required}, o[i].fieldLabel
+        			{name: o[i].fieldLabel, value: o[i].value, required: required}, o[i].fieldLabel
         		);
         		data.push(r);
         	}
@@ -75,7 +75,7 @@ afStudio.widgetDesigner.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumn
 	    g.PropertyColumnModel.superclass.constructor.call(this, [
 	        {header: this.nameText, width:50, sortable: true, dataIndex:'name', id: 'name', menuDisabled:true},
 	        {header: this.valueText, width:50, resizable:false, dataIndex: 'value', id: 'value', menuDisabled:true},
-	        {header: 'RequiredHeader', width:50, resizable:false, dataIndex: 'groupField', id: 'groupField', menuDisabled:true, hidden: true}
+	        {header: 'RequiredHeader', width:50, resizable:false, dataIndex: 'required', id: 'required', menuDisabled:true, hidden: true}
 	    ]);
 	    this.store = store;
 	
@@ -169,14 +169,17 @@ afStudio.widgetDesigner.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.
 	 */
     setSource : function(source){
         this.propStore.setSource(source);
-
+		this.hideMandatoryCheckers();
+    },
+	
+	hideMandatoryCheckers: function(){
         //Hide mandatory checkers
-        var hd = Ext.select('DIV[id*="-gp-groupField-Mandatory-hd"]');
+        var hd = Ext.select('DIV[id*="-gp-required-Mandatory-hd"]');
 		if(hd){
 			hd.setStyle({display: 'none'});
-		}
-    },
-
+		}		
+	},
+	
     /**
      * Gets the source data object containing the property data.  See {@link #setSource} for details regarding the
      * format of the data object.

@@ -9,6 +9,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         this.appendChild(new afStudio.widgetDesigner.ActionsNode());
         this.appendChild(new afStudio.widgetDesigner.DatasourceNode());
         this.appendChild(new afStudio.widgetDesigner.FieldsNode());
+        this.appendChild(new afStudio.widgetDesigner.ColumnNode());
 	},
     getProperties: function(){
         var properties = [
