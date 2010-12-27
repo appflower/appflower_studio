@@ -6,11 +6,10 @@ N = afStudio.widgetDesigner;
  * BaseNode is common class for all other WI node types
  * @param {Object} 
  */
-N.BaseNode = function(data){
-	
-	this.initialData = data;
-	
-    var config = this.getNodeConfig(data);
+N.BaseNode = function(config){
+    if (!config) {
+        config = this.getNodeConfig();
+    }
     this.createContextMenu();
     afStudio.widgetDesigner.BaseNode.superclass.constructor.apply(this, [config]);
     this._initEvents();

@@ -2,7 +2,12 @@ afStudio.widgetDesigner.ActionsNode = Ext.extend(afStudio.widgetDesigner.BaseNod
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [
-                {text: 'Add action', handler: this.addAction, scope: this}
+                {
+                    text: 'Add action',
+                    handler: this.addAction,
+                    scope: this,
+                    iconCls: 'icon-add'
+                }
             ]
         });
     },

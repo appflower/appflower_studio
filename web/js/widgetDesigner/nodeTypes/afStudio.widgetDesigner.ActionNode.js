@@ -2,7 +2,7 @@ afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [
-                {text: 'Delete', handler: this.remove, scope: this}
+                {text: 'Delete', handler: this.remove, scope: this, iconCls: 'icon-delete'}
             ]
         });
     },
@@ -19,5 +19,15 @@ afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode
             }
         };
         return node;
-	}
+	},
+    getProperties: function(){
+        var properties = [
+        	new afStudio.widgetDesigner.PropertyTypeString('name'),
+        	new afStudio.widgetDesigner.PropertyTypeString('iconCls'),
+        	new afStudio.widgetDesigner.PropertyTypeString('url'),
+        	new afStudio.widgetDesigner.PropertyTypeString('condition')
+        ];
+
+        return this.prepareProperties(properties);
+    }
 });
