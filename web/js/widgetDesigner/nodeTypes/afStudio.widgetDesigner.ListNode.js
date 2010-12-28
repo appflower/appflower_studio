@@ -13,10 +13,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 	},
     createProperties: function(){
         var properties = [
-        	new afStudio.widgetDesigner.PropertyRecord({
-                    name: 'Title', value: '', required: 'Optional'
-                }, 'Title'
-            )
+        	new afStudio.widgetDesigner.PropertyBaseType('i:title','Title').create()
         ];
         return properties;
     },

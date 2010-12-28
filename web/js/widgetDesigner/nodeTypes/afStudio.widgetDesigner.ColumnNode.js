@@ -8,14 +8,8 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.BaseNode
 	},
     createProperties: function(){
         var properties = [
-        	new afStudio.widgetDesigner.PropertyRecord({
-                    name: 'Name', value: '', required: 'Mandatory'
-                }, 'Name'
-            ),
-        	new afStudio.widgetDesigner.PropertyRecord({
-                    name: 'Style', value: '', required: 'Optional'
-                }, 'Style'
-            )
+            new afStudio.widgetDesigner.PropertyBaseType('i:name','Name').setRequired().create(),
+            new afStudio.widgetDesigner.PropertyBaseType('i:style','Style').create()
         ];
         return properties;
     }

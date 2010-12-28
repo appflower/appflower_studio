@@ -22,22 +22,10 @@ afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode
 	},
     createProperties: function(){
         var properties = [
-        	new afStudio.widgetDesigner.PropertyRecord({
-                    name: 'Name', value: '', required: 'Mandatory'
-                }, 'Name'
-            ),
-        	new afStudio.widgetDesigner.PropertyRecord({
-                    name: 'Icon', value: '', required: 'Optional'
-                }, 'Icon'
-            ),
-        	new afStudio.widgetDesigner.PropertyRecord({
-                    name: 'Url', value: '', required: 'Mandatory'
-                }, 'Url'
-            ),
-        	new afStudio.widgetDesigner.PropertyRecord({
-                    name: 'Condition', value: '', required: 'Optional'
-                }, 'Condition'
-            )
+            new afStudio.widgetDesigner.PropertyBaseType('i:name','Name').setRequired().create(),
+            new afStudio.widgetDesigner.PropertyBaseType('i:url','Url').setRequired().create(),
+            new afStudio.widgetDesigner.PropertyBaseType('i:icon','Icon').create(),
+            new afStudio.widgetDesigner.PropertyBaseType('i:condition','Condition').create()
         ];
         return properties;
     }

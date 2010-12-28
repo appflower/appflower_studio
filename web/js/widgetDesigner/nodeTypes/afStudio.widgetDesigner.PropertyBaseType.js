@@ -1,7 +1,10 @@
+/**
+ * This class wraps creation of Ext.data.Record objects
+ */
 (function(){
 	afStudio.widgetDesigner.PropertyBaseType = function(fieldId, fieldLabel){
-		var config = {fieldId: fieldId, fieldLabel: fieldLabel};
-		Ext.apply(this, config);
+		this.id = fieldId;
+        this.label = fieldLabel;
 	};
 })();
 
@@ -11,6 +14,8 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
 	 * Property value
 	 */
 	value: undefined,
+    id: undefined,
+    label: undefined,
 	
 	/**
 	 * @var {Boolean} required
@@ -26,5 +31,12 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
 	setValue: function(v){
 		this.value = v;
 		return this;
-	}
+	},
+    create: function(){
+        return new afStudio.widgetDesigner.PropertyRecord({
+            name: this.label,
+            value: this.value,
+            required: this.required ? "Mandatory" : 'Optional'
+        }, this.label);
+    }
 });
