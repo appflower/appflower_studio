@@ -157,9 +157,50 @@ afStudio.widgetDesigner.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.
 	 */
     setSource : function(source){
         this.propStore.setSource(source);
+        
+        this.addCustomEditorsAndRenderers(source);
+        
 		this.hideMandatoryCheckers();
     },
 	
+	/**
+	 * Function addCustomEditorsAndRenderers
+	 * Creates additional editors and renderers
+	 * @param {Array} source 
+	 */
+	addCustomEditorsAndRenderers: function(source){
+		for(var i = 0, l = source.length; i<l; i++){
+			//TODO: maybe we need to create another flag..
+			if('choice' == source[i].type){
+				if(!this.customEditors[source[i].id]){
+					var store = [];
+					for(var key in source[i].originalStore){
+						store.push([key, source[i].originalStore[key]]);
+					}
+					
+					this.customEditors[source[i].id] = new Ext.grid.GridEditor(new Ext.form.ComboBox({
+        				selectOnFocus:true, 
+        				value: source[i].get('value'),
+        				tpl: '<tpl for="."><div ext:qtip="{field2}" class="x-combo-list-item">{field2}</div></tpl>',
+//	        			store: [['1', 'First'], ['2', 'Second'], ['3', 'Third']],
+						store: store,
+	        			triggerAction: 'all'
+    	    		}));
+				}
+				
+				if(!this.customRenderers[source[i].id]){
+					this.customRenderers[source[i].id] = function(v, md, r){
+		        		return r.originalStore[v];
+		        	};
+				}
+			}
+		}
+	},
+	
+	/**
+	 * Function hideMandatoryCheckers
+	 * Hides checker group
+	 */
 	hideMandatoryCheckers: function(){
         //Hide mandatory checkers
         var hd = Ext.select('DIV[id*="-gp-required-Mandatory-hd"]');
