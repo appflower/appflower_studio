@@ -266,8 +266,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 				
 				_this.rootNode = new afStudio.widgetDesigner.ListNode();
         		_this.widgetInspectorTree.setRootNode(_this.rootNode);
-                window.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
-                window.widgetDefinition.fetch();
+                var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
+                widgetDefinition.fetchAndConfigure(_this.rootNode);
                 
 				cmp.body.unmask()
 		}

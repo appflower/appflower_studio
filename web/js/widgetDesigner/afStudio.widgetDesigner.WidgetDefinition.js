@@ -9,8 +9,25 @@ afStudio.widgetDesigner.WidgetDefinition = function(widgetUri){
 };
 
 afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, {
-   widgetUri: null,
-   fetch: function(){
-       console.log('fetching widget data from server for uri:'+this.widgetUri);
-   }
+    widgetUri: null,
+    definition: null,
+    fetchAndConfigure: function(widgetTypeRootNode){
+        Ext.Ajax.request({
+            url: 'afsWidgetBuilder/getWidget?uri='+this.widgetUri,
+            success: function(response){
+                this.parseFetchedData(response);
+                widgetTypeRootNode.configureFor(this);
+            },
+            scope: this
+        });
+   },
+   parseFetchedData: function(response){
+        if (response.statusText != 'OK') {
+            console.log('response looks invalid');
+        }
+
+        var baseData = Ext.util.JSON.decode(response.responseText);
+        this.definition = Ext.util.JSON.decode(baseData.data);
+    }
+
 });

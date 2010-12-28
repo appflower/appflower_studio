@@ -17,6 +17,10 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         ];
 
         return this.prepareProperties(properties);
+    },
+    configureFor: function(widgetDefinition){
+        console.log('going to populate widget tree with data from real widget');
+        console.log(widgetDefinition);
     }
 
 });
