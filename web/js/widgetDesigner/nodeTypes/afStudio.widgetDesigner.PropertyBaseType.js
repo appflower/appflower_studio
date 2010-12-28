@@ -14,8 +14,13 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
 	 * Property value
 	 */
 	value: undefined,
+    /**
+     * Used when value was not set. This should be set by class implementing concrete type
+     */
+    defaultValue: '',
     id: undefined,
     label: undefined,
+    type: 'string',
 	
 	/**
 	 * @var {Boolean} required
@@ -33,9 +38,20 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
 		return this;
 	},
     create: function(){
-        return new afStudio.widgetDesigner.PropertyRecord({
+        var recordConstructor = Ext.data.Record.create(
+            {
+                name:'name',
+                type:'string'
+            },
+            {
+                name:'value',
+                type:this.type
+            },
+            'required'
+        );
+        return new recordConstructor({
             name: this.label,
-            value: this.value,
+            value: this.value || this.defaultValue,
             required: this.required ? "Mandatory" : 'Optional'
         }, this.label);
     }

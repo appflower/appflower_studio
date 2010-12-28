@@ -13,7 +13,8 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 	},
     createProperties: function(){
         var properties = [
-        	new afStudio.widgetDesigner.PropertyBaseType('i:title','Title').create()
+        	new afStudio.widgetDesigner.PropertyBaseType('i:title','Title').create(),
+        	new afStudio.widgetDesigner.PropertyTypeBoolean('i:visible','Visible (bool for test)').create()
         ];
         return properties;
     },

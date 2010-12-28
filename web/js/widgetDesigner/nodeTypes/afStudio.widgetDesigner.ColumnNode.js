@@ -9,7 +9,8 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.BaseNode
     createProperties: function(){
         var properties = [
             new afStudio.widgetDesigner.PropertyBaseType('i:name','Name').setRequired().create(),
-            new afStudio.widgetDesigner.PropertyBaseType('i:style','Style').create()
+            new afStudio.widgetDesigner.PropertyBaseType('i:style','Style').create(),
+            new afStudio.widgetDesigner.PropertyTypeBoolean('i:somebool','true or false').create()
         ];
         return properties;
     }
