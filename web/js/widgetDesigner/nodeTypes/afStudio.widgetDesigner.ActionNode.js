@@ -20,14 +20,25 @@ afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode
         };
         return node;
 	},
-    getProperties: function(){
+    createProperties: function(){
         var properties = [
-        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Name', required: true}),
-        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Icon'}),
-        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Url', required: true}),
-        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Condition'})
+        	new afStudio.widgetDesigner.PropertyRecord({
+                    name: 'Name', value: '', required: 'Mandatory'
+                }, 'Name'
+            ),
+        	new afStudio.widgetDesigner.PropertyRecord({
+                    name: 'Icon', value: '', required: 'Optional'
+                }, 'Icon'
+            ),
+        	new afStudio.widgetDesigner.PropertyRecord({
+                    name: 'Url', value: '', required: 'Mandatory'
+                }, 'Url'
+            ),
+        	new afStudio.widgetDesigner.PropertyRecord({
+                    name: 'Condition', value: '', required: 'Optional'
+                }, 'Condition'
+            )
         ];
-
-        return this.prepareProperties(properties);
+        return properties;
     }
 });

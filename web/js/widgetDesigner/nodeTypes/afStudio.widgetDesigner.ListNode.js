@@ -11,12 +11,14 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         this.appendChild(new afStudio.widgetDesigner.FieldsNode());
         this.appendChild(new afStudio.widgetDesigner.ColumnNode());
 	},
-    getProperties: function(){
+    createProperties: function(){
         var properties = [
-        	new afStudio.widgetDesigner.PropertyTypeString({fieldLabel: 'Title'})
+        	new afStudio.widgetDesigner.PropertyRecord({
+                    name: 'Title', value: '', required: 'Optional'
+                }, 'Title'
+            )
         ];
-
-        return this.prepareProperties(properties);
+        return properties;
     },
     configureFor: function(widgetDefinition){
         console.log('going to populate widget tree with data from real widget');

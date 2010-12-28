@@ -38,21 +38,9 @@ afStudio.widgetDesigner.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
     },
     
     // protected - should only be called by the grid.  Use grid.setSource instead.
-    setSource : function(o){
-        this.source = o;
+    setSource : function(data){
+        this.source = data;
         this.store.removeAll();
-        var data = [];
-        
-        for(var i=0, l=o.length; i<l; i++ ){
-        	if(this.isEditableValue(o[i].value)){
-        		var required = (o[i].required)?'Mandatory':'Optional';
-        		var r = new afStudio.widgetDesigner.PropertyRecord(
-        			{name: o[i].fieldLabel, value: o[i].value, required: required}, o[i].fieldLabel
-        		);
-        		data.push(r);
-        	}
-        }
-        
         this.store.loadRecords({records: data}, {}, true);
     }
 });

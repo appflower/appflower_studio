@@ -17,30 +17,18 @@ N.BaseNode = function(config){
 Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
     createContextMenu: Ext.emptyFn,
     /**
+     * This method should initialize this.properties with records for GridProperty
+     */
+    createProperties: function(){return []},
+    properties: null,
+    /**
      * Returns fields for properties grid
      */
 	getProperties: function(){
-        return {};
-	},
-	
-	/**
-	 * Function prepareProperties
-	 * Prepares node properties before inserting in PropertyGrid
-	 * @param {Array} array of node properties
-	 * @return {Object} object with properties which optimized for PropertyGrid
-	 */
-	prepareProperties: function(props){
-		var properties = [];
-		for(var i = 0, l = props.length; i<l; i++){
-			properties.push(props[i].getPropertyRecordCfg());
-		}
-		return properties;
-//		for(var i = 0, l = props.length; i<l; i++){
-//            if (!props[i].value) {
-//                props[i].value = '';
-//            }
-//		}
-//		return props;
+        if (!this.properties) {
+            this.properties = this.createProperties();
+        }
+        return this.properties;
 	},
 	
     /**
