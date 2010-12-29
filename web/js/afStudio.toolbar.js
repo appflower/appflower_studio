@@ -46,7 +46,10 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 								text: 'Load project',
 								handler: function (b,e)
 								{
-									Ext.MessageBox.alert('Load project', 'Load project option')
+									//TODO: another name?
+									(new afStudio.LoadProject()).show();
+									
+//									Ext.MessageBox.alert('Load project', 'Load project option')
 								}
 							},{
 								text: 'Save project',
