@@ -28,6 +28,7 @@ class afsDatabaseQuery
      * @param $connection_name db connection name
      * @return array
      */
+    /*
     public static function getTables($connection_name)
     {
         $oAdapter = self::getAdapter($connection_name);
@@ -36,7 +37,7 @@ class afsDatabaseQuery
         $aTables = $oAdapter->getTables();
         return $aTables;
     }
-    
+    */
     /**
      * Getting generated name of table via table name in db
      * 
@@ -88,6 +89,33 @@ class afsDatabaseQuery
     {
         return self::getPhpName($table_name) . 'Peer';
     }
+    
+    /**
+     * Getting tables from parsed yaml schema
+     * 
+     * @param $connection_name db connection name
+     * @return array
+     */
+    public static function getTables($connection_name)
+    {
+        $oStudioModels = new afStudioModelsCommand();
+        
+        $tables = array();
+        foreach ($oStudioModels->propelSchemaArray as $schemaFile => $array)
+        {
+            if ($array['connection'] == $connection_name) {
+                foreach ($array['classes'] as $phpName => $attributes)
+                {
+                    $attributes['modelName'] = $phpName;
+                    $attributes['schemaFile'] = $schemaFile;
+                    $tables[] = $attributes;
+                }
+            }
+        }
+        
+        return $tables;
+    }
+    
 
 }
 

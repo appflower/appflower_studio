@@ -58,15 +58,11 @@ class afsDatabaseQueryHelper
     {
         if (!empty($table_name)) {
             $oPeer = afsDatabaseQuery::getPeerName($table_name);
-            
             $oTable = Propel::getDatabaseMap($oPeer::DATABASE_NAME)->getTable($table_name);
-            
         } else {
             $oTable = false;
         }
-        
         // $oDatabase;
-        
         var_dump($oTable->getColumns());
     }
     
@@ -89,7 +85,9 @@ class afsDatabaseQueryHelper
             $tables = array();
             foreach ($db['tables'] as $t) {
                 $tables[] = array(
-                	'text' => $t, 
+                	'text' => $t['tableName'],
+                	'model' => $t['modelName'],
+                	'schema' => $t['schemaFile'],
                 	'iconCls' => 'icon-tree-table', 
                 	'leaf' => true
                 );

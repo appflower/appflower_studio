@@ -10,6 +10,9 @@ class afsDatabaseQueryActions extends sfActions
 {
     private $oDBQueryHelper;
     
+    private $modelName;
+    private $modelQueryClass;
+    
 	public function preExecute()
 	{
 		$this->realRoot = sfConfig::get('sf_root_dir');
@@ -41,6 +44,22 @@ class afsDatabaseQueryActions extends sfActions
      */
     public function executeTable(sfWebRequest $request)
     {
+        
+        $modelName = $this->getRequest()->getParameter('model');
+        $modelQueryClass = "{$modelName}Query";
+        if (!class_exists($modelName)) {
+            throw new Exception("Model $modelName probably does not exist. Could not find class named $modelName");
+        }
+        
+        // var_dump($modelQueryClass);
+        
+        // $oModel = new afStudioModelsCommand();
+        // var_dump($oModel);
+        die;
+        
+        
+        
+        /*
         $table_name = $request->getParameter('name', false);
         $connection_name = $request->getParameter('connection', false);
         
@@ -50,9 +69,15 @@ class afsDatabaseQueryActions extends sfActions
         
         var_dump($aInfo);
         die;
-        
-        return $this->renderJson($oTable);
+        */
+        // return $this->renderJson($oTable);
     }
     
+    public function executeTest(sfWebRequest $request)
+    {
+        afsDatabaseQuery::getDatabaseList('propel');
+        
+        die;
+    }
 
 }
