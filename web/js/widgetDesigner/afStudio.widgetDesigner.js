@@ -34,6 +34,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		var _this = this;
 		
 		this.codeEditorAction = new Ext.ux.CodePress({
+			iconCls:'icon-script-edit',
 			title:'Code editor - actions.class.php',
 			closable:true,
 			path:_this.actionPath,
@@ -43,6 +44,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 
 		this.codeEditorSecurity = new Ext.ux.CodePress({
+			iconCls:'icon-script-edit',
 			title:'Code editor - security.yml',
 			closable:true,
 			path:_this.securityPath,
