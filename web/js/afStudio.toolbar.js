@@ -53,15 +53,15 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 								}
 							},{
 								text: 'Save project',
-								
-								menu: {
-									items: this.getRecentProjectsList()
-								},
-								
 								handler: function (b,e)
 								{
 									Ext.MessageBox.alert('Save project', 'Save project option')
 								}
+							}, '-', {
+								text: 'Recent projects',
+								menu: {
+									items: this.getRecentProjectsList()
+								}								
 							}]
 						}						
 					},{
