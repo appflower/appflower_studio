@@ -1,4 +1,4 @@
-afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
     updateNodeNameFromPropertyId: 'name',
 	getNodeConfig: function(){
         var node = {

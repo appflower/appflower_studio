@@ -1,4 +1,4 @@
-afStudio.widgetDesigner.RowActionsNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.RowActionsNode = Ext.extend(afStudio.widgetDesigner.CollectionNode, {
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [

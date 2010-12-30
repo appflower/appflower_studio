@@ -1,4 +1,4 @@
-afStudio.widgetDesigner.ParamNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.ParamNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
 	getNodeConfig: function(){
         var node = {
             leaf: true,

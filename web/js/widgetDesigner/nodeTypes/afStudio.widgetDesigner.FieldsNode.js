@@ -1,4 +1,4 @@
-afStudio.widgetDesigner.FieldsNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.FieldsNode = Ext.extend(afStudio.widgetDesigner.CollectionNode, {
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [

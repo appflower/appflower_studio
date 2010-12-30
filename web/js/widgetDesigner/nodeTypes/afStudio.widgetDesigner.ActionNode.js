@@ -1,4 +1,4 @@
-afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
     updateNodeNameFromPropertyId: 'name',
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({

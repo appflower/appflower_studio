@@ -1,4 +1,4 @@
-afStudio.widgetDesigner.MethodNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.MethodNode = Ext.extend(afStudio.widgetDesigner.CollectionNode, {
 	getNodeConfig: function(){
         var node = {
             leaf: true,

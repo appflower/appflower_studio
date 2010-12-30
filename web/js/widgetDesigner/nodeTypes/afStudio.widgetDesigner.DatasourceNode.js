@@ -1,4 +1,4 @@
-afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
 	constructor: function(){
         afStudio.widgetDesigner.DatasourceNode.superclass.constructor.apply(this, arguments);
 
