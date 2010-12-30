@@ -3,7 +3,7 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.Containe
 	getNodeConfig: function(){
         var node = {
             iconCls: 'icon-field',
-            text: 'column name'
+            text: 'new field'
         }
         return node;
 	},

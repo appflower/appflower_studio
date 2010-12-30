@@ -1,23 +1,8 @@
 afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
     updateNodeNameFromPropertyId: 'name',
-    createContextMenu: function(){
-        this.contextMenu = new Ext.menu.Menu({
-            items: [
-                {text: 'Delete', handler: this.remove, scope: this, iconCls: 'icon-delete'}
-            ]
-        });
-    },
-    contextMenuHandler: function(node, e){
-        node.select();
-        this.contextMenu.showAt(e.getXY());
-    },
 	getNodeConfig: function(){
         var node = {
-            leaf: true,
-            text: 'new action',
-            listeners: {
-                contextmenu: this.contextMenuHandler
-            }
+            text: 'new action'
         };
         return node;
 	},

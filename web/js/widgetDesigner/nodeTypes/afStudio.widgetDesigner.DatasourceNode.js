@@ -1,20 +1,6 @@
 afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
-	constructor: function(){
-        afStudio.widgetDesigner.DatasourceNode.superclass.constructor.apply(this, arguments);
-
+    addRequiredChilds: function(){
         this.appendChild(new afStudio.widgetDesigner.MethodNode());
-	},
-    createContextMenu: function(){
-        this.contextMenu = new Ext.menu.Menu({
-            items: [
-        		{iconCls: 'icon-edit', text: 'Rename Method'},
-				{iconCls: 'afs-icon-delete', text: 'Delete', handler: this.remove, scope: this}
-            ]
-        });
-    },
-    contextMenuHandler: function(node, e){
-        node.select();
-        this.contextMenu.showAt(e.getXY());
     },
     createProperties: function(){
         this.addProperty(
@@ -34,10 +20,6 @@ afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.Cont
 	getNodeConfig: function(data){
         var node = {
             text: 'Datasource',
-            leaf: true,
-            listeners: {
-                contextmenu: this.contextMenuHandler
-            },
             id: 'i:datasource'
         };
         return node;

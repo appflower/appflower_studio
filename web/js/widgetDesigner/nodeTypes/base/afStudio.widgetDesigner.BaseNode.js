@@ -14,8 +14,13 @@ N.BaseNode = function(config){
     afStudio.widgetDesigner.BaseNode.superclass.constructor.apply(this, [config]);
     this._initEvents();
     this.createProperties();
+    this.addRequiredChilds();
 };
 Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
+    /**
+     * When concrete node sets here name of one of its properties then each time
+     * that property changes - node text label is updated accordingly
+     */
     updateNodeNameFromPropertyId: false,
     createContextMenu: Ext.emptyFn,
     /**
@@ -103,6 +108,14 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
      * Returns node configuration, something like: {text: 'sadads', iconCls: 'icon'}
      */
     getNodeConfig: Ext.emptyFn,
-    _initEvents: Ext.emptyFn,
-    getPropertyRecordCfg: Ext.emptyFn
+    _initEvents: function(){
+        if (this.contextMenuHandler) {
+            this.on('contextmenu', this.contextMenuHandler);
+        }
+    },
+    getPropertyRecordCfg: Ext.emptyFn,
+    /**
+     * If given node should have some childs when builded - this method should do this
+     */
+    addRequiredChilds: Ext.emptyFn
 });
