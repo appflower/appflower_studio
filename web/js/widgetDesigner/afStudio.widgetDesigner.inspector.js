@@ -59,8 +59,9 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        	'afteredit': function(e){
 	        		//Create tooltip for edited row.
 	        		this.onGridRefresh(e.grid.getView());
-//	        		var node = this.widgetInspectorTree.getSelectionModel().getSelectedNode();
-//	        		this.rootNode.attributes.setPropertyField(node, e.record);
+                    if (e.record && e.record.WITreeNode) {
+                        e.record.WITreeNode.propertyChanged(e.record);
+                    }
 	        	}, scope: this
 	        },
 	        
@@ -268,6 +269,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
         		_this.widgetInspectorTree.setRootNode(_this.rootNode);
                 var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
                 widgetDefinition.fetchAndConfigure(_this.rootNode);
+                _this.widgetInspectorTree.expandAll();
                 
 				cmp.body.unmask()
 		}

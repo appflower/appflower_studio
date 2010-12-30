@@ -13,8 +13,11 @@ afStudio.widgetDesigner.ActionsNode = Ext.extend(afStudio.widgetDesigner.BaseNod
     },
     addAction: function(){
         var newNode = new afStudio.widgetDesigner.ActionNode;
-        this.expand();
         this.appendChild(newNode);
+        if (this.rendered) {
+            this.expand();
+        }
+        return newNode;
     },
     contextMenuHandler: function(node, e){
         node.select();
@@ -26,8 +29,22 @@ afStudio.widgetDesigner.ActionsNode = Ext.extend(afStudio.widgetDesigner.BaseNod
             leaf: true,
             listeners: {
                 contextmenu: this.contextMenuHandler
-            }
+            },
+            id: 'i:actions'
         };
         return config;
-	}
+	},
+    configureForValue: function(id, value){
+        if (id == 'i:action') {
+            if (!Ext.isArray(value)) {
+                value = [value];
+            }
+            for(var i=0;i<value.length;i++){
+                var newNode = this.addAction();
+                newNode.configureFor(value[i]);
+            }
+        } else {
+            afStudio.widgetDesigner.ActionsNode.superclass.configureForValue(this, arguments);
+        }
+    }
 });

@@ -1,4 +1,5 @@
 afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+    updateNodeNameFromPropertyId: 'name',
 	getNodeConfig: function(){
         var node = {
             iconCls: 'icon-field',
@@ -7,17 +8,26 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.BaseNode
         return node;
 	},
     createProperties: function(){
-        var properties = [
-            new afStudio.widgetDesigner.PropertyBaseType('i:name','Name').setRequired().create(),
-//            new afStudio.widgetDesigner.PropertyBaseType('i:style','Style').create(),
-//            new afStudio.widgetDesigner.PropertyTypeBoolean('i:somebool','true or false').create(),
-            new afStudio.widgetDesigner.PropertyTypeChoice('i:datasourceType','Type').setChoices(
-          		{
-          			'static': 'Static method implementation',
-                	'orm':'Implementation based on Criteria object' 
-				}
-			).create()
-        ];
-        return properties;
+        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create());
+        this.addProperty(
+            new afStudio.widgetDesigner.PropertyTypeBoolean('sortable','Sortable')
+                .create()
+        );
+        this.addProperty(
+            new afStudio.widgetDesigner.PropertyTypeBoolean('editable','Editable')
+                .create()
+        );
+        this.addProperty(
+            new afStudio.widgetDesigner.PropertyTypeBoolean('resizable','Resizable')
+                .create()
+        );
+        this.addProperty(
+            new afStudio.widgetDesigner.PropertyTypeString('style','Style')
+                .create()
+        );
+        this.addProperty(
+            new afStudio.widgetDesigner.PropertyTypeString('label','Label')
+                .create()
+        );
     }
 });

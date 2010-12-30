@@ -55,7 +55,7 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
             //TODO: will not work for boolean type! because if current value == false you will return defaultValue instead of original
             value: this.value || this.defaultValue,
             required: this.required ? "Mandatory" : 'Optional'
-        }, this.label);
+        }, this.id);
 
         //Set type of record
         r.type = this.type;

@@ -16,7 +16,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
             url: 'afsWidgetBuilder/getWidget?uri='+this.widgetUri,
             success: function(response){
                 this.parseFetchedData(response);
-                widgetTypeRootNode.configureFor(this);
+                widgetTypeRootNode.configureFor(this.definition);
             },
             scope: this
         });

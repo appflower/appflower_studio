@@ -1,4 +1,5 @@
 afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+    updateNodeNameFromPropertyId: 'name',
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [
@@ -21,12 +22,9 @@ afStudio.widgetDesigner.ActionNode = Ext.extend(afStudio.widgetDesigner.BaseNode
         return node;
 	},
     createProperties: function(){
-        var properties = [
-            new afStudio.widgetDesigner.PropertyBaseType('i:name','Name').setRequired().create(),
-            new afStudio.widgetDesigner.PropertyBaseType('i:url','Url').setRequired().create(),
-            new afStudio.widgetDesigner.PropertyBaseType('i:icon','Icon').create(),
-            new afStudio.widgetDesigner.PropertyBaseType('i:condition','Condition').create()
-        ];
-        return properties;
+        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('url','Url').setRequired().create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('iconCls','Icon').create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('condition','Condition').create());
     }
 });

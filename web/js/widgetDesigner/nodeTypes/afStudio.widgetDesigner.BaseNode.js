@@ -13,23 +13,76 @@ N.BaseNode = function(config){
     this.createContextMenu();
     afStudio.widgetDesigner.BaseNode.superclass.constructor.apply(this, [config]);
     this._initEvents();
+    this.createProperties();
 };
 Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
+    updateNodeNameFromPropertyId: false,
     createContextMenu: Ext.emptyFn,
     /**
      * This method should initialize this.properties with records for GridProperty
      */
     createProperties: function(){return []},
-    properties: null,
     /**
      * Returns fields for properties grid
+     *
+     * @return array
      */
 	getProperties: function(){
-        if (!this.properties) {
-            this.properties = this.createProperties();
+        var properties = [];
+        for(i in this.properties) {
+            properties.push(this.properties[i]);
         }
-        return this.properties;
+
+        return properties;
 	},
+    getProperty: function(id){
+        return this.properties[id];
+    },
+    addProperty: function(property){
+        if (!this.properties) {
+            this.properties = {};
+        }
+
+        property.WITreeNode = this;
+        this.properties[property.id] = property;
+    },
+    configureFor: function(widgetData){
+        for(id in widgetData){
+            var value = widgetData[id];
+            this.configureForValue(id, value);
+        }
+    },
+    configureForValue: function(id, value){
+        if (this.properties && this.properties[id]) {
+            var property = this.getProperty(id);
+            property.set('value',value);
+            this.propertyChanged(property);
+        } else {
+            var child = this.findChild('id', id);
+            if (child){
+                child.configureFor(value);
+            }
+        }
+    },
+    propertyChanged: function(property) {
+        if (this.updateNodeNameFromPropertyId){
+            if (property.id == this.updateNodeNameFromPropertyId) {
+                this.setText(property.get('value'));
+            }
+        }
+    },
+    dumpDataForWidgetDefinition: function(){
+        var data = {};
+        this.eachChild(function(childNode){
+            data[childNode.id] = childNode.dumpDataForWidgetDefinition();
+        });
+        
+        for(i in this.properties){
+            var property = this.properties[i];
+            data[property.get('id')] = property.get('value');
+        }
+        return data;
+    },
 	
     /**
      * Returns node configuration, something like: {text: 'sadads', iconCls: 'icon'}

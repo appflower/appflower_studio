@@ -1,13 +1,18 @@
-afStudio.widgetDesigner.FieldsNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+afStudio.widgetDesigner.MoreActionsNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [
-                {text: 'Add field', handler: this.addField, scope: this}
+                {
+                    text: 'Add moreaction',
+                    handler: this.addAction,
+                    scope: this,
+                    iconCls: 'icon-add'
+                }
             ]
         });
     },
-    addField: function(){
-        var newNode = new afStudio.widgetDesigner.ColumnNode;
+    addAction: function(){
+        var newNode = new afStudio.widgetDesigner.ActionNode;
         this.appendChild(newNode);
         if (this.rendered) {
             this.expand();
@@ -20,26 +25,26 @@ afStudio.widgetDesigner.FieldsNode = Ext.extend(afStudio.widgetDesigner.BaseNode
     },
 	getNodeConfig: function(){
         var config = {
-            text: 'Fields',
+            text: 'More Actions',
             leaf: true,
             listeners: {
                 contextmenu: this.contextMenuHandler
             },
-            id: 'i:fields'
+            id: 'i:moreactions'
         };
         return config;
 	},
     configureForValue: function(id, value){
-        if (id == 'i:column') {
+        if (id == 'i:action') {
             if (!Ext.isArray(value)) {
                 value = [value];
             }
             for(var i=0;i<value.length;i++){
-                var newNode = this.addField();
+                var newNode = this.addAction();
                 newNode.configureFor(value[i]);
             }
         } else {
-            afStudio.widgetDesigner.FieldsNode.superclass.configureForValue(this, arguments);
+            afStudio.widgetDesigner.MoreActionsNode.superclass.configureForValue(this, arguments);
         }
     }
 });
