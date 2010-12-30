@@ -72,14 +72,29 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         }
     },
     dumpDataForWidgetDefinition: function(){
+
+        var childsData = this.dumpChildsData();
+        var propertiesData = this.dumpPropertiesData();
+
+        //my array merge :)
+        for(key in propertiesData) {
+            childsData[key] = propertiesData[key];
+        }
+
+        return childsData;
+    },
+    dumpChildsData: function(){
         var data = {};
         this.eachChild(function(childNode){
             data[childNode.id] = childNode.dumpDataForWidgetDefinition();
         });
-        
+        return data;
+    },
+    dumpPropertiesData: function(){
+        var data = {};
         for(i in this.properties){
             var property = this.properties[i];
-            data[property.get('id')] = property.get('value');
+            data[property.id] = property.get('value');
         }
         return data;
     },

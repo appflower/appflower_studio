@@ -46,5 +46,13 @@ afStudio.widgetDesigner.RowActionsNode = Ext.extend(afStudio.widgetDesigner.Base
         } else {
             afStudio.widgetDesigner.RowActionsNode.superclass.configureForValue(this, arguments);
         }
+    },
+    dumpChildsData: function(){
+        var data = [];
+        this.eachChild(function(childNode){
+            data.push(childNode.dumpDataForWidgetDefinition());
+        });
+
+        return {'i:action': data};
     }
 });

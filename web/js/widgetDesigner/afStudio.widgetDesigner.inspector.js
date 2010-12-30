@@ -118,7 +118,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			frame: true,
 			
 			bbar: [
-				{text: 'Buil JSON', handler: this.buildJSONString, scope: this}
+				{text: 'Save', handler: this.saveWidget, scope: this}
 			],
 			
             listeners: {
@@ -231,31 +231,9 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		grid.hideMandatoryCheckers();
 	},	
 	
-//	buildJSONString: function(){
-//		function Dump(d,l) {
-//		    if (l == null) l = 1;
-//		    var s = '';
-//		    if (typeof(d) == "object" && typeof(d) != "function") {
-//		        s += typeof(d) + " {\n";
-//		        for (var k in d) {
-//		            for (var i=0; i<l; i++) s += "  ";
-//		            s += k+": " + Dump(d[k],l+1);
-//		        }
-//		        for (var i=0; i<l-1; i++) s += "  ";
-//		        s += "}\n"
-//		    } else {
-//		    	if(typeof(d) != "function")
-//			        s += "" + d + "\n";
-//		    }
-//		    return s;
-//		}
-//
-//		var root = this.rootNode.getOwnerTree().getRootNode();
-//		var fields = this.rootNode.attributes.getModifiedFields(root);
-//
-//		var s = Dump(fields, 10);
-//		alert(s)
-//	},
+	saveWidget: function(){
+        console.log(this.widgetInspectorTree.root.dumpDataForWidgetDefinition());
+	},
 	
 	/**
 	 * Function _initEvents

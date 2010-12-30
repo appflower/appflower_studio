@@ -41,5 +41,13 @@ afStudio.widgetDesigner.FieldsNode = Ext.extend(afStudio.widgetDesigner.BaseNode
         } else {
             afStudio.widgetDesigner.FieldsNode.superclass.configureForValue(this, arguments);
         }
+    },
+    dumpChildsData: function(){
+        var data = [];
+        this.eachChild(function(childNode){
+            data.push(childNode.dumpDataForWidgetDefinition());
+        });
+
+        return {'i:column': data};
     }
 });

@@ -30,5 +30,13 @@ afStudio.widgetDesigner.MethodNode = Ext.extend(afStudio.widgetDesigner.BaseNode
     },
     createProperties: function(){
         this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create());
+    },
+    dumpChildsData: function(){
+        var data = [];
+        this.eachChild(function(childNode){
+            data.push(childNode.dumpDataForWidgetDefinition());
+        });
+
+        return {'i:param': data};
     }
 });
