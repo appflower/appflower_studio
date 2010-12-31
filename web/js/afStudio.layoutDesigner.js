@@ -331,6 +331,34 @@ layout: 'fit',
 	 * Create dummy widget in the panel
 	 */
 	addNewWidget: function(){
+		
+									var form = new Ext.FormPanel({
+									    url: '', defaultType: 'textfield', width: 450, frame: true, 
+										labelWidth: 100, title: false,
+										items: [
+											{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'project_name', allowBlank: false},
+											{xtype:'textfield', fieldLabel: 'Path to prohect', anchor: '96%', name: 'project_path', allowBlank: false}
+										]
+									});
+											
+									var wnd = new Ext.Window({
+										title: 'Add new widget', width: 463,
+										autoHeight: true, closable: true,
+							            draggable: true, plain:true,
+							            modal: true, resizable: false,
+							            bodyBorder: false, border: false,
+							            items: form,
+										buttons: [
+											{text: 'Add widget'},
+											{text: 'Cancel', handler: function(){wnd.close}}
+										],
+										buttonAlign: 'center'
+									});
+									wnd.show()			
+		
+//		alert('added');
+		return;
+		
 		var component = this.getNewWidgetCfg();
 		//TODO: Quick fix
 		var qty_columns = Ext.getCmp('details-panel').columns;
