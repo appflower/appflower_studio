@@ -28,6 +28,23 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
 
         var baseData = Ext.util.JSON.decode(response.responseText);
         this.definition = Ext.util.JSON.decode(baseData.data);
-    }
+    },
+    save: function(data){
+        Ext.Ajax.request({
+            url: 'afsWidgetBuilder/saveWidget?uri='+this.widgetUri,
+            params: {'data': Ext.util.JSON.encode(data)},
+            success: function(response){
+                this.parseSaveResponse(response);
+            },
+            scope: this
+        });
+   },
+   parseSaveResponse: function(response){
+        if (response.statusText != 'OK') {
+            console.log('response looks invalid');
+        } else {
+            console.log('Widget definition was saved')
+        }
+   }
 
 });

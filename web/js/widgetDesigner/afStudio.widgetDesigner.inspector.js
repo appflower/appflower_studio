@@ -22,6 +22,12 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	propertiesGrid: null,
 
 	/**
+	 * @var {Object} widgetDefinition
+	 * Definition of a widget - its properties all values
+	 */
+	widgetDefinition: null,
+
+	/**
 	 * @var {Object} treeEditor
 	 * Ext.tree.TreeEditor component
 	 */		
@@ -232,7 +238,9 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	},	
 	
 	saveWidget: function(){
-        console.log(this.widgetInspectorTree.root.dumpDataForWidgetDefinition());
+        var widgetData = this.widgetInspectorTree.root.dumpDataForWidgetDefinition();
+        console.log(widgetData);
+        this.widgetDefinition.save(widgetData);
 	},
 	
 	/**
@@ -245,8 +253,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 				
 				_this.rootNode = new afStudio.widgetDesigner.ListNode();
         		_this.widgetInspectorTree.setRootNode(_this.rootNode);
-                var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
-                widgetDefinition.fetchAndConfigure(_this.rootNode);
+                _this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
+                _this.widgetDefinition.fetchAndConfigure(_this.rootNode);
                 _this.widgetInspectorTree.expandAll();
                 
 				cmp.body.unmask()
