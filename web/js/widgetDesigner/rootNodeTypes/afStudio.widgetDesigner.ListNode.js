@@ -10,24 +10,10 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         };
         return node;
 	},
-    /**
-     * If we want parameters like i:params/maxperpage to be presented in properties grid
-     * we must cover such case in our customized configureForValue implementation
-     */
-    configureForValue: function(id, value){
-        if (id == 'i:params' && value['i:param'] && value['i:param']['name'] == 'maxperpage') {
-            return afStudio.widgetDesigner.ListNode.superclass.configureForValue.apply(
-                this,
-                ['maxperpage', value['i:param']['_content']]
-            );
-        } else {
-            return afStudio.widgetDesigner.ListNode.superclass.configureForValue.apply(this, arguments);
-        }
-    },
     createProperties: function(){
         this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('i:title','Title').create());
         this.addProperty(new afStudio.widgetDesigner.PropertyTypeBoolean('i:description','Description').create());
-        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').markAsOneOfIParam().create());
     },
 	addRequiredChilds: function(){
         var actionNode = this.buildActionNode();
@@ -132,7 +118,8 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
                     new afStudio.widgetDesigner.PropertyTypeBoolean('editable','Editable').create(),
                     new afStudio.widgetDesigner.PropertyTypeBoolean('resizable','Resizable').create(),
                     new afStudio.widgetDesigner.PropertyTypeString('style','Style').create(),
-                    new afStudio.widgetDesigner.PropertyTypeString('label','Label').create()
+                    new afStudio.widgetDesigner.PropertyTypeString('label','Label').create(),
+                    new afStudio.widgetDesigner.PropertyTypeString('filter','Filter').create()
                ];
             }
         });

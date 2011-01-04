@@ -23,14 +23,9 @@ class afsXmlBuilder {
     private function build()
     {
         $elements = array();
-        $root = new SimpleXMLElement("<i___view></i___view>");
-//        echo "<pre>";
-//        print_r($this->definition);
-//        echo "</pre>";
+        $root = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><i___view></i___view>");
         $this->parseRow($this->definition, $root);
         $this->xml = str_replace('___',':',$root->asXML());
-//        echo $this->xml;
-//        file_put_contents( '/tmp/file.xml', $this->xml);
     }
 
     /**
@@ -64,7 +59,11 @@ class afsXmlBuilder {
                     $this->addManyChilds($parentElement, $key, $data);
                 } else {
                     if (isset($data['_content'])) {
-                        $element = $parentElement->addChild($key, $data['_content']);
+                        if ($data['_content'] != '') {
+                            $element = $parentElement->addChild($key, $data['_content']);
+                        } else {
+                            $element = $parentElement->addChild($key);
+                        }
                         unset($data['_content']);
                     } else {
                         $element = $parentElement->addChild($key);
@@ -102,7 +101,24 @@ class afsXmlBuilder {
             isset($childsAttributes['da']);
         }
         foreach ($childsAttributes as $childAttributes) {
-            $childEl = $parentElement->addChild($childsName);
+            $childElValue = null;
+            foreach ($childAttributes as $key => $value) {
+                if ($key == '_content') {
+                    if ($value != '') {
+                        $childElValue = $value;
+                    }
+                    break;
+                }
+            }
+            if (isset($childAttributes['_content'])) {
+                unset($childAttributes['_content']);
+            }
+            if ($childElValue) {
+                $childEl = $parentElement->addChild($childsName, $childElValue);
+            } else {
+                $childEl = $parentElement->addChild($childsName);
+            }
+
             foreach ($childAttributes as $key => $value) {
                 $childEl->addAttribute($key, $value);
             }

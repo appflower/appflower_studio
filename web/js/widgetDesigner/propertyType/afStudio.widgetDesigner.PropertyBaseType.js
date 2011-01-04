@@ -21,6 +21,15 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
     id: undefined,
     label: undefined,
     type: 'string',
+
+    /**
+     * this means that node can contain <i:param> and many <i:param> attributes on XML level
+     * Normally we would implement those as another node with many childs
+     * Instead we want those params to be displayed as node parameters on WI level
+     * so if node is marked as oneOfIParam then it is readed and dumped accordingly
+     *
+     */
+    oneOfIParam: false,
 	
 	/**
 	 * @var {Boolean} required
@@ -37,6 +46,13 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
 		this.value = v;
 		return this;
 	},
+    markAsOneOfIParam: function(){
+        this.oneOfIParam = true;
+        return this;
+    },
+    isOneOfIParam: function(){
+        return this.oneOfIParam;
+    },
     create: function(){
         var recordConstructor = Ext.data.Record.create(
             {
@@ -54,7 +70,8 @@ Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
             name: this.label,
             //TODO: will not work for boolean type! because if current value == false you will return defaultValue instead of original
             value: this.value || this.defaultValue,
-            required: this.required ? "Mandatory" : 'Optional'
+            required: this.required ? "Mandatory" : 'Optional',
+            oneOfIParam: this.oneOfIParam
         }, this.id);
 
         //Set type of record
