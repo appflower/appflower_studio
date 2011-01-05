@@ -50,23 +50,31 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			path:_this.securityPath,
 			tabTip:_this.securityPath,
 			file:_this.securityPath,
-			tabPanel:_this
+			tabPanel:_this,
+			
+			bbar: [
+				{text: 'bbar'}
+			]
 		});
 		
 		return {
 			itemId: 'widget-designer',
-//			height: 400,
 			activeTab: 0,
-			defaults: {
-				layout: 'fit'
-			},
+			defaults: {layout: 'fit'},
 			items: [
-			{
-				itemId: 'designer',
-				title: 'Widget Designer'
-			}
-			,this.codeEditorSecurity
-			,this.codeEditorAction
+				{itemId: 'designer', title: 'Widget Designer'},
+				
+				{xtype: 'panel', layout: 'fit',
+					iconCls:'icon-script-edit',
+					title:'security.yml',
+					closable:true,
+					tbar: [{text: 'Save', iconCls: 'icon-save', handler: function(){alert('Save button pressed')}}],
+					items: [
+						this.codeEditorSecurity
+					]
+				},
+				
+				this.codeEditorAction
 			],
 			plugins: new Ext.ux.TabMenu()
 		}

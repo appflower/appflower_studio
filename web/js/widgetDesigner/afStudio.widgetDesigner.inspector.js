@@ -41,7 +41,23 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
 		afStudio.widgetDesigner.inspector.superclass.initComponent.apply(this, arguments);
 		this._initEvents();
-	}	
+		
+		(function(){
+			var h1 = this.propertiesGrid.getHeight();
+			var h2 = this.widgetInspectorTree.getHeight();
+			
+			var h = (h1+h2)/2;
+			
+			this.propertiesGrid.setHeight(h);
+			this.widgetInspectorTree.setHeight(h);
+			
+			this.layout.setActiveItem(1);
+			this.layout.setActiveItem(0);
+			
+//			this.propertiesGrid.doLayout();
+//			this.widgetInspectorTree.doLayout();
+		}).defer(100, this);
+	}
 	
 	/**
 	 * Create user interface
@@ -55,13 +71,19 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			region: 'south',
 			split: true,
 	        frame: true,
+			
 			height: 150,
+			
 	        propertyNames: {
 	            wtype: 'Widget Type',
 	            maxperpage: 'Maximum per page'
 	        },
 	        
 	        listeners: {
+	        	'render': function(cmp){
+
+	        		
+	        	},
 	        	'afteredit': function(e){
 	        		//Create tooltip for edited row.
 	        		this.onGridRefresh(e.grid.getView());

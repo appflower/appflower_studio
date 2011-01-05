@@ -5,24 +5,24 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	initComponent: function() {
 		var _this = this;	
 	
-		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
+//		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
 
 
-//       var rootNode = new Ext.tree.AsyncTreeNode({
-//            expanded: true,
-//            text: 'XML',
-//			id: 'xml',
-//            children: [
-//            	{
-//            		text: 'XML 1', leaf: false, type: 'xml',
-//            		expanded: true, iconCls: 'icon-tree-db',
-//            		children: [
-//	        			{text: 'APP', iconCls: 'icon-tree-table', type: 'app', leaf: true},
-//	        			{text: 'MODULE', iconCls: 'icon-tree-table', type: 'module', leaf: true}
-//            		]
-//            	}
-//            ]
-//        });
+       var rootNode = new Ext.tree.AsyncTreeNode({
+            expanded: true,
+            text: 'XML',
+			id: 'xml',
+            children: [
+            	{
+            		text: 'XML 1', leaf: false, type: 'xml',
+            		expanded: true, iconCls: 'icon-tree-db',
+            		children: [
+	        			{text: 'APP', iconCls: 'icon-tree-table', type: 'app', leaf: true},
+	        			{text: 'MODULE', iconCls: 'icon-tree-table', type: 'module', leaf: true}
+            		]
+            	}
+            ]
+        });
 
 		var bottomToolBar = new Ext.Toolbar({
 			items: [
