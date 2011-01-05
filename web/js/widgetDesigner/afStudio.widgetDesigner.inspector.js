@@ -155,7 +155,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        listeners: {
 	        	'beforestartedit': function(editor, boundEl, value){
 	        		var cmp = Ext.getCmp('widget-inspector-menu');
-	        		if(!cmp.isVisible()){
+	        		if(cmp && !cmp.isVisible()){
 	        			return false;
 	        		}
 	        	},
