@@ -332,29 +332,79 @@ layout: 'fit',
 	 */
 	addNewWidget: function(){
 		
-									var form = new Ext.FormPanel({
-									    url: '', defaultType: 'textfield', width: 450, frame: true, 
-										labelWidth: 100, title: false,
-										items: [
-											{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'project_name', allowBlank: false},
-											{xtype:'textfield', fieldLabel: 'Path to prohect', anchor: '96%', name: 'project_path', allowBlank: false}
-										]
-									});
-											
-									var wnd = new Ext.Window({
-										title: 'Add new widget', width: 463,
-										autoHeight: true, closable: true,
-							            draggable: true, plain:true,
-							            modal: true, resizable: false,
-							            bodyBorder: false, border: false,
-							            items: form,
-										buttons: [
-											{text: 'Add widget'},
-											{text: 'Cancel', handler: function(){wnd.close}}
-										],
-										buttonAlign: 'center'
-									});
-									wnd.show()			
+
+		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
+//       var rootNode = new Ext.tree.AsyncTreeNode({
+//            expanded: true,
+//            text: 'XML',
+//			id: 'xml',
+//            children: [
+//            	{
+//            		text: 'XML 1', leaf: false, type: 'xml',
+//            		expanded: true, iconCls: 'icon-tree-db',
+//            		children: [
+//	        			{text: 'APP', iconCls: 'icon-tree-table', type: 'app', leaf: true},
+//	        			{text: 'MODULE', iconCls: 'icon-tree-table', type: 'module', leaf: true}
+//            		]
+//            	}
+//            ]
+//        });
+		
+		var loader = new Ext.tree.TreeLoader({
+			url: '/appFlowerStudio/modules',
+			baseParams: {cmd: 'get'},
+			listeners: {
+				beforeload:function (loader, node,clb){
+					node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
+				},
+				
+				load:function (loader,node,resp){
+					node.getOwnerTree().body.unmask();
+				},
+				
+				loadexception:function(loader,node,resp){
+					node.getOwnerTree().body.unmask();
+				}
+			}
+		}); 
+		
+		var widgetsTree = new Ext.tree.TreePanel({
+			url: '/appFlowerStudio/modules',
+			method: 'post',
+			reallyWantText: 'Do you really want to',
+			root: rootNode,
+			
+			loader: loader,
+			
+			listeners: {
+				'render': function(){
+					loader.load(rootNode);
+				},
+				'click': function(){
+					Ext.getCmp(this.id + '-add-widget-btn').enable();
+				}, scope: this
+			},
+			
+			rootVisible:false,
+			
+			height: 350,
+			autoScroll: true
+		});
+				
+		var wnd = new Ext.Window({
+			title: 'Add new widget', width: 233,
+			autoHeight: true, closable: true,
+            draggable: true, plain:true,
+            modal: true, resizable: false,
+            bodyBorder: false, border: false,
+            items: widgetsTree,
+			buttons: [
+				{text: 'Add widget', handler: this.addWidgetCmp, disabled: true, id: this.id + '-add-widget-btn', scope: this},
+				{text: 'Cancel', handler: function(){wnd.close()}}
+			],
+			buttonAlign: 'center'
+		});
+		wnd.show()			
 		
 //		alert('added');
 		return;
