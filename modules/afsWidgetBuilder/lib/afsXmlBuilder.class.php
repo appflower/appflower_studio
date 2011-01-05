@@ -11,21 +11,33 @@
  */
 class afsXmlBuilder {
     private $definition;
-    private $xml;
+    /**
+     * @var SimpleXml
+     */
+    private $rootNode;
 
-    function  __construct($definition) {
+    function  __construct($definition, $widgetType)
+    {
         $this->definition = $definition;
+        $this->createRootNode($widgetType);
+        $this->build();
     }
 
+    private function createRootNode($widgetType)
+    {
+        $this->rootNode = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><i___view></i___view>");
+        $this->rootNode->addAttribute('type', $widgetType);
+        $this->rootNode->addAttribute('xmlns___xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $this->rootNode->addAttribute('xsi___schemaLocation', 'http://www.appflower.com /schema/appflower.xsd');
+        $this->rootNode->addAttribute('xmlns___i', 'http://www.appflower.com/schema/');
+    }
+    
     /**
      * Initiates parsing of widget definition in array format
      */
     private function build()
     {
-        $elements = array();
-        $root = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><i___view></i___view>");
-        $this->parseRow($this->definition, $root);
-        $this->xml = str_replace('___',':',$root->asXML());
+        $this->parseRow($this->definition, $this->rootNode);
     }
 
     /**
@@ -130,11 +142,14 @@ class afsXmlBuilder {
      */
     function getXml()
     {
-        if (!$this->xml) {
-            $this->build();
-        }
-        
-        return $this->xml;
+        $dom = new DOMDocument();
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        $dom->loadXML($this->rootNode->asXML());
+
+
+        $xml = str_replace('___',':',$dom->saveXML());
+        return $xml;
     }
 }
 ?>

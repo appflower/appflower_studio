@@ -32,8 +32,10 @@ class afsWidgetBuilderActions extends sfActions
         try {
             $afsWBW = new afsWidgetBuilderWidget($request->getParameter('uri'));
             $data = $request->getParameter('data');
+            $widgetType = $request->getParameter('widgetType');
 
             $afsWBW->setDefinitionFromJSON($data);
+            $afsWBW->setWidgetType($widgetType);
             $afsWBW->validateAndSaveXml();
 
             return array(

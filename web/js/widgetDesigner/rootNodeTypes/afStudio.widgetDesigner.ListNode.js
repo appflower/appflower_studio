@@ -4,6 +4,7 @@
  * If needed - already existing widget definition can be loaded into this structure
  */
 afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRootNode, {
+    widgetType: 'list',
 	getNodeConfig: function(){
         var node = {
             text: 'New list widget'

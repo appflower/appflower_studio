@@ -10,11 +10,16 @@ class afsWidgetBuilderWidget {
 
     private $module;
     private $action;
+    private $widgetType;
     /**
      * Array representation of Widgets XML
      * @var array
      */
     private $definition;
+    
+    public function setWidgetType($widgetType) {
+       $this->widgetType = $widgetType;
+    }
 
     function __construct($uri)
     {

@@ -11,12 +11,16 @@ afStudio.widgetDesigner.WidgetDefinition = function(widgetUri){
 afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, {
     widgetUri: null,
     definition: null,
-    fetchAndConfigure: function(widgetTypeRootNode){
+    rootNode: null,
+    widgetType: null,
+    fetchAndConfigure: function(widgetInspector){
         Ext.Ajax.request({
             url: 'afsWidgetBuilder/getWidget?uri='+this.widgetUri,
             success: function(response){
                 this.parseFetchedData(response);
-                widgetTypeRootNode.configureFor(this.definition);
+                this.createRootNode();
+                this.rootNode.configureFor(this.definition);
+                widgetInspector.setRootNode(this.rootNode);
             },
             scope: this
         });
@@ -28,11 +32,15 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
 
         var baseData = Ext.util.JSON.decode(response.responseText);
         this.definition = Ext.util.JSON.decode(baseData.data);
+        this.widgetType = this.definition['type'];
     },
     save: function(data){
         Ext.Ajax.request({
             url: 'afsWidgetBuilder/saveWidget?uri='+this.widgetUri,
-            params: {'data': Ext.util.JSON.encode(data)},
+            params: {
+                'data': Ext.util.JSON.encode(data),
+                'widgetType': this.widgetType
+            },
             success: function(response){
                 this.parseSaveResponse(response);
             },
@@ -45,6 +53,15 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         } else {
             console.log('Widget definition was saved')
         }
+   },
+   createRootNode: function(){
+       switch (this.widgetType) {
+           case 'list':
+               this.rootNode = new afStudio.widgetDesigner.ListNode();
+               break;
+       }
+
+       return this.rootNode;
    }
 
 });

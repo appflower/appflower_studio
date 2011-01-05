@@ -239,7 +239,6 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	
 	saveWidget: function(){
         var widgetData = this.widgetInspectorTree.root.dumpDataForWidgetDefinition();
-        console.log(widgetData);
         this.widgetDefinition.save(widgetData);
 	},
 	
@@ -251,15 +250,17 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			var _this = this;
 				cmp.body.mask('Building inspector. Please wait.')
 				
-				_this.rootNode = new afStudio.widgetDesigner.ListNode();
-        		_this.widgetInspectorTree.setRootNode(_this.rootNode);
                 _this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
-                _this.widgetDefinition.fetchAndConfigure(_this.rootNode);
-                _this.widgetInspectorTree.expandAll();
+                _this.widgetDefinition.fetchAndConfigure(_this);
                 
 				cmp.body.unmask()
 		}
 		this.widgetInspectorTree.on('afterrender', fn, this);
-	}
+	},
+    setRootNode: function(rootNode){
+        this.rootNode = rootNode;
+        this.widgetInspectorTree.setRootNode(rootNode);
+        this.widgetInspectorTree.expandAll();
+    }
 });
 Ext.reg('afStudio.widgetDesigner.inspector', afStudio.widgetDesigner.inspector);
