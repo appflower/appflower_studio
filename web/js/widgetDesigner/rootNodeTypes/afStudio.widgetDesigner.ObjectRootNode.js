@@ -17,7 +17,7 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
     },
     buildDatasourceNode: function(){
         var methodNode = this.buildMethodNode();
-        var datasourceNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
+        var datasourceNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'Datasource',
            id: 'i:datasource',
            createProperties: function(){
@@ -42,7 +42,7 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
     },
     buildMethodNode: function(){
         var paramNode = this.buildParamNode();
-        var methodNode = new afStudio.widgetDesigner.CollectionNodeBuilder().getConstructor({
+        var methodNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Method',
            id: 'i:method',
            createChildConstructor: paramNode,
@@ -58,7 +58,7 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
         return methodNode;
     },
     buildParamNode: function(){
-        var paramNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
+        var paramNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'parameter',
            updateNodeNameFromPropertyId: 'name',
            createProperties: function(){

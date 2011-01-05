@@ -1,12 +1,14 @@
 /**
- * 
- * @param {Object} 
+ * Thanks to this builder class you can create WI node types at runtime
+ * It works similar to Ext.data.record.create() method which returns constructor function
+ * Returned constructor can be used to create many instances of defined node type
  */
-afStudio.widgetDesigner.ContainerNodeBuilder = function(){};
-afStudio.widgetDesigner.ContainerNodeBuilder = Ext.extend(afStudio.widgetDesigner.ContainerNodeBuilder,{
-    baseObject: afStudio.widgetDesigner.ContainerNode,
-    getConstructor: function(config){
-        var f = Ext.extend(this.baseObject, {});
+afStudio.widgetDesigner.NodeBuilder = {
+    createContainerNode: function(config, baseClass){
+        if (!baseClass){
+            baseClass = afStudio.widgetDesigner.ContainerNode;
+        }
+        var f = Ext.extend(baseClass, {});
         var p = f.prototype;
 
         p.getNodeConfig = function(){
@@ -47,6 +49,26 @@ afStudio.widgetDesigner.ContainerNodeBuilder = Ext.extend(afStudio.widgetDesigne
 
 
         return f;
+    },
+    createCollectionNode: function(config){
+        var f = this.createContainerNode(config, afStudio.widgetDesigner.CollectionNode);
+        var p = f.prototype;
+
+        if (config.addChildActionLabel) {
+            p.addChildActionLabel = config.addChildActionLabel;
+        }
+        if (config.childNodeId) {
+            p.childNodeId = config.childNodeId;
+        }
+
+
+        if (config.createChildConstructor) {
+            p.createChild = function(){
+                return new config.createChildConstructor;
+            }
+        }
+
+        return f;
     }
 
-});
+};

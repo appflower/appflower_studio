@@ -1,3 +1,10 @@
+/**
+ * BaseNode is common class for all nodes displayed in WI tree
+ * It can contain nested elements which are some specific NodeTypes but even childs are based on BaseNode
+ * It can also contain parameters which are accessed through Properties Grid displayed under WI tree
+ *
+ * This class is abstract class - you should not use it. Instead use CollectionNode or ContainerNode class
+ **/
 Ext.namespace('afStudio.widgetDesigner');
 
 N = afStudio.widgetDesigner;
@@ -22,6 +29,10 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
      * that property changes - node text label is updated accordingly
      */
     updateNodeNameFromPropertyId: false,
+    /**
+     * This method should create an instance of Ext.menu.Menu class and place it in this.contextMenu variable
+     * If defined - context menu will be displayed when given node is clicked with right mouse button
+     */
     createContextMenu: Ext.emptyFn,
     containsIParams: false,
     /**

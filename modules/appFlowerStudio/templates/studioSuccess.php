@@ -90,8 +90,7 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.BaseNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.ContainerNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.CollectionNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.ContainerNodeBuilder.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.CollectionNodeBuilder.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.NodeBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/rootNodeTypes/afStudio.widgetDesigner.ObjectRootNode.js"></script>
 <?php 
 $appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';

@@ -32,7 +32,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         this.appendChild(new proxyNode);
 	},
     buildProxyNode: function(){
-        var proxyNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
+        var proxyNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'Proxy',
            id: 'i:proxy',
            createProperties: function(){
@@ -46,7 +46,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
     },
     buildFieldsNode: function(){
         var columnNode = this.buildColumnNode();
-        var methodNode = new afStudio.widgetDesigner.CollectionNodeBuilder().getConstructor({
+        var methodNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Fields',
            id: 'i:fields',
            createChildConstructor: columnNode,
@@ -57,7 +57,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         return methodNode;
     },
     buildActionNode: function(){
-        var actionNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
+        var actionNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'new action'
            ,updateNodeNameFromPropertyId: 'name',
            createProperties: function(){
@@ -77,7 +77,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         return actionNode;
     },
     buildActionsNode: function(actionNodeConstructor){
-        var actionsNode = new afStudio.widgetDesigner.CollectionNodeBuilder().getConstructor({
+        var actionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Actions',
            id: 'i:actions',
            createChildConstructor: actionNodeConstructor,
@@ -87,7 +87,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         return actionsNode;
     },
     buildRowactionsNode: function(actionNodeConstructor){
-        var rowactionsNode = new afStudio.widgetDesigner.CollectionNodeBuilder().getConstructor({
+        var rowactionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Row Actions',
            id: 'i:rowactions',
            createChildConstructor: actionNodeConstructor,
@@ -97,7 +97,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         return rowactionsNode;
     },
     buildMoreactionsNode: function(actionNodeConstructor){
-        var moreactionsNode = new afStudio.widgetDesigner.CollectionNodeBuilder().getConstructor({
+        var moreactionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'More Actions',
            id: 'i:moreactions',
            createChildConstructor: actionNodeConstructor,
@@ -107,7 +107,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         return moreactionsNode;
     },
     buildColumnNode: function(){
-        var columnNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
+        var columnNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'new field',
            updateNodeNameFromPropertyId: 'name',
            iconCls: 'icon-field',
