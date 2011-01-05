@@ -10,5 +10,9 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
             expanded: true
         };
         return config;
-	}
+	},
+    createProperties: function(){
+        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('i:title','Title').create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyTypeBoolean('i:description','Description').create());
+    }
 });

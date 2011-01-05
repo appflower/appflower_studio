@@ -1,6 +1,7 @@
 /**
  * Responsibilities:
  *  * fetch cocnrete widget definition from Server
+ *  * initialize root node of WI tree
  *  * populate fetched values into already intialized Widget Inspector
  *  * save modified values back to server and handle any server side errors
  */
@@ -57,6 +58,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
        switch (this.widgetType) {
            case 'list':
                rootNode = new afStudio.widgetDesigner.ListNode();
+               break;
+           case 'edit':
+               rootNode = new afStudio.widgetDesigner.EditNode();
                break;
        }
 

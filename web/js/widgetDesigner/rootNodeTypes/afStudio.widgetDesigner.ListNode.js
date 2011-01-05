@@ -12,8 +12,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         return node;
 	},
     createProperties: function(){
-        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('i:title','Title').create());
-        this.addProperty(new afStudio.widgetDesigner.PropertyTypeBoolean('i:description','Description').create());
+        afStudio.widgetDesigner.EditNode.superclass.createProperties();
         this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').markAsOneOfIParam().create());
     },
 	addRequiredChilds: function(){
