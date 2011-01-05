@@ -11,16 +11,15 @@ afStudio.widgetDesigner.WidgetDefinition = function(widgetUri){
 afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, {
     widgetUri: null,
     definition: null,
-    rootNode: null,
     widgetType: null,
     fetchAndConfigure: function(widgetInspector){
         Ext.Ajax.request({
             url: 'afsWidgetBuilder/getWidget?uri='+this.widgetUri,
             success: function(response){
                 this.parseFetchedData(response);
-                this.createRootNode();
-                this.rootNode.configureFor(this.definition);
-                widgetInspector.setRootNode(this.rootNode);
+                var rootNode = this.createRootNode();
+                rootNode.configureFor(this.definition);
+                widgetInspector.setRootNode(rootNode);
             },
             scope: this
         });
@@ -57,11 +56,12 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
    createRootNode: function(){
        switch (this.widgetType) {
            case 'list':
-               this.rootNode = new afStudio.widgetDesigner.ListNode();
+               rootNode = new afStudio.widgetDesigner.ListNode();
                break;
        }
 
-       return this.rootNode;
+       rootNode.setText(this.widgetUri);
+       return rootNode;
    }
 
 });

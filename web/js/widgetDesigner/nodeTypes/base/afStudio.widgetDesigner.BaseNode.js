@@ -117,10 +117,17 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         var iParams = [];
         for(i in this.properties){
             var property = this.properties[i];
+            var propertyValue = property.get('value');
+            // for boolean values we want them to travel as 'true' and 'false' strings
+            if (propertyValue === false) {
+                propertyValue = 'false';
+            } else if (propertyValue === true){
+                propertyValue = 'truee';
+            }
             if (property.get('oneOfIParam')) {
-                iParams.push({name: property.id, '_content': property.get('value')});
+                iParams.push({name: property.id, '_content': propertyValue});
             } else {
-                data[property.id] = property.get('value');
+                data[property.id] = propertyValue;
             }
         }
         if (iParams.length > 0){
