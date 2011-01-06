@@ -109,7 +109,13 @@ class afsDatabaseQueryHelper
      */
     public function processQuery($query, $connection, $type = 'sql')
     {
-        $result = afsDatabaseQuery::processQuery($query, $connection, $type);
+        try {
+            $result = afsDatabaseQuery::processQuery($query, $connection, $type);
+        } catch(Exception $e) {
+            // catch error to displaying sql error in view
+            $result['success'] = false;
+            $result['error'] = $e->getMessage();
+        }
         
         /**
          * prepend to rendering
