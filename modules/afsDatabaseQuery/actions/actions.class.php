@@ -38,12 +38,36 @@ class afsDatabaseQueryActions extends sfActions
         $aDatabases = $this->oDBQueryHelper->getExtDatabaseStructureTree();
         return $this->renderJson($aDatabases);
     }
+    
+    /**
+     * Execute query action
+     */
+    public function executeQuery(sfWebRequest $request)
+    {
+        /* 
+         * http://studio/afsDatabaseQuery/query?query=select%20*%20from%20af_guard_group
+         * SELECT * FROM af_guard_group
+         */
+        
+        $sQuery = $request->getParameter('query', '');
+        $sConnection = $request->getParameter('connection', 'propel');
+        $sType = $request->getParameter('type', 'sql');
+        
+        $aResult = $this->oDBQueryHelper->processQuery($sQuery, $sConnection, $sType);
+        
+        return $this->renderJson($aResult);
+    }
+    
 
     /**
      * Getting table information
      */
     public function executeTable(sfWebRequest $request)
     {
+        /*
+         * http://studio/appFlowerStudio/models?xaction=read&model=TimeZones&schema=C:/xampp/htdocs/studio/config/schema.yml
+         */
+        
         
         $modelName = $this->getRequest()->getParameter('model');
         $modelQueryClass = "{$modelName}Query";
@@ -73,11 +97,4 @@ class afsDatabaseQueryActions extends sfActions
         // return $this->renderJson($oTable);
     }
     
-    public function executeTest(sfWebRequest $request)
-    {
-        afsDatabaseQuery::getDatabaseList('propel');
-        
-        die;
-    }
-
 }

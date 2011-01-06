@@ -116,6 +116,28 @@ class afsDatabaseQuery
         return $tables;
     }
     
+    /**
+     * Processing query via connection and query type
+     */
+    public static function processQuery($query, $connection = 'propel', $type = 'sql')
+    {
+        switch ($type) {
+            
+            case 'sql':
+                $con = Propel::getConnection($connection);
+                $stm = $con->prepare($query);
+                $stm->execute();
+                
+                $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+                break;
+                
+            case 'propel':
+                break;
+        }
+        
+        return $result;
+    }
+    
 
 }
 

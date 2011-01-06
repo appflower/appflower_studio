@@ -99,5 +99,26 @@ class afsDatabaseQueryHelper
     	
     	return $tree;
     }
+    
+    /**
+     * Execute query helper 
+     * 
+     * @param query - Query which will be processed
+     * @param type - Type of query (sql, propel)
+     * @return array
+     */
+    public function processQuery($query, $connection, $type = 'sql')
+    {
+        $result = afsDatabaseQuery::processQuery($query, $connection, $type);
+        
+        /**
+         * prepend to rendering
+         */
+        
+        return $result;
+    }
+    
+    
+    
 }
 
