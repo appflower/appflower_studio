@@ -46,7 +46,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		});
 
 		//Create west region
-		this.westPanel = new Ext.tree.TreePanel( {
+		/*this.westPanel = new Ext.tree.TreePanel( {
 			split: true, title: 'Files',  iconCls: 'icon-models',
 			url: '/appFlowerStudio/cssfilestree',
 			loader: this.loader, method: 'post',
@@ -75,7 +75,30 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
             draggable:false, // disable root node dragging
             id:'css'
         });		
-		this.westPanel.setRootNode(root);
+		this.westPanel.setRootNode(root);*/
+		
+		this.westPanel = new Ext.ux.FileTreePanel({
+			split: true, title: 'Files',  iconCls: 'icon-models',
+        	region: 'west',
+			url:'/appFlowerStudio/filetree'
+			,width: 220
+			,rootPath:'root/plugins/appFlowerStudioPlugin/web/css'
+			,path:'pluigns'
+			,rootVisible:true
+			,rootText:'CSS'
+			,maxFileSize:524288*2*10
+			,topMenu:false
+			,autoScroll:true
+			,enableProgress:false
+			,singleUpload:true
+			,listeners: {
+				click: function(node, e){
+					if(node.leaf){
+						this.codeEditor.loadFile('appFlowerStudioPlugin/css/' + node.text);
+					}
+				}, scope: this
+			}
+		});
 
 		// setup loading mask if configured
 		this.loader.on({
@@ -112,7 +135,19 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	},
 	
 	save: function(){
-		alert('Ssave button pressed')
+		var self = this;
+		Ext.Ajax.request({
+		   url: '/appFlowerStudio/cssfilesSave',
+		   params: { node: this.westPanel.getSelectionModel().getSelectedNode().text},
+		   xmlData:this.codeEditor.getValue(),
+		   success: function(result,request){
+			   //alert(result.responseText);
+			   var obj = Ext.decode(result.responseText);
+			   Ext.Msg.alert("Information",obj.message);
+		   }
+		});
+
+		//alert(this.codeEditor.getCode());
 	},
 	
 	/**

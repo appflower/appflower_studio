@@ -120,12 +120,48 @@ class appFlowerStudioActions extends sfActions
 	}
 
 	public function executeCssfilestree(){
+		$cssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
+		$cssExtensions=sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
+		$i=0;
+		foreach ($cssExtensions as $cssExtension){
+			$cssExtension = str_replace(sfConfig::get('sf_root_dir')."/plugins/appFlowerStudioPlugin/web/css/","",$cssExtension);
+			$nodes[$i]=array('text' => $cssExtension, 'id' => 'css/'.$cssExtension, 'leaf' => true);
+			$i++;
+		}
+		/*
 		$nodes = array(
 			array('text' => 'afStudio.console.css', 'id' => 'css/afStudio.console.css', 'leaf' => true),
 			array('text' => 'afStudio.css', 'id' => 'css/afStudio.css', 'leaf' => true),
-			array('text' => 'afStudio.tplSelector.css', 'id' => 'css/afStudio.tplSelector.css', 'leaf' => true)
-		);
+			array('text' => 'afStudio.tplSelector.css', 'id' => 'css/afStudio.tplSelector.css', 'leaf' => true),
+			array('text' => 'afStudio.tplSelector.css1', 'id' => 'css/afStudio.tplSelector.css1', 'leaf' => true)
+		);*/
 		return $this->renderJson($nodes);
+	}
+
+	public function executeCssfilesSave(){
+		$result=true;
+		$JDATA=file_get_contents("php://input");
+		$cssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
+		//echo $JDATA;
+		$node=$this->hasRequestParameter('node')?$this->getRequestParameter('node'):"";
+		try{
+			$fp = fopen($cssPath.$node,"w");
+			fWrite($fp,$JDATA);
+			fclose($fp);
+		}catch(Exception $e){
+			$result=false;	
+		}
+
+	 	if($result) {
+		    $success = true;
+		    $message = 'File saved successfully';
+		} else {
+		    $success = false;
+		    $message =  'Error while saving file to disk!';
+		}
+		
+		$info=array('success'=>$success, "message"=>$message);
+		return $this->renderJson($info);
 	}
 	
 	public function executeConsole(sfWebRequest $request)
