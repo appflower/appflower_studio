@@ -67,8 +67,22 @@ class afsWidgetBuilderWidget {
 
     function validateAndSaveXml()
     {
-        $xmlBuilder = new afsXmlBuilder($this->definition);
-        $xmlBuilder->getXml();
+        $xmlBuilder = new afsXmlBuilder($this->definition, $this->widgetType);
+
+        $afCU = new afConfigUtils($this->module);
+        $path = $afCU->getConfigFilePath($this->action.'.xml');
+        FirePHP::getInstance(true)->fb($path);
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
+        FirePHP::getInstance(true)->fb($tempPath);
+        file_put_contents($tempPath, $xmlBuilder->getXml());
+        chmod($tempPath, 0777);
+
+        $validator = new XmlValidator($tempPath);
+        $validationStatus = $validator->validateXmlDocument();
+        if ($validationStatus) {
+            rename($tempPath, $path);
+        }
     }
 }
 ?>

@@ -19,8 +19,83 @@ class afsXmlBuilder {
     function  __construct($definition, $widgetType)
     {
         $this->definition = $definition;
+        $this->fixElementsOrder();
         $this->createRootNode($widgetType);
         $this->build();
+    }
+
+    /**
+     * order of elements in XML file is important and this method job is to take care of it
+     */
+    private function fixElementsOrder()
+    {
+        $newDefinition = array();
+        $def = $this->definition;
+        if (isset($def['i:title'])) {
+            $newDefinition['i:title'] = $def['i:title'];
+            unset($def['i:title']);
+        }
+
+        if (isset($def['i:params'])) {
+            $newDefinition['i:params'] = $def['i:params'];
+            unset($def['i:params']);
+        }
+
+        if (isset($def['i:proxy'])) {
+            $newDefinition['i:proxy'] = $def['i:proxy'];
+            unset($def['i:proxy']);
+        }
+
+        if (isset($def['i:datasource'])) {
+            $newDefinition['i:datasource'] = $def['i:datasource'];
+            unset($def['i:datasource']);
+            $newDS = array();
+            if (isset($newDefinition['i:datasource']['i:class'])) {
+                $newDS['i:class'] = $newDefinition['i:datasource']['i:class'];
+                unset($newDefinition['i:datasource']['i:class']);
+            }
+            if (isset($newDefinition['i:datasource']['i:method'])) {
+                $newDS['i:method'] = $newDefinition['i:datasource']['i:method'];
+                unset($newDefinition['i:datasource']['i:method']);
+            }
+
+            foreach ($newDefinition['i:datasource'] as $key => $value) {
+                $newDS[$key] = $value;
+            }
+
+            $newDefinition['i:datasource'] = $newDS;
+        }
+
+        if (isset($def['i:fields'])) {
+            $newDefinition['i:fields'] = $def['i:fields'];
+            unset($def['i:fields']);
+        }
+
+        if (isset($def['i:rowactions'])) {
+            $newDefinition['i:rowactions'] = $def['i:rowactions'];
+            unset($def['i:rowactions']);
+        }
+
+        if (isset($def['i:actions'])) {
+            $newDefinition['i:actions'] = $def['i:actions'];
+            unset($def['i:actions']);
+        }
+
+        if (isset($def['i:moreactions'])) {
+            $newDefinition['i:moreactions'] = $def['i:moreactions'];
+            unset($def['i:moreactions']);
+        }
+
+        if (isset($def['i:description'])) {
+            $newDefinition['i:description'] = $def['i:description'];
+            unset($def['i:description']);
+        }
+
+        foreach ($def as $elName => $el) {
+            $newDefinition[$elName] = $el;
+        }
+
+        $this->definition = $newDefinition;
     }
 
     private function createRootNode($widgetType)
@@ -109,9 +184,6 @@ class afsXmlBuilder {
      */
     function addManyChilds($parentElement, $childsName, $childsAttributes)
     {
-        if ($childsName == 'column') {
-            isset($childsAttributes['da']);
-        }
         foreach ($childsAttributes as $childAttributes) {
             $childElValue = null;
             foreach ($childAttributes as $key => $value) {
@@ -130,10 +202,7 @@ class afsXmlBuilder {
             } else {
                 $childEl = $parentElement->addChild($childsName);
             }
-
-            foreach ($childAttributes as $key => $value) {
-                $childEl->addAttribute($key, $value);
-            }
+            $this->parseRow($childAttributes, $childEl);
         }
     }
 

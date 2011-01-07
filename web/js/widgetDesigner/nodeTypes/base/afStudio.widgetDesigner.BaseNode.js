@@ -111,7 +111,9 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
 
         //my array merge :)
         for(key in propertiesData) {
-            childsData[key] = propertiesData[key];
+            if (propertiesData[key] != '') {
+                childsData[key] = propertiesData[key];
+            }
         }
 
         return childsData;

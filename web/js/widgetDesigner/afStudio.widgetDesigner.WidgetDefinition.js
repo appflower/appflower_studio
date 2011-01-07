@@ -50,8 +50,13 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
    parseSaveResponse: function(response){
         if (response.statusText != 'OK') {
             console.log('response looks invalid');
+        }
+
+        var actionResponse = Ext.util.JSON.decode(response.responseText);
+        if (actionResponse.success !== true) {
+            console.log('An error occured: '+actionResponse.message);
         } else {
-            console.log('Widget definition was saved')
+            console.log(actionResponse.message);
         }
    },
    createRootNode: function(){
