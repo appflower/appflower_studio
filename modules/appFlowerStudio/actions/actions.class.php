@@ -146,8 +146,9 @@ class appFlowerStudioActions extends sfActions
 		$node=$this->hasRequestParameter('node')?$this->getRequestParameter('node'):"";
 		try{
 			$fp = fopen($cssPath.$node,"w");
-			fWrite($fp,$JDATA);
-			fclose($fp);
+			if(!$fp)throw new Exception("file open error");
+			if(!fWrite($fp,$JDATA))throw new Exception("file write error");
+			if(!fclose($fp))throw new Exception("file close error");
 		}catch(Exception $e){
 			$result=false;	
 		}
