@@ -86,6 +86,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 			,path:'pluigns'
 			,rootVisible:true
 			,rootText:'CSS'
+			,newfileText:'file.css'
 			,maxFileSize:524288*2*10
 			,topMenu:false
 			,autoScroll:true
@@ -135,7 +136,6 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	},
 	
 	save: function(){
-		var self = this;
 		Ext.Ajax.request({
 		   url: '/appFlowerStudio/cssfilesSave',
 		   params: { node: this.westPanel.getSelectionModel().getSelectedNode().text},

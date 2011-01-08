@@ -23,12 +23,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * plugins context menu
 	 */
 	contextMenu: new Ext.menu.Menu({
-	        items: [
-	        {
-	       		id: 'delete-plugin',
-	            text: 'Delete plugin',
-	            iconCls: 'icon-models-delete'
-	        },{
+	        items: [{
 	            id: 'edit-plugin',
 	            text: 'Edit plugin',
 	            iconCls: 'icon-models-edit'
@@ -36,7 +31,11 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	            id: 'rename-plugin',
 	            text: 'Change plugin name',
 	            iconCls: 'icon-models-edit'				
-			}],
+			},{
+	       		id: 'delete-plugin',
+	            text: 'Delete plugin',
+	            iconCls: 'icon-models-delete'
+	        }],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
@@ -504,7 +503,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			   } catch(e) {
 				   var data = {rows:[], totalCount:0}
 			   }
-			   	var fieldsGrid=new afStudio.plugins.FieldsGrid({
+			   /*	var fieldsGrid=new afStudio.plugins.FieldsGrid({
 			   		'title':'Editing '+this.getplugin(node),
 			   		_data:data,
 			   		plugin: this.getplugin(node),
@@ -519,7 +518,21 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					activeTab: 0,
 					items:[pluginGrid,fieldsGrid]
 				});
-				afStudio.vp.addToPortal(editTab, true);
+				afStudio.vp.addToPortal(editTab, true);*/
+			   
+				afStudio.vp.addToPortal({
+					title: 'Plugin Designer',
+					collapsible: false,
+					draggable: false,
+					layout: 'fit',
+					items: [{
+						xtype: 'afStudio.widgetDesigner',
+						actionPath: null,
+						securityPath: null,
+		                widgetUri: "afGuardUserProfile/edit"//widgetUri,
+						//mask: mask
+					}]
+				}, true);		
 				
 		       afStudio.vp.unmask('center');
 		   }
