@@ -925,12 +925,18 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		var id = Ext.id();
 		
-		var tabPanel=this.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt;
+
+		//TODO: think about this snippet later
+		var tabPanel = this.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt;
+		if('widget-designer' != tabPanel.itemId){
+			var tabPanel = this.ownerCt.ownerCt.ownerCt;
+		}
+
 		var currentTabs=tabPanel.items.items;
 		var fileName=this.getFileName(path);
 		
 		//find if the current path is opened
-		var opened_tabs=tabPanel.find('path',path);
+		var opened_tabs = tabPanel.find('filePath',path);
 		
 		if(opened_tabs.length>0)
 		{
@@ -938,97 +944,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			opened_tab.show();
 		}
 		else{
-			
-			var codePress = new Ext.ux.CodePress({
-				title:fileName,
-				closable:true,
-				path:path,
-				tabTip:path,
-				file:path,
-				tabPanel:tabPanel
-			});
-			
-			/**
-			 * 
-			 * 		var panel = new Ext.Panel({		
-			id:'widget-designer-panel',
-			flex: 3,			
-			frame: true,
-			border: true,
-			autoScroll: true,
-			layout: 'fit',
-			tbar: {
-				items: [
-					{text: 'Save', iconCls: 'icon-save'},
-					{xtype: 'tbseparator'},
-					{text: 'Add Field', iconCls: 'icon-add',handler:this.addField,scope:this},
-					{xtype: 'tbseparator'},
-					{text: 'Preview', iconCls: 'icon-preview', handler: this.preview,scope:this},
-					{xtype: 'tbseparator'},
-					{text: 'Format', iconCls: 'icon-format', menu: columnsMenu}
-				]
-			},
-			listeners:{
-				afterrender:this.containerPanelRender,
-				scope:this
-			}
-		});	
-			 * panel, 
-				{
-					xtype: 'panel', flex: 1, layout: 'fit',
-					items: [
-						{
-                            xtype: 'afStudio.widgetDesigner.inspector',
-                            widgetUri: this.widgetUri
-                        }
-					]
-				}
-			 */
-			/**
-			var fileBrowserPnl = new Ext.Panel({
-				title: 'panelt', //flex: 1
-				width: 50
-			});
-			
-			var panel = new Ext.Container({
-//				layout: 'fit',
-//layout: 'hbox',
-
-	layout: 'hbox',
-	layoutConfig: {
-	    align: 'stretch',
-	    pack: 'start'
-	},
-
-				iconCls: 'icon-script-edit',
-				title: fileName,
-				closable: true,
-				tbar: [{text: 'Save', iconCls: 'icon-save', handler: function(){alert('Save button pressed')}}],
-				items: [
-					{xtype: 'panel', title: '11',
-						flex: 1,			
-						frame: true,
-						border: true,
-						autoScroll: true,
-//						//layout: 'fit',
-					
-						items: codePress
-					}, 
-					fileBrowserPnl
-				]
-			})
-			*/
-			
-			//TODO: original panel
-			var panel = new Ext.Panel({
-				iconCls: 'icon-script-edit',
-				title: fileName,
-				closable: true,
-				tbar: [{text: 'Save', iconCls: 'icon-save', handler: function(){alert('Save button pressed')}}],
-				items: codePress
-			});
-		
-			var new_tab=tabPanel.add(panel).show();	
+			tabPanel.addCodeEditorTab(fileName, path, path, path);
 		}
 	}
 	// }}}

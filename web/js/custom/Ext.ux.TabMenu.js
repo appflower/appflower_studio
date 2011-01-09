@@ -13,7 +13,8 @@ Ext.ux.TabMenu = function(){
                 id: tabs.id + '-save',
                 text: 'Save',
                 iconCls: 'icon-file-save',
-                handler : function(){                	
+                handler : function(){
+                	//TODO: move to public function and it as "Save" button handler in CodeEditor Toolbar               	
                 	Ext.Ajax.request({
 			          url: codepressItem.fileContentUrl
 			          , method:'post'
