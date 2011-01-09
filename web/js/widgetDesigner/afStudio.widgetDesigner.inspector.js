@@ -42,6 +42,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		afStudio.widgetDesigner.inspector.superclass.initComponent.apply(this, arguments);
 		this._initEvents();
 		
+		//TODO: calculate and width to the WidgetInpectorTree and Properties grid
 		(function(){
 			var h1 = this.propertiesGrid.getHeight();
 			var h2 = this.widgetInspectorTree.getHeight();
@@ -51,11 +52,9 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			this.propertiesGrid.setHeight(h);
 			this.widgetInspectorTree.setHeight(h);
 			
+			//Hot fix
 			this.layout.setActiveItem(1);
 			this.layout.setActiveItem(0);
-			
-//			this.propertiesGrid.doLayout();
-//			this.widgetInspectorTree.doLayout();
 		}).defer(100, this);
 	}
 	
