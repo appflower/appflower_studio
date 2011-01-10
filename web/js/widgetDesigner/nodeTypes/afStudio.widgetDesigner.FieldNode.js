@@ -1,10 +1,7 @@
 /**
  * This node represents i:field node in edit type widget
- * Thanks to custom implementation for some of BaseNode methods it contains custom structure in WI tree
- * So Field node contains valueType and valueSource properties and based on their values
- * there is child node created that allows to make further configuration of i:value node
- * This node also needs custom code that sets its initial values from XML and
- * also custom code that dumps its data back to JSON so they can be written back to XML
+ *
+ * It needs this static definition because it extends NodeWithIValueElement - more on this in NodeWithIValueElement
  */
 afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.NodeWithIValueElement, {
     updateNodeNameFromPropertyId: 'name',

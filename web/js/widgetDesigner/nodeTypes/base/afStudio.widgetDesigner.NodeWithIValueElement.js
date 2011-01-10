@@ -5,6 +5,10 @@
  * there is child node created that allows to make further configuration of i:value node
  * This node also needs custom code that sets its initial values from XML and
  * also custom code that dumps its data back to JSON so they can be written back to XML
+ *
+ * Any class that extends NodeWithIValueElement and creates custom properties must have
+ * static definition. If you try to create it using NodeBuilder - properties won't be
+ * initialized properly.
  */
 afStudio.widgetDesigner.NodeWithIValueElement = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
     constructor: function(){
