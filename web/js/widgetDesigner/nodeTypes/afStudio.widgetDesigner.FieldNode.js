@@ -1,9 +1,9 @@
 /**
  * This node represents i:field node in edit type widget
  *
- * It needs this static definition because it extends NodeWithIValueElement - more on this in NodeWithIValueElement
+ * It needs this static definition because it extends ValueTypeNode - more on this in ValueTypeNode
  */
-afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.NodeWithIValueElement, {
+afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.ValueTypeNode, {
     updateNodeNameFromPropertyId: 'name',
     getNodeConfig: function(){
         return {

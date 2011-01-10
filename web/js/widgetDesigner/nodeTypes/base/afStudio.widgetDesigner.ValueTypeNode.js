@@ -1,18 +1,18 @@
 /**
- * This node can be used as a base node for any element that can/should contain i:value XML element.
+ * This node can be used as a base node for any XML element that "uses" i:valueType
  * Thanks to custom implementation for some of BaseNode methods it contains custom structure in WI tree
- * So Field node contains valueType and valueSource properties and based on their values
- * there is child node created that allows to make further configuration of i:value node
+ * So this node contains valueType and valueSource properties and based on their values
+ * there is child node created that allows to make further configuration of your i:valueType node
  * This node also needs custom code that sets its initial values from XML and
  * also custom code that dumps its data back to JSON so they can be written back to XML
  *
- * Any class that extends NodeWithIValueElement and creates custom properties must have
+ * Any class that extends ValueTypeNode and creates custom properties must have
  * static definition. If you try to create it using NodeBuilder - properties won't be
  * initialized properly.
  */
-afStudio.widgetDesigner.NodeWithIValueElement = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
+afStudio.widgetDesigner.ValueTypeNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
     constructor: function(){
-        afStudio.widgetDesigner.NodeWithIValueElement.superclass.constructor.apply(this, arguments);
+        afStudio.widgetDesigner.ValueTypeNode.superclass.constructor.apply(this, arguments);
         this.propertyChanged();
     },
     createProperties: function(){
@@ -25,7 +25,7 @@ afStudio.widgetDesigner.NodeWithIValueElement = Ext.extend(afStudio.widgetDesign
        }
     },
     dumpDataForWidgetDefinition: function(){
-        var widgetData = afStudio.widgetDesigner.NodeWithIValueElement.superclass.dumpDataForWidgetDefinition.apply(this, arguments);
+        var widgetData = afStudio.widgetDesigner.ValueTypeNode.superclass.dumpDataForWidgetDefinition.apply(this, arguments);
         var newWidgetData = {};
         for (i in widgetData) {
             if (i == 'valueType') {
@@ -64,7 +64,7 @@ afStudio.widgetDesigner.NodeWithIValueElement = Ext.extend(afStudio.widgetDesign
         return newWidgetData;
     },
     propertyChanged: function(property){
-        afStudio.widgetDesigner.NodeWithIValueElement.superclass.propertyChanged.apply(this, arguments);
+        afStudio.widgetDesigner.ValueTypeNode.superclass.propertyChanged.apply(this, arguments);
         if (property && property.id == 'valueSource') {
             this.valueSourceChanged();
         }
@@ -122,7 +122,7 @@ afStudio.widgetDesigner.NodeWithIValueElement = Ext.extend(afStudio.widgetDesign
         return data;
     },
     configureFor: function(widgetData){
-        afStudio.widgetDesigner.NodeWithIValueElement.superclass.configureFor.apply(this, [widgetData]);
+        afStudio.widgetDesigner.ValueTypeNode.superclass.configureFor.apply(this, [widgetData]);
         if (widgetData && widgetData['i:value']) {
             var iValueData = widgetData['i:value'];
             this.configureForValue('valueType', iValueData['type']);
