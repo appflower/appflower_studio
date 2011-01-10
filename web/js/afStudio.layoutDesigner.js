@@ -378,7 +378,7 @@ layout: 'fit',
 			
 			listeners: {
 				'render': function(){
-					loader.load(rootNode);
+//					loader.load(rootNode);
 				},
 				'click': function(){
 					Ext.getCmp(this.id + '-add-widget-btn').enable();
