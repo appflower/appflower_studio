@@ -4,6 +4,7 @@
  * It needs this static definition because it extends ValueTypeNode - more on this in ValueTypeNode
  */
 afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.ValueTypeNode, {
+    ValueTypeXMLName: 'i:value',
     updateNodeNameFromPropertyId: 'name',
     getNodeConfig: function(){
         return {

@@ -11,6 +11,7 @@
  * initialized properly.
  */
 afStudio.widgetDesigner.ValueTypeNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
+    ValueTypeXMLName: '',
     constructor: function(){
         afStudio.widgetDesigner.ValueTypeNode.superclass.constructor.apply(this, arguments);
         this.propertyChanged();
@@ -43,23 +44,24 @@ afStudio.widgetDesigner.ValueTypeNode = Ext.extend(afStudio.widgetDesigner.Conta
         } else {
             valueNode['type'] = 'orm';
         }
+        var XMLData = widgetData[this.ValueTypeXMLName];
         switch (valueSource) {
             case 'source':
-                    valueNode['i:source'] = {name: widgetData['i:value']['name']};
+                    valueNode['i:source'] = {name: XMLData['name']};
                 break;
             case 'classAndMethod':
-                    valueNode['i:class'] = widgetData['i:value']['i:class'];
-                    valueNode['i:method'] = {name: widgetData['i:value']['i:method']};
+                    valueNode['i:class'] = XMLData['i:class'];
+                    valueNode['i:method'] = {name: XMLData['i:method']};
                 break;
             case 'item':
-                    valueNode['i:source'] = {name: widgetData['i:value']['name']};
+                    valueNode['i:source'] = {name: XMLData['name']};
                 break;
             case 'static':
-                    valueNode['i:source'] = {name: widgetData['i:value']['name']};
+                    valueNode['i:source'] = {name: XMLData['name']};
                 break;
 
         }
-        newWidgetData['i:value'] = valueNode;
+        newWidgetData[this.ValueTypeXMLName] = valueNode;
 
         return newWidgetData;
     },
@@ -117,14 +119,14 @@ afStudio.widgetDesigner.ValueTypeNode = Ext.extend(afStudio.widgetDesigner.Conta
             var childNode = this.childNodes[0];
         }
         if (childNode) {
-            data['i:value'] = childNode.dumpDataForWidgetDefinition();
+            data[this.ValueTypeXMLName] = childNode.dumpDataForWidgetDefinition();
         }
         return data;
     },
     configureFor: function(widgetData){
         afStudio.widgetDesigner.ValueTypeNode.superclass.configureFor.apply(this, [widgetData]);
-        if (widgetData && widgetData['i:value']) {
-            var iValueData = widgetData['i:value'];
+        if (widgetData && widgetData[this.ValueTypeXMLName]) {
+            var iValueData = widgetData[this.ValueTypeXMLName];
             this.configureForValue('valueType', iValueData['type']);
             if (iValueData['i:source']) {
                 this.properties['valueSource'].set('value', 'source');
