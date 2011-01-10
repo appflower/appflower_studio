@@ -32,46 +32,33 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	_initCmp : function() {
 
 		var _this = this;
-		
-//		this.codeEditorAction = new Ext.ux.CodePress({
-//			iconCls:'icon-script-edit',
-//			title:'actions.class.php',
-//			closable:true,
-//			path:_this.actionPath,
-//			tabTip:_this.actionPath,
-//			file:_this.actionPath,
-//			tabPanel:_this
-//		});
+/***		
+		this.codeEditorAction = new Ext.ux.CodePress({
+			iconCls:'icon-script-edit',
+			title:'actions.class.php',
+			closable:true,
+			path:_this.actionPath,
+			tabTip:_this.actionPath,
+			file:_this.actionPath,
+			tabPanel:_this
+		});
 
-//		this.codeEditorSecurity = new Ext.ux.CodePress({
-//			iconCls:'icon-script-edit',
-//			title:'security.yml',
-//			closable:true,
-//			path:_this.securityPath,
-//			tabTip:_this.securityPath,
-//			file:_this.securityPath,
-//			tabPanel:_this
-//		});
-		
+		this.codeEditorSecurity = new Ext.ux.CodePress({
+			iconCls:'icon-script-edit',
+			title:'security.yml',
+			closable:true,
+			path:_this.securityPath,
+			tabTip:_this.securityPath,
+			file:_this.securityPath,
+			tabPanel:_this
+		});
+**/		
 		return {
 			itemId: 'widget-designer',
 			id: 'widget-designer-panel',
 			activeTab: 0,
-//			defaults: {layout: 'fit'},
 			items: [
 				{itemId: 'designer', title: 'Widget Designer', layout: 'fit'}
-
-//				{xtype: 'panel', layout: 'fit',
-//					iconCls:'icon-script-edit',
-//					title:'security.yml',
-//					closable:true,
-//					tbar: [{text: 'Save', iconCls: 'icon-save', handler: function(){alert('Save button pressed')}}],
-//					items: [
-//						this.codeEditorSecurity
-//					]
-//				},
-				
-//				this.codeEditorAction
 			],
 			plugins: new Ext.ux.TabMenu()
 		}
@@ -88,12 +75,14 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		var codePress = new Ext.ux.CodePress({
 			title: fileName, path: path,
 			tabTip: tabTip, file: file,
-			closable:true, tabPanel:this
+			closable:true, tabPanel:this,
+			
+			ctCls: 'codeEditorCls'
+			
+
 		});
 		
         var codeBrowserTree = new Ext.ux.FileTreePanel({
-			//?
-			height:500,
 			rootPath:'root', rootVisible:true, rootText:'Home',
 			url:'/appFlowerStudio/filetree', maxFileSize:524288*2*10,
 			topMenu:false, autoScroll:true, 
@@ -112,8 +101,19 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			closable: true,
 			tbar: [{text: 'Save', iconCls: 'icon-save', handler: onSaveBtnClick}],
 			items: [
-				{xtype: 'panel', flex: 3, items: codePress},
-				{xtype: 'panel', flex: 1, items: codeBrowserTree}
+				{xtype: 'panel', flex: 3, style: 'padding: 5px', layout: 'fit',
+					
+					title: 'Code Editor', frame: true,
+					
+					items: [
+						{xtype: 'panel', items: codePress, layout: 'fit'}
+					]
+				},
+				{
+					xtype: 'panel', flex: 1, frame: true, layout: 'fit',
+					title: 'Code Browser', style: 'padding: 5px;',
+					items: codeBrowserTree
+				}
 			]
 		});
 		

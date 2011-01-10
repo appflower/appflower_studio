@@ -264,7 +264,8 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
    resize : function(){
        if(this.initialized){
             var h = (this.height || this.ownerCt.body.dom.clientHeight) +'px';
-            var w = (this.width || this.ownerCt.body.dom.clientWidth) +'px';
+            var w = (this.ownerCt.body.dom.clientWidth || this.width) +'px';
+            
             this.editor.body.style.width = w;
             this.iframe.setStyle('height', h);
             this.iframe.setStyle('width', w);
