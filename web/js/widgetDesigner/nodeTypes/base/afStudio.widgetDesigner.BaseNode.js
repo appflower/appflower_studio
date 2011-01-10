@@ -99,7 +99,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
     },
     propertyChanged: function(property) {
         if (this.updateNodeNameFromPropertyId){
-            if (property.id == this.updateNodeNameFromPropertyId) {
+            if (property && property.id && property.id == this.updateNodeNameFromPropertyId) {
                 this.setText(property.get('value'));
             }
         }

@@ -17,17 +17,17 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 //        var rowactionsNode = this.buildRowactionsNode(actionNode);
 //        var moreactionsNode = this.buildMoreactionsNode(actionNode);
         var datasourceNode = this.buildDatasourceNode();
-//        var fieldsNode = this.buildFieldsNode();
+        var fieldsNode = this.buildFieldsNode();
 //        var proxyNode = this.buildProxyNode();
 
 //        this.appendChild(new actionsNode);
 //        this.appendChild(new rowactionsNode);
 //        this.appendChild(new moreactionsNode);
         this.appendChild(new datasourceNode);
-//        this.appendChild(new fieldsNode);
+        this.appendChild(new fieldsNode);
 //        this.appendChild(new proxyNode);
 	},
-//    buildProxyNode: function(){
+//    ,buildProxyNode: function(){
 //        var proxyNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
 //           text: 'Proxy',
 //           id: 'i:proxy',
@@ -40,19 +40,18 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 //
 //        return proxyNode;
 //    },
-//    buildFieldsNode: function(){
-//        var columnNode = this.buildColumnNode();
-//        var methodNode = new afStudio.widgetDesigner.CollectionNodeBuilder().getConstructor({
-//           text: 'Fields',
-//           id: 'i:fields',
-//           createChildConstructor: columnNode,
-//           childNodeId: 'i:column',
-//           addChildActionLabel: 'Add field'
-//        });
-//
-//        return methodNode;
-//    },
-//    buildActionNode: function(){
+    buildFieldsNode: function(){
+        var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
+           text: 'Fields',
+           id: 'i:fields',
+           createChildConstructor: afStudio.widgetDesigner.FieldNode,
+           childNodeId: 'i:field',
+           addChildActionLabel: 'Add field'
+        });
+
+        return fieldsNode;
+    },
+//    ,buildActionNode: function(){
 //        var actionNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
 //           text: 'new action'
 //           ,updateNodeNameFromPropertyId: 'name',
@@ -102,58 +101,50 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 //        });
 //        return moreactionsNode;
 //    },
-//    buildColumnNode: function(){
-//        var columnNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
+//    buildFieldNode: function(){
+//        var fieldNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
 //           text: 'new field',
 //           updateNodeNameFromPropertyId: 'name',
 //           iconCls: 'icon-field',
+//           createChildConstructor: valueNode,
+//           childNodeId: 'i:value',
+//           addChildActionLabel: 'Define value',
 //           createProperties: function(){
 //               return [
-//                    new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create(),
-//                    new afStudio.widgetDesigner.PropertyTypeBoolean('sortable','Sortable').create(),
-//                    new afStudio.widgetDesigner.PropertyTypeBoolean('editable','Editable').create(),
-//                    new afStudio.widgetDesigner.PropertyTypeBoolean('resizable','Resizable').create(),
-//                    new afStudio.widgetDesigner.PropertyTypeString('style','Style').create(),
+//                    new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
 //                    new afStudio.widgetDesigner.PropertyTypeString('label','Label').create(),
-//                    new afStudio.widgetDesigner.PropertyTypeString('filter','Filter').create()
+//                    new afStudio.widgetDesigner.PropertyTypeString('type','Type').create(),
+//                    new afStudio.widgetDesigner.ValueType('valueType', 'Value Type').create(),
+//                    new afStudio.widgetDesigner.PropertyTypeString('state','State').create(),
+//                    new afStudio.widgetDesigner.PropertyTypeString('style','Style').create(),
+//                    new afStudio.widgetDesigner.PropertyTypeString('i:comment','Comment').create()
 //               ];
 //            }
 //        });
-//        return columnNode;
+//        return fieldNode;
 //    },
-    buildDatasourceNode: function(){
-        var methodNode = this.buildMethodNode();
-        var datasourceNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
-           text: 'Datasource',
-           id: 'i:datasource',
+    buildValueNode: function(){
+        var valueNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
+           text: 'Value',
+           id: 'i:value',
            createProperties: function(){
                return [
-                    new afStudio.widgetDesigner.PropertyTypeChoice('type','Type')
-                        .setChoices({
-                            'orm':'orm',
-                            'file':'file',
-                            'static': 'static'
-                        }).create(),
-                   new afStudio.widgetDesigner.PropertyTypeString('i:class','Class').create()
+                   new afStudio.widgetDesigner.PropertyTypeString('type','Type').setRequired().create()
                ];
-            },
-            createRequiredChilds: function(){
-                return [
-                    new methodNode
-                ];
-            }
+           },
+           createRequiredChilds: function(){
+               return [
+                   new sourceNode
+               ];
+           }
         });
 
-        return datasourceNode;
+        return valueNode;
     },
-    buildMethodNode: function(){
-        var paramNode = this.buildParamNode();
-        var methodNode = new afStudio.widgetDesigner.CollectionNodeBuilder().getConstructor({
-           text: 'Method',
-           id: 'i:method',
-           createChildConstructor: paramNode,
-           childNodeId: 'i:param',
-           addChildActionLabel: 'Add param',
+    buildSourceNode: function(){
+        var sourceNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
+           text: 'Source',
+           id: 'i:source',
            createProperties: function(){
                return [
                    new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create()
@@ -161,20 +152,7 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            }
         });
 
-        return methodNode;
-    },
-    buildParamNode: function(){
-        var paramNode = new afStudio.widgetDesigner.ContainerNodeBuilder().getConstructor({
-           text: 'parameter',
-           updateNodeNameFromPropertyId: 'name',
-           createProperties: function(){
-               return [
-                    new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create(),
-                    new afStudio.widgetDesigner.PropertyBaseType('_content','Value').setRequired().create()
-               ];
-            }
-        });
-        return paramNode;
+        return sourceNode;
     }
 
 
