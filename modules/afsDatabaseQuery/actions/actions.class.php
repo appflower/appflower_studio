@@ -41,14 +41,16 @@ class afsDatabaseQueryActions extends sfActions
     
     /**
      * Execute query action
+     * 
+     * Examples:
+     * SQL:     http://studio/afsDatabaseQuery/query?query=select%20*%20from%20af_guard_group
+     *          SELECT * FROM af_guard_group
+     * 
+     * Propel:  http://studio/afsDatabaseQuery/query?query=TimeZonesQuery::create()->findPK(1);&type=propel
+     *          TimeZonesQuery::create()->findPK(1)
      */
     public function executeQuery(sfWebRequest $request)
     {
-        /* 
-         * http://studio/afsDatabaseQuery/query?query=select%20*%20from%20af_guard_group
-         * SELECT * FROM af_guard_group
-         */
-        
         $sQuery = $request->getParameter('query', '');
         $sConnection = $request->getParameter('connection', 'propel');
         $sType = $request->getParameter('type', 'sql');
@@ -56,45 +58,6 @@ class afsDatabaseQueryActions extends sfActions
         $aResult = $this->oDBQueryHelper->processQuery($sQuery, $sConnection, $sType);
         
         return $this->renderJson($aResult);
-    }
-    
-
-    /**
-     * Getting table information
-     */
-    public function executeTable(sfWebRequest $request)
-    {
-        /*
-         * http://studio/appFlowerStudio/models?xaction=read&model=TimeZones&schema=C:/xampp/htdocs/studio/config/schema.yml
-         */
-        
-        
-        $modelName = $this->getRequest()->getParameter('model');
-        $modelQueryClass = "{$modelName}Query";
-        if (!class_exists($modelName)) {
-            throw new Exception("Model $modelName probably does not exist. Could not find class named $modelName");
-        }
-        
-        // var_dump($modelQueryClass);
-        
-        // $oModel = new afStudioModelsCommand();
-        // var_dump($oModel);
-        die;
-        
-        
-        
-        /*
-        $table_name = $request->getParameter('name', false);
-        $connection_name = $request->getParameter('connection', false);
-        
-        $aInfo = $this->oDBQueryHelper->processTable($connection_name, $table_name);
-        
-        
-        
-        var_dump($aInfo);
-        die;
-        */
-        // return $this->renderJson($oTable);
     }
     
 }

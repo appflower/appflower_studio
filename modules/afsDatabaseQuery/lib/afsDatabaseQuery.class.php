@@ -118,6 +118,11 @@ class afsDatabaseQuery
     
     /**
      * Processing query via connection and query type
+     * 
+     * @param $query This query will be executed
+     * @param $connection Connection name 
+     * @param $type Query type: sql or propel
+     * @return mixed
      */
     public static function processQuery($query, $connection = 'propel', $type = 'sql')
     {
@@ -132,6 +137,12 @@ class afsDatabaseQuery
                 break;
                 
             case 'propel':
+                
+                eval('$execute_query = ' . $query);
+                // $execute_query->getFormatter();
+                // var_dump($execute_query->toArray('fieldName'));
+                die;
+                
                 break;
         }
         
