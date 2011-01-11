@@ -291,7 +291,7 @@ layout: 'fit',
 	        	{xtype: 'tbseparator'},
 	        	{text: 'Format', iconCls: 'icon-format', menu: columnsMenu},
 	        	{xtype: 'tbseparator'},
-	        	{text: 'Preview', iconCls: 'icon-preview'}
+	        	{text: 'Preview', iconCls: 'icon-preview', handler: this.preview}
 	        ]			
 		});
 		
@@ -328,27 +328,48 @@ layout: 'fit',
 	},
 	
 	/**
+	 * Function preview
+	 * Show preview window with real widget
+	 */
+	preview: function(){
+		afApp.widgetPopup("/afGuardUserProfile/edit","Edit profile",null,"iconCls:\'icon-bug-add\',width:1000,height:400,maximizable: false",afStudio);
+	},
+	
+	/**
 	 * Create dummy widget in the panel
 	 */
 	addNewWidget: function(){
-		
+//		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
 
-		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
-//       var rootNode = new Ext.tree.AsyncTreeNode({
-//            expanded: true,
-//            text: 'XML',
-//			id: 'xml',
-//            children: [
-//            	{
-//            		text: 'XML 1', leaf: false, type: 'xml',
-//            		expanded: true, iconCls: 'icon-tree-db',
-//            		children: [
-//	        			{text: 'APP', iconCls: 'icon-tree-table', type: 'app', leaf: true},
-//	        			{text: 'MODULE', iconCls: 'icon-tree-table', type: 'module', leaf: true}
-//            		]
-//            	}
-//            ]
-//        });
+       var rootNode = new Ext.tree.AsyncTreeNode({
+    		text: "frontend",
+		    type: "app",
+    		children: [{
+		        "text": "afGuardUserProfile",
+		        "type": "module",
+		        "app": "frontend",
+		        "leaf": false,
+		        "children": [
+		        	{
+		        		"app": "frontend", "module": "afGuardUserProfile", "widgetUri": "afGuardUserProfile\/list", "type": "xml", "text": "list.xml",
+			            "securityPath": "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/config\/security.yml",
+		    	        "xmlPath": "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/config\/list.xml",
+		        	    "actionPath": "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/actions\/actions.class.php",
+		            	"leaf": true
+			        }, {
+						"app": "frontend", "module": "afGuardUserProfile", "widgetUri": "afGuardUserProfile\/edit", "type": "xml", "text": "edit.xml",
+		            	"securityPath": "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/config\/security.yml",
+		            	"xmlPath": "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/config\/edit.xml",
+		            	"actionPath": "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/actions\/actions.class.php",
+		            	"leaf": true
+		        	}
+		        ]
+		    	},
+		    	{"text": "afGuardAuth", "type": "module", "app": "frontend", "leaf": true, "iconCls": "icon-folder"},
+			    {"text": "pages", "type": "module", "app": "frontend", "leaf": true, "iconCls": "icon-folder"},
+		    	{"text": "sfGuardUser", "type": "module", "app": "frontend", "leaf": true, "iconCls": "icon-folder"}
+			]
+        });
 		
 		var loader = new Ext.tree.TreeLoader({
 			url: '/appFlowerStudio/modules',
@@ -376,11 +397,13 @@ layout: 'fit',
 			
 			loader: loader,
 			
+			id: this.id + '-widgets-tree',
+			
 			listeners: {
 				'render': function(){
 //					loader.load(rootNode);
 				},
-				'click': function(){
+				'click': function(node, e){
 					Ext.getCmp(this.id + '-add-widget-btn').enable();
 				}, scope: this
 			},
@@ -390,8 +413,10 @@ layout: 'fit',
 			height: 350,
 			autoScroll: true
 		});
-				
+		
+		var scope = this;		
 		var wnd = new Ext.Window({
+			id: this.id + '-widgets-tree-wnd',
 			title: 'Add new widget', width: 233,
 			autoHeight: true, closable: true,
             draggable: true, plain:true,
@@ -399,17 +424,36 @@ layout: 'fit',
             bodyBorder: false, border: false,
             items: widgetsTree,
 			buttons: [
-				{text: 'Add widget', handler: this.addWidgetCmp, disabled: true, id: this.id + '-add-widget-btn', scope: this},
+				{text: 'Add widget', handler: this.addWidgetCmp, disabled: true, id: this.id + '-add-widget-btn', scope: scope},
 				{text: 'Cancel', handler: function(){wnd.close()}}
 			],
 			buttonAlign: 'center'
 		});
 		wnd.show()			
-		
-//		alert('added');
-		return;
-		
-		var component = this.getNewWidgetCfg();
+	},
+	
+	/**
+	 * Function addWidgetCmp
+	 * Add widget panel to the layout designer container
+	 * @return {Void}
+	 */
+	addWidgetCmp: function(){
+		var tree = Ext.getCmp(this.id + '-widgets-tree');
+		try {
+			var text = tree.getSelectionModel().selNode.text
+		} catch(e){
+			var text = 'Default Widget Name';
+		}
+		this.addWidgetToCnt(text);
+	},
+	
+	/**
+	 * Function addWidgetToCnt
+	 * Add widget to the Layout Container
+	 * @param {String} text 
+	 */
+	addWidgetToCnt: function(text){
+		var component = this.getNewWidgetCfg(text);
 		//TODO: Quick fix
 		var qty_columns = Ext.getCmp('details-panel').columns;
 		if(qty_columns < 10){
@@ -422,18 +466,26 @@ layout: 'fit',
 		var portalColumn = cp.items.itemAt(clnNum);
 		portalColumn.add(component);
 		portalColumn.doLayout();
+		
+		Ext.getCmp(this.id + '-widgets-tree-wnd').close();
 	},
 	
 	/**
 	 * Function getNewWidgetCfg 
+	 * @param {String} text
 	 * @return {Object} New widget cfg
 	 */
-	getNewWidgetCfg : function(){
-		return {html: '<br><center>Widget <Name></b><i>Click to edit Widget<i></center><br>', title: '"Widget (Name)"', frame: true,
+	getNewWidgetCfg : function(text){
+		return {html: '<br><center>Widget <b>' + text + '</b> <i>Click to edit Widget<i></center><br>', title: text, frame: true,
 			bodyCssClass: 'layout-designer-widget',
 			tools:[
 				{id: 'close', handler: this.removeWidget, scope: this}
 			],
+			buttons: [
+				{text: 'Preview', handler: this.preview, scope: this},
+				{text: 'Edit'}
+			],
+			buttonAlign: 'center',
 			getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
 		}		
 	},
