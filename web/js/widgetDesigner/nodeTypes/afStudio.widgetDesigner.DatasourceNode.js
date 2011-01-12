@@ -7,7 +7,6 @@
 afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
     constructor: function(){
         afStudio.widgetDesigner.DatasourceNode.superclass.constructor.apply(this, arguments);
-        this.propertyChanged();
     },
 
     getNodeConfig: function(){
@@ -18,8 +17,8 @@ afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.Cont
     },
     createProperties: function(){
        var properties = [
-            new afStudio.widgetDesigner.ValueType('valueType', 'Value Type').create(),
-            new afStudio.widgetDesigner.ValueSource('valueSource', 'Value Source').create(),
+            new afStudio.widgetDesigner.ValueType('valueType', 'Value Type').setValue('orm').create(),
+            new afStudio.widgetDesigner.ValueSource('valueSource', 'Value Source').setValue('classAndMethod').create(),
        ];
 
        for (i=0; i<properties.length;i++){

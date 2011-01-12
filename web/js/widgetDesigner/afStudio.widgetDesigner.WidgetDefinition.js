@@ -5,22 +5,28 @@
  *  * populate fetched values into already intialized Widget Inspector
  *  * save modified values back to server and handle any server side errors
  */
-afStudio.widgetDesigner.WidgetDefinition = function(widgetUri){
+afStudio.widgetDesigner.WidgetDefinition = function(widgetUri, widgetType){
     this.widgetUri = widgetUri;
+    if (widgetType) {
+        this.widgetType = widgetType;
+    }
 };
 
 afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, {
     widgetUri: null,
     definition: null,
     widgetType: null,
+    rootNode: null,
     fetchAndConfigure: function(widgetInspector){
         Ext.Ajax.request({
             url: 'afsWidgetBuilder/getWidget?uri='+this.widgetUri,
             success: function(response){
                 this.parseFetchedData(response);
-                var rootNode = this.createRootNode();
-                rootNode.configureFor(this.definition);
-                widgetInspector.setRootNode(rootNode);
+                this.createRootNode();
+                this.rootNode.configureFor(this.definition);
+                if (widgetInspector) {
+                    widgetInspector.setRootNode(this.rootNode);
+                }
             },
             scope: this
         });
@@ -34,7 +40,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         this.definition = Ext.util.JSON.decode(baseData.data);
         this.widgetType = this.definition['type'];
     },
-    save: function(data){
+    save: function(){
+        var data = this.rootNode.dumpDataForWidgetDefinition();
+
         Ext.Ajax.request({
             url: 'afsWidgetBuilder/saveWidget?uri='+this.widgetUri,
             params: {
@@ -62,15 +70,14 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
    createRootNode: function(){
        switch (this.widgetType) {
            case 'list':
-               rootNode = new afStudio.widgetDesigner.ListNode();
+               this.rootNode = new afStudio.widgetDesigner.ListNode();
                break;
            case 'edit':
-               rootNode = new afStudio.widgetDesigner.EditNode();
+               this.rootNode = new afStudio.widgetDesigner.EditNode();
                break;
        }
 
-       rootNode.setText(this.widgetUri);
-       return rootNode;
+       this.rootNode.setText(this.widgetUri);
    }
 
 });

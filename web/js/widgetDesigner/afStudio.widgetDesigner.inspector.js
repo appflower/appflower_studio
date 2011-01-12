@@ -259,8 +259,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	},	
 	
 	saveWidget: function(){
-        var widgetData = this.widgetInspectorTree.root.dumpDataForWidgetDefinition();
-        this.widgetDefinition.save(widgetData);
+        this.widgetDefinition.save();
 	},
 	
 	/**

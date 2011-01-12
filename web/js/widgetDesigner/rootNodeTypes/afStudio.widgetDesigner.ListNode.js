@@ -5,6 +5,8 @@
  */
 afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRootNode, {
     widgetType: 'list',
+    fieldsNode: null,
+    datasourceNode: null,
 	getNodeConfig: function(){
         var node = {
             text: 'New list widget'
@@ -26,10 +28,18 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         this.appendChild(new actionsNode);
         this.appendChild(new rowactionsNode);
         this.appendChild(new moreactionsNode);
-        this.appendChild(new afStudio.widgetDesigner.DatasourceNode);
-        this.appendChild(new fieldsNode);
+        this.datasourceNode = new afStudio.widgetDesigner.DatasourceNode;
+        this.appendChild(this.datasourceNode);
+        this.fieldsNode = new fieldsNode;
+        this.appendChild(this.fieldsNode);
         this.appendChild(new proxyNode);
 	},
+    getFieldsNode: function(){
+        return this.fieldsNode;
+    },
+    getDatasourceNode: function(){
+        return this.datasourceNode;
+    },
     buildProxyNode: function(){
         var proxyNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'Proxy',
@@ -117,7 +127,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
                     new afStudio.widgetDesigner.PropertyTypeBoolean('editable','Editable').create(),
                     new afStudio.widgetDesigner.PropertyTypeBoolean('resizable','Resizable').create(),
                     new afStudio.widgetDesigner.PropertyTypeString('style','Style').create(),
-                    new afStudio.widgetDesigner.PropertyTypeString('label','Label').create(),
+                    new afStudio.widgetDesigner.PropertyTypeString('label','Label').setRequired().create(),
                     new afStudio.widgetDesigner.PropertyTypeString('filter','Filter').create()
                ];
             }
