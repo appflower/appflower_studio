@@ -41,7 +41,7 @@ afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.Cont
                 break;
             case 'classAndMethod':
                     valueNode['i:class'] = widgetData['i:class'];
-                    valueNode['i:method'] = {name: widgetData['i:method']};
+                    valueNode['i:method'] = widgetData['i:method'];
                 break;
             case 'item':
                     valueNode['i:source'] = {name: widgetData['name']};

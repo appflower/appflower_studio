@@ -13,19 +13,54 @@ afStudio.widgetDesigner.FieldNodeValueSourceSource = Ext.extend(afStudio.widgetD
        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create());
     }
 });
+        var paramNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
+           text: 'parameter',
+           updateNodeNameFromPropertyId: 'name',
+           createProperties: function(){
+               return [
+                    new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create(),
+                    new afStudio.widgetDesigner.PropertyBaseType('_content','Value').setRequired().create()
+               ];
+            }
+        });
 
-afStudio.widgetDesigner.FieldNodeValueSourceMethod = Ext.extend(afStudio.widgetDesigner.FieldNodeValueSourceBase, {
+afStudio.widgetDesigner.FieldNodeValueSourceMethod = Ext.extend(afStudio.widgetDesigner.CollectionNode, {
+    addChildActionLabel: 'Add Param',
+    childNodeId: 'i:param',
+    getNodeConfig: function(){
+        return {
+            'text': 'Value Source'
+        };
+    },
+    createChild: function(){
+        return new paramNode;
+    },
     createProperties: function(){
        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('i:class','Class').setRequired().create());
        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('i:method','Method').setRequired().create());
     },
     configureFor: function(widgetData){
-        if (widgetData['i:method'] && widgetData['i:method']['name']) {
-            var methodName = widgetData['i:method']['name'];
+        if (widgetData['i:method']) {
+            var methodData = widgetData['i:method'];
+            if (methodData['i:param']) {
+                var paramData = methodData['i:param'];
+            }
+            var methodName = methodData['name'];
             widgetData['i:method'] = methodName;
+            if (paramData) {
+                widgetData['i:param'] = paramData;
+            }
         }
-        
-        afStudio.widgetDesigner.FieldNode.superclass.configureFor.apply(this, [widgetData]);
+
+        afStudio.widgetDesigner.FieldNodeValueSourceMethod.superclass.configureFor.apply(this, [widgetData]);
+    },
+    dumpDataForWidgetDefinition: function(){
+        var propertiesData = this.dumpPropertiesData();
+        var childsData = this.dumpChildsData();
+
+        childsData['name'] = propertiesData['i:method'];
+        propertiesData['i:method'] = childsData;
+        return propertiesData;
     }
 });
 

@@ -59,7 +59,7 @@ afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.Container
                 break;
             case 'classAndMethod':
                     valueNode['i:class'] = widgetData['i:value']['i:class'];
-                    valueNode['i:method'] = {name: widgetData['i:value']['i:method']};
+                    valueNode['i:method'] = widgetData['i:value']['i:method'];
                 break;
             case 'item':
                     valueNode['i:source'] = {name: widgetData['i:value']['name']};

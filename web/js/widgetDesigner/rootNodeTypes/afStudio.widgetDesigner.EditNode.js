@@ -16,14 +16,13 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 //        var actionsNode = this.buildActionsNode(actionNode);
 //        var rowactionsNode = this.buildRowactionsNode(actionNode);
 //        var moreactionsNode = this.buildMoreactionsNode(actionNode);
-        var datasourceNode = this.buildDatasourceNode();
         var fieldsNode = this.buildFieldsNode();
 //        var proxyNode = this.buildProxyNode();
 
 //        this.appendChild(new actionsNode);
 //        this.appendChild(new rowactionsNode);
 //        this.appendChild(new moreactionsNode);
-        this.appendChild(new datasourceNode);
+        this.appendChild(new afStudio.widgetDesigner.DatasourceNode);
         this.appendChild(new fieldsNode);
 //        this.appendChild(new proxyNode);
 	},
