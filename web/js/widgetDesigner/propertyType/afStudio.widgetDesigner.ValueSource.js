@@ -1,6 +1,6 @@
 /**
  * This class represents <xs:element name="value"> definition from xsd
- * It defines different sets of fields that can occur inside i:valueType element
+ * It defines different sets of fields that can occur inside i:value element
  */
 afStudio.widgetDesigner.ValueSource = Ext.extend(afStudio.widgetDesigner.PropertyTypeChoice, {
     defaultValue: '',
