@@ -126,6 +126,11 @@ class afsDatabaseQuery
      */
     public static function processQuery($query, $connection = 'propel', $type = 'sql')
     {
+        
+        /**
+         * TODO: separate via adapter instead case
+         */
+        
         switch ($type) {
             
             case 'sql':
@@ -137,10 +142,37 @@ class afsDatabaseQuery
                 break;
                 
             case 'propel':
-                
+                /**
+                 * TODO: Prepare query to execute
+                 */
+                 
                 eval('$execute_query = ' . $query);
-                // $execute_query->getFormatter();
-                // var_dump($execute_query->toArray('fieldName'));
+                
+                // $execute_query = TimeZonesQuery::create()->joinafGuardUserProfile('FirstName')->find();
+                // $execute_query = TimeZonesQuery::create()->withColumn('TimeZones.Id', 'temp_id')->find();
+                // $execute_query = TimeZonesQuery::create()->withColumn('TimeZones.Id', 'temp_id')->findPk(1);
+                
+                /**
+                 * TODO: Catch propel query error
+                 */
+                
+                $sClass = get_class($execute_query);
+                
+                if ($sClass == 'PropelObjectCollection') {
+                    // If has been returned collection 
+                    
+                    $oFormatter = $execute_query->getFormatter();
+                    $aResult = $execute_query->toArray();
+                    
+                    $aObject = $execute_query[0];
+                    
+                    // Getting virtual columns: $aObject->getVirtualColumns();
+                    
+                } else {
+                    // Getting value of virtual column: $execute_query->getVirtualColumn('temp_id');
+                    // Getting values and names of fields: $execute_query->toArray('fieldName');
+                }
+                
                 die;
                 
                 break;

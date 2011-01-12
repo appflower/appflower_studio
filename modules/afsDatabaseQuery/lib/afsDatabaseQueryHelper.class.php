@@ -52,21 +52,6 @@ class afsDatabaseQueryHelper
     }
     
     /**
-     * Getting table information (columns types, foreign keys, etc.) Helper
-     */
-    public function processTable($connection_name, $table_name)
-    {
-        if (!empty($table_name)) {
-            $oPeer = afsDatabaseQuery::getPeerName($table_name);
-            $oTable = Propel::getDatabaseMap($oPeer::DATABASE_NAME)->getTable($table_name);
-        } else {
-            $oTable = false;
-        }
-        // $oDatabase;
-        var_dump($oTable->getColumns());
-    }
-    
-    /**
      * Returns ExtJS data for DBStructureTree component
      * @return array the tree structure
      */
