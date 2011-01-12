@@ -16,6 +16,7 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
         this.addProperty(new afStudio.widgetDesigner.PropertyTypeBoolean('i:description','Description').create());
     },
     buildDatasourceNode: function(){
+        return afStudio.widgetDesigner.DatasourceNode;
         var methodNode = this.buildMethodNode();
         var datasourceNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'Datasource',
