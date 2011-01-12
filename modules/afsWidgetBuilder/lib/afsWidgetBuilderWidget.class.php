@@ -71,6 +71,9 @@ class afsWidgetBuilderWidget {
 
         $afCU = new afConfigUtils($this->module);
         $path = $afCU->getConfigFilePath($this->action.'.xml');
+        if (!$path) {
+            $path = $afCU->generateConfigFilePath($this->action.'.xml');
+        }
         FirePHP::getInstance(true)->fb($path);
 
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';

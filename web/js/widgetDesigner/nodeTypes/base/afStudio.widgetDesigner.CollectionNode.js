@@ -6,6 +6,7 @@
 afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
     addChildActionLabel: 'Add child',
     childNodeId: 'i:child',
+    dumpEvenWhenEmpty: true,
     createContextMenu: function(){
         this.contextMenu = new Ext.menu.Menu({
             items: [
@@ -50,6 +51,11 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
         });
 
         var ret = {};
+
+        if (data.length == 0 && !this.dumpEvenWhenEmpty) {
+            return ret;
+        }
+        
         ret[this.childNodeId] = data;
         return ret;
     },

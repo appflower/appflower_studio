@@ -61,6 +61,10 @@ afStudio.widgetDesigner.NodeBuilder = {
             p.childNodeId = config.childNodeId;
         }
 
+        if (config.dumpEvenWhenEmpty != undefined) {
+            p.dumpEvenWhenEmpty = config.dumpEvenWhenEmpty;
+        }
+
 
         if (config.createChildConstructor) {
             p.createChild = function(){

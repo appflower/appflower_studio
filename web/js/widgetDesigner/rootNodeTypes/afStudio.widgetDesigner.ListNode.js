@@ -91,7 +91,8 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            id: 'i:actions',
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
-           addChildActionLabel: 'Add action'
+           addChildActionLabel: 'Add action',
+           dumpEvenWhenEmpty: false
         });
         return actionsNode;
     },
@@ -101,7 +102,8 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            id: 'i:rowactions',
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
-           addChildActionLabel: 'Add row action'
+           addChildActionLabel: 'Add row action',
+           dumpEvenWhenEmpty: false
         });
         return rowactionsNode;
     },
@@ -111,7 +113,8 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            id: 'i:moreactions',
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
-           addChildActionLabel: 'Add "more action"'
+           addChildActionLabel: 'Add "more action"',
+           dumpEvenWhenEmpty: false
         });
         return moreactionsNode;
     },
