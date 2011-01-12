@@ -126,7 +126,6 @@ class afsDatabaseQuery
      */
     public static function processQuery($query, $connection = 'propel', $type = 'sql')
     {
-        
         /**
          * TODO: separate via adapter instead case
          */
@@ -134,6 +133,11 @@ class afsDatabaseQuery
         switch ($type) {
             
             case 'sql':
+                
+                /**
+                 * TODO: Prepare sql query
+                 */
+                
                 $con = Propel::getConnection($connection);
                 $stm = $con->prepare($query);
                 $stm->execute();
@@ -152,33 +156,72 @@ class afsDatabaseQuery
                 // $execute_query = TimeZonesQuery::create()->withColumn('TimeZones.Id', 'temp_id')->find();
                 // $execute_query = TimeZonesQuery::create()->withColumn('TimeZones.Id', 'temp_id')->findPk(1);
                 
-                /**
-                 * TODO: Catch propel query error
-                 */
-                
                 $sClass = get_class($execute_query);
                 
                 if ($sClass == 'PropelObjectCollection') {
-                    // If has been returned collection 
-                    
                     $oFormatter = $execute_query->getFormatter();
-                    $aResult = $execute_query->toArray();
                     
-                    $aObject = $execute_query[0];
+                    $aResult = (array)$execute_query;
                     
-                    // Getting virtual columns: $aObject->getVirtualColumns();
-                    
+                    if (count($aResult) > 0) {
+                        $aObject = $execute_query[0];
+                        $aFields = self::getFields($aObject);
+                        
+                        $result = self::prepareList($aResult);
+                    } else {
+                        $result = false;
+                    }
                 } else {
-                    // Getting value of virtual column: $execute_query->getVirtualColumn('temp_id');
-                    // Getting values and names of fields: $execute_query->toArray('fieldName');
+                    $result = self::prepareOutput($execute_query);
                 }
-                
-                die;
-                
                 break;
         }
         
         return $result;
+    }
+
+    public static function getFields($oCollection, $type = 'all')
+    {
+        if (is_object($oCollection)) {
+            $aFields = array();
+            
+            $aNative = $oCollection->toArray('fieldName');
+            $aVirtual = $oCollection->getVirtualColumns();
+            
+            switch ($type) {
+                case 'native':
+                    $aFields = array_keys($aNative);
+                    break;
+                
+                case 'virtual':
+                    $aFields = array_keys($aVirtual);
+                    break;
+                    
+                case 'all':
+                default:
+                    $aFields = array_keys(array_merge($aNative, $aVirtual));
+                    break;
+            }
+            
+            return $aFields;
+        } else {
+            return false;
+        }
+    }
+    
+    public static function prepareOutput($object)
+    {
+        return array_merge($object->toArray('fieldName'), $object->getVirtualColumns());
+    }
+    
+    public static function prepareList($aList)
+    {
+        $aResult = array();
+        foreach ((array)$aList as $object) {
+            $aResult[] = self::prepareOutput($object);
+        }
+        
+        return $aResult;
     }
     
 
