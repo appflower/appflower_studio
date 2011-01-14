@@ -332,7 +332,42 @@ layout: 'fit',
 	 * Show preview window with real widget
 	 */
 	preview: function(){
-		afApp.widgetPopup("/afGuardUserProfile/edit","Edit profile",null,"iconCls:\'icon-bug-add\',width:1000,height:400,maximizable: false",afStudio);
+		
+		//TODO: if user clicks on the "Preview" button in the LayoutDesigner widget panel. not sure if this is the better solution
+		try {
+			var wp = this.ownerCt.ownerCt.widgetParams;
+			
+			var iconCls = wp.iconCls;
+			var title = wp.title;
+		} catch (e) {
+			var iconCls = 'icon-bug-add';
+			var title = "Edit profile";
+		}
+		
+		afApp.widgetPopup("/afGuardUserProfile/edit", title, null, "iconCls:\'" +iconCls+ "\',width:800,height:600,maximizable: false", afStudio);
+	},
+	
+	/**
+	 * Function runWidgetDesigner
+	 * Create widget Designer 
+	 */	
+	runWidgetDesigner: function(){
+        var actionPath = "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/actions\/actions.class.php";
+        var securityPath = "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/config\/security.yml";
+        var widgetUri = 'afGuardUserProfile/edit';
+
+//        node.attributes.widgetUri;
+
+		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...', removeMask:true});
+		mask.show();
+		
+		afStudio.vp.addToPortal({
+			title: 'Widget Designer', layout: 'fit',
+			collapsible: false, draggable: false,
+			items: [
+				{xtype: 'afStudio.widgetDesigner', actionPath: actionPath, securityPath: securityPath, widgetUri: widgetUri, mask: mask}
+			]
+		}, true);		
 	},
 	
 	/**
@@ -440,20 +475,25 @@ layout: 'fit',
 	addWidgetCmp: function(){
 		var tree = Ext.getCmp(this.id + '-widgets-tree');
 		try {
-			var text = tree.getSelectionModel().selNode.text
+			var sn = tree.getSelectionModel().selNode;
+			var text = sn.text;
+			var params = {iconCls: sn.attributes.iconCls, title: sn.attributes.text};
 		} catch(e){
 			var text = 'Default Widget Name';
+			var params = {iconCls: 'icon-folder', title: text};
 		}
-		this.addWidgetToCnt(text);
+		this.addWidgetToCnt(text, params);
 	},
 	
 	/**
 	 * Function addWidgetToCnt
 	 * Add widget to the Layout Container
 	 * @param {String} text 
+	 * @param {Object} params
 	 */
-	addWidgetToCnt: function(text){
+	addWidgetToCnt: function(text, params){
 		var component = this.getNewWidgetCfg(text);
+		component.widgetParams = params;
 		//TODO: Quick fix
 		var qty_columns = Ext.getCmp('details-panel').columns;
 		if(qty_columns < 10){
@@ -482,8 +522,8 @@ layout: 'fit',
 				{id: 'close', handler: this.removeWidget, scope: this}
 			],
 			buttons: [
-				{text: 'Preview', handler: this.preview, scope: this},
-				{text: 'Edit'}
+				{text: 'Preview', handler: this.preview/*, scope: this*/},
+				{text: 'Edit', handler: this.runWidgetDesigner, scope: this}
 			],
 			buttonAlign: 'center',
 			getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
