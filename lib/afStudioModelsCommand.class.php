@@ -50,9 +50,8 @@ class afStudioModelsCommand
 	
 	private function loadSchemas()
 	{
-		$this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
 		$finder = sfFinder::type('file')->name('*schema.yml')->prune('doctrine');
-    	$dirs = array_merge(array(sfConfig::get('sf_config_dir')), $this->configuration->getPluginSubPaths('/config'));
+    	$dirs = array_merge(array(sfConfig::get('sf_config_dir')), afStudioUtil::getConfiguration()->getPluginSubPaths('/config'));
     	foreach ($dirs as $k=>$dir)
     	{
     		if(substr_count($dir,'appFlower')>0||substr_count($dir,'sfPropelPlugin')>0||substr_count($dir,'sfProtoculousPlugin')>0)

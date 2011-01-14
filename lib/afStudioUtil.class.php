@@ -4,12 +4,41 @@ class afStudioUtil
 {
   public static function getRootDir()
   {
-    return sfConfig::get('sf_root_dir');
+      $currentProject = sfContext::getInstance()->getConfiguration()->getCurrentProject();
+      if ($currentProject) {
+          $rootDir =  $currentProject->getConfiguration()->getRootDir();
+      } else {
+          $rootDir = sfConfig::get('sf_root_dir');
+      }
+
+      $lastChar = $rootDir[(strlen($rootDir)-1)];
+      if ($lastChar != '/') {
+          $rootDir .= '/';
+      }
+
+      return $rootDir;
+  }
+
+  public static function getAfConfigUtil($moduleName)
+  {
+      $configuration = self::getConfiguration();
+      return new afConfigUtils($moduleName, $configuration);
+  }
+
+  public static function getConfiguration()
+  {
+      $currentProject = sfContext::getInstance()->getConfiguration()->getCurrentProject();
+      if ($currentProject) {
+          return $currentProject->getConfiguration();
+      } else {
+          return sfContext::getInstance()->getConfiguration();
+      }
   }
 
   public static function getConfigDir()
   {
-    return sfConfig::get('sf_config_dir');
+      $rootDir = self::getRootDir();
+      return "{$rootDir}config/";
   }
 
   /*
