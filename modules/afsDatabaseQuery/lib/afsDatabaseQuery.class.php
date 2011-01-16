@@ -126,23 +126,26 @@ class afsDatabaseQuery
      */
     public static function processQuery($query, $connection = 'propel', $type = 'sql')
     {
-        /**
-         * TODO: separate via adapter instead case
-         */
-        
         switch ($type) {
             
             case 'sql':
+                if (preg_match('/alter|drop|create|;|insert|update|delete/si', $query)) {
+                    $result = self::fetchError('This operation or functionality has been disabled');
+                } else {
+                    $con = Propel::getConnection($connection, Propel::CONNECTION_READ);
                 
-                /**
-                 * TODO: Prepare sql query
-                 */
-                
-                $con = Propel::getConnection($connection);
-                $stm = $con->prepare($query);
-                $stm->execute();
-                
-                $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+                    $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+                    
+                    $stm = $con->prepare($query);
+                    $bExecuted = $stm->execute();
+                    
+                    if ($bExecuted) {
+                        $result = self::fetchSuccess($stm->fetchAll(PDO::FETCH_ASSOC));
+                    } else {
+                        $aErrorInfo = $stm->errorInfo();
+                        $result = self::fetchError($aErrorInfo[2]);
+                    }
+                }
                 break;
                 
             case 'propel':
@@ -164,20 +167,27 @@ class afsDatabaseQuery
                     $aResult = (array)$execute_query;
                     
                     if (count($aResult) > 0) {
-                        $aObject = $execute_query[0];
-                        $aFields = self::getFields($aObject);
-                        
-                        $result = self::prepareList($aResult);
+                        $result = self::fetchSuccess(self::prepareList($aResult));
                     } else {
-                        $result = false;
+                        $result = self::fetchError('Nothing has been found');
                     }
                 } else {
-                    $result = self::prepareOutput($execute_query);
+                    $result = self::fetchSuccess(self::prepareOutput($execute_query));
                 }
                 break;
         }
         
         return $result;
+    }
+
+    private static function fetchError($text)
+    {
+        return array('success' => false, 'error' => $text);
+    }
+    
+    private static function fetchSuccess($result)
+    {
+        return array('success' => true, 'result' => $result);
     }
 
     public static function getFields($oCollection, $type = 'all')
