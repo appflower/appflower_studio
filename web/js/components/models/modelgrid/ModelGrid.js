@@ -566,10 +566,16 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	/**
 	 * @cfg {String} schema required
 	 * This model's schema name
-	 */	
+	 */
+	
+	/**
+	 * @cfg {Number} recordsPerPage required (defaults to 25)
+	 * The number of displaying records per page
+	 */
+	recordsPerPage : 25
 	
 	//private
-	beforeInit : function() {
+	,beforeInit : function() {
 		var _this = this,
 			 data = _this._data.rows,
 		   fields = ['id'];		  
@@ -584,10 +590,11 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					width: 80,
 					hidden: false,					
 					editor: afStudio.models.TypeBuilder.createEditor(data[i].type, data[i].size, data[i]['default']),
+					renderer: afStudio.models.TypeBuilder.createRenderer(data[i].type),
 					/**
 					 * custom property used with {@link afStudio.models.EditFieldWindow} field editor
 					 */
-					fieldDefinition: Ext.apply(data[i], {exists: true}) 
+					fieldDefinition: Ext.apply(data[i], {exists: true})
 				});
 				fields.push({name:'c'+i});
 			}
@@ -610,29 +617,40 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			}
 		}
 
-		this.store = new Ext.data.Store({
+		_this.store = new Ext.data.Store({
 			reader: new afStudio.models.modelGridPanelReader({
 				root: 'rows',
 			    idProperty: 'id'
 			}, fields),
             proxy: _this.storeProxy,
-            writer: new Ext.data.JsonWriter({encode: false,listful: true}),
-            autoLoad: true,
-            autoSave: false,
-			listeners : {				
+            writer: new Ext.data.JsonWriter({encode: false,listful: true}),            
+            autoSave: false,            
+			listeners: {
 				load : function(store, records) {
 					//adds one line if the result set is empty
 					//if (Ext.isEmpty(records))
-					{
-						 var rec = store.recordType;
-						store.add([new rec()]);						
-					}
+					var rec = store.recordType;
+					store.add([new rec()]);
 				}
 			}
-		});		
-		this.columns = columns;
+		});
+		_this.store.load({
+			params: {
+				start: 0, 
+				limit: _this.recordsPerPage
+			}
+		});
+		
+		_this.columns = columns;		
 		
 		afStudio.models.ModelGrid.superclass.beforeInit.apply(this, arguments);
+		
+		var pagingBar = new Ext.PagingToolbar({
+	        store: _this.store,
+	        displayInfo: true,	        
+	        displayMsg: 'Displaying records {0} - {1} of {2}',
+	        pageSize: _this.recordsPerPage
+    	});
 		
 		var config = {
 			iconCls: 'icon-database-table',			
@@ -641,10 +659,13 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        columnLines: true,	        
 	        viewConfig: {
 	            forceFit: true
-	        },
-		        
-	        plugins: [Ext.ux.grid.DataDrop],
-	        tbar: [{ 
+	        },			
+	        //TODO Ext.ux.grid.DataDrop plugin affects on scolling inside the grid
+	        //the problem should be researched and corrected.
+	        //Now it is switched off.
+	        //plugins: [Ext.ux.grid.DataDrop],
+	        tbar: [
+	        {
 	            text: 'Save',
 	            iconCls: 'icon-save',
 	            handler: function(btn, ev) {
@@ -675,11 +696,12 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	    }	 
 	            },
 	            scope:this
-	        }]
+	        }],
+	        bbar: pagingBar
 		};
 		
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-	}
+	}//eo beforeInit
 	
 	//private
 	,afterInit : function() {

@@ -7,7 +7,7 @@
  * @author     luwo@appflower.com
  */
 class afsModelGridDataActions extends sfActions
-{
+{	
     /**
      * afsModelGridData actions are all executed in context of concrete model so
      * we are guessing early proper model name and its query class name
@@ -15,6 +15,7 @@ class afsModelGridDataActions extends sfActions
      * @var string
      */
     protected $modelName;
+    
     protected $modelQueryClass;
 
     function preExecute() {
@@ -54,15 +55,23 @@ class afsModelGridDataActions extends sfActions
      */
     public function executeRead(sfWebRequest $request)
     {
+    	$offset = $request->getParameter('start', 0);
+    	$recordsPerPage = $request->getParameter('limit');
+    			
         $query = $this->getModelQuery();
-        $data = $query->find();
+        
+        $totalRecordsNum = count($query->find());
+        
+        $query->offset($offset);
+        $query->limit($recordsPerPage);                
+        $data = $query->find();        
         $data2 = array();
         foreach ($data as $row) {
             $data2[] = $this->getModelObjectData($row);
         }
         $result = array(
             'rows' => $data2,
-            'results' => count($data2),
+            'total' => $totalRecordsNum,
             'success' =>true
         );
 

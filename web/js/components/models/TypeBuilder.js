@@ -5,17 +5,22 @@ Ext.ns('afStudio.models');
  * 
  * @class afStudio.models.TypeBuilder
  * @singleton
- * @author Nikolay
+ * @author Nikolai Babinski
  */
 afStudio.models.TypeBuilder = (function() {
 	
 	return {
 		
+		/**
+		 * Invalid field name message
+		 */
 		invalidFieldName : 'Field name must contains only characters, digits or "_" and starts from "_" or character'
 		
 		/**
 		 * Creates editor depends on data type
-		 * @param {String} dataType The data type
+		 * @param {String} dataType (optional) field's data type
+		 * @param {Number} size (optional) field's data size
+		 * @param {Mixed} defaultValue (optional) field's default value
 		 * @return {Ext.Editor}
 		 */
 		,createEditor : function(dataType, size, defaultValue) {
@@ -29,7 +34,7 @@ afStudio.models.TypeBuilder = (function() {
 				}
 			}
 			
-			switch(dataType) {
+			switch (dataType) {
 				case 'boolean':
 					editor = new Ext.grid.GridEditor(
 						new Ext.form.ComboBox({
@@ -76,6 +81,8 @@ afStudio.models.TypeBuilder = (function() {
 				case 'real': case 'float': case 'double':
 					editor =  new Ext.grid.GridEditor(
 						new Ext.form.NumberField({
+							//maximum digits after decimal point 
+							decimalPrecision: 6,
 							maxLength: size ? size : Number.MAX_VALUE
 						})
 					);
@@ -113,6 +120,32 @@ afStudio.models.TypeBuilder = (function() {
 			
 			return editor ? editor : null;	
 		}//eo createEditor
+		
+		/**
+		 * Creates renderer function for {@link Ext.grid.Column} column
+		 * @param {String} dataType (optional) field's data type
+		 * @return {Function} 
+		 */
+		,createRenderer : function(dataType) {
+			var renderer = null;
+			
+			switch (dataType) {
+				case 'bigint': case 'numeric': case 'decimal': case 'integer': case 'smallint':
+					renderer = function(value, meta) {
+						meta.attr = 'style="text-align:right;"';
+						return Ext.util.Format.number(value, '0.0,/i');
+					}
+				break;
+				
+				default:
+					renderer = function(value) {
+						return value;
+					}
+				break;
+			}
+			
+			return renderer;
+		}//eo createRenderer
 		
 	}
 })();

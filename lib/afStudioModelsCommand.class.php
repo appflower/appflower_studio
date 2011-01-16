@@ -247,7 +247,7 @@ class afStudioModelsCommand
 							$success = false;
 						}						
 						$this->result = array(
-							'success' => $success, 
+							'success' => $success,
 							'message' => $message
 						);				
 			        } catch( Exception $e ) {
@@ -599,7 +599,7 @@ class afStudioModelsCommand
 	
 	/**
 	 * Alters Model structure 
-	 * @param array $fields the new models fields 
+	 * @param array $fields the new models fields
 	 */
 	private function alterModel($fields)
 	{		
@@ -619,6 +619,8 @@ class afStudioModelsCommand
 		}		
 		$this->saveSchema();
 		$this->deployOfSchemaChanges();
+		
+		return true;
 	}
 	
 	/**

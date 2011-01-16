@@ -38,9 +38,8 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	,updateFieldDefinition : function(fDef) {
 		var _this = this,
 			  idx = _this.fieldIndex, 
-			   cm = _this.gridView.cm;		   
-		
-		//Client side changes			
+			   cm = _this.gridView.cm;
+		//Column model changes			
 		//header
 		cm.setColumnHeader(idx, fDef.name);
 		//editor
@@ -48,7 +47,12 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			fDef.type, 
 			Ext.util.Format.trim(fDef.size), 
 			fDef['default']
-		);		
+		);
+		//renderer
+		cm.config[idx].renderer = afStudio.models.TypeBuilder.createRenderer(fDef.type);
+		
+		_this.gridView.refresh();
+		
 		//reflect changes in fieldDefinition 
 		cm.config[idx].fieldDefinition.name = fDef['name'];			
 		cm.config[idx].fieldDefinition.type = fDef.type;		
@@ -330,7 +334,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 						mode: 'local',
 						valueField: 'field',
 						displayField: 'field',
-						store: [['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']],
+						store: [['', 'None'],['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']],
 						hiddenName: 'key',
 						name: 'key'
 					}]	
