@@ -10,49 +10,30 @@ class afsDatabaseQuery
      * Getting Adaptee class
      * 
      * @param $connection_name db connection name
+     * @param $type Type of created adaptee
      * @return object
      */
-    public static function getAdapter($connection_name)
+    public static function getAdapter($connection_name, $type)
     {
-        $adapter = get_class(Propel::getDatabaseMap($connection_name)->getDBAdapter());
-        
-        $class_name = $adapter.'Query';
-        $oAdapter = new $class_name;
+        $class_name = 'afsDatabaseQuery' . ucfirst(strtolower($type));
+        $oAdapter = new $class_name($connection_name);
         
         return new $oAdapter;
     }
-
+    
     /**
-     * Getting tables from adapter
+     * Processing query via connection and query type
      * 
-     * @param $connection_name db connection name
-     * @return array
+     * @param $query This query will be executed
+     * @param $connection Connection name 
+     * @param $type Query type: sql or propel
+     * @return mixed
      */
-    /*
-    public static function getTables($connection_name)
+    public static function processQuery($query, $connection = 'propel', $type = 'sql')
     {
-        $oAdapter = self::getAdapter($connection_name);
-        $oAdapter->setConnection(Propel::getConnection($connection_name));
-        
-        $aTables = $oAdapter->getTables();
-        return $aTables;
-    }
-    */
-    /**
-     * Getting generated name of table via table name in db
-     * 
-     * @param $schemaName Schema name 
-     * @return string
-     */
-    public static function getPhpName($schemaName)
-    {
-        $name = "";
-        $tok = strtok($schemaName, '_');
-        while ($tok !== false) {
-            $name .= ucfirst($tok);
-            $tok = strtok('_');
-        }
-        return $name;
+        $oAdapter = self::getAdapter($connection, $type);
+        $aResult = $oAdapter->process($query);
+        return $aResult;
     }
     
     /**
@@ -80,17 +61,6 @@ class afsDatabaseQuery
     }
     
     /**
-     * Get peer name by table name
-     * 
-     * @param @table_name Table name
-     * @return string
-     */
-    public static function getPeerName($table_name)
-    {
-        return self::getPhpName($table_name) . 'Peer';
-    }
-    
-    /**
      * Getting tables from parsed yaml schema
      * 
      * @param $connection_name db connection name
@@ -115,125 +85,6 @@ class afsDatabaseQuery
         
         return $tables;
     }
-    
-    /**
-     * Processing query via connection and query type
-     * 
-     * @param $query This query will be executed
-     * @param $connection Connection name 
-     * @param $type Query type: sql or propel
-     * @return mixed
-     */
-    public static function processQuery($query, $connection = 'propel', $type = 'sql')
-    {
-        switch ($type) {
-            
-            case 'sql':
-                if (preg_match('/alter|drop|create|;|insert|update|delete/si', $query)) {
-                    $result = self::fetchError('This operation or functionality has been disabled');
-                } else {
-                    $con = Propel::getConnection($connection, Propel::CONNECTION_READ);
-                
-                    $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
-                    
-                    $stm = $con->prepare($query);
-                    $bExecuted = $stm->execute();
-                    
-                    if ($bExecuted) {
-                        $result = self::fetchSuccess($stm->fetchAll(PDO::FETCH_ASSOC));
-                    } else {
-                        $aErrorInfo = $stm->errorInfo();
-                        $result = self::fetchError($aErrorInfo[2]);
-                    }
-                }
-                break;
-                
-            case 'propel':
-                /**
-                 * TODO: Prepare query to execute
-                 */
-                 
-                eval('$execute_query = ' . $query);
-                
-                // $execute_query = TimeZonesQuery::create()->joinafGuardUserProfile('FirstName')->find();
-                // $execute_query = TimeZonesQuery::create()->withColumn('TimeZones.Id', 'temp_id')->find();
-                // $execute_query = TimeZonesQuery::create()->withColumn('TimeZones.Id', 'temp_id')->findPk(1);
-                
-                $sClass = get_class($execute_query);
-                
-                if ($sClass == 'PropelObjectCollection') {
-                    $oFormatter = $execute_query->getFormatter();
-                    
-                    $aResult = (array)$execute_query;
-                    
-                    if (count($aResult) > 0) {
-                        $result = self::fetchSuccess(self::prepareList($aResult));
-                    } else {
-                        $result = self::fetchError('Nothing has been found');
-                    }
-                } else {
-                    $result = self::fetchSuccess(self::prepareOutput($execute_query));
-                }
-                break;
-        }
-        
-        return $result;
-    }
-
-    private static function fetchError($text)
-    {
-        return array('success' => false, 'error' => $text);
-    }
-    
-    private static function fetchSuccess($result)
-    {
-        return array('success' => true, 'result' => $result);
-    }
-
-    public static function getFields($oCollection, $type = 'all')
-    {
-        if (is_object($oCollection)) {
-            $aFields = array();
-            
-            $aNative = $oCollection->toArray('fieldName');
-            $aVirtual = $oCollection->getVirtualColumns();
-            
-            switch ($type) {
-                case 'native':
-                    $aFields = array_keys($aNative);
-                    break;
-                
-                case 'virtual':
-                    $aFields = array_keys($aVirtual);
-                    break;
-                    
-                case 'all':
-                default:
-                    $aFields = array_keys(array_merge($aNative, $aVirtual));
-                    break;
-            }
-            
-            return $aFields;
-        } else {
-            return false;
-        }
-    }
-    
-    public static function prepareOutput($object)
-    {
-        return array_merge($object->toArray('fieldName'), $object->getVirtualColumns());
-    }
-    
-    public static function prepareList($aList)
-    {
-        $aResult = array();
-        foreach ((array)$aList as $object) {
-            $aResult[] = self::prepareOutput($object);
-        }
-        
-        return $aResult;
-    }
-    
 
 }
 

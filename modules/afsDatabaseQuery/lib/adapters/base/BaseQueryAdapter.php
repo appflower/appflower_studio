@@ -2,20 +2,40 @@
 
 abstract class BaseQueryAdapter
 {
-	public $dbh;
+    protected $query;
+    protected $connection_name;
     
-    public function __construct($dbh = null)
+    public function __construct($connection = 'propel') 
     {
-        if ($dbh) $this->setConnection($dbh);
+        $this->connection_name = $connection;
     }
-
-    public function setConnection($dbh)
+    
+    /**
+     * Processing query
+     */
+    abstract public function process($query);
+    
+    /**
+     * Setting query for processing
+     */
+    public function setQuery($query)
     {
-        $this->dbh = $dbh;
+        $this->query = $query;
     }
-
-    public function getConnection()
+    
+    /**
+     * Fetching error, prepare for output
+     */
+    protected function fetchError($text)
     {
-        return $this->dbh;
+        return array('success' => false, 'error' => $text);
+    }
+    
+    /**
+     * Fetching success, prepare for output
+     */
+    protected function fetchSuccess($result)
+    {
+        return array('success' => true, 'result' => $result);
     }
 }
