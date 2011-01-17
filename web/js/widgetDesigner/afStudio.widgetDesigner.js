@@ -7,7 +7,7 @@ N = afStudio.widgetDesigner;
  * @class afStudio.widgetDesigner
  * @extends Ext.TabPanel
  */
-N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
+N.DesignerTabPanel = Ext.extend(Ext.ux.LogMessageTab, {
 	/**
 	* paths
 	*/
@@ -133,6 +133,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 					Ext.Msg.alert("Failure","The server can't save the file !");
 				}
 	        });
+	    	
 		}
 		
 		/**
@@ -162,7 +163,13 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			beforerender : function(cmp) {
 				cmp.add({
 					xtype: 'afStudio.widgetDesigner.designer',
-                    widgetUri: this.widgetUri
+                    widgetUri: this.widgetUri,
+                    listeners:{
+                    	logmessage:function(cmp,message){
+                    		this.fireEvent("logmessage",cmp,message);
+                    	},
+                    	scope:this
+                    }
 				});
 			},
 			

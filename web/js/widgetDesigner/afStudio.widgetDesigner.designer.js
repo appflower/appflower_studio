@@ -164,6 +164,10 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 		}
 	}
 	
+	,saveDesigner:function(){
+		this.fireEvent("logmessage",this,"widget designer saved");
+	}
+	
 	/**
 	 * Initialises component
 	 * @return {Object} the component initial literal
@@ -202,7 +206,7 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 			layout: 'fit',
 			tbar: {
 				items: [
-					{text: 'Save', iconCls: 'icon-save'},
+					{text: 'Save', iconCls: 'icon-save',handler:this.saveDesigner,scope:this},
 					{xtype: 'tbseparator'},
 					{text: 'Add Field', iconCls: 'icon-add',handler:this.addField,scope:this},
 					{xtype: 'tbseparator'},
@@ -241,7 +245,8 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	},
 	
 	_initEvents : function() {
-		var _this = this;				
+		var _this = this;	
+		this.addEvents("logmessage");
 	}// eo _initEvents
 	
 });
