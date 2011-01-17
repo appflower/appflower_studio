@@ -178,3 +178,15 @@ Ext.ux.WidgetFieldDragZone = Ext.extend(Ext.dd.DragZone, {
     }
 });
 
+Ext.ux.LogMessageTab = Ext.extend(Ext.TabPanel, {
+	initComponent:function(){
+		Ext.ux.LogMessageTab.superclass.initComponent.call(this);
+		this.addEvents("logmessage");
+		this.on("logmessage",this.onLogMessage,this);
+	},
+	onLogMessage:function(cmp,message){
+		afStudio.log(message,"text");
+	}
+	
+})
+

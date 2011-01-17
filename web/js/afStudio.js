@@ -52,6 +52,8 @@ var afStudio = function () {
 					
 					if (!success) {
 						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
+					}else{
+						Ext.getCmp('console').loadNotifications();
 					}					
 				}
 				

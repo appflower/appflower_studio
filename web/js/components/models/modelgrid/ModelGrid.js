@@ -670,6 +670,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            iconCls: 'icon-save',
 	            handler: function(btn, ev) {
 	            	this.getStore().save();
+	            	this.fireEvent("logmessage",this,"modelSave");
 	            },
 	            scope:this
 	        },'-',{	        	
@@ -726,7 +727,9 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			 * Fires if an error HTTP status was returned from the server during altering field.
 			 * @param {Object} The XMLHttpRequest object containing the response data.
 			 */
-			'alterfieldfailure'
+			'alterfieldfailure',
+			
+			'logmessage'
 		);		
 		
 	}
