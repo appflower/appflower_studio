@@ -56,7 +56,11 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
             $bExecuted = $stm->execute();
             
             if ($bExecuted) {
-                $result = $this->fetchSuccess($stm->fetchAll(PDO::FETCH_ASSOC));
+                if ($stm->rowCount() > 0) {
+                    $result = $this->fetchSuccess($stm->fetchAll(PDO::FETCH_ASSOC));
+                } else {
+                    $result = $this->fetchInfo('Nothing has been found');
+                }
             } else {
                 $aErrorInfo = $stm->errorInfo();
                 $result = $this->fetchError($aErrorInfo[2]);

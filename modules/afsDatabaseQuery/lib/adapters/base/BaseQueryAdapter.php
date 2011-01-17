@@ -2,6 +2,10 @@
 
 abstract class BaseQueryAdapter
 {
+    const TYPE_ERROR = 'error';
+    const TYPE_SUCCESS = 'success';
+    const TYPE_INFO = 'info';
+    
     protected $query;
     protected $connection_name;
     
@@ -26,16 +30,33 @@ abstract class BaseQueryAdapter
     /**
      * Fetching error, prepare for output
      */
-    protected function fetchError($text)
+    protected function fetchError($content)
     {
-        return array('success' => false, 'error' => $text);
+        return $this->fetch($content, false, self::TYPE_ERROR);
     }
     
     /**
      * Fetching success, prepare for output
      */
-    protected function fetchSuccess($result)
+    protected function fetchSuccess($content)
     {
-        return array('success' => true, 'result' => $result);
+        return $this->fetch($content, true, self::TYPE_SUCCESS);
     }
+    
+    /**
+     * Fetching info, prepare for output
+     */
+    protected function fetchInfo($content)
+    {
+        return $this->fetch($content, true, self::TYPE_INFO);
+    }
+    
+    /**
+     * Fetching output
+     */
+    protected function fetch($content, $success, $type)
+    {
+        return array('success' => $success, 'type' => $type, 'content' => $content);
+    }
+    
 }

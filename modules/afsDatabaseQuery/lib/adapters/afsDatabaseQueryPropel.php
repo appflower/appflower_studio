@@ -31,10 +31,10 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 if (count($aResult) > 0) {
                     $result = $this->fetchSuccess($this->prepareList($aResult));
                 } else {
-                    $result = $this->fetchError('Nothing has been found');
+                    $result = $this->fetchInfo('Nothing has been found');
                 }
             } else {
-                $result = $this->fetchSuccess($this->prepareOutput($execute_query));
+                $result = $this->fetchSuccess(array($this->prepareOutput($execute_query)));
             }
         } else {
             $result = $aValidate;

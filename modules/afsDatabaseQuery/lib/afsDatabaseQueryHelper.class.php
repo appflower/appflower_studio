@@ -96,11 +96,23 @@ class afsDatabaseQueryHelper
     {
         $result = afsDatabaseQuery::processQuery($query, $connection, $type);
         
-        /**
-         * prepend to rendering
-         */
+        if ($result['success'] && $result['type'] == 'success') {
+            
+            if (isset($result['content'][0])) {
+                $aFields = array_keys($result['content'][0]);
+                
+                $return = array(
+                                'success' => true,
+                                'type' => 'success',
+                                'meta' => $aFields,
+                                'data' => $result['content']
+                );
+            }
+        } else {
+            $return = $result;
+        }
         
-        return $result;
+        return $return;
     }
     
     
