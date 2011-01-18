@@ -31,28 +31,6 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		this.removeAll(true);
 	}
 	
-	,createTableDataGrid : function() {
-		var _this = this;
-		
-		var grid = new Ext.grid.GridPanel({
-			columns:[
-				{header:'column1', width:100},
-				{header:'column2', width:100},
-				{header:'column3', width:100}
-			],
-			store: new Ext.data.ArrayStore({
-	        	fields: [
-	        		{name: 'company'},
-	            	{name: 'price', type: 'float'}
-	         	]
-			}),
-			viewConfig: {
-				forceFit: true
-			}
-		});
-		
-		return grid;
-	}//eo createTableDataGrid	
 	
 	,createTableListGrid : function(tables) {
 		var grid = new Ext.grid.GridPanel({
@@ -73,25 +51,40 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		});
 		
 		return grid;		
-	}
+	}	
 	
-	,showTableData : function() {
-		this.maskContent();
-		
-		var grid = this.createTableDataGrid();
-		var tp = new Ext.TabPanel({
-			activeTab: 0,
-			items: [
-				{xtype: 'panel', title: 'Data', items: grid, layout: 'fit', hideBorders: true},
-				{xtype: 'panel', title: 'Structure'}
-			]
+	,showTableData : function(modelData) {	
+		var _this = this,
+			    m = modelData.model,
+			    s = modelData.schema;
+
+		_this.maskContent('loading metadata...');	    
+			    
+		Ext.Ajax.request({
+		   url: '/appFlowerStudio/models',
+		   params: { 
+			   xaction: 'read',
+			   model: m,
+			   schema: s
+		   },
+		   success: function(result, request) {
+		       _this.unmaskContent();		
+		       var response = Ext.decode(result.responseText);
+		       
+		       if (response.success) {
+			       var tableTab = new afStudio.dbQuery.TableModelTab({
+					   metaData: response.rows,
+					   modelName: m,
+					   schemaName: s
+			       });
+			       _this.clearPanel();
+			       _this.add(tableTab);
+			       _this.doLayout();
+		       }			   
+			   
+		   }
 		});
-			
-		this.unmaskContent();
-		this.clearPanel();
-		this.add(tp);
-		this.doLayout();
-	}
+	}//eo showTableData
 	
 	,showDatabaseTables : function(tables) {
 		this.maskContent();
@@ -117,7 +110,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 			layout: 'fit',			
 			border: true,
 			bodyBorder: true,
-			hideBorders: true			
+			hideBorders: true
 		}
 	}//eo _beforeInitComponent
 	
@@ -132,8 +125,8 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		var _this = this;
 		
 		_this.on({
-			'render': function(cmp){
-				(function(){
+			'render': function(cmp) {
+				(function() {
 					_this.maskContent('Please select table...');
 				}).defer(100);
 			}

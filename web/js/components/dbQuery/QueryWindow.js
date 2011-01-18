@@ -20,8 +20,9 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 		
 		switch (nodeType) {
 			case 'table':
-				_this.centerPanel.showTableData();	
+				_this.centerPanel.showTableData(node.attributes);	
 			break;
+			
 			case 'database':
 				_this.centerPanel.showDatabaseTables(node.childNodes);
 			break;
@@ -49,13 +50,14 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 		
 		return {
 			title: 'Database Query', 
-			width: 800,
+			width: 1007,
 			height: 600, 
 			closable: true,
 	        draggable: true, 
 	        plain: true,
 	        modal: true, 
 	        resizable: false,
+	        maximizable: true,
 	        bodyBorder: false, 
 	        border: false,
 	        
@@ -94,7 +96,8 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 		})
 	}
 	
-	,cancel:function(){
+	,cancel : function() {
 		this.close();
 	}
+	
 });

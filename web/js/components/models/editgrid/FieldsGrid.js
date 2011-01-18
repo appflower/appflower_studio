@@ -6,6 +6,7 @@ Ext.ns('afStudio.models');
  * 
  * @class afStudio.models.FieldsGrid
  * @extends Ext.grid.EditorGridPanel
+ * @author Nikolai Babinski
  */
 afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	

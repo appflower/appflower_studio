@@ -7,8 +7,7 @@ Ext.ns('afStudio.models');
  */
 afStudio.models.treeEditor = Ext.extend(Ext.tree.TreeEditor, {	
 	 //prevent dbclick editing
-	 beforeNodeClick : function(node, e) {
-	 }
+	 beforeNodeClick : Ext.emptyFn
 });
 
 
@@ -22,7 +21,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * Models context menu
 	 */
-	contextMenu: new Ext.menu.Menu({
+	contextMenu : new Ext.menu.Menu({
 	        items: [
 	        {
 	       		id: 'delete-model',
@@ -90,10 +89,13 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			reallyWantText: 'Do you really want to',
 		    root: rootNode,
 			rootVisible: false,
-			tools:[{id:'refresh', 
-				handler:function(){
+			tools: [
+			{
+				id: 'refresh', 
+				handler: function() {
 					this.loader.load(rootNode);
-				}, scope: this
+				}, 
+				scope: this
 			}],
 			bbar: bottomToolBar
 		};
@@ -104,7 +106,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * Template method
 	 * @private
 	 */	
-	,initComponent: function() {		
+	,initComponent : function() {		
 		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));		
 		
 		if (!this.loader) {
@@ -182,7 +184,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * Template method
 	 * @private
 	 */
-	,onRender: function() {
+	,onRender : function() {
 		// call parent
 		afStudio.models.treePanel.superclass.onRender.apply(this, arguments);
 		
@@ -315,7 +317,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		}
 	}
 	
-    ,getModel: function(node) {
+    ,getModel : function(node) {
 		var model;
 
 		// get path for non-root node
@@ -330,7 +332,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		return model;
 	}
 	
-	,getSchema: function(node) {
+	,getSchema : function(node) {
 		return node.attributes.schema || '';
 	}
 	
@@ -383,7 +385,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});				
 	} //eo addModel
 	
-	,deleteModel: function(node) {
+	,deleteModel : function(node) {
 		
 		var _this = this;
 		
@@ -444,7 +446,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}//eo deleteModel
 	
-	,renameModel: function(node, newValue, oldValue) { 
+	,renameModel : function(node, newValue, oldValue) { 
 		var _this = this;		
 		
 		Ext.Msg.show({
@@ -505,7 +507,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}//eo renameModel
 		
-	,editModel: function(node) {
+	,editModel : function(node) {
 		var _this = this;
 		
 		afStudio.vp.mask({region:'center'});

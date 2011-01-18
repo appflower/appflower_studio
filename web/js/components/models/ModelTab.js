@@ -9,7 +9,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.ux.LogMessageTab, {
 
 	/**
 	 * @cfg {Object} fieldsStructure required
-	 * The fieldsStructure object contains model's fields structure information
+	 * The fieldsStructure object contains model's fields structure metadata
 	 */
 	
 	/**
