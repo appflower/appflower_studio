@@ -99,7 +99,7 @@ N.DesignerTabPanel = Ext.extend(Ext.ux.LogMessageTab, {
 			filePath: path,
 			
 			closable: true,
-			tbar: [{text: 'Save', iconCls: 'icon-save', handler: onSaveBtnClick}],
+			tbar: [{text: 'Save', iconCls: 'icon-save', handler: onSaveBtnClick,scope:this}],
 			items: [
 				{xtype: 'panel', flex: 3, style: 'padding: 5px', layout: 'fit',
 					
@@ -118,6 +118,7 @@ N.DesignerTabPanel = Ext.extend(Ext.ux.LogMessageTab, {
 		});
 		
 		function onSaveBtnClick(){
+			var self = this;
 	    	//TODO: move to public function and it as ContextMenu "Save" item handler in Ext.ux.TabMenu
 	    	Ext.Ajax.request({
 	        	url: codePress.fileContentUrl, 
@@ -127,6 +128,7 @@ N.DesignerTabPanel = Ext.extend(Ext.ux.LogMessageTab, {
 	        		'code': codePress.getCode()			          	
 	        	},
 	        	success:function(response, options){			
+	        		self.fireEvent("logmessage",self,"Widget Designer code Saved");
 	        		Ext.Msg.alert("Success","The file was saved !");			            
 	        	},
 	        	failure: function() {

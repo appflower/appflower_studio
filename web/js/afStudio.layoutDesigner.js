@@ -5,7 +5,7 @@ Ext.namespace('afStudio.layoutDesigner');
  * @class afStudio.layoutDesigner
  * @extends Ext.Panel
  */
-afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.Panel, {	
+afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.ux.LogMessagePanel, {	
 
 	/**
 	 * ExtJS basic method
@@ -248,6 +248,10 @@ layout: 'fit',
 		}
 	},
 	
+	saveLayout: function(){
+		this.fireEvent("logmessage",this,"layout saved");
+	},
+	
 	/**
 	 * Function getTabs
 	 * @return {Array} array of items
@@ -285,7 +289,7 @@ layout: 'fit',
 		
 		var tb = new Ext.Toolbar({
 	        items: [
-	        	{text: 'Save', iconCls: 'icon-save'},
+	        	{text: 'Save', iconCls: 'icon-save',handler:this.saveLayout,scope:this},
 	        	{xtype: 'tbseparator'},
 	        	{text: 'New Widget', iconCls: 'icon-add', handler: this.addNewWidget, scope: this},
 	        	{xtype: 'tbseparator'},

@@ -190,3 +190,15 @@ Ext.ux.LogMessageTab = Ext.extend(Ext.TabPanel, {
 	
 })
 
+Ext.ux.LogMessagePanel = Ext.extend(Ext.Panel, {
+	initComponent:function(){
+		Ext.ux.LogMessagePanel.superclass.initComponent.call(this);
+		this.addEvents("logmessage");
+		this.on("logmessage",this.onLogMessage,this);
+	},
+	onLogMessage:function(cmp,message){
+		afStudio.log(message,"text");
+	}
+	
+})
+
