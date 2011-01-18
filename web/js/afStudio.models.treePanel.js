@@ -422,7 +422,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	  node.remove();
 				      	
 				      	  _this.fireEvent('modeldeleted');
-				      	 
+				      	  _this.fireEvent("logmessage",_this,"model deleted");
 				      	  afStudio.vp.clearPortal();
 				      	 
 				      	  _this.reloadModels();
@@ -482,7 +482,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      
 				      if (response.success) {
 				      	_this.reloadModels(function(){_this.selectModelNode(node);});
-				      	
+				      	_this.fireEvent("logmessage",_this,"rename model");
 				      	//update Model's Grids editor 
 				      	_this.editModel(node);
 				      	

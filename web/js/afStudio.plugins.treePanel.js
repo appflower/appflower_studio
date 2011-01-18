@@ -400,6 +400,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	  node.remove();
 				      	
 				      	  _this.fireEvent('plugindeleted');
+				      	  _this.fireEvent("logmessage",_this,"plugindeleted");
 				      	 
 				      	  afStudio.vp.clearPortal();
 				      	 

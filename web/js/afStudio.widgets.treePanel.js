@@ -254,8 +254,8 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 //							node.ownerTree.treeEditor.editNode = node;
 //							node.ownerTree.treeEditor.startEdit(node.ui.textNode);	
 							
-							
-									node.ownerTree.treeEditor.triggerEdit(node);		
+							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename model");
+							node.ownerTree.treeEditor.triggerEdit(node);		
 							
 							break;	                        
 	                }
@@ -522,6 +522,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	,deleteModule:function(node)
 	{
+		var self = this;
 		Ext.Msg.show({
 			 title:'Delete'
 			,msg:this.reallyWantText + ' delete <b>' + this.getModule(node) + '</b> module?'
@@ -556,7 +557,8 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	afStudio.updateConsole(response.console);				      	
+				      	afStudio.updateConsole(response.console);	
+				      	self.fireEvent("logmessage",self,"delete Module")
 				      }
 				      else
 				      {
