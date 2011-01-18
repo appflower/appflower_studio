@@ -18,7 +18,7 @@ class afStudioPluginsCommand
 	
 	public function start()
 	{
-		$cmd = $this->request->getParameterHolder()->has('cmd')?$this->request->getParameterHolder()->get('cmd'):null;
+		$cmd = $this->request->getParameterHolder()->has('cmd')?$this->request->getParameterHolder()->get('cmd'):"null";
 		$xaction = $this->request->getParameterHolder()->has('xaction')?$this->request->getParameterHolder()->get('xaction'):null;
 
 		if($cmd!=null)

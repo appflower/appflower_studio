@@ -202,3 +202,14 @@ Ext.ux.LogMessagePanel = Ext.extend(Ext.Panel, {
 	
 })
 
+Ext.override(Ext.BoxComponent,{
+	initComponent : function(){
+		Ext.BoxComponent.superclass.initComponent.call(this);
+		this.addEvents("resize","move","logmessage");
+		this.on("logmessage",this.onLogMessage,this);
+	},
+	onLogMessage:function(cmp,message){
+		afStudio.log(message,"text");
+	}
+})
+

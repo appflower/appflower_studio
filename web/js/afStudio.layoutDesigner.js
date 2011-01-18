@@ -5,7 +5,7 @@ Ext.namespace('afStudio.layoutDesigner');
  * @class afStudio.layoutDesigner
  * @extends Ext.Panel
  */
-afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.ux.LogMessagePanel, {	
+afStudio.layoutDesigner.DesignerTabPanel = Ext.extend(Ext.Panel, {	
 
 	/**
 	 * ExtJS basic method

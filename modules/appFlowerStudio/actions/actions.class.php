@@ -103,7 +103,7 @@ class appFlowerStudioActions extends sfActions
 	{
 		//TODO: debug only
 //		return $this->renderJson(array('console'=>'test'));
-		
+
 		$modules_command=new afStudioModulesCommand();
 		
 		return $this->renderText($modules_command->end());

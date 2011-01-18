@@ -5,7 +5,7 @@ Ext.ns('afStudio.models');
  * @extends Ext.TabPanel
  * @author Nikolay
  */
-afStudio.models.ModelTab = Ext.extend(Ext.ux.LogMessageTab, {
+afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 
 	/**
 	 * @cfg {Object} fieldsStructure required
@@ -129,13 +129,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.ux.LogMessageTab, {
                     update:  _this.modelGridDataUrl + '/update?model=' + mdl,
                     destroy: _this.modelGridDataUrl + '/delete?model=' + mdl
                 }
-            }),
-            listeners:{
-            	logmessage:function(cmp,message){
-            		this.fireEvent("logmessage",cmp,message);
-            	},
-            	scope:this
-            }
+            })
 		});
 	}//eo createModelDataGrid
 	
@@ -191,7 +185,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.ux.LogMessageTab, {
 			'alterfield' : Ext.util.Functions.createDelegate(_this.onAlterField, _this)
 		});		
 		
-		this.addEvents("logmessage");
+	
 	}//eo _afterInitComponent
 	
 });

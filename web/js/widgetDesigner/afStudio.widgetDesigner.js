@@ -7,7 +7,7 @@ N = afStudio.widgetDesigner;
  * @class afStudio.widgetDesigner
  * @extends Ext.TabPanel
  */
-N.DesignerTabPanel = Ext.extend(Ext.ux.LogMessageTab, {
+N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	/**
 	* paths
 	*/
