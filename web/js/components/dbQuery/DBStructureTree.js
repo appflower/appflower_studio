@@ -68,9 +68,6 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 			text: 'Databases',
 			expanded: true
 		});
-
-//		iconCls: 'icon-tree-db',
-//	    iconCls: 'icon-tree-table'		
 		
 		return {
 			layout: 'fit', 
@@ -117,6 +114,7 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 		//Tree Events
 		_this.on({
 			click: _this.onNodeClick,
+			buffer: 500,
 			scope: _this
 		});
 		

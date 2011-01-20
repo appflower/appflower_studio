@@ -15,6 +15,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 */
 	maskContent : function(msg) {
 		this.body.mask(msg ? msg : 'loading');
+		return this;
 	}
 	
 	/**
@@ -22,6 +23,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 */
 	,unmaskContent : function() {
 		this.body.unmask();
+		return this;
 	}
 	
 	/**
@@ -29,9 +31,13 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 */
 	,clearPanel : function() {			
 		this.removeAll(true);
-	}
+	}	
 	
-	
+	/**
+	 * Creates DataBase tables list
+	 * @param {Object} tables The tables 
+	 * @return {Ext.grid.GridPanel} db tables list grid
+	 */
 	,createTableListGrid : function(tables) {
 		var grid = new Ext.grid.GridPanel({
 			title: 'Tables',
@@ -52,7 +58,28 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		
 		return grid;		
 	}	
+
+	/**
+	 * Shows query's result 
+	 * @param {Object} result The query's "meta"-metada and "data"-data set
+	 */
+	,showQueryResult : function(result) {
+		this.maskContent();
+		
+    	var resultGrid = new afStudio.dbQuery.QueryResultsGrid({
+			metaData: result.meta,
+			queryResults: result.data
+    	});
+    	
+		this.unmaskContent().clearPanel();
+		this.add(resultGrid);
+		this.doLayout();
+	}
 	
+	/**
+	 * Shows table's data
+	 * @param {Object} modelData
+	 */
 	,showTableData : function(modelData) {	
 		var _this = this,
 			    m = modelData.model,
@@ -81,11 +108,14 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 			       _this.add(tableTab);
 			       _this.doLayout();
 		       }			   
-			   
 		   }
 		});
 	}//eo showTableData
 	
+	/**
+	 * Shows DataBase tables list
+	 * @param {Object} tables
+	 */
 	,showDatabaseTables : function(tables) {
 		this.maskContent();
 		

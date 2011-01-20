@@ -5,16 +5,59 @@ Ext.ns('afStudio.dbQuery');
  * 
  * @class afStudio.dbQuery.QueryForm
  * @extends Ext.Panel
- * @author Nick
+ * @author Nikolai
  */
-afStudio.dbQuery.QueryForm = Ext.extend(Ext.Panel, {
+afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
+	
+	/**
+	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
+	 * Query URL
+	 */
+	queryUrl : 'afsDatabaseQuery/query'
+	
+	/**
+	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryForm
+	 */
+	
+	/**
+	 * Executes Query
+	 */
+	,executeQuery : function() {
+		var _this = this,
+				f = _this.getForm();
+		
+		_this.dbQueryForm.maskDbQuery();			
+				
+		f.submit({
+		    clientValidation: true,
+		    url: _this.queryUrl,
+		    success: function(form, action) {
+		    	_this.fireEvent('executequery', action.result);
+		    	_this.dbQueryForm.unmaskDbQuery();
+		    },
+		    failure: function(form, action) {
+		    	_this.dbQueryForm.unmaskDbQuery();
+		    	
+		        switch (action.failureType) {
+		            case Ext.form.Action.CLIENT_INVALID:
+		                Ext.Msg.alert('Failure', 'Query text is empty');
+		                break;
+		            case Ext.form.Action.CONNECT_FAILURE:
+		                Ext.Msg.alert('Failure', 'Ajax communication failed');
+		                break;
+		            case Ext.form.Action.SERVER_INVALID:
+		               Ext.Msg.alert('Failure', action.result.content);
+		       }
+		    }			
+		});
+	}//eo executeQuery
 	
 	/**
 	 * Initializes component
 	 * @return {Object} The configuration object
 	 * @private
 	 */
-	_beforeInitComponent : function() {
+	,_beforeInitComponent : function() {
 		var _this = this;
 		
 		return {
@@ -42,21 +85,26 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.Panel, {
 						fieldLabel: 'Query type',						
 						anchor: '100%',
 						triggerAction: 'all',						
-						value: 1, 
-						store: [[1, 'SQL'], [2, 'Propel']]						
+						value: 'sql',
+						hiddenName: 'type',
+						name: 'type',
+						store: [['sql', 'sql'], ['propel', 'propel']]						
 					}
 				},{
 					items: {
 						xtype: 'button',
 						text: 'Query',
 						iconCls: 'icon-accept',
-						handler: function(){}
+						handler: Ext.util.Functions.createDelegate(_this.executeQuery, _this)
 					}
 				}]
 			},{
-				xtype: 'textarea', 
-				hideLabel: true, 
-				height: 80, 
+				xtype: 'textarea',
+				ref: 'queryText',
+				allowBlank: false,
+				hideLabel: true,
+				height: 80,
+				name: 'query',
 				anchor: '100% '
 			}]			
 		};		
@@ -66,6 +114,19 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.Panel, {
 	,initComponent : function() {
 		Ext.apply(this, Ext.applyIf(this.initialConfig, this._beforeInitComponent()));				
 		afStudio.dbQuery.QueryForm.superclass.initComponent.apply(this, arguments);
+		this._afterInitComponent();
+	}
+	
+	,_afterInitComponent : function() {
+		var _this = this;
+		
+		_this.addEvents(
+			/**
+			 * @event executequery Fires after query was successufully executed
+			 * @param {Object} result The query result object, containing "meta" - meta-data and "data" - result set 
+			 */
+			'executequery'
+		);
 	}	
 });
 

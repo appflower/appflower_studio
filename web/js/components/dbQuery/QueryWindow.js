@@ -10,12 +10,21 @@ Ext.ns('afStudio.dbQuery');
 afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	
 	/**
+	 * Relayed {@link afStudio.dbQuery.QueryForm#executequery} event listener
+	 * @param {Object} result The query result
+	 */
+	onExecuteQuery : function(result) {
+		this.westPanel.getSelectionModel().clearSelections(); 
+		this.centerPanel.showQueryResult(result);
+	}
+	
+	/**
 	 * Relayed {@link afStudio.dbQuery.DBStructureTree#dbnodeclick} event listener
  	 * @param {Ext.data.node} node The clicked node
 	 * @param {Ext.EventObject} e This event object
 	 * @param {String} nodeType The node's type - "table"/"database"
 	 */
-	onDBNodeClick : function(node, e, nodeType) {
+	,onDBNodeClick : function(node, e, nodeType) {
 		var _this = this;
 		
 		switch (nodeType) {
@@ -28,6 +37,25 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 			break;
 		}		
 	}//eo onDBNodeClick
+	
+	/**
+	 * Masksing window
+	 * @param {String} msg The message (defaults to 'Querying...')
+	 */
+	,maskDbQuery : function(msg) {
+		this.body.mask('Querying...');
+	}
+	
+	/**
+	 * Unmasks window
+	 */
+	,unmaskDbQuery : function() {
+		this.body.unmask();
+	}
+	
+	,cancelBtnPressed : function() {
+		this.close();
+	}
 	
 	/**
 	 * Initializes component
@@ -43,10 +71,11 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 			width: 250
 		});		
 		
-		_this.northPanel = new afStudio.dbQuery.QueryForm();
+		_this.northPanel = new afStudio.dbQuery.QueryForm({
+			dbQueryForm: _this
+		});
 		
 		_this.centerPanel = new afStudio.dbQuery.ContentPanel();
-
 		
 		return {
 			title: 'Database Query', 
@@ -72,7 +101,7 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 			{
 				text: 'Cancel', 
 				iconCls: 'afs-icon-cancel',
-				handler: this.cancel, 
+				handler: this.cancelBtnPressed, 
 				scope: this
 			}],
 			buttonAlign: 'right'
@@ -90,14 +119,13 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 		var _this = this;
 		
 		_this.relayEvents(_this.westPanel, ['dbnodeclick']);
+		_this.relayEvents(_this.northPanel, ['executequery']);
 		
 		_this.on({
-			'dbnodeclick': Ext.util.Functions.createDelegate(_this.onDBNodeClick, _this) 
+			'dbnodeclick': _this.onDBNodeClick,
+			'executequery': _this.onExecuteQuery,
+			scope: _this			
 		})
-	}
-	
-	,cancel : function() {
-		this.close();
 	}
 	
 });
