@@ -702,23 +702,8 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
         var actionPath = this.getActionPath(node);
         var securityPath = this.getSecurityPath(node);
         var widgetUri = node.attributes.widgetUri;
-
-		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});
-		mask.show();
-		
-		afStudio.vp.addToPortal({
-			title: 'Widget Designer',
-			collapsible: false,
-			draggable: false,
-			layout: 'fit',
-			items: [{
-				xtype: 'afStudio.widgetDesigner',
-				actionPath: actionPath,
-				securityPath: securityPath,
-                widgetUri: widgetUri,
-				mask: mask
-			}]
-		}, true);		
+        
+        afStudio.showWidgetDesigner(widgetUri,actionPath,securityPath);		
 	}
 }); 
 

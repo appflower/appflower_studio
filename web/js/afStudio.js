@@ -64,6 +64,26 @@ var afStudio = function () {
 		{
 			return this.vp;
 		}
+		
+		,showWidgetDesigner: function(widget,action,security)
+		{
+			var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});
+			mask.show();
+			
+			afStudio.vp.addToPortal({
+				title: widget + ' Widget Designer',
+				collapsible: false,
+				draggable: false,
+				layout: 'fit',
+				items: [{
+					xtype: 'afStudio.widgetDesigner',
+					actionPath: action,
+					securityPath: security,
+	                widgetUri: widget,
+					mask: mask
+				}]
+			}, true);
+		}
 				
 		,init: function () { 
 		    Ext.QuickTips.init();

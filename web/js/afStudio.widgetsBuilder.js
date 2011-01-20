@@ -246,7 +246,7 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 			bodyStyle: 'padding: 5px;', height: 70, width: 234
 		});
 		
-		var modulesCombo = new Ext.ux.form.GroupingComboBox({
+		this.modulesCombo = new Ext.ux.form.GroupingComboBox({
             fieldLabel: 'Module Location',
 			loadingText: 'Please wait...',
 			emptyText: 'Please select the module location...',
@@ -266,6 +266,18 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
             hiddenName: 'model'
 		});		
 		
+		this.actionInput = new Ext.form.TextField({fieldLabel: 'Widget Name', anchor: '100%'});
+				
+		this.typeCombo = new Ext.form.ComboBox({
+            fieldLabel: 'Widget Type', 
+            triggerAction: 'all', 
+            anchor: '100%', 
+			store: [['list', 'List'], 
+					['grid', 'Grid'], 
+					['edit', 'Edit'], 
+					['show', 'Show']],
+			value: 'list'
+		});
 		
 		return {
 			title: 'Create new widget',
@@ -294,12 +306,9 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 						new Ext.FormPanel({
 							bodyStyle: 'padding: 5px;', labelWidth: 100,
 							items: [
-								modulesCombo,
-								{xtype: 'textfield', fieldLabel: 'Widget Name', anchor: '100%'},
-								{xtype: 'combo', fieldLabel: 'Widget Type', triggerAction: 'all', anchor: '100%', 
-									store: [['list', 'List'], ['grid', 'Grid'], ['edit', 'Edit'], ['show', 'Show']],
-									value: 'list'
-								}
+								this.modulesCombo,
+								this.actionInput,
+								this.typeCombo
 							]
 						})
 					]
@@ -371,11 +380,40 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 	 */
 	create: function(){
 		var items = [];
+						
 		this.relationsGrid.getStore().each(function(rec){
-			items.push(rec.get('name'))
+			items.push(rec)
 		});
-		alert('Selected fields: ' + items.toString())
-	},
+		
+		/**
+		* each item contains data.field, data.id, data.model, data.name, data.size, data.type
+		*/
+		
+		var module = this.modulesCombo.getValue();
+		var action = this.actionInput.getValue();
+		var type = this.typeCombo.getValue();
+		
+		var afsWD = new afStudio.widgetDesigner.WidgetDefinition(module+'/'+action, type);
+
+		afsWD.createRootNode();
+		afsWD.rootNode.getDatasourceNode().valueSourceChanged();
+		
+		for (k in items)
+		{
+			if(items[k].data)
+			{
+				var field = afsWD.rootNode.getFieldsNode().addChild();
+				field.properties['name'].set('value', items[k].data.field);
+				field.properties['label'].set('value',items[k].data.field.ucfirst());
+			}	
+		}
+				
+		afsWD.save();
+		
+		this.close();
+		
+		afStudio.showWidgetDesigner(module+'/'+action);
+	},	
 	
 	/**
 	 * Function cancel
