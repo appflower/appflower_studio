@@ -15,6 +15,15 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	structureUrl : '/afsDatabaseQuery/databaseList'
 	
+	,getCurrentConnection : function() {
+		var node = this.getSelectionModel().getSelectedNode();
+		
+		return node ? (node.hasChildNodes() 
+						? node.attributes.connection 
+						: node.parentNode.attributes.connection) 
+				    : null;		
+	}
+	
 	/**
 	 * Masks tree
 	 * @param {String} msg optional
@@ -87,8 +96,7 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 		Ext.apply(this, Ext.applyIf(this.initialConfig, this._beforeInitComponent()));				
 		afStudio.dbQuery.DBStructureTree.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}	
-	
+	}
 
 	/**
 	 * @private

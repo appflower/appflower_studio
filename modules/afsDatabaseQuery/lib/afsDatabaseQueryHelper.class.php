@@ -35,7 +35,8 @@ class afsDatabaseQueryHelper
             // Generate list of databases and tables
             $database = array(
                 'name' => $aDsnInfo['dbname'],
-            	'tables_num' => count($aTables)
+            	'tables_num' => count($aTables),
+            	'connection' =>  $db_connection
             );
             
             $tables = array();
@@ -63,6 +64,7 @@ class afsDatabaseQueryHelper
     	foreach ($dbList as $db) {
     		$treeNode = array(
                 'text'    => $db['name'] . ' (' . $db['tables_num'] . ')',
+    			'connection' => $db['connection'],
                 'iconCls' => 'icon-tree-db',
                 'expanded' => true
             );

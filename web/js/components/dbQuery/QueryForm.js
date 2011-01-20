@@ -16,7 +16,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	queryUrl : 'afsDatabaseQuery/query'
 	
 	/**
-	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryForm
+	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryWindow
 	 */
 	
 	/**
@@ -24,19 +24,28 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	 */
 	,executeQuery : function() {
 		var _this = this,
-				f = _this.getForm();
+				f = _this.getForm(),
+	   connection = this.dbQueryWindow.westPanel.getCurrentConnection();				
 		
-		_this.dbQueryForm.maskDbQuery();			
+	    if (!connection) {
+	   		Ext.Msg.alert('Failure', 'Connection is not specified. <br /> Please select DataBase or DB\'s table.' );
+	   		return;
+	    }
+	   
+		_this.dbQueryWindow.maskDbQuery();
 				
 		f.submit({
 		    clientValidation: true,
 		    url: _this.queryUrl,
+		    params: {
+		    	'connection': connection
+		    },
 		    success: function(form, action) {
 		    	_this.fireEvent('executequery', action.result);
-		    	_this.dbQueryForm.unmaskDbQuery();
+		    	_this.dbQueryWindow.unmaskDbQuery();
 		    },
 		    failure: function(form, action) {
-		    	_this.dbQueryForm.unmaskDbQuery();
+		    	_this.dbQueryWindow.unmaskDbQuery();
 		    	
 		        switch (action.failureType) {
 		            case Ext.form.Action.CLIENT_INVALID:

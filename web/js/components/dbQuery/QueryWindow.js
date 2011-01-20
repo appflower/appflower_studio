@@ -72,7 +72,7 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 		});		
 		
 		_this.northPanel = new afStudio.dbQuery.QueryForm({
-			dbQueryForm: _this
+			dbQueryWindow: _this
 		});
 		
 		_this.centerPanel = new afStudio.dbQuery.ContentPanel();
