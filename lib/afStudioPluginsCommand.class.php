@@ -84,6 +84,7 @@ class afStudioPluginsCommand
 				if($f !="." && $f !=".." && $f!=".svn" && is_dir($dir.'/'.$f))
 				{
 					$folders[$i]["text"] = $f;
+					$folders[$i]["type"] = 'module';
 					$i++;
 				}
 			}
@@ -102,6 +103,7 @@ class afStudioPluginsCommand
 				if(!is_dir($dir.$f) && strpos($f,$pro_name)>0)
 				{
 					$files[$i]["text"] = $f;
+					$files[$i]["type"] = 'xml';
 					$files[$i]["leaf"] = true;
 					$i++;
 				}
