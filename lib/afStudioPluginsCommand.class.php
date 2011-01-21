@@ -38,7 +38,7 @@ class afStudioPluginsCommand
 						foreach($moduleFolders as $moduleFolder)
 						{
 							$modulename = $moduleFolder["text"];
-							$configfiles = $this->getFiles($this->realRoot."/plugins/".$plugin."/modules/".$modulename."/config/", ".xml");
+							$configfiles = $this->getFiles($plugin, $modulename, ".xml");
 							if (count($configfiles) > 0) {
 								$moduleFolder["children"] = $configfiles;
 								array_push($mod_datas,$moduleFolder);
@@ -92,8 +92,14 @@ class afStudioPluginsCommand
 		return $folders;
 	}
 
-	private function getFiles($dir, $pro_name)
+	private function getFiles($plugin, $modulename, $pro_name)
 	{
+		
+		$dir = $this->realRoot."/plugins/".$plugin."/modules/".$modulename."/config/";
+		
+		$securityPath = $this->realRoot."/apps/".$plugin."/modules/".$modulename."/config/security.yml";
+		$actionPath = $this->realRoot."/apps/".$plugin."/modules/".$modulename."/actions/actions.class.php";
+		
 		$files = array();
 		if (is_dir($dir)) {
 			$handler = opendir($dir);
@@ -104,6 +110,10 @@ class afStudioPluginsCommand
 				{
 					$files[$i]["text"] = $f;
 					$files[$i]["type"] = 'xml';
+					
+					$files[$i]["securityPath"] = $securityPath;
+					$files[$i]["actionPath"] = $actionPath;
+					
 					$files[$i]["leaf"] = true;
 					$i++;
 				}

@@ -58,7 +58,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	contextMenuModule: new Ext.menu.Menu({
 		items: [
-			{id: 'delete-module', text: 'Delete module', iconCls: 'icon-models-delete'}
+			{id: 'delete-plugin', text: 'Delete plugin', iconCls: 'icon-models-delete'}
 		],
 		listeners: {
 	    	itemclick: function(item) {
