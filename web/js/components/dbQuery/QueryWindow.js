@@ -13,8 +13,7 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	 * Relayed {@link afStudio.dbQuery.QueryForm#executequery} event listener
 	 * @param {Object} result The query result
 	 */
-	onExecuteQuery : function(result) {
-		this.westPanel.getSelectionModel().clearSelections(); 
+	onExecuteQuery : function(result) { 
 		this.centerPanel.showQueryResult(result);
 	}
 	
