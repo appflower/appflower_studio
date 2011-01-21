@@ -18,7 +18,7 @@ class afsDatabaseQuery
         $class_name = 'afsDatabaseQuery' . ucfirst(strtolower($type));
         $oAdapter = new $class_name($connection_name);
         
-        return new $oAdapter;
+        return $oAdapter;
     }
     
     /**

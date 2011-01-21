@@ -7,6 +7,11 @@
 class afsDatabaseQueryPropel extends BaseQueryAdapter
 {
     /**
+     * For checking validation handler
+     */
+    private $is_valid = true;
+    
+    /**
      * Processing query
      * 
      * @param $query Propel Query for executing
@@ -20,10 +25,10 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         
         if ($aValidate['success']) {
             eval('$execute_query = ' . $query . ';');
-        
+            
             $sClass = get_class($execute_query);
             
-            if ($sClass == 'PropelObjectCollection') {
+            if ($execute_query instanceof PropelObjectCollection) {
                 $oFormatter = $execute_query->getFormatter();
                 
                 $aResult = (array)$execute_query;
@@ -33,7 +38,11 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 } else {
                     $result = $this->fetchInfo('Nothing has been found');
                 }
-            } else {
+                
+            } elseif ($execute_query instanceof ModelCriteria) {
+                $result = $this->fetchError("Please, check syntax");
+                
+            } elseif ($execute_query instanceof BaseObject) {
                 if (is_null($execute_query)) {
                     $result = $this->fetchInfo('Nothing has been found');
                 } else {
@@ -45,6 +54,14 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         }
         
         return $result;
+    }
+    
+    /**
+     * Eval error handler
+     */
+    public function eval_error_handler($number, $error, $file, $line)
+    {
+        $this->is_valid = false;
     }
     
     /**
@@ -81,7 +98,17 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                         }
                         
                         if (!$bError) {
-                            $return = $this->fetchSuccess('Validated successfully');
+                            // Checking for errors when executing query
+                            set_error_handler(array($this, 'eval_error_handler'));
+                            @eval('$execute_query = ' . $this->query . ';');
+                            restore_error_handler();
+                            
+                            if ($this->is_valid) {
+                                $return = $this->fetchSuccess('Validated successfully');
+                            } else {
+                                $return = $this->fetchError("Please, check syntax");
+                            }
+                            
                         } else {
                             $sError = implode(', ', $aError);
                             $return = $this->fetchError("Class {$sClassName} doesn't have functions: {$sError}"); 
