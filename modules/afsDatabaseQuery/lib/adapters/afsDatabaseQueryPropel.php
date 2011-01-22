@@ -99,6 +99,10 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                         
                         if (!$bError) {
                             // Checking for errors when executing query
+                            
+                            // Handle shutdown function to catch fatal error
+                            register_shutdown_function(array($this, 'handleShutdown'));
+                            
                             set_error_handler(array($this, 'eval_error_handler'));
                             @eval('$execute_query = ' . $this->query . ';');
                             restore_error_handler();
@@ -164,5 +168,16 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         
         return $aResult;
     }
+    
+    /**
+     * Hadle fatal error via shutdown function
+     */
+    public function handleShutdown() {
+        $error = error_get_last();
+        if($error !== NULL){
+            echo json_encode($this->fetchError('Please, check syntax. Fatal Error: ' . $error['message']));
+        } 
+    }
+    
     
 }
