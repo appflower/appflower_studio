@@ -618,6 +618,9 @@ class afStudioModelsCommand
 			$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name] = $definition;
 		}		
 		$this->saveSchema();
+        
+        $this->saveSchemaChanges();
+        
 		$this->deployOfSchemaChanges();
 		
 		return true;
@@ -659,10 +662,22 @@ class afStudioModelsCommand
 		return true;		
 	}
 	
+    /**
+     * Deploy schema changes to DB
+     */
 	private function deployOfSchemaChanges() {
-		//TODO should be correctly implemented
-		$afConsole = new afStudioConsole();
-		$consoleResult = $afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
+	    // TODO: for many connection, now only for default propel
+        $filename = sfConfig::get('sf_data_dir')."/sql/propel.diff.sql";
+        
+        $i = new dbInfo();
+        $i->executeSql("SET FOREIGN_KEY_CHECKS=0;\n".file_get_contents($filename)."\nSET FOREIGN_KEY_CHECKS=1;", Propel::getConnection('propel'));
+        
+        // $oBuildModel = new sfPropelBuildModelTask(  sfContext::getInstance()->getEventDispatcher(), 
+        //                                             new sfFormatter());
+        // $oBuildModel->run();
+        
+		// $afConsole = new afStudioConsole();
+		// $consoleResult = $afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
 	}
 	
 	/**
@@ -684,5 +699,52 @@ class afStudioModelsCommand
 		}		
 		$array = $initial;
 	}
+    
+    /**
+     * Saving schema changes to file
+     */
+    private function saveSchemaChanges()
+    {
+        // TODO: for few connections, now only for propel done
+        
+        // Need for execute task
+        chdir(sfConfig::get('sf_root_dir'));
+        
+        // Create changes in create sql table file via propel build sql task
+        $buildSql = new sfPropelBuildSqlTask(   sfContext::getInstance()->getEventDispatcher(), 
+                                                new sfFormatter());
+        $buildSql->run();
+        
+        $i = new dbInfo();
+        $i->loadFromDb(Propel::getConnection('propel'));
+    
+        $i2 = new dbInfo();
+        
+        $sqlDir = sfConfig::get('sf_data_dir').'/sql';
+        $dbmap = file("$sqlDir/sqldb.map");
+        foreach($dbmap as $mapline) {
+            if($mapline[0]=='#') continue; //it is a comment
+            list($sqlfile, $dbname) = explode('=', trim($mapline));
+            if($dbname == 'propel') {
+                if (file_exists("$sqlDir/$sqlfile")) { 
+                    $i2->loadFromFile("$sqlDir/$sqlfile");
+                }
+            }
+        }
+        
+        // Need to ignore notices from sfPropelSqlDiff task - problem in plugin when process checkForeignKeys function
+        error_reporting(E_ALL ^ E_NOTICE);
+        
+        $i->checkForeignKeys($i2);
+            
+        $diff = $i->getDiffWith($i2);
+        $filenameOld = sfConfig::get('sf_data_dir').'/sql/diff.sql';
+        $filename = sfConfig::get('sf_data_dir')."/sql/propel.diff.sql";
+        if($diff=='') {
+          // Nothing has been changed
+        }
+        file_put_contents($filename, $diff);
+        file_put_contents($filenameOld, $diff);
+    }
 
 }
