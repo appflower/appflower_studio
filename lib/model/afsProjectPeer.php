@@ -13,6 +13,6 @@
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model
  */
-class ProjectPeer extends BaseProjectPeer {
+class afsProjectPeer extends BaseafsProjectPeer {
 
 } // ProjectPeer

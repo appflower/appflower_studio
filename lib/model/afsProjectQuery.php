@@ -13,6 +13,6 @@
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model
  */
-class ProjectQuery extends BaseProjectQuery {
+class afsProjectQuery extends BaseafsProjectQuery {
 
 } // ProjectQuery

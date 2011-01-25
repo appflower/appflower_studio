@@ -2,68 +2,68 @@
 
 
 /**
- * Base class that represents a query for the 'project' table.
+ * Base class that represents a query for the 'afs_project' table.
  *
  * 
  *
- * @method     ProjectQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method     ProjectQuery orderByPath($order = Criteria::ASC) Order by the path column
- * @method     ProjectQuery orderBySlug($order = Criteria::ASC) Order by the slug column
- * @method     ProjectQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     afsProjectQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     afsProjectQuery orderByPath($order = Criteria::ASC) Order by the path column
+ * @method     afsProjectQuery orderBySlug($order = Criteria::ASC) Order by the slug column
+ * @method     afsProjectQuery orderById($order = Criteria::ASC) Order by the id column
  *
- * @method     ProjectQuery groupByName() Group by the name column
- * @method     ProjectQuery groupByPath() Group by the path column
- * @method     ProjectQuery groupBySlug() Group by the slug column
- * @method     ProjectQuery groupById() Group by the id column
+ * @method     afsProjectQuery groupByName() Group by the name column
+ * @method     afsProjectQuery groupByPath() Group by the path column
+ * @method     afsProjectQuery groupBySlug() Group by the slug column
+ * @method     afsProjectQuery groupById() Group by the id column
  *
- * @method     ProjectQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ProjectQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ProjectQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     afsProjectQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     afsProjectQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     afsProjectQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     Project findOne(PropelPDO $con = null) Return the first Project matching the query
- * @method     Project findOneOrCreate(PropelPDO $con = null) Return the first Project matching the query, or a new Project object populated from the query conditions when no match is found
+ * @method     afsProject findOne(PropelPDO $con = null) Return the first afsProject matching the query
+ * @method     afsProject findOneOrCreate(PropelPDO $con = null) Return the first afsProject matching the query, or a new afsProject object populated from the query conditions when no match is found
  *
- * @method     Project findOneByName(string $name) Return the first Project filtered by the name column
- * @method     Project findOneByPath(string $path) Return the first Project filtered by the path column
- * @method     Project findOneBySlug(string $slug) Return the first Project filtered by the slug column
- * @method     Project findOneById(int $id) Return the first Project filtered by the id column
+ * @method     afsProject findOneByName(string $name) Return the first afsProject filtered by the name column
+ * @method     afsProject findOneByPath(string $path) Return the first afsProject filtered by the path column
+ * @method     afsProject findOneBySlug(string $slug) Return the first afsProject filtered by the slug column
+ * @method     afsProject findOneById(int $id) Return the first afsProject filtered by the id column
  *
- * @method     array findByName(string $name) Return Project objects filtered by the name column
- * @method     array findByPath(string $path) Return Project objects filtered by the path column
- * @method     array findBySlug(string $slug) Return Project objects filtered by the slug column
- * @method     array findById(int $id) Return Project objects filtered by the id column
+ * @method     array findByName(string $name) Return afsProject objects filtered by the name column
+ * @method     array findByPath(string $path) Return afsProject objects filtered by the path column
+ * @method     array findBySlug(string $slug) Return afsProject objects filtered by the slug column
+ * @method     array findById(int $id) Return afsProject objects filtered by the id column
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model.om
  */
-abstract class BaseProjectQuery extends ModelCriteria
+abstract class BaseafsProjectQuery extends ModelCriteria
 {
 
 	/**
-	 * Initializes internal state of BaseProjectQuery object.
+	 * Initializes internal state of BaseafsProjectQuery object.
 	 *
 	 * @param     string $dbName The dabase name
 	 * @param     string $modelName The phpName of a model, e.g. 'Book'
 	 * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
 	 */
-	public function __construct($dbName = 'propel', $modelName = 'Project', $modelAlias = null)
+	public function __construct($dbName = 'propel', $modelName = 'afsProject', $modelAlias = null)
 	{
 		parent::__construct($dbName, $modelName, $modelAlias);
 	}
 
 	/**
-	 * Returns a new ProjectQuery object.
+	 * Returns a new afsProjectQuery object.
 	 *
 	 * @param     string $modelAlias The alias of a model in the query
 	 * @param     Criteria $criteria Optional Criteria to build the query from
 	 *
-	 * @return    ProjectQuery
+	 * @return    afsProjectQuery
 	 */
 	public static function create($modelAlias = null, $criteria = null)
 	{
-		if ($criteria instanceof ProjectQuery) {
+		if ($criteria instanceof afsProjectQuery) {
 			return $criteria;
 		}
-		$query = new ProjectQuery();
+		$query = new afsProjectQuery();
 		if (null !== $modelAlias) {
 			$query->setModelAlias($modelAlias);
 		}
@@ -82,11 +82,11 @@ abstract class BaseProjectQuery extends ModelCriteria
 	 * @param     mixed $key Primary key to use for the query
 	 * @param     PropelPDO $con an optional connection object
 	 *
-	 * @return    Project|array|mixed the result, formatted by the current formatter
+	 * @return    afsProject|array|mixed the result, formatted by the current formatter
 	 */
 	public function findPk($key, $con = null)
 	{
-		if ((null !== ($obj = ProjectPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+		if ((null !== ($obj = afsProjectPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
 			// the object is alredy in the instance pool
 			return $obj;
 		} else {
@@ -122,11 +122,11 @@ abstract class BaseProjectQuery extends ModelCriteria
 	 *
 	 * @param     mixed $key Primary key to use for the query
 	 *
-	 * @return    ProjectQuery The current query, for fluid interface
+	 * @return    afsProjectQuery The current query, for fluid interface
 	 */
 	public function filterByPrimaryKey($key)
 	{
-		return $this->addUsingAlias(ProjectPeer::ID, $key, Criteria::EQUAL);
+		return $this->addUsingAlias(afsProjectPeer::ID, $key, Criteria::EQUAL);
 	}
 
 	/**
@@ -134,11 +134,11 @@ abstract class BaseProjectQuery extends ModelCriteria
 	 *
 	 * @param     array $keys The list of primary key to use for the query
 	 *
-	 * @return    ProjectQuery The current query, for fluid interface
+	 * @return    afsProjectQuery The current query, for fluid interface
 	 */
 	public function filterByPrimaryKeys($keys)
 	{
-		return $this->addUsingAlias(ProjectPeer::ID, $keys, Criteria::IN);
+		return $this->addUsingAlias(afsProjectPeer::ID, $keys, Criteria::IN);
 	}
 
 	/**
@@ -148,7 +148,7 @@ abstract class BaseProjectQuery extends ModelCriteria
 	 *            Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
-	 * @return    ProjectQuery The current query, for fluid interface
+	 * @return    afsProjectQuery The current query, for fluid interface
 	 */
 	public function filterByName($name = null, $comparison = null)
 	{
@@ -160,7 +160,7 @@ abstract class BaseProjectQuery extends ModelCriteria
 				$comparison = Criteria::LIKE;
 			}
 		}
-		return $this->addUsingAlias(ProjectPeer::NAME, $name, $comparison);
+		return $this->addUsingAlias(afsProjectPeer::NAME, $name, $comparison);
 	}
 
 	/**
@@ -170,7 +170,7 @@ abstract class BaseProjectQuery extends ModelCriteria
 	 *            Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
-	 * @return    ProjectQuery The current query, for fluid interface
+	 * @return    afsProjectQuery The current query, for fluid interface
 	 */
 	public function filterByPath($path = null, $comparison = null)
 	{
@@ -182,7 +182,7 @@ abstract class BaseProjectQuery extends ModelCriteria
 				$comparison = Criteria::LIKE;
 			}
 		}
-		return $this->addUsingAlias(ProjectPeer::PATH, $path, $comparison);
+		return $this->addUsingAlias(afsProjectPeer::PATH, $path, $comparison);
 	}
 
 	/**
@@ -192,7 +192,7 @@ abstract class BaseProjectQuery extends ModelCriteria
 	 *            Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
-	 * @return    ProjectQuery The current query, for fluid interface
+	 * @return    afsProjectQuery The current query, for fluid interface
 	 */
 	public function filterBySlug($slug = null, $comparison = null)
 	{
@@ -204,7 +204,7 @@ abstract class BaseProjectQuery extends ModelCriteria
 				$comparison = Criteria::LIKE;
 			}
 		}
-		return $this->addUsingAlias(ProjectPeer::SLUG, $slug, $comparison);
+		return $this->addUsingAlias(afsProjectPeer::SLUG, $slug, $comparison);
 	}
 
 	/**
@@ -214,30 +214,30 @@ abstract class BaseProjectQuery extends ModelCriteria
 	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
-	 * @return    ProjectQuery The current query, for fluid interface
+	 * @return    afsProjectQuery The current query, for fluid interface
 	 */
 	public function filterById($id = null, $comparison = null)
 	{
 		if (is_array($id) && null === $comparison) {
 			$comparison = Criteria::IN;
 		}
-		return $this->addUsingAlias(ProjectPeer::ID, $id, $comparison);
+		return $this->addUsingAlias(afsProjectPeer::ID, $id, $comparison);
 	}
 
 	/**
 	 * Exclude object from result
 	 *
-	 * @param     Project $project Object to remove from the list of results
+	 * @param     afsProject $afsProject Object to remove from the list of results
 	 *
-	 * @return    ProjectQuery The current query, for fluid interface
+	 * @return    afsProjectQuery The current query, for fluid interface
 	 */
-	public function prune($project = null)
+	public function prune($afsProject = null)
 	{
-		if ($project) {
-			$this->addUsingAlias(ProjectPeer::ID, $project->getId(), Criteria::NOT_EQUAL);
+		if ($afsProject) {
+			$this->addUsingAlias(afsProjectPeer::ID, $afsProject->getId(), Criteria::NOT_EQUAL);
 	  }
 	  
 		return $this;
 	}
 
-} // BaseProjectQuery
+} // BaseafsProjectQuery

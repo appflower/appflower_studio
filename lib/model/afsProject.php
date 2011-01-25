@@ -13,7 +13,7 @@
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model
  */
-class Project extends BaseProject {
+class afsProject extends BaseafsProject {
 
     /**
      * @var studioAppConfiguration

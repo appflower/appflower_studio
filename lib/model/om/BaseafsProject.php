@@ -2,25 +2,25 @@
 
 
 /**
- * Base class that represents a row from the 'project' table.
+ * Base class that represents a row from the 'afs_project' table.
  *
  * 
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model.om
  */
-abstract class BaseProject extends BaseObject  implements Persistent
+abstract class BaseafsProject extends BaseObject  implements Persistent
 {
 
 	/**
 	 * Peer class name
 	 */
-	const PEER = 'ProjectPeer';
+	const PEER = 'afsProjectPeer';
 
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
 	 * that calling code may not be able to identify.
-	 * @var        ProjectPeer
+	 * @var        afsProjectPeer
 	 */
 	protected static $peer;
 
@@ -106,7 +106,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 * Set the value of [name] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     Project The current object (for fluent API support)
+	 * @return     afsProject The current object (for fluent API support)
 	 */
 	public function setName($v)
 	{
@@ -116,7 +116,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 
 		if ($this->name !== $v) {
 			$this->name = $v;
-			$this->modifiedColumns[] = ProjectPeer::NAME;
+			$this->modifiedColumns[] = afsProjectPeer::NAME;
 		}
 
 		return $this;
@@ -126,7 +126,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 * Set the value of [path] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     Project The current object (for fluent API support)
+	 * @return     afsProject The current object (for fluent API support)
 	 */
 	public function setPath($v)
 	{
@@ -136,7 +136,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 
 		if ($this->path !== $v) {
 			$this->path = $v;
-			$this->modifiedColumns[] = ProjectPeer::PATH;
+			$this->modifiedColumns[] = afsProjectPeer::PATH;
 		}
 
 		return $this;
@@ -146,7 +146,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 * Set the value of [slug] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     Project The current object (for fluent API support)
+	 * @return     afsProject The current object (for fluent API support)
 	 */
 	public function setSlug($v)
 	{
@@ -156,7 +156,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 
 		if ($this->slug !== $v) {
 			$this->slug = $v;
-			$this->modifiedColumns[] = ProjectPeer::SLUG;
+			$this->modifiedColumns[] = afsProjectPeer::SLUG;
 		}
 
 		return $this;
@@ -166,7 +166,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 * Set the value of [id] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     Project The current object (for fluent API support)
+	 * @return     afsProject The current object (for fluent API support)
 	 */
 	public function setId($v)
 	{
@@ -176,7 +176,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 
 		if ($this->id !== $v) {
 			$this->id = $v;
-			$this->modifiedColumns[] = ProjectPeer::ID;
+			$this->modifiedColumns[] = afsProjectPeer::ID;
 		}
 
 		return $this;
@@ -226,10 +226,10 @@ abstract class BaseProject extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 4; // 4 = ProjectPeer::NUM_COLUMNS - ProjectPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 4; // 4 = afsProjectPeer::NUM_COLUMNS - afsProjectPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
-			throw new PropelException("Error populating Project object", $e);
+			throw new PropelException("Error populating afsProject object", $e);
 		}
 	}
 
@@ -272,13 +272,13 @@ abstract class BaseProject extends BaseObject  implements Persistent
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		// We don't need to alter the object instance pool; we're just modifying this instance
 		// already in the pool.
 
-		$stmt = ProjectPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$stmt = afsProjectPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 		$stmt->closeCursor();
 		if (!$row) {
@@ -307,14 +307,14 @@ abstract class BaseProject extends BaseObject  implements Persistent
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$con->beginTransaction();
 		try {
 			$ret = $this->preDelete($con);
 			// symfony_behaviors behavior
-			foreach (sfMixer::getCallables('BaseProject:delete:pre') as $callable)
+			foreach (sfMixer::getCallables('BaseafsProject:delete:pre') as $callable)
 			{
 			  if (call_user_func($callable, $this, $con))
 			  {
@@ -324,12 +324,12 @@ abstract class BaseProject extends BaseObject  implements Persistent
 			}
 
 			if ($ret) {
-				ProjectQuery::create()
+				afsProjectQuery::create()
 					->filterByPrimaryKey($this->getPrimaryKey())
 					->delete($con);
 				$this->postDelete($con);
 				// symfony_behaviors behavior
-				foreach (sfMixer::getCallables('BaseProject:delete:post') as $callable)
+				foreach (sfMixer::getCallables('BaseafsProject:delete:post') as $callable)
 				{
 				  call_user_func($callable, $this, $con);
 				}
@@ -365,7 +365,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$con->beginTransaction();
@@ -373,7 +373,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 		try {
 			$ret = $this->preSave($con);
 			// symfony_behaviors behavior
-			foreach (sfMixer::getCallables('BaseProject:save:pre') as $callable)
+			foreach (sfMixer::getCallables('BaseafsProject:save:pre') as $callable)
 			{
 			  if (is_integer($affectedRows = call_user_func($callable, $this, $con)))
 			  {
@@ -396,12 +396,12 @@ abstract class BaseProject extends BaseObject  implements Persistent
 				}
 				$this->postSave($con);
 				// symfony_behaviors behavior
-				foreach (sfMixer::getCallables('BaseProject:save:post') as $callable)
+				foreach (sfMixer::getCallables('BaseafsProject:save:post') as $callable)
 				{
 				  call_user_func($callable, $this, $con, $affectedRows);
 				}
 
-				ProjectPeer::addInstanceToPool($this);
+				afsProjectPeer::addInstanceToPool($this);
 			} else {
 				$affectedRows = 0;
 			}
@@ -431,15 +431,15 @@ abstract class BaseProject extends BaseObject  implements Persistent
 			$this->alreadyInSave = true;
 
 			if ($this->isNew() ) {
-				$this->modifiedColumns[] = ProjectPeer::ID;
+				$this->modifiedColumns[] = afsProjectPeer::ID;
 			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(ProjectPeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProjectPeer::ID.')');
+					if ($criteria->keyContainsValue(afsProjectPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.afsProjectPeer::ID.')');
 					}
 
 					$pk = BasePeer::doInsert($criteria, $con);
@@ -447,7 +447,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = ProjectPeer::doUpdate($this, $con);
+					$affectedRows = afsProjectPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -519,7 +519,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 			$failureMap = array();
 
 
-			if (($retval = ProjectPeer::doValidate($this, $columns)) !== true) {
+			if (($retval = afsProjectPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
@@ -542,7 +542,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = ProjectPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = afsProjectPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		$field = $this->getByPosition($pos);
 		return $field;
 	}
@@ -590,7 +590,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 */
 	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		$keys = ProjectPeer::getFieldNames($keyType);
+		$keys = afsProjectPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getName(),
 			$keys[1] => $this->getPath(),
@@ -612,7 +612,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = ProjectPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = afsProjectPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->setByPosition($pos, $value);
 	}
 
@@ -661,7 +661,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 */
 	public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
 	{
-		$keys = ProjectPeer::getFieldNames($keyType);
+		$keys = afsProjectPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setName($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setPath($arr[$keys[1]]);
@@ -676,12 +676,12 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 */
 	public function buildCriteria()
 	{
-		$criteria = new Criteria(ProjectPeer::DATABASE_NAME);
+		$criteria = new Criteria(afsProjectPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(ProjectPeer::NAME)) $criteria->add(ProjectPeer::NAME, $this->name);
-		if ($this->isColumnModified(ProjectPeer::PATH)) $criteria->add(ProjectPeer::PATH, $this->path);
-		if ($this->isColumnModified(ProjectPeer::SLUG)) $criteria->add(ProjectPeer::SLUG, $this->slug);
-		if ($this->isColumnModified(ProjectPeer::ID)) $criteria->add(ProjectPeer::ID, $this->id);
+		if ($this->isColumnModified(afsProjectPeer::NAME)) $criteria->add(afsProjectPeer::NAME, $this->name);
+		if ($this->isColumnModified(afsProjectPeer::PATH)) $criteria->add(afsProjectPeer::PATH, $this->path);
+		if ($this->isColumnModified(afsProjectPeer::SLUG)) $criteria->add(afsProjectPeer::SLUG, $this->slug);
+		if ($this->isColumnModified(afsProjectPeer::ID)) $criteria->add(afsProjectPeer::ID, $this->id);
 
 		return $criteria;
 	}
@@ -696,8 +696,8 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 */
 	public function buildPkeyCriteria()
 	{
-		$criteria = new Criteria(ProjectPeer::DATABASE_NAME);
-		$criteria->add(ProjectPeer::ID, $this->id);
+		$criteria = new Criteria(afsProjectPeer::DATABASE_NAME);
+		$criteria->add(afsProjectPeer::ID, $this->id);
 
 		return $criteria;
 	}
@@ -737,7 +737,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 * If desired, this method can also make copies of all associated (fkey referrers)
 	 * objects.
 	 *
-	 * @param      object $copyObj An object of Project (or compatible) type.
+	 * @param      object $copyObj An object of afsProject (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
 	 * @throws     PropelException
 	 */
@@ -760,7 +760,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 * objects.
 	 *
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @return     Project Clone of current object.
+	 * @return     afsProject Clone of current object.
 	 * @throws     PropelException
 	 */
 	public function copy($deepCopy = false)
@@ -779,12 +779,12 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	 * same instance for all member of this class. The method could therefore
 	 * be static, but this would prevent one from overriding the behavior.
 	 *
-	 * @return     ProjectPeer
+	 * @return     afsProjectPeer
 	 */
 	public function getPeer()
 	{
 		if (self::$peer === null) {
-			self::$peer = new ProjectPeer();
+			self::$peer = new afsProjectPeer();
 		}
 		return self::$peer;
 	}
@@ -828,7 +828,7 @@ abstract class BaseProject extends BaseObject  implements Persistent
 	public function __call($name, $params)
 	{
 		// symfony_behaviors behavior
-		if ($callable = sfMixer::getCallable('BaseProject:' . $name))
+		if ($callable = sfMixer::getCallable('BaseafsProject:' . $name))
 		{
 		  array_unshift($params, $this);
 		  return call_user_func_array($callable, $params);
@@ -848,4 +848,4 @@ abstract class BaseProject extends BaseObject  implements Persistent
 		return parent::__call($name, $params);
 	}
 
-} // BaseProject
+} // BaseafsProject

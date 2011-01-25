@@ -2,28 +2,28 @@
 
 
 /**
- * Base static class for performing query and update operations on the 'project' table.
+ * Base static class for performing query and update operations on the 'afs_project' table.
  *
  * 
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model.om
  */
-abstract class BaseProjectPeer {
+abstract class BaseafsProjectPeer {
 
 	/** the default database name for this class */
 	const DATABASE_NAME = 'propel';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'project';
+	const TABLE_NAME = 'afs_project';
 
 	/** the related Propel class for this table */
-	const OM_CLASS = 'Project';
+	const OM_CLASS = 'afsProject';
 
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = 'plugins.appFlowerStudioPlugin.lib.model.Project';
+	const CLASS_DEFAULT = 'plugins.appFlowerStudioPlugin.lib.model.afsProject';
 
 	/** the related TableMap class for this table */
-	const TM_CLASS = 'ProjectTableMap';
+	const TM_CLASS = 'afsProjectTableMap';
 	
 	/** The total number of columns. */
 	const NUM_COLUMNS = 4;
@@ -32,22 +32,22 @@ abstract class BaseProjectPeer {
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 	/** the column name for the NAME field */
-	const NAME = 'project.NAME';
+	const NAME = 'afs_project.NAME';
 
 	/** the column name for the PATH field */
-	const PATH = 'project.PATH';
+	const PATH = 'afs_project.PATH';
 
 	/** the column name for the SLUG field */
-	const SLUG = 'project.SLUG';
+	const SLUG = 'afs_project.SLUG';
 
 	/** the column name for the ID field */
-	const ID = 'project.ID';
+	const ID = 'afs_project.ID';
 
 	/**
-	 * An identiy map to hold any loaded instances of Project objects.
+	 * An identiy map to hold any loaded instances of afsProject objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
 	 * queries.
-	 * @var        array Project[]
+	 * @var        array afsProject[]
 	 */
 	public static $instances = array();
 
@@ -135,12 +135,12 @@ abstract class BaseProjectPeer {
 	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
 	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. ProjectPeer::COLUMN_NAME).
+	 * @param      string $column The column name for current table. (i.e. afsProjectPeer::COLUMN_NAME).
 	 * @return     string
 	 */
 	public static function alias($alias, $column)
 	{
-		return str_replace(ProjectPeer::TABLE_NAME.'.', $alias.'.', $column);
+		return str_replace(afsProjectPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
 	/**
@@ -158,10 +158,10 @@ abstract class BaseProjectPeer {
 	public static function addSelectColumns(Criteria $criteria, $alias = null)
 	{
 		if (null === $alias) {
-			$criteria->addSelectColumn(ProjectPeer::NAME);
-			$criteria->addSelectColumn(ProjectPeer::PATH);
-			$criteria->addSelectColumn(ProjectPeer::SLUG);
-			$criteria->addSelectColumn(ProjectPeer::ID);
+			$criteria->addSelectColumn(afsProjectPeer::NAME);
+			$criteria->addSelectColumn(afsProjectPeer::PATH);
+			$criteria->addSelectColumn(afsProjectPeer::SLUG);
+			$criteria->addSelectColumn(afsProjectPeer::ID);
 		} else {
 			$criteria->addSelectColumn($alias . '.NAME');
 			$criteria->addSelectColumn($alias . '.PATH');
@@ -186,26 +186,26 @@ abstract class BaseProjectPeer {
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ProjectPeer::TABLE_NAME);
+		$criteria->setPrimaryTableName(afsProjectPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			ProjectPeer::addSelectColumns($criteria);
+			afsProjectPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
 
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 		// symfony_behaviors behavior
 		foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
 		{
-		  call_user_func($sf_hook, 'BaseProjectPeer', $criteria, $con);
+		  call_user_func($sf_hook, 'BaseafsProjectPeer', $criteria, $con);
 		}
 
 		// BasePeer returns a PDOStatement
@@ -224,7 +224,7 @@ abstract class BaseProjectPeer {
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      PropelPDO $con
-	 * @return     Project
+	 * @return     afsProject
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -232,7 +232,7 @@ abstract class BaseProjectPeer {
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
-		$objects = ProjectPeer::doSelect($critcopy, $con);
+		$objects = afsProjectPeer::doSelect($critcopy, $con);
 		if ($objects) {
 			return $objects[0];
 		}
@@ -249,7 +249,7 @@ abstract class BaseProjectPeer {
 	 */
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return ProjectPeer::populateObjects(ProjectPeer::doSelectStmt($criteria, $con));
+		return afsProjectPeer::populateObjects(afsProjectPeer::doSelectStmt($criteria, $con));
 	}
 	/**
 	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -267,12 +267,12 @@ abstract class BaseProjectPeer {
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
-			ProjectPeer::addSelectColumns($criteria);
+			afsProjectPeer::addSelectColumns($criteria);
 		}
 
 		// Set the correct dbName
@@ -280,7 +280,7 @@ abstract class BaseProjectPeer {
 		// symfony_behaviors behavior
 		foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
 		{
-		  call_user_func($sf_hook, 'BaseProjectPeer', $criteria, $con);
+		  call_user_func($sf_hook, 'BaseafsProjectPeer', $criteria, $con);
 		}
 
 
@@ -296,10 +296,10 @@ abstract class BaseProjectPeer {
 	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
 	 * and retrieveByPK*() calls.
 	 *
-	 * @param      Project $value A Project object.
+	 * @param      afsProject $value A afsProject object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool(Project $obj, $key = null)
+	public static function addInstanceToPool(afsProject $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
@@ -317,18 +317,18 @@ abstract class BaseProjectPeer {
 	 * methods in your stub classes -- you may need to explicitly remove objects
 	 * from the cache in order to prevent returning objects that no longer exist.
 	 *
-	 * @param      mixed $value A Project object or a primary key value.
+	 * @param      mixed $value A afsProject object or a primary key value.
 	 */
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
-			if (is_object($value) && $value instanceof Project) {
+			if (is_object($value) && $value instanceof afsProject) {
 				$key = (string) $value->getId();
 			} elseif (is_scalar($value)) {
 				// assume we've been passed a primary key
 				$key = (string) $value;
 			} else {
-				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Project object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or afsProject object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
 			}
 
@@ -343,7 +343,7 @@ abstract class BaseProjectPeer {
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
 	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     Project Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @return     afsProject Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
 	 * @see        getPrimaryKeyHash()
 	 */
 	public static function getInstanceFromPool($key)
@@ -367,7 +367,7 @@ abstract class BaseProjectPeer {
 	}
 	
 	/**
-	 * Method to invalidate the instance pool of all tables related to project
+	 * Method to invalidate the instance pool of all tables related to afs_project
 	 * by a foreign key with ON DELETE CASCADE
 	 */
 	public static function clearRelatedInstancePool()
@@ -419,11 +419,11 @@ abstract class BaseProjectPeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = ProjectPeer::getOMClass(false);
+		$cls = afsProjectPeer::getOMClass(false);
 		// populate the object(s)
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key = ProjectPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj = ProjectPeer::getInstanceFromPool($key))) {
+			$key = afsProjectPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = afsProjectPeer::getInstanceFromPool($key))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://www.propelorm.org/ticket/509
 				// $obj->hydrate($row, 0, true); // rehydrate
@@ -432,7 +432,7 @@ abstract class BaseProjectPeer {
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
-				ProjectPeer::addInstanceToPool($obj, $key);
+				afsProjectPeer::addInstanceToPool($obj, $key);
 			} // if key exists
 		}
 		$stmt->closeCursor();
@@ -445,21 +445,21 @@ abstract class BaseProjectPeer {
 	 * @param      int $startcol The 0-based offset for reading from the resultset row.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return     array (Project object, last column rank)
+	 * @return     array (afsProject object, last column rank)
 	 */
 	public static function populateObject($row, $startcol = 0)
 	{
-		$key = ProjectPeer::getPrimaryKeyHashFromRow($row, $startcol);
-		if (null !== ($obj = ProjectPeer::getInstanceFromPool($key))) {
+		$key = afsProjectPeer::getPrimaryKeyHashFromRow($row, $startcol);
+		if (null !== ($obj = afsProjectPeer::getInstanceFromPool($key))) {
 			// We no longer rehydrate the object, since this can cause data loss.
 			// See http://www.propelorm.org/ticket/509
 			// $obj->hydrate($row, $startcol, true); // rehydrate
-			$col = $startcol + ProjectPeer::NUM_COLUMNS;
+			$col = $startcol + afsProjectPeer::NUM_COLUMNS;
 		} else {
-			$cls = ProjectPeer::OM_CLASS;
+			$cls = afsProjectPeer::OM_CLASS;
 			$obj = new $cls();
 			$col = $obj->hydrate($row, $startcol);
-			ProjectPeer::addInstanceToPool($obj, $key);
+			afsProjectPeer::addInstanceToPool($obj, $key);
 		}
 		return array($obj, $col);
 	}
@@ -480,10 +480,10 @@ abstract class BaseProjectPeer {
 	 */
 	public static function buildTableMap()
 	{
-	  $dbMap = Propel::getDatabaseMap(BaseProjectPeer::DATABASE_NAME);
-	  if (!$dbMap->hasTable(BaseProjectPeer::TABLE_NAME))
+	  $dbMap = Propel::getDatabaseMap(BaseafsProjectPeer::DATABASE_NAME);
+	  if (!$dbMap->hasTable(BaseafsProjectPeer::TABLE_NAME))
 	  {
-	    $dbMap->addTableObject(new ProjectTableMap());
+	    $dbMap->addTableObject(new afsProjectTableMap());
 	  }
 	}
 
@@ -500,13 +500,13 @@ abstract class BaseProjectPeer {
 	 */
 	public static function getOMClass($withPrefix = true)
 	{
-		return $withPrefix ? ProjectPeer::CLASS_DEFAULT : ProjectPeer::OM_CLASS;
+		return $withPrefix ? afsProjectPeer::CLASS_DEFAULT : afsProjectPeer::OM_CLASS;
 	}
 
 	/**
-	 * Method perform an INSERT on the database, given a Project or Criteria object.
+	 * Method perform an INSERT on the database, given a afsProject or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or Project object containing data that is used to create the INSERT statement.
+	 * @param      mixed $values Criteria or afsProject object containing data that is used to create the INSERT statement.
 	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -515,17 +515,17 @@ abstract class BaseProjectPeer {
 	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from Project object
+			$criteria = $values->buildCriteria(); // build Criteria from afsProject object
 		}
 
-		if ($criteria->containsKey(ProjectPeer::ID) && $criteria->keyContainsValue(ProjectPeer::ID) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProjectPeer::ID.')');
+		if ($criteria->containsKey(afsProjectPeer::ID) && $criteria->keyContainsValue(afsProjectPeer::ID) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.afsProjectPeer::ID.')');
 		}
 
 
@@ -547,9 +547,9 @@ abstract class BaseProjectPeer {
 	}
 
 	/**
-	 * Method perform an UPDATE on the database, given a Project or Criteria object.
+	 * Method perform an UPDATE on the database, given a afsProject or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or Project object containing data that is used to create the UPDATE statement.
+	 * @param      mixed $values Criteria or afsProject object containing data that is used to create the UPDATE statement.
 	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -558,7 +558,7 @@ abstract class BaseProjectPeer {
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -566,15 +566,15 @@ abstract class BaseProjectPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(ProjectPeer::ID);
-			$value = $criteria->remove(ProjectPeer::ID);
+			$comparison = $criteria->getComparison(afsProjectPeer::ID);
+			$value = $criteria->remove(afsProjectPeer::ID);
 			if ($value) {
-				$selectCriteria->add(ProjectPeer::ID, $value, $comparison);
+				$selectCriteria->add(afsProjectPeer::ID, $value, $comparison);
 			} else {
-				$selectCriteria->setPrimaryTableName(ProjectPeer::TABLE_NAME);
+				$selectCriteria->setPrimaryTableName(afsProjectPeer::TABLE_NAME);
 			}
 
-		} else { // $values is Project object
+		} else { // $values is afsProject object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
 		}
@@ -586,26 +586,26 @@ abstract class BaseProjectPeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the project table.
+	 * Method to DELETE all rows from the afs_project table.
 	 *
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
-			$affectedRows += BasePeer::doDeleteAll(ProjectPeer::TABLE_NAME, $con, ProjectPeer::DATABASE_NAME);
+			$affectedRows += BasePeer::doDeleteAll(afsProjectPeer::TABLE_NAME, $con, afsProjectPeer::DATABASE_NAME);
 			// Because this db requires some delete cascade/set null emulation, we have to
 			// clear the cached instance *after* the emulation has happened (since
 			// instances get re-added by the select statement contained therein).
-			ProjectPeer::clearInstancePool();
-			ProjectPeer::clearRelatedInstancePool();
+			afsProjectPeer::clearInstancePool();
+			afsProjectPeer::clearRelatedInstancePool();
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -615,9 +615,9 @@ abstract class BaseProjectPeer {
 	}
 
 	/**
-	 * Method perform a DELETE on the database, given a Project or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a afsProject or Criteria object OR a primary key value.
 	 *
-	 * @param      mixed $values Criteria or Project object or primary key or array of primary keys
+	 * @param      mixed $values Criteria or afsProject object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
 	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -628,27 +628,27 @@ abstract class BaseProjectPeer {
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
 			// invalidate the cache for all objects of this type, since we have no
 			// way of knowing (without running a query) what objects should be invalidated
 			// from the cache based on this Criteria.
-			ProjectPeer::clearInstancePool();
+			afsProjectPeer::clearInstancePool();
 			// rename for clarity
 			$criteria = clone $values;
-		} elseif ($values instanceof Project) { // it's a model object
+		} elseif ($values instanceof afsProject) { // it's a model object
 			// invalidate the cache for this single object
-			ProjectPeer::removeInstanceFromPool($values);
+			afsProjectPeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else { // it's a primary key, or an array of pks
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(ProjectPeer::ID, (array) $values, Criteria::IN);
+			$criteria->add(afsProjectPeer::ID, (array) $values, Criteria::IN);
 			// invalidate the cache for this object(s)
 			foreach ((array) $values as $singleval) {
-				ProjectPeer::removeInstanceFromPool($singleval);
+				afsProjectPeer::removeInstanceFromPool($singleval);
 			}
 		}
 
@@ -663,7 +663,7 @@ abstract class BaseProjectPeer {
 			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
-			ProjectPeer::clearRelatedInstancePool();
+			afsProjectPeer::clearRelatedInstancePool();
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -673,24 +673,24 @@ abstract class BaseProjectPeer {
 	}
 
 	/**
-	 * Validates all modified columns of given Project object.
+	 * Validates all modified columns of given afsProject object.
 	 * If parameter $columns is either a single column name or an array of column names
 	 * than only those columns are validated.
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      Project $obj The object to validate.
+	 * @param      afsProject $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(Project $obj, $cols = null)
+	public static function doValidate(afsProject $obj, $cols = null)
 	{
 		$columns = array();
 
 		if ($cols) {
-			$dbMap = Propel::getDatabaseMap(ProjectPeer::DATABASE_NAME);
-			$tableMap = $dbMap->getTable(ProjectPeer::TABLE_NAME);
+			$dbMap = Propel::getDatabaseMap(afsProjectPeer::DATABASE_NAME);
+			$tableMap = $dbMap->getTable(afsProjectPeer::TABLE_NAME);
 
 			if (! is_array($cols)) {
 				$cols = array($cols);
@@ -706,7 +706,7 @@ abstract class BaseProjectPeer {
 
 		}
 
-		return BasePeer::doValidate(ProjectPeer::DATABASE_NAME, ProjectPeer::TABLE_NAME, $columns);
+		return BasePeer::doValidate(afsProjectPeer::DATABASE_NAME, afsProjectPeer::TABLE_NAME, $columns);
 	}
 
 	/**
@@ -714,23 +714,23 @@ abstract class BaseProjectPeer {
 	 *
 	 * @param      int $pk the primary key.
 	 * @param      PropelPDO $con the connection to use
-	 * @return     Project
+	 * @return     afsProject
 	 */
 	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
 
-		if (null !== ($obj = ProjectPeer::getInstanceFromPool((string) $pk))) {
+		if (null !== ($obj = afsProjectPeer::getInstanceFromPool((string) $pk))) {
 			return $obj;
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria = new Criteria(ProjectPeer::DATABASE_NAME);
-		$criteria->add(ProjectPeer::ID, $pk);
+		$criteria = new Criteria(afsProjectPeer::DATABASE_NAME);
+		$criteria->add(afsProjectPeer::ID, $pk);
 
-		$v = ProjectPeer::doSelect($criteria, $con);
+		$v = afsProjectPeer::doSelect($criteria, $con);
 
 		return !empty($v) > 0 ? $v[0] : null;
 	}
@@ -746,16 +746,16 @@ abstract class BaseProjectPeer {
 	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(ProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(afsProjectPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$objs = null;
 		if (empty($pks)) {
 			$objs = array();
 		} else {
-			$criteria = new Criteria(ProjectPeer::DATABASE_NAME);
-			$criteria->add(ProjectPeer::ID, $pks, Criteria::IN);
-			$objs = ProjectPeer::doSelect($criteria, $con);
+			$criteria = new Criteria(afsProjectPeer::DATABASE_NAME);
+			$criteria->add(afsProjectPeer::ID, $pks, Criteria::IN);
+			$objs = afsProjectPeer::doSelect($criteria, $con);
 		}
 		return $objs;
 	}
@@ -787,15 +787,15 @@ abstract class BaseProjectPeer {
 	{
 	  if (preg_match('/^do(Select|Count)(Join(All(Except)?)?|Stmt)?/', $method, $match))
 	  {
-	    return sprintf('BaseProjectPeer:%s:%1$s', 'Count' == $match[1] ? 'doCount' : $match[0]);
+	    return sprintf('BaseafsProjectPeer:%s:%1$s', 'Count' == $match[1] ? 'doCount' : $match[0]);
 	  }
 	
 	  throw new LogicException(sprintf('Unrecognized function "%s"', $method));
 	}
 
-} // BaseProjectPeer
+} // BaseafsProjectPeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseProjectPeer::buildTableMap();
+BaseafsProjectPeer::buildTableMap();
 

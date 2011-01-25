@@ -3,7 +3,7 @@
 
 
 /**
- * This class defines the structure of the 'project' table.
+ * This class defines the structure of the 'afs_project' table.
  *
  *
  *
@@ -14,12 +14,12 @@
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model.map
  */
-class ProjectTableMap extends TableMap {
+class afsProjectTableMap extends TableMap {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'plugins.appFlowerStudioPlugin.lib.model.map.ProjectTableMap';
+	const CLASS_NAME = 'plugins.appFlowerStudioPlugin.lib.model.map.afsProjectTableMap';
 
 	/**
 	 * Initialize the table attributes, columns and validators
@@ -31,9 +31,9 @@ class ProjectTableMap extends TableMap {
 	public function initialize()
 	{
 	  // attributes
-		$this->setName('project');
-		$this->setPhpName('Project');
-		$this->setClassname('Project');
+		$this->setName('afs_project');
+		$this->setPhpName('afsProject');
+		$this->setClassname('afsProject');
 		$this->setPackage('plugins.appFlowerStudioPlugin.lib.model');
 		$this->setUseIdGenerator(true);
 		// columns
@@ -65,4 +65,4 @@ class ProjectTableMap extends TableMap {
 		);
 	} // getBehaviors()
 
-} // ProjectTableMap
+} // afsProjectTableMap
