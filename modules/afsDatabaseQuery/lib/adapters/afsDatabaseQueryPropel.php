@@ -26,28 +26,36 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         if ($aValidate['success']) {
             eval('$execute_query = ' . $query . ';');
             
-            $sClass = get_class($execute_query);
-            
-            if ($execute_query instanceof PropelObjectCollection) {
-                $oFormatter = $execute_query->getFormatter();
+            if (is_object($execute_query)) {
+                $sClass = get_class($execute_query);
                 
-                $aResult = (array)$execute_query;
-                
-                if (count($aResult) > 0) {
-                    $result = $this->fetchSuccess($this->prepareList($aResult));
+                if ($execute_query instanceof PropelObjectCollection) {
+                    $oFormatter = $execute_query->getFormatter();
+                    
+                    $aResult = (array)$execute_query;
+                    
+                    if (count($aResult) > 0) {
+                        $result = $this->fetchSuccess($this->prepareList($aResult));
+                    } else {
+                        $result = $this->fetchInfo('Nothing has been found');
+                    }
+                    
+                } elseif ($execute_query instanceof ModelCriteria) {
+                    $result = $this->fetchError("Please, check syntax");
+                    
+                } elseif ($execute_query instanceof BaseObject) {
+                    if (is_null($execute_query)) {
+                        $result = $this->fetchInfo('Nothing has been found');
+                    } else {
+                        $result = $this->fetchSuccess(array($this->prepareOutput($execute_query)));
+                    }
                 } else {
                     $result = $this->fetchInfo('Nothing has been found');
                 }
-                
-            } elseif ($execute_query instanceof ModelCriteria) {
-                $result = $this->fetchError("Please, check syntax");
-                
-            } elseif ($execute_query instanceof BaseObject) {
-                if (is_null($execute_query)) {
-                    $result = $this->fetchInfo('Nothing has been found');
-                } else {
-                    $result = $this->fetchSuccess(array($this->prepareOutput($execute_query)));
-                }
+            } elseif (is_int($execute_query)) {
+                $result = $this->fetchSuccess(array(array($execute_query)));
+            } else {
+                $result = $this->fetchInfo('Nothing has been found');
             }
         } else {
             $result = $aValidate;
@@ -103,14 +111,26 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                             // Handle shutdown function to catch fatal error
                             register_shutdown_function(array($this, 'handleShutdown'));
                             
+                            // adding error handling to catching errors
                             set_error_handler(array($this, 'eval_error_handler'));
-                            @eval('$execute_query = ' . $this->query . ';');
+                            
+                            // using try-catch to catching errors that symfony catch
+                            try {
+                                @eval('$execute_query = ' . $this->query . ';');
+                            } catch (Exception $e) {
+                                $this->is_valid = false;
+                                $sMessage = $e->getMessage();
+                            }
                             restore_error_handler();
                             
                             if ($this->is_valid) {
                                 $return = $this->fetchSuccess('Validated successfully');
                             } else {
-                                $return = $this->fetchError("Please, check syntax");
+                                if (isset($sMessage) && !empty($sMessage)) {
+                                    $return = $this->fetchError($sMessage);
+                                } else {
+                                    $return = $this->fetchError("Please, check syntax");
+                                }
                             }
                             
                         } else {
