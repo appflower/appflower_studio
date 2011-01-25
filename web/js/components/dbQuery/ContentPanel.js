@@ -88,7 +88,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		_this.maskContent('loading metadata...');	    
 			    
 		Ext.Ajax.request({
-		   url: '/appFlowerStudio/models',
+		   url: window.afStudioWSUrls.getModelsUrl(),
 		   params: { 
 			   xaction: 'read',
 			   model: m,

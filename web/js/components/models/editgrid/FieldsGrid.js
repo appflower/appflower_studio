@@ -192,7 +192,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		}
 		
 		var fieldsStore = new Ext.data.JsonStore({			
-			url: '/appFlowerStudio/models',
+			url: window.afStudioWSUrls.getModelsUrl(),
 			autoLoad: false,
 		    baseParams: {
 		    	xaction: 'read',
@@ -284,7 +284,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				sortable: true,
 				dataIndex: 'relation',
 				editor: new afStudio.models.RelationCombo({
-					relationUrl: '/appFlowerStudio/models',
+					relationUrl: window.afStudioWSUrls.getModelsUrl(),
 					fieldsGrid: _this
 				})
 			},{

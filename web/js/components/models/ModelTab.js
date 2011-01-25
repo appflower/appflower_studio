@@ -30,7 +30,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 * @cfg {String} modelUrl required (defaults to '/appFlowerStudio/models')
 	 * Base URL for models 
 	 */
-	,modelUrl : '/appFlowerStudio/models'
+	,modelUrl : window.afStudioWSUrls.getModelsUrl()
 
 	/**
 	 * Runs altering process and updates model's grids

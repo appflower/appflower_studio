@@ -99,8 +99,7 @@ var afStudio = function () {
 			this.vp=new afStudio.viewport();
 			
 			this.console = Ext.getCmp('console-console-tab');
-			
-			afApp.urlPrefix = '';
+
 			GLOBAL_JS_VAR = GLOBAL_CSS_VAR = new Array();
 		}
 	}

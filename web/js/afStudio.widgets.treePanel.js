@@ -430,8 +430,8 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 //  		});		
 //		
 		var wb = new afStudio.widgetsBuilder({
-			modelsUrl: '/appFlowerStudio/models',
-			fieldsUrl: '/appFlowerStudio/models'			
+			modelsUrl: window.afStudioWSUrls.getModelsUrl(),
+			fieldsUrl: window.afStudioWSUrls.getModelsUrl()
 		});
 		wb.show()
 	}

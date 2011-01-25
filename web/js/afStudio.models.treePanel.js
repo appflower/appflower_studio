@@ -84,7 +84,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			title: 'Models',
 			iconCls: 'icon-databases',
 			autoScroll: true,
-			url: '/appFlowerStudio/models',			
+			url: window.afStudioWSUrls.getModelsUrl(),
 			method: 'post',
 			reallyWantText: 'Do you really want to',
 		    root: rootNode,
@@ -511,9 +511,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		var _this = this;
 		
 		afStudio.vp.mask({region:'center'});
-		
 		Ext.Ajax.request({
-		   url: '/appFlowerStudio/models',
+		   url: window.afStudioWSUrls.getModelsUrl(),
 		   params: { 
 			   xaction: 'read',
 			   model: _this.getModel(node),

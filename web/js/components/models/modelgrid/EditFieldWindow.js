@@ -85,11 +85,11 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		
 		switch (o.action) {
 			case 'update':
-				url = '/appFlowerStudio/models/';
+				url = window.afStudioWSUrls.getModelsUrl();
 				xaction = 'alterModelUpdateField';
 			break;
 			case 'create':
-				url = '/appFlowerStudio/models/';
+				url = window.afStudioWSUrls.getModelsUrl();
 				xaction = 'alterModelCreateField';
 			break;
 			
@@ -346,7 +346,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 					items: [
 					{
 						xtype: 'relationcombo',
-						relationUrl: '/appFlowerStudio/models',
+						relationUrl: window.afStudioWSUrls.getModelsUrl(),
 						listWidth: 250,
 						fieldLabel: 'Relation',
 						name: 'relation'
