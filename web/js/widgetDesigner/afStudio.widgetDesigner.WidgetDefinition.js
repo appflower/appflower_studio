@@ -55,17 +55,49 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
             scope: this
         });
    },
+   
+   /***
+    * Function showMessage
+    * Show notification message 
+    * @param {String} title - title of the message
+    * @param {String} message - notification message
+    * @param {String} icon - message icon
+    */
+   showMessage: function(title, message, icon){
+   	
+   		if(message.length > 2000){
+   			message = message.substr(0, 2000) + '...';
+   		}
+   	
+		Ext.Msg.show({
+			title: title,
+			msg: message,
+			buttons: Ext.Msg.OK,
+			icon: Ext.MessageBox[icon]
+		});
+   },
+   
    parseSaveResponse: function(response){
+   		//Unmask parent tree
+   		var tree = this.rootNode.getOwnerTree()
+   		tree.body.unmask();
+   		
         if (response.statusText != 'OK') {
+        	this.showMessage('System Message', 'Response looks invalid', 'ERROR');
             console.log('response looks invalid');
         }
 
         var actionResponse = Ext.util.JSON.decode(response.responseText);
         if (actionResponse.success !== true) {
+        	this.showMessage('System Message', 'An error occured: '+actionResponse.message, 'ERROR');
             console.log('An error occured: '+actionResponse.message);
         } else {
+        	this.showMessage('System Message', actionResponse.message, 'INFO');
             console.log(actionResponse.message);
         }
+        
+        //Reload Widget inspector tree
+        tree.fireEvent('afterrender', tree);
    },
    createRootNode: function(){
        switch (this.widgetType) {

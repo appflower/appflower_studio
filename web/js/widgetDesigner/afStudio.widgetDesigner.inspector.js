@@ -74,8 +74,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			height: 150,
 			
 	        propertyNames: {
-	            wtype: 'Widget Type',
-	            maxperpage: 'Maximum per page'
+//	            valueType: 'Value Type',
+//	            valueChoice: 'Value Choice'
 	        },
 	        
 	        listeners: {
@@ -92,33 +92,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	        	}, scope: this
 	        },
 	        
-	        customRenderers: {
-	        	wtype: function(v){
-	        		switch(v){
-	        			case 'list': {
-	        				v = 'List';
-	        				break;
-	        			}
-	        			case 'show':{ 
-	        				v = 'Show';
-	        				break;
-	        			}
-	        			case 'edit': {
-	        				v = 'Edit';
-	        				break;
-	        			}
-	        		}
-	        		return v;
-	        	}
-	        },
-	        
-	        customEditors: {
-	        	wtype: new Ext.grid.GridEditor(new Ext.form.ComboBox({
-	        		selectOnFocus:true, 
-	        		store: [['list', 'List'], ['edit', 'Edit'], ['show', 'Show']],
-	        		triggerAction: 'all'
-	        	})),
-	        },
+	        customRenderers: {},
+	        customEditors: {},
 	        
 	        layout: 'fit',
 	        
@@ -259,6 +234,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	},	
 	
 	saveWidget: function(){
+		this.widgetInspectorTree.body.mask('Loading, please Wait...', 'x-mask-loading');
         this.widgetDefinition.save();
 	},
 	

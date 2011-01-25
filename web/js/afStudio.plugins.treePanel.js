@@ -58,12 +58,12 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	contextMenuModule: new Ext.menu.Menu({
 		items: [
-			{id: 'delete-plugin', text: 'Delete plugin', iconCls: 'icon-models-delete'}
+			{id: 'delete-plugin-folder', text: 'Delete plugin', iconCls: 'icon-models-delete'}
 		],
 		listeners: {
 	    	itemclick: function(item) {
 				switch (item.id) {
-	            	case 'delete-module':
+	            	case 'delete-plugin-folder':
 	                	var node = item.parentMenu.contextNode;
 	                	node.getOwnerTree().deleteplugin(node);
 	            		break;

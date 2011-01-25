@@ -6,7 +6,7 @@ afStudio.widgetDesigner.ValueType = Ext.extend(afStudio.widgetDesigner.PropertyT
     constructor: function(){
         afStudio.widgetDesigner.PropertyTypeChoice.superclass.constructor.apply(this, arguments);
         this.setChoices({
-           'default': '',
+           'default': '&#x20;',
            'orm': 'orm',
            'static': 'static',
            'file': 'file'

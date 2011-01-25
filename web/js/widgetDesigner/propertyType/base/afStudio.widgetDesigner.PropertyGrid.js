@@ -86,7 +86,30 @@ afStudio.widgetDesigner.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumn
 	    };
 	    this.renderCellDelegate = this.renderCell.createDelegate(this);
 	    this.renderPropDelegate = this.renderProp.createDelegate(this);
+    },
+    
+    // private
+    getCellEditor : function(colIndex, rowIndex){
+    	//TODO: Using n = p.id instead of n = p.data.name because,
+    	//Because we are using custom records models instead of simple name => value model
+    	
+        var p = this.store.getProperty(rowIndex),
+            n = p.id, 
+            val = p.data.value;
+        if(this.grid.customEditors[n]){
+            return this.grid.customEditors[n];
+        }
+        if(Ext.isDate(val)){
+            return this.editors.date;
+        }else if(typeof val == 'number'){
+            return this.editors.number;
+        }else if(typeof val == 'boolean'){
+            return this.editors['boolean'];
+        }else{
+            return this.editors.string;
+        }
     }
+    
 });
 
 /**
@@ -156,10 +179,8 @@ afStudio.widgetDesigner.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.
 	 * @param {Object} source data object
 	 */
     setSource : function(source){
+		this.addCustomEditorsAndRenderers(source);
         this.propStore.setSource(source);
-        
-        this.addCustomEditorsAndRenderers(source);
-        
 		this.hideMandatoryCheckers();
     },
 	
