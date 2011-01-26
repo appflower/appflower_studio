@@ -27,31 +27,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
             eval('$execute_query = ' . $query . ';');
             
             if (is_object($execute_query)) {
-                $sClass = get_class($execute_query);
-                
-                if ($execute_query instanceof PropelObjectCollection) {
-                    $oFormatter = $execute_query->getFormatter();
-                    
-                    $aResult = (array)$execute_query;
-                    
-                    if (count($aResult) > 0) {
-                        $result = $this->fetchSuccess($this->prepareList($aResult));
-                    } else {
-                        $result = $this->fetchInfo('Nothing has been found');
-                    }
-                    
-                } elseif ($execute_query instanceof ModelCriteria) {
-                    $result = $this->fetchError("Please, check syntax");
-                    
-                } elseif ($execute_query instanceof BaseObject) {
-                    if (is_null($execute_query)) {
-                        $result = $this->fetchInfo('Nothing has been found');
-                    } else {
-                        $result = $this->fetchSuccess(array($this->prepareOutput($execute_query)));
-                    }
-                } else {
-                    $result = $this->fetchInfo('Nothing has been found');
-                }
+                $result = $this->processClass($execute_query);
             } elseif (is_int($execute_query)) {
                 $result = $this->fetchSuccess(array(array($execute_query)));
             } else {
@@ -199,5 +175,48 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         } 
     }
     
+    /**
+     * Process class resutls
+     * 
+     * @param $execute_query Executed result 
+     * @return mixed
+     */
+    private function processClass($execute_query)
+    {
+        if ($execute_query instanceof PropelObjectCollection) {
+            $oFormatter = $execute_query->getFormatter();
+            
+            $aResult = (array)$execute_query;
+            
+            if (count($aResult) > 0) {
+                $result = $this->fetchSuccess($this->prepareList($aResult));
+            } else {
+                $result = $this->fetchInfo('Nothing has been found');
+            }
+            
+        } elseif ($execute_query instanceof ModelCriteria) {
+            $result = $this->fetchError("Please, check syntax");
+            
+        } elseif ($execute_query instanceof BaseObject) {
+            if (is_null($execute_query)) {
+                $result = $this->fetchInfo('Nothing has been found');
+            } else {
+                $result = $this->fetchSuccess(array($this->prepareOutput($execute_query)));
+            }
+        } elseif ($execute_query instanceof PropelArrayCollection) {
+            $aResult = (array)$execute_query;
+            
+            if (count($aResult) > 0) {
+                $result = $this->fetchSuccess($aResult);
+            } else {
+                $result = $this->fetchInfo('Nothing has been found');
+            }
+        } else {
+            $result = $this->fetchInfo('Nothing has been found');
+        }
+        
+        return $result;
+        
+    }
     
 }
