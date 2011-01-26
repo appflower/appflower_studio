@@ -9,6 +9,7 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 
 	layout: 'accordion',
 	style: 'border-top: 1px solid #99BBE8',
+
 	/**
 	 * @var {Object} widgetInspectorTree
 	 * Ext.TreePanel component
@@ -118,6 +119,8 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			region: 'center',
             animate:true, autoScroll:true, 
 			frame: true,
+			
+			bodyStyle: 'border-bottom: 1px solid #99BBE8',
 			
 			bbar: [
 				{text: 'Save', handler: this.saveWidget, scope: this}
