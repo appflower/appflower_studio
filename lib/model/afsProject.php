@@ -27,4 +27,10 @@ class afsProject extends BaseafsProject {
 
         return $this->projectAppConfiguration;
     }
+    public function getBaseUrl() {
+        /**
+         * we should add baseUrl field to project table, for now I just putted this fake method here
+         */
+        return 'http://seedcontrol/';
+    }
 } // Project
