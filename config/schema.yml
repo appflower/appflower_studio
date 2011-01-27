@@ -8,8 +8,3 @@ propel:
     user: { type: INTEGER, size: 11, required: true, default: 0 }
     ip: { type: VARCHAR, size: 255, required: true }
     created_at:
-  afs_project:
-    _attributes: { phpName: afsProject }
-    name: { type: VARCHAR, size: 255, required: true }
-    path: { type: VARCHAR, size: 255, required: true }
-    slug: { type: VARCHAR, size: 50, required: true, index: unique }

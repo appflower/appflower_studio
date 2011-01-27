@@ -34,11 +34,11 @@ class afsWidgetBuilderWidget {
 
     function loadXml()
     {
-        $afCU = afStudioUtil::getAfConfigUtil($this->module);
+        $afCU = new afConfigUtils($this->module);
         $path = $afCU->getConfigFilePath("{$this->action}.xml");
 
-        if (!$path || !is_readable($path)) {
-            throw new Exception("Could not find widget XML file, looked at path: $path");
+        if (!is_readable($path)) {
+            throw new Exception("Could not find widget XML file");
         }
 
         $options = array(
@@ -69,7 +69,7 @@ class afsWidgetBuilderWidget {
     {
         $xmlBuilder = new afsXmlBuilder($this->definition, $this->widgetType);
 
-        $afCU = afStudioUtil::getAfConfigUtil($this->module);
+        $afCU = new afConfigUtils($this->module);
         $path = $afCU->getConfigFilePath($this->action.'.xml');
         if (!$path) {
             $path = $afCU->generateConfigFilePath($this->action.'.xml');
