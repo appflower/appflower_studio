@@ -2,18 +2,8 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all-debug.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
-
-<?php
-$currentProject = ProjectConfiguration::getActive()->getCurrentProject();
-if ($currentProject) {
-    $projectSlug = $currentProject->getSlug();
-} else {
-    $projectSlug = '';
-}
-?>
-
 <script type="text/javascript">
-window.afStudioWSUrls = new afStudio.WSUrlsClass('<?php echo $projectSlug; ?>');
+window.afStudioWSUrls = new afStudio.WSUrlsClass();
 </script>
 
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/widgetJS.js"></script>

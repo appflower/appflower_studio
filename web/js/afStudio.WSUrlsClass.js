@@ -2,8 +2,7 @@
  * In this class we'll store all URL used to fetch project related data with ajax calls
  * We need to have those in one place
  */
-afStudio.WSUrlsClass =function (projectSlug) {
-    this.projectSlug = projectSlug;
+afStudio.WSUrlsClass =function () {
 };
 
 afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
@@ -71,10 +70,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/afsModelGridData/delete?model=' + modelName);
     },
     buildUrlFor: function(url) {
-        if (this.projectSlug != '') {
-            return '/project/'+this.projectSlug+url;
-        } else {
-            return url;
-        }
+        return url;
     }
 });
