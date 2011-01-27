@@ -11,14 +11,21 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	 * This grid's data store
 	 */
 	
+	/**
+	 * Loads query response data into the QueryResultsGrid 
+	 */
+	loadResultsData : function() {
+		this.getStore().loadData(this.queryResults || []);
+	}
+	
 	//private
-	_beforeInitComponent : function() {
+	,_beforeInitComponent : function() {
 		var   _this = this,
-	       metaData = _this.metaData,
+	       metaData = _this.metaData || [],
+	          store,
 		storeFields = [],
-			  store,
-		  pagingBar, 
-			columns = [];
+			columns = [],  
+		  pagingBar;
 		
 		if (metaData.length > 0) {
 			columns = [new Ext.ux.grid.PagingRowNumberer({header: 'Rec #', width: 50})];
@@ -52,7 +59,8 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 		    columns: columns,
 	        columnLines: true,
 	        viewConfig: {
-	            forceFit: true
+	            forceFit: true,
+	            emptyText: "Empty!"
 	        }
 		};
 	}//eo beforeInit
@@ -72,8 +80,9 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
-		this.on('afterrender', function(cmp) {
-			cmp.getStore().loadData(_this.queryResults);
+		_this.on({
+			afterrender: _this.loadResultsData,
+			scope: _this
 		});
 	}//eo _afterInitComponent
 	

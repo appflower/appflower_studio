@@ -125,6 +125,6 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 			'executequery': _this.onExecuteQuery,
 			scope: _this			
 		})
-	}
+	}//eo _afterInitComponent
 	
 });

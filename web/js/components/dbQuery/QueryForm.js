@@ -25,9 +25,14 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	,executeQuery : function() {
 		var _this = this,
 				f = _this.getForm(),
-	   connection = this.dbQueryWindow.westPanel.getCurrentConnection();				
+			   qt = _this.queryTypeCmp.getValue(),
+			extraParams = {};
 		
-	    if (!connection) {
+	    if (qt == 'sql') {
+	    	extraParams.connection = this.dbQueryWindow.westPanel.getCurrentConnection();	    	
+	    }
+	    
+	    if (qt == 'sql' && !extraParams.connection) {
 	   		Ext.Msg.alert('Failure', 'Connection is not specified. <br /> Please select DataBase or DB\'s table.' );
 	   		return;
 	    }
@@ -37,12 +42,14 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		f.submit({
 		    clientValidation: true,
 		    url: _this.queryUrl,
-		    params: {
-		    	'connection': connection
-		    },
+		    params: extraParams,
 		    success: function(form, action) {
-		    	_this.fireEvent('executequery', action.result);
 		    	_this.dbQueryWindow.unmaskDbQuery();
+		    	if (action.result.type == 'success') {
+		    		_this.fireEvent('executequery', action.result);
+		    	} else {
+		    		Ext.Msg.alert('Query Response', action.result.content);
+		    	}
 		    },
 		    failure: function(form, action) {
 		    	_this.dbQueryWindow.unmaskDbQuery();
@@ -91,6 +98,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 					style: 'margin-right: 5px;',
 					items: {
 						xtype: 'combo',
+						ref: '../../queryTypeCmp',
 						fieldLabel: 'Query type',						
 						anchor: '100%',
 						triggerAction: 'all',						
@@ -126,6 +134,9 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		this._afterInitComponent();
 	}
 	
+	/**
+	 * @private
+	 */
 	,_afterInitComponent : function() {
 		var _this = this;
 		
