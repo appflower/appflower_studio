@@ -42,13 +42,13 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	createRegions: function(){
 		//Create TreeLoader component
 		this.loader = new Ext.tree.TreeLoader({
-			 dataUrl: '/appFlowerStudio/cssfilestree'
+			 dataUrl: window.afStudioWSUrls.getCssFilestreeUrl()
 		});
 
 		//Create west region
 		/*this.westPanel = new Ext.tree.TreePanel( {
 			split: true, title: 'Files',  iconCls: 'icon-models',
-			url: '/appFlowerStudio/cssfilestree',
+			url: window.afStudioWSUrls.getCssFilestreeUrl(),
 			loader: this.loader, method: 'post',
 			tools:[{id:'refresh', 
 				handler:function(){
@@ -80,7 +80,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		this.westPanel = new Ext.ux.FileTreePanel({
 			split: true, title: 'Files',  iconCls: 'icon-models',
         	region: 'west',
-			url:'/appFlowerStudio/filetree'
+			url:window.afStudioWSUrls.getFiletreeUrl()
 			,width: 220
 			,rootPath:'root/plugins/appFlowerStudioPlugin/web/css'
 			,path:'pluigns'
@@ -137,7 +137,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	
 	save: function(){
 		Ext.Ajax.request({
-		   url: '/appFlowerStudio/cssfilesSave',
+		   url: window.afStudioWSUrls.getCssFilesSaveUrl(),
 		   params: { node: this.westPanel.getSelectionModel().getSelectedNode().text},
 		   xmlData:this.codeEditor.getValue(),
 		   success: function(result,request){

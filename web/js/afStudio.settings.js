@@ -52,14 +52,14 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 		});
 		
 		this.dbForm =  new Ext.FormPanel({
-			url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, 
+			url: window.afStudioWSUrls.getConfigureDatabaseUrl(), defaultType: 'textfield', width: 450,
 			bodyStyle: 'padding: 5px;',
 			border: false, bodyBorder: false,
 	        labelWidth: 100, title: false,
 	        listeners: {
 	        	'render': function(cmp){
 					cmp.getForm().load({
-			            url: 'appFlowerStudio/loadDatabaseConnectionSettings',
+			            url: window.afStudioWSUrls.getLoadDatabaseConnectionSettingsUrl(),
 			
 			            failure: function(form, action) {
 			                Ext.Msg.alert("Load failed", 'Error while getting data');

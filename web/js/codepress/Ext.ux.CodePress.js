@@ -45,11 +45,11 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
    /**
    * Iframe engine code loader url
    */
-	engineUrl:'/appFlowerStudio/codepress',
+	engineUrl:window.afStudioWSUrls.getCodepressUrl(),
 	/**
 	* file content url, from where to get the file content
 	*/
-	fileContentUrl:'/appFlowerStudio/filecontent',
+	fileContentUrl:window.afStudioWSUrls.getFilecontentUrl(),
 	
 	/**
 	 * delayedStart - set to ttrue in config if you do not want to load data after initialization..

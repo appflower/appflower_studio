@@ -100,7 +100,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			title: 'Plugins',
 			iconCls: 'icon-bricks',
 			autoScroll: true,
-			url: '/appFlowerStudio/plugins',			
+			url: window.afStudioWSUrls.getPluginsUrl(),
 			method: 'post',
 			reallyWantText: 'Do you really want to',
 		    root: rootNode,
@@ -525,7 +525,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		Ext.Ajax.request({
 		   scope:this,
-		   url: '/appFlowerStudio/plugins',
+		   url: window.afStudioWSUrls.getPluginsUrl(),
 		   params: { 
 			   xaction:'read',
 			   plugin: this.getplugin(node),

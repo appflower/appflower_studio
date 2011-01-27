@@ -251,7 +251,7 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 			loadingText: 'Please wait...',
 			emptyText: 'Please select the module location...',
             store: new Ext.data.Store({
-	            proxy: new Ext.data.HttpProxy({url: '/appFlowerStudio/modules'}),
+	            proxy: new Ext.data.HttpProxy({url: window.afStudioWSUrls.getModulesUrl()}),
 	            baseParams: {cmd: 'getGrouped'},
 	            reader: new Ext.data.JsonReader(
 	                {totalProperty: 'total', id: 'value'},

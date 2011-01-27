@@ -84,7 +84,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		
         var codeBrowserTree = new Ext.ux.FileTreePanel({
 			rootPath:'root', rootVisible:true, rootText:'Home',
-			url:'/appFlowerStudio/filetree', maxFileSize:524288*2*10,
+			url:window.afStudioWSUrls.getFiletreeUrl(), maxFileSize:524288*2*10,
 			topMenu:false, autoScroll:true, 
 			enableProgress:false, singleUpload:true
 		});

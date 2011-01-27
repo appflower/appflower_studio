@@ -19,7 +19,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
     rootNode: null,
     fetchAndConfigure: function(widgetInspector){
         Ext.Ajax.request({
-            url: 'afsWidgetBuilder/getWidget?uri='+this.widgetUri,
+            url: window.afStudioWSUrls.getGetWidgetUrl(this.widgetUri),
             success: function(response){
                 this.parseFetchedData(response);
                 this.createRootNode();
@@ -44,7 +44,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         var data = this.rootNode.dumpDataForWidgetDefinition();
 
         Ext.Ajax.request({
-            url: 'afsWidgetBuilder/saveWidget?uri='+this.widgetUri,
+            url: window.afStudioWSUrls.getSaveWidgetUrl(this.widgetUri),
             params: {
                 'data': Ext.util.JSON.encode(data),
                 'widgetType': this.widgetType

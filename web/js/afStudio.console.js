@@ -155,7 +155,7 @@ afStudio.console = Ext.extend(Ext.Panel, {
 		_this.debugStore = new Ext.data.Store({
             autoLoad: {params:{start: 0, limit: 1}},
             
-            url: '/appFlowerStudio/debug',
+            url: window.afStudioWSUrls.getDebugUrl(),
             id: 'debug_store',
             
             reader: new Ext.data.JsonReader({
@@ -242,9 +242,9 @@ afStudio.console = Ext.extend(Ext.Panel, {
 				})
 			],
 			method: 'post',
-			consoleUrl: '/appFlowerStudio/console',
-			debugUrl: '/appFlowerStudio/debug',
-			notificationsUrl: '/appFlowerStudio/notifications', 
+			consoleUrl: window.afStudioWSUrls.getConsoleUrl(),
+			debugUrl: window.afStudioWSUrls.getDebugUrl(),
+			notificationsUrl: window.afStudioWSUrls.getNotificationsUrl(),
 			plugins: new Ext.ux.MaximizeTool()
 		}
 		return config;

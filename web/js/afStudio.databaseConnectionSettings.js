@@ -27,7 +27,7 @@ afStudio.databaseConnectionSettings = Ext.extend(Ext.Window, {
 	createForm: function(){
 /***
 		this.form = new Ext.FormPanel({
-		    url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, frame: true, 
+		    url: window.afStudioWSUrls.getConfigureDatabaseUrl(), defaultType: 'textfield', width: 450, frame: true,
 			labelWidth: 100, title: false,
 			items: [
 				{xtype: 'panel', layout: 'column',
@@ -49,7 +49,7 @@ afStudio.databaseConnectionSettings = Ext.extend(Ext.Window, {
 */		
 		
 		this.form =  new Ext.FormPanel({
-			url: 'appFlowerStudio/configureDatabase', defaultType: 'textfield', width: 450, frame: true,
+			url: window.afStudioWSUrls.getConfigureDatabaseUrl(), defaultType: 'textfield', width: 450, frame: true,
 	        labelWidth: 100, title: false,
 			items: [
 	        	{xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false},
@@ -71,7 +71,7 @@ afStudio.databaseConnectionSettings = Ext.extend(Ext.Window, {
 		});
 
                 this.form.getForm().load({
-                    url: 'appFlowerStudio/loadDatabaseConnectionSettings',
+                    url: window.afStudioWSUrls.getLoadDatabaseConnectionSettingsUrl(),
 
                     failure: function(form, action) {
                         Ext.Msg.alert("Load failed", 'Error while getting data');

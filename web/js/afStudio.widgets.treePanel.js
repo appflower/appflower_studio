@@ -42,7 +42,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		var config = {			
 			title: 'Widgets'
 			,iconCls: 'icon-models'
-			,url: '/appFlowerStudio/modules'
+			,url: window.afStudioWSUrls.getModulesUrl()
 			,method: 'post'
 			,reallyWantText: 'Do you really want to'
 		    ,root: rootNode

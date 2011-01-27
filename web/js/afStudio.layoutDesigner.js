@@ -411,7 +411,7 @@ layout: 'fit',
         });
 		
 		var loader = new Ext.tree.TreeLoader({
-			url: '/appFlowerStudio/modules',
+			url: window.afStudioWSUrls.getModulesUrl(),
 			baseParams: {cmd: 'get'},
 			listeners: {
 				beforeload:function (loader, node,clb){
@@ -429,7 +429,7 @@ layout: 'fit',
 		}); 
 		
 		var widgetsTree = new Ext.tree.TreePanel({
-			url: '/appFlowerStudio/modules',
+			url: window.afStudioWSUrls.getModulesUrl(),
 			method: 'post',
 			reallyWantText: 'Do you really want to',
 			root: rootNode,

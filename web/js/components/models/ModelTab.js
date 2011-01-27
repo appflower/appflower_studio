@@ -21,16 +21,10 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 */
 	
 	/**
-	 * @cfg {String} modelGridDataUrl required (defaults to '/afsModelGridData')
-	 * Base URL for modelData grid 
-	 */
-	modelGridDataUrl : '/afsModelGridData'
-	
-	/**
 	 * @cfg {String} modelUrl required (defaults to '/appFlowerStudio/models')
 	 * Base URL for models 
 	 */
-	,modelUrl : window.afStudioWSUrls.getModelsUrl()
+	modelUrl : window.afStudioWSUrls.getModelsUrl()
 
 	/**
 	 * Runs altering process and updates model's grids
@@ -124,10 +118,10 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 			schema: _this.schemaName,			
             storeProxy: new Ext.data.HttpProxy({
                 api: {
-                	read:    _this.modelGridDataUrl + '/read?model='   + mdl,
-                    create:  _this.modelGridDataUrl + '/create?model=' + mdl,
-                    update:  _this.modelGridDataUrl + '/update?model=' + mdl,
-                    destroy: _this.modelGridDataUrl + '/delete?model=' + mdl
+                	read:    window.afStudioWSUrls.getModelGridDataReadUrl(mdl),
+                    create:  window.afStudioWSUrls.getModelGridDataCreateUrl(mdl),
+                    update:  window.afStudioWSUrls.getModelGridDataUpdateUrl(mdl),
+                    destroy: window.afStudioWSUrls.getModelGridDataDeleteUrl(mdl)
                 }
             })
 		});

@@ -39,7 +39,7 @@ var afStudio = function () {
 			messageType = messageType || false;
 			
 			Ext.Ajax.request({
-				url: '/appFlowerStudio/notifications',
+				url: window.afStudioWSUrls.getNotificationsUrl(),
 				method: 'POST',
 				params: {
 					cmd: 'set',
