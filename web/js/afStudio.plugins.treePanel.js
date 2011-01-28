@@ -20,17 +20,17 @@ afStudio.plugins.treeEditor = Ext.extend(Ext.tree.TreeEditor, {
 afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
-	 * plugins context menu xml
+	 * plugins context menu
 	 */
-	contextMenuXml: new Ext.menu.Menu({
+	contextMenu: new Ext.menu.Menu({
 	        items: [{
 	            id: 'edit-plugin',
 	            text: 'Edit plugin',
 	            iconCls: 'icon-models-edit'
 			},{
 	            id: 'rename-plugin',
-	            text: 'Rename Plugin',
-	            iconCls: 'icon-edit'				
+	            text: 'Change plugin name',
+	            iconCls: 'icon-models-edit'				
 			},{
 	       		id: 'delete-plugin',
 	            text: 'Delete plugin',
@@ -54,22 +54,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                }
 	            }
 	        }
-	}),
-	
-	contextMenuModule: new Ext.menu.Menu({
-		items: [
-			{id: 'delete-plugin-folder', text: 'Delete plugin', iconCls: 'icon-models-delete'}
-		],
-		listeners: {
-	    	itemclick: function(item) {
-				switch (item.id) {
-	            	case 'delete-plugin-folder':
-	                	var node = item.parentMenu.contextNode;
-	                	node.getOwnerTree().deleteplugin(node);
-	            		break;
-	        	}
-	    	}
-		}
 	})
 	
 	/**
@@ -186,26 +170,9 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			//showing context menu for each node
 			contextmenu: function(node, e) {
 	            node.select();
-	            
-	            switch (node.attributes.type) {
-	            	case "app":
-	            		var c = node.getOwnerTree().contextMenuApp;
-	            		break;
-	            	case "module":
-	            		var c = node.getOwnerTree().contextMenuModule;
-	            		break;
-	            	case "xml":
-	            		var c = node.getOwnerTree().contextMenuXml;
-	            		break;	
-	            }
-	            
-	            if(c){
-	            	c.contextNode = node;
-	            	c.showAt(e.getXY());
-	            }
-//	            var c = node.getOwnerTree().contextMenu;
-//	            c.contextNode = node;
-//	            c.showAt(e.getXY());
+	            var c = node.getOwnerTree().contextMenu;
+	            c.contextNode = node;
+	            c.showAt(e.getXY());
 	        },
 	        dblclick : Ext.util.Functions.createDelegate(_this.onpluginDbClick, _this)
 		});
@@ -433,7 +400,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	  node.remove();
 				      	
 				      	  _this.fireEvent('plugindeleted');
-				      	  _this.fireEvent("logmessage",_this,"plugindeleted");
 				      	 
 				      	  afStudio.vp.clearPortal();
 				      	 

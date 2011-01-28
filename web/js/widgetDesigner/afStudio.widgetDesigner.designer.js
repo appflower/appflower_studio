@@ -151,6 +151,10 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	
 	//remove all the border on preview
 	,preview: function(){
+		
+		//TODO: added dummy values 
+		afApp.widgetPopup("/afGuardUserProfile/edit", 'Title', null, "iconCls:\'" + "\',width:800,height:600,maximizable: false", afStudio);
+		
 		var els = Ext.DomQuery.select('DIV[class*="redborder"]', 'widget-designer-panel');
 		for(var i=0, l=els.length; i<l; i++ ){
 			var ell = Ext.fly(els[i]);
