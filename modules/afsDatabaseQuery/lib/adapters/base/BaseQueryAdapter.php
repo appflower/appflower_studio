@@ -17,7 +17,7 @@ abstract class BaseQueryAdapter
     /**
      * Processing query
      */
-    abstract public function process($query);
+    abstract public function process($query, $offset, $limit);
     
     /**
      * Setting query for processing

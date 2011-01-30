@@ -88,26 +88,31 @@ class afsDatabaseQueryHelper
     }
     
     /**
-     * Execute query helper 
+     * Execute query helper method
      * 
-     * @param query - Query which will be processed
-     * @param type - Type of query (sql, propel)
+     * @param $query Query which will be processed
+     * @param $connection Connection name for executing query
+     * @param $type Type of query (sql, propel)
+     * @param $offset Offset for query
+     * @param $limit Limit for query
      * @return array
      */
-    public function processQuery($query, $connection, $type = 'sql')
+    public function processQuery($query, $connection, $type = 'sql', $offset = 0, $limit = 50)
     {
-        $result = afsDatabaseQuery::processQuery($query, $connection, $type);
+        $result = afsDatabaseQuery::processQuery($query, $connection, $type, $offset, $limit);
         
         if ($result['success'] && $result['type'] == 'success') {
             
-            if (isset($result['content'][0])) {
-                $aFields = array_keys($result['content'][0]);
+            $nTotal = $result['content']['count'];
+            
+            if (isset($result['content']['result'][0])) {
+                $aFields = array_keys($result['content']['result'][0]);
                 
                 $return = array(
                                 'success' => true,
                                 'type' => 'success',
                                 'meta' => $aFields,
-                                'data' => $result['content']
+                                'data' => $result['content']['result']
                 );
             }
         } else {

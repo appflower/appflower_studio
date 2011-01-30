@@ -27,12 +27,14 @@ class afsDatabaseQuery
      * @param $query This query will be executed
      * @param $connection Connection name 
      * @param $type Query type: sql or propel
+     * @param $offset 
+     * @param $limit
      * @return mixed
      */
-    public static function processQuery($query, $connection = 'propel', $type = 'sql')
+    public static function processQuery($query, $connection = 'propel', $type = 'sql', $offset = 0, $limit = 50)
     {
         $oAdapter = self::getAdapter($connection, $type);
-        $aResult = $oAdapter->process($query);
+        $aResult = $oAdapter->process($query, $offset, $limit);
         return $aResult;
     }
     

@@ -12,24 +12,42 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     private $is_valid = true;
     
     /**
+     * Total found rows
+     */
+    private $total = 0;
+    /**
      * Processing query
      * 
      * @param $query Propel Query for executing
+     * @param $offset 
+     * @param $limit
      * @return mixed
      */
-    public function process($query)
+    public function process($query, $offset = 0, $limit = 50)
     {
         $this->setQuery(trim($query));
 
         $aValidate = $this->validate();
         
         if ($aValidate['success']) {
-            eval('$execute_query = ' . $query . ';');
+            eval('$execute_query = ' . $this->query . ';');
+            
+            $this->total = count($execute_query);
+            
+            if ($this->total > $limit) {
+                $this->limiting($offset, $limit);
+                eval('$execute_query = ' . $this->query . ';');
+            }
             
             if (is_object($execute_query)) {
                 $result = $this->processClass($execute_query);
             } elseif (is_int($execute_query)) {
-                $result = $this->fetchSuccess(array(array($execute_query)));
+                
+                $aResult = array(
+                                'result' => array(array($execute_query)),
+                                'count' => $this->total
+                );
+                $result = $this->fetchSuccess($aResult);
             } else {
                 $result = $this->fetchInfo('Nothing has been found');
             }
@@ -189,7 +207,11 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
             $aResult = (array)$execute_query;
             
             if (count($aResult) > 0) {
-                $result = $this->fetchSuccess($this->prepareList($aResult));
+                $aResult = array(
+                                'result' => $this->prepareList($aResult),
+                                'count' => $this->total
+                );
+                $result = $this->fetchSuccess($aResult);
             } else {
                 $result = $this->fetchInfo('Nothing has been found');
             }
@@ -201,12 +223,20 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
             if (is_null($execute_query)) {
                 $result = $this->fetchInfo('Nothing has been found');
             } else {
-                $result = $this->fetchSuccess(array($this->prepareOutput($execute_query)));
+                $aResult = array(
+                                'result' => $this->fetchSuccess(array($this->prepareOutput($execute_query))),
+                                'count' => $this->total
+                );
+                $result = $aResult;
             }
         } elseif ($execute_query instanceof PropelArrayCollection) {
             $aResult = (array)$execute_query;
             
             if (count($aResult) > 0) {
+                $aResult = array(
+                                'result' => $aResult,
+                                'count' => $this->total
+                );
                 $result = $this->fetchSuccess($aResult);
             } else {
                 $result = $this->fetchInfo('Nothing has been found');
@@ -216,6 +246,57 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         }
         
         return $result;
+        
+    }
+    
+    /**
+     * Limiting query by default
+     * 
+     * @param $offset
+     * @param $limit
+     */
+    private function limiting($offset = 0, $limit = 50)
+    {
+        $bMatchedOffset = preg_match('/::create\(\).*?->offset\(\s*?(\d+)\s*\)/sim', $this->query, $matched_offset);
+        $bMatchedLimit = preg_match('/::create\(\).*?->limit\(\s*?(\d+)\s*\)/sim', $this->query, $matched_limit);
+        
+        if ($bMatchedOffset && $bMatchedLimit) {
+            // Limit and offset has been matched
+            
+            $nOffset = (int)$matched_offset[1] + $offset;
+            $nLimit = ($matched_limit[1] < $limit) ? $matched_limit[1] : $limit;
+            
+            if (($nOffset + $nLimit) > ($matched_offset[1] + $matched_limit[1])) {
+                $nLimit = ($matched_offset[1] + $matched_limit[1]) - $nOffset;
+            }
+            
+            $this->query = preg_replace('/->offset\(\s*?(\d+)\s*\)/sim', "->offset({$nOffset})", $this->query);
+            $this->query = preg_replace('/->limit\(\s*?(\d+)\s*\)/sim', "->limit({$nLimit})", $this->query);
+        } elseif (!$bMatchedOffset && $bMatchedLimit) {
+            // Matched only limit
+            
+            $nLimit = ($matched_limit[1] < $limit) ? $matched_limit[1] : $limit;
+            
+            if (($offset + $limit) > $matched_limit[1]) {
+                $nLimit = $matched_limit[1] - $offset;
+            }
+            
+            $nPosition = strripos($this->query, '->');
+            if ($nPosition !== false) {
+                $sSelect = substr($this->query, $nPosition, strlen($this->query));
+                $this->query = str_replace($sSelect, "->offset({$offset}){$sSelect}", $this->query);
+            }
+            
+            $this->query = preg_replace('/->limit\(\s*?(\d+)\s*\)/sim', "->limit({$nLimit})", $this->query);
+        } else {
+            // Nothing has been matched
+            
+            $nPosition = strripos($this->query, '->');
+            if ($nPosition !== false) {
+                $sSelect = substr($this->query, $nPosition, strlen($this->query));
+                $this->query = str_replace($sSelect, "->offset({$offset})->limit({$limit}){$sSelect}", $this->query);
+            }
+        }
         
     }
     
