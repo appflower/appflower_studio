@@ -224,17 +224,28 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 $result = $this->fetchInfo('Nothing has been found');
             } else {
                 $aResult = array(
-                                'result' => $this->fetchSuccess(array($this->prepareOutput($execute_query))),
+                                'result' => (array($this->prepareOutput($execute_query))),
                                 'count' => $this->total
                 );
-                $result = $aResult;
+                $result = $this->fetchSuccess($aResult);
             }
         } elseif ($execute_query instanceof PropelArrayCollection) {
-            $aResult = (array)$execute_query;
             
-            if (count($aResult) > 0) {
+            $aResults = (array)$execute_query;
+            
+            if (count($aResults) > 0) {
+                if (!is_array($aResults[0])) {
+                    $oFormatter = $execute_query->getFormatter();
+                    $aColumns = $oFormatter->getAsColumns();
+                    $sColumn = str_replace('"', '', key($aColumns));
+                    
+                    foreach ($aResults as &$row) {
+                        $row = array($sColumn => $row);
+                    }
+                }
+                
                 $aResult = array(
-                                'result' => $aResult,
+                                'result' => $aResults,
                                 'count' => $this->total
                 );
                 $result = $this->fetchSuccess($aResult);
