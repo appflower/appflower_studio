@@ -247,7 +247,10 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	_initEvents: function(){
 		var fn = function(cmp){
 			var _this = this;
-				cmp.body.mask('Building inspector. Please wait.')
+				cmp.body.mask('Building inspector. Please wait.');
+//				(function(){
+//					_this.setRootNode(_this.rootNode);
+//				}).defer(10000);
 				
                 _this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
                 _this.widgetDefinition.fetchAndConfigure(_this);

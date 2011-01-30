@@ -489,6 +489,28 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		afStudio.vp.mask({region:'center'});
 		
+		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(node.attributes.widgetUri);
+		this.widgetDefinition.on('datafetched', function(rootNode, definition){
+			rootNode.configureFor(definition);
+			afStudio.vp.addToPortal({
+				title: 'Plugin Designer',
+				collapsible: false,
+				draggable: false,
+				layout: 'fit',
+				items: [{
+					xtype: 'afStudio.widgetDesigner',
+					actionPath: null,
+					securityPath: null,
+	                widgetUri: node.attributes.widgetUri,
+	                rootNode: rootNode
+				}]
+			}, true);
+	       afStudio.vp.unmask('center');
+		});
+		this.widgetDefinition.fetchAndConfigure();
+
+		
+/**		
 		Ext.Ajax.request({
 		   scope:this,
 		   url: window.afStudioWSUrls.getPluginsUrl(),
@@ -503,40 +525,26 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			   } catch(e) {
 				   var data = {rows:[], totalCount:0}
 			   }
-			   /*	var fieldsGrid=new afStudio.plugins.FieldsGrid({
-			   		'title':'Editing '+this.getplugin(node),
-			   		_data:data,
-			   		plugin: this.getplugin(node),
-					schema: this.getSchema(node)
-			   	});		
-			   	
-				var pluginGrid = new afStudio.model.ModelGrid({
-					title:'pluginGrid '+this.getplugin(node),
-					_data:data
-				});
-				var editTab = new Ext.TabPanel({
-					activeTab: 0,
-					items:[pluginGrid,fieldsGrid]
-				});
-				afStudio.vp.addToPortal(editTab, true);*/
 			   
-				afStudio.vp.addToPortal({
-					title: 'Plugin Designer',
-					collapsible: false,
-					draggable: false,
-					layout: 'fit',
-					items: [{
-						xtype: 'afStudio.widgetDesigner',
-						actionPath: null,
-						securityPath: null,
-		                widgetUri: "afGuardUserProfile/edit"//widgetUri,
-						//mask: mask
-					}]
-				}, true);		
-				
-		       afStudio.vp.unmask('center');
+//			   	var fieldsGrid=new afStudio.plugins.FieldsGrid({
+//			   		'title':'Editing '+this.getplugin(node),
+//			   		_data:data,
+//			   		plugin: this.getplugin(node),
+//					schema: this.getSchema(node)
+//			   	});		
+//			   	
+//				var pluginGrid = new afStudio.model.ModelGrid({
+//					title:'pluginGrid '+this.getplugin(node),
+//					_data:data
+//				});
+//				var editTab = new Ext.TabPanel({
+//					activeTab: 0,
+//					items:[pluginGrid,fieldsGrid]
+//				});
+//				afStudio.vp.addToPortal(editTab, true);
 		   }
-		});		
+		});
+**/
 	}	
 }); 
 

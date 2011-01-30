@@ -10,9 +10,10 @@ afStudio.widgetDesigner.WidgetDefinition = function(widgetUri, widgetType){
     if (widgetType) {
         this.widgetType = widgetType;
     }
+    this.addEvents('datafetched');
 };
 
-afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, {
+afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, Ext.util.Observable, {
     widgetUri: null,
     definition: null,
     widgetType: null,
@@ -27,6 +28,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
                 if (widgetInspector) {
                     widgetInspector.setRootNode(this.rootNode);
                 }
+                this.fireEvent('datafetched', this.rootNode, this.definition);
             },
             scope: this
         });

@@ -111,6 +111,8 @@ class afStudioPluginsCommand
 					$files[$i]["text"] = $f;
 					$files[$i]["type"] = 'xml';
 					
+					$files[$i]["widgetUri"]=$modulename.'/'.str_replace('.xml', '', $f);
+					
 					$files[$i]["securityPath"] = $securityPath;
 					$files[$i]["actionPath"] = $actionPath;
 					

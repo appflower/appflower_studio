@@ -62,10 +62,14 @@ afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.Cont
         if (!dataForNewNode) {
             dataForNewNode = {};
         }
-        if (this.childNodes.length > 0) {
-            var childNode = this.childNodes[0];
-            childNode.destroy();
-        }
+        
+        //TODO: try to fix problem with the unexisted tree
+        try {
+	        if (this.childNodes.length > 0) {
+	            var childNode = this.childNodes[0];
+	            childNode.destroy();
+	        }
+        } catch (err) {}
 
         switch (this.properties['valueSource'].get('value')) {
             case 'source':
