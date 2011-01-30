@@ -17,6 +17,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	
 	/**
 	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryWindow
+	 * Parent container window
 	 */
 	
 	/**
@@ -26,31 +27,37 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		var _this = this,
 				f = _this.getForm(),
 			   qt = _this.queryTypeCmp.getValue(),
-			extraParams = {};
+	    connection = this.dbQueryWindow.westPanel.getCurrentConnection(),
+		queryParam = Ext.apply(f.getFieldValues(), connection);	    
 		
-	    if (qt == 'sql') {
-	    	extraParams.connection = this.dbQueryWindow.westPanel.getCurrentConnection();	    	
-	    }
-	    
-	    if (qt == 'sql' && !extraParams.connection) {
+	    if (qt == 'sql' && !connection) {
 	   		Ext.Msg.alert('Failure', 'Connection is not specified. <br /> Please select DataBase or DB\'s table.' );
 	   		return;
 	    }
-	   
+	    
 		_this.dbQueryWindow.maskDbQuery();
 				
 		f.submit({
 		    clientValidation: true,
 		    url: _this.queryUrl,
-		    params: extraParams,
-		    success: function(form, action) {
+		    params: {
+		    	connection: connection,
+		    	start: 0,
+		    	limit: afStudio.dbQuery.QueryResultsGrid.prototype.recordsPerPage
+		    },
+		    success: function(form, action) {		    	
 		    	_this.dbQueryWindow.unmaskDbQuery();
+		    	
 		    	if (action.result.type == 'success') {
-		    		_this.fireEvent('executequery', action.result);
+		    		_this.fireEvent('executequery', {
+		    			result: action.result,
+		    			queryParam: queryParam
+		    		});
 		    	} else {
 		    		Ext.Msg.alert('Query Response', action.result.content);
-		    	}
+		    	}		    	
 		    },
+		    
 		    failure: function(form, action) {
 		    	_this.dbQueryWindow.unmaskDbQuery();
 		    	
@@ -143,7 +150,9 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		_this.addEvents(
 			/**
 			 * @event executequery Fires after query was successufully executed
-			 * @param {Object} result The query result object, containing "meta" - meta-data and "data" - result set 
+			 * @param {Object} result The query result object, 
+			 * containing "meta" - meta-data and "data" - result set, "total" - total number of records, "type" and "success"
+			 * @param {Object} queryParam The query parameters
 			 */
 			'executequery'
 		);

@@ -2,26 +2,39 @@ Ext.ns('afStudio.dbQuery');
 
 afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	/**
-	 * @cfg {Object} metaData required
-	 * The metaData object contains model's structure
+	 * @cfg {Object} queryParam required
+	 * The Query metaData object contains query's parameters
 	 */
 	
 	/**
-	 * @cfg {Object} queryResults required
-	 * This grid's data store
+	 * @cfg {Object} queryResult required
+	 * Contains query's result set data(first result set limited by "recordsPerPage") and meta data 
 	 */
 	
 	/**
-	 * Loads query response data into the QueryResultsGrid 
+	 * @cfg {Number} recordsPerPage (defaults to 50)
 	 */
-	loadResultsData : function() {
-		this.getStore().loadData(this.queryResults || []);
+	recordsPerPage : 50
+	
+	/**
+	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
+	 * Query URL
+	 */
+	,queryUrl : window.afStudioWSUrls.getDBQueryQueryUrl()
+	
+	
+	/**
+	 * Loads query result set data
+	 * @param {Object} data The data set to be loaded
+	 */
+	,loadResultsData : function(data) {
+		this.getStore().loadData(data);
 	}
 	
 	//private
 	,_beforeInitComponent : function() {
 		var   _this = this,
-	       metaData = _this.metaData || [],
+	       metaData = _this.queryResult.meta || [],
 	          store,
 		storeFields = [],
 			columns = [],  
@@ -41,15 +54,19 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 		}
 
 		store = new Ext.data.JsonStore({
-			fields: storeFields            
+			url: _this.queryUrl,
+			root: 'data',
+			totalProperty: 'total',
+			baseParams: _this.queryParam,
+			fields: storeFields           
 		});
 		
-//		pagingBar = new Ext.PagingToolbar({
-//	        store: store,
-//	        displayInfo: true,	        
-//	        displayMsg: 'Displaying records {0} - {1} of {2}',
-//	        pageSize: _this.recordsPerPage
-//    	});
+		pagingBar = new Ext.PagingToolbar({
+	        store: store,
+	        displayInfo: true,	        
+	        displayMsg: 'Displaying records {0} - {1} of {2}',
+	        pageSize: _this.recordsPerPage
+    	});
 		
 		return {
 			title: 'Query Result',
@@ -61,7 +78,8 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	        viewConfig: {
 	            forceFit: true,
 	            emptyText: "Empty!"
-	        }
+	        },
+	        bbar: pagingBar
 		};
 	}//eo beforeInit
 	
@@ -81,7 +99,9 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 		var _this = this;
 		
 		_this.on({
-			afterrender: _this.loadResultsData,
+			afterrender: function() { 
+				_this.loadResultsData(_this.queryResult ? _this.queryResult : []);
+			},
 			scope: _this
 		});
 	}//eo _afterInitComponent

@@ -63,12 +63,12 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 * Shows query's result 
 	 * @param {Object} result The query's "meta"-metada and "data"-data set
 	 */
-	,showQueryResult : function(result) {
+	,showQueryResult : function(data) {
 		this.maskContent();
 		
-    	var resultGrid = new afStudio.dbQuery.QueryResultsGrid({
-			metaData: result.meta,
-			queryResults: result.data
+    	var resultGrid = new afStudio.dbQuery.QueryResultsGrid({    	
+			queryResult: data.result,
+			queryParam: data.queryParam
     	});
     	
 		this.unmaskContent().clearPanel();

@@ -22,10 +22,10 @@ afStudio.dbQuery.DataGrid = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	
 	/**
-	 * @cfg {Number} recordsPerPage required (defaults to 25)
+	 * @cfg {Number} recordsPerPage required (defaults to 50)
 	 * The number of displaying records per page
 	 */
-	recordsPerPage : 25
+	recordsPerPage : 50
 	
 	//private
 	,_beforeInitComponent : function() {

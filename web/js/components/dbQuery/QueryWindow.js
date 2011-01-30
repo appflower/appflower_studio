@@ -11,10 +11,10 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	
 	/**
 	 * Relayed {@link afStudio.dbQuery.QueryForm#executequery} event listener
-	 * @param {Object} result The query result
+	 * @param {Object} queryResult The query result
 	 */
-	onExecuteQuery : function(result) { 
-		this.centerPanel.showQueryResult(result);
+	onExecuteQuery : function(queryResult) { 
+		this.centerPanel.showQueryResult(queryResult);
 	}
 	
 	/**

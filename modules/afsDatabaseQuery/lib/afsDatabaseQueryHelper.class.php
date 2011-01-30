@@ -110,9 +110,10 @@ class afsDatabaseQueryHelper
                 
                 $return = array(
                                 'success' => true,
-                                'type' => 'success',
-                                'meta' => $aFields,
-                                'data' => $result['content']['result']
+                                'type'  => 'success',
+                                'meta'  => $aFields,
+                                'data'  => $result['content']['result'],
+                				'total' => $nTotal
                 );
             }
         } else {

@@ -55,7 +55,7 @@ class afsDatabaseQueryActions extends sfActions
         $sConnection = $request->getParameter('connection', 'propel');
         $sType = $request->getParameter('type', 'sql');
         
-        $nOffset = $request->getParameter('offset', 0);
+        $nOffset = $request->getParameter('start', 0);
         $nLimit = $request->getParameter('limit', 50);
         
         $aResult = $this->oDBQueryHelper->processQuery($sQuery, $sConnection, $sType, $nOffset, $nLimit);
