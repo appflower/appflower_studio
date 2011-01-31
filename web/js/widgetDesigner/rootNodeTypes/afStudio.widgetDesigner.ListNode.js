@@ -5,8 +5,6 @@
  */
 afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRootNode, {
     widgetType: 'list',
-    fieldsNode: null,
-    datasourceNode: null,
 	getNodeConfig: function(){
         var node = {
             text: 'New list widget'
@@ -18,28 +16,18 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').markAsOneOfIParam().create());
     },
 	addRequiredChilds: function(){
+        afStudio.widgetDesigner.ListNode.superclass.addRequiredChilds.apply(this);
         var actionNode = this.buildActionNode();
         var actionsNode = this.buildActionsNode(actionNode);
         var rowactionsNode = this.buildRowactionsNode(actionNode);
         var moreactionsNode = this.buildMoreactionsNode(actionNode);
-        var fieldsNode = this.buildFieldsNode();
         var proxyNode = this.buildProxyNode();
 
         this.appendChild(new actionsNode);
         this.appendChild(new rowactionsNode);
         this.appendChild(new moreactionsNode);
-        this.datasourceNode = new afStudio.widgetDesigner.DatasourceNode;
-        this.appendChild(this.datasourceNode);
-        this.fieldsNode = new fieldsNode;
-        this.appendChild(this.fieldsNode);
         this.appendChild(new proxyNode);
 	},
-    getFieldsNode: function(){
-        return this.fieldsNode;
-    },
-    getDatasourceNode: function(){
-        return this.datasourceNode;
-    },
     buildProxyNode: function(){
         var proxyNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'Proxy',
@@ -55,7 +43,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
     },
     buildFieldsNode: function(){
         var columnNode = this.buildColumnNode();
-        var methodNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
+        var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Fields',
            id: 'i:fields',
            createChildConstructor: columnNode,
@@ -63,7 +51,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            addChildActionLabel: 'Add column'
         });
 
-        return methodNode;
+        return new fieldsNode;
     },
     buildActionNode: function(){
         var actionNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({

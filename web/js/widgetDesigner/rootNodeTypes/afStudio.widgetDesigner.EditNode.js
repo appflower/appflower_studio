@@ -11,11 +11,6 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         };
         return node;
 	},
-	addRequiredChilds: function(){
-        var fieldsNode = this.buildFieldsNode();
-        this.appendChild(new afStudio.widgetDesigner.DatasourceNode);
-        this.appendChild(new fieldsNode);
-	},
     buildFieldsNode: function(){
         var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Fields',
@@ -25,6 +20,6 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            addChildActionLabel: 'Add field'
         });
 
-        return fieldsNode;
+        return new fieldsNode;
     }
 });
