@@ -81,8 +81,9 @@ class afsWidgetBuilderWidget {
         file_put_contents($tempPath, $xmlBuilder->getXml());
         chmod($tempPath, 0777);
 
-        $validator = new XmlValidator($tempPath);
-        $validationStatus = $validator->validateXmlDocument();
+        $validator = new XmlValidator(null, false, true);
+        $validator->readXmlDocument($tempPath, true);
+        $validationStatus = $validator->validateXmlDocument(true);
         if ($validationStatus) {
             if (file_exists($path) && !is_writable($path) || !is_writable(dirname($path))) {
                 return 'File was validated properly but I was not able to save it in: '.$path.'. Please check file/dir permissions.';
