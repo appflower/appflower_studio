@@ -407,12 +407,9 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 				field.properties['label'].set('value',items[k].data.field.ucfirst());
 			}	
 		}
-				
-		afsWD.save();
 		
-		this.close();
-		
-		afStudio.showWidgetDesigner(module+'/'+action);
+
+		afsWD.save(this);
 	},	
 	
 	/**

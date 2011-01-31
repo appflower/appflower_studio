@@ -37,12 +37,13 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         if (response.statusText != 'OK') {
             console.log('response looks invalid');
         }
-
         var baseData = Ext.util.JSON.decode(response.responseText);
-        this.definition = Ext.util.JSON.decode(baseData.data);
-        this.widgetType = this.definition['type'];
+        if (baseData.success) {
+            this.definition = Ext.util.JSON.decode(baseData.data);
+            this.widgetType = this.definition['type'];
+        }
     },
-    save: function(){
+    save: function(widgetBuilderWindow){
         var data = this.rootNode.dumpDataForWidgetDefinition();
 
         Ext.Ajax.request({
@@ -52,7 +53,11 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
                 'widgetType': this.widgetType
             },
             success: function(response){
-                this.parseSaveResponse(response);
+                if (this.parseSaveResponse(response)) {
+                    if (widgetBuilderWindow) {
+                        widgetBuilderWindow.close();
+                    }
+                }
             },
             scope: this
         });
@@ -99,11 +104,17 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         	this.showMessage('System Message', actionResponse.message, 'INFO');
             console.log(actionResponse.message);
         }
-        
+
         //Reload Widget inspector tree
-        if (tree) {
+        if (tree && actionResponse.success === true) {
             tree.fireEvent('afterrender', tree);
+            return true;
+        } else if (actionResponse.success === true) {
+            afStudio.showWidgetDesigner(this.widgetUri);
+            return true;
         }
+
+        return false;
    },
    createRootNode: function(){
        switch (this.widgetType) {

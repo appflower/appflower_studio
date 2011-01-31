@@ -84,8 +84,14 @@ class afsWidgetBuilderWidget {
         $validator = new XmlValidator($tempPath);
         $validationStatus = $validator->validateXmlDocument();
         if ($validationStatus) {
+            if (file_exists($path) && !is_writable($path) || !is_writable(dirname($path))) {
+                return 'File was validated properly but I was not able to save it in: '.$path.'. Please check file/dir permissions.';
+            }
             rename($tempPath, $path);
+            return true;
         }
+
+        return 'Widget XML is not valid.';
     }
 }
 ?>
