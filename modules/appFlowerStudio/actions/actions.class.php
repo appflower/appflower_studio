@@ -309,4 +309,18 @@ class appFlowerStudioActions extends sfActions
 		
 		return $this->renderText($notifications_command->end());
 	}    
+    
+    /**
+     * Getting widgets list by app anem and module name
+     */
+    public function executeModuleWidgets(sfWebRequest $request)
+    {
+        $app = $request->getParameter('app_name', 'frontend');
+        $module = $request->getParameter('module_name', '');
+        
+        $aWidgets = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
+        
+        return $this->renderJson($aWidgets);
+        
+    }
 }
