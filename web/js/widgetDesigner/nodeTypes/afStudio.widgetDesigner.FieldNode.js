@@ -9,7 +9,6 @@
 afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
     constructor: function(){
         afStudio.widgetDesigner.FieldNode.superclass.constructor.apply(this, arguments);
-        this.propertyChanged();
     },
     updateNodeNameFromPropertyId: 'name',
 

@@ -82,7 +82,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
    parseSaveResponse: function(response){
    		//Unmask parent tree
    		var tree = this.rootNode.getOwnerTree()
-   		tree.body.unmask();
+        if (tree) {
+            tree.body.unmask();
+        }
    		
         if (response.statusText != 'OK') {
         	this.showMessage('System Message', 'Response looks invalid', 'ERROR');
@@ -99,7 +101,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         }
         
         //Reload Widget inspector tree
-        tree.fireEvent('afterrender', tree);
+        if (tree) {
+            tree.fireEvent('afterrender', tree);
+        }
    },
    createRootNode: function(){
        switch (this.widgetType) {
