@@ -42,11 +42,10 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         return proxyNode;
     },
     buildFieldsNode: function(){
-        var columnNode = this.buildColumnNode();
         var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Fields',
            id: 'i:fields',
-           createChildConstructor: columnNode,
+           createChildConstructor: afStudio.widgetDesigner.ColumnNode,
            childNodeId: 'i:column',
            addChildActionLabel: 'Add column'
         });
@@ -105,24 +104,5 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            dumpEvenWhenEmpty: false
         });
         return moreactionsNode;
-    },
-    buildColumnNode: function(){
-        var columnNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
-           text: 'new field',
-           updateNodeNameFromPropertyId: 'name',
-           iconCls: 'icon-field',
-           createProperties: function(){
-               return [
-                    new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
-                    new afStudio.widgetDesigner.PropertyTypeBoolean('sortable','Sortable').create(),
-                    new afStudio.widgetDesigner.PropertyTypeBoolean('editable','Editable').create(),
-                    new afStudio.widgetDesigner.PropertyTypeBoolean('resizable','Resizable').create(),
-                    new afStudio.widgetDesigner.PropertyTypeString('style','Style').create(),
-                    new afStudio.widgetDesigner.PropertyTypeString('label','Label').setRequired().create(),
-                    new afStudio.widgetDesigner.PropertyTypeString('filter','Filter').create()
-               ];
-            }
-        });
-        return columnNode;
     }
 });
