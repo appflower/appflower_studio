@@ -13,16 +13,6 @@ afStudio.widgetDesigner.FieldNodeValueSourceSource = Ext.extend(afStudio.widgetD
        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create());
     }
 });
-        var paramNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
-           text: 'parameter',
-           updateNodeNameFromPropertyId: 'name',
-           createProperties: function(){
-               return [
-                    new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create(),
-                    new afStudio.widgetDesigner.PropertyBaseType('_content','Value').setRequired().create()
-               ];
-            }
-        });
 
 afStudio.widgetDesigner.FieldNodeValueSourceMethod = Ext.extend(afStudio.widgetDesigner.CollectionNode, {
     addChildActionLabel: 'Add Param',
@@ -33,7 +23,7 @@ afStudio.widgetDesigner.FieldNodeValueSourceMethod = Ext.extend(afStudio.widgetD
         };
     },
     createChild: function(){
-        return new paramNode;
+        return new afStudio.widgetDesigner.ParamNode;
     },
     createProperties: function(){
        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('i:class','Class').setRequired().create());

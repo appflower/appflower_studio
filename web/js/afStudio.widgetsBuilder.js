@@ -46,7 +46,8 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 				        name: m + '.' + fr.get('name'),
 				        field: fr.get('name'),
 				        type: fr.get('type'),
-				        size: fr.get('size')
+				        size: fr.get('size'),
+                                        required: fr.get('required')
 					});
 					
                     _this.relationsGrid.store.add(r);
