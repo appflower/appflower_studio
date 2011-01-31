@@ -47,6 +47,8 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			,reallyWantText: 'Do you really want to'
 		    ,root: rootNode
 			,rootVisible:false
+			,autoScroll:true
+            ,containerScroll: true
 			,tools:[{id:'refresh', 
 				handler:function(){
 					this.loader.load(rootNode);
@@ -558,7 +560,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
 				      	afStudio.updateConsole(response.console);	
-				      	self.fireEvent("logmessage",self,"delete Module")
+				      	self.fireEvent("logmessage",self,"delete "+node.text+" Widget");
 				      }
 				      else
 				      {

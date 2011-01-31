@@ -169,7 +169,7 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	}
 	
 	,saveDesigner:function(){
-		this.fireEvent("logmessage",this,"widget designer saved");
+		this.fireEvent("logmessage",this,"widget designer "+this.ownerCt.ownerCt.widgetUri+" saved");
 	}
 	
 	/**
@@ -250,7 +250,6 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	
 	_initEvents : function() {
 		var _this = this;	
-		this.addEvents("logmessage");
 	}// eo _initEvents
 	
 });

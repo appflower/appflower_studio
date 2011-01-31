@@ -422,7 +422,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	  node.remove();
 				      	
 				      	  _this.fireEvent('modeldeleted');
-				      	  _this.fireEvent("logmessage",_this,"model deleted");
+				      	  _this.fireEvent("logmessage",_this,"model "+node.text+" deleted");
 				      	  afStudio.vp.clearPortal();
 				      	 
 				      	  _this.reloadModels();
@@ -522,6 +522,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		       var data = Ext.decode(result.responseText);
 		       
 			   var modelTab = new afStudio.models.ModelTab({
+				    _node:node,
 			   		fieldsStructure: data,
 			   		modelName: _this.getModel(node),
 			   		schemaName: _this.getSchema(node)

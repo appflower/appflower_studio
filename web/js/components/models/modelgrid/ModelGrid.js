@@ -670,7 +670,12 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            iconCls: 'icon-save',
 	            handler: function(btn, ev) {
 	            	this.getStore().save();
-	            	this.fireEvent("logmessage",this,"modelSave");
+	            	//alert(this.ownerCt._node.text);
+	            	if(this.ownerCt && this.ownerCt._node)
+	            		var message = "model "+this.ownerCt._node.text+" Saved";
+	            	else 
+	            		var message = "model Saved";
+	            	this.fireEvent("logmessage",this,message);
 	            },
 	            scope:this
 	        },'-',{	        	

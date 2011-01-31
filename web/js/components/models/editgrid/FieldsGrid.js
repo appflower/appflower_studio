@@ -45,17 +45,26 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				fields: Ext.encode(aRecords)
 			},
 			success: function(xhr, opt) {
+				if(_this.ownerCt && _this.ownerCt._node)
+            		var message = "model "+_this.ownerCt._node.text+" Config Saved";
+            	else 
+            		var message = "model Config Saved";
+				_this.fireEvent("logmessage",_this,message);
+				
 				var response = Ext.decode(xhr.responseText);
 				afStudio.vp.unmask('center');
 				if (response.success) {					
 					s.commitChanges();					
 					_this.fireEvent('altermodel');
+					
+	            	
 				} else {
 					_this.fireEvent('altermodelexception', xhr);
 					Ext.Msg.alert('Warning', response.message);
 				}
 			},
 			failure: function(xhr, opt) {
+				
 				afStudio.vp.unmask('center');
 				_this.fireEvent('altermodelfailure', xhr);				
 				Ext.Msg.alert('Failure', 'Status: ' + xhr.status);
