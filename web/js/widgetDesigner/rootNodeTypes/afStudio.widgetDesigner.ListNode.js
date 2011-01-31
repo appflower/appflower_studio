@@ -59,15 +59,15 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            ,updateNodeNameFromPropertyId: 'name',
            createProperties: function(){
                return [
-                   new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create(),
-                   new afStudio.widgetDesigner.PropertyBaseType('url','Url').setRequired().create(),
-                   new afStudio.widgetDesigner.PropertyBaseType('iconCls','Icon CSS class').create(),
-                   new afStudio.widgetDesigner.PropertyBaseType('icon','Icon URL').create(),
+                   new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
+                   new afStudio.widgetDesigner.PropertyTypeString('url','Url').setRequired().create(),
+                   new afStudio.widgetDesigner.PropertyTypeString('iconCls','Icon CSS class').create(),
+                   new afStudio.widgetDesigner.PropertyTypeString('icon','Icon URL').create(),
                    new afStudio.widgetDesigner.PropertyTypeBoolean('forceSelection','Force selection').create(),
                    new afStudio.widgetDesigner.PropertyTypeBoolean('post','Post').create(),
                    new afStudio.widgetDesigner.PropertyTypeString('tooltip','Tooltip').create(),
                    new afStudio.widgetDesigner.PropertyTypeString('confirmMsg','Confirm message').create(),
-                   new afStudio.widgetDesigner.PropertyBaseType('condition','Condition').create()
+                   new afStudio.widgetDesigner.PropertyTypeString('condition','Condition').create()
                ];
             }
         });
@@ -113,7 +113,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            iconCls: 'icon-field',
            createProperties: function(){
                return [
-                    new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create(),
+                    new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
                     new afStudio.widgetDesigner.PropertyTypeBoolean('sortable','Sortable').create(),
                     new afStudio.widgetDesigner.PropertyTypeBoolean('editable','Editable').create(),
                     new afStudio.widgetDesigner.PropertyTypeBoolean('resizable','Resizable').create(),

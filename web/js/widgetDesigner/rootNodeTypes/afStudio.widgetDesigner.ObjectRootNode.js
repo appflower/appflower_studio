@@ -32,7 +32,7 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
         return this.datasourceNode;
     },
     createProperties: function(){
-        this.addProperty(new afStudio.widgetDesigner.PropertyBaseType('i:title','Title').create());
-        this.addProperty(new afStudio.widgetDesigner.PropertyTypeBoolean('i:description','Description').create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('i:title','Title').create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('i:description','Description').create());
     }
 });

@@ -12,8 +12,8 @@ afStudio.widgetDesigner.ParamNode = Ext.extend(afStudio.widgetDesigner.Container
     updateNodeNameFromPropertyId: 'name',
     createProperties: function(){
         var properties = [
-            new afStudio.widgetDesigner.PropertyBaseType('name','Name').setRequired().create(),
-            new afStudio.widgetDesigner.PropertyBaseType('_content','Value').setRequired().create()
+            new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
+            new afStudio.widgetDesigner.PropertyTypeString('_content','Value').setRequired().create()
         ];
        for (i=0; i<properties.length;i++){
            this.addProperty(properties[i]);
