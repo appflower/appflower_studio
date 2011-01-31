@@ -383,7 +383,9 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		var items = [];
 						
 		this.relationsGrid.getStore().each(function(rec){
-			items.push(rec)
+                        if (rec.data) {
+                            items.push(rec.data);
+                        }
 		});
 		
 		/**
@@ -399,14 +401,13 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		afsWD.createRootNode();
 		afsWD.rootNode.getDatasourceNode().valueSourceChanged();
 		
-		for (k in items)
+		for (k=0; k < items.length; k++)
 		{
-			if(items[k].data)
-			{
-				var field = afsWD.rootNode.getFieldsNode().addChild();
-				field.properties['name'].set('value', items[k].data.field);
-				field.properties['label'].set('value',items[k].data.field.ucfirst());
-			}	
+                    var field = afsWD.rootNode.getFieldsNode().addChild();
+                    field.setNameAndLabel(
+                        items[k].field,
+                        items[k].field.ucfirst()
+                    );
 		}
 		
 

@@ -145,5 +145,9 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.Containe
             }
             this.valueSourceChanged(iValueData);
         }
+    },
+    setNameAndLabel: function(name, label) {
+        this.properties['name'].set('value', name);
+        this.properties['label'].set('value', label);
     }
 });
