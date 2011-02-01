@@ -323,4 +323,14 @@ class appFlowerStudioActions extends sfActions
         return $this->renderJson($aWidgets);
         
     }
+    
+    /**
+     * Process layout pages functionality
+     */
+    public function executeLayout(sfWebRequest $request)
+    {
+        $oLayout = new afStudioLayoutCommand();
+        return $this->renderText($oLayout->end());
+    }
+    
 }

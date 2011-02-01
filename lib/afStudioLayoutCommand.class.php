@@ -6,7 +6,6 @@
  */
 class afStudioLayoutCommand
 {
-	
     /**
      * Request instance
      */
@@ -41,9 +40,12 @@ class afStudioLayoutCommand
 		$this->app = $this->request->hasParameter('app') ? $this->request->getParameter('app') : false;
 		$this->moduleName = $this->request->hasParameter('moduleName') ? $this->request->getParameter('moduleName') : false;
 		
-		// $this->start();
+		$this->start();
 	}
 	
+    /**
+     * Separate to different controllers part
+     */
 	public function start()
 	{
 		$cmd = $this->request->getParameterHolder()->has('cmd') ? $this->request->getParameterHolder()->get('cmd') : null;
@@ -55,68 +57,85 @@ class afStudioLayoutCommand
             if (method_exists($this, $controller_name)) {
                 call_user_func(array($this, $controller_name));
             } else {
-                // TODO: throw
+                throw new Exception("Controller: '{$controller_name}' not defined");
             }
             
 		}
 	}
 	
+    /**
+     * Getting tree list controller
+     */
     private function processGet()
     {
-        $i=0;
-                    
-        $data = array();
-        $apps = afStudioUtil::getDirectories($this->realRoot . "/apps/", true);
+        $tree = array();
         
-        foreach($apps as $app)
-        {
-            $data[$i]['text'] = $app;
-            $data[$i]['type'] = 'app';
+        $aPageList = $this->getPagesList();
+        
+        foreach ($aPageList as $app => $aPage) {
             
-            $xmlNames = afStudioUtil::getFiles($this->realRoot . "/apps/{$app}/config/pages/", true, 'xml');
-            $xmlPaths = afStudioUtil::getFiles($this->realRoot . "/apps/{$app}/config/pages/", false, 'xml');
+            $treeNode['text'] = $app;
+            $treeNode['type'] = 'app';
             
-            $j=0;
-            
-            if (count($xmlNames) > 0) {
-                foreach ($xmlNames as $xk => $page) {
-                    $data[$i]['children'][$j]['app'] = $app;
-                    $data[$i]['children'][$j]['text'] = $page;
-                    $data[$i]['children'][$j]['xmlPath'] = $xmlPaths[$xk];
-                    $data[$i]['children'][$j]['leaf'] = true;
-                    
-                    $j++;
+            if (count($aPage) > 0) {
+                foreach ($aPage as $page) {
+                    $treeNode['children'][] = array(
+                        'app' => $app,
+                        'text' => $page['text'],
+                        'xmlPath' => $page['xmlPath'],
+                        'leaf' => true
+                    );
                 }
             } else {
-                $data[$i]['leaf']=true;
-                $data[$i]['iconCls']='icon-folder';
+                $treeNode['leaf'] = true;
+                $treeNode['iconCls'] = 'icon-folder';
             }
             
-            $i++;
+            $tree[] = $treeNode;
         }
         
-        if(count($data) > 0) {
-            $this->result = $data;
+        if(count($tree) > 0) {
+            $this->result = $tree;
         } else {
             $this->result = array('success' => true);
         }
+        
     }
     
+    /**
+     * Getting pages list from applications 
+     * 
+     * @return array
+     */
+    private function getPagesList()
+    {
+        $data = array();
+        $apps = afStudioUtil::getDirectories($this->realRoot . "/apps/", true);
+        
+        foreach($apps as $app) {
+            $xmlNames = afStudioUtil::getFiles($this->realRoot . "/apps/{$app}/config/pages/", true, 'xml');
+            $xmlPaths = afStudioUtil::getFiles($this->realRoot . "/apps/{$app}/config/pages/", false, 'xml');
+            
+            if (count($xmlNames) > 0) {
+                foreach ($xmlNames as $xk => $page) {
+                    $data[$app][] = array(
+                        'text' => $page,
+                        'xmlPath' => $xmlPaths[$xk],
+                    );
+                }
+            }
+        }
+        
+        return $data;
+    }
+    
+    
 	public function end()
-	{	
-		$this->result=json_encode($this->result);
+	{
+		$this->result = json_encode($this->result);
 		return $this->result;
 	}
     
-    public function setCommand($sCommand)
-    {
-        $this->cmd = $sCommand;
-    }
-    
-    public function getCommand()
-    {
-        return $this->cmd;
-    }
     
 }
 ?>
