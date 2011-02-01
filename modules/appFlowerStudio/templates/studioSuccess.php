@@ -98,6 +98,7 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeBehaviors/base/afStudio.widgetDesigner.BaseBehavior.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.BaseNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.ContainerNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.CollectionNode.js"></script>

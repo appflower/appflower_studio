@@ -22,6 +22,7 @@ N.BaseNode = function(config){
     this._initEvents();
     this.createProperties();
     this.addRequiredChilds();
+    this.behaviors = [];
 };
 Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
     /**
@@ -66,10 +67,18 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             this.containsIParams = true;
         }
     },
+    addProperties: function(properties){
+        for(i=0; i<properties.length;i++) {
+            this.addProperty(properties[i]);
+        }
+    },
     configureFor: function(widgetData){
         for(id in widgetData){
             var value = widgetData[id];
             this.configureForValue(id, value);
+        }
+        for(i=0;i<this.behaviors.length;i++) {
+            this.behaviors[i].configureFor(this, widgetData);
         }
     },
     configureForValue: function(id, value){
@@ -103,6 +112,9 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
                 this.setText(property.get('value'));
             }
         }
+        for(i=0;i<this.behaviors.length;i++) {
+            this.behaviors[i].propertyChanged(this, property);
+        }
     },
     dumpDataForWidgetDefinition: function(){
 
@@ -114,6 +126,10 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             if (propertiesData[key] != '') {
                 childsData[key] = propertiesData[key];
             }
+        }
+
+        for(i=0;i<this.behaviors.length;i++) {
+            childsData = this.behaviors[i].dumpDataForWidgetDefinition(this, childsData);
         }
 
         return childsData;
@@ -162,5 +178,12 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
     /**
      * If given node should have some childs when builded - this method should do this
      */
-    addRequiredChilds: Ext.emptyFn
+    addRequiredChilds: Ext.emptyFn,
+    /**
+     * Adds behavior to given node
+     */
+    addBehavior: function(WITreeNodeBehavior){
+        this.behaviors.push(WITreeNodeBehavior);
+        this.addProperties(WITreeNodeBehavior.createBehaviorProperties());
+    }
 });
