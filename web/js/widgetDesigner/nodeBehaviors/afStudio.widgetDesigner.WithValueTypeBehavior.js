@@ -110,7 +110,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
      * We need to detect when valueSource was changed
      */
     propertyChanged: function(node, property){
-        if (property && property.id == 'valueSource') {
+        if (property.id == 'valueSource') {
             this.valueSourceChanged(node);
         }
     },

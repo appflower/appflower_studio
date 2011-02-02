@@ -7,8 +7,8 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.Containe
         var behavior = new afStudio.widgetDesigner.WithValueTypeBehavior;
         behavior.setValueTypeDataKey('i:value');
         this.addBehavior(behavior);
+        this.addBehavior(new afStudio.widgetDesigner.WithNamePropertyAsLabelBehavior);
     },
-    updateNodeNameFromPropertyId: 'name',
 
     getNodeConfig: function(){
         return {

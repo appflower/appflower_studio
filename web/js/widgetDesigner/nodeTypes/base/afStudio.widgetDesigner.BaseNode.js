@@ -26,11 +26,6 @@ N.BaseNode = function(config){
 };
 Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
     /**
-     * When concrete node sets here name of one of its properties then each time
-     * that property changes - node text label is updated accordingly
-     */
-    updateNodeNameFromPropertyId: false,
-    /**
      * This method should create an instance of Ext.menu.Menu class and place it in this.contextMenu variable
      * If defined - context menu will be displayed when given node is clicked with right mouse button
      */
@@ -107,11 +102,10 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         }
     },
     propertyChanged: function(property) {
-        if (this.updateNodeNameFromPropertyId){
-            if (property && property.id && property.id == this.updateNodeNameFromPropertyId) {
-                this.setText(property.get('value'));
-            }
+        if (!property) {
+            return;
         }
+
         for(i=0;i<this.behaviors.length;i++) {
             this.behaviors[i].propertyChanged(this, property);
         }

@@ -17,10 +17,9 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
     },
 	addRequiredChilds: function(){
         afStudio.widgetDesigner.ListNode.superclass.addRequiredChilds.apply(this);
-        var actionNode = this.buildActionNode();
-        var actionsNode = this.buildActionsNode(actionNode);
-        var rowactionsNode = this.buildRowactionsNode(actionNode);
-        var moreactionsNode = this.buildMoreactionsNode(actionNode);
+        var actionsNode = this.buildActionsNode(afStudio.widgetDesigner.ActionNode);
+        var rowactionsNode = this.buildRowactionsNode(afStudio.widgetDesigner.ActionNode);
+        var moreactionsNode = this.buildMoreactionsNode(afStudio.widgetDesigner.ActionNode);
         var proxyNode = this.buildProxyNode();
 
         this.appendChild(new actionsNode);
@@ -51,26 +50,6 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         });
 
         return new fieldsNode;
-    },
-    buildActionNode: function(){
-        var actionNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
-           text: 'new action'
-           ,updateNodeNameFromPropertyId: 'name',
-           createProperties: function(){
-               return [
-                   new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
-                   new afStudio.widgetDesigner.PropertyTypeString('url','Url').setRequired().create(),
-                   new afStudio.widgetDesigner.PropertyTypeString('iconCls','Icon CSS class').create(),
-                   new afStudio.widgetDesigner.PropertyTypeString('icon','Icon URL').create(),
-                   new afStudio.widgetDesigner.PropertyTypeBoolean('forceSelection','Force selection').create(),
-                   new afStudio.widgetDesigner.PropertyTypeBoolean('post','Post').create(),
-                   new afStudio.widgetDesigner.PropertyTypeString('tooltip','Tooltip').create(),
-                   new afStudio.widgetDesigner.PropertyTypeString('confirmMsg','Confirm message').create(),
-                   new afStudio.widgetDesigner.PropertyTypeString('condition','Condition').create()
-               ];
-            }
-        });
-        return actionNode;
     },
     buildActionsNode: function(actionNodeConstructor){
         var actionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({

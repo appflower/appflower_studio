@@ -4,12 +4,15 @@
  * Also in validators
  */
 afStudio.widgetDesigner.ParamNode = Ext.extend(afStudio.widgetDesigner.ContainerNode, {
+    constructor: function(){
+        afStudio.widgetDesigner.ParamNode.superclass.constructor.apply(this, arguments);
+        this.addBehavior(new afStudio.widgetDesigner.WithNamePropertyAsLabelBehavior);
+    },
     getNodeConfig: function(){
         return {
             'text': 'parameter'
         };
     },
-    updateNodeNameFromPropertyId: 'name',
     createProperties: function(){
         var properties = [
             new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),

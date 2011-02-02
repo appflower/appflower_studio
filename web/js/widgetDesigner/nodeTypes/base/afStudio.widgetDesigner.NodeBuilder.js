@@ -25,10 +25,6 @@ afStudio.widgetDesigner.NodeBuilder = {
             return nodeConfig;
         }
 
-        if (config.updateNodeNameFromPropertyId) {
-            p.updateNodeNameFromPropertyId = config.updateNodeNameFromPropertyId;
-        }
-
         if (config.createProperties) {
             p.createProperties = function(){
                 var properties = config.createProperties();

@@ -7,8 +7,8 @@ afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.Container
         var behavior = new afStudio.widgetDesigner.WithValueTypeBehavior;
         behavior.setValueTypeDataKey('i:value');
         this.addBehavior(behavior);
+        this.addBehavior(new afStudio.widgetDesigner.WithNamePropertyAsLabelBehavior);
     },
-    updateNodeNameFromPropertyId: 'name',
 
     getNodeConfig: function(){
         return {
