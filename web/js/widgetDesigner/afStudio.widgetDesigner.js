@@ -166,7 +166,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				cmp.add({
 					xtype: 'afStudio.widgetDesigner.designer',
                     widgetUri: this.widgetUri,
-                    rootNode: this.rootNode,
+                    rootNodeEl: this.rootNodeEl,
                     listeners:{
                     	logmessage:function(cmp,message){
                     		this.fireEvent("logmessage",cmp,message);

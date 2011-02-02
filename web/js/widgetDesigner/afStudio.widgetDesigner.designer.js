@@ -153,7 +153,7 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 	,preview: function(){
 		
 		//TODO: added dummy values 
-		afApp.widgetPopup(this.widgetUri, this.rootNode.text, null, "iconCls:\'" + "\',width:800,height:600,maximizable: false", afStudio);
+		afApp.widgetPopup(this.widgetUri, this.rootNodeEl.text, null, "iconCls:\'" + "\',width:800,height:600,maximizable: false", afStudio);
 		
 		var els = Ext.DomQuery.select('DIV[class*="redborder"]', 'widget-designer-panel');
 		for(var i=0, l=els.length; i<l; i++ ){
@@ -240,7 +240,8 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 					items: [
 						{
                             xtype: 'afStudio.widgetDesigner.inspector',
-                            widgetUri: this.widgetUri
+                            widgetUri: this.widgetUri,
+                            rootNodeEl: this.rootNodeEl
                         }
 					]
 				}
