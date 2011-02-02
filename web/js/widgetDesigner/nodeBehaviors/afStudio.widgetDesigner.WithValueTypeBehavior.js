@@ -118,46 +118,53 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
      * now we must build data that is send back to server 
      */
     dumpDataForWidgetDefinition: function(node, nodeWidgetData){
-        var newNodeData = {};
+        
+        if (nodeWidgetData['valueType']) {
+            delete nodeWidgetData.valueType;
+        }
+
+        if (nodeWidgetData['valueSource']) {
+            delete nodeWidgetData.valueSource;
+        }
+
+
         if (this.valueSourceNode) {
             var valueSourceNodeId = this.valueSourceNode.id;
             var valueTypeData = nodeWidgetData[valueSourceNodeId];
-            for (i in nodeWidgetData) {
-                if (i != valueSourceNodeId && i != 'valueType' && i != 'valueSource') {
-                    newNodeData[i] = nodeWidgetData[i];
-                }
-            }
-        } else {
-            newNodeData = nodeWidgetData;
+            delete nodeWidgetData[valueSourceNodeId];
         }
 
         var valueType = node.getProperty('valueType').get('value');
         var valueSource = node.getProperty('valueSource').get('value');
 
         var valueNode = {};
+        
         if (valueType) {
             valueNode['type'] = valueType;
         } else {
             valueNode['type'] = 'orm';
         }
-        switch (valueSource) {
-            case 'source':
-                    valueNode['i:source'] = {name: valueTypeData['name']};
-                break;
-            case 'classAndMethod':
-                    valueNode['i:class'] = valueTypeData['i:class'];
-                    valueNode['i:method'] = valueTypeData['i:method'];
-                break;
-            case 'item':
-                    valueNode['i:source'] = {name: valueTypeData['name']};
-                break;
-            case 'static':
-                    valueNode['i:source'] = {name: valueTypeData['name']};
-                break;
 
+        if (valueNode['type'] == 'orm' && valueSource != '') {
+            switch (valueSource) {
+                case 'source':
+                        valueNode['i:source'] = {name: valueTypeData['name']};
+                    break;
+                case 'classAndMethod':
+                        valueNode['i:class'] = valueTypeData['i:class'];
+                        valueNode['i:method'] = valueTypeData['i:method'];
+                    break;
+                case 'item':
+                        valueNode['i:source'] = {name: valueTypeData['name']};
+                    break;
+                case 'static':
+                        valueNode['i:source'] = {name: valueTypeData['name']};
+                    break;
+
+            }
+            nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
         }
-        newNodeData = this.mergeInValueTypeData(newNodeData, valueNode);
 
-        return newNodeData;
+        return nodeWidgetData;
     }
 });

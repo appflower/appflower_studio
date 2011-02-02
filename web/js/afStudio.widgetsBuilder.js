@@ -399,7 +399,6 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		var afsWD = new afStudio.widgetDesigner.WidgetDefinition(module+'/'+action, type);
 
 		afsWD.createRootNode();
-		afsWD.rootNode.getDatasourceNode().valueSourceChanged();
 		
 		for (k=0; k < items.length; k++)
 		{

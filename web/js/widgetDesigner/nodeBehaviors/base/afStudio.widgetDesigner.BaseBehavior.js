@@ -25,6 +25,9 @@ Ext.apply(afStudio.widgetDesigner.BaseBehavior.prototype, {
     /**
      * this method gets attached node widgetData and it should modify it if needed
      * after any modifications it should return widgetData (with some values changed probably)
+     * default implementation just returns widgetData without modifying it
      */
-    dumpDataForWidgetDefinition: function(node, nodeWidgetData){}
+    dumpDataForWidgetDefinition: function(node, nodeWidgetData){
+        return nodeWidgetData;
+    }
 });
