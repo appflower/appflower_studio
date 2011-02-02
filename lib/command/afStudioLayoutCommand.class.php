@@ -12,31 +12,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
      */
     protected function processGet()
     {
-        $tree = array();
-        
-        $aPageList = $this->getPagesList();
-        
-        foreach ($aPageList as $app => $aPage) {
-            
-            $treeNode['text'] = $app;
-            $treeNode['type'] = 'app';
-            
-            if (count($aPage) > 0) {
-                foreach ($aPage as $page) {
-                    $treeNode['children'][] = array(
-                        'app' => $app,
-                        'text' => $page['text'],
-                        'xmlPath' => $page['xmlPath'],
-                        'leaf' => true
-                    );
-                }
-            } else {
-                $treeNode['leaf'] = true;
-                $treeNode['iconCls'] = 'icon-folder';
-            }
-            
-            $tree[] = $treeNode;
-        }
+        $tree = afStudioLayoutCommandHelper::processGet($this->getPagesList());
         
         if(count($tree) > 0) {
             $this->result = $tree;
@@ -51,7 +27,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
      * 
      * @return array
      */
-    protected function getPagesList()
+    private function getPagesList()
     {
         $sRealRoot = afStudioUtil::getRootDir();
         

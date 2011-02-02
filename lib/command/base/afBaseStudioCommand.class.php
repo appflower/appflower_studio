@@ -25,8 +25,6 @@ abstract class afBaseStudioCommand
      */
 	public function process()
 	{
-		// $cmd = $this->request->getParameterHolder()->has('cmd') ? $this->request->getParameterHolder()->get('cmd') : null;
-			
 		if($this->cmd != null) {
 			$controller_name = 'process' . ucfirst(strtolower($this->cmd));
             
