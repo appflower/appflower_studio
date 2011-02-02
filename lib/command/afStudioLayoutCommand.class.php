@@ -12,9 +12,9 @@ class afStudioLayoutCommand extends afBaseStudioCommand
      */
     protected function processGet()
     {
-        $tree = afStudioLayoutCommandHelper::processGet($this->getPagesList());
+    	$tree = afStudioLayoutCommandHelper::processGet($this->getPagesList());
         
-        if(count($tree) > 0) {
+        if (count($tree) > 0) {
             $this->result = $tree;
         } else {
             $this->result = array('success' => true);
@@ -34,7 +34,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $data = array();
         $apps = afStudioUtil::getDirectories($sRealRoot . "/apps/", true);
         
-        foreach($apps as $app) {
+        foreach ($apps as $app) {
             $xmlNames = afStudioUtil::getFiles($sRealRoot . "/apps/{$app}/config/pages/", true, 'xml');
             $xmlPaths = afStudioUtil::getFiles($sRealRoot . "/apps/{$app}/config/pages/", false, 'xml');
             

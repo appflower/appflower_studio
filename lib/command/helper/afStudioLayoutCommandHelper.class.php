@@ -24,6 +24,7 @@ class afStudioLayoutCommandHelper
                 foreach ($aPage as $page) {
                     $treeNode['children'][] = array(
                         'text' => $page['text'],
+                    	'iconCls' => 'icon-layout',
                         'xmlPath' => $page['xmlPath'],
                         'leaf' => true
                     );
