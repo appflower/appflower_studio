@@ -1,10 +1,15 @@
 Ext.namespace('afStudio.layoutDesigner');
 
+/**
+ * @class afStudio.layoutDesigner.DesignerPanel
+ * @extends Ext.Panel
+ * @author Nikolai
+ */
 afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	/**
 	 * @cfg {Number} columnsNumber (defaults to 2)
-	 * Columns number of DesignerPanel 
+	 * Columns number of designer panel 
 	 */
 	 columnsNumber : 2
 	 
@@ -33,6 +38,61 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		}
 	}
 	
+	/**
+	 * Creates widget
+	 * @param {Object} widgetParam
+	 * @return {Object} widget configuration object
+	 */
+	,createWidget : function(widgetParam) {
+		var _this = this,
+		 	widgetTitle = widgetParam.module + '/' + widgetParam.widget;
+		
+		return {
+			title: widgetTitle,
+			frame: true,
+			html: '<br /><center>Widget <b>Dummy Widget</b> <i>Click to edit Widget<i> </center><br />',
+			bodyCssClass: 'layout-designer-widget',
+			tools: [{
+				id: 'close', 
+				handler: _this.removeWidget, 
+				scope: _this
+			}],
+			buttons: [
+			{
+				text: 'Preview', 
+				handler: this.preview
+			},{
+				text: 'Edit', 
+				handler: _this.runWidgetDesigner, 
+				scope: _this
+			}],
+			buttonAlign: 'center'
+		}
+	}//eo createWidget
+	
+	/**
+	 * Creates {@link #designerPortal} column
+	 * @param {Number} id The column's ID
+	 * @param {Number} width The column's width
+	 * @return {Object} column configuration
+	 */
+	,createDesignerColumn : function(id, width) {
+		return {
+			id: 'port-column-' + id,				
+			columnWidth: width,
+			style: 'padding:5px 0 5px 5px',
+			defaults: {
+				bodyCssClass: 'layout-designer-widget'
+			}			
+		}
+	}//eo createDesignerColumn	
+	
+	,addWidget : function(widget) {
+		var cl = this.designerPortal.items.itemAt(0);
+		cl.add(widget);
+		cl.doLayout();  		
+	}
+	
 	//TODO
 	,refreshExistingWidgets : function() {
 		/*
@@ -50,24 +110,6 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		}
 		*/		
 	}//eo refreshExistingWidgets
-	
-	
-	/**
-	 * Creates {@link #designerPortal} column
-	 * @param {Number} id The column's ID
-	 * @param {Number} width The column's width
-	 * @return {Object} column configuration
-	 */
-	,createDesignerColumn : function(id, width) {
-		return {
-			id: 'port-column-' + id,				
-			columnWidth: width,
-			style: 'padding:5px 0 5px 5px',
-			defaults: {
-				bodyCssClass: 'layout-designer-widget'
-			}			
-		}
-	}//eo createDesignerColumn
 
 	/**
 	 * Updates designer panel.
@@ -82,8 +124,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		
 		dp.removeAll(true);
 			   
-		var columnwidth = Ext.util.Format.round(1 / cls, 2);
-		
+		var columnwidth = Ext.util.Format.round(1 / cls, 2);		
 		for (var i = 0; i < cls; i++) {			
 			dpColumns.push(_this.createDesignerColumn(i, columnwidth));
 		}
@@ -201,10 +242,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		
 		newWidgetBtn.on('click', _this.onClickNewWidget, _this);
 		
-		formatColumnCb.on({
-			select: _this.onSelectDesignerColumnNumber,
-			scope: this
-		});		
+		formatColumnCb.on('select', _this.onSelectDesignerColumnsNumber, _this);
 	}//eo _afterInitComponent
 	
 	/**
@@ -219,23 +257,36 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Format->Columns <u>select</u> event listener
 	 * For more detailed information look at {@link Ext.form.ComboBox#select}
 	 */
-	,onSelectDesignerColumnNumber : function(combo, record, index) {
+	,onSelectDesignerColumnsNumber : function(combo, record, index) {
 		var colNum = combo.getValue();
 		this.columnsNumber = colNum;
 		this.refreshDesignerPanel();
-	}
+	}//onSelectDesignerColumnsNumber
 	
-	,onClickNewWidget : function() {
+	,onClickNewWidget : function() {		
 		if (!this.widgetSelectorWindow) {
-			this.widgetSelectorWindow = new afStudio.layoutDesigner.WidgetSelectorWindow();
+			this.widgetSelectorWindow = new afStudio.layoutDesigner.WidgetSelectorWindow();			
+			this.widgetSelectorWindow.on('widgetselect', this.onAddWidget, this);
 		}
-		this.widgetSelectorWindow.show();
+		this.widgetSelectorWindow.show();		
+	}//eo f.getFieldValues()
+	
+	/**
+	 * Creates and adds widget 
+	 * widgetSelectorWindow <u>widgetselect</u> event listener
+	 * @param {Object} widgetParam
+	 */
+	,onAddWidget : function(widgetParam) {
+		var _this = this,
+			    w = _this.createWidget(widgetParam);
+		_this.addWidget(w);	    
 	}
 	
 	/**
 	 * function resizeItems
 	 * Resize button handler
 	 */
+	//TODO rewrite 
 	,resizeItems: function(){
     	var detailp=Ext.getCmp('details-panel');
     	var columns = detailp.columns;

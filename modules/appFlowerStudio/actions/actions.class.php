@@ -311,7 +311,7 @@ class appFlowerStudioActions extends sfActions
 	}    
     
     /**
-     * Getting widgets list by app anem and module name
+     * Getting widgets list by app nane and module name
      */
     public function executeModuleWidgets(sfWebRequest $request)
     {
@@ -320,8 +320,12 @@ class appFlowerStudioActions extends sfActions
         
         $aWidgets = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
         
-        return $this->renderJson($aWidgets);
+        $aExtWidgets = array();
+    	foreach ($aWidgets as $i => $name) {
+    		$aExtWidgets[] = array('id' => $i, 'name' => $name);
+		}
         
+        return $this->renderJson($aExtWidgets);        
     }
     
     /**

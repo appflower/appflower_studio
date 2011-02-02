@@ -21,6 +21,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getModulesUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/modules');
     },
+    getModuleWidgetsUrl: function() {
+        return this.buildUrlFor('/appFlowerStudio/moduleWidgets');
+    },    
     getPluginsUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/plugins');
     },
