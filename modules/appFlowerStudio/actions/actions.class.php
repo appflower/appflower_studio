@@ -329,8 +329,12 @@ class appFlowerStudioActions extends sfActions
      */
     public function executeLayout(sfWebRequest $request)
     {
-        $oLayout = new afStudioLayoutCommand();
-        return $this->renderText($oLayout->end());
+        $sCommand = $request->getParameter('cmd');
+        
+        $aResult = afStudioCommand::process('layout', $sCommand);
+        
+        return $this->renderJson($aResult);
+        
     }
     
 }
