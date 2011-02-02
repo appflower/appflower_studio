@@ -55,7 +55,10 @@ afStudio.layoutDesigner.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					layout: 'fit',
 					
 					draggable: false,
-					items: [{xtype: 'afStudio.layoutDesigner', page: page}]
+					items: [{
+						xtype: 'afStudio.layoutDesigner.designerPanel', 
+						page: page
+					}]
 				}, true);
 	        }
 		});		

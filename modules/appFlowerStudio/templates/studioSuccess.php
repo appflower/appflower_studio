@@ -45,9 +45,6 @@ window.afStudioWSUrls = new afStudio.WSUrlsClass();
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/grid-filtering/ux/grid/filter/ListFilter.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/grid-filtering/ux/grid/filter/NumericFilter.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/grid-filtering/ux/grid/filter/StringFilter.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/portal/Portal.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/portal/PortalColumn.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/portal/Portlet.js"></script>
 
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/examples/portal/sample-grid.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/portalsJS.js"></script>
@@ -70,6 +67,11 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 
+<!-- Portal -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portal.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/PortalColumn.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portlet.js"></script>
+
 <!-- models -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationPicker.js"></script>
@@ -90,6 +92,10 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/DBStructureTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/ContentPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/QueryWindow.js"></script>
+
+<!-- layoutDesigner -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/DesignerPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/WidgetSelectorWindow.js"></script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreePanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreeMenu.js"></script>

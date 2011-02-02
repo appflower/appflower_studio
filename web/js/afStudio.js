@@ -85,7 +85,7 @@ var afStudio = function () {
 			}, true);
 		}
 				
-		,init: function () { 
+		,init : function () { 
 		    Ext.QuickTips.init();
 		    Ext.apply(Ext.QuickTips.getQuickTip(), {
 			    trackMouse: true
@@ -94,9 +94,9 @@ var afStudio = function () {
 			
 			this.initAjaxRedirect();
 			
-			this.tb=new afStudio.toolbar();
+			this.tb = new afStudio.toolbar();
 			this.tb.init();
-			this.vp=new afStudio.viewport();
+			this.vp = new afStudio.viewport();
 			
 			this.console = Ext.getCmp('console-console-tab');
 			
