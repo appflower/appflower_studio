@@ -487,25 +487,22 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	,editplugin: function(node) {
 		
-		
 		afStudio.vp.mask({region:'center'});
 		
 		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(node.attributes.widgetUri);
 		this.widgetDefinition.on('datafetched', function(rootNode, definition){
-			
 			rootNode.configureFor(definition);
-			
 			afStudio.vp.addToPortal({
-				title: node.text + '- Plugin Designer',
+				title: 'Plugin Designer',
 				collapsible: false,
 				draggable: false,
 				layout: 'fit',
 				items: [{
 					xtype: 'afStudio.widgetDesigner',
-					actionPath: node.attributes.actionPath,
-					securityPath: node.attributes.securityPath,
+					actionPath: null,
+					securityPath: null,
 	                widgetUri: node.attributes.widgetUri,
-	                rootNodeEl: rootNode
+	                rootNode: rootNode
 				}]
 			}, true);
 	       afStudio.vp.unmask('center');
