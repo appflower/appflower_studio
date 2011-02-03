@@ -15,10 +15,10 @@ class afStudioCommand
      * 
      * @return object
      */
-    public static function getAdapter($type, $command)
+    public static function getAdapter($type, $command, $params = array())
     {
         $class_name = 'afStudio' . ucfirst(strtolower($type)) . 'Command';
-        $oAdapter = new $class_name($command);
+        $oAdapter = new $class_name($command, $params);
         
         return $oAdapter;
     }
@@ -31,9 +31,9 @@ class afStudioCommand
      * 
      * @return mixed
      */
-    public static function process($type, $command)
+    public static function process($type, $command, $params = array())
     {
-        $oAdapter = self::getAdapter($type, $command);
+        $oAdapter = self::getAdapter($type, $command, $params);
         $aResult = $oAdapter->process();
         
         return $aResult;

@@ -70,10 +70,10 @@ class afsDatabaseQuery
      */
     public static function getTables($connection_name)
     {
-        $oStudioModels = new afStudioModelsCommand();
+        $aPropelSchemaArray = self::getSchemas();
         
         $tables = array();
-        foreach ($oStudioModels->propelSchemaArray as $schemaFile => $array)
+        foreach ($aPropelSchemaArray as $schemaFile => $array)
         {
             if ($array['connection'] == $connection_name) {
                 foreach ($array['classes'] as $phpName => $attributes)
@@ -86,6 +86,64 @@ class afsDatabaseQuery
         }
         
         return $tables;
+    }
+    
+    /**
+     * Getting schemas array from configs
+     * 
+     * @return array Connections and tables
+     */
+    private static function getSchemas()
+    {
+        $configuration = new ProjectConfiguration(null, new sfEventDispatcher());
+        $finder = sfFinder::type('file')->name('*schema.yml')->prune('doctrine');
+        $dirs = array_merge(array(sfConfig::get('sf_config_dir')), $configuration->getPluginSubPaths('/config'));
+        
+        $db_schema = new sfPropelDatabaseSchema();
+        
+        foreach ($dirs as $k => $dir) {
+            if(substr_count($dir, 'appFlower')>0 || substr_count($dir, 'sfPropelPlugin') > 0 || substr_count($dir, 'sfProtoculousPlugin') > 0) {
+                unset($dirs[$k]);
+            }
+        }
+        
+        $dirs = array_values($dirs);
+        
+        $schemas = $finder->in($dirs);
+        
+        foreach ($schemas as $schema) {
+            $aOriginalSchemaArray[$schema] = sfYaml::load($schema);
+
+            if (!is_array($aOriginalSchemaArray[$schema])) {
+                $aOriginalSchemaArray[$schema];
+                continue; // No defined schema here, skipping
+            }
+    
+            if (!isset($aOriginalSchemaArray[$schema]['classes'])) {
+                // Old schema syntax: we convert it
+                $aPropelSchemaArray[$schema] = $db_schema->convertOldToNewYaml($aOriginalSchemaArray[$schema]);
+            }
+    
+            $customSchemaFilename = str_replace(array(
+                str_replace(DIRECTORY_SEPARATOR, '/', sfConfig::get('sf_root_dir')).'/',
+                'plugins/',
+                'config/',
+                '/',
+                'schema.yml'
+            ), array('', '', '', '_', 'schema.custom.yml'), $schema);
+            $customSchemas = sfFinder::type('file')->name($customSchemaFilename)->in($dirs);
+    
+            foreach ($customSchemas as $customSchema) {
+                $aOriginalSchemaArray[$customSchema] = sfYaml::load($customSchema);
+                if (!isset($aOriginalSchemaArray[$customSchema]['classes']))
+                {
+                    // Old schema syntax: we convert it
+                    $aPropelSchemaArray[$customSchema] = $db_schema->convertOldToNewYaml($$aOriginalSchemaArray[$customSchema]);
+                }
+            }
+        }
+        
+        return $aPropelSchemaArray;
     }
 
 }

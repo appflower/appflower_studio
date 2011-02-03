@@ -15,9 +15,15 @@ abstract class afBaseStudioCommand
      */
     protected $cmd;
     
-	public function __construct($command = '')
+    /**
+     * Parameters 
+     */
+    protected $params;
+    
+	public function __construct($command = '', $params = array())
 	{		
 		$this->cmd = $command;
+        $this->params = $params;
 	}
 	
     /**
@@ -58,6 +64,18 @@ abstract class afBaseStudioCommand
     public function getCommand()
     {
         return $this->cmd;
+    }
+    
+    /**
+     * Getting parameters 
+     */
+    protected function getParameter($name)
+    {
+        if (isset($this->params[$name])) {
+            return $this->params[$name];
+        } else {
+            return false;
+        }
     }
     
 }
