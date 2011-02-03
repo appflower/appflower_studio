@@ -705,7 +705,30 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
         var securityPath = this.getSecurityPath(node);
         var widgetUri = node.attributes.widgetUri;
         
-        afStudio.showWidgetDesigner(widgetUri,actionPath,securityPath);		
+        
+		afStudio.vp.mask({region:'center'});
+		
+		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
+		this.widgetDefinition.on('datafetched', function(rootNode, definition){
+			rootNode.configureFor(definition);
+			afStudio.vp.addToPortal({
+				title: 'Plugin Designer',
+				collapsible: false,
+				draggable: false,
+				layout: 'fit',
+				items: [{
+					xtype: 'afStudio.widgetDesigner',
+					actionPath: actionPath,
+					securityPath: securityPath,
+	                widgetUri: widgetUri,
+	                rootNodeEl: rootNode
+				}]
+			}, true);
+	       afStudio.vp.unmask('center');
+		});
+		this.widgetDefinition.fetchAndConfigure();        
+        
+//        afStudio.showWidgetDesigner(widgetUri,actionPath,securityPath);		
 	}
 }); 
 

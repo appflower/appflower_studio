@@ -240,7 +240,8 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 					items: [
 						{
                             xtype: 'afStudio.widgetDesigner.inspector',
-                            widgetUri: this.widgetUri
+                            widgetUri: this.widgetUri,
+                            rootNodeEl: this.rootNodeEl
                         }
 					]
 				}
