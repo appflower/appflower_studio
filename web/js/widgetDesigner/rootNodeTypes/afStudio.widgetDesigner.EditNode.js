@@ -17,7 +17,12 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            id: 'i:fields',
            createChildConstructor: afStudio.widgetDesigner.FieldNode,
            childNodeId: 'i:field',
-           addChildActionLabel: 'Add field'
+           addChildActionLabel: 'Add field',
+           createProperties: function(){
+               return [
+                   new afStudio.widgetDesigner.PropertyTypeString('url','Url').setRequired().create()
+               ];
+            }
         });
 
         return new fieldsNode;

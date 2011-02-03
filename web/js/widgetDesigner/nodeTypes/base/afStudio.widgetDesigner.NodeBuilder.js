@@ -28,9 +28,7 @@ afStudio.widgetDesigner.NodeBuilder = {
         if (config.createProperties) {
             p.createProperties = function(){
                 var properties = config.createProperties();
-                for(var i=0; i<properties.length;i++){
-                    this.addProperty(properties[i]);
-                }
+                this.addProperties(properties);
             };
         }
 

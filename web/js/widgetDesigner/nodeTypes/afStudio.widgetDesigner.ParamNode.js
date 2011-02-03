@@ -18,8 +18,6 @@ afStudio.widgetDesigner.ParamNode = Ext.extend(afStudio.widgetDesigner.Container
             new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
             new afStudio.widgetDesigner.PropertyTypeString('_content','Value').setRequired().create()
         ];
-       for (i=0; i<properties.length;i++){
-           this.addProperty(properties[i]);
-       }
+        this.addProperties(properties);
     }
 });

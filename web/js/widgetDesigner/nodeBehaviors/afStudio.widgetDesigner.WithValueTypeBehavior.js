@@ -15,8 +15,8 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
      */
     createBehaviorProperties: function() {
         return [
-            new afStudio.widgetDesigner.ValueType('valueType', 'Value Type').create(),
-            new afStudio.widgetDesigner.ValueSource('valueSource', 'Value Source').create()
+            new afStudio.widgetDesigner.ValueType().create(),
+            new afStudio.widgetDesigner.ValueSource().create()
         ];
     },
     getValueTypeData: function(widgetData) {
