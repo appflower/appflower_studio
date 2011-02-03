@@ -45,7 +45,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
                         	break;
 	                    case 'edit-plugin':
 	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().editplugin(node);
+	                    	node.getOwnerTree().editPluginXml(node);
 	                        break;
 	                    case 'rename-plugin':
 	                    	var node = item.parentMenu.contextNode;
@@ -195,14 +195,14 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,contextMenuApp: new Ext.menu.Menu({
 	        items: [
 	        {
-	       		id: 'add-module',
+	       		id: 'add-plugin',
 	            text: 'Add Plugin',
 	            iconCls: 'icon-models-add'
 	        }],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
-	                    case 'add-module':
+	                    case 'add-plugin':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().onAddModule(node);
 	                        break;
@@ -213,14 +213,14 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,contextMenuModule: new Ext.menu.Menu({
 	        items: [
 	        {
-	       		id: 'delete-module',
+	       		id: 'delete-plugin',
 	            text: 'Delete Plugin',
 	            iconCls: 'icon-models-delete'
 	        }],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
-	                    case 'delete-module':
+	                    case 'delete-plugin':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().deleteModule(node);
 	                        break;
@@ -231,30 +231,30 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,contextMenuXml: new Ext.menu.Menu({
 	        items: [
 	        {
-	            id: 'edit-xml',
+	            id: 'edit-plugin-xml',
 	            text: 'Edit Plugin',
 	            iconCls: 'icon-models-edit'
 			},{
-	            id: 'rename-xml',
+	            id: 'rename-plugin-xml',
 	            text: 'Rename Plugin',
 	            iconCls: 'icon-edit'
 			},{
-	       		id: 'delete-xml',
+	       		id: 'delete-plugin-xml',
 	            text: 'Delete Plugin',
 	            iconCls: 'icon-models-delete'
 	        }],
 	        listeners: {
 	            itemclick: function(item) {
 	                switch (item.id) {
-	                    case 'delete-xml':
+	                    case 'delete-plugin-xml':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().deleteXml(node);
 	                        break;
-	                    case 'edit-xml':
+	                    case 'edit-plugin-xml':
 	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().editXml(node);
+	                    	node.getOwnerTree().editPluginXml(node);
 	                        break;
-						case 'rename-xml':
+						case 'rename-plugin-xml':
 						
 node.getOwnerTree().treeEditor.triggerEdit(node);						
 						
@@ -441,7 +441,7 @@ node.getOwnerTree().treeEditor.triggerEdit(node);
 						console.body.scroll("bottom", 1000000, true );				      		
 			      	}
 			      	
-			      	_this.editplugin(node);
+			      	_this.editPluginXml(node);
 			      	
 			      	_this.fireEvent('plugincreated', node);
 			    }
@@ -555,7 +555,7 @@ node.getOwnerTree().treeEditor.triggerEdit(node);
 				      	_this.reloadplugins(function(){_this.selectpluginNode(node);});
 				      	
 				      	//update plugin's Grids editor 
-				      	_this.editplugin(node);
+				      	_this.editPluginXml(node);
 				      	
 				      	if (response.console) {
 				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
@@ -578,7 +578,7 @@ node.getOwnerTree().treeEditor.triggerEdit(node);
 		});
 	}//eo renameplugin
 	
-	,editplugin: function(node) {
+	,editPluginXml: function(node) {
 		
 		afStudio.vp.mask({region:'center'});
 		
