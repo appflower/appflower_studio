@@ -5,7 +5,7 @@
 afStudio.widgetDesigner.ValueSource = Ext.extend(afStudio.widgetDesigner.PropertyTypeChoice, {
     defaultValue: '',
     constructor: function(){
-        afStudio.widgetDesigner.PropertyTypeChoice.superclass.constructor.apply(this, arguments);
+        afStudio.widgetDesigner.ValueSource.superclass.constructor.apply(this, arguments);
         this.setChoices({
            'source': 'source',
            'classAndMethod': 'class and method',

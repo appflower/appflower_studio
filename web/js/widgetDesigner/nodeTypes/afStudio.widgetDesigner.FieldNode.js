@@ -20,7 +20,7 @@ afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.Container
        var properties = [
             new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create(),
             new afStudio.widgetDesigner.PropertyTypeString('label','Label').create(),
-            new afStudio.widgetDesigner.PropertyTypeString('type','Type').create(),
+            new afStudio.widgetDesigner.FieldType().create(),
             new afStudio.widgetDesigner.PropertyTypeString('state','State').create(),
             new afStudio.widgetDesigner.PropertyTypeString('style','Style').create(),
        ];
