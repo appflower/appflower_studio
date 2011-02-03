@@ -35,9 +35,11 @@ afStudio.console = Ext.extend(Ext.Panel, {
 				
 				_this.notificationOffset = response.offset;
 				
-		      	var textContent = Ext.getCmp(_this.id + '-notifications-tab').body.dom.innerHTML;
-		      	Ext.getCmp(_this.id + '-notifications-tab').update(textContent+response.notifications);
-		      	Ext.getCmp(_this.id + '-notifications-tab').body.scroll("bottom", 1000000, true );				
+		      	var textContent = Ext.getCmp(_this.id + '-notifications-tab');
+		      	if(textContent){
+		      		textContent.update(textContent.body.dom.innerHTML+response.notifications);
+		      		textContent.body.scroll("bottom", 1000000, true );				
+		      	}
 			}
 			
 		});						
