@@ -110,8 +110,10 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             this.behaviors[i].propertyChanged(this, property);
         }
     },
-    dumpDataForWidgetDefinition: function(){
-
+    dumpDataForWidgetDefinition: function(data){
+        if (!data) {
+            data = {};
+        }
         var childsData = this.dumpChildsData();
         var propertiesData = this.dumpPropertiesData();
 
@@ -126,12 +128,20 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             childsData = this.behaviors[i].dumpDataForWidgetDefinition(this, childsData);
         }
 
-        return childsData;
+        if (this.id.substr(0, 6) == 'xnode-') {
+            for (i in childsData) {
+                data[i] = childsData[i];
+            }
+        } else {
+            data[this.id] = childsData;
+        }
+        
+        return data;
     },
     dumpChildsData: function(){
         var data = {};
         this.eachChild(function(childNode){
-            data[childNode.id] = childNode.dumpDataForWidgetDefinition();
+            data = childNode.dumpDataForWidgetDefinition(data);
         });
         return data;
     },

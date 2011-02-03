@@ -43,14 +43,6 @@ afStudio.widgetDesigner.FieldNodeValueSourceMethod = Ext.extend(afStudio.widgetD
         }
 
         afStudio.widgetDesigner.FieldNodeValueSourceMethod.superclass.configureFor.apply(this, [widgetData]);
-    },
-    dumpDataForWidgetDefinition: function(){
-        var propertiesData = this.dumpPropertiesData();
-        var childsData = this.dumpChildsData();
-
-        childsData['name'] = propertiesData['i:method'];
-        propertiesData['i:method'] = childsData;
-        return propertiesData;
     }
 });
 

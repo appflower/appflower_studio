@@ -34,5 +34,10 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
     createProperties: function(){
         this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('i:title','Title').create());
         this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('i:description','Description').create());
+    },
+    dumpDataForWidgetDefinition: function(){
+        var data = {};
+        afStudio.widgetDesigner.ObjectRootNode.superclass.dumpDataForWidgetDefinition.apply(this, [data]);
+        return data;
     }
 });

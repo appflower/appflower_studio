@@ -127,13 +127,6 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             delete nodeWidgetData.valueSource;
         }
 
-
-        if (this.valueSourceNode) {
-            var valueSourceNodeId = this.valueSourceNode.id;
-            var valueTypeData = nodeWidgetData[valueSourceNodeId];
-            delete nodeWidgetData[valueSourceNodeId];
-        }
-
         var valueType = node.getProperty('valueType').get('value');
         var valueSource = node.getProperty('valueSource').get('value');
 
@@ -148,17 +141,20 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
         if (valueNode['type'] == 'orm' && valueSource != '') {
             switch (valueSource) {
                 case 'source':
-                        valueNode['i:source'] = {name: valueTypeData['name']};
+                        valueNode['i:source'] = {name: nodeWidgetData['name']};
                     break;
                 case 'classAndMethod':
-                        valueNode['i:class'] = valueTypeData['i:class'];
-                        valueNode['i:method'] = valueTypeData['i:method'];
+                        valueNode['i:class'] = nodeWidgetData['i:class'];
+                        valueNode['i:method'] = {
+                            name: nodeWidgetData['i:method'],
+                            'i:param': nodeWidgetData['i:param']
+                        }
                     break;
                 case 'item':
-                        valueNode['i:source'] = {name: valueTypeData['name']};
+                        valueNode['i:source'] = {name: nodeWidgetData['name']};
                     break;
                 case 'static':
-                        valueNode['i:source'] = {name: valueTypeData['name']};
+                        valueNode['i:source'] = {name: nodeWidgetData['name']};
                     break;
 
             }
