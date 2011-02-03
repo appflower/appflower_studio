@@ -10,7 +10,7 @@ afStudio.widgetDesigner.FieldNodeValueSourceBase = Ext.extend(afStudio.widgetDes
 });
 afStudio.widgetDesigner.FieldNodeValueSourceSource = Ext.extend(afStudio.widgetDesigner.FieldNodeValueSourceBase, {
     createProperties: function(){
-       this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('name','Name').setRequired().create());
+       this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('sourceName','Name').setRequired().create());
     }
 });
 

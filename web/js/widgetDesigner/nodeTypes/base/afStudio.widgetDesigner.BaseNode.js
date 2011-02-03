@@ -118,6 +118,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         var propertiesData = this.dumpPropertiesData();
 
         //my array merge :)
+        //TODO: properties are overwriting values that came from childs - this can be dangerous
         for(key in propertiesData) {
             if (propertiesData[key] != '') {
                 childsData[key] = propertiesData[key];

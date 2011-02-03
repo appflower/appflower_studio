@@ -77,6 +77,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
                 var newNode= new afStudio.widgetDesigner.FieldNodeValueSourceSource();
                 if (dataForNewNode['i:source']) {
                     var nodeData = dataForNewNode['i:source'];
+                    nodeData['sourceName'] = nodeData['name'];
                 }
                 break;
             case 'classAndMethod':
@@ -103,7 +104,6 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
                 newNode.configureFor(nodeData);
             }
             node.appendChild(newNode);
-            this.valueSourceNode = newNode;
         }
     },
     /**
@@ -141,7 +141,8 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
         if (valueNode['type'] == 'orm' && valueSource != '') {
             switch (valueSource) {
                 case 'source':
-                        valueNode['i:source'] = {name: nodeWidgetData['name']};
+                        valueNode['i:source'] = {name: nodeWidgetData['sourceName']};
+                        delete nodeWidgetData['sourceName'];
                     break;
                 case 'classAndMethod':
                         valueNode['i:class'] = nodeWidgetData['i:class'];
@@ -149,6 +150,9 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
                             name: nodeWidgetData['i:method'],
                             'i:param': nodeWidgetData['i:param']
                         }
+                        delete nodeWidgetData['i:param'];
+                        delete nodeWidgetData['i:class'];
+                        delete nodeWidgetData['i:method'];
                     break;
                 case 'item':
                         valueNode['i:source'] = {name: nodeWidgetData['name']};
