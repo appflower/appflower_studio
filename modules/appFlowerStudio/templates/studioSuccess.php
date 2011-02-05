@@ -67,6 +67,17 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 
+<!-- Navigation -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/BaseItemTreePanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/LayoutItem.js"></script>
+
+
+<!-- Viewport -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/StudioViewport.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/WestPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/SouthPanel.js"></script>
+
+
 <!-- Portal -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portal.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/PortalColumn.js"></script>
@@ -113,9 +124,9 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/propertyType/base/afStudio.widgetDesigner.PropertyBaseType.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/propertyType/base/afStudio.widgetDesigner.PropertyTypeChoice.js"></script>
 <?php 
-$appFlowerStudioPluginJsPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
+$appFlowerStudioPluginJsPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
 
-$afStudioJsExtensions=sfFinder::type('file')->name('afStudio.*.js')->sort_by_name()->in($appFlowerStudioPluginJsPath);
+$afStudioJsExtensions = sfFinder::type('file')->name('afStudio.*.js')->sort_by_name()->in($appFlowerStudioPluginJsPath);
 foreach ($afStudioJsExtensions as $afStudioJsExtension)
 {
 ?>
@@ -144,7 +155,7 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/examples/form/groupingcombobox/Ext.ux.form.GroupingComboBox.css" />
 
 <?php 
-$appFlowerStudioPluginCssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
+$appFlowerStudioPluginCssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
 
 $afStudioCssExtensions=sfFinder::type('file')->name('afStudio.*.css')->in($appFlowerStudioPluginCssPath);
 foreach ($afStudioCssExtensions as $afStudioCssExtension)

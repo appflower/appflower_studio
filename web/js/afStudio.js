@@ -96,7 +96,7 @@ var afStudio = function () {
 			
 			this.tb = new afStudio.toolbar();
 			this.tb.init();
-			this.vp = new afStudio.viewport();
+			this.vp = new afStudio.viewport.StudioViewport();						  
 			
 			this.console = Ext.getCmp('console-console-tab');
 			

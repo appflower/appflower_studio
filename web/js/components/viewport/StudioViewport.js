@@ -1,5 +1,18 @@
-afStudio.viewport = Ext.extend(Ext.Viewport, { 
+Ext.namespace('afStudio.viewport');
 
+afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, { 
+
+	/**
+	 * @property {Object} viewRegions
+	 * Contains all regions of this viewport 
+	 * {
+	 *  north:  "north panel",
+	 *  center: "center panel",
+	 *  west:   "west panel",
+	 *  south:  "south panel"
+	 * }
+	 */
+	
 	initComponent : function() {
 		
 		var northPanel = new Ext.Panel ({
@@ -27,8 +40,8 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 			style: "padding-right:5px;"
 		});
 		
-		var westPanel = new afStudio.westPanel(),
-			southPanel = new afStudio.southPanel();
+		var  westPanel = new afStudio.viewport.WestPanel(),
+		    southPanel = new afStudio.viewport.SouthPanel();
 		
 		this.viewRegions = {
 			north: northPanel,
@@ -50,7 +63,7 @@ afStudio.viewport = Ext.extend(Ext.Viewport, {
 		
 		// apply config
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		afStudio.viewport.superclass.initComponent.apply(this, arguments);
+		afStudio.viewport.StudioViewport.superclass.initComponent.apply(this, arguments);
 	}
 	
 	/**

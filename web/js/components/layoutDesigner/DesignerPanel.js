@@ -71,6 +71,16 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}//eo createWidget
 	
 	/**
+	 * 
+	 * @param {Ext.EventObject} e The click event.
+	 * @param {Ext.Element} tool The tool Element.
+	 * @param {Ext.ux.Portlet} panel The widget panel
+	 */
+	,removeWidget: function(e, tool, panel) {
+		panel.destroy();
+	}	
+	
+	/**
 	 * Creates {@link #designerPortal} column
 	 * @param {Number} id The column's ID
 	 * @param {Number} width The column's width
@@ -78,7 +88,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 */
 	,createDesignerColumn : function(id, width) {
 		return {
-			id: 'port-column-' + id,				
+			id: 'portal-column-' + id,				
 			columnWidth: width,
 			style: 'padding:5px 0 5px 5px',
 			defaults: {
@@ -87,6 +97,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		}
 	}//eo createDesignerColumn	
 	
+	/**
+	 * Adds widget to layout designer
+	 * @param {} widget
+	 */
 	,addWidget : function(widget) {
 		var cl = this.designerPortal.items.itemAt(0);
 		cl.add(widget);
@@ -179,13 +193,13 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 							}]
 						}
 					},{
-						text: 'Re-size', 
-						handler: this.resizeItems, 
-						scope: this
+						text: 'Re-size',
+						handler: _this.resizeItems, 
+						scope: _this
 					},{
 						text: 'Auto-Adjust', 
-						handler: this.autoAdjust, 
-						scope: this
+						handler: _this.autoAdjust, 
+						scope: _this
 					}]	        		
 	        	}	        	
 	        },'-',{
@@ -238,7 +252,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	    	scope: _this
 		});
 		
-		saveBtn.on('click', _this.saveLayout, _this);
+		saveBtn.on('click', _this.onClickSaveDesignerLayout, _this);
 		
 		newWidgetBtn.on('click', _this.onClickNewWidget, _this);
 		
@@ -263,6 +277,11 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		this.refreshDesignerPanel();
 	}//onSelectDesignerColumnsNumber
 	
+	/**
+	 * New Widget button <u>click</u> event listener
+	 * Creates widget selector window if it is not exist or show it otherwise.
+	 * Widget selector window helps to select new widget to be added listing all modules and their widgets
+	 */
 	,onClickNewWidget : function() {		
 		if (!this.widgetSelectorWindow) {
 			this.widgetSelectorWindow = new afStudio.layoutDesigner.WidgetSelectorWindow();			
@@ -280,6 +299,14 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		var _this = this,
 			    w = _this.createWidget(widgetParam);
 		_this.addWidget(w);	    
+	}	
+ 
+	/**
+	 * Save button <u>click</u> event listener
+	 * Saves layout
+	 */
+	,onClickSaveDesignerLayout : function() {
+		this.fireEvent("logmessage", this, "layout saved");
 	}
 	
 	/**
@@ -287,87 +314,54 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Resize button handler
 	 */
 	//TODO rewrite 
-	,resizeItems: function(){
-    	var detailp=Ext.getCmp('details-panel');
-    	var columns = detailp.columns;
-    	detailp.resizer=[];
-    	if(columns<10){
-	    	for(var i=1;i<columns;i++){
-	    		var resizer = new Ext.Resizable('portColumn'+(i-1), {
-	    			 width: 200,
-	                 minWidth:100,
-	                 minHeight:50,
-	                 listeners:{
-	                	 beforeresize :function(resizer,e){
-	                		 var el = Ext.fly(resizer.el);
-	                		 resizer._width = Ext.fly(el).getWidth();
-	                	 },
-	                	 resize:function(resizer,width,height,e){
-	                		 detailp.resizerHandler(resizer,width,height,e);
-	                	 }
-	                 }
-	    		})
-	    		//resizer.on('resize', detailp.resizerHandler,detailp);
-	    		detailp.resizer.push(resizer);
-	    	}
-    	}else{
-    		var _layout = detailp._layout;
-    		if(_layout){
-    			for(var i=0;i<_layout[0];i++){
-    				for(var j=0;j<_layout[1];j++){
-	    	    		var resizer = new Ext.Resizable('portColumn'+i+j, {
-	    	    			 width: 200,
-	    	                 minWidth:100,
-	    	                 minHeight:50,
-	    	                 listeners:{
-	    	                	 beforeresize :function(resizer,e){
-	    	                		 var el = Ext.fly(resizer.el);
-	    	                		 resizer._width = Ext.fly(el).getWidth();
-	    	                	 },
-	    	                	 resize:function(resizer,width,height,e){
-	    	                		 detailp.resizerHandler(resizer,width,height,e);
-	    	                	 }
-	    	                 }
-	    	    		})
-	    	    		//resizer.on('resize', detailp.resizerHandler,detailp);
-	    	    		detailp.resizer.push(resizer);
-    				}
-    	    	}
-    		}
+	,resizeItems : function() {
+    	var detailp = this;
+    	var columns = detailp.columnsNumber;    	
+    	detailp.resizer = [];
+    		
+    	for (var i = 0; i < columns; i++) {    		
+    		var resizer = new Ext.Resizable('portal-column-' + i, {
+    			 width: 200,
+                 minWidth: 100,
+                 minHeight: 50,
+                 listeners: {
+                	 beforeresize: function(resizer, e) {
+                		 var el = Ext.fly(resizer.el);
+                		 resizer._width = Ext.fly(el).getWidth();
+                	 },
+                	 resize: function(resizer, width, height, e) {
+                		 detailp.resizerHandler(resizer, width, height, e);
+                	 }
+                 }
+    		});
+    		detailp.resizer.push(resizer);
     	}
-	},
-	
+	}//eo resizeItems
+
 	/**
-	 * function autoAdjust
-	 * Auto-Adjust button handler
+	 * Auto-Adjust button handler 
 	 */
-	//TODO rewrite 
-	autoAdjust: function(){
-		var els = Ext.DomQuery.select('DIV[class*="x-portlet"]', 'details-panel');
-//		var els = Ext.DomQuery.select('DIV[id*="portColum"]', 'details-panel');
-		for(var i=0, l=els.length; i<l; i++ ){
+	,autoAdjust : function() {
+		var els = Ext.DomQuery.select('div[class*="x-portlet"]', this.designerPortal.el);
+		
+		for (var i = 0, l = els.length; i < l; i++) {
 			var cmp = Ext.getCmp(els[i].id);
-			var w = cmp.ownerCt.getWidth();
+			var colW = cmp.ownerCt.getWidth();
 			
-			cmp.setWidth(w);
-			Ext.get(els[i]).setWidth(w);
+			cmp.setWidth(colW);
+			Ext.get(els[i]).setWidth(colW);
 			
 			cmp.doLayout();
 			cmp.ownerCt.doLayout();
 		}
-	},
-		
-	//TODO rewrite 
-	saveLayout: function(){
-		this.fireEvent("logmessage",this,"layout saved");
-	},	
+	}//eo autoAdjust	
 	
 	/**
 	 * Function preview
 	 * Show preview window with real widget
 	 */
 	//TODO rewrite 
-	preview: function() {		
+	,preview: function() {		
 		//TODO: if user clicks on the "Preview" button in the LayoutDesigner widget panel. not sure if this is the better solution
 		try {
 			var wp = this.ownerCt.ownerCt.widgetParams;
@@ -380,102 +374,34 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		}
 		
 		afApp.widgetPopup("/afGuardUserProfile/edit", title, null, "iconCls:\'" +iconCls+ "\',width:800,height:600,maximizable: false", afStudio);
-	},
+	}
 	
 	/**
 	 * Function runWidgetDesigner
 	 * Create widget Designer 
-	 */	
-	runWidgetDesigner: function(){
+	 */
+	//TODO rewrite make it working with real data
+	,runWidgetDesigner : function() {
         var actionPath = "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/actions\/actions.class.php";
         var securityPath = "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/config\/security.yml";
         var widgetUri = 'afGuardUserProfile/edit';
-
-//        node.attributes.widgetUri;
 
 		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...', removeMask:true});
 		mask.show();
 		
 		afStudio.vp.addToPortal({
-			title: 'Widget Designer', layout: 'fit',
-			collapsible: false, draggable: false,
-			items: [
-				{xtype: 'afStudio.widgetDesigner', actionPath: actionPath, securityPath: securityPath, widgetUri: widgetUri, mask: mask}
-			]
+			title: 'Widget Designer', 
+			layout: 'fit',
+			collapsible: false, 
+			draggable: false,
+			items: [{
+				xtype: 'afStudio.widgetDesigner', 
+				actionPath: actionPath, 
+				securityPath: securityPath, 
+				widgetUri: widgetUri, 
+				mask: mask
+			}]
 		}, true);		
-	},
-	
-	/**
-	 * Function addWidgetCmp
-	 * Add widget panel to the layout designer container
-	 * @return {Void}
-	 */
-	addWidgetCmp: function(){
-		var tree = Ext.getCmp(this.id + '-widgets-tree');
-		try {
-			var sn = tree.getSelectionModel().selNode;
-			var text = sn.text;
-			var params = {iconCls: sn.attributes.iconCls, title: sn.attributes.text};
-		} catch(e){
-			var text = 'Default Widget Name';
-			var params = {iconCls: 'icon-folder', title: text};
-		}
-		this.addWidgetToCnt(text, params);
-	},
-	
-	/**
-	 * Function addWidgetToCnt
-	 * Add widget to the Layout Container
-	 * @param {String} text 
-	 * @param {Object} params
-	 */
-	addWidgetToCnt: function(text, params){
-		var component = this.getNewWidgetCfg(text);
-		component.widgetParams = params;
-		//TODO: Quick fix
-		var qty_columns = Ext.getCmp('details-panel').columns;
-		if(qty_columns < 10){
-			var cp = Ext.getCmp(this.id + '-layout-designer-portal');
-		} else {
-			var cp = Ext.getCmp(this.id + '-layout-designer-portal0');
-		}
-		
-		var clnNum = 0;
-		var portalColumn = cp.items.itemAt(clnNum);
-		portalColumn.add(component);
-		portalColumn.doLayout();
-		
-		Ext.getCmp(this.id + '-widgets-tree-wnd').close();
-	},
-	
-	/**
-	 * Function getNewWidgetCfg 
-	 * @param {String} text
-	 * @return {Object} New widget cfg
-	 */
-	getNewWidgetCfg : function(text){
-		return {html: '<br><center>Widget <b>' + text + '</b> <i>Click to edit Widget<i></center><br>', title: text, frame: true,
-			bodyCssClass: 'layout-designer-widget',
-			tools:[
-				{id: 'close', handler: this.removeWidget, scope: this}
-			],
-			buttons: [
-				{text: 'Preview', handler: this.preview/*, scope: this*/},
-				{text: 'Edit', handler: this.runWidgetDesigner, scope: this}
-			],
-			buttonAlign: 'center',
-			getWidgetConfig: function () { var o={}; o.idxml=this.idxml || false; return o; }
-		}		
-	},
-	
-	/**
-	 * Function remove widget
-	 * @param {Object} e browser event
-	 * @param {Object} tool current tool
-	 * @param {Object} panel owner panel
-	 */
-	removeWidget: function(e, tool, panel){
-		panel.destroy();
 	}
 	
 });

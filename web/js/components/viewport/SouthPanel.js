@@ -1,18 +1,17 @@
-
 /**
- * afStudio south region panel
- * @class afStudio.southPanel
+ * South region panel
+ * @class afStudio.viewport.SouthPanel
  * @extends Ext.Panel
  * @author Nikolai
  */
-afStudio.southPanel = Ext.extend(Ext.Panel, { 
+afStudio.viewport.SouthPanel = Ext.extend(Ext.Panel, { 
 
 	/**
 	 * Initializes component
 	 * @return {Object} The config object
 	 * @private
 	 */
-	_initCmp : function() {
+	_beforeInitComponent : function() {
 		return {
 			id: 'south_panel',
 			region: "south",
@@ -31,7 +30,7 @@ afStudio.southPanel = Ext.extend(Ext.Panel, {
 	 * @private
 	 */
 	,initComponent: function() {
-		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
-		afStudio.southPanel.superclass.initComponent.apply(this, arguments);
+		Ext.apply(this, Ext.apply(this.initialConfig, this._beforeInitComponent()));
+		afStudio.viewport.SouthPanel.superclass.initComponent.apply(this, arguments);
 	}
 });

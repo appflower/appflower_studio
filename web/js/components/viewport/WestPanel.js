@@ -1,4 +1,5 @@
-afStudio.westPanel = Ext.extend(Ext.Panel, { 
+
+afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 
 	initComponent: function(){
 		
@@ -11,19 +12,23 @@ afStudio.westPanel = Ext.extend(Ext.Panel, {
 			autoHeight: false,
 			autoScroll: true,
 			split: true,
-			layoutConfig: { animate: true },
+			layoutConfig: { 
+				animate: true 
+			},
 			collapsible: true,
 			layout: "accordion",
-			listeners: {"beforerender": function(){this.activeItem = this.findById("models")}},
-			defaults: {
-				border: false
-			},			
+			listeners: {
+				beforerender: function() {
+					this.activeItem = this.findById("models")
+				}
+			},
 			defaults: {
 				border: false
 			},
 			items: [				
 				new afStudio.models.treePanel({id:'models'}),
-				new afStudio.layoutDesigner.treePanel({id:'layoutdesigner'}),
+				new afStudio.navigation.LayoutItem({id:'layoutdesigner'}),
+//				new afStudio.layoutDesigner.tree2(),
 			    new afStudio.widgets.treePanel({id:'widgets'}),
 			    new afStudio.plugins.treePanel({id:'plugins'}),
 			    
@@ -40,6 +45,6 @@ afStudio.westPanel = Ext.extend(Ext.Panel, {
 				
 		// apply config
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		afStudio.westPanel.superclass.initComponent.apply(this, arguments);	
+		afStudio.viewport.WestPanel.superclass.initComponent.apply(this, arguments);	
 	}
 });
