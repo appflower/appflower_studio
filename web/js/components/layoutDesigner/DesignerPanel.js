@@ -214,11 +214,9 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		});
 		
 		return {
-			id: 'details-panel',
+			title: 'Layout Designer',
 			layout: 'fit',
 			tbar: tb,
-	        bodyBorder: false, 
-	        border: false,			
 			autoScroll: true,
 			items: 	_this.designerPortal
 		}		

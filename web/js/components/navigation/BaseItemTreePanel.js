@@ -27,8 +27,28 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
      * @cfg {Boolean} autoScroll (defaults to true)   
      */
     ,autoScroll : true
-
 	
+    /**
+     * Returns node's attribute
+     * @param {Ext.tree.TreeNode} node required
+     * @param {String} attribute required
+     * @param {Mixed} defaultValue optional
+     * @return attribute / null
+     */
+    ,getNodeAttribute : function(node, attribute, defaultValue) {
+    	return node.attributes[attribute]
+    				? node.attributes[attribute] 
+    				: (defaultValue ? defaultValue : null);
+    }//eo getNodeAttribute
+    
+    /**
+	 * Selects node
+	 * @param {Ext.tree.TreeNode} node The node to be selected
+	 */
+	,selectNode : function(node) {
+		this.selectPath(node.getPath());
+	}//eo selectNode
+    
 	/**
 	 * Initializes component
 	 * @private
@@ -43,18 +63,9 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			draggable: false
 		});
 		
-		var treeLoader = new Ext.tree.TreeLoader({
-			url: _this.baseUrl,
-			baseParams: {
-				cmd: 'get'
-			}
-		});
-		
 		return {
-//			reallyWantText: 'Do you really want to',
 		    root: rootNode,
-		    rootVisible: false,
-		    loader: treeLoader,			
+		    rootVisible: false,			
 			tools: [{
 				id: 'refresh', 
 				handler: function() {
@@ -84,7 +95,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */	
 	,_afterInitComponent : function() {
 		var _this = this;
-		
+	 
 		//Loader Events
 		_this.loader.on({
 			 beforeload: function(loader,node,clb) {
@@ -96,6 +107,31 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			 ,loadexception: function(loader,node,resp) {
 				node.getOwnerTree().body.unmask();
 			 }
-		});		
-	}//eo _afterInitComponent	
+		});
+		
+		//Tree events
+		_this.on({
+			contextmenu: _this.onNodeContextMenu,
+			dblclick: _this.onNodeDblClick,
+			scope: _this
+	    });
+	}//eo _afterInitComponent
+	
+	/**
+	 * <u>dblclick</u> event listener
+	 * @protected
+	 * @param {Ext.data.Node} node The node
+	 * @param {Ext.EventObject} e The event object
+	 */
+	,onNodeDblClick : Ext.emptyFn
+	
+	/**
+	 * <u>contextmenu</u> event listener
+	 * For moere detailed information look at {@link Ext.tree.TreePanel#contextmenu} 
+	 * @protected 
+	 * @param {Ext.data.Node} node The node
+	 * @param {Ext.EventObject} e The event object 
+	 */
+	,onNodeContextMenu : Ext.emptyFn
+	
 });

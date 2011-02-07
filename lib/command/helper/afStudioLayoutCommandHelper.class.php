@@ -26,7 +26,8 @@ class afStudioLayoutCommandHelper
                         'text' => $page['text'],
                     	'iconCls' => 'icon-layout',
                         'xmlPath' => $page['xmlPath'],
-                        'leaf' => true
+                        'leaf' => true,
+                    	'type' => 'page'
                     );
                 }
             } else {
