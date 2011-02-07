@@ -98,6 +98,13 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             var child = this.findChild('id', id);
             if (child){
                 child.configureFor(value);
+            } else {
+                child = this.findChild('childNodeId', id);
+                if (child){
+                    var tmpObj = {};
+                    tmpObj[id] = value;
+                    child.configureFor(tmpObj);
+                }
             }
         }
     },
