@@ -9,7 +9,10 @@ afStudio.widgetDesigner.FieldNode = Ext.extend(afStudio.widgetDesigner.Container
         this.addBehavior(behavior);
         this.addBehavior(new afStudio.widgetDesigner.WithNamePropertyAsLabelBehavior);
     },
-
+    addRequiredChilds: function(){
+        var validatorsNode = new afStudio.widgetDesigner.ValidatorsNode;
+        this.appendChild(validatorsNode);
+    },
     getNodeConfig: function(){
         return {
             'text': 'new field',
