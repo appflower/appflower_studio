@@ -11,7 +11,7 @@ class afStudioLayoutCommandHelper
      * Returns ExtJS data 
      * @return array the tree structure
      */
-    public static function processGet($aPageList)
+    public static function processGetList($aPageList)
     {
     	$tree = array();
         

@@ -1,6 +1,6 @@
 <?php
 /**
- * afStudioLayout tree panel Command
+ * afStudioLayout Command
  *
  * @author startsev.sergey@gmail.com
  */
@@ -10,9 +10,9 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     /**
      * Getting tree list controller
      */
-    protected function processGet()
+    protected function processGetList()
     {
-    	$tree = afStudioLayoutCommandHelper::processGet($this->getPagesList());
+    	$tree = afStudioLayoutCommandHelper::processGetList($this->getPagesList());
         
         if (count($tree) > 0) {
             $this->result = $tree;
@@ -20,6 +20,72 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             $this->result = array('success' => true);
         }
         
+    }
+    
+    /**
+     * Getting needed page definition
+     */
+    protected function processGet()
+    {
+        $root_dir = sfConfig::get('sf_root_dir');
+        
+        $sPath = "{$root_dir}/apps/{$this->getParameter('app')}/config/pages/{$this->getParameter('page')}";
+        
+        if (file_exists($sPath)) {
+            $options = array(
+                'parseAttributes' => true,
+                'attributesArray' => 'attributes',
+                'mode' => 'simplexml',
+            );
+    
+            $unserializer = new XML_Unserializer($options);
+            $status = $unserializer->unserialize($sPath, true);
+    
+            if ($status) {
+                $definition = $unserializer->getUnserializedData();
+                
+                $return = array(
+                    'success' => true,
+                    'page' => $definition
+                );
+            } else {
+                $return = array(
+                    'success' => false,
+                    'message' => "Can't parse page"
+                );
+            }
+        } else {
+            $return = array(
+                'success' => false,
+                'message' => "File doesn't exists"
+            );
+        }
+        
+        $this->result = $return;
+    }
+    
+    /**
+     * Saving changed page information
+     * 
+     * @TODO: need to finish functionality
+     */
+    protected function processSave()
+    {
+        $oXmlUtil = new XML_Util;
+        
+        $options = array(
+            'rootName' => 'i:view',
+            'attributesArray' => 'attributes',
+            'indent' => '    ',
+            'mode' => 'simplexml',
+            'addDecl' => true,
+            'encoding' => 'UTF-8'
+        );
+        
+        $serializer = new XML_Serializer($options);
+        $result = $serializer->serialize($definition);
+        
+        $result = $serializer->getSerializedData();
     }
     
     /**
