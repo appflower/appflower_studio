@@ -16,26 +16,5 @@ afStudio.widgetDesigner.FieldType = Ext.extend(afStudio.widgetDesigner.PropertyT
            'combo': 'combo',
            'multicombo':'multicombo'
         });
-    },
-    setTypeAndValidatorFromModelType: function(modelType) {
-        var type;
-        switch (modelType) {
-            case 'integer': type = ''; break;
-            case 'varchar': type = ''; break;
-            case 'longvarchar': type = ''; break;
-            case 'timestamp': type = ''; break;
-            case 'boolean': type = ''; break;
-/**
-textarea
-checkbox
-hidden
-password
-radio
-file
-combo (same as XHTML <select>)
-multicombo (same as XHTML <select multiple="true">)
-
- */
-        }
     }
 });

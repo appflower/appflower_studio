@@ -407,6 +407,9 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
                         items[k].field,
                         items[k].field.ucfirst()
                     );
+                    if (type == 'edit') {
+                        field.setTypeAndValidatorFromModelType(items[k]);
+                    }
 		}
 		
 
