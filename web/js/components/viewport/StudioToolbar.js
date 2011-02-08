@@ -1,10 +1,10 @@
-Ext.ns('afStudio');
+Ext.namespace('afStudio.viewport');
 
-afStudio.toolbar = Ext.extend(Ext.Toolbar, { 
+afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, { 
 
 	initComponent : function() {
+		
 		var config = {
-			id: "toolbar",
 			items: [
 			{
 				text: "File",
@@ -142,7 +142,7 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 		
 		// apply config
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		afStudio.toolbar.superclass.initComponent.apply(this, arguments);
+		afStudio.viewport.StudioToolbar.superclass.initComponent.apply(this, arguments);
 		
 	}//eo initComponent
 	
@@ -159,8 +159,9 @@ afStudio.toolbar = Ext.extend(Ext.Toolbar, {
 		return recentProjects;
 	}
 	
-	,init : function() {
-		this.render(document.body);
-	}
-	
 });
+
+/**
+ * @type 'afStudio.viewport.studioToolbar'
+ */
+Ext.reg('afStudio.viewport.studioToolbar', afStudio.viewport.StudioToolbar);

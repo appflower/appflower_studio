@@ -73,6 +73,7 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 
 
 <!-- Viewport -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/StudioToolbar.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/StudioViewport.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/WestPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/SouthPanel.js"></script>
@@ -167,3 +168,8 @@ foreach ($afStudioCssExtensions as $afStudioCssExtension)
 <script type="text/javascript">
 Ext.onReady(afStudio.init, afStudio);
 </script>
+
+<body>
+	<div id="toolbar-container-el"></div>
+</body>
+

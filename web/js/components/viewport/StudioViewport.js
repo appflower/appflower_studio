@@ -20,7 +20,8 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 			region: "north",
 			height: 32,
 			border: false,
-			bodyStyle: "background-color:#dfe8f6;"
+			bodyStyle: "background-color:#dfe8f6;",
+			items: afStudio.tb
 		});
 						
 		var centerPanel = new Ext.ux.Portal ({
