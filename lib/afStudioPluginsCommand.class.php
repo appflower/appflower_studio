@@ -12,7 +12,10 @@ class afStudioPluginsCommand
 		$this->request=sfContext::getInstance()->getRequest();		
 		
 		$this->realRoot=afStudioUtil::getRootDir();
-				
+		
+		$this->app = $this->request->hasParameter('app')?$this->request->getParameter('app'):false;
+		$this->pluginName = $this->request->hasParameter('pluginName')?$this->request->getParameter('pluginName'):false;
+						
 		$this->start();
 	}
 	
@@ -32,8 +35,9 @@ class afStudioPluginsCommand
 					foreach($pluginFolders as $pluginFolder)
 					{
 						$plugin = $pluginFolder["text"];
+						
 						$moduleFolders = $this->getSubFolders($this->realRoot."/plugins/".$plugin."/modules/");
-
+ 
 						$mod_datas=array();
 						foreach($moduleFolders as $moduleFolder)
 						{
@@ -58,6 +62,46 @@ class afStudioPluginsCommand
 					else
 					$this->result = array('success' => true);
 					break;
+
+				case "deletePlugin":
+					$pluginDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$this->pluginName.'/';
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+										
+					$consoleResult.=$this->afConsole->execute('rm -rf '.$pluginDir);
+					
+					if(!file_exists($pluginDir)){	
+						$consoleResult.=$this->afConsole->execute(array('sf cc'));		
+						
+						$this->result = array('success' => true,'message'=>'Deleted plugin <b>'.$this->pluginName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t delete plugin <b>'.$this->pluginName.'</b> inside <b>'.$this->app.'</b> application!');
+					break;
+				
+				case "renameModule":
+					break;
+				
+				case "renameXml":
+					$renamedPluginName = $this->request->getParameter('renamedPlugin');
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+					
+					$oldModuleDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$this->pluginName.'/';
+					$newModuleDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$renamedPluginName.'/';
+					
+					$this->filesystem->rename($oldModuleDir,$newModuleDir);
+					
+					if(!file_exists($oldModuleDir)&&file_exists($newModuleDir))
+					{			
+						$consoleResult.=$this->afConsole->execute('sf cc');
+						
+						$this->result = array('success' => true,'message'=>'Renamed plugin from <b>'.$this->pluginName.'</b> to <b>'.$renamedPluginName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t rename plugin from <b>' + $this->pluginName + '</b> to <b>' + $renamedPluginName + '</b> inside <b>'.$this->app.'</b> application!');				
+					break;	
+					
 				default:
 					$this->result = array('success' => true);
 					break;
@@ -84,6 +128,14 @@ class afStudioPluginsCommand
 				if($f !="." && $f !=".." && $f!=".svn" && is_dir($dir.'/'.$f))
 				{
 					$folders[$i]["text"] = $f;
+					
+//					echo '/*';
+//					
+//					var_dump($f);
+//					var_dump($i);
+//					
+//					echo '*/';
+					
 					$folders[$i]["type"] = 'module';
 					$i++;
 				}
