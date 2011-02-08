@@ -614,7 +614,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 						 cmd:'renameModule'
 						,moduleName:oldValue
 						,renamedModule:newValue
-						,app:this.getApp(node)
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
@@ -671,7 +670,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 						 cmd:'renameXml'
 						,moduleName:oldValue
 						,renamedModule:newValue
-						,app:this.getApp(node)
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
@@ -698,24 +696,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				Ext.Ajax.request(options);
 			}
 		});
-	}
-	
-	,getApp:function(node) {
-		var app;
-
-		switch (node.attributes.type) {
-			case "app":
-        		app = node.text;
-        		break;
-        	case "module":
-        		app = node.attributes.app;
-        		break;
-        	case "xml":
-        		module = node.attributes.app;
-        		break;	
-        }
-
-		return app;
 	}
 	
     ,getModule:function(node) {
@@ -762,7 +742,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					,params:{
 						 cmd:'deletePlugin'
 						,moduleName:this.getModule(node)
-						,app:this.getApp(node)
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
