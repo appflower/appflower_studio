@@ -45,7 +45,7 @@ class DatabaseConfigurationManager {
 
 
     public function __construct() {
-        $this->databaseConfFilePath = afStudioUtil::getConfigDir() . '/' . 'databasess.yml';
+        $this->databaseConfFilePath = afStudioUtil::getConfigDir() . '/' . 'databases.yml';
 
         $this->setDatabaseConfTemplate();
     }
