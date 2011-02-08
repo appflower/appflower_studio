@@ -213,10 +213,10 @@ N.DesignerTab = Ext.extend(Ext.Container, {
 					{text: 'Save', iconCls: 'icon-save',handler:this.saveDesigner,scope:this},
 					{xtype: 'tbseparator'},
 					{text: 'Add Field', iconCls: 'icon-add',handler:this.addField,scope:this},
+					{xtype: 'tbseparator'},					
+					{text: 'Format', iconCls: 'icon-format', menu: columnsMenu},
 					{xtype: 'tbseparator'},
-					{text: 'Preview', iconCls: 'icon-preview', handler: this.preview,scope:this},
-					{xtype: 'tbseparator'},
-					{text: 'Format', iconCls: 'icon-format', menu: columnsMenu}
+					{text: 'Preview', iconCls: 'icon-preview', handler: this.preview,scope:this}
 				]
 			},
 			listeners:{

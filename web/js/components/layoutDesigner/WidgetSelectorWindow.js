@@ -159,7 +159,7 @@ afStudio.layoutDesigner.WidgetSelectorWindow = Ext.extend(Ext.Window, {
 		});
 		
 		return {
-			title: 'Add New Widget',
+			title: 'Add Widget',
 			closeAction: 'hide',
 			modal: true,
 			frame: true,

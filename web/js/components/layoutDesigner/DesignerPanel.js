@@ -165,7 +165,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	        	itemId : 'designerSaveBtn',
 	        	iconCls: 'icon-save'	        	
 	        },'-',{
-	        	text: 'New Widget',
+	        	text: 'Add Widget',
 	        	itemId : 'designerNewWidgetBtn',
 	        	iconCls: 'icon-add'	        	
 	        },'-',{
@@ -200,7 +200,9 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 						text: 'Auto-Adjust', 
 						handler: _this.autoAdjust, 
 						scope: _this
-					}]	        		
+					},{
+						text: 'Add new Tab' 
+					}]
 	        	}	        	
 	        },'-',{
 	        	text: 'Preview', 
