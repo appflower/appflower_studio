@@ -1,10 +1,24 @@
 Ext.BLANK_IMAGE_URL = '/appFlowerPlugin/extjs-3/resources/images/default/s.gif';
 Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
 Ext.ns('afStudio');
 
-// application: afStudio
 var afStudio = function () { 
 
+	/**
+	 * @property {afStudio.viewport.StudioToolbar} tb
+	 * Studio toolbar
+	 */
+	
+	/**
+	 * @property {afStudio.viewport.StudioViewport} vp
+	 * Studio view port
+	 */
+	
+	/**
+	 * @property {afStudio.console} console
+	 */
+	
 	return {
 		
 		initAjaxRedirect: function() {			
@@ -16,26 +30,21 @@ var afStudio = function () {
 			});
 		}		
 		
-		,setConsole: function(content)
-		{
-			if(content)
-			{
+		,setConsole : function(content) {
+			if(content){
 				this.console.body.dom.innerHTML = content;
 				this.console.body.scroll("bottom", 1000000, true );
 			}
 		}
 		
-		,updateConsole: function(content)
-		{
-			if(content)
-			{
+		,updateConsole : function(content) {
+			if (content) {
 				this.console.body.dom.innerHTML += content;
 				this.console.body.scroll("bottom", 1000000, true );
 			}
 		}
 		
-		,log: function(message, messageType)
-		{
+		,log : function(message, messageType) {
 			messageType = messageType || false;
 			
 			Ext.Ajax.request({
@@ -58,18 +67,18 @@ var afStudio = function () {
 				}
 				
 			});		
-		}
+		}//eo log
 		
-		,getViewport: function()
-		{
+		,getViewport : function() {
 			return this.vp;
 		}
 		
-		,showWidgetDesigner: function(widget,action,security)
-		{
-			var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...',removeMask:true});
+		,showWidgetDesigner : function(widget, action, security) {
+  			//FIXME should be used afStudio.vp.mask({region: 'center'}) or afStudio.vp.mask(), read the jsdocs
+			var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...', removeMask:true});
 			mask.show();
 			
+			//FIXME should not pass mask in the component just to have ability to remove it in the component
 			afStudio.vp.addToPortal({
 				title: widget + ' Widget Designer',
 				collapsible: false,
@@ -84,7 +93,7 @@ var afStudio = function () {
 				}]
 			}, true);
 		}
-				
+
 		,init : function () { 
 		    Ext.QuickTips.init();
 		    Ext.apply(Ext.QuickTips.getQuickTip(), {
@@ -94,8 +103,7 @@ var afStudio = function () {
 			
 			this.initAjaxRedirect();
 			
-			this.tb = new afStudio.toolbar();
-			this.tb.init();
+			this.tb = new afStudio.viewport.StudioToolbar();
 			this.vp = new afStudio.viewport.StudioViewport();						  
 			
 			this.console = Ext.getCmp('console-console-tab');
