@@ -670,6 +670,11 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 						 cmd:'renameXml'
 						,moduleName:oldValue
 						,renamedModule:newValue
+						
+						
+						,pluginName: node.parentNode.parentNode.text
+						,moduleName: node.parentNode.text
+						
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
