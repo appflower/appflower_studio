@@ -13,7 +13,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 	},
     createProperties: function(){
         afStudio.widgetDesigner.EditNode.superclass.createProperties();
-        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').markAsOneOfIParam().create());
+        this.addProperty(new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').markAsOneOfIParam().setValue(10).create());
     },
 	addRequiredChilds: function(){
         afStudio.widgetDesigner.ListNode.superclass.addRequiredChilds.apply(this);

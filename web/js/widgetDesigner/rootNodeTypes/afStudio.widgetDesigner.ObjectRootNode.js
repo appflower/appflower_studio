@@ -39,5 +39,8 @@ afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.Base
         var data = {};
         afStudio.widgetDesigner.ObjectRootNode.superclass.dumpDataForWidgetDefinition.apply(this, [data]);
         return data;
+    },
+    setTitle: function(title) {
+        this.getProperty('i:title').set('value', title);
     }
 });
