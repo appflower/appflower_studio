@@ -741,7 +741,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					,node:node
 					,params:{
 						 cmd:'deletePlugin'
-						,moduleName:this.getModule(node)
+						,pluginName:this.getModule(node)
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);

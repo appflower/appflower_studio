@@ -13,7 +13,8 @@ class afStudioPluginsCommand
 		
 		$this->realRoot=afStudioUtil::getRootDir();
 		
-		$this->app = $this->request->hasParameter('app')?$this->request->getParameter('app'):false;
+		$this->afConsole=new afStudioConsole();
+		
 		$this->pluginName = $this->request->hasParameter('pluginName')?$this->request->getParameter('pluginName'):false;
 						
 		$this->start();
@@ -64,7 +65,7 @@ class afStudioPluginsCommand
 					break;
 
 				case "deletePlugin":
-					$pluginDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$this->pluginName.'/';
+					$pluginDir = sfConfig::get('sf_root_dir').'/plugins/'.$this->pluginName.'/';
 					
 					$consoleResult=$this->afConsole->execute('afs fix-perms');
 										
@@ -73,10 +74,10 @@ class afStudioPluginsCommand
 					if(!file_exists($pluginDir)){	
 						$consoleResult.=$this->afConsole->execute(array('sf cc'));		
 						
-						$this->result = array('success' => true,'message'=>'Deleted plugin <b>'.$this->pluginName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
+						$this->result = array('success' => true,'message'=>'Deleted plugin <b>'.$this->pluginName.'</b> ','console'=>$consoleResult);
 					}
 					else
-					$this->result = array('success' => false,'message'=>'Can\'t delete plugin <b>'.$this->pluginName.'</b> inside <b>'.$this->app.'</b> application!');
+					$this->result = array('success' => false,'message'=>'Can\'t delete plugin <b>'.$this->pluginName.'</b>!');
 					break;
 				
 				case "renameModule":
