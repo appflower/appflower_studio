@@ -178,7 +178,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                        break;
 						case 'rename-plugin':
 							var node = item.parentMenu.contextNode;
-//							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename plugin");
+							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename plugin");
 							node.ownerTree.treeEditor.triggerEdit(node);						
 							break;
 	                }
@@ -207,7 +207,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                        break;
 						case 'rename-module':
 							var node = item.parentMenu.contextNode;
-//							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename module");
+							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename module");
 							node.ownerTree.treeEditor.triggerEdit(node);						
 							break;
 	                }
@@ -242,7 +242,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                        break;
 						case 'rename-plugin-xml':
 							var node = item.parentMenu.contextNode;
-//							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename page");
+							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename page");
 							node.ownerTree.treeEditor.triggerEdit(node);		
 							break;	                        
 	                }
