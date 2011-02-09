@@ -8,6 +8,16 @@ class afStudioLayoutCommand extends afBaseStudioCommand
 {
 	
     /**
+     * XML page definition
+     */
+    private $definition;
+    
+    /**
+     * Message for information, for example validation error message
+     */
+    private $message;
+     
+    /**
      * Getting tree list controller
      */
     protected function processGetList()
@@ -28,7 +38,6 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     protected function processGet()
     {
         $root_dir = sfConfig::get('sf_root_dir');
-        
         $sPath = "{$root_dir}/apps/{$this->getParameter('app')}/config/pages/{$this->getParameter('page')}";
         
         if (file_exists($sPath)) {
@@ -36,6 +45,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 'parseAttributes' => true,
                 'attributesArray' => 'attributes',
                 'mode' => 'simplexml',
+                'complexType' => 'array'
             );
     
             $unserializer = new XML_Unserializer($options);
@@ -43,22 +53,12 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     
             if ($status) {
                 $definition = $unserializer->getUnserializedData();
-                
-                $return = array(
-                    'success' => true,
-                    'page' => $definition
-                );
+                $return = $this->fetchSuccess($definition);
             } else {
-                $return = array(
-                    'success' => false,
-                    'message' => "Can't parse page"
-                );
+                $return = $this->fetchError("Can't parse page");
             }
         } else {
-            $return = array(
-                'success' => false,
-                'message' => "File doesn't exists"
-            );
+            $return = $this->fetchError("Page doesn't exists");
         }
         
         $this->result = $return;
@@ -66,14 +66,22 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     
     /**
      * Saving changed page information
-     * 
-     * @TODO: need to finish functionality
      */
     protected function processSave()
     {
+        // Getting needed parameters - page, application name, and sure definition
+        $sPage = $this->getParameter('page');
+        $sApplication = $this->getParameter('app');
+        $aDefinition = $this->getParameter('definition');
+        
+        $root_dir = sfConfig::get('sf_root_dir');
+        $sPath = "{$root_dir}/apps/{$this->getParameter('app')}/config/pages/{$this->getParameter('page')}";
+        
+        // Needs to define/initialize xml serialize constants
         $oXmlUtil = new XML_Util;
         
-        $options = array(
+        // Defining options for Serializing
+        $aOptions = array(
             'rootName' => 'i:view',
             'attributesArray' => 'attributes',
             'indent' => '    ',
@@ -82,10 +90,28 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             'encoding' => 'UTF-8'
         );
         
-        $serializer = new XML_Serializer($options);
-        $result = $serializer->serialize($definition);
+        $serializer = new XML_Serializer($aOptions);
+        $status = $serializer->serialize($aDefinition);
         
-        $result = $serializer->getSerializedData();
+        if ($status) {
+            $return = $serializer->getSerializedData();
+            
+            $this->definition = $serializer->getSerializedData();
+            
+            if ($this->validate()) {
+                // Save changes
+                file_put_contents($sPath, $this->definition);
+                
+                $return = $this->fetchSuccess('Page has been changed');
+            } else {
+                // Getting error message from validation results, from $this->message
+                $return = $this->fetchError($this->message);
+            }
+        } else {
+            $return = $this->fetchError('Some errors has beed found');
+        }
+        
+        $this->result = $return;
     }
     
     /**
@@ -115,6 +141,37 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         }
         
         return $data;
+    }
+    
+    /**
+     * Page validation method, using XML validator
+     * 
+     * Might be in future we should do some refactoring in XmlValidator class, 
+     * and this method will be a little bit rewritten too 
+     * 
+     * @return boolean
+     */
+    private function validate()
+    {
+        $tempPath = tempnam(sys_get_temp_dir(), 'studio_la_lb').'.xml';
+        
+        file_put_contents($tempPath, $this->definition);
+
+        $validator = new XmlValidator(null, false, true);
+        $validator->readXmlDocument($tempPath, true);
+        
+        unlink($tempPath);
+        
+        $aValidate = $validator->validateXmlDocument(true);
+        
+        if ($aValidate[0] == 'ERROR') {
+            $this->message = trim($aValidate[1]->getMessage());
+            $result = false;
+        } else {
+            $result = true;
+        }
+        
+        return $result;
     }
     
 }

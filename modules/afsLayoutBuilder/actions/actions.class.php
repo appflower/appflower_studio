@@ -44,5 +44,20 @@ class afsLayoutBuilderActions extends sfActions
         return $this->renderJson($aResponse);
     }
     
+    /**
+     * Saving changes in page definition
+     */
+    public function executeSave(sfWebRequest $request)
+    {
+        $aParameters = array(
+            'app' => $request->getParameter('app', 'frontend'),
+            'page' => $request->getParameter('page', ''),
+            'definition' => json_decode($request->getParameter('definition'), true)
+        );
+        
+        $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
+        
+        return $this->renderJson($aResponse);
+    }
     
 }

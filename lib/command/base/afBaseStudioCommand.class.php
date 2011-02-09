@@ -78,5 +78,28 @@ abstract class afBaseStudioCommand
         }
     }
     
+    /**
+     * Fetching error, prepare for output
+     */
+    protected function fetchError($content)
+    {
+        return $this->fetch($content, false);
+    }
+    
+    /**
+     * Fetching success, prepare for output
+     */
+    protected function fetchSuccess($content)
+    {
+        return $this->fetch($content, true);
+    }
+    
+    /**
+     * Fetching output
+     */
+    protected function fetch($content, $success)
+    {
+        return array('success' => $success, 'content' => $content);
+    }
 }
 ?>
