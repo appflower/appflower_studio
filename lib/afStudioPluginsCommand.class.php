@@ -10,12 +10,12 @@ class afStudioPluginsCommand
 	public function __construct()
 	{		
 		$this->request=sfContext::getInstance()->getRequest();		
-		
 		$this->realRoot=afStudioUtil::getRootDir();
-		
 		$this->afConsole=new afStudioConsole();
+		$this->filesystem = new sfFileSystem();
 		
 		$this->pluginName = $this->request->hasParameter('pluginName')?$this->request->getParameter('pluginName'):false;
+		$this->moduleName = $this->request->hasParameter('moduleName')?$this->request->getParameter('moduleName'):false;
 						
 		$this->start();
 	}
@@ -81,6 +81,23 @@ class afStudioPluginsCommand
 					break;
 				
 				case "renameModule":
+					$renamedModuleName = $this->request->getParameter('renamedModule');
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+					
+					$oldModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$this->moduleName.'/';
+					$newModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$renamedModuleName.'/';
+					
+					$this->filesystem->rename($oldModuleDir,$newModuleDir);
+					
+					if(!file_exists($oldModuleDir)&&file_exists($newModuleDir))
+					{			
+						$consoleResult.=$this->afConsole->execute('sf cc');
+						
+						$this->result = array('success' => true,'message'=>'Renamed module from <b>'.$this->moduleName.'</b> to <b>'.$renamedModuleName.'</b>!','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t rename module from <b>' + $this->moduleName + '</b> to <b>' + $renamedModuleName + '</b>!');
 					break;
 				
 				case "renameXml":
