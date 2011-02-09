@@ -20,44 +20,6 @@ afStudio.plugins.treeEditor = Ext.extend(Ext.tree.TreeEditor, {
 afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
-	 * old plugins context menu
-		wil be removed in the next commite
-	contextMenu: new Ext.menu.Menu({
-	        items: [{
-	            id: 'edit-plugin',
-	            text: 'Edit plugin',
-	            iconCls: 'icon-models-edit'
-			},{
-	            id: 'rename-plugin',
-	            text: 'Change plugin name',
-	            iconCls: 'icon-models-edit'				
-			},{
-	       		id: 'delete-plugin',
-	            text: 'Delete plugin',
-	            iconCls: 'icon-models-delete'
-	        }],
-	        listeners: {
-	            itemclick: function(item) {
-	                switch (item.id) {
-	                    case 'delete-plugin':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().deleteplugin(node);
-                        	break;
-	                    case 'edit-plugin':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().editPluginXml(node);
-	                        break;
-	                    case 'rename-plugin':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().treeEditor.triggerEdit(node);	                    	
-	                        break;	                        
-	                }
-	            }
-	        }
-	})
-	**/
-	
-	/**
 	 * Initializes component
 	 * @return {Object} The config object
 	 * @private
@@ -173,8 +135,8 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			contextmenu: function(node, e) {
 	            node.select();
 	            switch (node.attributes.type) {
-	            	case "app":
-	            		var c = node.getOwnerTree().contextMenuApp;
+	            	case "plugin":
+	            		var c = node.getOwnerTree().contextMenuPlugin;
 	            		break;
 	            	case "module":
 	            		var c = node.getOwnerTree().contextMenuModule;
@@ -194,36 +156,18 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}
 	
-	,contextMenuApp: new Ext.menu.Menu({
-	        items: [
-	        {
-	       		id: 'add-plugin',
-	            text: 'Add Plugin',
-	            iconCls: 'icon-models-add'
-	        }],
-	        listeners: {
-	            itemclick: function(item) {
-	                switch (item.id) {
-	                    case 'add-plugin':
-	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().onAddModule(node);
-	                        break;
-	                }
-	            }
-	        }
-	})
-	,contextMenuModule: new Ext.menu.Menu({
-	        items: [
-	        {
-	       		id: 'delete-plugin',
-	            text: 'Delete Plugin',
-	            iconCls: 'icon-models-delete'
-	        },
+	,contextMenuPlugin: new Ext.menu.Menu({
+			items: [
 	        {
 	       		id: 'rename-plugin',
 	            text: 'Rename Plugin',
 	            iconCls: 'icon-edit'
-	        }	        
+	        },
+	        {
+	       		id: 'delete-plugin',
+	            text: 'Delete Plugin',
+	            iconCls: 'icon-models-delete'
+	        }
 	        ],
 	        listeners: {
 	            itemclick: function(item) {
@@ -234,7 +178,36 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                        break;
 						case 'rename-plugin':
 							var node = item.parentMenu.contextNode;
-							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename plugin");
+//							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename plugin");
+							node.ownerTree.treeEditor.triggerEdit(node);						
+							break;
+	                }
+	            }
+	        }
+	})
+	,contextMenuModule: new Ext.menu.Menu({
+	        items: [
+	        {
+	       		id: 'rename-module',
+	            text: 'Rename Module',
+	            iconCls: 'icon-edit'
+	        },
+	        {
+	       		id: 'delete-module',
+	            text: 'Delete Module',
+	            iconCls: 'icon-models-delete'
+	        }
+	        ],
+	        listeners: {
+	            itemclick: function(item) {
+	                switch (item.id) {
+	                    case 'delete-module':
+	                    	var node = item.parentMenu.contextNode;
+	                    	node.getOwnerTree().deleteModule(node);
+	                        break;
+						case 'rename-module':
+							var node = item.parentMenu.contextNode;
+//							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename module");
 							node.ownerTree.treeEditor.triggerEdit(node);						
 							break;
 	                }
@@ -245,15 +218,15 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        items: [
 	        {
 	            id: 'edit-plugin-xml',
-	            text: 'Edit Plugin',
+	            text: 'Edit Page',
 	            iconCls: 'icon-models-edit'
 			},{
 	            id: 'rename-plugin-xml',
-	            text: 'Rename Plugin',
+	            text: 'Rename Page',
 	            iconCls: 'icon-edit'
 			},{
 	       		id: 'delete-plugin-xml',
-	            text: 'Delete Plugin',
+	            text: 'Delete Page',
 	            iconCls: 'icon-models-delete'
 	        }],
 	        listeners: {
@@ -268,16 +241,9 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                    	node.getOwnerTree().editPluginXml(node);
 	                        break;
 						case 'rename-plugin-xml':
-						
-//node.getOwnerTree().treeEditor.triggerEdit(node);						
-						
 							var node = item.parentMenu.contextNode;
-//							node.ownerTree.treeEditor.editNode = node;
-//							node.ownerTree.treeEditor.startEdit(node.ui.textNode);	
-							
-							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename plugin");
+//							node.getOwnerTree().fireEvent("logmessage",node.getOwnerTree(),"rename page");
 							node.ownerTree.treeEditor.triggerEdit(node);		
-							
 							break;	                        
 	                }
 	            }
@@ -373,9 +339,9 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			tree = node.getOwnerTree();
 				
 		//validates module
-		if (!tree.isValidModuleName(newValue)) {			
-			return false;			
-		}
+//		if (!tree.isValidModuleName(newValue)) {			
+//			return false;			
+//		}
 	}
 	
 	 /*
@@ -428,8 +394,8 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			if(newValue!=oldValue)
 			{
 				switch (node.attributes.type) {
-					case "app":
-	            		tree.renameApp(node,newValue,oldValue);
+					case "plugin":
+	            		tree.renamePlugin(node,newValue,oldValue);
 	            		break;
 	            	case "module":
 	            		tree.renameModule(node,newValue,oldValue);
@@ -523,71 +489,61 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});				
 	} //eo addplugin
 	
-	,deleteplugin: function(node) {
-		
-		var _this = this;
-		
+	,renamePlugin:function(node,newValue,oldValue)
+	{
 		Ext.Msg.show({
-			title: 'Delete',
-			msg: this.reallyWantText + ' delete <b>' + this.getplugin(node) + '</b> plugin?',
-			icon: Ext.Msg.WARNING,
-			buttons: Ext.Msg.YESNO,
-			width: 400,			
-			fn: function(response) {
+			 title:'Rename'
+			,msg:this.reallyWantText + ' rename plugin\'s name from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?'
+			,icon:Ext.Msg.WARNING
+			,buttons:Ext.Msg.YESNO
+			,width:400
+			,scope:this
+			,fn:function(response) {
 				// do nothing if answer is not yes
 				if('yes' !== response) {
-					_this.getEl().dom.focus();
+					node.setText(oldValue);
+					this.getEl().dom.focus();
 					return;
 				}
-				
-				_this.maskpluginTree('Processing request...');
-				
-				Ext.Ajax.request({
-					url: _this.url,
-					method: _this.method,					
-					node: node,
-					params: {
-						cmd: 'delete',
-						plugin: _this.getplugin(node),
-						schema: _this.getSchema(node)
+				// setup request options
+				var options = {
+					 url:this.url
+					,method:this.method
+					,scope:this
+					,node:node
+					,params:{
+						 cmd:'renamePlugin'
+						,oldValue:oldValue
+						,newValue:newValue
 					},
 					success: function(response, opts) {
-					  _this.unmaskpluginTree();
-					  
 				      var response = Ext.decode(response.responseText);
 				      
-				      if (response.success) {
-				      	  node.remove();
+				      if(response.success)
+				      {
+				      	afStudio.vp.layout.west.items[1].root.reload();
 				      	
-				      	  _this.fireEvent('plugindeleted');
-				      	 
-				      	  afStudio.vp.clearPortal();
-				      	 
-				      	  _this.reloadplugins();
-				      	
-				      	 if (response.console) {	
-				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
-				      		console.body.dom.innerHTML += response.console;
-							console.body.scroll("bottom", 1000000, true );				      		
-				      	 }
+				      	afStudio.updateConsole(response.console);
+				      }
+				      else
+				      {
+				      	node.setText(oldValue);
 				      }
 				      
 				      Ext.Msg.show({
-						 title: response.success ? 'Success' : 'Failure',
-						 msg: response.message,
-						 buttons: Ext.Msg.OK,
-						 width: 400
+						 title:response.success?'Success':'Failure'
+						,msg:response.message
+						,buttons:Ext.Msg.OK
+						,width:400
 				      });
 				    }
-				});				
+				};
+				Ext.Ajax.request(options);
 			}
 		});
-	}//eo deleteplugin
+	}
 	
-	
-	
-	
-		,renameModule:function(node,newValue,oldValue)
+	,renameModule:function(node,newValue,oldValue)
 	{
 		Ext.Msg.show({
 			 title:'Rename'
@@ -612,8 +568,9 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					,node:node
 					,params:{
 						 cmd:'renameModule'
-						,moduleName:oldValue
-						,renamedModule:newValue
+						,oldValue:oldValue
+						,newValue:newValue
+						,pluginName: node.parentNode.text
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
@@ -668,13 +625,10 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					,node:node
 					,params:{
 						 cmd:'renameXml'
-						,moduleName:oldValue
-						,renamedModule:newValue
-						
-						
+						,oldValue:oldValue
+						,newValue:newValue
 						,pluginName: node.parentNode.parentNode.text
 						,moduleName: node.parentNode.text
-						
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
@@ -723,10 +677,12 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	,deletePlugin:function(node)
 	{
+		var _this = this;
+		
 		var self = this;
 		Ext.Msg.show({
 			 title:'Delete'
-			,msg:this.reallyWantText + ' delete <b>' + this.getModule(node) + '</b> module?'
+			,msg:this.reallyWantText + ' delete <b>' + node.text + '</b> plugin?'
 			,icon:Ext.Msg.WARNING
 			,buttons:Ext.Msg.YESNO
 			,width:400
@@ -746,7 +702,126 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					,node:node
 					,params:{
 						 cmd:'deletePlugin'
-						,pluginName:this.getModule(node)
+						,pluginName:node.text
+					},
+					success: function(response, opts) {
+				      var response = Ext.decode(response.responseText);
+				      
+				      if(response.success)
+				      {
+				      	node.remove();
+				      	
+				      	afStudio.vp.layout.west.items[1].root.reload();
+				      	
+				      	afStudio.updateConsole(response.console);	
+				      	self.fireEvent("logmessage",self,"delete "+node.text+" Widget");
+				      }
+				      else
+				      {
+				      }
+				      
+				      Ext.Msg.show({
+						 title:response.success?'Success':'Failure'
+						,msg:response.message
+						,buttons:Ext.Msg.OK
+						,width:400
+				      });
+				    }
+				};
+				Ext.Ajax.request(options);
+			}
+		});
+	}
+	
+	,deleteModule:function(node)
+	{
+		var _this = this;
+		
+		var self = this;
+		Ext.Msg.show({
+			 title:'Delete'
+			,msg:this.reallyWantText + ' delete <b>' + node.text + '</b> module?'
+			,icon:Ext.Msg.WARNING
+			,buttons:Ext.Msg.YESNO
+			,width:400
+			,scope:this
+			,fn:function(response) {
+				// do nothing if answer is not yes
+				if('yes' !== response) {
+					this.getEl().dom.focus();
+					return;
+				}
+				// setup request options
+				var options = {
+					 url:this.url
+					,method:this.method
+					,scope:this
+					//,callback:this.cmdCallback
+					,node:node
+					,params:{
+						 cmd:'deleteModule'
+						,pluginName:node.parentNode.text
+						,moduleName:node.text
+					},
+					success: function(response, opts) {
+				      var response = Ext.decode(response.responseText);
+				      
+				      if(response.success)
+				      {
+				      	node.remove();
+				      	
+				      	afStudio.vp.layout.west.items[1].root.reload();
+				      	
+				      	afStudio.updateConsole(response.console);	
+				      	self.fireEvent("logmessage",self,"delete "+node.text+" Widget");
+				      }
+				      else
+				      {
+				      }
+				      
+				      Ext.Msg.show({
+						 title:response.success?'Success':'Failure'
+						,msg:response.message
+						,buttons:Ext.Msg.OK
+						,width:400
+				      });
+				    }
+				};
+				Ext.Ajax.request(options);
+			}
+		});
+	}
+	
+	,deleteXml:function(node)
+	{
+		var _this = this;
+		
+		var self = this;
+		Ext.Msg.show({
+			 title:'Delete'
+			,msg:this.reallyWantText + ' delete <b>' + node.text + '</b> page?'
+			,icon:Ext.Msg.WARNING
+			,buttons:Ext.Msg.YESNO
+			,width:400
+			,scope:this
+			,fn:function(response) {
+				// do nothing if answer is not yes
+				if('yes' !== response) {
+					this.getEl().dom.focus();
+					return;
+				}
+				// setup request options
+				var options = {
+					 url:this.url
+					,method:this.method
+					,scope:this
+					//,callback:this.cmdCallback
+					,node:node
+					,params:{
+						 cmd:'deleteXml'
+						,pluginName:node.parentNode.parentNode.text
+						,moduleName:node.parentNode.text
+						,xmlName:node.text
 					},
 					success: function(response, opts) {
 				      var response = Ext.decode(response.responseText);
@@ -777,68 +852,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}
 		
-	/***
-	,renameplugin: function(node, newValue, oldValue) { 
-		var _this = this;
-		
-		Ext.Msg.show({
-			title: 'Rename',
-			msg: _this.reallyWantText + ' rename plugin\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?',
-			icon: Ext.Msg.WARNING,
-			buttons: Ext.Msg.YESNO,
-			width: 400,			
-			fn: function(response) {
-				// do nothing if answer is not yes
-				if ('yes' !== response) {
-					node.setText(oldValue);
-					_this.getEl().dom.focus();
-					return;
-				}
-
-				_this.maskpluginTree('Processing request...');
-				
-				Ext.Ajax.request({
-					url: _this.url,
-					method: _this.method,					
-					node: node,
-					params: {
-						cmd: 'rename',
-						plugin: oldValue,
-						renamedplugin: newValue,
-						schema: _this.getSchema(node)
-					},
-					success: function(response, opts) {
-					  _this.unmaskpluginTree();	
-					  
-				      var response = Ext.decode(response.responseText);
-				      
-				      if (response.success) {
-				      	_this.reloadplugins(function(){_this.selectpluginNode(node);});
-				      	
-				      	//update plugin's Grids editor 
-				      	_this.editPluginXml(node);
-				      	
-				      	if (response.console) {
-				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
-				      		console.body.dom.innerHTML += response.console;
-							console.body.scroll( "bottom", 1000000, true );
-				      	}
-				      } else {
-				      	node.setText(oldValue);
-				      }
-				      
-				      Ext.Msg.show({
-						title: response.success ? 'Success' : 'Failure',
-					    msg: response.message,
-						buttons: Ext.Msg.OK,
-						width: 400
-				      });
-				    }
-				});				
-			}
-		});
-	}//eo renameplugin
-	**/
 	,editPluginXml: function(node) {
 		
 		afStudio.vp.mask({region:'center'});

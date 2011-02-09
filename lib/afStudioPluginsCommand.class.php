@@ -31,7 +31,7 @@ class afStudioPluginsCommand
 			{
 				case "get":
 					$datas = array();
-					$pluginFolders = $this->getSubFolders($this->realRoot.'/plugins');
+					$pluginFolders = $this->getSubFolders($this->realRoot.'/plugins', 'plugin');
 
 					foreach($pluginFolders as $pluginFolder)
 					{
@@ -63,6 +63,27 @@ class afStudioPluginsCommand
 					else
 					$this->result = array('success' => true);
 					break;
+				
+				case "renamePlugin":
+					$oldValue = $this->request->getParameter('oldValue');
+					$newValue = $this->request->getParameter('newValue');
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+					
+					$oldModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$oldValue.'/';
+					$newModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$newValue.'/';
+					
+					$this->filesystem->rename($oldModuleDir,$newModuleDir);
+					
+					if(!file_exists($oldModuleDir)&&file_exists($newModuleDir))
+					{			
+						$consoleResult.=$this->afConsole->execute('sf cc');
+						
+						$this->result = array('success' => true,'message'=>'Renamed plugin from <b>'.$oldValue.'</b> to <b>'.$newValue.'</b>!','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t rename plugin from <b>' + $oldValue + '</b> to <b>' + $newValue + '</b>!');
+					break;
 
 				case "deletePlugin":
 					$pluginDir = sfConfig::get('sf_root_dir').'/plugins/'.$this->pluginName.'/';
@@ -81,12 +102,14 @@ class afStudioPluginsCommand
 					break;
 				
 				case "renameModule":
-					$renamedModuleName = $this->request->getParameter('renamedModule');
+					$oldValue = $this->request->getParameter('oldValue');
+					$newValue = $this->request->getParameter('newValue');
+					$pluginName = $this->request->getParameter('pluginName');
 					
 					$consoleResult=$this->afConsole->execute('afs fix-perms');
 					
-					$oldModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$this->moduleName.'/';
-					$newModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$renamedModuleName.'/';
+					$oldModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$pluginName.'/modules/'.$oldValue.'/';
+					$newModuleDir = sfConfig::get('sf_root_dir').'/plugins/'.$pluginName.'/modules/'.$newValue.'/';
 					
 					$this->filesystem->rename($oldModuleDir,$newModuleDir);
 					
@@ -94,31 +117,69 @@ class afStudioPluginsCommand
 					{			
 						$consoleResult.=$this->afConsole->execute('sf cc');
 						
-						$this->result = array('success' => true,'message'=>'Renamed module from <b>'.$this->moduleName.'</b> to <b>'.$renamedModuleName.'</b>!','console'=>$consoleResult);
+						$this->result = array('success' => true,'message'=>'Renamed module from <b>'.$oldValue.'</b> to <b>'.$newValue.'</b>!','console'=>$consoleResult);
 					}
 					else
-					$this->result = array('success' => false,'message'=>'Can\'t rename module from <b>' + $this->moduleName + '</b> to <b>' + $renamedModuleName + '</b>!');
+					$this->result = array('success' => false,'message'=>'Can\'t rename module from <b>' + $oldValue + '</b> to <b>' + $newValue + '</b>!');
 					break;
 				
+				case "deleteModule":
+					$moduleName = $this->request->getParameter('moduleName');
+					$pluginName = $this->request->getParameter('pluginName');
+					$moduleDir = sfConfig::get('sf_root_dir').'/plugins/'.$pluginName.'/modules/'.$moduleName.'/';
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+										
+					$consoleResult.=$this->afConsole->execute('rm -rf '.$moduleDir);
+					
+					if(!file_exists($moduleDir)){	
+						$consoleResult.=$this->afConsole->execute(array('sf cc'));		
+						
+						$this->result = array('success' => true,'message'=>'Deleted module <b>'.$moduleName.'</b> ','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t delete module <b>'.$moduleName.'</b>!');
+					break;
+					
 				case "renameXml":
-					$renamedPluginName = $this->request->getParameter('renamedPlugin');
+					$oldValue = $this->request->getParameter('oldValue');
+					$newValue = $this->request->getParameter('newValue');
 					
 					$consoleResult=$this->afConsole->execute('afs fix-perms');
 					
-					$oldModuleDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$this->pluginName.'/';
-					$newModuleDir = sfConfig::get('sf_root_dir').'/apps/'.$this->app.'/modules/'.$renamedPluginName.'/';
+					$oldName = sfConfig::get('sf_root_dir').'/plugins/'.$this->pluginName.'/modules/'.$this->moduleName.'/config/'.$oldValue;
+					$newName = sfConfig::get('sf_root_dir').'/plugins/'.$this->pluginName.'/modules/'.$this->moduleName.'/config/'.$newValue;
 					
-					$this->filesystem->rename($oldModuleDir,$newModuleDir);
+					$this->filesystem->rename($oldName,$newName);
 					
-					if(!file_exists($oldModuleDir)&&file_exists($newModuleDir))
+					if(!file_exists($oldName)&&file_exists($newName))
 					{			
 						$consoleResult.=$this->afConsole->execute('sf cc');
 						
-						$this->result = array('success' => true,'message'=>'Renamed plugin from <b>'.$this->pluginName.'</b> to <b>'.$renamedPluginName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
+						$this->result = array('success' => true,'message'=>'Renamed page from <b>'.$oldValue.'</b> to <b>'.$newValue.'</b>!','console'=>$consoleResult);
 					}
 					else
-					$this->result = array('success' => false,'message'=>'Can\'t rename plugin from <b>' + $this->pluginName + '</b> to <b>' + $renamedPluginName + '</b> inside <b>'.$this->app.'</b> application!');				
+					$this->result = array('success' => false,'message'=>'Can\'t rename page from <b>' + $oldValue + '</b> to <b>' + $newValue + '</b>!');				
 					break;	
+					
+				case "deleteXml":
+					$moduleName = $this->request->getParameter('moduleName');
+					$pluginName = $this->request->getParameter('pluginName');
+					$xmlName = $this->request->getParameter('xmlName');
+					$xmlDir = sfConfig::get('sf_root_dir').'/plugins/'.$pluginName.'/modules/'.$moduleName.'/config/'.$xmlName;
+					
+					$consoleResult=$this->afConsole->execute('afs fix-perms');
+										
+					$consoleResult.=$this->afConsole->execute('rm -rf '.$xmlDir);
+					
+					if(!file_exists($xmlDir)){	
+						$consoleResult.=$this->afConsole->execute(array('sf cc'));		
+						
+						$this->result = array('success' => true,'message'=>'Deleted page <b>'.$xmlName.'</b> ','console'=>$consoleResult);
+					}
+					else
+					$this->result = array('success' => false,'message'=>'Can\'t delete page <b>'.$xmlName.'</b>!');
+					break;
 					
 				default:
 					$this->result = array('success' => true);
@@ -133,7 +194,7 @@ class afStudioPluginsCommand
 		return $this->result;
 	}
 	
-	private function getSubFolders ($dir)
+	private function getSubFolders ($dir, $type='module')
 	{
 		$folders = array();
 
@@ -147,14 +208,7 @@ class afStudioPluginsCommand
 				{
 					$folders[$i]["text"] = $f;
 					
-//					echo '/*';
-//					
-//					var_dump($f);
-//					var_dump($i);
-//					
-//					echo '*/';
-					
-					$folders[$i]["type"] = 'module';
+					$folders[$i]["type"] = $type;
 					$i++;
 				}
 			}
