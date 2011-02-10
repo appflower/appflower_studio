@@ -163,7 +163,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             if (propertyValue === false) {
                 propertyValue = 'false';
             } else if (propertyValue === true){
-                propertyValue = 'truee';
+                propertyValue = 'true';
             }
             if (property.get('oneOfIParam')) {
                 iParams.push({name: property.id, '_content': propertyValue});
