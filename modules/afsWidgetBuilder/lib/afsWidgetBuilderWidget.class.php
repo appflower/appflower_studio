@@ -127,13 +127,14 @@ class afsWidgetBuilderWidget {
         }
 
         file_put_contents($actionFilePath, $this->renderActionFileContent());
+        return true;
     }
 
     private function renderActionFileContent()
     {
         $content =
             '<'.'?'.'php'."\n".
-            "class {$this->action}Action" . "\n" .
+            "class {$this->action}Action extends sfAction" . "\n" .
             "{" . "\n" .
             '    function execute($request)' . "\n" .
             "    {" . "\n" .
