@@ -8,6 +8,10 @@ Ext.namespace('afStudio.layoutDesigner');
 afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	/**
+	 * @cfg {Object} layoutMetaData required 
+	 */	
+	
+	/**
 	 * @cfg {Number} columnsNumber (defaults to 2)
 	 * Columns number of designer panel 
 	 */
@@ -19,7 +23,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	/**
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
-	 */ 
+	 */	 
 	  
 	//TODO rewrite
 	,resizerHandler : function(resizer,width,height,e) {
@@ -148,7 +152,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		_this.refreshExistingWidgets();
 
 		_this.doLayout();
-	}//eo refreshDesignerPanel	
+	}//eo refreshDesignerPanel
 	
 	/**
 	 * Initializes component
@@ -211,17 +215,21 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	        }]			
 		});
 		
-		_this.designerPortal = new Ext.ux.Portal ({
-			bodyStyle: 'padding: 5px;'
-		});
+//		_this.designerPortal = new Ext.ux.Portal ({
+//			bodyStyle: 'padding: 5px;'
+//		});
 		
 		return {
 			title: 'Layout Designer',
 			layout: 'fit',
 			tbar: tb,
 			autoScroll: true,
-			items: 	_this.designerPortal
-		}		
+//			items: 	_this.designerPortal
+			items: {
+				xtype: 'afStudio.layoutDesigner.view.page',
+				metaData: _this.layoutMetaData
+			}
+		}
 	}//eo _beforeInitComponent
 	
 	/**
@@ -247,10 +255,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		newWidgetBtn = tbar.getComponent('designerNewWidgetBtn'),
 		formatColumnCb = Ext.getCmp('designer-format-column-combo');
 
-		_this.on({
-	    	afterrender: _this.initDesignerPanel,
-	    	scope: _this
-		});
+//		_this.on({
+//	    	afterrender: _this.initDesignerPanel,
+//	    	scope: _this
+//		});
 		
 		saveBtn.on('click', _this.onClickSaveDesignerLayout, _this);
 		

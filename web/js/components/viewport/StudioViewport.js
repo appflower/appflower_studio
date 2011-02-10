@@ -86,12 +86,9 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 		if (['center', 'west', 'north', 'south'].indexOf(region) != -1) {			
 			this.viewRegions[region].body.mask(maskMessage, 'x-mask-loading');
 		} else {
-			if (!this.loadMask) {
-				this.loadMask = new Ext.LoadMask(this.el, {msg: maskMessage});
-			}
-			this.loadMask.show();
+			this.el.mask(maskMessage, 'x-mask-loading');
 		}
-	}
+	}//eo mask
 	
 	/**
 	 * Removes mask from afStudio.viewport
@@ -101,8 +98,8 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 		if (['center', 'west', 'north', 'south'].indexOf(region) != -1) {			
 			this.viewRegions[region].body.unmask();
 		}
-		this.loadMask ? this.loadMask.hide() : null;
-	}
+		this.el.unmask();
+	}//eo unmask
 	
 	/**
 	 * Adds component to {@link Ext.ux.Portal} container.

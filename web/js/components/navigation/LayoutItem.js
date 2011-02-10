@@ -11,6 +11,11 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @cfg {String} baseUrl (defaults to '/appFlowerStudio/layout')
 	 */
 	baseUrl : '/appFlowerStudio/layout'
+	
+	/**
+	 * @cfg {String} layoutMetaUrl (defaults to 'afsLayoutBuilder/get')
+	 */
+	,layoutMetaUrl : 'afsLayoutBuilder/get'
 
 	/**
 	 * @property {Ext.menu.Menu} appContextMenu
@@ -28,8 +33,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
             	var node = item.parentMenu.contextNode;
             }
         }
-	})//eo appContextMenu
-	
+	})//eo appContextMenu	
 	
 	/**
 	 * @property {Ext.menu.Menu} pageContextMenu
@@ -107,13 +111,48 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo initComponent	
 	
 	/**
+	 * Loads layout designer for the specified layoutNode 
+	 * @param {Ext.tree.TreeNode} layoutNode
+	 */
+	,loadLayout : function(layoutNode) {
+		var _this = this,
+			 page = _this.getNodeAttribute(layoutNode, 'text'),
+			  app = _this.getParentNodeAttribute(layoutNode, 'text');
+		
+		afStudio.vp.mask(String.format('Loading {0} page metadata...', page));
+		
+		Ext.Ajax.request({
+		   url: _this.layoutMetaUrl,
+		   params: {
+		       app: app,
+		       page: page
+		   },
+		   success: function(xhr, opt) {		   
+			   afStudio.vp.unmask();
+			   var response = Ext.decode(xhr.responseText);
+			   if (response.success) {
+				   afStudio.vp.addToPortal(new afStudio.layoutDesigner.DesignerPanel({
+				       	layoutMetaData: response.content
+				   }), true);			   	
+			   } else {
+			   	   Ext.Msg.alert('Error', response.content);
+			   }
+		   },
+		   failure: function(xhr, opt) {
+		   	   afStudio.vp.unmask();
+		       Ext.Msg.alert('Error', String.format('Status code {0}, message {1}', xhr.status, xhr.statusText));
+		   }
+		});
+	}//eo loadLayout
+	
+	/**
 	 * Fires when a node is double clicked
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */
 	,onNodeDblClick : function(node, e) {			
         if (this.getNodeAttribute(node, 'type') == 'page') {
-        	afStudio.vp.addToPortal(new afStudio.layoutDesigner.DesignerPanel(), true);
+        	this.loadLayout(node);        	
         }				
 	}//eo onNodeDblClick
 	

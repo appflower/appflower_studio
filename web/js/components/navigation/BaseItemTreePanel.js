@@ -42,6 +42,15 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
     }//eo getNodeAttribute
     
     /**
+     * Returns parent node attribute of passed in node
+     * look at {@link #getNodeAttribute}
+     * @return attribute / null 
+     */
+    ,getParentNodeAttribute : function(node, attribute, defaultValue) {
+    	return this.getNodeAttribute(node.parentNode, attribute, defaultValue);
+    }
+    
+    /**
 	 * Selects node
 	 * @param {Ext.tree.TreeNode} node The node to be selected
 	 */

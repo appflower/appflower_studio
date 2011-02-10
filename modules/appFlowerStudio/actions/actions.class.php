@@ -333,12 +333,12 @@ class appFlowerStudioActions extends sfActions
      */
     public function executeLayout(sfWebRequest $request)
     {
-        $sCommand = $request->getParameter('cmd');
-        
+    	$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+    	
+        $sCommand = $request->getParameter('cmd');        
         $aResult = afStudioCommand::process('layout', $sCommand);
         
-        return $this->renderJson($aResult);
-        
+        return $this->renderJson($aResult);        
     }
     
 }
