@@ -12,7 +12,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	layout : 'border'	
 	
 	/**
-	 * @cfg {Object} metaData required
+	 * @cfg {Object} pageMeta required
 	 * Page metadata
 	 */	
 	
@@ -23,11 +23,11 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	 */
 	,_beforeInitComponent : function() {
 		afStudio.vp.mask({
-			msg: String.format('"{0}" view building...', this.metaData['i:title']), 
+			msg: String.format('"{0}" view building...', this.pageMeta['i:title']), 
 			region: 'center'
 		});
 		
-		var	views = afStudio.layoutDesigner.view.ViewFactory.buildView(this.metaData);
+		var	views = afStudio.layoutDesigner.view.ViewFactory.buildView(this.pageMeta);
 			
 		return {
 			items: views

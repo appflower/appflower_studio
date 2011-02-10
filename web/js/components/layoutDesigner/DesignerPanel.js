@@ -1,5 +1,7 @@
 Ext.namespace('afStudio.layoutDesigner');
 
+//TODO should be cleaned & rewritten
+
 /**
  * @class afStudio.layoutDesigner.DesignerPanel
  * @extends Ext.Panel
@@ -10,109 +12,15 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * @cfg {Object} layoutMetaData required 
 	 */	
-	
-	/**
-	 * @cfg {Number} columnsNumber (defaults to 2)
-	 * Columns number of designer panel 
-	 */
-	 columnsNumber : 2
 	 
-	/**
-	 * @property {Ext.ux.Portal} designerPortal
-	 */
 
 	/**
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
-	 */	 
-	  
-	//TODO rewrite
-	,resizerHandler : function(resizer,width,height,e) {
-		var id = resizer.el.id;
-		var index = id.substr(id.length-1,1);
-		index = parseInt(index);
-		index++;
-		var w = resizer._width;
-		w = width -w;
-		Ext.getCmp(id).doLayout();
-		var nextcolumn = Ext.getCmp(id.substr(0,id.length-1)+index);
-		if(nextcolumn){
-			var ww  = nextcolumn.getWidth();
-			nextcolumn.setWidth(ww-w);
-			nextcolumn.doLayout();
-		}
-	}
-	
-	/**
-	 * Creates widget
-	 * @param {Object} widgetParam
-	 * @return {Object} widget configuration object
 	 */
-	,createWidget : function(widgetParam) {
-		var _this = this,
-		 	widgetTitle = widgetParam.module + '/' + widgetParam.widget;
-		
-		return {
-			title: widgetTitle,
-			frame: true,
-			html: '<br /><center>Widget <b>Dummy Widget</b> <i>Click to edit Widget<i> </center><br />',
-			bodyCssClass: 'layout-designer-widget',
-			tools: [{
-				id: 'close', 
-				handler: _this.removeWidget, 
-				scope: _this
-			}],
-			buttons: [
-			{
-				text: 'Preview', 
-				handler: this.preview
-			},{
-				text: 'Edit', 
-				handler: _this.runWidgetDesigner, 
-				scope: _this
-			}],
-			buttonAlign: 'center'
-		}
-	}//eo createWidget
 	
-	/**
-	 * 
-	 * @param {Ext.EventObject} e The click event.
-	 * @param {Ext.Element} tool The tool Element.
-	 * @param {Ext.ux.Portlet} panel The widget panel
-	 */
-	,removeWidget: function(e, tool, panel) {
-		panel.destroy();
-	}	
 	
-	/**
-	 * Creates {@link #designerPortal} column
-	 * @param {Number} id The column's ID
-	 * @param {Number} width The column's width
-	 * @return {Object} column configuration
-	 */
-	,createDesignerColumn : function(id, width) {
-		return {
-			id: 'portal-column-' + id,				
-			columnWidth: width,
-			style: 'padding:5px 0 5px 5px',
-			defaults: {
-				bodyCssClass: 'layout-designer-widget'
-			}			
-		}
-	}//eo createDesignerColumn	
-	
-	/**
-	 * Adds widget to layout designer
-	 * @param {} widget
-	 */
-	,addWidget : function(widget) {
-		var cl = this.designerPortal.items.itemAt(0);
-		cl.add(widget);
-		cl.doLayout();  		
-	}
-	
-	//TODO
-	,refreshExistingWidgets : function() {
+	//TODO remove
+	refreshExistingWidgets : function() {
 		/*
 		var els = Ext.DomQuery.select('DIV[class*="layout-designer-widget"]', 'details-panel');
 		
@@ -213,21 +121,15 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	        	iconCls: 'icon-preview', 
 	        	handler: this.preview
 	        }]			
-		});
-		
-//		_this.designerPortal = new Ext.ux.Portal ({
-//			bodyStyle: 'padding: 5px;'
-//		});
+		});		
 		
 		return {
 			title: 'Layout Designer',
 			layout: 'fit',
 			tbar: tb,
-			autoScroll: true,
-//			items: 	_this.designerPortal
 			items: {
 				xtype: 'afStudio.layoutDesigner.view.page',
-				metaData: _this.layoutMetaData
+				pageMeta: _this.layoutMetaData
 			}
 		}
 	}//eo _beforeInitComponent
@@ -254,11 +156,6 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			 saveBtn = tbar.getComponent('designerSaveBtn'),
 		newWidgetBtn = tbar.getComponent('designerNewWidgetBtn'),
 		formatColumnCb = Ext.getCmp('designer-format-column-combo');
-
-//		_this.on({
-//	    	afterrender: _this.initDesignerPanel,
-//	    	scope: _this
-//		});
 		
 		saveBtn.on('click', _this.onClickSaveDesignerLayout, _this);
 		

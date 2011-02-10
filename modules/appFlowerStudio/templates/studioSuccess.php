@@ -106,6 +106,7 @@ var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects
 <!-- layoutDesigner -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/ViewFactory.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/NormalView.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/TabbedView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/Page.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/DesignerPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/WidgetSelectorWindow.js"></script>

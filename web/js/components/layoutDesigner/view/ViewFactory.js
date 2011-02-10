@@ -6,8 +6,6 @@ Ext.namespace('afStudio.layoutDesigner.view');
  */
 afStudio.layoutDesigner.view.ViewFactory = function() {
 	
-	x = 'builder';
-	
 	return {
 		
 		/**
@@ -18,16 +16,19 @@ afStudio.layoutDesigner.view.ViewFactory = function() {
 			
 			if (Ext.isArray(meta['i:area'])) {
 				for (var i = 0, len = meta['i:area'].length; i < len.length; i++) {
-					view.push(this.createViewComponent(meta['i:area'][i]));
+					view.push(this.createPage(meta['i:area'][i]));
 				}
 			} else {
-				view.push(this.createViewComponent(meta['i:area']));
+				view.push(this.createPage(meta['i:area']));
 			}
 			
 			return view;
 		}//eo buildView
 		
-		,createViewComponent : function(vm) {
+		/**
+		 * Creates page view
+		 */
+		,createPage : function(vm) {
 			var region, //depends on view type 
 				  view;
 			
@@ -44,17 +45,20 @@ afStudio.layoutDesigner.view.ViewFactory = function() {
 			}
 			
 			if (Ext.isDefined(vm['i:tab'])) {
-				
+				view = new afStudio.layoutDesigner.view.TabbedView({
+					region : region,
+					viewMeta : vm
+				});
 			} else {
 				view = new afStudio.layoutDesigner.view.NormalView({
 					region : region,
-					viewLayout : vm.attributes.layout
+					viewMeta : vm
 				});
 			}
 			
 			return view; 
-		}//eo createViewComponent
+		}//eo createPage
 		
-	}
-	
+		
+	}//eo afStudio.layoutDesigner.view.ViewFactory
 }();
