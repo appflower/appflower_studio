@@ -3,6 +3,8 @@
  * This class reflects widgets XML file
  * It can read widget definition and convert it to JSON format
  * It can also save changed widget definition coming from client side
+ * This class can also create action file for new widgets
+ * 
  *
  * @author lukas
  */
@@ -65,7 +67,7 @@ class afsWidgetBuilderWidget {
         $this->definition = json_decode($data, true);
     }
 
-    function validateAndSaveXml()
+    private function validateAndSaveXml()
     {
         $xmlBuilder = new afsXmlBuilder($this->definition, $this->widgetType);
 
@@ -93,6 +95,52 @@ class afsWidgetBuilderWidget {
         }
 
         return 'Widget XML is not valid.';
+    }
+
+    function save()
+    {
+        $validationStatusOrError = $this->validateAndSaveXml();
+        if ($validationStatusOrError === true) {
+            return $this->ensureActionExists();
+        }
+    }
+
+    /**
+     * checks if action file exists
+     * if not - we are createing new action file
+     */
+    private function ensureActionExists()
+    {
+        $afCU = new afConfigUtils($this->module);
+        if ($afCU->isActionDefined($this->action)) {
+            return true;
+        }
+
+        $actionFilePath = $afCU->generateActionFilePath($this->action);
+
+        $fileExists = file_exists($actionFilePath);
+        $fileWritable = is_writable($actionFilePath);
+        $dirWritable = is_writable(dirname($actionFilePath));
+        if (!$dirWritable ||
+            $dirWritable && $fileExists && !$fileWritable) {
+            return 'I need write permissions to '.$actionFilePath.'. Please check file/dir permissions.';
+        }
+
+        file_put_contents($actionFilePath, $this->renderActionFileContent());
+    }
+
+    private function renderActionFileContent()
+    {
+        $content =
+            '<'.'?'.'php'."\n".
+            "class {$this->action}Action" . "\n" .
+            "{" . "\n" .
+            '    function execute($request)' . "\n" .
+            "    {" . "\n" .
+            "    }" . "\n" .
+            "}";
+
+        return $content;
     }
 }
 ?>

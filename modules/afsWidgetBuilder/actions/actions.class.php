@@ -36,7 +36,7 @@ class afsWidgetBuilderActions extends sfActions
 
             $afsWBW->setDefinitionFromJSON($data);
             $afsWBW->setWidgetType($widgetType);
-            $validationStatusOrError = $afsWBW->validateAndSaveXml();
+            $validationStatusOrError = $afsWBW->save();
 
             if ($validationStatusOrError === true) {
                 return array(
