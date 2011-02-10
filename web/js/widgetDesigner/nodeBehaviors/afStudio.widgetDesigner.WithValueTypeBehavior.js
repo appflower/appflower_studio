@@ -146,13 +146,15 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
                     break;
                 case 'classAndMethod':
                         valueNode['i:class'] = nodeWidgetData['i:class'];
-                        valueNode['i:method'] = {
-                            name: nodeWidgetData['i:method'],
-                            'i:param': nodeWidgetData['i:param']
+                        if (nodeWidgetData['i:method'] && nodeWidgetData['i:method'] != '') {
+                            valueNode['i:method'] = {
+                                name: nodeWidgetData['i:method'],
+                                'i:param': nodeWidgetData['i:param']
+                            }
+                            delete nodeWidgetData['i:param'];
+                            delete nodeWidgetData['i:class'];
+                            delete nodeWidgetData['i:method'];
                         }
-                        delete nodeWidgetData['i:param'];
-                        delete nodeWidgetData['i:class'];
-                        delete nodeWidgetData['i:method'];
                     break;
                 case 'item':
                         valueNode['i:source'] = {name: nodeWidgetData['name']};

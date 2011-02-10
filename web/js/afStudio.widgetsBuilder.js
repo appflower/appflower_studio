@@ -412,6 +412,11 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
                         field.setTypeAndValidatorFromModelType(items[k]);
                     }
 		}
+
+                if (items.length > 0) {
+                    var modelFromFirstField = items[0].model;
+                    afsWD.rootNode.getDatasourceNode().setClassFromModel(modelFromFirstField);
+                }
 		
 
 		afsWD.save(this);

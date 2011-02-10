@@ -11,5 +11,12 @@ afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.Cont
             'text': 'Datasource',
             'id': 'i:datasource'
         };
+    },
+    setClassFromModel: function(model) {
+        var peerClass = model+'Peer';
+        this.behaviors[0].configureFor(this,{
+           'type': 'orm',
+           'i:class': peerClass
+        });
     }
 });
