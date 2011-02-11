@@ -341,4 +341,12 @@ class appFlowerStudioActions extends sfActions
         return $this->renderJson($aResult);        
     }
     
+    public function executeConfigureProject(sfWebRequest $request)
+    {
+        $pcm = new ProjectConfigurationManager($request);
+	    $result = $pcm->build();
+            
+        return $this->renderText($result);
+    }
+    
 }

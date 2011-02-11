@@ -30,24 +30,35 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 		this.tabPanel = new Ext.TabPanel({
 			activeTab: 0,
 			items:[
-				{xtype: 'panel', title: 'Project', items: this.projectForm},
-				{xtype: 'panel', title: 'Database', items: this.dbForm}
+				{xtype: 'panel', title: 'Project', formName: 'projectForm', items: this.projectForm},
+				{xtype: 'panel', title: 'Database', formName: 'dbForm', items: this.dbForm}
 			]
 		});
 	},
 	
 	createTabsUI: function(){
 		this.projectForm = new Ext.FormPanel({
+			url: window.afStudioWSUrls.getConfigureProjectUrl()+'?type=save',
 			bodyStyle: 'padding: 5px;', labelWidth: 140, 
 			border: false,
 			bodyBorder: false,
-
+			listeners: {
+	        	'render': function(cmp){
+					cmp.getForm().load({
+			            url: window.afStudioWSUrls.getConfigureProjectUrl(),
+			
+			            failure: function(form, action) {
+			                Ext.Msg.alert("Load failed", 'Error while getting data');
+			            }
+			        });	        		
+	        	}, scope: this
+	        },
 			items:[
 				{xtype:'textfield', name: 'name', fieldLabel:'Project Name', anchor:'95%'},
-				{xtype:'textfield', name: 'path', fieldLabel:'Path to Project', anchor:'95%'},
+				{xtype:'displayfield', name: 'path', fieldLabel:'Path to Project', anchor:'95%', style: 'font-weight:bold;'},
 				{xtype:'label', html: 'Description:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},
 				{xtype:'textarea', hideLabel: true, anchor: '100%', name: 'description', height: 57, style: 'margin-top: 5px;'},
-				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Auto-Deploy on Save', name: 'auto_deploy'}
+				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Auto-Deploy on Save', name: 'autodeploy'}
 			]
 		});
 		
@@ -78,7 +89,7 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 							items: [{xtype: 'textfield', fieldLabel: 'Host', name: 'host', anchor: '92%', allowBlank: false}]
 						},
 						{xtype: 'panel', width: 100, layout: 'form', labelWidth: 35,
-							items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '82%', allowBlank: false}]
+							items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '82%', allowBlank: true}]
 						}
 					]
 				},
@@ -91,10 +102,21 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 	},
 	
 	save: function(){
-		//TODO: save database connection settings
-		var f = this.form.getForm();
-		if(f.isValid()){
-		    f.submit({
+		var activeTab = this.tabPanel.getActiveTab();
+		
+		switch(activeTab.formName)
+		{
+			case "projectForm":
+				var activeForm = this.projectForm.getForm();
+				break;
+				
+			case "dbForm":
+				var activeForm = this.dbForm.getForm();
+				break;
+		}
+			
+		if(activeForm.isValid()){
+		    activeForm.submit({
 		        failure:function(form,action){
 		                if(action.result)
 		                {

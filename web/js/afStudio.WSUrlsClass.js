@@ -42,6 +42,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getConsoleUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/console');
     },
+    getConfigureProjectUrl: function() {
+        return this.buildUrlFor('/appFlowerStudio/configureProject');
+    },
     getConfigureDatabaseUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/configureDatabase');
     },

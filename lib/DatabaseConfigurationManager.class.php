@@ -107,13 +107,15 @@ class DatabaseConfigurationManager {
         $param['dsn']        = $this->buildDsn($confData['all']['propel']['param']['dsn']);
         $param['username']   = $this->params['username'];
         $param['password']   = $this->params['password'];
-        $param['persistent'] = (isset($this->params['persistent']) ? 'true' : 'false');
-        $param['pooling']    = (isset($this->params['pooling']) ? 'true' : 'false');
+        $param['persistent'] = (isset($this->params['persistent']) ? true : false);
+        $param['pooling']    = (isset($this->params['pooling']) ? true : false);
 
-        //temporary commented, modifies project config/databases.yml
-        // I'm not sure if it is ok, beacause if someone changes settings we could have problem with login to application
-//        $result = false;//@file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
-$result = @file_put_contents('/tmp/new.yml', $this->dumpYaml($confData));
+        @file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
+        
+        afsNotificationPeer::log('Database Settings have been modified','Settings');
+        
+        $result = true;
+		
         return $result;
     }
 
