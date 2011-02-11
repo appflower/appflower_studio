@@ -132,7 +132,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			   var response = Ext.decode(xhr.responseText);
 			   if (response.success) {
 				   afStudio.vp.addToPortal(new afStudio.layoutDesigner.DesignerPanel({
-				       	layoutMetaData: response.content
+				       	layoutMeta: response.content
 				   }), true);			   	
 			   } else {
 			   	   Ext.Msg.alert('Error', response.content);

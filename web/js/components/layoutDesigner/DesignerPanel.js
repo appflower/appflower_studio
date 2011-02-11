@@ -10,7 +10,7 @@ Ext.namespace('afStudio.layoutDesigner');
 afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	/**
-	 * @cfg {Object} layoutMetaData required 
+	 * @cfg {Object} layoutMeta required 
 	 */	
 	 
 
@@ -18,9 +18,71 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
 	 */
 	
+	/**
+	 * Checks if <b>content</b> layout is tabbed
+	 * @return {Boolean} true is layout is tabbed otherwise false
+	 */
+	isLayoutTabbed : function() {
+		var _this = this,
+			isTabbed = false,
+			area = this.layoutMeta['i:area'];
+			
+		if (Ext.isArray(area)) {
+			Ext.each(area, function(a, i) {
+				if (a.attributes.type == 'content' && a['i:tab']) {
+					isTabbed = true;
+					return false;
+				}
+			});
+		} else {
+			if (area.attributes.type == 'content' && area['i:tab']) {
+				isTabbed = true;
+			}			
+		}
+		
+		return isTabbed;
+	}//eo isLayoutTabbed
 	
-	//TODO remove
-	refreshExistingWidgets : function() {
+	/**
+	 * Returns specified <u>Format</u> menu item 
+	 * @param {Ext.menu.Item} item The specified menu item
+	 * @return {Ext.menu.Item} menu item
+	 */
+	,getFormatMenuItem : function(item) {
+ 		var formatM = this.getTopToolbar().getComponent('formatMenu').menu; 			  
+ 		return formatM.getComponent(item);
+	}//eo getFormatMenuItem
+	
+	/**
+	 * Returns specified <u>Format</u>-><u>Type</u> menu item
+	 * @param {Ext.menu.Item} item The specified menu item
+	 * @return {Ext.menu.Item} menu item
+	 */
+	,getFormatTypeMenuItem : function(item) {
+		var typeM = this.getFormatMenuItem('typeItem').menu;
+ 		return typeM.getComponent(item);
+	}//eo getFormatTypeMenuItem
+	
+	/**
+	 * Updates state of designer control panel's items
+	 * depending on layout type.
+	 */
+	,updateDesignerPanelControls : function() {
+		var addNewTabMi = this.getFormatMenuItem('addNewTab');
+		
+		//Sets Format->Type menu in the proper state depending on layout type (normal/tabbed)
+		if (this.isLayoutTabbed()) {
+			this.getFormatTypeMenuItem('tabbedView').setChecked(true, true);
+			addNewTabMi.enable();
+		} else {
+			this.getFormatTypeMenuItem('normalView').setChecked(true, true);
+			addNewTabMi.disable();
+		}	
+	}//eo updateDesignerPanelControls	
+	
+	
+	//TODO remove not the right place for this method
+	,refreshExistingWidgets : function() {
 		/*
 		var els = Ext.DomQuery.select('DIV[class*="layout-designer-widget"]', 'details-panel');
 		
@@ -36,31 +98,6 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		}
 		*/		
 	}//eo refreshExistingWidgets
-
-	/**
-	 * Updates designer panel.
-	 * Creates {@link #columnsNumber} number of columns inside {@link #designerPortal} portal panel
-	 * and recreates already exist widgets
-	 */
-	,refreshDesignerPanel : function() {
-		var _this = this,
-			  cls = this.columnsNumber,
-			   dp = this.designerPortal,
-		dpColumns = [];
-		
-		dp.removeAll(true);
-			   
-		var columnwidth = Ext.util.Format.round(1 / cls, 2);		
-		for (var i = 0; i < cls; i++) {			
-			dpColumns.push(_this.createDesignerColumn(i, columnwidth));
-		}
-
-		dp.add(dpColumns);
-		
-		_this.refreshExistingWidgets();
-
-		_this.doLayout();
-	}//eo refreshDesignerPanel
 	
 	/**
 	 * Initializes component
@@ -74,19 +111,36 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	        items: [
 	        {
 	        	text: 'Save',
-	        	itemId : 'designerSaveBtn',
+	        	itemId : 'saveLayoutBtn',
 	        	iconCls: 'icon-save'	        	
 	        },'-',{
 	        	text: 'Add Widget',
-	        	itemId : 'designerNewWidgetBtn',
+	        	itemId : 'addWidgetBtn',
 	        	iconCls: 'icon-add'	        	
 	        },'-',{
 	        	text: 'Format', 
-	        	itemId : 'designerFromatMenu',
+	        	itemId : 'formatMenu',
 	        	iconCls: 'icon-format', 
 	        	menu: {
 					items: [
 					{
+						text: 'Type',
+						itemId: 'typeItem',
+						menu: {
+							defaults: {
+								xtype: 'menucheckitem',								
+								group: 'layoutType'
+							},
+							items: [
+							{	
+								itemId: 'normalView',
+								text: 'Normal' 
+							},{
+								itemId: 'tabbedView',
+								text: 'Tabbed'
+							}]
+						}
+					},{
 						text: 'Columns', 
 						menu: {
 							items: [
@@ -113,6 +167,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 						handler: _this.autoAdjust, 
 						scope: _this
 					},{
+						itemId: 'addNewTab',
 						text: 'Add new Tab' 
 					}]
 	        	}	        	
@@ -129,7 +184,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			tbar: tb,
 			items: {
 				xtype: 'afStudio.layoutDesigner.view.page',
-				pageMeta: _this.layoutMetaData
+				pageMeta: _this.layoutMeta
 			}
 		}
 	}//eo _beforeInitComponent
@@ -153,8 +208,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	,_afterInitComponent : function() {
 		var _this = this,
 			 tbar = _this.getTopToolbar(),
-			 saveBtn = tbar.getComponent('designerSaveBtn'),
-		newWidgetBtn = tbar.getComponent('designerNewWidgetBtn'),
+			 saveBtn = tbar.getComponent('saveLayoutBtn'),
+		newWidgetBtn = tbar.getComponent('addWidgetBtn'),
 		formatColumnCb = Ext.getCmp('designer-format-column-combo');
 		
 		saveBtn.on('click', _this.onClickSaveDesignerLayout, _this);
@@ -162,14 +217,16 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		newWidgetBtn.on('click', _this.onClickNewWidget, _this);
 		
 		formatColumnCb.on('select', _this.onSelectDesignerColumnsNumber, _this);
+		
+		_this.on('afterrender', _this.initDesignerPanel, _this);
 	}//eo _afterInitComponent
 	
 	/**
 	 * This designer panel <u>afterrender</u> event listener
 	 * Executes init actions
 	 */
-	,initDesignerPanel : function() {
-		this.refreshDesignerPanel();		
+	,initDesignerPanel : function() {		
+		this.updateDesignerPanelControls();		
 	}	
 	
 	/**
@@ -203,7 +260,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	,onAddWidget : function(widgetParam) {
 		var _this = this,
 			    w = _this.createWidget(widgetParam);
-		_this.addWidget(w);	    
+		_this.addWidget(w);
 	}	
  
 	/**
