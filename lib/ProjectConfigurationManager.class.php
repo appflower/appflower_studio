@@ -10,7 +10,7 @@ class ProjectConfigurationManager {
     static $defaultProjectTemplate = array(
        'project' => array(
             'name' => 'Studio playground',
-            'description' => 'This is the Studio\'s playground, will be used for new projects',
+            'description' => "This is the Studio's playground, will be used for new projects",
             'autodeploy' => 'true'
         )
     );
