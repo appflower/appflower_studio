@@ -3,7 +3,7 @@
  * Widget Designer
  * @class afStudio.CssEditor
  * @extends Ext.TabPanel
- * @author milos
+ * @author milos_silni
  */
 afStudio.ToolbarEditor = Ext.extend(Ext.Window, { 
 
@@ -13,6 +13,7 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 	 * @private
 	 */
 	initComponent: function(){
+		this.checkToolbarHelperFileExist();
 		this.createRegions();
 		var config = {
 			title: 'Toolbar Editor', width: 813,
@@ -39,27 +40,6 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 	 * This function creates west and center panels and needful components
 	 */
 	createRegions: function(){
-		//Create TreeLoader component
-		this.loader = new Ext.tree.TreeLoader({
-			 dataUrl: window.afStudioWSUrls.getCssFilestreeUrl()
-		});
-
-		// setup loading mask if configured
-		this.loader.on({
-			 beforeload:function (loader, node, clb){
-			 	(function(){
-				 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
-			 	}).defer(100);
-			 }
-			,load:function (loader, node, resp){
-				node.getOwnerTree().body.unmask();
-			}
-			,loadexception:function(loader, node, resp){
-				node.getOwnerTree().body.unmask();
-			}
-		});
-		
-		//Create CodePress element
 		this.codeEditor = new Ext.ux.CodePress({
 			delayedStart: false, 
 			closable:true,
@@ -79,16 +59,20 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 	save: function(){
 		Ext.Ajax.request({
 		   url: window.afStudioWSUrls.getToolbarHelperFileSaveUrl(),
-//		   params: { node: this.westPanel.getSelectionModel().getSelectedNode().text},
 		   xmlData:this.codeEditor.getValue(),
 		   success: function(result,request){
-//			   alert(result.responseText);
 			   var obj = Ext.decode(result.responseText);
 			   Ext.Msg.alert("Information",obj.message);
 		   }
 		});
 
-		//alert(this.codeEditor.getCode());
+	},
+	
+	checkToolbarHelperFileExist: function(){
+		Ext.Ajax.request({
+		   url: window.afStudioWSUrls.buildUrlFor('/appFlowerStudio/checkToolbarHelperFileExist'),
+		});
+
 	},
 	
 	/**

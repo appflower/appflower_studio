@@ -373,5 +373,25 @@ class appFlowerStudioActions extends sfActions
 		$info=array('success'=>$success, "message"=>$message);
 		return $this->renderJson($info);
 	}
+	
+	public function executeCheckToolbarHelperFileExist(){
+		$result = true;
+		$message = "";
+		
+		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/ImmExtjsToolbarHelper.php';
+		
+		if (!file_exists($filePath)) {
+			$_ImmExtjsToolbarHelper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_ImmExtjsToolbarHelper.php', true);
+			$fp = fopen($filePath,"w");
+			fWrite($fp,$_ImmExtjsToolbarHelper);
+			fclose($fp);
+			
+			$result=false;
+			$message = 'File created successfully';
+		}
+		
+		$info=array('success'=>$result, "message"=>$message);
+		return $this->renderJson($info);
+	}
     
 }
