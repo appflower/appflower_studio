@@ -18,6 +18,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getCssFilesSaveUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/cssfilesSave');
     },
+    getToolbarHelperFileSaveUrl: function() {
+        return this.buildUrlFor('/appFlowerStudio/toolbarHelperFileSave');
+    },
     getModulesUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/modules');
     },

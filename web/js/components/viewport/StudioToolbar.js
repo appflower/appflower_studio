@@ -91,6 +91,11 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						handler: function (b, e) {
 							(new afStudio.CssEditor()).show();
 						}
+					},{
+						text: 'Toolbar Editor',
+						handler: function (b, e) {
+							(new afStudio.ToolbarEditor()).show();
+						}
 					}]
 				}
 			},{

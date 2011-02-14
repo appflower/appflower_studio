@@ -349,4 +349,29 @@ class appFlowerStudioActions extends sfActions
         return $this->renderText($result);
     }
     
+	public function executeToolbarHelperFileSave(){
+		$result=true;
+		$JDATA=file_get_contents("php://input");
+		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/ImmExtjsToolbarHelper.php';
+		try{
+			$fp = fopen($filePath,"w");
+			if(!$fp)throw new Exception("file open error");
+			if(!fWrite($fp,$JDATA))throw new Exception("file write error");
+			if(!fclose($fp))throw new Exception("file close error");
+		}catch(Exception $e){
+			$result=false;	
+		}
+
+	 	if($result) {
+		    $success = true;
+		    $message = 'File saved successfully';
+		} else {
+		    $success = false;
+		    $message =  'Error while saving file to disk!';
+		}
+		
+		$info=array('success'=>$success, "message"=>$message);
+		return $this->renderJson($info);
+	}
+    
 }
