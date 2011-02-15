@@ -11,7 +11,7 @@ class ProjectConfigurationManager {
        'project' => array(
             'name' => 'Studio playground',
             'description' => "This is the Studio's playground, will be used for new projects",
-            'autodeploy' => 'true'
+            'autodeploy' => true
         )
     );
 
