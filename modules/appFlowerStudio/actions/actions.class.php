@@ -374,6 +374,9 @@ class appFlowerStudioActions extends sfActions
 		return $this->renderJson($info);
 	}
 	
+	/**
+	 * Check if file exists and if not there create a new one based on the template (_ImmExtjsToolbarHelper.php).
+	 */
 	public function executeCheckToolbarHelperFileExist(){
 		$result = true;
 		$message = "";
@@ -381,12 +384,16 @@ class appFlowerStudioActions extends sfActions
 		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/ImmExtjsToolbarHelper.php';
 		
 		if (!file_exists($filePath)) {
-			$_ImmExtjsToolbarHelper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_ImmExtjsToolbarHelper.php', true);
-			$fp = fopen($filePath,"w");
-			fWrite($fp,$_ImmExtjsToolbarHelper);
-			fclose($fp);
+			try{
+				$_ImmExtjsToolbarHelper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_ImmExtjsToolbarHelper.php', true);
+				$fp = fopen($filePath,"w");
+				fWrite($fp,$_ImmExtjsToolbarHelper);
+				fclose($fp);
+			}catch (Exception $e) {
+				$result=false;
+				$message = 'Error while saving file to disk!';
+			}
 			
-			$result=false;
 			$message = 'File created successfully';
 		}
 		

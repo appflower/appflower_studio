@@ -71,6 +71,10 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 	checkToolbarHelperFileExist: function(){
 		Ext.Ajax.request({
 		   url: window.afStudioWSUrls.buildUrlFor('/appFlowerStudio/checkToolbarHelperFileExist'),
+		   failure: function ( result, request) {
+				var obj = Ext.decode(result.responseText);
+				Ext.MessageBox.alert('Failed', result.responseText); 
+		   }
 		});
 
 	},
