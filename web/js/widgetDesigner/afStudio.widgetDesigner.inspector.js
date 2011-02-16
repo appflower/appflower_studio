@@ -252,10 +252,10 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 //					_this.setRootNode(_this.rootNode);
 //				}).defer(10000);
 				
-                _this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
-                _this.widgetDefinition.fetchAndConfigure(_this);
+//                _this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
+//                _this.widgetDefinition.fetchAndConfigure(_this);
                 
-//                _this.setRootNode(_this.rootNodeEl);
+                _this.setRootNode(_this.rootNodeEl);
                 
 				cmp.body.unmask()
 		}
