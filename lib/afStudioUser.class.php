@@ -50,6 +50,8 @@ class afStudioUser
     
     /**
      * Getting user status
+     * 
+     * @return boolean
      */
     public function isAuthenticated()
     {
@@ -58,6 +60,8 @@ class afStudioUser
     
     /**
      * Process authorization
+     * 
+     * @return boolean Has been authorized user
      */
     public function authorize()
     {
@@ -111,14 +115,18 @@ class afStudioUser
     }
     
     /**
-     * Fix user to system
+     * Fix user to system using credentials
+     * 
+     * @param   string  $username
+     * @param   string  $password
+     * @param   boolean $remember
      */
-    public static function set($username, $password)
+    public static function set($username, $password, $remember = false)
     {
         sfContext::getInstance()->getResponse()->setCookie(
             self::USER_IDENTIFICATOR, 
             $username . ':' . sha1($username . sha1($password)), 
-            time()+ 1000
+            (($remember) ? time() + 60*60*24*15 : 0)
         );
     }
     
@@ -183,6 +191,8 @@ class afStudioUser
     
     /**
      * Getting user collection path
+     * 
+     * @return string
      */
     public static function getCollectionPath()
     {
@@ -191,6 +201,8 @@ class afStudioUser
     
     /**
      * Getting user collection 
+     * 
+     * @return array
      */
     public static function getCollection()
     {
@@ -198,7 +210,9 @@ class afStudioUser
     }
     
     /**
-     * Setting user collection 
+     * Setting user collection
+     * 
+     * @param   array $definition 
      */
     public static function setCollection($definition)
     {

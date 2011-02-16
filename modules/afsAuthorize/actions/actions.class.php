@@ -2,7 +2,9 @@
 /**
  * afsAuthorize action
  * 
- * @author startsev.sergey@gmail.com
+ * @package     appFlowerStudio
+ * @subpackage  plugin
+ * @author      startsev.sergey@gmail.com
  */
 class afsAuthorizeActions extends sfActions
 {
@@ -13,6 +15,15 @@ class afsAuthorizeActions extends sfActions
     {
         afStudioUser::getInstance()->authorize();
     }
+    
+    /**
+     * Rendering json
+     */
+    protected function renderJson($result)
+    {
+        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+        return $this->renderText(json_encode($result));
+    } 
     
     /**
      * Sign out controller
@@ -37,7 +48,7 @@ class afsAuthorizeActions extends sfActions
     /**
      * Sign In functionality controller
      */
-	public function executeSignin($request)
+	public function executeSignin(sfWebRequest $request)
 	{
 		
 		if ($request->isMethod('post')) {
@@ -47,26 +58,23 @@ class afsAuthorizeActions extends sfActions
 
                 $sUsername = $signin['username'];
                 $sPassword = $signin['password'];
+                $bRemember = isset($signin['remember']);
                 
                 $user = afStudioUser::getInstance()->retrieve($sUsername);
 
                 if ($user) {
-					
                     if ($user['password'] === sha1($signin['password'])) {
                         
-                        afStudioUser::getInstance()->set($sUsername, $sPassword);
+                        afStudioUser::getInstance()->set($sUsername, $sPassword, $bRemember);
                         
 						$signinUrl = $this->getRequest()->getReferer();
-						$signinUrl = ($signinUrl!=null) ? $signinUrl : url_for('@homepage');
+						$signinUrl = ($signinUrl != null) ? $signinUrl : url_for('@homepage');
 						
 						$result = array(
                             'success' => true, 
-                            'redirect'=>$signinUrl, 
-                            'load'=>'page'
+                            'redirect' => $signinUrl, 
+                            'load' => 'page'
                         );
-                        
-						$result = json_encode($result);
-						return $this->renderText($result);
                         
 					} else {
 						$result = array(
@@ -74,8 +82,6 @@ class afsAuthorizeActions extends sfActions
                             'message' => 'The username and/or password is invalid. Please try again.'
                         );
                         
-						$result = json_encode($result);
-						return $this->renderText($result);
 					}
 				} else {
 					$result = array(
@@ -84,8 +90,6 @@ class afsAuthorizeActions extends sfActions
                         'redirect' => '/afsAuthorize/index', 
                         'load' => 'page'
                     );
-					$result = json_encode($result);
-					return $this->renderText($result);
                 }
                 
             } else {
@@ -97,9 +101,6 @@ class afsAuthorizeActions extends sfActions
                     'load' => 'page'
                 );
                 
-				$result = json_encode($result);
-                
-				return $this->renderText($result);
 			}
             
 		} else {
@@ -116,10 +117,69 @@ class afsAuthorizeActions extends sfActions
 				    'redirect' => '/afsAuthorize/index',
 				    'load' => 'page'
 				);
-				$result = json_encode($result);
-				return $this->renderText($result);
+				
 			}
 		}
         
+        return $this->renderJson($result);
+        
 	}
+
+
+    /**
+     * Password request controller
+     * 
+     * @TODO end this functionality, and need to create template with form
+     */
+    public function executePasswordRequest(sfWebRequest $request)
+    {
+        if ($this->getRequest()->getMethod() != sfRequest::POST)
+        {
+            // display the form
+            return sfView::SUCCESS;
+        }
+
+        // handle the form submission
+        $c = new Criteria();
+        $c->add(sfGuardUserPeer::USERNAME, $this->getRequestParameter('email'));
+        $user = sfGuardUserPeer::doSelectOne($c);
+
+        // email exists?
+        if ($user)
+        {
+            //audit log
+            $user_old=clone $user;
+
+            // set new random password
+            $password = substr(md5(rand(100000, 999999)), 0, 6);
+            $user->setPassword($password);
+            $user->save(); // save new password
+
+
+                        if ($user->getUsername()) {
+                            $parameters = array(
+                                'userObj'  => $user,
+                                'password' => $password,
+                                'email'    => $user->getUsername(),
+                                'subject'  => 'seedControl password recovery',
+                                'from'     => 'Seedcontrol'
+                            );
+
+                            afAutomailer::saveMail('mail', 'sendPasswordRequest', $parameters);
+                        }
+
+
+            sfProjectConfiguration::getActive()->loadHelpers(array("Url","Tag"));
+            $result = array('success' => true,'message'=>'Your login information was sent to '.$this->getRequestParameter('email').'. <br>You should receive it shortly, so you can proceed to the '.link_to('login page', '@login').'.');
+
+        }
+        else
+        {
+            $result = array('success' => false,'message'=>'There is no user with this email address. Please try again!');
+        }
+
+        $result = json_encode($result);
+        return $this->renderText($result);
+    }
+
 }
