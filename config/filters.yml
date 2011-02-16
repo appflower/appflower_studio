@@ -1,0 +1,15 @@
+rendering: ~
+security:
+  class: afsStudioBasicSecurityFilter
+  
+cache:     ~
+common:    ~
+
+parser_validation: 
+  class: XmlParserValidationFilter
+
+null_filter: ~
+
+exception_catching: ~
+
+execution: ~
