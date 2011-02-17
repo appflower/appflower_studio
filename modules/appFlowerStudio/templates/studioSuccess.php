@@ -56,7 +56,6 @@ window.afStudioWSUrls = new afStudio.WSUrlsClass();
 
 <script type="text/javascript">
 var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>';
-var afStudioRecentProjects='<?php echo appFlowerStudioActions::getRecentProjects(); ?>';
 </script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>

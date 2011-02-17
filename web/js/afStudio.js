@@ -73,6 +73,39 @@ var afStudio = function () {
 			return this.vp;
 		}
 		
+		,getRecentProjects: function()
+		{
+			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
+			
+			for(key in recentProjects)
+			{
+				Ext.apply(recentProjects[key], {
+					handler: function (b,e)
+					{
+						console.log(b);
+					}
+				});				
+			}
+			
+			return recentProjects;
+		}
+		
+		/**
+		* usage: afStudio.addRecentProject({text: "Second one",url: "http://192.168.1.105:585"})
+		*/		
+		,addRecentProject: function(project)
+		{
+			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
+			
+			if((recentProjects[recentProjects.length-1]&&recentProjects[recentProjects.length-1].url != project.url)||(!recentProjects[recentProjects.length-1]))
+			recentProjects.push(project);
+			
+			var expirationDate=new Date();
+			expirationDate.setDate(expirationDate.getDate()+30);
+			
+			Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate);
+		}
+		
 		,showWidgetDesigner : function(widget, action, security) {
   			//FIXME should be used afStudio.vp.mask({region: 'center'}) or afStudio.vp.mask(), read the jsdocs
 			var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...', removeMask:true});

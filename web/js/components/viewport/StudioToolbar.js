@@ -51,12 +51,6 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 									
 //									Ext.MessageBox.alert('Load project', 'Load project option')
 								}
-							},{
-								text: 'Save project',
-								handler: function (b,e)
-								{
-									Ext.MessageBox.alert('Save project', 'Save project option')
-								}
 							}, '-', {
 								text: 'Recent projects',
 								menu: {
@@ -157,7 +151,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 */
 	,getRecentProjectsList: function(){
 		try {
-			var recentProjects = Ext.decode(afStudioRecentProjects);
+			var recentProjects = afStudio.getRecentProjects();
 		} catch (e){
 			var recentProjects = [];
 		}
