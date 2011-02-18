@@ -3,7 +3,9 @@ Ext.namespace('afStudio.viewport');
 afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, { 
 
 	initComponent : function() {
-		
+			
+		_self = this;
+				
 		var config = {
 			items: [
 			{
@@ -12,51 +14,15 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 					items: [
 					{
 						text: 'Project',
-						menu: {
-							items: [
+						listeners: {
+							added: function(menuItem)
 							{
-								text: 'Create new project',
-								handler: function (b,e)
-								{
-									var form = new Ext.FormPanel({
-									    url: '', defaultType: 'textfield', width: 450, frame: true, 
-										labelWidth: 100, title: false,
-										items: [
-											{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'project_name', allowBlank: false},
-											{xtype:'textfield', fieldLabel: 'Path to prohect', anchor: '96%', name: 'project_path', allowBlank: false}
-										]
-									});
-											
-									var wnd = new Ext.Window({
-										title: 'Create new project', width: 463,
-										autoHeight: true, closable: true,
-							            draggable: true, plain:true,
-							            modal: true, resizable: false,
-							            bodyBorder: false, border: false,
-							            items: form,
-										buttons: [
-											{text: 'Create project'},
-											{text: 'Cancel', handler: function(){wnd.close}}
-										],
-										buttonAlign: 'center'
-									});
-									wnd.show()												
-								}
-							},{
-								text: 'Load project',
-								handler: function (b,e)
-								{
-									//TODO: another name?
-									(new afStudio.LoadProject()).show();
-									
-//									Ext.MessageBox.alert('Load project', 'Load project option')
-								}
-							}, '-', {
-								text: 'Recent projects',
-								menu: {
-									items: this.getRecentProjectsList()
-								}								
-							}]
+								_self.setProjectMenu(menuItem);
+							},
+							activate: function(menuItem)
+							{
+								_self.setProjectMenu(menuItem);
+							}
 						}						
 					},{
 						text: 'Settings',
@@ -139,6 +105,8 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			}]
 		};
 		
+		//Ext.util.Observable.capture(this, function(e){console.info(e)});
+		
 		// apply config
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		afStudio.viewport.StudioToolbar.superclass.initComponent.apply(this, arguments);
@@ -146,16 +114,90 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	}//eo initComponent
 	
 	/**
-	 * Function getRecentProjectsList
-	 * @return {Array} list of latest projects
+	 * Function setProjectMenu
+	 * creates the project menu dynamically
 	 */
-	,getRecentProjectsList: function(){
-		try {
-			var recentProjects = afStudio.getRecentProjects();
-		} catch (e){
-			var recentProjects = [];
+	,setProjectMenu: function(menuItem)
+	{
+		var recentProjects = afStudio.getRecentProjects();
+		_self = this;
+		
+		if(menuItem.menu)
+		{
+			menuItem.menu.removeAll();
 		}
-		return recentProjects;
+		else
+		{	
+			menuItem.menu = new Ext.menu.Menu();
+		}	
+		
+		menuItem.menu.addMenuItem({
+								text: 'Create new project',
+								handler: function (b,e)
+								{
+									var form = new Ext.FormPanel({
+									    url: '', defaultType: 'textfield', width: 450, frame: true, 
+										labelWidth: 100, title: false,
+										items: [
+											{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'project_name', allowBlank: false},
+											{xtype:'textfield', fieldLabel: 'Path to prohect', anchor: '96%', name: 'project_path', allowBlank: false}
+										]
+									});
+											
+									var wnd = new Ext.Window({
+										title: 'Create new project', width: 463,
+										autoHeight: true, closable: true,
+							            draggable: true, plain:true,
+							            modal: true, resizable: false,
+							            bodyBorder: false, border: false,
+							            items: form,
+										buttons: [
+											{text: 'Create project'},
+											{text: 'Cancel', handler: function(){wnd.close}}
+										],
+										buttonAlign: 'center'
+									});
+									wnd.show()												
+								}
+							});
+							
+		menuItem.menu.addMenuItem({
+								text: 'Load project',
+								handler: function (b,e)
+								{
+									//TODO: another name?
+									(new afStudio.LoadProject()).show();
+									
+//									Ext.MessageBox.alert('Load project', 'Load project option')
+								}
+							});
+				
+				
+		if(recentProjects.length>0)
+		{
+			menuItem.menu.addSeparator();			
+			menuItem.menu.addMenuItem({
+								text: 'Recent projects',
+								menu: _self.getRecentProjectsMenu(recentProjects)
+							});
+		}
+		
+		menuItem.menu.doLayout();
+	}
+	/**
+	 * Function getRecentProjectsMenu
+	 * creates the recent projects menu dynamically
+	 */
+	,getRecentProjectsMenu: function(recentProjects){
+		recentProjectsMenu = new Ext.menu.Menu();
+		
+		for(key in recentProjects)
+		{
+			if(recentProjects[key].url)
+    		recentProjectsMenu.add({text: recentProjects[key].text, href: recentProjects[key].url});
+		}
+		
+		return recentProjectsMenu;
 	}
 	
 });

@@ -76,34 +76,35 @@ var afStudio = function () {
 		,getRecentProjects: function()
 		{
 			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
-			
-			for(key in recentProjects)
-			{
-				Ext.apply(recentProjects[key], {
-					handler: function (b,e)
-					{
-						console.log(b);
-					}
-				});				
-			}
+						
+			recentProject = recentProjects.reverse();
 			
 			return recentProjects;
 		}
 		
-		/**
-		* usage: afStudio.addRecentProject({text: "Second one",url: "http://192.168.1.105:585"})
-		*/		
-		,addRecentProject: function(project)
+		,addCurrentProject: function()
 		{
 			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
 			
-			if((recentProjects[recentProjects.length-1]&&recentProjects[recentProjects.length-1].url != project.url)||(!recentProjects[recentProjects.length-1]))
-			recentProjects.push(project);
-			
-			var expirationDate=new Date();
-			expirationDate.setDate(expirationDate.getDate()+30);
-			
-			Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate);
+			Ext.Ajax.request({
+			   url: window.afStudioWSUrls.getConfigureProjectUrl(),
+			   success: function(response, opts) {
+			      var response = Ext.decode(response.responseText);
+			      var project = {};
+			      project.text = response.data.name;
+			      project.url = document.location.protocol+'//'+document.location.host+'/studio';			      
+			      
+			      if((recentProjects[recentProjects.length-1]&&recentProjects[recentProjects.length-1].url != project.url)||(!recentProjects[recentProjects.length-1]))
+					{
+						recentProjects.push(project);
+					
+						var expirationDate=new Date();
+						expirationDate.setDate(expirationDate.getDate()+30);
+					
+						Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate);
+					}
+			   }
+			});
 		}
 		
 		,showWidgetDesigner : function(widget, action, security) {
@@ -143,6 +144,11 @@ var afStudio = function () {
 			
 			afApp.urlPrefix = '';
 			GLOBAL_JS_VAR = GLOBAL_CSS_VAR = new Array();
+			
+			/**
+			* this will add current project's url to the recent projects cookie
+			*/
+			this.addCurrentProject();
 		}
 	}
 }();
