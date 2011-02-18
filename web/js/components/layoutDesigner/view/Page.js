@@ -15,6 +15,11 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	 * @cfg {Object} pageMeta required
 	 * Page metadata
 	 */	
+
+	/**
+	 * @property {afStudio.layoutDesigner.DesignerPanel} designPanel
+	 * Designer Panel, this component wrapper
+	 */
 	
 	/**
 	 * Initializes component
@@ -27,7 +32,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 			region: 'center'
 		});
 		
-		var	views = afStudio.layoutDesigner.view.ViewFactory.buildView(this.pageMeta);
+		var	views = afStudio.layoutDesigner.view.ViewFactory.buildLayout(this.pageMeta);
 			
 		return {
 			items: views
@@ -51,8 +56,23 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	 * @private
 	 */	
 	,_afterInitComponent : function() {
+		var _this = this;
+		
 		afStudio.vp.unmask('center');
-	}//eo _afterInitComponent
+		
+		//set designPanel property
+		_this.designPanel = _this.ownerCt;
+		
+	}//eo _afterInitComponent	
+	
+	/**
+	 * Returns page's <i>content</i> view 
+	 * @return {afStudio.layoutDesigner.view.NormalView} view The content page view
+	 */
+	,getContentView : function() {
+		var cv = this.find('region', 'center')[0];
+		return Ext.isDefined(cv) ? cv : null;
+	}//eo getContentView	
 	
 });
 

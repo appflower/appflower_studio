@@ -104,6 +104,7 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 
 <!-- layoutDesigner -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/ViewFactory.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/MetaDataProcessor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/NormalView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/TabbedView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/Page.js"></script>

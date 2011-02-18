@@ -10,37 +10,28 @@ Ext.namespace('afStudio.layoutDesigner');
 afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	/**
-	 * @cfg {Object} layoutMeta required 
-	 */	
-	 
+	 * @cfg {Object} layoutMeta required
+	 * Layout meta data 
+	 */
 
 	/**
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
 	 */
 	
 	/**
-	 * Checks if <b>content</b> layout is tabbed
-	 * @return {Boolean} true is layout is tabbed otherwise false
+	 * @property {afStudio.layoutDesigner.view.Page} layoutView
+	 * Layout page view
+	 */
+	
+	/**
+	 * Checks if <b>content</b> view of {@link #layoutView} is tabbed
+	 * @return {Boolean} true if tabbed otherwise false
 	 */
 	isLayoutTabbed : function() {
-		var _this = this,
-			isTabbed = false,
-			area = this.layoutMeta['i:area'];
-			
-		if (Ext.isArray(area)) {
-			Ext.each(area, function(a, i) {
-				if (a.attributes.type == 'content' && a['i:tab']) {
-					isTabbed = true;
-					return false;
-				}
-			});
-		} else {
-			if (area.attributes.type == 'content' && area['i:tab']) {
-				isTabbed = true;
-			}			
-		}
+		var view = this.layoutView.getContentView(),
+			  vm = view.viewMeta;
 		
-		return isTabbed;
+		return this.isViewTabbed(vm);
 	}//eo isLayoutTabbed
 	
 	/**
@@ -62,6 +53,16 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		var typeM = this.getFormatMenuItem('typeItem').menu;
  		return typeM.getComponent(item);
 	}//eo getFormatTypeMenuItem
+
+	/**
+	 * Returns specified <u>Format</u>-><u>Columns</u> menu item
+	 * @param {Ext.menu.Item} item The specified menu item
+	 * @return {Ext.menu.Item} menu item
+	 */	
+	,getFormatLayoutMenuItem : function(item) {
+		var typeM = this.getFormatMenuItem('layoutItem').menu;
+ 		return typeM.getComponent(item);
+	}
 	
 	/**
 	 * Updates state of designer control panel's items
@@ -80,6 +81,15 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		}	
 	}//eo updateDesignerPanelControls	
 	
+	/**
+	 * Updates designer view.   
+	 * @param {afStudio.layoutDesigner.view.Page} view The new view 
+	 */
+	,updateLayoutView : function(view) {
+		this.removeAll(true);
+		this.layoutView = this.add(view);
+		this.doLayout();		
+	}//eo updateLayoutView
 	
 	//TODO remove not the right place for this method
 	,refreshExistingWidgets : function() {
@@ -122,11 +132,12 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	        	itemId : 'formatMenu',
 	        	iconCls: 'icon-format', 
 	        	menu: {
+	        		ignoreParentClicks: true,
 					items: [
 					{
 						text: 'Type',
 						itemId: 'typeItem',
-						menu: {
+						menu: {							
 							defaults: {
 								xtype: 'menucheckitem',								
 								group: 'layoutType'
@@ -134,19 +145,22 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 							items: [
 							{	
 								itemId: 'normalView',
+								type: 'normal',
 								text: 'Normal' 
 							},{
 								itemId: 'tabbedView',
+								type: 'tabbed',
 								text: 'Tabbed'
 							}]
 						}
 					},{
-						text: 'Columns', 
+						text: 'Columns',
+						itemId: 'layoutItem',
 						menu: {
 							items: [
 	    					{
 								xtype: 'combo',
-								id: 'designer-format-column-combo',
+								itemId: 'layoutStructure',
 								triggerAction: 'all', 
 								mode: 'local', 
 								emptyText: 'Select an item...',
@@ -183,8 +197,9 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			layout: 'fit',
 			tbar: tb,
 			items: {
-				xtype: 'afStudio.layoutDesigner.view.page',
-				pageMeta: _this.layoutMeta
+				xtype: 'afStudio.layoutDesigner.view.page',				
+				pageMeta: _this.layoutMeta,
+				ref: 'layoutView'
 			}
 		}
 	}//eo _beforeInitComponent
@@ -209,14 +224,29 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		var _this = this,
 			 tbar = _this.getTopToolbar(),
 			 saveBtn = tbar.getComponent('saveLayoutBtn'),
-		newWidgetBtn = tbar.getComponent('addWidgetBtn'),
-		formatColumnCb = Ext.getCmp('designer-format-column-combo');
+		newWidgetBtn = tbar.getComponent('addWidgetBtn');
+		
+		_this.addEvents(
+			/**
+			 * @event layouttypechanged Fires after view layout was changed
+			 * @param {String} layoutType The new view layout type (normal/tabbed)
+			 */
+			'layouttypechanged'
+		);
 		
 		saveBtn.on('click', _this.onClickSaveDesignerLayout, _this);
 		
 		newWidgetBtn.on('click', _this.onClickNewWidget, _this);
 		
-		formatColumnCb.on('select', _this.onSelectDesignerColumnsNumber, _this);
+		_this.getFormatLayoutMenuItem('layoutStructure').on({
+			select: _this.onSelectDesignerColumnsNumber, 
+			scope: _this	
+		});
+		
+		_this.getFormatMenuItem('typeItem').menu.on({
+			itemclick: _this.onLayoutTypeChanged,
+			scope: _this
+		});
 		
 		_this.on('afterrender', _this.initDesignerPanel, _this);
 	}//eo _afterInitComponent
@@ -226,8 +256,41 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Executes init actions
 	 */
 	,initDesignerPanel : function() {		
-		this.updateDesignerPanelControls();		
+		this.updateDesignerPanelControls();
 	}	
+	
+	/**
+	 * 
+	 * @param {} item The selected menu item
+	 * @param {} e The event object
+	 */
+	,onLayoutTypeChanged : function(item, e) {		
+		var _this = this,
+			   vt =	item.type,
+			   vm = _this.layoutView.getContentView().viewMeta,
+			   pm = _this.layoutView.pageMeta;
+		
+			var isTabbed = _this.isViewTabbed(vm);
+		
+		switch (vt) {
+			case 'normal':
+				if (isTabbed) {
+					var meta = _this.changeContentViewMetaData('normal', pm);
+					_this.updateLayoutView(new afStudio.layoutDesigner.view.Page({pageMeta: meta}));			
+				}
+			break;
+			
+			case 'tabbed':
+				if (!isTabbed) {
+					var meta = _this.changeContentViewMetaData('tabbed', pm);
+					_this.updateLayoutView(new afStudio.layoutDesigner.view.Page({pageMeta: meta}));
+				}
+			break;
+		}
+		
+		this.fireEvent('layouttypechanged', item.type);
+		
+	}//eo onLayoutTypeChanged
 	
 	/**
 	 * Format->Columns <u>select</u> event listener
@@ -372,3 +435,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
  * @type 'afStudio.layoutDesigner.designerPanel'
  */
 Ext.reg('afStudio.layoutDesigner.designerPanel', afStudio.layoutDesigner.DesignerPanel);
+
+/**
+ * Mixture MetaData 
+ */
+Ext.apply(afStudio.layoutDesigner.DesignerPanel.prototype, afStudio.layoutDesigner.view.MetaDataProcessor);

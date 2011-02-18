@@ -124,6 +124,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		 cmpsMeta = this.getViewComponentsMetaData() || [];
 		
 		if (!Ext.isEmpty(cmpsMeta)) {
+			
 			Ext.each(cmpsMeta, function(cm, i, allCmps) {
 				var cl = cm.attributes.column || 0;
 				var w = _this.createViewComponent(cm);				

@@ -3,32 +3,36 @@ Ext.namespace('afStudio.layoutDesigner.view');
 /**
  * View Factory
  * @singleton
+ * @author Nikolai
  */
 afStudio.layoutDesigner.view.ViewFactory = function() {
 	
 	return {
 		
 		/**
+		 * Factory method
+		 * 
 		 * @param {Object} meta The view meta/structure data
 		 */
-		buildView : function(meta) {			
+		buildLayout : function(meta) {			
 			var view = [];
 			
 			if (Ext.isArray(meta['i:area'])) {
 				for (var i = 0, len = meta['i:area'].length; i < len; i++) {
-					view.push(this.createPage(meta['i:area'][i]));
+					view.push(this.createView(meta['i:area'][i]));
 				}
 			} else {
-				view.push(this.createPage(meta['i:area']));
+				view.push(this.createView(meta['i:area']));
 			}
 			
 			return view;
-		}//eo buildView
+		}//eo buildLayout
+		
 		
 		/**
 		 * Creates page view
 		 */
-		,createPage : function(vm) {
+		,createView : function(vm) {
 			var region, //depends on view type
 				viewConfigObj = {},
 				view;
@@ -59,13 +63,12 @@ afStudio.layoutDesigner.view.ViewFactory = function() {
 			
 			viewConfigObj.viewMeta = vm;
 			
-			view = Ext.isDefined(vm['i:tab']) 
+			view = afStudio.layoutDesigner.view.MetaDataProcessor.isViewTabbed(vm) 
 					? new afStudio.layoutDesigner.view.TabbedView(viewConfigObj)
-					: view = new afStudio.layoutDesigner.view.NormalView(viewConfigObj);
+					: new afStudio.layoutDesigner.view.NormalView(viewConfigObj);
 			
 			return view; 
-		}//eo createPage
-		
+		}//eo createView
 		
 	}//eo afStudio.layoutDesigner.view.ViewFactory
 }();
