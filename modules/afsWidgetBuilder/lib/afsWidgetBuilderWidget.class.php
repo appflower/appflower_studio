@@ -103,6 +103,7 @@ class afsWidgetBuilderWidget {
         if ($validationStatusOrError === true) {
             return $this->ensureActionExists();
         }
+        return $validationStatusOrError;
     }
 
     /**
