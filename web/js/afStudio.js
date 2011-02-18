@@ -92,7 +92,7 @@ var afStudio = function () {
 			      var response = Ext.decode(response.responseText);
 			      var project = {};
 			      project.text = response.data.name;
-			      project.url = document.location.protocol+'//'+document.location.host+'/studio';			      
+			      project.url = response.data.url+'/studio';			      
 			      
 			      if((recentProjects[recentProjects.length-1]&&recentProjects[recentProjects.length-1].url != project.url)||(!recentProjects[recentProjects.length-1]))
 					{
