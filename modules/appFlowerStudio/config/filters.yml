@@ -13,3 +13,6 @@ null_filter: ~
 exception_catching: ~
 
 execution: ~
+
+csrf:
+  enabled: false
