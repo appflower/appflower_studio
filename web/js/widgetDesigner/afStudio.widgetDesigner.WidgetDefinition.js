@@ -4,6 +4,10 @@
  *  * initialize root node of WI tree
  *  * populate fetched values into already intialized Widget Inspector
  *  * save modified values back to server and handle any server side errors
+ *
+ * When Widget is loaded from server there is 'datafetched' event emmited
+ * In your handler for datafetched you should pass rootNode into WI ExtJS component
+ *
  */
 afStudio.widgetDesigner.WidgetDefinition = function(widgetUri, widgetType){
     this.widgetUri = widgetUri;
@@ -18,16 +22,13 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
     definition: null,
     widgetType: null,
     rootNode: null,
-    fetchAndConfigure: function(widgetInspector){
+    fetchAndConfigure: function(){
         Ext.Ajax.request({
             url: window.afStudioWSUrls.getGetWidgetUrl(this.widgetUri),
             success: function(response){
                 this.parseFetchedData(response);
                 this.createRootNode();
                 this.rootNode.configureFor(this.definition);
-                if (widgetInspector) {
-                    widgetInspector.setRootNode(this.rootNode);
-                }
                 this.fireEvent('datafetched', this.rootNode, this.definition);
             },
             scope: this
@@ -57,7 +58,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
                     if (widgetBuilderWindow) {
                         widgetBuilderWindow.close();
                     }
+                    afStudio.getWidgetsTreePanel().addWidgetDesigner(this.widgetUri);
                 }
+
             },
             scope: this
         });

@@ -23,12 +23,6 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 	propertiesGrid: null,
 
 	/**
-	 * @var {Object} widgetDefinition
-	 * Definition of a widget - its properties all values
-	 */
-	widgetDefinition: null,
-
-	/**
 	 * @var {Object} treeEditor
 	 * Ext.tree.TreeEditor component
 	 */		
@@ -123,7 +117,14 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			bodyStyle: 'border-bottom: 1px solid #99BBE8',
 			
 			bbar: [
-				{text: 'Save', handler: this.saveWidget, scope: this}
+				{
+                    text: 'Save',
+                    handler: function(){
+                        this.widgetInspectorTree.body.mask('Loading, please Wait...', 'x-mask-loading');
+                        var widgetsTreePanel = afStudio.getWidgetsTreePanel()
+                        widgetsTreePanel.saveWidgetDefinition();
+                    },
+                    scope: this}
 			],
 			
             listeners: {
@@ -236,33 +237,12 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		grid.hideMandatoryCheckers();
 	},	
 	
-	saveWidget: function(){
-		this.widgetInspectorTree.body.mask('Loading, please Wait...', 'x-mask-loading');
-        this.widgetDefinition.save();
-	},
-	
 	/**
 	 * Function _initEvents
 	 */
 	_initEvents: function(){
-		var fn = function(cmp){
-			var _this = this;
-				cmp.body.mask('Building inspector. Please wait.');
-//				(function(){
-//					_this.setRootNode(_this.rootNode);
-//				}).defer(10000);
-				
-//                _this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(this.widgetUri);
-//                _this.widgetDefinition.fetchAndConfigure(_this);
-                
-                _this.setRootNode(_this.rootNodeEl);
-                
-				cmp.body.unmask()
-		}
-		this.widgetInspectorTree.on('afterrender', fn, this);
 	},
     setRootNode: function(rootNode){
-        this.rootNode = rootNode;
         this.widgetInspectorTree.setRootNode(rootNode);
         this.widgetInspectorTree.expandAll();
     }

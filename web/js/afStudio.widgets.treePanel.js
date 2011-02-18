@@ -7,23 +7,6 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 		var rootNode = new Ext.tree.AsyncTreeNode({path:'root',allowDrag:false});
 
-
-//       var rootNode = new Ext.tree.AsyncTreeNode({
-//            expanded: true,
-//            text: 'XML',
-//			id: 'xml',
-//            children: [
-//            	{
-//            		text: 'XML 1', leaf: false, type: 'xml',
-//            		expanded: true, iconCls: 'icon-tree-db',
-//            		children: [
-//	        			{text: 'APP', iconCls: 'icon-tree-table', type: 'app', leaf: true},
-//	        			{text: 'MODULE', iconCls: 'icon-tree-table', type: 'module', leaf: true}
-//            		]
-//            	}
-//            ]
-//        });
-
 		var bottomToolBar = new Ext.Toolbar({
 			items: [
 			'->',
@@ -168,7 +151,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        
 	        dblclick: function(node, e){
 	        	if('xml' == node.attributes.type){
-					this.addWidgetDesigner(node);
+					this.addWidgetDesignerForNode(node);
 	        	}
 	        }
 		});
@@ -698,20 +681,22 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 	,editXml:function(node)
 	{
-		this.addWidgetDesigner(node);
+		this.addWidgetDesignerForNode(node);
 	}
-	
-	,addWidgetDesigner: function(node){
+
+    ,addWidgetDesignerForNode: function(node)
+    {
         var actionPath = this.getActionPath(node);
         var securityPath = this.getSecurityPath(node);
         var widgetUri = node.attributes.widgetUri;
-        
-        
+
+        this.addWidgetDesigner(widgetUri, actionPath, securityPath);
+    }
+	,addWidgetDesigner: function(widgetUri, actionPath, securityPath){
 		afStudio.vp.mask({region:'center'});
 		
 		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
 		this.widgetDefinition.on('datafetched', function(rootNode, definition){
-			rootNode.configureFor(definition);
 			afStudio.vp.addToPortal({
 				title: 'Plugin Designer',
 				collapsible: false,
@@ -725,12 +710,17 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                rootNodeEl: rootNode
 				}]
 			}, true);
+
+           var WI = afStudio.getWidgetInspector();
+           WI.setRootNode(rootNode);
+
 	       afStudio.vp.unmask('center');
 		});
-		this.widgetDefinition.fetchAndConfigure();        
-        
-//        afStudio.showWidgetDesigner(widgetUri,actionPath,securityPath);		
-	}
+		this.widgetDefinition.fetchAndConfigure();
+	},
+    saveWidgetDefinition: function() {
+        this.widgetDefinition.save();
+    }
 }); 
 
 // register xtype

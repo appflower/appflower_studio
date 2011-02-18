@@ -238,7 +238,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                        break;
 	                    case 'edit-plugin-xml':
 	                    	var node = item.parentMenu.contextNode;
-	                    	node.getOwnerTree().editPluginXml(node);
+	                    	afStudio.getWidgetsTreePanel().addWidgetDesignerForNode(node);
 	                        break;
 						case 'rename-plugin-xml':
 							var node = item.parentMenu.contextNode;
@@ -474,7 +474,7 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 						console.body.scroll("bottom", 1000000, true );				      		
 			      	}
 			      	
-			      	_this.editPluginXml(node);
+                    afStudio.getWidgetsTreePanel().addWidgetDesignerForNode(node);
 			      	
 			      	_this.fireEvent('plugincreated', node);
 			    }
@@ -851,31 +851,6 @@ afStudio.plugins.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 	}
-		
-	,editPluginXml: function(node) {
-		
-		afStudio.vp.mask({region:'center'});
-		
-		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(node.attributes.widgetUri);
-		this.widgetDefinition.on('datafetched', function(rootNode, definition){
-			rootNode.configureFor(definition);
-			afStudio.vp.addToPortal({
-				title: 'Plugin Designer',
-				collapsible: false,
-				draggable: false,
-				layout: 'fit',
-				items: [{
-					xtype: 'afStudio.widgetDesigner',
-					actionPath: node.attributes.actionPath,
-					securityPath: node.attributes.securityPath,
-	                widgetUri: node.attributes.widgetUri,
-	                rootNodeEl: rootNode
-				}]
-			}, true);
-	       afStudio.vp.unmask('center');
-		});
-		this.widgetDefinition.fetchAndConfigure();
-	}	
 }); 
 
 // register xtype

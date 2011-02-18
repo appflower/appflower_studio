@@ -150,5 +150,17 @@ var afStudio = function () {
 			*/
 			this.addCurrentProject();
 		}
+        ,getWidgetsTreePanel: function() {
+            var components = this.vp.findByType('afStudio.widgets.treePanel');
+            if (components.length > 0) {
+                return components[0];
+            }
+        }
+        ,getWidgetInspector: function() {
+            var components = this.vp.findByType('afStudio.widgetDesigner.inspector');
+            if (components.length > 0) {
+                return components[0];
+            }
+        }
 	}
 }();
