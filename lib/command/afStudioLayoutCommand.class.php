@@ -115,6 +115,42 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     }
     
     /**
+     * Getting widget information
+     */
+    protected function processGetWidget()
+    {
+        // Getting needed parameters - module and action
+        $sModule = $this->getParameter('module');
+        $sAction = $this->getParameter('action');
+        
+        $afCU = new afConfigUtils($sModule);
+        $sPath = $afCU->getConfigFilePath("{$sAction}.xml");
+        
+        if (file_exists($sPath)) {
+            $options = array(
+                'parseAttributes' => true,
+                'attributesArray' => 'attributes',
+                'mode' => 'simplexml',
+                'complexType' => 'array'
+            );
+    
+            $unserializer = new XML_Unserializer($options);
+            $status = $unserializer->unserialize($sPath, true);
+    
+            if ($status) {
+                $definition = $unserializer->getUnserializedData();
+                $return = $this->fetchSuccess($definition);
+            } else {
+                $return = $this->fetchError("Can't parse widget");
+            }
+        } else {
+            $return = $this->fetchError("Widget doesn't exists");
+        }
+        
+        $this->result = $return;
+    }
+    
+    /**
      * Getting pages list from applications 
      * 
      * @return array

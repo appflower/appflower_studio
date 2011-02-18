@@ -60,4 +60,19 @@ class afsLayoutBuilderActions extends sfActions
         return $this->renderJson($aResponse);
     }
     
+    /**
+     * Getting widget info
+     */
+    public function executeGetWidget(sfWebRequest $request)
+    {
+        $aParameters = array(
+            'module' => $request->getParameter('module_name'),
+            'action' => $request->getParameter('action_name'),
+        );
+        
+        $aResponse = afStudioCommand::process('layout', 'getWidget', $aParameters);
+        
+        return $this->renderJson($aResponse);
+    }
+    
 }
