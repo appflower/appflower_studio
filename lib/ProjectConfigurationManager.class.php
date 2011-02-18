@@ -49,7 +49,7 @@ class ProjectConfigurationManager {
     {
     	$params = $this->projectConfTemplate['project'];
     	$params['path'] = afStudioUtil::getRootDir();
-    	$params['url'] = '<a href="'.$params['url'].'">'.$params['url'].'</a>';
+    	$params['display_url'] = '<a href="'.$params['url'].'">'.$params['url'].'</a>';
     	    	
         return $params;
     }
