@@ -78,6 +78,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getModelGridDataDeleteUrl: function(modelName) {
         return this.buildUrlFor('/afsModelGridData/delete?model=' + modelName);
     },
+    getProjectLoadTreeUrl: function() {
+    	return this.buildUrlFor('/appFlowerStudio/loadProjectTree');
+    },
     buildUrlFor: function(url) {
         return url;
     }

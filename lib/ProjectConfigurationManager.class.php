@@ -10,6 +10,7 @@ class ProjectConfigurationManager {
     static $defaultProjectTemplate = array(
        'project' => array(
             'name' => 'Studio playground',
+            'url' => '',
             'description' => "This is the Studio's playground, will be used for new projects",
             'autodeploy' => true
         )
@@ -28,11 +29,14 @@ class ProjectConfigurationManager {
 
     private function setProjectConfTemplate()
     {
-        if(file_exists($this->projectConfFilePath)) {
-            $this->projectConfTemplate = $this->loadYaml($this->projectConfFilePath);
+        if(file_exists($this->projectConfFilePath)) {       	
+            $this->projectConfTemplate = $this->loadYaml($this->projectConfFilePath);jectConfTemplate));
         } else {
-            $this->projectConfTemplate = self::$defaultProjectTemplate;
+        	$this->projectConfTemplate = self::$defaultProjectTemplate;
         }
+        
+        $this->projectConfTemplate['project']['url'] = afStudioUtil::getHost();
+        @file_put_contents($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));
     }
 
 
@@ -77,7 +81,7 @@ class ProjectConfigurationManager {
         	
         	$this->setProjectParams($params);
         	
-        	@file_put_contents($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));	
+        	@file_put_contents($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));
         	
         	$result['success'] = true;
             $result['message'] = 'Project Settings saved successfully';

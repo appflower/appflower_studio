@@ -400,5 +400,15 @@ class appFlowerStudioActions extends sfActions
 		$info=array('success'=>$result, "message"=>$message);
 		return $this->renderJson($info);
 	}
+	
+	/**
+	 * @return json for load project feature
+	 */
+	public function executeLoadProjectTree()
+	{
+		$filetree_command=new afStudioFileTreeCommand('/');
+		
+		return $this->renderText($filetree_command->end());
+	}
     
 }

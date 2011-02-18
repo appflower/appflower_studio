@@ -173,4 +173,47 @@ class afStudioUtil
 			return $files;
 		}
 	}
+	
+	/**
+	 * @return the IP address
+	 * @author radu
+	 */
+	public static function getIP()
+    {
+        $ip = false; // No IP found
+
+        /**
+         * User is behind a proxy and check that we discard RFC1918 IP addresses.
+         * If these address are behind a proxy then only figure out which IP belongs
+         * to the user.
+         */
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(', ', $_SERVER['HTTP_X_FORWARDED_FOR']); // Put the IP's into an array which we shall work with.
+            $no = count($ips);
+            for ($i = 0 ; $i < $no ; $i++) {
+
+                /**
+                 * Skip RFC 1918 IP's 10.0.0.0/8, 172.16.0.0/12 and
+                 * 192.168.0.0/16
+                 */
+                if (!eregi('^(10|172\.16|192\.168)\.', $ips[$i])) {
+                    $ip = $ips[$i];
+                    break;
+                } // End if
+
+            } // End for
+
+        } // End if
+        return ($ip ? $ip : isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1'); // Return with the found IP, the remote address or the local loopback address
+
+    }
+    
+    /**
+     * @return host name from sf request class
+     * @author radu
+     */
+    public static function getHost()
+    {
+    	return sfContext::getInstance()->getRequest()->getUriPrefix();
+    }
 }

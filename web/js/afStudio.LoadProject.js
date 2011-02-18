@@ -2,7 +2,7 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 	form: null,
 	initComponent: function(){
 		this.codeBrowserTree = new Ext.ux.FileTreePanel({
-			url:window.afStudioWSUrls.getFiletreeUrl(),
+			url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
 			id:'ftp',
 			rootPath:'root',
 			rootVisible:true,
