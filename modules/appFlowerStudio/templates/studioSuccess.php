@@ -66,6 +66,9 @@ var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>'
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 
+<!-- Error -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/error/ApsError.js"></script>
+
 <!-- Navigation -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/BaseItemTreePanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/LayoutItem.js"></script>

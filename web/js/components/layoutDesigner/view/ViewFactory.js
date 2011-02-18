@@ -26,8 +26,7 @@ afStudio.layoutDesigner.view.ViewFactory = function() {
 			}
 			
 			return view;
-		}//eo buildLayout
-		
+		}//eo buildLayout		
 		
 		/**
 		 * Creates page view

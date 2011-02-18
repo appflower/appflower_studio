@@ -8,11 +8,15 @@ Ext.namespace('afStudio.layoutDesigner');
  * @author Nikolai
  */
 afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
-
 	/**
 	 * @cfg {Object} layoutMeta required
 	 * Layout meta data 
 	 */
+	
+	/**
+	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
+	 */
+	widgetMetaUrl : 'afsLayoutBuilder/getWidget'	
 
 	/**
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
@@ -27,7 +31,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Checks if <b>content</b> view of {@link #layoutView} is tabbed
 	 * @return {Boolean} true if tabbed otherwise false
 	 */
-	isLayoutTabbed : function() {
+	,isLayoutTabbed : function() {
 		var view = this.layoutView.getContentView(),
 			  vm = view.viewMeta;
 		
@@ -322,9 +326,35 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 */
 	,onAddWidget : function(widgetParam) {
 		var _this = this,
-			    w = _this.createWidget(widgetParam);
-		_this.addWidget(w);
-	}	
+				p = _this.layoutView;
+		
+		afStudio.vp.mask({
+			msg: 'Add Widget...', 
+			region: 'center'
+		});
+		
+		Ext.Ajax.request({
+		   url: _this.widgetMetaUrl,
+		   params: {
+		       module_name: widgetParam.module,
+		       action_name: widgetParam.widget
+		   },
+		   success: function(xhr, opt) {		   
+			   afStudio.vp.unmask('center');
+			   var response = Ext.decode(xhr.responseText);
+			   if (response.success) {
+			      p.addWidgetComponentToContentView(
+			      	Ext.apply(widgetParam, {meta: response.content}));			      		   	
+			   } else {
+			   	   Ext.Msg.alert('Error', response.content);
+			   }
+		   },
+		   failure: function(xhr, opt) {
+		   	   afStudio.vp.unmask('center');
+		       Ext.Msg.alert('Error', String.format('Status code {0}, message {1}', xhr.status, xhr.statusText));
+		   }
+		});		
+	}//eo onAddWidget	
  
 	/**
 	 * Save button <u>click</u> event listener
@@ -437,6 +467,6 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 Ext.reg('afStudio.layoutDesigner.designerPanel', afStudio.layoutDesigner.DesignerPanel);
 
 /**
- * Mixture MetaData 
+ * Mixin MetaData Class is added to DesignerPanel to increase its functionality
  */
 Ext.apply(afStudio.layoutDesigner.DesignerPanel.prototype, afStudio.layoutDesigner.view.MetaDataProcessor);

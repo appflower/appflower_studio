@@ -9,6 +9,9 @@ Ext.namespace('afStudio.layoutDesigner.view');
  */
 afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	
+	/**
+	 * @cfg {String} layout (defaults to 'border')
+	 */
 	layout : 'border'	
 	
 	/**
@@ -66,13 +69,47 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	}//eo _afterInitComponent	
 	
 	/**
-	 * Returns page's <i>content</i> view 
-	 * @return {afStudio.layoutDesigner.view.NormalView} view The content page view
+	 * Returns page's <i>content</i> view container
+	 * @return {afStudio.layoutDesigner.view.NormalView} view The content view container
 	 */
 	,getContentView : function() {
 		var cv = this.find('region', 'center')[0];
 		return Ext.isDefined(cv) ? cv : null;
-	}//eo getContentView	
+	}//eo getContentView
+	
+	/**
+	 * Return <i>active content</i> view container
+	 * @return {afStudio.layoutDesigner.view.NormalView} view The content view container
+	 */
+	,getActiveContentView : function() {
+		var _this = this,
+			   cv = _this.getContentView(),
+			   mp = afStudio.layoutDesigner.view.MetaDataProcessor;
+
+		if (Ext.isEmpty(cv)) {
+			throw new afStudio.error.ApsError('"Content view is not defined!"');
+		}
+		
+		if (mp.isViewTabbed(cv.viewMeta)) {
+			cv = cv.getActiveTab();
+		}
+		
+		return cv;
+	}//eo getActiveContentView
+	
+	//TODO refresh metadata
+	,addWidgetComponentToContentView : function(widgetMeta) {
+		var cv = this.getActiveContentView();
+		
+		cv.addViewComponent({
+			attributes: {
+				name: widgetMeta.widget,
+				module: widgetMeta.module
+			}
+		}, widgetMeta.meta['i:title']);
+		
+		this.doLayout();		
+	}//eo addWidgetComponentToContentView
 	
 });
 

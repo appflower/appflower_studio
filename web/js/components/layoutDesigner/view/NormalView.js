@@ -1,6 +1,7 @@
 Ext.namespace('afStudio.layoutDesigner.view');
 
 /**
+ * Basic view class
  * 
  * @class afStudio.layoutDesigner.view.NormalView
  * @extends Ext.ux.Portal
@@ -9,7 +10,7 @@ Ext.namespace('afStudio.layoutDesigner.view');
 afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	
 	/**
-	 * @cfg {Object} viewMeta
+	 * @cfg {Object} viewMeta required
 	 * View metadata
 	 */
 	
@@ -62,7 +63,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 						? this.viewLayout : config.viewMeta.attributes.layout;		
 		
 		afStudio.layoutDesigner.view.NormalView.superclass.constructor.call(this, config);
-	}
+	}//eo constructor
 	
 	/**
 	 * Initializes component
@@ -102,7 +103,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo _afterInitComponent
 	
 	/**
-	 * Initializes view
+	 * Initializes view.
+	 * Creates all views containers.
 	 * @return {Object} view's layout
 	 */
 	,initView : function() {
@@ -126,14 +128,25 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		if (!Ext.isEmpty(cmpsMeta)) {
 			
 			Ext.each(cmpsMeta, function(cm, i, allCmps) {
-				var cl = cm.attributes.column || 0;
-				var w = _this.createViewComponent(cm);				
+				var cl = cm.attributes.column || 0,
+					 w = _this.createViewComponent(cm);
+					 
 				_this.items.itemAt(cl).add(w);
 			});
 			
 			_this.doLayout();
 		}
 	}//eo initViewComponents
+	
+	/**
+	 * Adds new component into the view
+	 * @param {Object} cmpMeta The component metadata
+	 */
+	,addViewComponent : function(cmpMeta, title) {		
+		var w = this.createViewComponent(cmpMeta, title);					 
+		this.items.itemAt(0).add(w);
+		this.doLayout();
+	}//eo addViewComponent
 	
 	/**
 	 * Creates view column 
@@ -158,7 +171,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Object} cmpMeta The component metadata
 	 * @return {Object} component(widget)
 	 */
-	,createViewComponent : function(cmpMeta) {
+	,createViewComponent : function(cmpMeta, title) {
 		var _this = this,
 			 cmpName = cmpMeta.attributes.name,
 			 cmpModule = cmpMeta.attributes.module,
@@ -167,9 +180,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			 
 		var w = new Ext.ux.Portlet({
 			componentMeta: cmpMeta,
-			title: String.format('{0} / {1}', cmpModule, cmpName),
 			frame: true,
-			html: String.format('<br /><center>Widget {0} </center><br />', pTitle),
+			title: String.format('{0} / {1}', cmpModule, cmpName),			
+			html: String.format('<br /><center>Widget {0} </center><br />', title || pTitle),
 			tools: [{
 				id: 'close', 
 				handler: Ext.util.Functions.createDelegate(_this.removeWidget, _this)
@@ -182,7 +195,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 				text: 'Edit',
 				handler: Ext.util.Functions.createDelegate(_this.editWidget, _this, [cmpName, cmpModule, cmpMeta])
 			}],
-			buttonAlign: 'center'			
+			buttonAlign: 'center'
 		});
 		
 		return w;

@@ -1,6 +1,8 @@
 Ext.namespace('afStudio.layoutDesigner.view');
 
 /**
+ * Mixin class
+ * 
  * @singleton
  * @author Nikolai
  */
@@ -18,11 +20,14 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		}//eo isViewTabbed
 		
 		/**
-		 * 
+		 * Returns <u>content</u> view's metadata and its position
+		 * @param {Object} page metadata
+		 * @return {Object} content view's coordinates
 		 */
 		,getContentViewMeta : function(pm) {
-			var cm,
-				cIdx;
+			var cm,   //view metadata
+				cIdx; //view position inside page's views collaction
+				
 			if (Ext.isArray(pm['i:area'])) {
 				Ext.each(pm['i:area'], function(v, i) {
 					if (v.attributes.type == 'content') {					
@@ -35,9 +40,15 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 				cm = pm['i:area'];	
 			}
 			
-			return {contentView: cm, contentIdx: cIdx};
-		}
+			return {
+				contentView: cm, 
+				contentIdx: cIdx
+			};
+		}//eo getContentViewMeta
 		
+		/**
+		 * 
+		 */
 		,changeContentViewMetaData : function(type, pm) {			
 			var vo = this.getContentViewMeta(pm),
 				viewTabbed = this.isViewTabbed(vo.contentView),
@@ -89,7 +100,7 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			}
 			
 			return {components: cmps, maxLayout: maxLayout};
-		}
+		}//eo getTabbedViewComponents
 		
 		,getNormalViewComponents : function(cm) {
 			var cmps = [];			
@@ -102,7 +113,7 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			}
 			
 			return cmps;
-		}//eo 
+		}//eo getNormalViewComponents 
 		
 		
 	}//eo afStudio.layoutDesigner.view.MetaDataProcessor

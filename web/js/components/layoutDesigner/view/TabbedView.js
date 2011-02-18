@@ -9,7 +9,7 @@ Ext.namespace('afStudio.layoutDesigner.view');
 afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	
 	/**
-	 * @cfg {Object} viewMeta
+	 * @cfg {Object} viewMeta required
 	 * View metadata
 	 */
 	
@@ -55,7 +55,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 						? this.viewLayout : config.viewMeta.attributes.layout;		
 		
 		afStudio.layoutDesigner.view.NormalView.superclass.constructor.call(this, config);
-	}
+	}//eo constructor
 	
 	/**
 	 * Initializes component
@@ -92,12 +92,11 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	 */	
 	,_afterInitComponent : function() {
 		var _this = this;
-		
-//		_this.on('afterrender', _this.initViewComponents, _this);		
 	}//eo _afterInitComponent
 	
 	/**
-	 * Initializes view
+	 * Initializes view.
+	 * Creates all views tab containers.
 	 * @return {Object} view's layout
 	 */
 	,initView : function() {
@@ -110,9 +109,13 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		});   
 		
 		return layout;
-	}//eo initView
+	}//eo initView	
 	
-	
+	/**
+	 * Returns newly created view container.
+	 * @param {Object} tabMeta The view metadata 
+	 * @return {}
+	 */
 	,createTabView : function(tabMeta) {
 		var _this = this;
 		var title = tabMeta.attributes.title;

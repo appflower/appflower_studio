@@ -322,7 +322,7 @@ class appFlowerStudioActions extends sfActions
         
         $aExtWidgets = array();
     	foreach ($aWidgets as $i => $name) {
-    		$aExtWidgets[] = array('id' => $i, 'name' => $name);
+    		$aExtWidgets[] = array('id' => $i, 'name' => strstr($name, '.xml', true));
 		}
         
         return $this->renderJson($aExtWidgets);        
