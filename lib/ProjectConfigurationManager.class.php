@@ -30,7 +30,7 @@ class ProjectConfigurationManager {
     private function setProjectConfTemplate()
     {
         if(file_exists($this->projectConfFilePath)) {       	
-            $this->projectConfTemplate = $this->loadYaml($this->projectConfFilePath);jectConfTemplate));
+            $this->projectConfTemplate = $this->loadYaml($this->projectConfFilePath);
         } else {
         	$this->projectConfTemplate = self::$defaultProjectTemplate;
         }
@@ -49,7 +49,8 @@ class ProjectConfigurationManager {
     {
     	$params = $this->projectConfTemplate['project'];
     	$params['path'] = afStudioUtil::getRootDir();
-    	
+    	$params['url'] = '<a href="'.$params['url'].'">'.$params['url'].'</a>';
+    	    	
         return $params;
     }
 
@@ -75,9 +76,9 @@ class ProjectConfigurationManager {
         {
         	$params = $this->request->getPostParameters();
         	unset($params['type']);
-        	unset($params['path']);
         	
         	$params['autodeploy'] = !isset($params['autodeploy'])?false:true;
+        	$params['url'] = afStudioUtil::getHost();
         	
         	$this->setProjectParams($params);
         	
