@@ -1,2 +1,2 @@
-all:
-  is_secure:   false
+default:
+  is_secure: false

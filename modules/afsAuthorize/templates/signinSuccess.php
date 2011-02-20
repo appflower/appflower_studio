@@ -34,7 +34,7 @@ $fieldset->endColumns($columns);
 $form->endFieldset($fieldset);
 
 new ImmExtjsSubmitButton($form,array('action' => '/afsAuthorize/signin'));
-new ImmExtjsLinkButton($form,array('url' => url_for('@af_guard_password'), 'load' => 'page', 'label' => 'Forgot your password?', 'icon' => '/images/famfamfam/email_go.png'));
+new ImmExtjsLinkButton($form,array('url' => url_for('/afsAuthorize/passwordRequest'), 'load' => 'page', 'label' => 'Forgot your password?', 'icon' => '/images/famfamfam/email_go.png'));
 
 $form->end();
 

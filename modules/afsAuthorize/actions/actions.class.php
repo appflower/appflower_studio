@@ -14,6 +14,10 @@ class afsAuthorizeActions extends sfActions
     public function preExecute()
     {
         afStudioUser::getInstance()->authorize();
+        
+        if (afStudioUser::getInstance()->isAuthenticated() && $this->getActionName() != 'signout') {
+            $this->redirect('appFlowerStudio/studio');
+        }
     }
     
     /**
@@ -28,7 +32,7 @@ class afsAuthorizeActions extends sfActions
     /**
      * Sign out controller
      */
-	public function executeSignout($request)
+	public function executeSignout(sfWebRequest $request)
 	{
         afStudioUser::getInstance()->signOut();
         
@@ -50,7 +54,6 @@ class afsAuthorizeActions extends sfActions
      */
 	public function executeSignin(sfWebRequest $request)
 	{
-		
 		if ($request->isMethod('post')) {
 			if($request->hasParameter('signin')) {
 			    
@@ -122,64 +125,79 @@ class afsAuthorizeActions extends sfActions
 		}
         
         return $this->renderJson($result);
-        
 	}
-
 
     /**
      * Password request controller
-     * 
-     * @TODO end this functionality, and need to create template with form
      */
     public function executePasswordRequest(sfWebRequest $request)
     {
-        if ($this->getRequest()->getMethod() != sfRequest::POST)
+        if ($request->getMethod() != sfRequest::POST)
         {
             // display the form
             return sfView::SUCCESS;
         }
-
-        // handle the form submission
-        $c = new Criteria();
-        $c->add(sfGuardUserPeer::USERNAME, $this->getRequestParameter('email'));
-        $user = sfGuardUserPeer::doSelectOne($c);
-
-        // email exists?
-        if ($user)
-        {
-            //audit log
-            $user_old=clone $user;
-
+        
+        $email = $request->getParameter('email');
+        
+        // Retrieve user via email
+        $user = afStudioUser::getInstance()->retrieveByEmail($email);
+        
+        if ($user) {
             // set new random password
             $password = substr(md5(rand(100000, 999999)), 0, 6);
-            $user->setPassword($password);
-            $user->save(); // save new password
-
-
-                        if ($user->getUsername()) {
-                            $parameters = array(
-                                'userObj'  => $user,
-                                'password' => $password,
-                                'email'    => $user->getUsername(),
-                                'subject'  => 'seedControl password recovery',
-                                'from'     => 'Seedcontrol'
-                            );
-
-                            afAutomailer::saveMail('mail', 'sendPasswordRequest', $parameters);
-                        }
-
-
-            sfProjectConfiguration::getActive()->loadHelpers(array("Url","Tag"));
-            $result = array('success' => true,'message'=>'Your login information was sent to '.$this->getRequestParameter('email').'. <br>You should receive it shortly, so you can proceed to the '.link_to('login page', '@login').'.');
-
+            
+            // updating password 
+            afStudioUser::update(
+                $user['username'],
+                array(afStudioUser::PASSWORD => afStudioUser::passwordRule($password))
+            );
+            
+            // getting current domain
+            $domain = '';
+            if (sfConfig::get('app_domain')) {
+                $domain = sfConfig::get('app_domain');
+            } else {
+                $domain = sfContext::getInstance()->getRequest()->getHost();
+            }
+            
+            // parameters for partial -> recovering mail
+            $aParameters = array(
+                'user' => $user,
+                'password' => $password,
+            );
+            
+            sfProjectConfiguration::getActive()->loadHelpers(array("Url", "Tag"));
+            
+            $message = Swift_Message::newInstance()
+                ->setFrom("no-reply@{$domain}", 'Studio')
+                ->setTo($user['email'])
+                ->setSubject('Studio password recovery')
+                ->setBody($this->getPartial('recovery', $aParameters))
+                ->setContentType('text/html')
+            ;
+            
+            // Sending mail 
+            if ($this->getMailer()->send($message) > 0) {
+                $result = array(
+                    'success' => true,
+                    'message' => 'Your login information was sent to '.$email.'. <br>You should receive it shortly, so you can proceed to the '.link_to('login page', 'afsAuthorize/index').'.'
+                );
+            } else {
+                $result = array(
+                    'success' => false,
+                    'message' => 'There is no user with this email address. Please try again!'
+                );
+            }
+            
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'There is no user with this email address. Please try again!'
+            );
         }
-        else
-        {
-            $result = array('success' => false,'message'=>'There is no user with this email address. Please try again!');
-        }
 
-        $result = json_encode($result);
-        return $this->renderText($result);
+        return $this->renderJson($result);
     }
 
 }

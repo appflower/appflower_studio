@@ -11,9 +11,6 @@ class afsStudioBasicSecurityFilter extends sfBasicSecurityFilter
      */
     public function execute($filterChain)
     {
-        // Base validation
-        parent::execute($filterChain);
-        
         if ($this->isFirstCall()) {
         
             $context = $this->getContext();
@@ -25,8 +22,8 @@ class afsStudioBasicSecurityFilter extends sfBasicSecurityFilter
                 throw new sfStopException();
             }
         }
+        
+        $filterChain->execute();
     }
-    
-    
     
 }

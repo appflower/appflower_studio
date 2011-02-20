@@ -12,6 +12,15 @@ class afStudioUser
     const USER_IDENTIFICATOR = 'app_flower_studio_credentials';
     
     /**
+     * Keys for user in meta file
+     */
+    const   EMAIL = 'email',
+            PASSWORD = 'password',
+            FIRST_NAME = 'first_name',
+            LAST_NAME = 'last_name',
+            ROLE = 'role';
+    
+    /**
      * User identificator - username
      */
     private $username;
@@ -104,6 +113,72 @@ class afStudioUser
         $user = (isset($aUsers[$username]) && !empty($aUsers[$username])) ? $aUsers[$username] : false;
         
         return $user;
+    }
+    
+    /**
+     * Retrieve user by his mail
+     *
+     * @param string $email
+     * @return mixed
+     */
+    public static function retrieveByEmail($email)
+    {
+        $aUsers = self::getCollection();
+        
+        $aUser = array();
+        
+        foreach ($aUsers as $username => $user) {
+            if ($user['email'] == $email) {
+                $aUser = $user;
+                $aUser['username'] = $username;
+                break;
+            }
+        }
+        
+        if (!empty($aUser)) {
+            return $aUser;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Updating user via username
+     *
+     * @param string $username
+     * @param array $info
+     * @return boolean
+     */
+    public static function update($username, $info)
+    {
+        $aUsers = self::getCollection();
+        
+        if (isset($aUsers[$username])) {
+            
+            foreach ((array)$info as $name => $associate) {
+                if (isset($aUsers[$username][$name])) {
+                    $aUsers[$username][$name] = $associate;
+                }
+            }
+            
+            // Commit changes
+            self::setCollection($aUsers);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Password rule for creating (encoding)
+     *
+     * @param srting $password
+     * @return string
+     */
+    public static function passwordRule($password)
+    {
+        return sha1($password);
     }
     
     /**

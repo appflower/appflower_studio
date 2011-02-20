@@ -97,7 +97,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				xtype: "tbfill"
 			},{
 				text: "<img src=\"\/images\/famfamfam\/user_go.png\" border=\"0\">",
-				handler: function () { window.location.href="/logout"; },
+				handler: function () { window.location.href="/afsAuthorize/signout"; },
 				tooltip: {
 					text: "Click to log out", 
 					title: "admin"

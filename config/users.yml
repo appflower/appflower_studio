@@ -1,14 +1,12 @@
 admin:
   first_name: Admin
-  last_name:  Admin
-  email:      admin@appflower.com
-  password:   d033e22ae348aeb5660fc2140aec35850c4da997
-  role:       admin
-  
-user_temp:
-  first_name: User First Name
-  last_name:  User Last Name
-  email:      user@appflower.com
-  password:   12dea96fec20593566ab75692c9949596833adc9
-  role:       user
-  
+  last_name: Admin
+  email: admin@appflower.com
+  password: d033e22ae348aeb5660fc2140aec35850c4da997
+  role: admin
+user:
+  first_name: 'User First Name'
+  last_name: 'User Last Name'
+  email: startsev.sergey@gmail.com
+  password: d99ef6000c8bd64dbc971f7dacaf1752585386ef
+  role: user
