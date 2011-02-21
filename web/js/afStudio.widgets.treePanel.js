@@ -32,10 +32,10 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			,rootVisible:false
 			,autoScroll:true
             ,containerScroll: true
-			,tools:[{id:'refresh', 
-				handler:function(){
-					this.loader.load(rootNode);
-				}, scope: this
+			,tools:[{
+                id:'refresh',
+				handler: this.reloadTree,
+                scope: this
 			}]
 			,bbar: bottomToolBar
 		};
@@ -158,7 +158,11 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		afStudio.models.treePanel.superclass.initComponent.apply(this, arguments);	
 	} //eo initComponent
-	
+
+    ,reloadTree: function() {
+        this.loader.load(this.root);
+    }
+
 	,onRender:function() {
 		// call parent
 		afStudio.models.treePanel.superclass.onRender.apply(this, arguments);

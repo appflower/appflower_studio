@@ -55,10 +55,12 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
             },
             success: function(response){
                 if (this.parseSaveResponse(response)) {
+                    var widgetsTreePanel = afStudio.getWidgetsTreePanel();
                     if (widgetBuilderWindow) {
                         widgetBuilderWindow.close();
+                        widgetsTreePanel.reloadTree()
                     }
-                    afStudio.getWidgetsTreePanel().addWidgetDesigner(this.widgetUri);
+                    widgetsTreePanel.addWidgetDesigner(this.widgetUri);
                 }
 
             },

@@ -67,9 +67,16 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
         if (!dataForNewNode) {
             dataForNewNode = {};
         }
-        if (node.rendered && node.childNodes.length > 0) {
-            var childNode = node.childNodes[0];
-            childNode.destroy();
+        if (node.rendered) {
+            var childsCount = node.childNodes.length;
+            if (childsCount > 0) {
+                for (i = (childsCount-1); i >= 0; i--) {
+                    var childNode = node.childNodes[i];
+                    if (childNode.text == 'Value Source') {
+                        childNode.destroy();
+                    }
+                }
+            }
         }
 
         switch (node.getProperty('valueSource').get('value')) {
