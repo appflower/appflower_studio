@@ -108,7 +108,7 @@ class afStudioDebug
      */
     public static function get_file_len($file_name)
     {
-        return strlen(file_get_contents(sfConfig::get('sf_root_dir') . '/log/' . $file_name));
+		return filesize( sfConfig::get('sf_root_dir') . '/log/' . $file_name );
     }
     
 }
