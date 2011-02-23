@@ -2,6 +2,7 @@
 /**
  * This class reflects widgets XML file
  * It can read widget definition and convert it to JSON format
+ * After widget definition is parsed class allows to get basic information like fields list
  * It can also save changed widget definition coming from client side
  * This class can also create action file for new widgets
  * 
@@ -55,6 +56,11 @@ class afsWidgetBuilderWidget {
         }
 
         $this->definition = $unserializer->getUnserializedData();
+    }
+
+    function getDefinition()
+    {
+        return $this->definition;
     }
 
     function getDefinitionAsJSON()
@@ -133,16 +139,54 @@ class afsWidgetBuilderWidget {
 
     private function renderActionFileContent()
     {
-        $content =
-            '<'.'?'.'php'."\n".
-            "class {$this->action}Action extends sfAction" . "\n" .
-            "{" . "\n" .
-            '    function execute($request)' . "\n" .
-            "    {" . "\n" .
-            "    }" . "\n" .
-            "}";
+        if ($this->widgetType == 'list') {
+            $content =
+                '<'.'?'.'php'."\n".
+                "class {$this->action}Action extends sfAction" . "\n" .
+                "{" . "\n" .
+                '    function execute($request)' . "\n" .
+                "    {" . "\n" .
+                "    }" . "\n" .
+                "}";
+        } else {
+            $content =
+                '<'.'?'.'php'."\n".
+                "class {$this->action}Action extends simpleWidgetEditAction" . "\n" .
+                "{" . "\n" .
+                "}";
+        }
 
         return $content;
+    }
+
+    function getDefinedFieldNames()
+    {
+        $fieldNames = array();
+        if (isset($this->definition['i:fields'])) {
+            $fields = $this->definition['i:fields'];
+            if (isset($fields['i:field'])) {
+                $fields = $fields['i:field'];
+                if (is_array($fields)) {
+                    foreach ($fields as $field) {
+                        $fieldNames[] = $field['name'];
+                    }
+                }
+            }
+        }
+
+        return $fieldNames;
+        
+    }
+
+    function getDatasourceClassName()
+    {
+        if (isset($this->definition['i:datasource'])) {
+            if (isset($this->definition['i:datasource']['i:class'])) {
+                return $this->definition['i:datasource']['i:class'];
+            }
+        }
+
+        return null;
     }
 }
 ?>
