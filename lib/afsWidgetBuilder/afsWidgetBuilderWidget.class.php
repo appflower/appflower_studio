@@ -167,8 +167,12 @@ class afsWidgetBuilderWidget {
             if (isset($fields['i:field'])) {
                 $fields = $fields['i:field'];
                 if (is_array($fields)) {
-                    foreach ($fields as $field) {
-                        $fieldNames[] = $field['name'];
+                    if (isset($fields['name'])) {
+                        $fieldNames[] = $fields['name'];
+                    } else {
+                        foreach ($fields as $field) {
+                            $fieldNames[] = $field['name'];
+                        }
                     }
                 }
             }
