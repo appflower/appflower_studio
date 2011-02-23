@@ -2,6 +2,9 @@ rendering: ~
 security:
   class: afsStudioBasicSecurityFilter
   
+csrf:
+  enabled: false
+  
 cache:     ~
 common:    ~
 
