@@ -1,7 +1,0 @@
-all:
-  .actions:
-    login_module:           afsAuthorize
-    login_action:           signin
-    
-    # secure_module:          afsAuthorize
-    # secure_action:          hasCredentials
