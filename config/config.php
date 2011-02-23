@@ -9,3 +9,5 @@ sfConfig::set(  'sf_enabled_modules',
                             $modules
                 )
 );
+
+//todo: automatic insertion of schema.yml tables into existing db
