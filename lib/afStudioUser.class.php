@@ -9,7 +9,12 @@ class afStudioUser
 	/**
      * Cookie user identificator
      */
-    const USER_IDENTIFICATOR = 'app_flower_studio_credentials';
+    const   USER_IDENTIFICATOR = 'app_flower_studio_credentials';
+    
+    /**
+     * Key for username
+     */
+    const   USERNAME = 'username';
     
     /**
      * Keys for user in meta file
@@ -171,6 +176,28 @@ class afStudioUser
     }
     
     /**
+     * Creating new user
+     *
+     * @param string $username
+     * @param array $info
+     * @return boolean
+     */
+    public static function create($username, $info)
+    {
+        $aUsers = self::getCollection();
+        
+        $info[self::PASSWORD] = self::passwordRule($info[self::PASSWORD]);
+        
+        if (!isset($aUsers[$username])) {
+            $aUsers[$username] = $info;
+            
+            self::setCollection($aUsers);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * Password rule for creating (encoding)
      *
      * @param srting $password
@@ -229,6 +256,11 @@ class afStudioUser
         }
     } 
     
+    public function getUsername()
+    {
+        return $this->username;
+    }
+    
     /**
      * Getting meta First Name
      */
@@ -259,6 +291,25 @@ class afStudioUser
     public function getRole()
     {
         return $this->role;
+    }
+    
+    /**
+     * Validating associated array
+     *
+     * @param array $info - associated array
+     * @return mixed
+     */
+    public static function validate($info)
+    {
+        $return = '';
+        
+        $result = afStudioUserValidator::process($info);
+        
+        if (is_array($result)) {
+            $result = implode('\n', $result);
+        }
+        
+        return $result;
     }
     
     
