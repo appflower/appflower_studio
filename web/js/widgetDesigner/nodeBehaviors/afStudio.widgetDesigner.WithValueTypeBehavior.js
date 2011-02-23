@@ -145,7 +145,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             valueNode['type'] = 'orm';
         }
 
-        if (valueNode['type'] == 'orm' && valueSource != '') {
+        if (valueNode['type'] == 'orm') {
             switch (valueSource) {
                 case 'source':
                         valueNode['i:source'] = {name: nodeWidgetData['sourceName']};

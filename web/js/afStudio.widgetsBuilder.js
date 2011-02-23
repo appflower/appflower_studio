@@ -410,6 +410,7 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
                     );
                     if (type == 'edit') {
                         field.setTypeAndValidatorFromModelType(items[k]);
+                        field.getProperty('valueType').set('value', 'orm');
                     }
 		}
 

@@ -16,7 +16,11 @@ afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.Cont
         var peerClass = model+'Peer';
         this.behaviors[0].configureFor(this,{
            'type': 'orm',
-           'i:class': peerClass
+           'i:class': peerClass,
+           'i:method': {
+             'name': 'retrieveByPk',
+             'i:param': {name: 'id', _content: '{id}'}
+           }
         });
     }
 });
