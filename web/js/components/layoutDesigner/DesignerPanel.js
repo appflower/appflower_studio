@@ -294,6 +294,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		
 		this.fireEvent('layouttypechanged', item.type);
 		
+		this.updateDesignerPanelControls();
 	}//eo onLayoutTypeChanged
 	
 	/**
@@ -343,8 +344,9 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			   afStudio.vp.unmask('center');
 			   var response = Ext.decode(xhr.responseText);
 			   if (response.success) {
-			      p.addWidgetComponentToContentView(
-			      	Ext.apply(widgetParam, {meta: response.content}));			      		   	
+			       p.addWidgetComponentToContentView(
+			       	 Ext.apply(widgetParam, {meta: response.content})
+			       );			      		   	
 			   } else {
 			   	   Ext.Msg.alert('Error', response.content);
 			   }

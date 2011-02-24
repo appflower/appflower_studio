@@ -15,10 +15,22 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 */
 	
 	/**
+	 * @cfg {Number} viewMetaPosition required (defaults to 0)
+	 * Metadata position
+	 */
+	viewMetaPosition : 0
+	
+	/**
+	 * @property {Number} componentsNum (defaults to 0)
+	 * The components number in this view
+	 */
+	,componentsNum : 0
+	
+	/**
 	 * @property {Number} viewLayout (defaults to 1)
 	 * Default view layout type
 	 */
-	viewLayout : 1
+	,viewLayout : 1
 	
 	/**
 	 * @property {Object} viewLayoutConfig
@@ -99,7 +111,11 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
-		_this.on('afterrender', _this.initViewComponents, _this);		
+		_this.on({
+			afterrender:    _this.initViewComponents,
+			scope: _this
+		});		
+				
 	}//eo _afterInitComponent
 	
 	/**
@@ -127,9 +143,11 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		if (!Ext.isEmpty(cmpsMeta)) {
 			
+			_this.componentsNum = cmpsMeta.length;
+			
 			Ext.each(cmpsMeta, function(cm, i, allCmps) {
 				var cl = cm.attributes.column || 0,
-					 w = _this.createViewComponent(cm);
+					 w = _this.createViewComponent(cm, null, i);
 					 
 				_this.items.itemAt(cl).add(w);
 			});
@@ -139,12 +157,63 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo initViewComponents
 	
 	/**
-	 * Adds new component into the view
+	 * Updates view's metadata and trigger changes inside the container
+	 */
+	,updateViewMetaData : function() {
+		var container = this.ownerCt;
+		
+		container.updateMetaData({
+			meta: this.viewMeta, 
+			position: this.viewMetaPosition
+		});
+	}//eo updateMetaData	
+	
+	/**
+	 * Adds component's metadata to this view
 	 * @param {Object} cmpMeta The component metadata
 	 */
-	,addViewComponent : function(cmpMeta, title) {		
-		var w = this.createViewComponent(cmpMeta, title);					 
-		this.items.itemAt(0).add(w);
+	,addViewComponentMetaData : function(cmpMeta) {
+		var vc = this.viewMeta['i:component'];
+		
+		if (Ext.isArray(vc)) {
+			vc.push(cmpMeta);
+		} else {
+			this.viewMeta['i:component'] = [vc, cmpMeta];
+		}
+		
+		this.updateViewMetaData();
+	}//eo addViewComponentMetaData
+	
+	,deleteViewComponentMetaData : function(cmpPosition) {
+		var vc = this.viewMeta['i:component'];
+		
+		if (Ext.isArray(vc)) {
+			delete vc[cmpPosition];
+		} else {
+			delete this.viewMeta['i:component'];
+		}
+		
+		this.updateViewMetaData();
+	}
+	
+	/**
+	 * Adds new component into the view
+	 * @param {Object} cmpMeta The component's metadata
+	 * @param {String} title The component's title
+	 */
+	,addViewComponent : function(cmpMeta, title) {
+		var mp = afStudio.layoutDesigner.view.MetaDataProcessor,
+			 w = this.createViewComponent(cmpMeta, title, this.componentsNum);
+		
+		this.componentsNum++;
+		
+		var column = 0;
+		
+		cmpMeta.attributes.column = column;
+		this.addViewComponentMetaData(cmpMeta);
+		
+		this.items.itemAt(column).add(w);
+		
 		this.doLayout();
 	}//eo addViewComponent
 	
@@ -169,9 +238,11 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	/**
 	 * Creates view's component
 	 * @param {Object} cmpMeta The component metadata
+	 * @param {String} title 
+	 * @param {Number} position
 	 * @return {Object} component(widget)
 	 */
-	,createViewComponent : function(cmpMeta, title) {
+	,createViewComponent : function(cmpMeta, title, position) {
 		var _this = this,
 			 cmpName = cmpMeta.attributes.name,
 			 cmpModule = cmpMeta.attributes.module,
@@ -180,6 +251,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			 
 		var w = new Ext.ux.Portlet({
 			componentMeta: cmpMeta,
+			componentPosition: position,
 			frame: true,
 			title: String.format('{0} / {1}', cmpModule, cmpName),			
 			html: String.format('<br /><center>Widget {0} </center><br />', title || pTitle),
@@ -212,6 +284,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}
 	
 	,removeWidget: function(e, tool, panel) {
+		var cmpPos = panel.componentPosition;
+		
+//		this.deleteViewComponentMetaData(cmpPos);		
 		panel.destroy();
 	}
 	

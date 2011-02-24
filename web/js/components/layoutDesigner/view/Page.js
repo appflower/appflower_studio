@@ -96,8 +96,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		
 		return cv;
 	}//eo getActiveContentView
-	
-	//TODO refresh metadata
+
 	,addWidgetComponentToContentView : function(widgetMeta) {
 		var cv = this.getActiveContentView();
 		
@@ -110,6 +109,21 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		
 		this.doLayout();		
 	}//eo addWidgetComponentToContentView
+	
+	/**
+	 * Updates {@link #pageMeta} metadata
+	 * @param {Object} md The new "content" view metadata
+	 */
+	,updateMetaData : function(md) {
+		var mp = afStudio.layoutDesigner.view.MetaDataProcessor,
+		  vIdx = mp.getContentViewMeta(this.pageMeta).contentIdx;
+		
+		if (Ext.isDefined(vIdx)) {
+			this.pageMeta['i:area'][vIdx] = md.meta;	
+		} else {
+			this.pageMeta['i:area'] = md.meta;
+		}
+	}//eo updateMetaData
 	
 });
 

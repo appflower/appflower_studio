@@ -37,7 +37,7 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 					}
 				});
 			} else {
-				cm = pm['i:area'];	
+				cm = pm['i:area'];
 			}
 			
 			return {
@@ -85,6 +85,10 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			return pm;				
 		}//eo
 		
+		/**
+		 * Returns <u>tabbed</u> view components and max layout
+		 * @return {Object} components and maxLayout
+		 */
 		,getTabbedViewComponents : function(tm) {			
 			var cmps = [],
 				maxLayout;
@@ -102,6 +106,10 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			return {components: cmps, maxLayout: maxLayout};
 		}//eo getTabbedViewComponents
 		
+		/**
+		 * Returns <u>normal</u> view components
+		 * @return {Object} components 
+		 */
 		,getNormalViewComponents : function(cm) {
 			var cmps = [];			
 			if (Ext.isArray(cm)) {
@@ -113,7 +121,7 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			}
 			
 			return cmps;
-		}//eo getNormalViewComponents 
+		}//eo getNormalViewComponents
 		
 		
 	}//eo afStudio.layoutDesigner.view.MetaDataProcessor

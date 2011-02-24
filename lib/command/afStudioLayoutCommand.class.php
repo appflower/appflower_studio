@@ -170,7 +170,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 foreach ($xmlNames as $xk => $page) {
                     $data[$app][] = array(
                         'text' => $page,
-                        'xmlPath' => $xmlPaths[$xk],
+                        'xmlPath' => $xmlPaths[$xk]
                     );
                 }
             }
