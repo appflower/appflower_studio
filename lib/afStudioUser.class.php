@@ -50,6 +50,8 @@ class afStudioUser
     
     private function __construct() {}
     
+    private function __clone() {}
+    
     /**
      * Retrieve the instance of this class.
      */
@@ -198,6 +200,28 @@ class afStudioUser
     }
     
     /**
+     * Deleting user functionality
+     *
+     * @param string $username
+     * @return boolean
+     */
+    public static function delete($username)
+    {
+        $aUsers = self::getCollection();
+        
+        if (isset($aUsers[$username])) {
+            // deleting user from list
+            unset($aUsers[$username]);
+            // commit changes
+            self::setCollection($aUsers);
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * Password rule for creating (encoding)
      *
      * @param srting $password
@@ -256,6 +280,9 @@ class afStudioUser
         }
     } 
     
+    /**
+     * Getting username
+     */
     public function getUsername()
     {
         return $this->username;
@@ -312,7 +339,15 @@ class afStudioUser
         return $result;
     }
     
-    
+    /**
+     * Checking - is current user admin
+     *
+     * @return boolean
+     */
+    public function isAdmin()
+    {
+        return ($this->getRole() == 'admin');
+    }
     
     
     /**

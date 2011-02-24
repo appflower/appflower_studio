@@ -34,6 +34,11 @@ class afsUserManagerActions extends sfActions
     {
         $sUsername = $request->getParameter('username', afStudioUser::getInstance()->getUsername());
         
+        // Catching if current user not admin
+        if (!afStudioUser::getInstance()->isAdmin() && afStudioUser::getInstance()->getUsername() != $sUsername) {
+            $this->forward404("You have no rights to execute this action");
+        }
+        
         $aUser = afStudioUser::getInstance()->retrieve($sUsername);
         
         return $this->renderJson($aUser);
@@ -44,6 +49,11 @@ class afsUserManagerActions extends sfActions
      */
     public function executeGetList(sfWebRequest $request)
     {
+        // Catching if current user not admin 
+        if (!afStudioUser::getInstance()->isAdmin()) {
+            $this->forward404("You have no rights to execute this action");
+        }
+        
         $aUsers = afStudioUser::getCollection();
         return $this->renderJson($aUsers);
     }
@@ -55,6 +65,11 @@ class afsUserManagerActions extends sfActions
     {
         $sUsername = $request->getParameter('username');
         $aUser = json_decode($request->getParameter('user'), true);
+        
+        // Will be passed if user - admin or he trying update his own profile
+        if (!afStudioUser::getInstance()->isAdmin() && afStudioUser::getInstance()->getUsername() != $sUsername) {
+            $this->forward404("You have no rights to execute this action");
+        }
         
         // Retrieve user via username
         $user = afStudioUser::getInstance()->retrieve($sUsername);
@@ -99,6 +114,11 @@ class afsUserManagerActions extends sfActions
      */
     public function executeCreate(sfWebRequest $request)
     {
+        // Catching if current user not admin 
+        if (!afStudioUser::getInstance()->isAdmin()) {
+            $this->forward404("You have no rights to execute this action");
+        }
+        
         $sUsername = $request->getParameter('username');
         $aUser = json_decode($request->getParameter('user'), true);
         
@@ -132,6 +152,34 @@ class afsUserManagerActions extends sfActions
             
         } else {
             $aResult = $this->fetchError('User with this `username` already exists');
+        }
+        
+        return $this->renderJson($aResult);
+    }
+    
+    /**
+     * Delete User functionality
+     */
+    public function executeDelete(sfWebRequest $request)
+    {
+        if (!afStudioUser::getInstance()->isAdmin()) {
+            $this->forward404("You have no rights to execute this action");
+        }
+        
+        $sUsername = $request->getParameter('username');
+        
+        if (afStudioUser::getInstance()->getUsername() == $sUsername) {
+            $aResult = $this->fetchError("You can't delete youself");
+        } else {
+            if (afStudioUser::getInstance()->retrieve($sUsername)) {
+                if (afStudioUser::delete($sUsername)) {
+                    $aResult = $this->fetchSuccess("User has been deleted");
+                } else {
+                    $aResult = $this->fetchError("Can't delete user");
+                }
+            } else {
+                $aResult = $this->fetchError("This doesn't exists");
+            }
         }
         
         return $this->renderJson($aResult);
