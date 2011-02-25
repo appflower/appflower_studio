@@ -340,7 +340,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		       module_name: widgetParam.module,
 		       action_name: widgetParam.widget
 		   },
-		   success: function(xhr, opt) {		   
+		   success: function(xhr, opt) {
 			   afStudio.vp.unmask('center');
 			   var response = Ext.decode(xhr.responseText);
 			   if (response.success) {

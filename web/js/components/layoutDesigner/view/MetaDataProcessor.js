@@ -49,7 +49,7 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		/**
 		 * 
 		 */
-		,changeContentViewMetaData : function(type, pm) {			
+		,changeContentViewMetaData : function(type, pm) {
 			var vo = this.getContentViewMeta(pm),
 				viewTabbed = this.isViewTabbed(vo.contentView),
 				cmps = viewTabbed ? this.getTabbedViewComponents(vo.contentView['i:tab']) 
@@ -59,7 +59,7 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			
 			if (type == 'tabbed') {
 				var tabAttr = Ext.apply({title: pm['i:title']}, vo.contentView.attributes);				
-				delete tabAttr.type;				
+				delete tabAttr.type;
 				meta = {
 					'attributes': vo.contentView.attributes,
 					'i:tab': {
@@ -90,17 +90,25 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		 * @return {Object} components and maxLayout
 		 */
 		,getTabbedViewComponents : function(tm) {			
-			var cmps = [],
+			var cmps,
 				maxLayout;
-			
-			if (Ext.isArray(tm)) {
-				Ext.each(tm, function(t, i) {
-					maxLayout = t.attributes.layout;
-					cmps.push(this.getNormalViewComponents(t['i:component']));
-				}, this);		
-			} else {
-				maxLayout = tm.attributes.layout;
-				cmps.push(this.getNormalViewComponents(tm['i:component']));
+				
+			if (Ext.isDefined(tm)) {
+				cmps = [];
+				
+				if (Ext.isArray(tm)) {
+					Ext.each(tm, function(t, i) {
+						if (t['i:component']) {
+							maxLayout = t.attributes.layout;						
+							cmps.push(this.getNormalViewComponents(t['i:component']));
+						}		
+					}, this);		
+				} else {
+					if (tm['i:component']) {
+						maxLayout = tm.attributes.layout;
+						cmps.push(this.getNormalViewComponents(tm['i:component']));
+					}
+				}				
 			}
 			
 			return {components: cmps, maxLayout: maxLayout};
@@ -111,13 +119,17 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		 * @return {Object} components 
 		 */
 		,getNormalViewComponents : function(cm) {
-			var cmps = [];			
-			if (Ext.isArray(cm)) {
-				Ext.each(cm, function(c, i) {
-					cmps.push(c);
-				});
-			} else {
-				cmps.push(cm);
+			var cmps;
+			
+			if (Ext.isDefined(cm)) {
+				cmps = [];
+				if (Ext.isArray(cm)) {
+					Ext.each(cm, function(c, i) {
+						cmps.push(c);
+					});
+				} else {
+					cmps.push(cm);
+				}
 			}
 			
 			return cmps;

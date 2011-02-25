@@ -10,6 +10,11 @@ Ext.namespace('afStudio.layoutDesigner.view');
 afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	
 	/**
+	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
+	 */
+	widgetMetaUrl : 'afsLayoutBuilder/getWidget'	
+	
+	/**
 	 * @cfg {Object} viewMeta required
 	 * View metadata
 	 */
@@ -18,7 +23,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @cfg {Number} viewMetaPosition required (defaults to 0)
 	 * Metadata position
 	 */
-	viewMetaPosition : 0
+	,viewMetaPosition : 0
 	
 	/**
 	 * @property {Number} componentsNum (defaults to 0)
@@ -139,18 +144,27 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 */
 	,initViewComponents : function() {
 		var _this = this,
-		 cmpsMeta = this.getViewComponentsMetaData() || [];
-		
+		 cmpsMeta = this.getViewComponentsMetaData();
+		 
 		if (!Ext.isEmpty(cmpsMeta)) {
 			
-			_this.componentsNum = cmpsMeta.length;
-			
-			Ext.each(cmpsMeta, function(cm, i, allCmps) {
-				var cl = cm.attributes.column || 0,
-					 w = _this.createViewComponent(cm, null, i);
+			if (Ext.isArray(cmpsMeta)) {
+				_this.componentsNum = cmpsMeta.length;
+				
+				Ext.each(cmpsMeta, function(cm, i, allCmps) {
+					var cl = cm.attributes.column || 0,
+						 w = _this.createViewComponent(cm, null, i);
+						 
+					_this.items.itemAt(cl).add(w);
+				});
+				
+			} else {
+				
+				var cl = cmpsMeta.attributes.column || 0,
+					 w = _this.createViewComponent(cmpsMeta, null, this.componentsNum);
 					 
 				_this.items.itemAt(cl).add(w);
-			});
+			}
 			
 			_this.doLayout();
 		}
@@ -189,12 +203,33 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		if (Ext.isArray(vc)) {
 			delete vc[cmpPosition];
+			
+			var compArr = [];			
+			for (var i = 0, len = vc.length; i < len; i++) {
+				if (Ext.isDefined(vc[i])) {
+					compArr.push(vc[i]);
+				}
+			}
+			
+			if (compArr.length > 0) {
+				this.viewMeta['i:component'] = compArr;
+				this.componentsNum = compArr.length - 1; 
+			} else {
+				delete this.viewMeta['i:component'];
+				this.componentsNum = 0;
+			}
+			
+//			console.log('componentsNum', this.componentsNum);
+//			console.log('viewMeta', this.viewMeta);
+			
 		} else {
+			
 			delete this.viewMeta['i:component'];
+			this.componentsNum = 0;
 		}
 		
 		this.updateViewMetaData();
-	}
+	}//eo deleteViewComponentMetaData
 	
 	/**
 	 * Adds new component into the view
@@ -279,16 +314,69 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}
 	
 	,editWidget : function(name, module, cmpMeta) {
-		Ext.Msg.alert('Edit Widget', 'Under developing');
-		//console.log('edit widget', name, module, cmpMeta);
-	}
+		
+		Ext.Ajax.request({
+		   url: this.widgetMetaUrl,
+		   params: {
+		       module_name: module,
+		       action_name: name
+		   },
+		   success: function(xhr, opt) {
+			   afStudio.vp.unmask('center');
+			   var response = Ext.decode(xhr.responseText);
+			   if (response.success) {
+			       var actionPath = response.meta.actionPath;
+			       var securityPath = response.meta.securityPath;		
+				   var widgetUri = String.format('{0}/{1}', module, name);
+
+					afStudio.vp.mask({region:'center'});
+					
+					var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
+					widgetDefinition.on('datafetched', function(rootNode, definition){
+						afStudio.vp.addToPortal({
+							title: 'Plugin Designer',
+							collapsible: false,
+							draggable: false,
+							layout: 'fit',
+							items: [{
+								xtype: 'afStudio.widgetDesigner',
+								actionPath: actionPath,
+								securityPath: securityPath,
+				                widgetUri: widgetUri,
+				                rootNodeEl: rootNode
+							}]
+						}, true);
+			
+			           var WI = afStudio.getWidgetInspector();
+			           WI.setRootNode(rootNode);
+			
+				       afStudio.vp.unmask('center');
+					});
+					widgetDefinition.fetchAndConfigure();				   
+				   
+			       	 
+			   } else {
+			   	   Ext.Msg.alert('Error', response.content);
+			   }
+		   },
+		   failure: function(xhr, opt) {
+		   	   afStudio.vp.unmask('center');
+		       Ext.Msg.alert('Error', String.format('Status code {0}, message {1}', xhr.status, xhr.statusText));
+		   }
+		});
+		
+	}//eo editWidget 
 	
+	/**
+	 * Removes component from view
+	 * For detailed information look at {@link Ext.Panel#tools}
+	 */
 	,removeWidget: function(e, tool, panel) {
 		var cmpPos = panel.componentPosition;
 		
-//		this.deleteViewComponentMetaData(cmpPos);		
+		this.deleteViewComponentMetaData(cmpPos);		
 		panel.destroy();
-	}
+	}//eo removeWidget
 	
 });
 
