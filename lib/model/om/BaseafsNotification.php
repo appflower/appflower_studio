@@ -38,8 +38,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 
 	/**
 	 * The value for the user field.
-	 * Note: this column has a database default value of: 0
-	 * @var        int
+	 * @var        string
 	 */
 	protected $user;
 
@@ -76,27 +75,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	protected $alreadyInValidation = false;
 
 	/**
-	 * Applies default values to this object.
-	 * This method should be called from the object's constructor (or
-	 * equivalent initialization method).
-	 * @see        __construct()
-	 */
-	public function applyDefaultValues()
-	{
-		$this->user = 0;
-	}
-
-	/**
-	 * Initializes internal state of BaseafsNotification object.
-	 * @see        applyDefaults()
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->applyDefaultValues();
-	}
-
-	/**
 	 * Get the [message] column value.
 	 * 
 	 * @return     string
@@ -119,7 +97,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	/**
 	 * Get the [user] column value.
 	 * 
-	 * @return     int
+	 * @return     string
 	 */
 	public function getUser()
 	{
@@ -227,16 +205,16 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	/**
 	 * Set the value of [user] column.
 	 * 
-	 * @param      int $v new value
+	 * @param      string $v new value
 	 * @return     afsNotification The current object (for fluent API support)
 	 */
 	public function setUser($v)
 	{
 		if ($v !== null) {
-			$v = (int) $v;
+			$v = (string) $v;
 		}
 
-		if ($this->user !== $v || $this->isNew()) {
+		if ($this->user !== $v) {
 			$this->user = $v;
 			$this->modifiedColumns[] = afsNotificationPeer::USER;
 		}
@@ -343,10 +321,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
-			if ($this->user !== 0) {
-				return false;
-			}
-
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -371,7 +345,7 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 
 			$this->message = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
 			$this->message_type = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->user = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+			$this->user = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ip = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->created_at = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->id = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
@@ -988,7 +962,6 @@ abstract class BaseafsNotification extends BaseObject  implements Persistent
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
-		$this->applyDefaultValues();
 		$this->resetModified();
 		$this->setNew(true);
 		$this->setDeleted(false);

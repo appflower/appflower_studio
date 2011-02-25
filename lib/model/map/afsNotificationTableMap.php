@@ -39,7 +39,7 @@ class afsNotificationTableMap extends TableMap {
 		// columns
 		$this->addColumn('MESSAGE', 'Message', 'VARCHAR', true, 255, null);
 		$this->addColumn('MESSAGE_TYPE', 'MessageType', 'VARCHAR', true, 255, null);
-		$this->addColumn('USER', 'User', 'INTEGER', true, 11, 0);
+		$this->addColumn('USER', 'User', 'VARCHAR', true, 128, null);
 		$this->addColumn('IP', 'Ip', 'VARCHAR', true, 255, null);
 		$this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);

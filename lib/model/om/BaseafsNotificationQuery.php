@@ -29,14 +29,14 @@
  *
  * @method     afsNotification findOneByMessage(string $message) Return the first afsNotification filtered by the message column
  * @method     afsNotification findOneByMessageType(string $message_type) Return the first afsNotification filtered by the message_type column
- * @method     afsNotification findOneByUser(int $user) Return the first afsNotification filtered by the user column
+ * @method     afsNotification findOneByUser(string $user) Return the first afsNotification filtered by the user column
  * @method     afsNotification findOneByIp(string $ip) Return the first afsNotification filtered by the ip column
  * @method     afsNotification findOneByCreatedAt(string $created_at) Return the first afsNotification filtered by the created_at column
  * @method     afsNotification findOneById(int $id) Return the first afsNotification filtered by the id column
  *
  * @method     array findByMessage(string $message) Return afsNotification objects filtered by the message column
  * @method     array findByMessageType(string $message_type) Return afsNotification objects filtered by the message_type column
- * @method     array findByUser(int $user) Return afsNotification objects filtered by the user column
+ * @method     array findByUser(string $user) Return afsNotification objects filtered by the user column
  * @method     array findByIp(string $ip) Return afsNotification objects filtered by the ip column
  * @method     array findByCreatedAt(string $created_at) Return afsNotification objects filtered by the created_at column
  * @method     array findById(int $id) Return afsNotification objects filtered by the id column
@@ -196,29 +196,20 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 	/**
 	 * Filter the query on the user column
 	 * 
-	 * @param     int|array $user The value to use as filter.
-	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * @param     string $user The value to use as filter.
+	 *            Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
 	 */
 	public function filterByUser($user = null, $comparison = null)
 	{
-		if (is_array($user)) {
-			$useMinMax = false;
-			if (isset($user['min'])) {
-				$this->addUsingAlias(afsNotificationPeer::USER, $user['min'], Criteria::GREATER_EQUAL);
-				$useMinMax = true;
-			}
-			if (isset($user['max'])) {
-				$this->addUsingAlias(afsNotificationPeer::USER, $user['max'], Criteria::LESS_EQUAL);
-				$useMinMax = true;
-			}
-			if ($useMinMax) {
-				return $this;
-			}
-			if (null === $comparison) {
+		if (null === $comparison) {
+			if (is_array($user)) {
 				$comparison = Criteria::IN;
+			} elseif (preg_match('/[\%\*]/', $user)) {
+				$user = str_replace('*', '%', $user);
+				$comparison = Criteria::LIKE;
 			}
 		}
 		return $this->addUsingAlias(afsNotificationPeer::USER, $user, $comparison);

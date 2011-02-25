@@ -106,7 +106,7 @@ var afStudio = function () {
 				  var expirationDate=new Date();
 				  expirationDate.setDate(expirationDate.getDate()+30);
 					
-				  Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate);
+				  Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate,'/','');
 			   }
 			});
 		}
