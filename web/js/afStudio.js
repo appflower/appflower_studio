@@ -94,15 +94,19 @@ var afStudio = function () {
 			      project.text = response.data.name;
 			      project.url = response.data.url+'/studio';			      
 			      
-			      if((recentProjects[recentProjects.length-1]&&recentProjects[recentProjects.length-1].url != project.url)||(!recentProjects[recentProjects.length-1]))
-					{
-						recentProjects.push(project);
+			      Ext.each(recentProjects, function(recentProject, index) {
+				  		if(recentProject.url == project.url)
+				  		{
+				  			delete recentProjects[index];
+				  		}
+			      });
+			      
+			      recentProjects[recentProjects.length] = project;
 					
-						var expirationDate=new Date();
-						expirationDate.setDate(expirationDate.getDate()+30);
+				  var expirationDate=new Date();
+				  expirationDate.setDate(expirationDate.getDate()+30);
 					
-						Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate);
-					}
+				  Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate);
 			   }
 			});
 		}
