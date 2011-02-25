@@ -473,5 +473,13 @@ public function checkForeignKeys(&$db_info2) {
     return $tables;
   }
   
+	public function generateDropTables($tables) {
+		$sql = '';
+		foreach ($tables as $tablename) {
+            $sql .= "DROP TABLE IF EXISTS `$tablename`;\n";
+        }
+        return $sql;
+    }
+  
 };
 ?>

@@ -17,10 +17,10 @@ class afsInsertDiffSqlTask extends sfBaseTask
   protected function configure()
   {
   	$this->addOptions(array(
-      new sfCommandOption('application', null, sfCommandOption::PARAMETER_REQUIRED, 'The application name'),
-      new sfCommandOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev'),
       new sfCommandOption('connection', null, sfCommandOption::PARAMETER_REQUIRED, 'The connection name', 'propel'),
+      new sfCommandOption('clean', null, sfCommandOption::PARAMETER_REQUIRED, 'Remove existing tables from appFlowerStudio schema.yml, if they exist in db', false),
     ));
+    
     
     $this->namespace = 'afs';
     $this->name = 'insert-diff-sql';
@@ -43,25 +43,30 @@ EOF;
     $buildSql = new sfPropelBuildSqlTask($this->dispatcher, $this->formatter);
     $buildSql->setCommandApplication($this->commandApplication);
     $buildSql->run();
-
-//  check table changes in db and /plugins/afStudio/config/schema.yml and generate sql diff
-    $this->logSection("sql-diff", "building database patch");
     
     $sqlDir = sfConfig::get('sf_data_dir').'/sql';
     $sqlFilePath = "$sqlDir/plugins.appFlowerStudioPlugin.lib.model.schema.sql";
-    
-    $i = new afsDbInfo();
-    $i->loadFromDbForTables(Propel::getConnection($options['connection']), afsDbInfo::getTableNamesFromFile($sqlFilePath));
 
-    $i2 = new afsDbInfo();
+    $this->logSection("sql-diff", "building database patch");
+    $diff = '';
     
-	if (file_exists($sqlFilePath)) { 
-		$i2->loadFromFile($sqlFilePath);
-	}
+  	if($options['clean']==true) { // remove existing tables from appFlowerStudio schema.yml, if they exist in db
+  	
+  		$i = new afsDbInfo();
+  		$diff = $i->generateDropTables(afsDbInfo::getTableNamesFromFile($sqlFilePath));
+  		
+  	} else { //  check table changes in db and /plugins/afStudio/config/schema.yml and generate sql diff
 	
-    $i -> checkForeignKeys($i2);
-    $diff = $i->getDiffWith($i2);
-
+	    $i = new afsDbInfo();
+	    $i->loadFromDbForTables(Propel::getConnection($options['connection']), afsDbInfo::getTableNamesFromFile($sqlFilePath));
+	    $i2 = new afsDbInfo();
+		if (file_exists($sqlFilePath)) { 
+			$i2->loadFromFile($sqlFilePath);
+		}
+	    $i -> checkForeignKeys($i2);
+	    $diff = $i->getDiffWith($i2);
+  	}
+  		
 //  write diff file to disk  
     $filename = sfConfig::get('sf_data_dir')."/sql/{$options['connection']}.appFlowerStudioPlugin.diff.sql";
     if($diff=='') {
