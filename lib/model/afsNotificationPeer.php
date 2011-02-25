@@ -25,14 +25,12 @@ class afsNotificationPeer extends BaseafsNotificationPeer {
 	 */
 	public static function log($message, $messageType = 'notification', $user=0)
 	{
-		if(sfContext::getInstance()->getUser()->isAuthenticated())
-		{
-			$user = sfContext::getInstance()->getUser()->getGuardUser()->getId();
+	    if (afStudioUser::getInstance()->isAuthenticated()) {
+            $user = afStudioUser::getInstance()->getUsername();
+		} else {
+		    // Seems like method called not from studio, or user not authenticated
+		    $user = 'not-authenticated';
 		}
-		elseif ($user instanceof afGuardUser)
-		{
-			$user = $afGuardUser->getId();
-		}	
 		
 		$afsNotification = new afsNotification();
 		$afsNotification->setMessage($message);

@@ -5,6 +5,6 @@ propel:
     _attributes: { phpName: afsNotification }
     message: { type: VARCHAR, size: 255, required: true }
     message_type: { type: VARCHAR, size: 255, required: true }
-    user: { type: INTEGER, size: 11, required: true, default: 0 }
+    user: { type: VARCHAR, size: 128, required: true }
     ip: { type: VARCHAR, size: 255, required: true }
     created_at:
