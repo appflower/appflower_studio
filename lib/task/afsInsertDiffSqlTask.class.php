@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(__FILE__).'/../afsDbInfo.php');
+
 /**
  * checks all tables from Studio's schema.yml if they exist in db, and if they don't exist create them into the db.
  *
@@ -48,10 +50,10 @@ EOF;
     $sqlDir = sfConfig::get('sf_data_dir').'/sql';
     $sqlFilePath = "$sqlDir/plugins.appFlowerStudioPlugin.lib.model.schema.sql";
     
-    $i = new dbInfo();
-    $i->loadFromDbForTables(Propel::getConnection($options['connection']), dbInfo::getTableNamesFromFile($sqlFilePath));
+    $i = new afsDbInfo();
+    $i->loadFromDbForTables(Propel::getConnection($options['connection']), afsDbInfo::getTableNamesFromFile($sqlFilePath));
 
-    $i2 = new dbInfo();
+    $i2 = new afsDbInfo();
     
 	if (file_exists($sqlFilePath)) { 
 		$i2->loadFromFile($sqlFilePath);
