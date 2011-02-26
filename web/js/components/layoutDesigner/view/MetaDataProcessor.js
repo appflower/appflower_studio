@@ -69,7 +69,8 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 				}
 			} else {
 				var viewAttr = Ext.apply({}, vo.contentView.attributes);				
-				viewAttr.layout = cmps.maxLayout || viewAttr.layout;				
+				viewAttr.layout = (viewAttr.layout > cmps.maxLayout) 
+								? viewAttr.layout : cmps.maxLayout;				
 				meta = {
 					'attributes': viewAttr,
 					'i:component': Ext.flatten(cmps.components)

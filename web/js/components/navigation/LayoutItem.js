@@ -15,7 +15,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	/**
 	 * @cfg {String} layoutMetaUrl (defaults to 'afsLayoutBuilder/get')
 	 */
-	,layoutMetaUrl : 'afsLayoutBuilder/get'
+	,layoutMetaUrl : '/afsLayoutBuilder/get'
 
 	/**
 	 * @property {Ext.menu.Menu} appContextMenu

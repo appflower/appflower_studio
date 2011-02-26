@@ -153,16 +153,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 				
 				Ext.each(cmpsMeta, function(cm, i, allCmps) {
 					var cl = cm.attributes.column || 0,
-						 w = _this.createViewComponent(cm, null, i);
-						 
+						 w = _this.createViewComponent(cm, null, i);						 
 					_this.items.itemAt(cl).add(w);
-				});
-				
-			} else {
-				
+				});				
+			} else {				
 				var cl = cmpsMeta.attributes.column || 0,
-					 w = _this.createViewComponent(cmpsMeta, null, this.componentsNum);
-					 
+					 w = _this.createViewComponent(cmpsMeta, null, this.componentsNum);					 
 				_this.items.itemAt(cl).add(w);
 			}
 			
@@ -198,11 +194,29 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		this.updateViewMetaData();
 	}//eo addViewComponentMetaData
 	
-	,deleteViewComponentMetaData : function(cmpPosition) {
+	/**
+	 * 
+	 * @param {Object} cmpMeta
+	 */
+	,deleteViewComponentMetaData : function(cmpMeta) {
 		var vc = this.viewMeta['i:component'];
 		
 		if (Ext.isArray(vc)) {
-			delete vc[cmpPosition];
+
+			for (var i = 0, len = vc.length; i < len; i++) {
+				var found = true;
+
+				Ext.iterate(cmpMeta.attributes, function(key, value) {
+					if (vc[i]['attributes'][key] != value) {
+						found = false;
+					}
+				});
+				
+				if (found) {
+					delete vc[i];
+					break;
+				}
+			}
 			
 			var compArr = [];			
 			for (var i = 0, len = vc.length; i < len; i++) {
@@ -218,12 +232,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 				delete this.viewMeta['i:component'];
 				this.componentsNum = 0;
 			}
-			
-//			console.log('componentsNum', this.componentsNum);
-//			console.log('viewMeta', this.viewMeta);
-			
-		} else {
-			
+		} else {			
 			delete this.viewMeta['i:component'];
 			this.componentsNum = 0;
 		}
@@ -372,9 +381,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * For detailed information look at {@link Ext.Panel#tools}
 	 */
 	,removeWidget: function(e, tool, panel) {
-		var cmpPos = panel.componentPosition;
-		
-		this.deleteViewComponentMetaData(cmpPos);		
+		var cmpMeta = panel.componentMeta;		
+		this.deleteViewComponentMetaData(cmpMeta);		
 		panel.destroy();
 	}//eo removeWidget
 	
