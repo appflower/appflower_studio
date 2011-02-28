@@ -321,6 +321,22 @@ class afStudioUser
     }
     
     /**
+     * Getting Name - Generate user name from meta-data
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        if (!empty($this->last_name) && !empty($this->first_name)) {
+            $sName = $this->first_name . ' ' . $this->last_name;
+        } else {
+            $sName = (!empty($this->first_name)) ? $this->first_name : ((!empty($this->last_name)) ? $this->last_name : $this->username);
+        }
+        
+        return $sName;
+    }
+    
+    /**
      * Validating associated array
      *
      * @param array $info - associated array
