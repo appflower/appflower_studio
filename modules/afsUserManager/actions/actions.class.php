@@ -186,6 +186,21 @@ class afsUserManagerActions extends sfActions
     }
     
     /**
+     * Getting Info about current user
+     */
+    public function executeCurrent(sfWebRequest $request)
+    {
+        $user = afStudioUser::getInstance();
+        $result = array(
+            'username' => $user->getUsername(),
+            'name' => $user->getName(),
+            'isAdmin' => $user->isAdmin()
+        );
+        
+        return $this->renderJson($result);
+    }
+    
+    /**
      * Fetching success response
      */
     private function fetchSuccess($message)
