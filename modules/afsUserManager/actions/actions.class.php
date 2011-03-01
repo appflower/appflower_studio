@@ -61,7 +61,8 @@ class afsUserManagerActions extends sfActions
         
         $i = 1;
         foreach ($aUsers as $username => $user) {
-            $users[$i] = array(
+            $users[] = array(
+                'id' => $i,
                 'username' => $username,
                 'email' => $user['email'],
                 'first_name' => $user['first_name'],
