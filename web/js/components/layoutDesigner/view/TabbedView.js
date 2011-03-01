@@ -144,17 +144,13 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	 * @param {Object} md The new tab's meta
 	 */
 	,updateMetaData : function(md) {
-//		var tabMeta = this.getViewTabMetaData(md.position),
-		  var container = this.ownerCt; 
-		
-//		console.log('tab meta', md.meta);
-		
+	 	var container = this.ownerCt;
 		
 		Ext.apply(this.getViewTabMetaData(md.position), md.meta);
 		
-//		console.log('tab view meta', this.viewMeta);
-		
-		container.updateMetaData({meta: this.viewMeta});
+		container.updateMetaData(Ext.apply(md, {
+			meta: this.viewMeta
+		}));
 	}//eo updateMetaData
 	
 });

@@ -167,14 +167,15 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo initViewComponents
 	
 	/**
-	 * Updates view's metadata and trigger changes inside the container
+	 * Updates view's metadata and triggers changes inside the container
 	 */
-	,updateViewMetaData : function() {
+	,updateViewMetaData : function(callback) {
 		var container = this.ownerCt;
 		
 		container.updateMetaData({
-			meta: this.viewMeta, 
-			position: this.viewMetaPosition
+			meta: this.viewMeta,
+			position: this.viewMetaPosition,
+			callback: callback
 		});
 	}//eo updateMetaData	
 	
@@ -195,8 +196,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo addViewComponentMetaData
 	
 	/**
-	 * 
-	 * @param {Object} cmpMeta
+	 * Removes component metadata
+	 * @param {Object} cmpMeta The component's meta to be removed
 	 */
 	,deleteViewComponentMetaData : function(cmpMeta) {
 		var vc = this.viewMeta['i:component'];
@@ -239,6 +240,18 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		this.updateViewMetaData();
 	}//eo deleteViewComponentMetaData
+	
+	/**
+	 * Sets view's layout type
+	 * @param {Number} newLayout The new layout type
+	 */
+	,setLayoutMeta : function(newLayout) {
+		this.viewMeta.attributes.layout = newLayout;
+		
+		this.updateViewMetaData(function(){
+			this.refreshPageLayout();
+		});
+	}//eo setLayoutMeta
 	
 	/**
 	 * Adds new component into the view

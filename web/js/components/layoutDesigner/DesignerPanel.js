@@ -15,11 +15,12 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	/**
 	 * @cfg {String} layoutApp required
+	 * Opened in LD application
 	 */
 
 	/**
 	 * @cfg {String} layoutPage required
-	 * Page's name 
+	 * Opened in LD page 
 	 */	
 	
 	/**
@@ -209,11 +210,11 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 								triggerAction: 'all', 
 								mode: 'local', 
 								emptyText: 'Select an item...',
+								forceSelection: true,
 								store: [
-									[1, '1 column'], 
-									[2, '2 columns'], 
-									[3, '3 columns'], 
-									[4, '4 columns']
+									[1, '1 - column 100%'],       [2, '2 - columns 50/50'],        [3, '3 - columns 25/75'], 
+									[4, '4 - columns 75/25'],     [5, '5 - columns 33/33/33'],	   [6, '6 - columns - 50/25/25'],
+									[7, '7 - columns 25/50/25'],  [8, '8 - columns 25/25/25/25'],  [9, '9 - columns - 40/20/20/20']
 								]
 							}]
 						}
@@ -339,13 +340,14 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}//eo onLayoutTypeChanged
 	
 	/**
-	 * Format->Columns <u>select</u> event listener
+	 * Handles Format->Columns <u>select</u> event listener
 	 * For more detailed information look at {@link Ext.form.ComboBox#select}
 	 */
 	,onSelectDesignerColumnsNumber : function(combo, record, index) {
-		var colNum = combo.getValue();
-		this.columnsNumber = colNum;
-		this.refreshDesignerPanel();
+		var p = this.layoutView, 
+			layoutNum = combo.getValue();
+		
+		p.setActiveContentViewLayout(layoutNum);
 	}//onSelectDesignerColumnsNumber
 	
 	/**

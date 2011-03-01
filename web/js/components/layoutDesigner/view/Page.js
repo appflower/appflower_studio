@@ -63,10 +63,27 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		
 		afStudio.vp.unmask('center');
 		
+		_this.on('afterrender', _this.initPageView, _this);
+	}//eo _afterInitComponent
+	
+	/**
+	 * Page view <u>afterrender</u> event listener
+	 * Executes init actions
+	 */
+	,initPageView : function() {
 		//set designPanel property
-		_this.designPanel = _this.ownerCt;
+		this.designPanel = this.ownerCt;
 		
-	}//eo _afterInitComponent	
+	}//eo initPageView
+	
+	/**
+	 * Refreshes page layout
+	 */
+	,refreshPageLayout : function() {
+		var dp = this.designPanel;
+		
+		dp.updateLayoutView(new afStudio.layoutDesigner.view.Page({pageMeta: this.pageMeta}));		
+	}//eo refreshPageLayout
 	
 	/**
 	 * Returns page's metadata.
@@ -119,6 +136,13 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		this.doLayout();		
 	}//eo addWidgetComponentToContentView
 	
+	,setActiveContentViewLayout : function(layout) {
+		var _this = this,
+			   cv = this.getActiveContentView();
+		
+		cv.setLayoutMeta(layout);		
+	}//eo setActiveContentViewLayout
+	
 	/**
 	 * Updates {@link #pageMeta} metadata
 	 * @param {Object} md The new "content" view metadata
@@ -131,6 +155,10 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 			this.pageMeta['i:area'][vIdx] = md.meta;	
 		} else {
 			this.pageMeta['i:area'] = md.meta;
+		}
+		
+		if (Ext.isFunction(md.callback)) {
+			Ext.util.Functions.createDelegate(md.callback, this)();
 		}
 	}//eo updateMetaData
 	
