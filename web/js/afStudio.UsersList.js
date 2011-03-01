@@ -41,8 +41,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 		//Cretae record
 		var r = Ext.data.Record.create([
 			{name: 'id', type: 'int'}, {name: 'first_name'}, {name: 'last_name'}, 
-			{name: 'email'}, {name: 'password'},
-			{name: 'role'}
+			{name: 'email'}, {name: 'password'}, {name: 'role'}, {name: 'username'}
 		]);
 	
 		//Create DatStore
@@ -54,13 +53,22 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 			remoteSort: true
 	    });		
 		
+		//
+		var renderActionsClmn = function(v, md, r){
+			return '<img ext:qtip="Delete User" style="cursor: pointer;" src="appFlowerStudioPlugin/images/delete.png">' +
+					'<img ext:qtip="Edit User" style="cursor: pointer;margin-left: 5px" src="appFlowerStudioPlugin/images/delete.png">';
+			return v;
+		};
+		
 		//Create ColumnModel
 		var cm = new Ext.grid.ColumnModel([
-//			{header: 'Status', sortable: true, dataIndex: 'status'},
+			new Ext.grid.RowNumberer(),
 			{header: 'First Name', sortable: true, dataIndex: 'first_name'},
 			{header: 'Last Name', sortable: true, dataIndex: 'last_name'},
+			{header: 'Username', sortable: true, dataIndex: 'username'},
 			{header: 'Email', sortable: true, dataIndex: 'email'},
-			{header: 'Role', sortable: true, dataIndex: 'role'}
+			{header: 'Role', sortable: true, fixed: true, width: 75, dataIndex: 'role'},
+			{header: 'Actions', sortable: false, fixed: true, width: 75, dataIndex: 'username', renderer: renderActionsClmn}
 		]);
 		
 		//Creat  grid
