@@ -12,12 +12,28 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @cfg {Object} layoutMeta required
 	 * Layout meta data 
 	 */
+
+	/**
+	 * @cfg {String} layoutApp required
+	 */
+
+	/**
+	 * @cfg {String} layoutPage required
+	 * Page's name 
+	 */	
 	
 	/**
 	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
 	 */
 	widgetMetaUrl : 'afsLayoutBuilder/getWidget'	
 
+
+	/**
+	 * @cfg {String} saveLayoutUrl (defaults to 'afsLayoutBuilder/save')
+	 */
+	,saveLayoutUrl : 'afsLayoutBuilder/save'	
+	
+	
 	/**
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
 	 */
@@ -26,6 +42,49 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @property {afStudio.layoutDesigner.view.Page} layoutView
 	 * Layout page view
 	 */
+	
+	/**
+	 * Runs action 
+	 * 
+	 * @param {Object} action contains:
+	 *   {String} url The action URL
+	 * 	 {Function} run required The action function to be run on success
+	 * 		accepts result (response) object 
+	 *   {Object} actionParams optional
+	 *   {String} loadingMessage optional
+	 *   {Object} scope
+	 */
+	,executeAction : function(action) {		
+		afStudio.vp.mask({
+			msg: action.loadingMessage 
+				 ? action.loadingMessage 
+				 : 'Loading...', 
+			region: 'center'
+		});
+		
+		Ext.Ajax.request({
+		   url: action.url,
+		   params: action.params,
+		   success: function(xhr, opt) {
+			   afStudio.vp.unmask('center');
+			   var response = Ext.decode(xhr.responseText);
+			   if (response.success) {
+			   	   Ext.util.Functions.createDelegate(
+		   			 action.run, 
+		   			 action.scope ? action.scope : this, 
+		   			 [response], 
+		   			 false
+			   	   )();			       				   	
+			   } else {
+			   	   Ext.Msg.alert('Error', response.content);
+			   }
+		   }, 
+		   failure: function(xhr, opt) {
+		   	   afStudio.vp.unmask('center');
+		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
+		   }
+		});
+	}//eo executeAction
 	
 	/**
 	 * Checks if <b>content</b> view of {@link #layoutView} is tabbed
@@ -94,24 +153,6 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		this.layoutView = this.add(view);
 		this.doLayout();		
 	}//eo updateLayoutView
-	
-	//TODO remove not the right place for this method
-	,refreshExistingWidgets : function() {
-		/*
-		var els = Ext.DomQuery.select('DIV[class*="layout-designer-widget"]', 'details-panel');
-		
-		var detailP = Ext.getCmp('details-panel');
-		detailP.removeAll(true);
-		
-		this.addLayout(detailP, cmp.getValue(), els.length);		
-		
-		if(0 ==i) {
-			for(var j = 0; j < additionalColumns; j++ ) {
-				portItems[0].items.push(this.getNewWidgetCfg());
-			}
-		}
-		*/		
-	}//eo refreshExistingWidgets
 	
 	/**
 	 * Initializes component
@@ -238,7 +279,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			'layouttypechanged'
 		);
 		
-		saveBtn.on('click', _this.onClickSaveDesignerLayout, _this);
+		saveBtn.on('click', _this.onSaveDesignerLayout, _this);
 		
 		newWidgetBtn.on('click', _this.onClickNewWidget, _this);
 		
@@ -329,42 +370,45 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		var _this = this,
 				p = _this.layoutView;
 		
-		afStudio.vp.mask({
-			msg: 'Add Widget...', 
-			region: 'center'
-		});
-		
-		Ext.Ajax.request({
-		   url: _this.widgetMetaUrl,
-		   params: {
+		_this.executeAction({
+			url: _this.widgetMetaUrl,			  
+			params: {
 		       module_name: widgetParam.module,
 		       action_name: widgetParam.widget
-		   },
-		   success: function(xhr, opt) {
-			   afStudio.vp.unmask('center');
-			   var response = Ext.decode(xhr.responseText);
-			   if (response.success) {
-			       p.addWidgetComponentToContentView(
-			       	 Ext.apply(widgetParam, {meta: response.content})
-			       );			      		   	
-			   } else {
-			   	   Ext.Msg.alert('Error', response.content);
-			   }
-		   },
-		   failure: function(xhr, opt) {
-		   	   afStudio.vp.unmask('center');
-		       Ext.Msg.alert('Error', String.format('Status code {0}, message {1}', xhr.status, xhr.statusText));
-		   }
+		    }, 
+		    run: function(response) {
+		       p.addWidgetComponentToContentView(
+		       	 Ext.apply(widgetParam, {meta: response.content})
+		       );
+		    },
+		    loadingMessage: 'Add Widget...'			
 		});		
 	}//eo onAddWidget	
  
 	/**
-	 * Save button <u>click</u> event listener
+	 * Handles <i>save</i> button <u>click</u> event listener
 	 * Saves layout
 	 */
-	,onClickSaveDesignerLayout : function() {
-		this.fireEvent("logmessage", this, "layout saved");
-	}
+	,onSaveDesignerLayout : function() {
+		var _this = this,		
+		 pageMeta = _this.layoutView.getPageMetaData(); 
+		 
+		_this.executeAction({			
+			url: _this.saveLayoutUrl,
+			params: {
+	            app: _this.layoutApp,
+	            page: _this.layoutPage,
+	            definition: Ext.encode(pageMeta)
+		    },
+		    scope: _this,
+		    run: function(response) {
+		    	//response.content success message here
+		   		this.fireEvent("logmessage", this, "layout saved"); 	
+		    },
+		    loadingMessage: 'Saving...'
+		});
+		
+	}//eo onSaveDesignerLayout
 	
 	/**
 	 * function resizeItems

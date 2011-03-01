@@ -69,6 +69,15 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	}//eo _afterInitComponent	
 	
 	/**
+	 * Returns page's metadata.
+	 *  
+	 * @return {Object} page metadata object
+	 */
+	,getPageMetaData : function() {
+		return this.pageMeta;	
+	}//eo getPageMetaData
+	
+	/**
 	 * Returns page's <i>content</i> view container
 	 * @return {afStudio.layoutDesigner.view.NormalView} view The content view container
 	 */
@@ -78,7 +87,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	}//eo getContentView
 	
 	/**
-	 * Return <i>active content</i> view container
+	 * Return <i>active content</i> view container, real components(widgets) container
 	 * @return {afStudio.layoutDesigner.view.NormalView} view The content view container
 	 */
 	,getActiveContentView : function() {
