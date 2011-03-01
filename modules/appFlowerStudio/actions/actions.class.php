@@ -12,6 +12,8 @@ class appFlowerStudioActions extends sfActions
 	{
 		$this->realRoot=sfConfig::get('sf_root_dir');
 		$this->immExtjs=ImmExtjs::getInstance();
+		
+		$this->isAdmin = afStudioUser::getInstance()->isAdmin();
 	}	
 		
 	public function executeIndex()

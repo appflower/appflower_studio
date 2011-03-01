@@ -55,7 +55,23 @@ class afsUserManagerActions extends sfActions
         }
         
         $aUsers = afStudioUser::getCollection();
-        return $this->renderJson($aUsers);
+        
+        // Preparing users for output
+        $users = array();
+        
+        $i = 1;
+        foreach ($aUsers as $username => $user) {
+            $users[$i] = array(
+                'username' => $username,
+                'email' => $user['email'],
+                'first_name' => $user['first_name'],
+                'last_name' => $user['last_name'],
+                'role' => $user['role']
+            );
+            $i++;
+        }
+        
+        return $this->renderJson($users);
     }
     
     /**
