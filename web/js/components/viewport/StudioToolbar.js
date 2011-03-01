@@ -80,7 +80,13 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				xtype: 'tbseparator'
 			},{
 				text: 'Users', 
-				iconCls: 'icon-users'
+				iconCls: 'icon-users',
+				
+				hidden: (is_visible_users)?false:true,
+				
+				handler: function(){
+					(new afStudio.UsersList).show();
+				}
 			},{
 				xtype: 'tbseparator'
 			},{

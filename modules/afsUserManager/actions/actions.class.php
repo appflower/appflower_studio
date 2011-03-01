@@ -72,7 +72,7 @@ class afsUserManagerActions extends sfActions
             $i++;
         }
         
-        return $this->renderJson($users);
+        return $this->renderJson(array('data' => $users));
     }
     
     /**
