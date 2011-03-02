@@ -84,11 +84,11 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 				
 				callback: function(options, success, response) {				
 					response = Ext.decode(response.responseText);
-					if (!response.success) {
-						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
-					}else{
+//					if (!response.success) {
+//						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
+//					}else{
 						Ext.getCmp('manage-users-grid').showDialog('edit', response);
-					}
+//					}
 				}
 			});
 		}
