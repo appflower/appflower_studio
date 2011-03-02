@@ -83,27 +83,11 @@ class afsLayoutBuilderActions extends sfActions
     }
     
     /**
-     * Getting groups list
-     */
-    public function executeGetGroupList(sfWebRequest $request)
-    {
-        $aResponse = afStudioCommand::process('layout', 'getGroupList');
-        
-        return $this->renderJson($aResponse);
-    }
-    
-    /**
      * Get widget list
      */
     public function executeGetWidgetList(sfWebRequest $request)
     {
-        $aParameters = array(
-            'type' => $request->getParameter('type'),
-            'group' => $request->getParameter('group'),
-            'module' => $request->getParameter('module_name')
-        );
-        
-        $aResponse = afStudioCommand::process('layout', 'getWidgetList', $aParameters);
+        $aResponse = afStudioCommand::process('layout', 'getWidgetList');
         
         return $this->renderJson($aResponse);
     }
