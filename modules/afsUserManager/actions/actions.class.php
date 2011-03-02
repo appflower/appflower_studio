@@ -41,6 +41,8 @@ class afsUserManagerActions extends sfActions
         
         $aUser = afStudioUser::getInstance()->retrieve($sUsername);
         
+        $aUser['username'] = $sUsername;
+        
         return $this->renderJson($aUser);
     }
     
@@ -96,6 +98,7 @@ class afsUserManagerActions extends sfActions
                 afStudioUser::FIRST_NAME => $aUser['first_name'],
                 afStudioUser::LAST_NAME => $aUser['last_name'],
                 afStudioUser::EMAIL => $aUser['email'],
+                afStudioUser::ROLE => $aUser['role'],
             );
             
             if (!empty($aUser['password'])) {
@@ -149,7 +152,8 @@ class afsUserManagerActions extends sfActions
                 afStudioUser::FIRST_NAME => $aUser['first_name'],
                 afStudioUser::LAST_NAME => $aUser['last_name'],
                 afStudioUser::EMAIL => $aUser['email'],
-                afStudioUser::PASSWORD => $aUser['password']
+                afStudioUser::PASSWORD => $aUser['password'],
+                afStudioUser::ROLE => $aUser['role']
             );
             
             // Validating user data

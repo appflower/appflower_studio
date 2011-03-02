@@ -1,6 +1,8 @@
 <?php
 /**
  * afStudioUserValidator - Validate fields before saving/updating
+ * 
+ * @author startsev.sergey@gmail.com
  */
 class afStudioUserValidator
 {
@@ -132,6 +134,23 @@ class afStudioUserValidator
         } else {
             return true;
         }
+    }
+    
+    /**
+     * Role validate functionality
+     *
+     * @param string $value
+     * @return mixed
+     */
+    public static function validateRole($value)
+    {
+        if (empty($value)) {
+            return self::fetchError(self::templateEmpty('Role'));
+        } elseif ($value != 'user' && $value != 'admin') {
+            return self::fetchError('Role should be one of `admin`, `user`');
+        }
+        
+        return true;
     }
     
     /**
