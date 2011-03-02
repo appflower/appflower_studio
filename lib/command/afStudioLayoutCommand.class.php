@@ -103,6 +103,9 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 file_put_contents($sPath, $this->definition);
                 
                 $return = $this->fetchSuccess('Page has been changed');
+                
+                $afConsole = new afStudioConsole();
+                $consoleResult = $afConsole->execute('sf appflower:validate-cache frontend cache yes');
             } else {
                 // Getting error message from validation results, from $this->message
                 $return = $this->fetchError($this->message);
