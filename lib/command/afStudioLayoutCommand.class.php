@@ -151,6 +151,64 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     }
     
     /**
+     * Getting groups list
+     */
+    protected function processGetGroupList()
+    {
+        $aData = array();
+        
+        $root_dir = sfConfig::get('sf_root_dir');
+        
+        $aTypes = array('apps', 'plugins');
+        
+        foreach ($aTypes as $type) {
+            $aList = afStudioUtil::getDirectories("{$root_dir}/{$type}/", true);
+            
+            foreach ($aList as $node) {
+                $aData = array_merge($aData, $this->getModules($node, $type));
+            }
+        }
+        
+        $this->result = $aData;
+    }
+    
+    /**
+     * Getting modules
+     *
+     * @param string $name
+     * @param string $type - apps/plugins
+     * @return array
+     */
+    private function getModules($name, $type = 'apps')
+    {
+        $root_dir = sfConfig::get('sf_root_dir');
+        
+        $modules = afStudioUtil::getDirectories("{$root_dir}/{$type}/{$name}/modules/", true);
+        
+        $return = afStudioLayoutCommandHelper::processGetModulesList($modules, $name, $type);
+        
+        return $return;
+    }
+    
+    /**
+     * Getting widget list from applications and plugins
+     */
+    protected function processGetWidgetList()
+    {
+        $group_name = $this->getParameter('group');
+        $module = $this->getParameter('module');
+        $type = $this->getParameter('type');
+        
+        $root_dir = sfConfig::get('sf_root_dir');
+        
+        $aWidgets = afStudioUtil::getFiles("{$root_dir}/{$type}/{$group_name}/modules/{$module}/config/", true, "xml");
+        
+        $return = afStudioLayoutCommandHelper::processGetWidgetList($aWidgets);
+		
+        $this->result = $return;
+    }
+    
+    /**
      * Getting pages list from applications 
      * 
      * @return array

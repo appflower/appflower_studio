@@ -41,5 +41,47 @@ class afStudioLayoutCommandHelper
     	return $tree;
     }
     
+    /**
+     * Prepare modules list for output
+     *
+     * @param array $modules
+     * @return array
+     */
+    public static function processGetModulesList($modules, $name, $type)
+    {
+        $data = array();
+        
+        foreach ($modules as $module) {
+            $data[] = array(
+                'value' => $module,
+                'text' => $module,
+                'group' => $name,
+                'type' => $type
+            );
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * Prepare widgets list for output
+     *
+     * @param array $aWidgets
+     * @return array
+     */
+    public static function processGetWidgetList($aWidgets)
+    {
+        $aExtWidgets = array();
+        
+    	foreach ($aWidgets as $i => $name) {
+    		$aExtWidgets[] = array(
+                'id' => $i, 
+                'name' => strstr($name, '.xml', true)
+            );
+		}
+		
+		return $aExtWidgets;
+    }
+    
 }
 
