@@ -102,14 +102,14 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	showDialog: function(mode, data){
 		//Window Title
 		var title = ('edit' == mode)?'Edit user information':'Add new user';
-		
+
 		//Button handlers
 		var save = function(){
 			var f = form.getForm();
 			if(f.isValid()){
 				var params = f.getValues();
 				Ext.Ajax.request({
-					url: ('edit' == mode)?'afsUserManage/update':'afsUserManage/create',
+					url: ('edit' == mode)?'afsUserManager/update':'afsUserManager/create',
 					params: {
 						username: params['username'],
 						user: Ext.encode(params)
@@ -122,7 +122,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 						}else{
 							Ext.Msg.alert('System Message', response.message);
 							wnd.close()
-							this.usersGrid.getStore().load();
+							Ext.getCmp('manage-users-grid').getStore().load();
 						}
 					}
 				});				

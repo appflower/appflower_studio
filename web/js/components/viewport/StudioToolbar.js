@@ -87,9 +87,13 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				handler: function(){
 					(new afStudio.UsersList).show();
 				}
-			},{
-				xtype: 'tbseparator'
-			},{
+			},
+			
+			{
+				xtype: 'tbseparator', hidden: (is_visible_users)?false:true
+			},
+			
+			{
 				text: 'Run', 
 				iconCls: 'icon-run', 
 				handler: function() { alert('Run button pressed'); }
