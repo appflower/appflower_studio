@@ -54,7 +54,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 						
 						callback: function(options, success, response) {				
 							response = Ext.decode(response.responseText);
-							if (!success) {
+							if (!response.success) {
 								Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
 							}else{
 								Ext.Msg.alert('System Message', 'User was successfully deleted');
@@ -84,7 +84,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 				
 				callback: function(options, success, response) {				
 					response = Ext.decode(response.responseText);
-					if (!success) {
+					if (!response.success) {
 						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
 					}else{
 						Ext.getCmp('manage-users-grid').showDialog('edit', response);
@@ -115,13 +115,13 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 						user: Ext.encode(params)
 					},
 					
-					callback: function(options, success, response) {				
+					callback: function(options, success, response) {
 						response = Ext.decode(response.responseText);
-						if (!success) {
+						if (!response.success) {
 							Ext.Msg.alert('Failure','Server-side failure with next message: ' + response.message);
 						}else{
 							Ext.Msg.alert('System Message', response.message);
-							wnd.close()
+							wnd.close();
 							Ext.getCmp('manage-users-grid').getStore().load();
 						}
 					}
