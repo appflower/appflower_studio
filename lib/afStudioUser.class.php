@@ -345,8 +345,9 @@ class afStudioUser
     public static function validate($info)
     {
         $result = afStudioUserValidator::process($info);
-        
-        $result = array_values($result);
+        if (is_array($result)) {
+            $result = array_values($result);
+        }
         
         return $result;
     }

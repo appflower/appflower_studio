@@ -64,7 +64,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 					});
 				}
 			}
-			Ext.Msg.confirm('Delete user', 'Are you sure want delete selecetd user?', fn);
+			Ext.Msg.confirm('Delete user', 'Are you sure want delete selected user?', fn);
 		}
 	},
 
@@ -120,8 +120,10 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 						if (!response.success) {
 							
 							var msg = response.message;
-							if(response.message.length>1){
-								var msg = response.message.join('<br>');
+							if (Ext.isArray(msg)) {
+    							if(response.message.length>1){
+    								var msg = response.message.join('<br>');
+    							}
 							}
 							//'Server-side failure with next message: ' + response.message
 							Ext.Msg.alert('Failure', msg);

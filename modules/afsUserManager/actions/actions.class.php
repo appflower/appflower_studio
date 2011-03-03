@@ -94,32 +94,39 @@ class afsUserManagerActions extends sfActions
         $user = afStudioUser::getInstance()->retrieve($sUsername);
         
         if ($user) {
-            $aUpdate = array(
-                afStudioUser::FIRST_NAME => $aUser['first_name'],
-                afStudioUser::LAST_NAME => $aUser['last_name'],
-                afStudioUser::EMAIL => $aUser['email'],
-                afStudioUser::ROLE => $aUser['role'],
-            );
             
-            if (!empty($aUser['password'])) {
-                $aUpdate[afStudioUser::PASSWORD] = $aUser['password'];
-            }
+            $aUserCheck = afStudioUser::getInstance()->retrieveByEmail($aUser['email']);
+            if (!$aUserCheck || ($aUserCheck['username'] == $aUser['username'])) {
             
-            // Validate user data 
-            $validate = afStudioUser::validate($aUpdate);
-            
-            if (is_bool($validate) && $validate === true) {
-                // if password has been setted encoding using rule
+                $aUpdate = array(
+                    afStudioUser::FIRST_NAME => $aUser['first_name'],
+                    afStudioUser::LAST_NAME => $aUser['last_name'],
+                    afStudioUser::EMAIL => $aUser['email'],
+                    afStudioUser::ROLE => $aUser['role'],
+                );
+                
                 if (!empty($aUser['password'])) {
-                    $aUpdate[afStudioUser::PASSWORD] = afStudioUser::passwordRule($aUser['password']);
+                    $aUpdate[afStudioUser::PASSWORD] = $aUser['password'];
                 }
                 
-                // Update processing
-                afStudioUser::update($sUsername, $aUpdate);
+                // Validate user data 
+                $validate = afStudioUser::validate($aUpdate);
                 
-                $aResult = $this->fetchSuccess('User has been successfully updated');
+                if (is_bool($validate) && $validate === true) {
+                    // if password has been setted encoding using rule
+                    if (!empty($aUser['password'])) {
+                        $aUpdate[afStudioUser::PASSWORD] = afStudioUser::passwordRule($aUser['password']);
+                    }
+                    
+                    // Update processing
+                    afStudioUser::update($sUsername, $aUpdate);
+                    
+                    $aResult = $this->fetchSuccess('User has been successfully updated');
+                } else {
+                    $aResult = $this->fetchError($validate);
+                }
             } else {
-                $aResult = $this->fetchError($validate);
+                $aResult = $this->fetchError("User with this `email` already exists");
             }
             
         } else {
@@ -145,30 +152,64 @@ class afsUserManagerActions extends sfActions
         $user = afStudioUser::getInstance()->retrieve($sUsername);
         
         if (!$user) {
-            
-            // Prepare data for validating and creating
-            $aCreate = array(
-                afStudioUser::USERNAME => $sUsername,
-                afStudioUser::FIRST_NAME => $aUser['first_name'],
-                afStudioUser::LAST_NAME => $aUser['last_name'],
-                afStudioUser::EMAIL => $aUser['email'],
-                afStudioUser::PASSWORD => $aUser['password'],
-                afStudioUser::ROLE => $aUser['role']
-            );
-            
-            // Validating user data
-            $validate = afStudioUser::validate($aCreate);
-            
-            if (is_bool($validate) && $validate === true) {
-                // unset username - no need to creating meta-field username
-                unset($aCreate[afStudioUser::USERNAME]);
+            if (!afStudioUser::getInstance()->retrieveByEmail($aUser['email'])) {
                 
-                // Create new user
-                afStudioUser::create($sUsername, $aCreate);
+                // Prepare data for validating and creating
+                $aCreate = array(
+                    afStudioUser::USERNAME => $sUsername,
+                    afStudioUser::FIRST_NAME => $aUser['first_name'],
+                    afStudioUser::LAST_NAME => $aUser['last_name'],
+                    afStudioUser::EMAIL => $aUser['email'],
+                    afStudioUser::PASSWORD => $aUser['password'],
+                    afStudioUser::ROLE => $aUser['role']
+                );
                 
-                $aResult = $this->fetchSuccess('User has been successfully created');
+                // Validating user data
+                $validate = afStudioUser::validate($aCreate);
+                
+                if (is_bool($validate) && $validate === true) {
+                    // unset username - no need to creating meta-field username
+                    unset($aCreate[afStudioUser::USERNAME]);
+                    
+                    // Create new user
+                    afStudioUser::create($sUsername, $aCreate);
+    
+                    // Sending email part
+                    
+                    // getting current domain
+                    $domain = '';
+                    if (sfConfig::get('app_domain')) {
+                        $domain = sfConfig::get('app_domain');
+                    } else {
+                        $domain = sfContext::getInstance()->getRequest()->getHost();
+                    }
+                    
+                    $aParameters = array(
+                        'user' => $aUser,
+                        'password' => $aUser['password'],
+                    );
+                    
+                    sfProjectConfiguration::getActive()->loadHelpers(array("Url", "Tag"));
+                    
+                    $message = Swift_Message::newInstance()
+                        ->setFrom("no-reply@{$domain}", 'Studio')
+                        ->setTo($aUser['email'])
+                        ->setSubject('Studio Account')
+                        ->setBody($this->getPartial('create', $aParameters))
+                        ->setContentType('text/html')
+                    ;
+                    
+                    // Sending mail 
+                    if ($this->getMailer()->send($message) > 0) {
+                        $aResult = $this->fetchSuccess('User has been successfully created');
+                    } else {
+                        $aResult = $this->fetchError("User has been successfully created. Can't send mail.");
+                    }
+                } else {
+                    $aResult = $this->fetchError($validate);
+                }
             } else {
-                $aResult = $this->fetchError($validate);
+                $aResult = $this->fetchError("User with this `email` already exists");
             }
             
         } else {
@@ -215,7 +256,6 @@ class afsUserManagerActions extends sfActions
         $result = array(
             'username' => $user->getUsername(),
             'name' => $user->getName(),
-            'isAdmin' => $user->isAdmin()
         );
         
         return $this->renderJson($result);
