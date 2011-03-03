@@ -118,7 +118,13 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 					callback: function(options, success, response) {
 						response = Ext.decode(response.responseText);
 						if (!response.success) {
-							Ext.Msg.alert('Failure','Server-side failure with next message: ' + response.message);
+							
+							var msg = response.message;
+							if(response.message.length>1){
+								var msg = response.message.join('<br>');
+							}
+							//'Server-side failure with next message: ' + response.message
+							Ext.Msg.alert('Failure', msg);
 						}else{
 							Ext.Msg.alert('System Message', response.message);
 							wnd.close();
@@ -144,7 +150,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 				{name: 'last_name', fieldLabel: 'Last Name'},
 				{name: 'username', fieldLabel: 'Username'},
 				{name: 'email', fieldLabel: 'Email', vtype: 'email'},
-				{name: 'password', fieldLabel: 'Password', allowBlank: ('edit' == mode)?true:false},
+				{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == mode)?true:false},
 				{xtype: 'combo', mode: 'local', triggerAction: 'all',
 					fieldLabel: 'User role',
 					emptyText: 'Please select user role...',
