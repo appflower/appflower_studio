@@ -98,6 +98,9 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             
             $this->definition = $serializer->getSerializedData();
             
+            $afConsole = new afStudioConsole();
+            $consoleResult = $afConsole->execute('sf appflower:validate-cache frontend cache yes');
+            
             if ($this->validate()) {
                 // Save changes
                 file_put_contents($sPath, $this->definition);
