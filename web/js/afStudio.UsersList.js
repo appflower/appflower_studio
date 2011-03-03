@@ -231,11 +231,11 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 		//Create ColumnModel
 		var cm = new Ext.grid.ColumnModel([
 			new Ext.grid.RowNumberer(),
-			{header: 'First Name', sortable: true, dataIndex: 'first_name'},
-			{header: 'Last Name', sortable: true, dataIndex: 'last_name'},
-			{header: 'Username', sortable: true, dataIndex: 'username'},
-			{header: 'Email', sortable: true, dataIndex: 'email'},
-			{header: 'Role', sortable: true, fixed: true, width: 75, dataIndex: 'role'},
+			{header: 'First Name', sortable: false, dataIndex: 'first_name'},
+			{header: 'Last Name', sortable: false, dataIndex: 'last_name'},
+			{header: 'Username', sortable: false, dataIndex: 'username'},
+			{header: 'Email', sortable: false, dataIndex: 'email'},
+			{header: 'Role', sortable: false, fixed: true, width: 75, dataIndex: 'role'},
 			{header: 'Actions', sortable: false, fixed: true, width: 75, dataIndex: 'username', renderer: renderActionsClmn}
 		]);
 		
