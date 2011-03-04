@@ -13,9 +13,13 @@ class appFlowerStudioActions extends sfActions
 		$this->realRoot=sfConfig::get('sf_root_dir');
 		$this->immExtjs=ImmExtjs::getInstance();
 		
-		$this->isAdmin = afStudioUser::getInstance()->isAdmin();
+		$this->userinfo = array(
+			'is_admin' 	=> afStudioUser::getInstance()->isAdmin(),
+		   	'username' 	=> afStudioUser::getInstance()->getUsername(),
+		   	'name' 		=> afStudioUser::getInstance()->getName()
+		);
 	}	
-		
+	
 	public function executeIndex()
 	{
 		
@@ -93,7 +97,7 @@ class appFlowerStudioActions extends sfActions
 	public function executeModels()
 	{
 		//TODO: debug only
-//		return $this->renderJson(array('console'=>'test'));
+		//return $this->renderJson(array('console'=>'test'));
 		
 		$models_command = new afStudioModelsCommand();		
 		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
@@ -104,7 +108,7 @@ class appFlowerStudioActions extends sfActions
 	public function executeModules()
 	{
 		//TODO: debug only
-//		return $this->renderJson(array('console'=>'test'));
+		//return $this->renderJson(array('console'=>'test'));
 
 		$modules_command=new afStudioModulesCommand();
 		
@@ -114,7 +118,7 @@ class appFlowerStudioActions extends sfActions
 	public function executePlugins()
 	{
 		//TODO: debug only
-//		return $this->renderJson(array('console'=>'test'));
+		//return $this->renderJson(array('console'=>'test'));
 		
 		$modules_command=new afStudioPluginsCommand();
 
@@ -170,7 +174,7 @@ class appFlowerStudioActions extends sfActions
 	public function executeConsole(sfWebRequest $request)
 	{
 		//TODO: debug only
-//		return $this->renderJson(array('console'=>'test'));
+		//return $this->renderJson(array('console'=>'test'));
 		
 		$command = trim($request->getParameter("command"));
 		
@@ -335,6 +339,9 @@ class appFlowerStudioActions extends sfActions
      */
     public function executeLayout(sfWebRequest $request)
     {
+		//TODO: debug only
+		//return $this->renderJson(array('console'=>'test'));    	
+    	
     	$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
     	
         $sCommand = $request->getParameter('cmd');        

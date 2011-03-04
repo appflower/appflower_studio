@@ -22,7 +22,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	        bodyBorder: false, border: false,
 	        items: [this.usersGrid],
 			buttons: [
-				{text: 'Create user', handler: this.showDialog.createDelegate(this, ['add']), scope: this},
+				{text: 'Create user', handler: this.showDialog, scope: this},
 				{text: 'Cancel', handler: this.cancel, scope: this}
 			],
 			buttonAlign: 'center'
@@ -75,23 +75,20 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	 */	
 	onUserEdit: function(e, t){
 		var username = t.getAttribute('username');
-		if(username){
-			Ext.Ajax.request({
-				url: 'afsUserManager/get',
-				params: {
-					username: username
-				},
-				
-				callback: function(options, success, response) {				
-					response = Ext.decode(response.responseText);
-//					if (!response.success) {
-//						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
-//					}else{
-						Ext.getCmp('manage-users-grid').showDialog('edit', response);
-//					}
-				}
-			});
-		}
+		var fn = function(){
+			Ext.getCmp('manage-users-grid').getStore().load();
+		};
+		(new afStudio.UserWindow(
+			{mode: 'edit', username: username, onFormClose: fn}
+		)).show();
+	},
+	
+	/**
+	 * Function refreshGrid
+	 * Refresh grid store
+	 */
+	refreshGrid: function(){
+		;
 	},
 	
 	/**
@@ -100,98 +97,9 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	 * @param {Object} data
 	 */
 	showDialog: function(mode, data){
-		//Window Title
-		var title = ('edit' == mode)?'Edit user information':'Add new user';
-
-		//Button handlers
-		var save = function(){
-			var f = form.getForm();
-			if(f.isValid()){
-				var params = f.getValues();
-				Ext.Ajax.request({
-					url: ('edit' == mode)?'afsUserManager/update':'afsUserManager/create',
-					params: {
-						username: params['username'],
-						user: Ext.encode(params)
-					},
-					
-					callback: function(options, success, response) {
-						response = Ext.decode(response.responseText);
-						if (!response.success) {
-							
-							var msg = response.message;
-							if (Ext.isArray(msg)) {
-    							if(response.message.length>1){
-    								var msg = response.message.join('<br>');
-    							}
-							}
-							//'Server-side failure with next message: ' + response.message
-							Ext.Msg.alert('Failure', msg);
-						}else{
-							Ext.Msg.alert('System Message', response.message);
-							wnd.close();
-							Ext.getCmp('manage-users-grid').getStore().load();
-						}
-					}
-				});				
-			}
-		}
-		var cancel = function(){
-			wnd.close();
-		}
-		
-		//Active form
-		var form = new Ext.FormPanel({
-		    url: '',
-			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
-			frame: true, title: false,
-			defaults: {allowBlank: false, anchor: '95%'},
-			items: [
-				{name: 'first_name', fieldLabel: 'First Name'},
-				{name: 'last_name', fieldLabel: 'Last Name'},
-				{name: 'username', fieldLabel: 'Username'},
-				{name: 'email', fieldLabel: 'Email', vtype: 'email'},
-				{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == mode)?true:false},
-				{xtype: 'combo', mode: 'local', triggerAction: 'all',
-					fieldLabel: 'User role',
-					emptyText: 'Please select user role...',
-					store: [
-						['admin', 'Admin'], ['user', 'User']
-					],
-//					name: 'role',
-					hiddenName: 'role'
-				}
-			]
-		});
-		
-		//Main window
-		var wnd = new Ext.Window({
-			width: 463,
-			title: title,
-			autoHeight: true, closable: true, draggable: true,
-			plain:true, modal: true, resizable: false,
-			bodyBorder: false, border: false,
-			items: form,
-			
-			buttons: [
-				{text: 'Save user data', handler: save, scope: this},
-				{text: 'Cancel', handler: cancel, scope: this}
-			],
-			buttonAlign: 'center'			
-		});
-		wnd.show();
-		
-		//Set values
-		if(data){
-			form.getForm().setValues({
-				first_name: data.first_name,
-				last_name: data.last_name,
-				username: data.username,
-				email: data.email,
-				role: data.role
-			});
-		}
+		(new afStudio.UserWindow(
+			{mode: 'add', onFormClose: this.refreshGrid}
+		)).show();
 	},
 	
 	/**
@@ -223,7 +131,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 			}
 	    });		
 		
-		//
+		//Render for actions column
 		var renderActionsClmn = function(v, md, r){
 			return '<img class="deleteUserEmptyCls" username="'+v+'" ext:qtip="Delete User" style="cursor: pointer;" src="appFlowerStudioPlugin/images/delete.png">' +
 					'<img class="editUserEmptyCls" username="'+v+'" ext:qtip="Edit User" style="cursor: pointer;margin-left: 5px" src="appFlowerStudioPlugin/images/pencil.png">';

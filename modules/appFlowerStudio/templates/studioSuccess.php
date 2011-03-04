@@ -56,7 +56,11 @@ window.afStudioWSUrls = new afStudio.WSUrlsClass();
 
 <script type="text/javascript">
 var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>';
-var is_visible_users = <?php echo (int)$isAdmin; ?>;
+var is_visible_users = <?php echo (int)$userinfo['is_admin']; ?>;
+var userinfo = {
+    'username': "<?php echo $userinfo['username'] ?>",
+    'name': "<?php echo $userinfo['name'] ?>"
+};
 </script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
