@@ -57,6 +57,8 @@ class afsLayoutBuilderActions extends sfActions
         
         $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
         
+        $aResponse = array_merge($aResponse, array('temp' => tempnam(sys_get_temp_dir(), 'studio_la_lb'), 'temp_path' => sys_get_temp_dir(), 'is_writable' => is_writable(sys_get_temp_dir())));
+        
         return $this->renderJson($aResponse);
     }
     

@@ -142,9 +142,9 @@ class afsUserManagerActions extends sfActions
     public function executeCreate(sfWebRequest $request)
     {
         // Catching if current user not admin 
-        if (!afStudioUser::getInstance()->isAdmin()) {
-            $this->forward404("You have no rights to execute this action");
-        }
+//        if (!afStudioUser::getInstance()->isAdmin()) {
+//            $this->forward404("You have no rights to execute this action");
+//        }
         
         $sUsername = $request->getParameter('username');
         $aUser = json_decode($request->getParameter('user'), true);
@@ -161,7 +161,7 @@ class afsUserManagerActions extends sfActions
                     afStudioUser::LAST_NAME => $aUser['last_name'],
                     afStudioUser::EMAIL => $aUser['email'],
                     afStudioUser::PASSWORD => $aUser['password'],
-                    afStudioUser::ROLE => $aUser['role']
+                    afStudioUser::ROLE => (afStudioUser::getInstance()->isAdmin()) ? $aUser['role'] : 'user'
                 );
                 
                 // Validating user data
@@ -245,20 +245,6 @@ class afsUserManagerActions extends sfActions
         }
         
         return $this->renderJson($aResult);
-    }
-    
-    /**
-     * Getting Info about current user
-     */
-    public function executeCurrent(sfWebRequest $request)
-    {
-        $user = afStudioUser::getInstance();
-        $result = array(
-            'username' => $user->getUsername(),
-            'name' => $user->getName(),
-        );
-        
-        return $this->renderJson($result);
     }
     
     /**

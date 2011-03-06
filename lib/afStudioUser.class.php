@@ -337,6 +337,27 @@ class afStudioUser
     }
     
     /**
+     * Getting Info about current user
+     * 
+     * @return mixed - If authenticated - array
+     */
+    public function getInfo()
+    {
+        if ($this->isAuthenticated()) {
+            
+            $aInfo = array(
+                'name' => $this->getName(),
+                'username' => $this->getUsername(),
+                'is_admin' => $this->isAdmin(),
+            );
+            
+            return $aInfo;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * Validating associated array
      *
      * @param array $info - associated array
