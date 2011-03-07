@@ -32,6 +32,12 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 	isRoleFieldAvailable: true,
 	
 	/**
+	 * @var {String}
+	 * Captcha source destination
+	 */
+	captchaSrc: 'afsUserManager/captcha?width=415&height=50',
+	
+	/**
 	 * initComponent method
 	 * ExtJS template method
 	 * @private
@@ -69,6 +75,31 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 	 * Initializes form with user information
 	 */
 	initForm: function(){
+		//Form items
+		var formItems = [
+			{name: 'first_name', fieldLabel: 'First Name'},
+			{name: 'last_name', fieldLabel: 'Last Name'},
+			{name: 'username', fieldLabel: 'Username', readOnly: ('edit' == this.mode)?true:false},
+			{name: 'email', fieldLabel: 'Email', vtype: 'email'},
+			{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == this.mode)?true:false},
+			{xtype: 'combo', mode: 'local', triggerAction: 'all', 
+				hidden: (this.isRoleFieldAvailable)?false:true,
+				disabled: (this.isRoleFieldAvailable) ? false : true,
+				fieldLabel: 'User role',
+				emptyText: 'Please select user role...',
+				store: [
+					['admin', 'Admin'], ['user', 'User']
+				],
+				hiddenName: 'role'
+			}
+		];
+		
+		//Add CAPTCHA if needed (login form)
+		if(false == this.isRoleFieldAvailable){
+			formItems[formItems.length] = {fieldLabel: 'Verification', name: 'captcha', emptyText: 'Please enter text from the verification image...'};
+			formItems[formItems.length] = {xtype: 'label', html: ['<img style="cursor: pointer;" ext:qtip="Please click on the picture if you can\'t see the symbols" id="verificationimage" src="', this.captchaSrc, '">'].join('')};
+		}
+		
 		//Active form
 		this.form = new Ext.FormPanel({
 		    url: '',
@@ -76,23 +107,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 			width: 450, labelWidth: 70,
 			frame: true, title: false,
 			defaults: {allowBlank: false, anchor: '95%'},
-			items: [
-				{name: 'first_name', fieldLabel: 'First Name'},
-				{name: 'last_name', fieldLabel: 'Last Name'},
-				{name: 'username', fieldLabel: 'Username', readOnly: ('edit' == this.mode)?true:false},
-				{name: 'email', fieldLabel: 'Email', vtype: 'email'},
-				{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == this.mode)?true:false},
-				{xtype: 'combo', mode: 'local', triggerAction: 'all', 
-					hidden: (this.isRoleFieldAvailable)?false:true,
-					disabled: (this.isRoleFieldAvailable) ? false : true,
-					fieldLabel: 'User role',
-					emptyText: 'Please select user role...',
-					store: [
-						['admin', 'Admin'], ['user', 'User']
-					],
-					hiddenName: 'role'
-				}
-			]
+			items: formItems
 		});		
 	},
 	
@@ -133,6 +148,11 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 						}
 						//'Server-side failure with next message: ' + response.message
 						Ext.Msg.alert('Failure', msg);
+						
+						//Update CAPTCHA element if it exists
+						if(false == this.isRoleFieldAvailable){
+							this.refreshCaptcha();
+						}
 					}else{
 						Ext.Msg.alert('System Message', response.message);
 						this.closeForm();
@@ -141,8 +161,6 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 						if(Ext.isFunction(this.onFormClose)){
 							this.onFormClose();
 						}
-						//TODO
-//						Ext.getCmp('manage-users-grid').getStore().load();
 					}
 				},
 				
@@ -154,13 +172,28 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 			});				
 		}
 	},
-
+	
+	/**
+	 * Function refreshCaptcha
+	 * Refreshes current captcha
+	 */
+	refreshCaptcha: function(){
+		//Generate additional parametr which will solve "caching issue"
+		var dc = (new Date()).format('U');
+		
+		//Get CAPTCHA element
+		var el = Ext.get("verificationimage");
+		el.dom.src = [this.captchaSrc, '&', dc].join('');
+		console.log(el.dom.src);
+	},
+	
 	/**
 	 * Function onWindowShow
 	 * Runs when window showed
 	 * Loads data into the grid
 	 */
 	onWindowShow: function(cmp){
+		//Run getData query
 		if('edit' == this.mode){
 			//Mask panel body
 			cmp.getEl().mask('Please wait...');
@@ -181,6 +214,9 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 				scope: this
 			});			
 		}
+		
+		//Create handler for refreshCaptcha function
+		Ext.get('verificationimage').on('click', this.refreshCaptcha, this);
 	},
 	
 	/**
