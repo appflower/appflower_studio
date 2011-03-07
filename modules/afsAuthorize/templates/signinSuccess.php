@@ -8,8 +8,13 @@
 
 <body style="background-image: url(/appFlowerStudioPlugin/images/bg/backgrond_3.2.2.jpg);background-position: 50% 50%;background-repeat: no-repeat;">
     <!-- Page Frame -->
+    
+    <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script> 
+    <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/users/afStudio.UserWindow.js"></script>
+    
 <?php
 $layout = new ImmExtjsSfGuardLayout();
+
 
 /**
  * EXTJS SIGN IN FORM
@@ -34,7 +39,17 @@ $fieldset->endColumns($columns);
 $form->endFieldset($fieldset);
 
 new ImmExtjsSubmitButton($form,array('action' => '/afsAuthorize/signin'));
-new ImmExtjsLinkButton($form,array('url' => url_for('/afsAuthorize/passwordRequest'), 'load' => 'page', 'label' => 'Forgot your password?', 'icon' => '/images/famfamfam/email_go.png'));
+new ImmExtjsLinkButton($form,array('url' => url_for('/afsAuthorize/passwordRequest'), 'load' => 'page', 'label' => 'Forgot your password?', 'icon' => '/appFlowerStudioPlugin/images/email_go.png'));
+
+new ImmExtjsLinkButton(
+    $form,
+    array(
+        'url' => '#', 
+        'load' => 'page', 
+        'label' => 'Create User', 
+        'icon' => '/appFlowerStudioPlugin/images/add.png',
+        'handlerSource' => "(new afStudio.UserWindow({mode: 'add', isRoleFieldAvailable: false})).show()"
+));
 
 $form->end();
 

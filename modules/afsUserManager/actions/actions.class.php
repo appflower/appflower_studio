@@ -13,7 +13,7 @@ class afsUserManagerActions extends sfActions
      */
     public function preExecute()
     {
-        if (!$this->getRequest()->isXmlHttpRequest()) {
+        if (!$this->getRequest()->isXmlHttpRequest() && $this->getActionName() != 'captcha') {
             $this->forward404("This action should be used only for ajax requests");
         }
     }
@@ -245,6 +245,25 @@ class afsUserManagerActions extends sfActions
         }
         
         return $this->renderJson($aResult);
+    }
+    
+    /**
+     * Getting captcha image
+     */
+    public function executeCaptcha(sfWebRequest $request)
+    {
+        $width = $request->getParameter('width', 160);
+        $height = $request->getParameter('height', 50);
+        
+        $characters = $request->getParameter('characters', 6);
+        
+        $captcha = new afsCaptcha($width, $height, $characters);
+        $captcha->generate();
+        
+//        $captcha = afsCaptcha::generate($width, $height, $characters);
+        
+
+        return sfView::NONE;
     }
     
     /**
