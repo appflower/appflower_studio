@@ -14,7 +14,7 @@ class afsCaptcha {
 	/**
 	 * Session identificator for captcha
 	 */
-	const SESSION_IDENTIFICATOR = 'captcha';
+	const SESSION_IDENTIFICATOR = 'afs_captcha';
 	
 	/**
 	 * Image width
