@@ -85,10 +85,10 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 			{xtype: 'combo', mode: 'local', triggerAction: 'all', 
 				hidden: (this.isRoleFieldAvailable && is_visible_users)?false:true,
 				disabled: (this.isRoleFieldAvailable && is_visible_users) ? false : true,
-				fieldLabel: 'User role',
+				fieldLabel: 'User Role',
 				emptyText: 'Please select user role...',
 				store: [
-					['admin', 'Admin'], ['user', 'User']
+					['admin', 'Administrator'], ['user', 'Studio User']
 				],
 				hiddenName: 'role'
 			}

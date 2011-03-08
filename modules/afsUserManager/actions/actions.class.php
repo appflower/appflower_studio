@@ -269,7 +269,7 @@ class afsUserManagerActions extends sfActions
         $characters = $request->getParameter('characters', 6);
         
         $captcha = new afsCaptcha($width, $height, $characters);
-        $captcha->generate();
+        $captcha->CreateImage();
         
         return sfView::NONE;
     }

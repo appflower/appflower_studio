@@ -9,7 +9,7 @@ class afsCaptcha {
     /**
      * Default font name
      */
-	const FONT = 'captcha.ttf';
+	const FONT = 'Duality.ttf';
     
 	/**
 	 * Session identificator for captcha
@@ -66,20 +66,20 @@ class afsCaptcha {
     /**
      * Generate captcha image
      */
-    public function generate()
+    public function CreateImage()
     {
-		$this->font_size = $this->height * 0.75;
+		$this->font_size = $this->height * 0.60;
 		$this->image = @imagecreate($this->width, $this->height);
 		
         // Initialize colors
         $this->setColors();
         
-        // Generate noise
+//         Generate noise
         $this->generateDots();
         $this->generateLines();
         
         // Getting code
-        $code = $this->generateCode();
+        $code = $this->getCode();
         
         // Getting font
         $font = $this->getFont();
@@ -87,11 +87,17 @@ class afsCaptcha {
         // Preparing for writing text
         $textbox = imagettfbbox($this->font_size, 0, $font, $code);
         
+        // Getting positions in the middle of the box
         $x = ($this->width - $textbox[4]) / 2;
         $y = ($this->height - $textbox[5]) / 2;
         
-        // Write text
-        imagettftext($this->image, $this->font_size, 0, $x, $y, $this->text_color, $font, $code);
+        // angle for code
+        $niveliring = rand(-9, 9);
+        
+        imagettftext($this->image, $this->font_size, $niveliring, $x, $y + $niveliring, $this->text_color, $font, $code);
+        
+        // Create wave effect 
+        $this->makeWave(7, 15);
         
         // Sending headers etc.
         $context = sfContext::getInstance();
@@ -110,8 +116,8 @@ class afsCaptcha {
     /**
      * Initialize colors
      */
-	public function setColors()
-	{
+    public function setColors()
+    {
 	    $this->background_color = imagecolorallocate($this->image, 255, 255, 255);
 		$this->text_color = imagecolorallocate($this->image, 20, 40, 100);
 		$this->noise_color = imagecolorallocate($this->image, 100, 120, 180);
@@ -140,7 +146,7 @@ class afsCaptcha {
 	private function generateLines()
 	{
 	    // Generate random lines in background 
-		for( $i=0; $i < ($this->width * $this->height) / 150; $i++ ) {
+		for( $i=0; $i < ($this->width * $this->height) / 300; $i++ ) {
             imageline(  $this->image, 
                         mt_rand(0, $this->width), 
                         mt_rand(0, $this->height), 
@@ -152,12 +158,11 @@ class afsCaptcha {
 	}
 	
 	/**
-	 * Generate code
+	 * Generate code - for now random symbols - in future should be words
 	 *
-	 * @param int $characters - count of symbols
 	 * @return string
 	 */
-	private function generateCode() 
+	private function getCode() 
 	{
 		$possible = '23456789bcdfghjkmnpqrstvwxyz';
 		
@@ -170,6 +175,31 @@ class afsCaptcha {
 		}
 		return $code;
 	}
+	
+	/**
+	 * Make wave on image
+	 *
+	 * @param int $amplitude
+	 * @param int $period
+	 */
+	private function makeWave($amplitude = 10, $period = 10)
+	{
+        $height2 = $this->height * 2; 
+        $width2 = $this->width * 2; 
+        $img2 = imagecreatetruecolor($width2, $height2); 
+        imagecopyresampled($img2, $this->image, 0, 0, 0, 0, $width2, $height2, $this->width, $this->height); 
+        
+        if($period == 0) $period = 1;
+        
+        // Wave it 
+        for($i = 0; $i < ($width2); $i += 2) 
+            imagecopy($img2, $img2, $i - 2, sin($i / $period) * $amplitude, $i, 0, 2, $height2); 
+        
+        // Resample it down again 
+        imagecopyresampled($this->image, $img2, 0, 0, 0, 0, $this->width, $this->height, $width2, $height2); 
+        
+        imagedestroy($img2);
+    }  
 	
 	/**
 	 * Getting full font path
