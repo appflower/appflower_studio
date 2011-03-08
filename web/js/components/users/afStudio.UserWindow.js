@@ -35,7 +35,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 	 * @var {String}
 	 * Captcha source destination
 	 */
-	captchaSrc: 'afsUserManager/captcha?width=415&height=50',
+	captchaSrc: '/afsUserManager/captcha?width=415&height=50',
 	
 	/**
 	 * initComponent method
@@ -128,7 +128,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 		if(f.isValid()){
 			var params = f.getValues();
 			Ext.Ajax.request({
-				url: ('edit' == this.mode)?'afsUserManager/update':'afsUserManager/create',
+				url: ('edit' == this.mode)?'/afsUserManager/update':'/afsUserManager/create',
 				params: {
 					username: params['username'],
 					user: Ext.encode(params)
@@ -198,7 +198,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 			//Mask panel body
 			cmp.getEl().mask('Please wait...');
 			Ext.Ajax.request({
-				url: 'afsUserManager/get',
+				url: '/afsUserManager/get',
 				params: {username: this.username},
 				success: function(response, opt){
 					//Unmask body

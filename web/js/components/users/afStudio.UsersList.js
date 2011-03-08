@@ -115,7 +115,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	
 		//Create DatStore
 		var ds = new Ext.data.Store({
-			proxy: new Ext.data.HttpProxy({url: 'afsUserManager/getList'}),
+			proxy: new Ext.data.HttpProxy({url: '/afsUserManager/getList'}),
 	        reader: new Ext.data.JsonReader(
 				{root: 'data', totalProperty: 'total', id: 'id', fields: r}
 			),
@@ -133,8 +133,8 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 		
 		//Render for actions column
 		var renderActionsClmn = function(v, md, r){
-			return '<img class="deleteUserEmptyCls" username="'+v+'" ext:qtip="Delete User" style="cursor: pointer;" src="appFlowerStudioPlugin/images/delete.png">' +
-					'<img class="editUserEmptyCls" username="'+v+'" ext:qtip="Edit User" style="cursor: pointer;margin-left: 5px" src="appFlowerStudioPlugin/images/pencil.png">';
+			return '<img class="deleteUserEmptyCls" username="'+v+'" ext:qtip="Delete User" style="cursor: pointer;" src="/appFlowerStudioPlugin/images/delete.png">' +
+					'<img class="editUserEmptyCls" username="'+v+'" ext:qtip="Edit User" style="cursor: pointer;margin-left: 5px" src="/appFlowerStudioPlugin/images/pencil.png">';
 			return v;
 		};
 		
