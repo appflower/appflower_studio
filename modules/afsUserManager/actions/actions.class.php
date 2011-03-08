@@ -102,8 +102,11 @@ class afsUserManagerActions extends sfActions
                     afStudioUser::FIRST_NAME => $aUser['first_name'],
                     afStudioUser::LAST_NAME => $aUser['last_name'],
                     afStudioUser::EMAIL => $aUser['email'],
-                    afStudioUser::ROLE => $aUser['role'],
                 );
+                
+                if (isset($aUser['role'])) {
+                    $aUpdate[afStudioUser::ROLE] = $aUser['role'];
+                }
                 
                 if (!empty($aUser['password'])) {
                     $aUpdate[afStudioUser::PASSWORD] = $aUser['password'];
@@ -160,7 +163,7 @@ class afsUserManagerActions extends sfActions
         
         if (!afStudioUser::getInstance()->isAdmin()) {
             if ($aUser['captcha'] != sfContext::getInstance()->getUser()->getFlash(afsCaptcha::SESSION_IDENTIFICATOR)) {
-                $aErrors = array_merge($aErrors, array("Invalid verification code"));
+                $aErrors[] = "Invalid verification code";
             }
         }
         
