@@ -415,5 +415,17 @@ class appFlowerStudioActions extends sfActions
 		
 		return $this->renderText($filetree_command->end());
 	}
+	
+	/**
+	 * Execute run project coomand
+	 */
+	public function executeRun()
+	{
+        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+        
+        $aResult = afStudioCommand::process('execute', 'run');
+        
+        return $this->renderJson($aResult);
+	}
     
 }
