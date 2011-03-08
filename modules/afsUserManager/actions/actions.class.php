@@ -158,6 +158,12 @@ class afsUserManagerActions extends sfActions
             $aErrors[] = "User with this `email` already exists";
         }
         
+        if (!afStudioUser::getInstance()->isAdmin()) {
+            if ($aUser['captcha'] != sfContext::getInstance()->getUser()->getFlash(afsCaptcha::SESSION_IDENTIFICATOR)) {
+                $aErrors = array_merge($aErrors, array("Invalid verification code"));
+            }
+        }
+        
         // Prepare data for validating and creating
         $aCreate = array(
             afStudioUser::USERNAME => $sUsername,
@@ -210,12 +216,6 @@ class afsUserManagerActions extends sfActions
         } else {
             if (is_array($validate)) {
                 $aErrors = array_merge($aErrors, $validate);
-            }
-        }
-        
-        if (!afStudioUser::getInstance()->isAdmin()) {
-            if ($aUser['captcha'] != sfContext::getInstance()->getUser()->getFlash(afsCaptcha::SESSION_IDENTIFICATOR)) {
-                $aErrors = array_merge($aErrors, array("Invalid verification code"));
             }
         }
                 
