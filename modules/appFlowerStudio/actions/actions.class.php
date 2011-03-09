@@ -422,12 +422,16 @@ class appFlowerStudioActions extends sfActions
 	
 	/**
 	 * Execute run project coomand
+	 * 
+	 * @author startsev.sergey@gmail.com
 	 */
 	public function executeRun()
 	{
         $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
         
         $aResult = afStudioCommand::process('execute', 'run');
+        
+        afsNotificationPeer::log('[run] Run was executed on the project');
         
         return $this->renderJson($aResult);
 	}
