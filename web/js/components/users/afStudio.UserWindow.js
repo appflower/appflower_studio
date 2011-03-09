@@ -77,12 +77,12 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 	initForm: function(){
 		//Form items
 		var formItems = [
-			{name: 'first_name', fieldLabel: 'First Name'},
-			{name: 'last_name', fieldLabel: 'Last Name'},
-			{name: 'username', fieldLabel: 'Username', readOnly: ('edit' == this.mode)?true:false},
-			{name: 'email', fieldLabel: 'Email', vtype: 'email'},
-			{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == this.mode)?true:false},
-			{xtype: 'combo', mode: 'local', triggerAction: 'all', 
+			{name: 'first_name', fieldLabel: 'First Name', helpText: '<i>First Name</i>'},
+			{name: 'last_name', fieldLabel: 'Last Name', helpText: '<i>Last Name</i>'},
+			{name: 'username', fieldLabel: 'Username', helpText: '<i>Username</i>', readOnly: ('edit' == this.mode)?true:false},
+			{name: 'email', fieldLabel: 'Email', vtype: 'email', helpText: '<i>Email</i>'},
+			{name: 'password', inputType: 'password', fieldLabel: 'Password', helpText: '<i>Password</i>', allowBlank: ('edit' == this.mode)?true:false},
+			{xtype: 'combo', mode: 'local', triggerAction: 'all', helpText: '<i>User role</i>', 
 				hidden: (this.isRoleFieldAvailable && is_visible_users)?false:true,
 				disabled: (this.isRoleFieldAvailable && is_visible_users) ? false : true,
 				fieldLabel: 'User Role',
@@ -96,7 +96,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 		
 		//Add CAPTCHA if needed (login form)
 		if(false == this.isRoleFieldAvailable){
-			formItems[formItems.length] = {fieldLabel: 'Verification', name: 'captcha', emptyText: 'Please enter text from the verification image...'};
+			formItems[formItems.length] = {fieldLabel: 'Verification', helpText: '<i>Verification</i>', name: 'captcha', emptyText: 'Please enter text from the verification image...'};
 			formItems[formItems.length] = {xtype: 'label', html: ['<img style="cursor: pointer;" ext:qtip="Please click on the picture if you can\'t see the symbols" id="verificationimage" src="', this.captchaSrc, '">'].join('')};
 		}
 		
@@ -106,7 +106,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 			defaultType: 'textfield',
 			width: 450, labelWidth: 70,
 			frame: true, title: false,
-			defaults: {allowBlank: false, anchor: '95%'},
+			defaults: {allowBlank: false, anchor: '95%', plugins:[Ext.ux.plugins.HelpText], helpType: "comment"},
 			items: formItems
 		});		
 	},
@@ -139,6 +139,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 					response = Ext.decode(response.responseText);
 					//Check action response
 					if (!response.success) {
+						/**
 						//Build error message if needful
 						var msg = response.message;
 						if (Ext.isArray(msg)) {
@@ -148,6 +149,15 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 						}
 						//'Server-side failure with next message: ' + response.message
 						Ext.Msg.alert('Failure', msg);
+						**/ 
+
+						if (Ext.isArray(response.message)) {
+							for(var i=0, l=response.message.length; i<l; i++){
+
+								var msg = response.message[i]
+								this.form.find('name', msg.fieldname)[0].markInvalid(msg.message);
+							}
+						}
 						
 						//Update CAPTCHA element if it exists
 						if(false == this.isRoleFieldAvailable){
