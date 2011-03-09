@@ -431,5 +431,19 @@ class appFlowerStudioActions extends sfActions
         
         return $this->renderJson($aResult);
 	}
+	
+	/**
+	 * @return json for create project feature
+	 * 
+	 * @author radu
+	 */
+	public function executeCreateProject($request)
+	{
+		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+        
+        $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));
+        
+        return $this->renderJson($aResult);
+	}
     
 }

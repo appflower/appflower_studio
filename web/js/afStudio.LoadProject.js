@@ -6,7 +6,6 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 			rootPath:'root',
 			rootVisible:true,
 			rootText:afStudioHost.user+'@'+afStudioHost.name,
-			maxFileSize:524288*2*10,
 			topMenu:false,
 			autoScroll:true,
 			enableProgress:false,

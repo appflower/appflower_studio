@@ -145,40 +145,15 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 								text: 'Create new project',
 								handler: function (b,e)
 								{
-									var form = new Ext.FormPanel({
-									    url: '', defaultType: 'textfield', width: 450, frame: true, 
-										labelWidth: 100, title: false,
-										items: [
-											{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'project_name', allowBlank: false},
-											{xtype:'textfield', fieldLabel: 'Path to prohect', anchor: '96%', name: 'project_path', allowBlank: false}
-										]
-									});
-											
-									var wnd = new Ext.Window({
-										title: 'Create new project', width: 463,
-										autoHeight: true, closable: true,
-							            draggable: true, plain:true,
-							            modal: true, resizable: false,
-							            bodyBorder: false, border: false,
-							            items: form,
-										buttons: [
-											{text: 'Create project'},
-											{text: 'Cancel', handler: function(){wnd.close}}
-										],
-										buttonAlign: 'center'
-									});
-									wnd.show()												
+									(new afStudio.CreateProject()).show();
 								}
 							});
 							
 		menuItem.menu.addMenuItem({
 								text: 'Load project',
 								handler: function (b,e)
-								{
-									//TODO: another name?
+								{									
 									(new afStudio.LoadProject()).show();
-									
-//									Ext.MessageBox.alert('Load project', 'Load project option')
 								}
 							});
 				

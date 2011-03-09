@@ -54,7 +54,7 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 	        	}, scope: this
 	        },
 			items:[
-				{xtype:'textfield', name: 'name', fieldLabel:'Project Name', anchor:'95%'},
+				{xtype:'textfield', name: 'name', fieldLabel:'Project Name', anchor:'95%', allowBlank: false},
 				{xtype:'displayfield', name: 'display_url', fieldLabel:'Url', anchor:'95%', style: 'font-weight:bold;'},
 				{xtype:'displayfield', name: 'path', fieldLabel:'Path to Project', anchor:'95%', style: 'font-weight:bold;'},
 				{xtype:'label', html: 'Description:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},

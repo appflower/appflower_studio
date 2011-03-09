@@ -81,6 +81,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getProjectLoadTreeUrl: function() {
     	return this.buildUrlFor('/appFlowerStudio/loadProjectTree');
     },
+    getProjectCreateUrl: function() {
+    	return this.buildUrlFor('/appFlowerStudio/createProject');
+    },
     buildUrlFor: function(url) {
         return url;
     }
