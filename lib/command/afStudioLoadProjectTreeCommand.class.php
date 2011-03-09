@@ -35,8 +35,10 @@ class afStudioLoadProjectTreeCommand extends afBaseStudioCommand
 		}
 				
 		$projectYmlPath = $projectPath . '/config/project.yml';
+		$appFlowerPluginPath = $projectPath . '/plugins/appFlowerPlugin/';
+		$appFlowerStudioPluginPath = $projectPath . '/plugins/appFlowerStudioPlugin/';
 		
-		if(file_exists($projectYmlPath))
+		if(file_exists($projectYmlPath)&&file_exists($appFlowerPluginPath)&&file_exists($appFlowerStudioPluginPath))
 		{
 			$sfYaml = new sfYaml();
         	$projectYmlData = $sfYaml->load($projectYmlPath);
