@@ -43,10 +43,15 @@ class afStudioLoadProjectTreeCommand extends afBaseStudioCommand
 			$sfYaml = new sfYaml();
         	$projectYmlData = $sfYaml->load($projectYmlPath);
         	
-        	$this->result = array_merge(array('success'=>true, 'title'=>'Success', 'message'=>'The selected path contains a valid project. <br>You will now be redirected to <b>'.$projectYmlData['project']['url'].'/studio</b>'),$projectYmlData);
+        	if(!empty($projectYmlData['project']['url']))
+        	{
+        		$this->result = array_merge(array('title'=>'Success', 'message'=>'The selected path contains a valid project. <br>You will now be redirected to <b>'.$projectYmlData['project']['url'].'/studio</b>'),$projectYmlData);
+        	}
+        	else 
+        	$this->result = array('title'=>'Failure', 'message'=> 'The selected path contains an AppFlower project, but the URL for the project is not set!!');
 		}
 		else		
-		$this->result = array('success' => false, 'title'=>'Failure', 'message'=> 'The selected path doesn\'t contain any AppFlower project!');
+		$this->result = array('title'=>'Failure', 'message'=> 'The selected path doesn\'t contain any valid AppFlower project!');
 	}
 }
 ?>
