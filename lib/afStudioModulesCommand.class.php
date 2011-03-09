@@ -13,7 +13,7 @@ class afStudioModulesCommand
 		
 		$this->realRoot=afStudioUtil::getRootDir();
 		
-		$this->afConsole=new afStudioConsole();
+		$this->afConsole=afStudioConsole::getInstance();
 		
 		$this->filesystem = new sfFileSystem();
 

@@ -149,7 +149,7 @@ class afStudioModelsCommand
 					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;				
 					
 					if ($this->saveSchema()) {			
-						$afConsole = new afStudioConsole();
+						$afConsole = afStudioConsole::getInstance();
 						$consoleResult = $afConsole->execute('sf propel:build-model');
 						
 						$this->result = array('success' => true, 'message'=>'Added model <b>'.$this->modelName.'</b>!', 'console'=>$consoleResult);						
@@ -163,7 +163,7 @@ class afStudioModelsCommand
 					
 					if($this->saveSchema())
 					{	
-						$afConsole=new afStudioConsole();
+						$afConsole=afStudioConsole::getInstance();
 						$consoleResult=$afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));		
 						
 						$this->result = array('success' => true,'message'=>'Deleted model <b>'.$this->modelName.'</b>!','console'=>$consoleResult);
@@ -183,7 +183,7 @@ class afStudioModelsCommand
 					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $renamedModelName;
 					
 					if ($this->saveSchema()) {			
-						$afConsole = new afStudioConsole();
+						$afConsole = afStudioConsole::getInstance();
 						$consoleResult = $afConsole->execute('sf propel:build-model');						
 						$this->result = array('success' => true,'message'=>'Renamed model\'s phpName from <b>'.$this->modelName.'</b> to <b>'.$renamedModelName.'</b>!','console'=>$consoleResult);
 					} else {
@@ -220,7 +220,7 @@ class afStudioModelsCommand
 						
 						if($this->saveSchema())
 						{			
-							$afConsole=new afStudioConsole();
+							$afConsole=afStudioConsole::getInstance();
 							$consoleResult=$afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
 							
 							$this->result = array('success' => true,'message'=>'Updated model <b>'.$this->modelName.'</b> !','console'=>$consoleResult);
@@ -684,7 +684,7 @@ class afStudioModelsCommand
             $i->executeSql("SET FOREIGN_KEY_CHECKS=0;\n".file_get_contents($filename)."\nSET FOREIGN_KEY_CHECKS=1;", Propel::getConnection($db_connection));
         }
         
-        // $afConsole = new afStudioConsole();
+        // $afConsole = afStudioConsole::getInstance();
         // $consoleResult = $afConsole->execute('sf propel:build-model');
         
         /*
@@ -694,7 +694,7 @@ class afStudioModelsCommand
         $oBuildModel->run();
         */
         
-		// $afConsole = new afStudioConsole();
+		// $afConsole = afStudioConsole::getInstance();
 		// $consoleResult = $afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
 	}
 	

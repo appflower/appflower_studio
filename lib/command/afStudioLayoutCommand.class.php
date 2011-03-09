@@ -98,7 +98,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             
             $this->definition = $serializer->getSerializedData();
             
-            $afConsole = new afStudioConsole();
+            $afConsole = afStudioConsole::getInstance();
             $consoleResult = $afConsole->execute('sf appflower:validate-cache frontend cache yes');
             
             if ($this->validate()) {
@@ -107,7 +107,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 
                 $return = $this->fetchSuccess('Page has been changed');
                 
-                $afConsole = new afStudioConsole();
+                $afConsole = afStudioConsole::getInstance();
                 $consoleResult = $afConsole->execute('sf appflower:validate-cache frontend cache yes');
             } else {
                 // Getting error message from validation results, from $this->message

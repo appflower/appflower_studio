@@ -1,18 +1,16 @@
 afStudio.LoadProject = Ext.extend(Ext.Window, { 
-	form: null,
+	
 	initComponent: function(){
-		this.codeBrowserTree = new Ext.ux.FileTreePanel({
+		this.tree = new Ext.ux.FileTreePanel({
 			url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
-			id:'ftp',
 			rootPath:'root',
 			rootVisible:true,
-			rootText:'Home',
+			rootText:afStudioHost.user+'@'+afStudioHost.name,
 			maxFileSize:524288*2*10,
 			topMenu:false,
 			autoScroll:true,
 			enableProgress:false,
-			singleUpload:true,
-			
+			singleUpload:true,			
 			onDblClick: Ext.emptyFn,
 			onContextMenu: Ext.emptyFn
 		});
@@ -28,11 +26,11 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 	        bodyBorder: false, border: false,
 	        layout: 'fit',
             items:[
-            	this.codeBrowserTree
+            	this.tree
             ],
 	        
 			buttons: [
-				{text: 'Load', handler: this.cancel, scope: this},
+				{text: 'Load', handler: this.load, scope: this},
 				{text: 'Cancel', handler: this.cancel, scope: this}
 			],
 			buttonAlign: 'center'
@@ -49,17 +47,7 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 	 * Initialize events
 	 */
 	_initEvents: function(){
-		/***
-		this.on('show', function(cmp){
-			Ext.get('help-iframe').on('load', function(){
-				cmp.body.unmask()
-			});
-		 	(function(){
-				 	cmp.body.mask('Loading, please Wait...', 'x-mask-loading');
-				 	
-		 	}).defer(100);
-		})
-		**/ 
+		
 	},
 	
 	/**
@@ -68,5 +56,51 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 	 */
 	cancel:function(){
 		this.close();
+	},
+	
+	load: function()
+	{
+		var node = this.tree.getSelectionModel().getSelectedNode();	
+		if(node)
+		{	
+			var path = this.tree.getPath(node);
+			
+			//first check if there is a AF project inside path, and if it is load the selected project in browser
+			Ext.Ajax.request({
+				url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
+				method: 'post',
+				params: {
+					cmd: 'isPathValid',
+					path: path
+				},
+				callback: function(options, success, response) {				
+					response = Ext.decode(response.responseText);
+					
+					if(response.title&&response.message)
+	                {
+	                    Ext.Msg.show({
+	                    	title: response.title, 
+	                    	msg: response.message,
+	                    	buttons: Ext.Msg.OKCANCEL,
+	                    	modal: true,
+	                    	fn: function(buttonId){
+	                    		
+	                    		if(buttonId=='ok'&&response.project){
+	                                window.location.href=response.project.url+'/studio';
+	                            }
+	                            else{
+	                            	this.close();
+	                            }
+	                    	}
+	                    });
+	                }
+				}
+				
+			});
+		}
+		else
+		{
+			Ext.Msg.alert('','Please select a directory !');	
+		}
 	}
 });

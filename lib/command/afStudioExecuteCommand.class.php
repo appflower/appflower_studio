@@ -11,7 +11,7 @@ class afStudioExecuteCommand extends afBaseStudioCommand
      */
     protected function processRun()
     {
-        $afConsole = new afStudioConsole();
+        $afConsole = afStudioConsole::getInstance();
         
         $sResult = $afConsole->execute('sf propel:build-model');
         $sResult .= $afConsole->execute('sf appflower:validator-cache frontend cache yes');

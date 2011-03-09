@@ -17,7 +17,7 @@ class afStudioCommand
      */
     public static function getAdapter($type, $command, $params = array())
     {
-        $class_name = 'afStudio' . ucfirst(strtolower($type)) . 'Command';
+        $class_name = 'afStudio' . ucfirst($type) . 'Command';
         $oAdapter = new $class_name($command, $params);
         
         return $oAdapter;

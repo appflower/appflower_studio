@@ -32,7 +32,7 @@ abstract class afBaseStudioCommand
 	public function process()
 	{
 		if($this->cmd != null) {
-			$controller_name = 'process' . ucfirst(strtolower($this->cmd));
+			$controller_name = 'process' . ucfirst($this->cmd);
             
             if (method_exists($this, $controller_name)) {
                 call_user_func(array($this, $controller_name));

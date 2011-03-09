@@ -408,12 +408,16 @@ class appFlowerStudioActions extends sfActions
 	
 	/**
 	 * @return json for load project feature
+	 * 
+	 * @author radu
 	 */
-	public function executeLoadProjectTree()
+	public function executeLoadProjectTree($request)
 	{
-		$filetree_command=new afStudioFileTreeCommand('/');
-		
-		return $this->renderText($filetree_command->end());
+		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+        
+        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'),array('request'=>$request));
+        
+        return $this->renderJson($aResult);
 	}
 	
 	/**

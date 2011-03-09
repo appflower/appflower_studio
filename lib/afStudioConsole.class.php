@@ -7,14 +7,23 @@ class afStudioConsole
 {
 	public static
     $defaultCommands = 'sf appflower afs batch man ll ls pwd cat mkdir rm cp mv touch chmod free df find clear php';
-	
-	public function __construct()
-	{
-		$filesystem=new afStudioFilesystem();
+    
+    public
+    $pwd, $uname, $uname_short, $filesystem, $prompt, $whoami;
+    
+    /**
+     * Class instance
+     */
+    private static $instance = null;
+    
+    public function __construct() {
+    	
+    	$this->filesystem=new afStudioFilesystem();
 		
 		$this->uname = php_uname();
+		$this->uname_short = php_uname('n');
 		
-		$result=$filesystem->execute('whoami');
+		$result=$this->filesystem->execute('whoami');
 		
 		if(strlen($result[1])==0)
 		{
@@ -25,13 +34,25 @@ class afStudioConsole
 		  $this->whoami = 'unknown_user';
 		}
 		
-		$result=$filesystem->execute('pwd');
+		$result=$this->filesystem->execute('pwd');
 		
 		$this->pwd =  (strlen($result[1])==0)? $result[0] : '';
 		
-		$this->prompt = $this->whoami.'@'.php_uname('n').':'.'~/'.afStudioUtil::unRootify($this->pwd).'$&nbsp;';
-	}
-
+		$this->prompt = $this->whoami.'@'.php_uname('n').':'.'~/'.afStudioUtil::unRootify($this->pwd).'$&nbsp;';	
+    }
+    
+    /**
+     * Retrieve the instance of this class.
+     */
+    public static function getInstance()
+    {
+        if (!isset(self::$instance)) {
+          self::$instance = new afStudioConsole();
+        }
+        
+        return self::$instance;
+    }
+		
 	public static function getCommands($explode=true)
 	{
 		if($explode)

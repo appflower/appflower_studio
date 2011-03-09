@@ -11,7 +11,7 @@ class afStudioPluginsCommand
 	{		
 		$this->request=sfContext::getInstance()->getRequest();		
 		$this->realRoot=afStudioUtil::getRootDir();
-		$this->afConsole=new afStudioConsole();
+		$this->afConsole=afStudioConsole::getInstance();
 		$this->filesystem = new sfFileSystem();
 		
 		$this->pluginName = $this->request->hasParameter('pluginName')?$this->request->getParameter('pluginName'):false;

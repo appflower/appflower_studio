@@ -1,5 +1,6 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base-debug.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all-debug.js"></script>
+<script type="text/javascript" src="/appFlowerPlugin/js/custom/Ext.CrossDomain.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
 <script type="text/javascript">
@@ -60,6 +61,10 @@ var is_visible_users = <?php echo (int)$userinfo['is_admin']; ?>;
 var userinfo = {
     'username': "<?php echo $userinfo['username'] ?>",
     'name': "<?php echo $userinfo['name'] ?>"
+};
+var afStudioHost = { 
+	name: '<?php echo afStudioConsole::getInstance()->uname_short;?>',
+	user: '<?php echo afStudioConsole::getInstance()->whoami;?>' 
 };
 </script>
 
