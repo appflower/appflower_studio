@@ -34,7 +34,7 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 			border: false,
 			bodyBorder: false,
 			items: [
-				{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'project_name', allowBlank: false},
+				{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'name', allowBlank: false},
 				{xtype:'label', html: 'Path to Project:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},							
 				{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small>'},
 				_self.tree,
