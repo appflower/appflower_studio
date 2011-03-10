@@ -10,7 +10,9 @@ Ext.namespace('afStudio.layoutDesigner');
 afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * @cfg {Object} layoutMeta required
-	 * Layout meta data 
+	 * Layout meta data.
+	 * Actual only for the first page loading,
+	 * any changes inside the page doesn't reflect on layoutMeta data 
 	 */
 
 	/**
@@ -20,7 +22,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	/**
 	 * @cfg {String} layoutPage required
-	 * Opened in LD page 
+	 * Opened in LD page belongs to {@link #layoutApp} application 
 	 */	
 	
 	/**
@@ -126,7 +128,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	,getFormatLayoutMenuItem : function(item) {
 		var typeM = this.getFormatMenuItem('layoutItem').menu;
  		return typeM.getComponent(item);
-	}
+	}//eo getFormatLayoutMenuItem
 	
 	/**
 	 * Updates state of designer control panel's items
@@ -146,7 +148,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}//eo updateDesignerPanelControls	
 	
 	/**
-	 * Updates designer view.   
+	 * Updates designer with specified view.   
 	 * @param {afStudio.layoutDesigner.view.Page} view The new view 
 	 */
 	,updateLayoutView : function(view) {
@@ -232,9 +234,9 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 					}]
 	        	}	        	
 	        },'-',{
-	        	text: 'Preview', 
-	        	iconCls: 'icon-preview', 
-	        	handler: this.preview
+	        	text: 'Preview',
+	        	itemId: 'previewPageBtn',
+	        	iconCls: 'icon-preview'
 	        }]			
 		});		
 		
@@ -247,7 +249,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 				pageMeta: _this.layoutMeta,
 				ref: 'layoutView'
 			}
-		}
+		};
 	}//eo _beforeInitComponent
 	
 	/**
@@ -270,7 +272,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		var _this = this,
 			 tbar = _this.getTopToolbar(),
 			 saveBtn = tbar.getComponent('saveLayoutBtn'),
-		newWidgetBtn = tbar.getComponent('addWidgetBtn');
+		newWidgetBtn = tbar.getComponent('addWidgetBtn'),
+		previewPageBtn = tbar.getComponent('previewPageBtn');
 		
 		_this.addEvents(
 			/**
@@ -283,6 +286,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		saveBtn.on('click', _this.onSaveDesignerLayout, _this);
 		
 		newWidgetBtn.on('click', _this.onClickNewWidget, _this);
+		
+		previewPageBtn.on('click', _this.onPreviewPage, _this);
 		
 		_this.getFormatLayoutMenuItem('layoutStructure').on({
 			select: _this.onSelectDesignerColumnsNumber, 
@@ -392,8 +397,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Saves layout
 	 */
 	,onSaveDesignerLayout : function() {
-		var _this = this,		
-		 pageMeta = _this.layoutView.getPageMetaData(); 
+		var   _this = this,		
+		   pageMeta = _this.layoutView.getPageMetaData(); 
 		 
 		_this.executeAction({			
 			url: _this.saveLayoutUrl,
@@ -408,9 +413,19 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		   		this.fireEvent("logmessage", this, "layout saved"); 	
 		    },
 		    loadingMessage: 'Saving...'
-		});
-		
+		});		
 	}//eo onSaveDesignerLayout
+	
+	/**
+	 * Shows the page opened inside layout designer
+	 */
+	,onPreviewPage : function() {		
+		var p = this.layoutPage;
+		
+		var name = p.substring(0, p.lastIndexOf('.xml'));
+		
+		window.open('/pages/' + name, 'ldPagePreview');		
+	}//eo onPreviewPage
 	
 	/**
 	 * function resizeItems
@@ -444,6 +459,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * Auto-Adjust button handler 
 	 */
+	//TODO rewrite
 	,autoAdjust : function() {
 		var els = Ext.DomQuery.select('div[class*="x-portlet"]', this.designerPortal.el);
 		
@@ -457,55 +473,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			cmp.doLayout();
 			cmp.ownerCt.doLayout();
 		}
-	}//eo autoAdjust	
-	
-	/**
-	 * Function preview
-	 * Show preview window with real widget
-	 */
-	//TODO rewrite 
-	,preview: function() {		
-		//TODO: if user clicks on the "Preview" button in the LayoutDesigner widget panel. not sure if this is the better solution
-		try {
-			var wp = this.ownerCt.ownerCt.widgetParams;
-			
-			var iconCls = wp.iconCls;
-			var title = wp.title;
-		} catch (e) {
-			var iconCls = 'icon-bug-add';
-			var title = "Edit profile";
-		}
-		
-		afApp.widgetPopup("/afGuardUserProfile/edit", title, null, "iconCls:\'" +iconCls+ "\',width:800,height:600,maximizable: false", afStudio);
-	}
-	
-	/**
-	 * Function runWidgetDesigner
-	 * Create widget Designer 
-	 */
-	//TODO rewrite make it working with real data
-	,runWidgetDesigner : function() {
-        var actionPath = "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/actions\/actions.class.php";
-        var securityPath = "\/var\/www\/web4\/apps\/frontend\/modules\/afGuardUserProfile\/config\/security.yml";
-        var widgetUri = 'afGuardUserProfile/edit';
-
-		var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...', removeMask:true});
-		mask.show();
-		
-		afStudio.vp.addToPortal({
-			title: 'Widget Designer', 
-			layout: 'fit',
-			collapsible: false, 
-			draggable: false,
-			items: [{
-				xtype: 'afStudio.widgetDesigner', 
-				actionPath: actionPath, 
-				securityPath: securityPath, 
-				widgetUri: widgetUri, 
-				mask: mask
-			}]
-		}, true);		
-	}
+	}//eo autoAdjust
 	
 });
 

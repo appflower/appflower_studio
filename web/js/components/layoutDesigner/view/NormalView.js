@@ -335,6 +335,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		//console.log('preview widget', name, module, cmpMeta);
 	}
 	
+	/**
+	 * 
+	 * @param {String} name The widget action name
+	 * @param {String} module The widget module name
+	 * @param {} cmpMeta
+	 */
 	,editWidget : function(name, module, cmpMeta) {
 		
 		Ext.Ajax.request({
@@ -344,9 +350,13 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		       action_name: name
 		   },
 		   success: function(xhr, opt) {
+		   	
 			   afStudio.vp.unmask('center');
+			   
 			   var response = Ext.decode(xhr.responseText);
+			   
 			   if (response.success) {
+			   	
 			       var actionPath = response.meta.actionPath;
 			       var securityPath = response.meta.securityPath;		
 				   var widgetUri = String.format('{0}/{1}', module, name);
@@ -374,8 +384,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			
 				       afStudio.vp.unmask('center');
 					});
-					widgetDefinition.fetchAndConfigure();				   
-				   
+					widgetDefinition.fetchAndConfigure();
 			       	 
 			   } else {
 			   	   Ext.Msg.alert('Error', response.content);
