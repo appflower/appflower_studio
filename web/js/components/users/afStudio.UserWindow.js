@@ -77,12 +77,12 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 	initForm: function(){
 		//Form items
 		var formItems = [
-			{name: 'first_name', fieldLabel: 'First Name', helpText: '<i>First Name</i>'},
-			{name: 'last_name', fieldLabel: 'Last Name', helpText: '<i>Last Name</i>'},
-			{name: 'username', fieldLabel: 'Username', helpText: '<i>Username</i>', readOnly: ('edit' == this.mode)?true:false},
-			{name: 'email', fieldLabel: 'Email', vtype: 'email', helpText: '<i>Email</i>'},
-			{name: 'password', inputType: 'password', fieldLabel: 'Password', helpText: '<i>Password</i>', allowBlank: ('edit' == this.mode)?true:false},
-			{xtype: 'combo', mode: 'local', triggerAction: 'all', helpText: '<i>User role</i>', 
+			{name: 'first_name', fieldLabel: 'First Name'},
+			{name: 'last_name', fieldLabel: 'Last Name'},
+			{name: 'username', fieldLabel: 'Username', readOnly: ('edit' == this.mode)?true:false},
+			{name: 'email', fieldLabel: 'Email', vtype: 'email'},
+			{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == this.mode)?true:false},
+			{xtype: 'combo', mode: 'local', triggerAction: 'all', 
 				hidden: (this.isRoleFieldAvailable && is_visible_users)?false:true,
 				disabled: (this.isRoleFieldAvailable && is_visible_users) ? false : true,
 				fieldLabel: 'User Role',
@@ -97,7 +97,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 		
 		//Add CAPTCHA if needed (login form)
 		if(false == this.isRoleFieldAvailable){
-			formItems[formItems.length] = {fieldLabel: 'Verification', helpText: '<i>Verification</i>', name: 'captcha', emptyText: 'Please enter text from the verification image...'};
+			formItems[formItems.length] = {fieldLabel: 'Verification', helpText: '<i>Type the code you see below</i>', name: 'captcha', emptyText: 'Please enter text from the verification image...'};
 			formItems[formItems.length] = {xtype: 'label', html: ['<img style="cursor: pointer;" ext:qtip="Please click on the picture if you can\'t see the symbols" id="verificationimage" src="', this.captchaSrc, '">'].join('')};
 		}
 		
