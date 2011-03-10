@@ -90,46 +90,55 @@ class afsUserManagerActions extends sfActions
             $this->forward404("You have no rights to execute this action");
         }
         
+        $aErrors = array();
+        
         // Retrieve user via username
         $user = afStudioUser::getInstance()->retrieve($sUsername);
         
         if ($user) {
             
             $aUserCheck = afStudioUser::getInstance()->retrieveByEmail($aUser['email']);
-            if (!$aUserCheck || ($aUserCheck['username'] == $aUser['username'])) {
             
-                $aUpdate = array(
-                    afStudioUser::FIRST_NAME => $aUser['first_name'],
-                    afStudioUser::LAST_NAME => $aUser['last_name'],
-                    afStudioUser::EMAIL => $aUser['email'],
-                );
-                
-                if (isset($aUser['role'])) {
-                    $aUpdate[afStudioUser::ROLE] = $aUser['role'];
-                }
-                
+            if ($aUserCheck && $aUserCheck['username'] != $aUser['username']) {
+                $aErrors['email'] = "User with this `email` already exists";
+            }
+            
+            
+            $aUpdate = array(
+                afStudioUser::FIRST_NAME => $aUser['first_name'],
+                afStudioUser::LAST_NAME => $aUser['last_name'],
+                afStudioUser::EMAIL => $aUser['email'],
+            );
+            
+            if (isset($aUser['role'])) {
+                $aUpdate[afStudioUser::ROLE] = $aUser['role'];
+            }
+            
+            if (!empty($aUser['password'])) {
+                $aUpdate[afStudioUser::PASSWORD] = $aUser['password'];
+            }
+            
+            // Validate user data 
+            $validate = afStudioUser::validate($aUpdate);
+            
+            if (is_bool($validate) && $validate === true && empty($aErrors)) {
+                // if password has been setted encoding using rule
                 if (!empty($aUser['password'])) {
-                    $aUpdate[afStudioUser::PASSWORD] = $aUser['password'];
+                    $aUpdate[afStudioUser::PASSWORD] = afStudioUser::passwordRule($aUser['password']);
                 }
                 
-                // Validate user data 
-                $validate = afStudioUser::validate($aUpdate);
+                // Update processing
+                afStudioUser::update($sUsername, $aUpdate);
                 
-                if (is_bool($validate) && $validate === true) {
-                    // if password has been setted encoding using rule
-                    if (!empty($aUser['password'])) {
-                        $aUpdate[afStudioUser::PASSWORD] = afStudioUser::passwordRule($aUser['password']);
-                    }
-                    
-                    // Update processing
-                    afStudioUser::update($sUsername, $aUpdate);
-                    
-                    $aResult = $this->fetchSuccess('User has been successfully updated');
-                } else {
-                    $aResult = $this->fetchError($validate);
-                }
+                $aResult = $this->fetchSuccess('User has been successfully updated');
             } else {
-                $aResult = $this->fetchError("User with this `email` already exists");
+                if (is_array($validate)) {
+                    $aErrors = afUserManagerHelper::mergeErrors($aErrors, $validate);
+                }
+                
+                $aErrors = afUserManagerHelper::prepareErrors($aErrors);
+                
+                $aResult = $this->fetchError($aErrors);
             }
             
         } else {
@@ -151,19 +160,22 @@ class afsUserManagerActions extends sfActions
         
         $user = afStudioUser::getInstance()->retrieve($sUsername);
         
-        $aErrors = array();
         
+//        errors: [{fieldname: 'username', message: 'error message here'}, ...]
+        
+        $aErrors = array();
+
         if ($user) {
-            $aErrors[] = 'User with this `username` already exists';
+            $aErrors['username'] = 'User with this `username` already exists';
         }
         
         if (afStudioUser::getInstance()->retrieveByEmail($aUser['email'])) {
-            $aErrors[] = "User with this `email` already exists";
+            $aErrors['email'] = "User with this `email` already exists";
         }
         
         if (!afStudioUser::getInstance()->isAdmin()) {
             if ($aUser['captcha'] != sfContext::getInstance()->getUser()->getFlash(afsCaptcha::SESSION_IDENTIFICATOR)) {
-                $aErrors[] = "Invalid verification code";
+                $aErrors['captcha'] = "Invalid verification code";
             }
         }
         
@@ -214,14 +226,16 @@ class afsUserManagerActions extends sfActions
             
             // Sending mail 
             if (!$this->getMailer()->send($message)) {
-                $aErrors = array_merge($aErrors, array("User has been successfully created. Can't send mail."));
+                $aErrors = afUserManagerHelper::mergeErrors($aErrors, array('sent' => "User has been successfully created. Can't send mail."));
             }
         } else {
             if (is_array($validate)) {
-                $aErrors = array_merge($aErrors, $validate);
+                $aErrors = afUserManagerHelper::mergeErrors($aErrors, $validate);
             }
         }
-                
+        
+        $aErrors = afUserManagerHelper::prepareErrors($aErrors);
+        
         if (!empty($aErrors)) {
             $aResult = $this->fetchError($aErrors);
         } else {

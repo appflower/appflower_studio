@@ -47,7 +47,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 		this.initForm();
 		
 		//Create needful title for the form
-		var title = ('edit' == this.mode)?'Edit user information':'Add new user';
+		var title = ('edit' == this.mode)?'You can edit an existing user from this widget':'You can add a new user from this widget';
 		
 		//Create config object
 		var config = {
@@ -90,7 +90,8 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 				store: [
 					['admin', 'Administrator'], ['user', 'Studio User']
 				],
-				hiddenName: 'role'
+				hiddenName: 'role',
+				name: 'role'
 			}
 		];
 		
