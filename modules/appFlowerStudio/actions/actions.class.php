@@ -431,6 +431,11 @@ class appFlowerStudioActions extends sfActions
         
         $aResult = afStudioCommand::process('execute', 'run');
         
+        $aResult = array_merge(
+            $aResult, 
+            array('homepage' => sfContext::getInstance()->getController()->genUrl('@homepage'))
+        );
+        
         afsNotificationPeer::log('[run] Run was executed on the project');
         
         return $this->renderJson($aResult);
