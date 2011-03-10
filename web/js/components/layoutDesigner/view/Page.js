@@ -136,6 +136,10 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		this.doLayout();		
 	}//eo addWidgetComponentToContentView
 	
+	/**
+	 * Sets view layout type
+	 * @param {Number} layout
+	 */
 	,setActiveContentViewLayout : function(layout) {
 		var _this = this,
 			   cv = this.getActiveContentView();
