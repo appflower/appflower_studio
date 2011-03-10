@@ -21,7 +21,7 @@ var afStudio = function () {
 	
 	return {
 		
-		initAjaxRedirect: function() {			
+		initAjaxRedirect : function() {			
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
 				var response = Ext.decode(xhr.responseText);				
 				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
@@ -140,6 +140,9 @@ var afStudio = function () {
 			Ext.form.Field.prototype.msgTarget = 'side';
 			
 			this.initAjaxRedirect();
+			
+			//timeout 5 minutes
+			Ext.Ajax.timeout = 300000;
 			
 			this.tb = new afStudio.viewport.StudioToolbar();
 			this.vp = new afStudio.viewport.StudioViewport();						  
