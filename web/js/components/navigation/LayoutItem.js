@@ -39,7 +39,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @property {Ext.menu.Menu} pageContextMenu
 	 * "Page" node type context menu
 	 */
-	,pageContextMenu : new Ext.menu.Menu({
+	,pageContextMenu : new Ext.menu.Menu({		
         items: [
         {
             itemId: 'edit-page',

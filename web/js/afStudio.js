@@ -31,16 +31,16 @@ var afStudio = function () {
 		}		
 		
 		,setConsole : function(content) {
-			if(content){
+			if (content) {
 				this.console.body.dom.innerHTML = content;
-				this.console.body.scroll("bottom", 1000000, true );
+				this.console.body.scroll("bottom", 1000000, true);
 			}
 		}
 		
 		,updateConsole : function(content) {
 			if (content) {
 				this.console.body.dom.innerHTML += content;
-				this.console.body.scroll("bottom", 1000000, true );
+				this.console.body.scroll("bottom", 1000000, true);
 			}
 		}
 		
@@ -154,12 +154,14 @@ var afStudio = function () {
 			*/
 			this.addCurrentProject();
 		}
+		
         ,getWidgetsTreePanel: function() {
             var components = this.vp.findByType('afStudio.widgets.treePanel');
             if (components.length > 0) {
                 return components[0];
             }
         }
+        
         ,getWidgetInspector: function() {
             var components = this.vp.findByType('afStudio.widgetDesigner.inspector');
             if (components.length > 0) {

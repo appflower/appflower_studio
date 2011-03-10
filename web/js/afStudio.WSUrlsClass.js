@@ -2,7 +2,7 @@
  * In this class we'll store all URL used to fetch project related data with ajax calls
  * We need to have those in one place
  */
-afStudio.WSUrlsClass =function () {
+afStudio.WSUrlsClass = function() {
 };
 
 afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
@@ -83,6 +83,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     },
     getProjectCreateUrl: function() {
     	return this.buildUrlFor('/appFlowerStudio/createProject');
+    },
+    getProjectRunUrl: function() {
+    	return this.buildUrlFor('/appFlowerStudio/run');
     },
     buildUrlFor: function(url) {
         return url;

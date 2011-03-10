@@ -9,8 +9,11 @@
 afStudio.console = Ext.extend(Ext.Panel, {
 	
 	id: 'console'
+	
 	,startedNotifications: false
+	
 	,notificationOffset: 0
+	
 	/**
 	 * Loads notifications with an offset, for not loading all the time all the notifcations at once
 	 */
@@ -153,7 +156,9 @@ afStudio.console = Ext.extend(Ext.Panel, {
 			enableKeyEvents: true
 		});
 		
-		var console_cmd_display = new Ext.form.DisplayField({value: '<span style="margin-left:10px;"><b>cmds:</b> ' + afStudioConsoleCommands + '</span>'});
+		var console_cmd_display = new Ext.form.DisplayField({
+			value: '<span style="margin-left:10px;"><b>cmds:</b> ' + afStudioConsoleCommands + '</span>'
+		});
 		
 		_this.debugStore = new Ext.data.Store({
             autoLoad: {params:{start: 0, limit: 1}},
@@ -179,12 +184,11 @@ afStudio.console = Ext.extend(Ext.Panel, {
         );
         
         var debugDataView = new Ext.DataView({
-                                            store: _this.debugStore,
-                                            tpl: tpl,
-                                            autoHeight: true,
-                                            forceFit: true,
-                        });
-        
+            store: _this.debugStore,
+            tpl: tpl,
+            autoHeight: true,
+            forceFit: true
+        });        
 		
 		var config = {
 			itemId: 'console',
@@ -199,9 +203,11 @@ afStudio.console = Ext.extend(Ext.Panel, {
 					activeTab: 0,
 					items: [
 						{
-							xtype: 'panel', iconCls: 'icon-console', title: 'Console', 
+							xtype: 'panel', 
+							iconCls: 'icon-console', 
+							title: 'Console', 
 							tbar: {
-								items:[
+								items: [
 									console_cmd_label,
 									console_cmd_field,
 									console_cmd_display

@@ -2,8 +2,11 @@ Ext.namespace('afStudio.viewport');
 
 afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, { 
 
-	initComponent : function() {
-			
+	/**
+	 * ExtJS template method
+	 * @private
+	 */
+	initComponent : function() {			
 		_self = this;
 				
 		var config = {
@@ -80,23 +83,19 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				xtype: 'tbseparator'
 			},{
 				text: 'Users', 
-				iconCls: 'icon-users',
-				
-				hidden: (is_visible_users)?false:true,
-				
-				handler: function(){
+				iconCls: 'icon-users',				
+				hidden: (is_visible_users) ? false : true,				
+				handler: function() {
 					(new afStudio.UsersList).show();
 				}
-			},
-			
-			{
-				xtype: 'tbseparator', hidden: (is_visible_users)?false:true
-			},
-			
-			{
+			},{
+				xtype: 'tbseparator',
+				hidden: (is_visible_users) ? false : true
+			},{
 				text: 'Run', 
-				iconCls: 'icon-run', 
-				handler: function() { alert('Run button pressed'); }
+				iconCls: 'icon-run',
+				scope: _self,
+				handler: _self.runProject
 			},{
 				xtype: 'tbseparator'
 			},{
@@ -127,17 +126,14 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 * Function setProjectMenu
 	 * creates the project menu dynamically
 	 */
-	,setProjectMenu: function(menuItem)
-	{
+	,setProjectMenu: function(menuItem) {
 		var recentProjects = afStudio.getRecentProjects();
 		_self = this;
 		
-		if(menuItem.menu)
-		{
+
+		if (menuItem.menu) {
 			menuItem.menu.removeAll();
-		}
-		else
-		{	
+		} else {	
 			menuItem.menu = new Ext.menu.Menu();
 		}	
 		
@@ -169,6 +165,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 		
 		menuItem.menu.doLayout();
 	}
+	
 	/**
 	 * Function getRecentProjectsMenu
 	 * creates the recent projects menu dynamically
@@ -184,6 +181,37 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 		
 		return recentProjectsMenu;
 	}
+	
+	/**
+	 * Runs projects commands and opens project in a new browser's tab
+	 */
+	,runProject : function() {		
+		var runUrl = window.afStudioWSUrls.getProjectRunUrl();
+		
+		afStudio.vp.mask({
+			msg: 'Run command...'
+		});
+		
+		Ext.Ajax.request({
+		   url: runUrl,
+		   success: function(xhr, opt) {
+			   afStudio.vp.unmask();
+			   
+			   var response = Ext.decode(xhr.responseText);
+			   
+			   if (response.success) {			   	
+			   	   afStudio.updateConsole(response.content);
+			   	   window.open(response.homepage, 'runProject');
+			   } else {
+			   	   Ext.Msg.alert('Failure', response.content);
+			   }
+		   }, 
+		   failure: function(xhr, opt) {
+		   	   afStudio.vp.unmask();
+		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
+		   }
+		});
+	}//eo runProject
 	
 });
 
