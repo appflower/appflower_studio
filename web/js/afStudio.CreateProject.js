@@ -15,13 +15,33 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 			onDblClick: Ext.emptyFn,
 			onContextMenu: Ext.emptyFn,
 			listeners: {
-				click: function(n) {
-					var path = this.getPath(n);
+				//when node is clicked, path is stored in hidden field and displayed
+				click: function(node) {
+					var path = this.getPath(node);
 					var pathDisplayField = _self.form.form.items.items[1];
 					var pathField = _self.form.form.items.items[2];
 					
 					pathDisplayField.setValue('<small>'+path.slice(4)+'</small>');
 					pathField.setValue(path.slice(4));
+            	},
+            	//this expands the nodes starting with root, until open dir node is the one the project sits in, also ensure scroll and selection for dir node
+				expandnode: function(node) {
+					
+					if(node.childNodes)
+					{
+						for(var i=0;i<node.childNodes.length;i++)
+						{
+							if(afProjectInPath.indexOf(this.getPath(node.childNodes[i]).slice(4))>-1)
+							{
+								this.expandPath(node.childNodes[i].getPath());
+								
+								node.childNodes[i].select();
+								node.childNodes[i].ensureVisible();
+								
+								this.fireEvent('click', node.childNodes[i]);
+							}
+						}
+					}
             	}
 			},
 			height: 200

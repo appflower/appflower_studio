@@ -11,7 +11,26 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 			enableProgress:false,
 			singleUpload:true,			
 			onDblClick: Ext.emptyFn,
-			onContextMenu: Ext.emptyFn
+			onContextMenu: Ext.emptyFn,
+			listeners: {
+				//this expands the nodes starting with root, until open dir node is the one the project sits in, also ensure scroll and selection for dir node
+				expandnode: function(node) {
+					
+					if(node.childNodes)
+					{
+						for(var i=0;i<node.childNodes.length;i++)
+						{
+							if(afProjectInPath.indexOf(this.getPath(node.childNodes[i]).slice(4))>-1)
+							{
+								this.expandPath(node.childNodes[i].getPath());
+								
+								node.childNodes[i].select();
+								node.childNodes[i].ensureVisible();
+							}
+						}
+					}
+            	}
+			}
 		});
 
 		var config = {
@@ -19,8 +38,7 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 			width:348,
 			height:400,
 			closable: true,
-	        draggable: true, 
-//	        plain:true,
+	        draggable: true,
 	        modal: true, resizable: false,
 	        bodyBorder: false, border: false,
 	        layout: 'fit',
