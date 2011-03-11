@@ -91,8 +91,10 @@ class afsXmlBuilder {
             unset($def['i:description']);
         }
 
-        foreach ($def as $elName => $el) {
-            $newDefinition[$elName] = $el;
+        if (is_array($def)) {
+            foreach ($def as $elName => $el) {
+                $newDefinition[$elName] = $el;
+            }
         }
 
         $this->definition = $newDefinition;
