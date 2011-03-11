@@ -14,6 +14,9 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	initComponent: function(){
 		this.createUserGrid();
 		var config = {
+			tbar: [
+				{text: 'Create user', iconCls: 'icon-add', handler: this.showDialog, scope: this}
+			],
 			title: 'Users Management', width: 813,
 			layout: 'fit',
 			height: 550, closable: true,
@@ -21,10 +24,6 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	        modal: true, resizable: false,
 	        bodyBorder: false, border: false,
 	        items: [this.usersGrid],
-			buttons: [
-				{text: 'Create user', handler: this.showDialog, scope: this},
-				{text: 'Cancel', handler: this.cancel, scope: this}
-			],
 			buttonAlign: 'center'
 		};
 				
