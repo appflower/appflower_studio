@@ -71,6 +71,20 @@ class afsWidgetBuilderWidget {
     function setDefinitionFromJSON($data)
     {
         $this->definition = json_decode($data, true);
+
+        switch($this->widgetType) {
+            case 'edit':
+                $widgetModifier = new EditWidgetModifier;
+                break;
+            case 'list':
+                $widgetModifier = new ListWidgetModifier;
+                break;
+            default:
+                throw new Exception("I dont know which concrete builder class to use for widget type: ".$this->widgetType);
+                break;
+        }
+
+        $this->definition = $widgetModifier->modify($this);
     }
 
     private function validateAndSaveXml()

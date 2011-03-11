@@ -34,8 +34,8 @@ class afsWidgetBuilderActions extends sfActions
             $data = $request->getParameter('data');
             $widgetType = $request->getParameter('widgetType');
 
-            $afsWBW->setDefinitionFromJSON($data);
             $afsWBW->setWidgetType($widgetType);
+            $afsWBW->setDefinitionFromJSON($data);
             $validationStatusOrError = $afsWBW->save();
 
             if ($validationStatusOrError === true) {
