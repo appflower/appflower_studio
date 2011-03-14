@@ -46,6 +46,13 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Layout page view
 	 */
 	
+	
+	/**
+	 * @property {Window} pagePreviewWindow (defaults to null)
+	 * Stores reference to open page preview window 
+	 */
+	,pagePreviewWindow : null
+
 	/**
 	 * Runs action 
 	 * 
@@ -57,7 +64,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 *   {String} loadingMessage optional
 	 *   {Object} scope
 	 */
-	,executeAction : function(action) {		
+	,executeAction : function(action) {
 		afStudio.vp.mask({
 			msg: action.loadingMessage 
 				 ? action.loadingMessage 
@@ -420,11 +427,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Shows the page opened inside layout designer
 	 */
 	,onPreviewPage : function() {		
-		var p = this.layoutPage;
+		var p = this.layoutPage,
+			pageName = p.substring(0, p.lastIndexOf('.xml'));
 		
-		var name = p.substring(0, p.lastIndexOf('.xml'));
-		
-		window.open('/pages/' + name, 'ldPagePreview');		
+		this.pagePreviewWindow = window.open('/#/pages/' + pageName, 'layoutDesignerPagePreview');		
 	}//eo onPreviewPage
 	
 	/**
