@@ -82,7 +82,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	,refreshPageLayout : function() {
 		var dp = this.designPanel;
 		
-		dp.updateLayoutView(new afStudio.layoutDesigner.view.Page({pageMeta: this.pageMeta}));		
+		dp.updateLayoutView(new afStudio.layoutDesigner.view.Page({pageMeta: this.pageMeta}));
 	}//eo refreshPageLayout
 	
 	/**
@@ -123,15 +123,23 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		return cv;
 	}//eo getActiveContentView
 
+	/**
+	 * Adds view component (widget) to the active <u>content</u> view.
+	 * 
+	 * @param {Object} widgetMeta
+	 */
 	,addWidgetComponentToContentView : function(widgetMeta) {
 		var cv = this.getActiveContentView();
 		
-		cv.addViewComponent({
-			attributes: {
-				name: widgetMeta.widget,
-				module: widgetMeta.module
-			}
-		}, widgetMeta.meta['i:title']);
+		cv.addViewComponent(
+			{
+				attributes: {
+					name: widgetMeta.widget,
+					module: widgetMeta.module
+				}
+			}, 
+			widgetMeta.meta['i:title']
+		);
 		
 		this.doLayout();		
 	}//eo addWidgetComponentToContentView
@@ -151,10 +159,15 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	 * Updates {@link #pageMeta} metadata.
 	 * 
 	 * @param {Object} md The new "content" view metadata
+	 * {
+	 *    meta: view metadata,
+	 *    callback: optional, function executed in this page context and accepted 
+	 *              {@link afStudio.layoutDesigner.DesignerPanel} designPanel parameter
+	 * }
 	 */
 	,updateMetaData : function(md) {
-		var mp = afStudio.layoutDesigner.view.MetaDataProcessor,
-		  vIdx = mp.getContentViewMeta(this.pageMeta).contentIdx;
+		var   mp = afStudio.layoutDesigner.view.MetaDataProcessor,
+		    vIdx = mp.getContentViewMeta(this.pageMeta).contentIdx;
 		
 		if (Ext.isDefined(vIdx)) {
 			this.pageMeta['i:area'][vIdx] = md.meta;	
@@ -163,7 +176,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		}
 		
 		if (Ext.isFunction(md.callback)) {
-			Ext.util.Functions.createDelegate(md.callback, this)();
+			Ext.util.Functions.createDelegate(md.callback, this, [this.designPanel])();
 		}
 	}//eo updateMetaData
 	

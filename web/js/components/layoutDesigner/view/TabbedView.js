@@ -188,30 +188,35 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	/**
 	 * Adds new Tab component to this View.
 	 * 
-	 * @param {String} tabTitle
+	 * @param {String} tabTitle The tab's title
 	 */
 	,addTabViewComponent : function(tabTitle) {
+		var _this = this;
 		
+		//empty tab metadata
 		var newTabMeta = {
 			'attributes': {
 				layout: 1,
 				title: tabTitle
-			},
-			'i:component' : []
+			}
 		};
 		
-		var tabPosition = this.addEmptyTabMetaData();
+		var tabPosition = _this.addEmptyTabMetaData();
 		
-		this.updateMetaData({
+		/**
+		 * @param {@link afStudio.layoutDesigner.DesignerPanel} designPanel
+		 * @context {@link afStudio.layoutDesigner.view.Page}
+		 */
+		function afterTabAdditionCallback(designPanel) {
+			this.refreshPageLayout();				
+			designPanel.layoutView.getContentView().setActiveTab(tabPosition);			
+		}
+		
+		_this.updateMetaData({
 			position: tabPosition,
 			meta: newTabMeta,
-			callback : function() {
-				this.refreshPageLayout();
-			}
-		});
-		
-		//tabPanel.setActiveTab(tab.getId());
-		
+			callback: afterTabAdditionCallback
+		});		
 	}//eo addTabViewComponent
 });
 

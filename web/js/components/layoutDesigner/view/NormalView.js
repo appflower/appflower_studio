@@ -192,7 +192,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		if (Ext.isArray(vc)) {
 			vc.push(cmpMeta);
 		} else {
-			this.viewMeta['i:component'] = [vc, cmpMeta];
+			if (Ext.isDefined(vc)) { 
+				this.viewMeta['i:component'] = [vc, cmpMeta];	
+			} else {
+			//if undefined - the view is empty
+				this.viewMeta['i:component'] = cmpMeta;
+			}
 		}
 		
 		this.updateViewMetaData();
@@ -259,7 +264,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 					vc[i]['attributes']['column'] = newLayout - 1;
 				}
 			}
-		} else {			
+		} else {
 			if (vc['attributes']['column'] >= newLayout) {
 				vc['attributes']['column'] = newLayout - 1;
 			}

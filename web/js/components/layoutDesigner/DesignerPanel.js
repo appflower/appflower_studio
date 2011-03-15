@@ -1,7 +1,5 @@
 Ext.namespace('afStudio.layoutDesigner');
 
-//TODO should be cleaned & rewritten
-
 /**
  * @class afStudio.layoutDesigner.DesignerPanel
  * @extends Ext.Panel

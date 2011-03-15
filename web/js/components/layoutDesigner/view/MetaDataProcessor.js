@@ -20,9 +20,14 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		}//eo isViewTabbed
 		
 		/**
-		 * Returns <u>content</u> view's metadata and its position
+		 * Returns <u>content</u> view's metadata and its position.
+		 * 
 		 * @param {Object} page metadata
 		 * @return {Object} content view's coordinates
+		 * {
+		 *    contentView: "content" view metadata,
+		 *    contentIdx: metadata position / undefined
+		 * }
 		 */
 		,getContentViewMeta : function(pm) {
 			var cm,   //view metadata
