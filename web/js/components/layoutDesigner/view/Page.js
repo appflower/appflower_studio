@@ -113,7 +113,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 			   mp = afStudio.layoutDesigner.view.MetaDataProcessor;
 
 		if (Ext.isEmpty(cv)) {
-			throw new afStudio.error.ApsError('"Content view is not defined!"');
+			throw new afStudio.error.ApsError('Content view is not defined!');
 		}
 		
 		if (mp.isViewTabbed(cv.viewMeta)) {
@@ -148,7 +148,8 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	}//eo setActiveContentViewLayout
 	
 	/**
-	 * Updates {@link #pageMeta} metadata
+	 * Updates {@link #pageMeta} metadata.
+	 * 
 	 * @param {Object} md The new "content" view metadata
 	 */
 	,updateMetaData : function(md) {

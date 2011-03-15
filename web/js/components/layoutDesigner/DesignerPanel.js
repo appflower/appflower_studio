@@ -23,29 +23,30 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * @cfg {String} layoutPage required
 	 * Opened in LD page belongs to {@link #layoutApp} application 
-	 */	
+	 */
 	
 	/**
 	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
 	 */
-	widgetMetaUrl : 'afsLayoutBuilder/getWidget'	
-
+	widgetMetaUrl : 'afsLayoutBuilder/getWidget'
 
 	/**
 	 * @cfg {String} saveLayoutUrl (defaults to 'afsLayoutBuilder/save')
 	 */
 	,saveLayoutUrl : 'afsLayoutBuilder/save'	
 	
-	
 	/**
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
 	 */
 	
 	/**
-	 * @property {afStudio.layoutDesigner.view.Page} layoutView
-	 * Layout page view
+	 * @property {Ext.Window} tabNamePickerWindow
 	 */
 	
+	/**
+	 * @property {afStudio.layoutDesigner.view.Page} layoutView
+	 * Layout page view
+	 */	
 	
 	/**
 	 * @property {Window} pagePreviewWindow (defaults to null)
@@ -155,7 +156,9 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}//eo updateDesignerPanelControls	
 	
 	/**
-	 * Updates designer with specified view.   
+	 * Updates designer with specified view.
+	 * Removes previous page from designer.
+	 * 
 	 * @param {afStudio.layoutDesigner.view.Page} view The new view 
 	 */
 	,updateLayoutView : function(view) {
@@ -192,7 +195,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 					{
 						text: 'Type',
 						itemId: 'typeItem',
-						menu: {							
+						menu: {
 							defaults: {
 								xtype: 'menucheckitem',								
 								group: 'layoutType'
@@ -306,6 +309,11 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			scope: _this
 		});
 		
+		_this.getFormatMenuItem('addNewTab').on({
+			click: _this.onClickAddNewPagesTab,
+			scope: _this
+		});		
+		
 		_this.on('afterrender', _this.initDesignerPanel, _this);
 	}//eo _afterInitComponent
 	
@@ -318,9 +326,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}	
 	
 	/**
-	 * 
-	 * @param {} item The selected menu item
-	 * @param {} e The event object
+	 * Switches page type - normal/tabbed
+	 * layoutItem <u>itemclick</u> event listener
+	 * @param {Ext.menu.BaseItem} item The selected menu item
+	 * @param {Ext.EventObject} e The event object
 	 */
 	,onLayoutTypeChanged : function(item, e) {		
 		var _this = this,
@@ -361,6 +370,28 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		
 		p.setActiveContentViewLayout(layoutNum);
 	}//onSelectDesignerColumnsNumber
+	
+	/**
+	 * Add New Tab button <u>click</u> event listener
+	 * Opens/Creates tab name picker window
+	 */
+	,onClickAddNewPagesTab : function() {
+		if (!this.tabNamePickerWindow) {
+			this.tabNamePickerWindow = new afStudio.layoutDesigner.TabNamePickerWindow();			
+			this.tabNamePickerWindow.on('tabnamepicked', this.onAddNewPagesTab, this);
+		}
+		this.tabNamePickerWindow.show();
+	}//eo onAddNewPagesTab
+	
+	/**
+	 * Creates and adds new tab to the page
+	 * @param {String} tabTitle The tab title
+	 */
+	,onAddNewPagesTab : function(tabTitle) {		
+		var tabPanel = this.layoutView.getContentView();
+		
+		tabPanel.addTabViewComponent(tabTitle);		
+	}//eo onAddNewPagesTab 
 	
 	/**
 	 * New Widget button <u>click</u> event listener

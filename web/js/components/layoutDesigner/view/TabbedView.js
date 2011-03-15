@@ -1,6 +1,7 @@
 Ext.namespace('afStudio.layoutDesigner.view');
 
 /**
+ * Tabbed page view
  * 
  * @class afStudio.layoutDesigner.view.TabbedView
  * @extends Ext.TabPanel
@@ -19,7 +20,10 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	 */
 	viewLayout : 1
 	
-	
+	/**
+	 * Returns view's layout metadata
+	 * @return {Number} 1-9 layout type number
+	 */
 	,getViewLayout : function() {
 		return this.viewMeta.attributes.layout;		
 	}
@@ -32,10 +36,37 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		return this.viewMeta['i:tab'];
 	}
 
+	,addEmptyTabMetaData : function() {
+		var tm = this.getViewTabsMetaData();
+		
+		var newTabIndex; 
+		
+		if (Ext.isArray(tm)) {
+			newTabIndex = this.viewMeta['i:tab'].push({});
+			newTabIndex--;
+		} else {			
+			this.viewMeta['i:tab'] = [tm, {}];
+			newTabIndex = 1;
+		}
+		
+		return newTabIndex;
+	}//eo addEmptyTabMetaData
+	
+	/**
+	 * Returns tab's metadata.
+	 * 
+	 * @param {Number} tabIndex The tab index number inside 'i:tab' metadata collection 
+	 * @return {Object} tab metadata
+	 */
 	,getViewTabMetaData : function(tabIndex) {
 		return this.getViewTabsMetaData()[tabIndex];
 	}
 
+	/**
+	 * Returns components metadata for the specified tab
+	 * @param {Number} tabIndex
+	 * @return {Object} components metadata
+	 */
 	,getViewTabComponentsMetaData : function(tabIndex) {
 		return this.getViewTabMetaData(tabIndex)['i:component'];
 	}	
@@ -119,6 +150,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	
 	/**
 	 * Returns newly created view container.
+	 * 
 	 * @param {Object} tabMeta The view metadata
 	 * @param {Number} metaPosition The metadata position 
 	 * @return {afStudio.layoutDesigner.view.NormalView} view
@@ -127,7 +159,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		var _this = this;
 		var title = tabMeta.attributes.title;
 		
-		tabMeta.attributes.layout = this.getViewTabLayout(tabMeta);		
+		tabMeta.attributes.layout = this.getViewTabLayout(tabMeta);
 		
 		var view = new afStudio.layoutDesigner.view.NormalView({
 			title: title,
@@ -135,12 +167,12 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 			viewMetaPosition: metaPosition 
 		});
 		
-		return view;
-		
+		return view;		
 	}//eo createTabView
 	
 	/**
-	 * Updates tab's metadata and applies changes in the owner container
+	 * Updates tab's metadata and applies changes to the owner container
+	 * 
 	 * @param {Object} md The new tab's meta
 	 */
 	,updateMetaData : function(md) {
@@ -151,8 +183,36 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		container.updateMetaData(Ext.apply(md, {
 			meta: this.viewMeta
 		}));
-	}//eo updateMetaData
+	}//eo updateMetaData	
 	
+	/**
+	 * Adds new Tab component to this View.
+	 * 
+	 * @param {String} tabTitle
+	 */
+	,addTabViewComponent : function(tabTitle) {
+		
+		var newTabMeta = {
+			'attributes': {
+				layout: 1,
+				title: tabTitle
+			},
+			'i:component' : []
+		};
+		
+		var tabPosition = this.addEmptyTabMetaData();
+		
+		this.updateMetaData({
+			position: tabPosition,
+			meta: newTabMeta,
+			callback : function() {
+				this.refreshPageLayout();
+			}
+		});
+		
+		//tabPanel.setActiveTab(tab.getId());
+		
+	}//eo addTabViewComponent
 });
 
 
