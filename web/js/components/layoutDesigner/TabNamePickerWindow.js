@@ -48,6 +48,7 @@ afStudio.layoutDesigner.TabNamePickerWindow = Ext.extend(Ext.Window, {
 			    f = this.pickerForm;
 	    
 		f.getForm().reset();
+		f.tabNameField.focus(true);
 	}//eo onTabNamePickerRendered	
 	
 	/**

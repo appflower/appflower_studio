@@ -258,15 +258,19 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		var vc = this.viewMeta['i:component'];
 		
-		if (Ext.isArray(vc)) {
-			for (var i = 0, len = vc.length; i < len; i++) {
-				if (vc[i]['attributes']['column'] >= newLayout) {
-					vc[i]['attributes']['column'] = newLayout - 1;
+		//if this.viewMeta['i:component'] is undefined means view is empty
+		if (Ext.isDefined(vc)) {
+			
+			if (Ext.isArray(vc)) {
+				for (var i = 0, len = vc.length; i < len; i++) {
+					if (vc[i]['attributes']['column'] >= newLayout) {
+						vc[i]['attributes']['column'] = newLayout - 1;
+					}
 				}
-			}
-		} else {
-			if (vc['attributes']['column'] >= newLayout) {
-				vc['attributes']['column'] = newLayout - 1;
+			} else {
+				if (vc['attributes']['column'] >= newLayout) {
+					vc['attributes']['column'] = newLayout - 1;
+				}
 			}
 		}
 		
