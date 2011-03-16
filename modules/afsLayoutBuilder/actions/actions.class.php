@@ -76,9 +76,10 @@ class afsLayoutBuilderActions extends sfActions
         
         $afCU = new afConfigUtils($aParameters['module']);
         $aResponse['meta'] = array(
-            'actionPath' => $afCU->getActionFilePath('actions.class.php'),
-            'xmlPath' => $afCU->getConfigFilePath("{$aParameters['action']}.xml"),
-            'securityPath' => $afCU->getConfigFilePath("security.yml")
+            'actionPath'   => $afCU->getActionFilePath('actions.class.php'),
+            'xmlPath'      => $afCU->getConfigFilePath("{$aParameters['action']}.xml"),
+            'securityPath' => $afCU->getConfigFilePath("security.yml"),
+        	"widgetUri"    => "{$aParameters['module']}/{$aParameters['action']}"
         );
         
         return $this->renderJson($aResponse);

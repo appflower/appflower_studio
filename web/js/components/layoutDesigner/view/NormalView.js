@@ -362,10 +362,21 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		return w;
 	}//eo createViewWidget
 	
+	/**
+	 * Shows widget preview
+	 * @param {String} name
+	 * @param {String} module
+	 * @param {Object} cmpMeta
+	 */
 	,previewWidget : function(name, module, cmpMeta) {
-		Ext.Msg.alert('Preview Widget', 'Under developing');
-		//console.log('preview widget', name, module, cmpMeta);
-	}
+//		console.log('preview widget', name, module, cmpMeta);
+		
+		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;
+		
+//		console.log('widgetUri', widgetUri);
+		
+		afApp.widgetPopup(widgetUri, widgetUri, null, null, afStudio);		
+	}//eo previewWidget
 	
 	/**
 	 * 
