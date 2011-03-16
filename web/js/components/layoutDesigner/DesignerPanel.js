@@ -228,15 +228,17 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 								]
 							}]
 						}
-					},{
-						text: 'Re-size',
-						handler: _this.resizeItems, 
-						scope: _this
-					},{
-						text: 'Auto-Adjust', 
-						handler: _this.autoAdjust, 
-						scope: _this
-					},{
+					}
+//					,{ Will be imlemented in future release
+//						text: 'Re-size',
+//						handler: _this.resizeItems, 
+//						scope: _this
+//					},{
+//						text: 'Auto-Adjust', 
+//						handler: _this.autoAdjust, 
+//						scope: _this
+//					}
+					,{
 						itemId: 'addNewTab',
 						text: 'Add new Tab' 
 					}]
@@ -270,7 +272,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		);				
 		afStudio.layoutDesigner.DesignerPanel.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	/**
 	 * Initializes events & does post configuration
@@ -398,7 +400,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 */
 	,onClickNewWidget : function() {		
 		if (!this.widgetSelectorWindow) {
-			this.widgetSelectorWindow = new afStudio.layoutDesigner.WidgetSelectorWindow();			
+			this.widgetSelectorWindow = new afStudio.layoutDesigner.WidgetSelectorTreeWindow();			
 			this.widgetSelectorWindow.on('widgetselect', this.onAddWidget, this);
 		}
 		this.widgetSelectorWindow.show();		
