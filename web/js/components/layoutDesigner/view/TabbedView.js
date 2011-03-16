@@ -36,6 +36,11 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		return this.viewMeta['i:tab'];
 	}
 
+	/**
+	 * Adds <tt>new empty</tt> tab metadata to the end of <tt>i:tab</tt> metadata.
+	 *   
+	 * @return {Number} just added empty tab position
+	 */
 	,addEmptyTabMetaData : function() {
 		var tm = this.getViewTabsMetaData();
 		
@@ -89,7 +94,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		//area layout attribute
 		config.viewMeta.attributes.layout = 
 			!Ext.isDefined(config.viewMeta.attributes.layout) 
-			? this.viewLayout : config.viewMeta.attributes.layout;		
+				? this.viewLayout : config.viewMeta.attributes.layout;		
 		
 		afStudio.layoutDesigner.view.NormalView.superclass.constructor.call(this, config);
 	}//eo constructor
@@ -106,8 +111,10 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 
 		return {
 			activeTab: 0,
+			enableTabScroll: true,
 			anchor: '100%',
-			items: viewItems 
+			items: viewItems,
+			plugins: new Ext.ux.TabCloseMenu()
 		}
 	}//eo _beforeInitComponent
 	
@@ -164,7 +171,8 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		var view = new afStudio.layoutDesigner.view.NormalView({
 			title: title,
 			viewMeta: tabMeta,
-			viewMetaPosition: metaPosition 
+			viewMetaPosition: metaPosition,
+			closable: true
 		});
 		
 		return view;		
@@ -176,7 +184,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	 * @param {Object} md The new tab's meta
 	 */
 	,updateMetaData : function(md) {
-	 	var container = this.ownerCt;
+	 	var container = this.ownerCt; //page
 		
 		Ext.apply(this.getViewTabMetaData(md.position), md.meta);
 		
@@ -184,6 +192,38 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 			meta: this.viewMeta
 		}));
 	}//eo updateMetaData	
+	
+	,deleteViewMetaData : function(md) {
+	 	var container = this.ownerCt; //page
+		
+	 	
+	 	
+		if (Ext.isArray(this.viewMeta['i:tab'])) {
+
+			delete this.viewMeta['i:tab'][md.position];//this.getViewTabMetaData(md.position);
+			
+			var compArr = [];			
+			for (var i = 0, len = this.viewMeta['i:tab'].length; i < len; i++) {
+				if (Ext.isDefined(this.viewMeta['i:tab'][i])) {
+					compArr.push(this.viewMeta['i:tab'][i]);
+				}
+			}
+			
+			if (compArr.length > 0) {
+				this.viewMeta['i:tab'] = compArr;				 
+			} else {
+				delete this.viewMeta['i:tab'];
+			}
+		} else {			
+			delete this.viewMeta['i:tab'];
+		}
+		
+//		console.log('tabbed', this.viewMeta, md.position);
+		
+		container.updateMetaData(Ext.apply(md, {
+			meta: this.viewMeta
+		}));
+	}
 	
 	/**
 	 * Adds new Tab component to this View.

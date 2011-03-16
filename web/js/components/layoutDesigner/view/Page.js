@@ -174,7 +174,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 		} else {
 			this.pageMeta['i:area'] = md.meta;
 		}
-		
+//		console.log('page meta', this.pageMeta);
 		if (Ext.isFunction(md.callback)) {
 			Ext.util.Functions.createDelegate(md.callback, this, [this.designPanel])();
 		}

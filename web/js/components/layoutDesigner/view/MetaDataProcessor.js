@@ -52,7 +52,11 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		}//eo getContentViewMeta
 		
 		/**
+		 * Switches (transforms page metadata) to specified <u>content</u> type (norma/tabbed).
+		 * Returns new built page metadata according to specified page type.
 		 * 
+		 * @param {String} type The result page's metadata type normal or tabbed
+		 * @param {Object} pm The page's metadata being transformed
 		 */
 		,changeContentViewMetaData : function(type, pm) {
 			var vo = this.getContentViewMeta(pm),

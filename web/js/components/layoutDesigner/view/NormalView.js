@@ -118,6 +118,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		_this.on({
 			afterrender: _this.initViewComponents,
+			close: _this.onCloseView,
+			beforeclose: _this.onBeforeCloseView,
 			scope: _this
 		});		
 				
@@ -181,6 +183,18 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			callback: callback
 		});
 	}//eo updateMetaData	
+	
+	,deleteViewMetaData : function() {
+		var container = this.ownerCt;
+
+		delete this.viewMeta;
+		
+//		console.log('delete component metadata', this.viewMetaPosition);
+		
+		container.deleteViewMetaData({
+			position: this.viewMetaPosition
+		});		
+	}//eo deleteViewMetaData
 	
 	/**
 	 * Adds component's metadata to this view
@@ -379,6 +393,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo previewWidget
 	
 	/**
+	 * Runs WD (Widget Designer) for specified view component.
+	 * 
+	 * //TODO should be optimized
 	 * 
 	 * @param {String} name The widget action name
 	 * @param {String} module The widget module name
@@ -442,14 +459,55 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo editWidget 
 	
 	/**
-	 * Removes component from view
+	 * Removes component from this view. 
 	 * For detailed information look at {@link Ext.Panel#tools}
 	 */
 	,removeWidget: function(e, tool, panel) {
-		var cmpMeta = panel.componentMeta;		
+		var cmpMeta = panel.componentMeta;
 		this.deleteViewComponentMetaData(cmpMeta);		
 		panel.destroy();
 	}//eo removeWidget
+	
+	/**
+	 * View <u>beforeclose</u> event listener.
+	 * 
+	 * @param {afStudio.layoutDesigner.view.NormalView} view The closing view.
+	 * @param {Boolean} <tt>custom</tt> severalTabs optional Signalizes what we are going to close several views.
+	 * @param {Array} <tt>custom</tt> views optional If severalTabs = true, then views contains an array of
+	 * 					{@link afStudio.layoutDesigner.view.NormalView} being closed.   
+	 */
+	,onBeforeCloseView : function(view, severalTabs, views) {
+		var confirmTitle = 'Delete',
+			confirmText;
+		
+		if (severalTabs) {
+			var viewsTitle = [];			
+	        Ext.each(views, function(v) {
+	            viewsTitle.push(v.viewMeta.attributes.title);
+	        }, this);
+	        
+			confirmText = 'Are you sure you want to delete tabs: ' + viewsTitle.join(', ');
+		} else {
+			confirmText = 'Are you sure you want to delete tab "' + view.viewMeta.attributes.title + '"';
+		}
+		//TODO replace native browser confirm popup with extjs
+//		Ext.Msg.confirm(confirmTitle, confirmText, function(buttonId) {
+//			if (buttonId == 'yes') {					
+//			}			
+//		});
+		return confirm(confirmText);
+	}//eo onBeforeCloseView
+	
+	/**
+	 * View <u>close</u> event listener.
+	 * @param {afStudio.layoutDesigner.view.NormalView} view The being closed view
+	 */
+	,onCloseView : function(view) {
+//		console.log('close event', view, view.viewMeta, view.viewMetaPosition);
+		this.deleteViewMetaData();
+		
+		
+	}//eo onCloseView 
 	
 });
 
