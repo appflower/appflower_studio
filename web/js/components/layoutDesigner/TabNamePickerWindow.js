@@ -48,7 +48,7 @@ afStudio.layoutDesigner.TabNamePickerWindow = Ext.extend(Ext.Window, {
 			    f = this.pickerForm;
 	    
 		f.getForm().reset();
-		f.tabNameField.focus(true);
+		f.tabNameField.focus(true, 200);
 	}//eo onTabNamePickerRendered	
 	
 	/**
@@ -151,7 +151,8 @@ afStudio.layoutDesigner.TabNamePickerWindow = Ext.extend(Ext.Window, {
 		tabNamePicker.on('keypress', _this.onTabPickerFieldKeyPress, _this);
 		
 		_this.on({
-			'show': Ext.util.Functions.createDelegate(_this.onTabNamePickerShow, _this)
+			show: _this.onTabNamePickerShow, 
+			scope: _this
 		});
 	}//eo _afterInitComponent	
 	

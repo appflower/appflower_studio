@@ -116,10 +116,20 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
+		_this.addEvents(
+			/**
+			 * @event 'viewtitlechange' Fires after view's title was changed
+			 * @param {afStudio.layoutDesigner.view.NormalView} view The view which title was changed
+			 * @param {String} newTitle The new view's title
+			 */
+			'viewtitlechange'
+		);
+		
 		_this.on({
-			afterrender: _this.initViewComponents,
-			close: _this.onCloseView,
-			beforeclose: _this.onBeforeCloseView,
+			afterrender: 	 _this.initViewComponents,
+			beforeclose: 	 _this.onBeforeCloseView,
+			close:       	 _this.onCloseView,
+			viewtitlechange: _this.onViewTitleChange,
 			scope: _this
 		});		
 				
@@ -491,6 +501,16 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		this.deleteViewMetaData();
 	}//eo onCloseView
+	
+	/**
+	 * View <u>viewtitlechange</u> event listener.
+	 * @param {afStudio.layoutDesigner.view.NormalView} view The view which title was changed
+	 * @param {String} newTitle The new view's title
+	 */
+	,onViewTitleChange : function(view, newTitle) {
+		this.viewMeta.attributes.title = newTitle;
+		this.updateViewMetaData();
+	}//eo onViewTitleChange
 	
 });
 

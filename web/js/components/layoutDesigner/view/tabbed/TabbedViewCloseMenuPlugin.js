@@ -9,10 +9,59 @@ Ext.namespace('afStudio.layoutDesigner.view');
  */
 afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCloseMenu, {
     
+    /**
+     * @cfg {String} renameTabText
+     * The text for renaming the current tab. Defaults to <tt>'Rename Tab'</tt>.
+     */
+    renameTabText: 'Rename Tab'
+	
+    /**
+     * @override
+     * @return {}
+     */
+    ,createMenu : function() {
+        if (!this.menu) {
+            var items = [
+            {
+                itemId: 'close',
+                text: this.closeTabText,
+                scope: this,
+                handler: this.onClose
+            },{
+                itemId: 'rename',
+                text: this.renameTabText,
+                scope: this,
+                handler: this.onRename
+            }];
+            if (this.showCloseAll) {
+                items.push('-');
+            }
+            items.push({
+                itemId: 'closeothers',
+                text: this.closeOtherTabsText,
+                scope: this,
+                handler: this.onCloseOthers
+            });
+            if (this.showCloseAll) {
+                items.push({
+                    itemId: 'closeall',
+                    text: this.closeAllTabsText,
+                    scope: this,
+                    handler: this.onCloseAll
+                });
+            }
+            this.menu = new Ext.menu.Menu({
+                items: items
+            });
+        }
+        
+        return this.menu;
+    }//eo createMenu
+    
 	/**
 	 * Checks if TabPanel has no tabs, and if it is true fires <tt>alltabswereclosed</tt> event
 	 */
-	allTabsAreClosed : function() {
+	,allTabsAreClosed : function() {
      	if (this.tabs.items.getCount() == 0) {
      		this.tabs.fireEvent('alltabswereclosed');
      	}		
@@ -61,7 +110,33 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
 	}//eo pickTabsToClose
 	
 	/**
+	 * "rename" menu item's <u>click</u> event listener
+	 * Attention, this listener shares with {@link afStudio.layoutDesigner.DesignerPanel} designer "tabNamePickerWindow"  
+	 */
+	,onRename : function() {
+		var activeTab = this.active;
+		
+		//mapped to {@link afStudio.layoutDesigner.DesignerPanel#tabNamePickerWindow}
+		var pickerWin = this.tabs.ownerCt.designPanel.tabNamePickerWindow;		
+
+		if (!pickerWin) {
+			this.tabs.ownerCt.designPanel.tabNamePickerWindow = new afStudio.layoutDesigner.TabNamePickerWindow();
+			pickerWin = this.tabs.ownerCt.designPanel.tabNamePickerWindow;
+			pickerWin.on('tabnamepicked', function(tabTitle) {
+				activeTab.setTitle(tabTitle);
+				activeTab.fireEvent('viewtitlechange', activeTab, tabTitle);
+			}, this);
+		}
+		pickerWin.show(activeTab, function() {
+			var tabTitleFld = this.pickerForm.tabNameField;
+			tabTitleFld.setValue(activeTab.title);
+			tabTitleFld.focus(true, 200);
+		});
+	}//eo onRename 
+	
+	/**
 	 * "close" menu item's <u>click</u> event listener
+	 * @override 
 	 */
     ,onClose : function() {
     	var _this = this,
@@ -86,6 +161,7 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
     
     /**
      * "closeothers" menu item's <u>click</u> event listener
+     * @override
      */
     ,onCloseOthers : function() {
 		var _this = this,
@@ -106,6 +182,7 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
     
     /**
      * "closeall" menu item's <u>click</u> event listener
+     * @override
      */
     ,onCloseAll : function() {
 		var _this = this,
@@ -125,7 +202,9 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
     }//eo onCloseAll 
     
     /**
-     * Closes several tabs
+     * Closes several tabs.
+     * @override
+     * 
      * @param {Array} items The tabs being closed 
      */
     ,doClose : function(items) {    	

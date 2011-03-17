@@ -21,7 +21,7 @@
  * {Boolean} severalTabs optional Signalizes what we are going to close several tabs.
  * {Array} tabs optional If severalTabs = true, then tabs contains an array of tab items being closed.
  */
-Ext.ux.TabCloseMenu = Ext.extend(Object, {
+Ext.ux.TabCloseMenu = Ext.extend(Object, {	
     /**
      * @cfg {String} closeTabText
      * The text for closing the current tab. Defaults to <tt>'Close Tab'</tt>.
@@ -45,6 +45,21 @@ Ext.ux.TabCloseMenu = Ext.extend(Object, {
      * <p>The text for closing all tabs. Defaults to <tt>'Close All Tabs'</tt>.
      */
     closeAllTabsText: 'Close All Tabs',
+    
+    /**
+     * @property {Ext.menu.Menu} menu
+     * Context menu reference
+     */
+
+    /**
+     * @property {Ext.TabPanel} tabs
+     * This tab panel
+     */
+
+    /**
+     * @property {Ext.Panel} active
+     * Context menu active tab
+     */
     
     constructor : function(config){
         Ext.apply(this, config || {});
