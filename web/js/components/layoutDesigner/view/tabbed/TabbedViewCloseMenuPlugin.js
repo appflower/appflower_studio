@@ -16,6 +16,11 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
     renameTabText: 'Rename Tab'
 	
     /**
+     * @property {afStudio.layoutDesigner.TabNamePickerWindow} pickerWin
+     * Tab title picker window   
+     */
+    
+    /**
      * @override
      * @return {}
      */
@@ -115,19 +120,15 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
 	 */
 	,onRename : function() {
 		var activeTab = this.active;
-		
-		//mapped to {@link afStudio.layoutDesigner.DesignerPanel#tabNamePickerWindow}
-		var pickerWin = this.tabs.ownerCt.designPanel.tabNamePickerWindow;		
 
-		if (!pickerWin) {
-			this.tabs.ownerCt.designPanel.tabNamePickerWindow = new afStudio.layoutDesigner.TabNamePickerWindow();
-			pickerWin = this.tabs.ownerCt.designPanel.tabNamePickerWindow;
-			pickerWin.on('tabnamepicked', function(tabTitle) {
+		if (!this.pickerWin) {
+			this.pickerWin = new afStudio.layoutDesigner.TabNamePickerWindow();			
+			this.pickerWin.on('tabnamepicked', function(tabTitle) {
 				activeTab.setTitle(tabTitle);
 				activeTab.fireEvent('viewtitlechange', activeTab, tabTitle);
 			}, this);
 		}
-		pickerWin.show(activeTab, function() {
+		this.pickerWin.show(activeTab, function() {
 			var tabTitleFld = this.pickerForm.tabNameField;
 			tabTitleFld.setValue(activeTab.title);
 			tabTitleFld.focus(true, 200);
