@@ -162,7 +162,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	,updateLayoutView : function(view) {
 		this.removeAll(true);
 		this.layoutView = this.add(view);
-		this.doLayout();		
+		this.doLayout();
+		this.updateDesignerPanelControls();
 	}//eo updateLayoutView
 	
 	/**

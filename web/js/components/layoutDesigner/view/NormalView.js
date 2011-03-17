@@ -184,14 +184,19 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		});
 	}//eo updateMetaData	
 	
+	/**
+	 * Deletes view's metadata and triggers changes inside the container.
+	 * Works only with Tabbed views after view was closed
+	 */
 	,deleteViewMetaData : function() {
 		var container = this.ownerCt;
 
+		var metadata = Ext.apply({}, this.viewMeta);
+		
 		delete this.viewMeta;
 		
-//		console.log('delete component metadata', this.viewMetaPosition);
-		
 		container.deleteViewMetaData({
+			meta: metadata, 
 			position: this.viewMetaPosition
 		});		
 	}//eo deleteViewMetaData
@@ -228,7 +233,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 
 			for (var i = 0, len = vc.length; i < len; i++) {
 				var found = true;
-
+				
 				Ext.iterate(cmpMeta.attributes, function(key, value) {
 					if (vc[i]['attributes'][key] != value) {
 						found = false;
@@ -476,38 +481,16 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Array} <tt>custom</tt> views optional If severalTabs = true, then views contains an array of
 	 * 					{@link afStudio.layoutDesigner.view.NormalView} being closed.   
 	 */
-	,onBeforeCloseView : function(view, severalTabs, views) {
-		var confirmTitle = 'Delete',
-			confirmText;
-		
-		if (severalTabs) {
-			var viewsTitle = [];			
-	        Ext.each(views, function(v) {
-	            viewsTitle.push(v.viewMeta.attributes.title);
-	        }, this);
-	        
-			confirmText = 'Are you sure you want to delete tabs: ' + viewsTitle.join(', ');
-		} else {
-			confirmText = 'Are you sure you want to delete tab "' + view.viewMeta.attributes.title + '"';
-		}
-		//TODO replace native browser confirm popup with extjs
-//		Ext.Msg.confirm(confirmTitle, confirmText, function(buttonId) {
-//			if (buttonId == 'yes') {					
-//			}			
-//		});
-		return confirm(confirmText);
-	}//eo onBeforeCloseView
+	,onBeforeCloseView : Ext.emptyFn
 	
 	/**
 	 * View <u>close</u> event listener.
 	 * @param {afStudio.layoutDesigner.view.NormalView} view The being closed view
 	 */
 	,onCloseView : function(view) {
-//		console.log('close event', view, view.viewMeta, view.viewMetaPosition);
+		
 		this.deleteViewMetaData();
-		
-		
-	}//eo onCloseView 
+	}//eo onCloseView
 	
 });
 

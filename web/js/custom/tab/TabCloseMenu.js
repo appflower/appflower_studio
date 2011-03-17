@@ -16,6 +16,10 @@
  * @ptype tabclosemenu
  * 
  * @reedit Nikolai Babinski
+ * Added support for <tt>beforeclose</tt>, <tt>close</tt> events. 
+ * To <tt>beforeclose</tt> event was added to additional parameters:
+ * {Boolean} severalTabs optional Signalizes what we are going to close several tabs.
+ * {Array} tabs optional If severalTabs = true, then tabs contains an array of tab items being closed.
  */
 Ext.ux.TabCloseMenu = Ext.extend(Object, {
     /**

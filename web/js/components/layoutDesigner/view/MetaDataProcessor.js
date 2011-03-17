@@ -60,7 +60,9 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		 */
 		,changeContentViewMetaData : function(type, pm) {
 			var vo = this.getContentViewMeta(pm),
+			
 				viewTabbed = this.isViewTabbed(vo.contentView),
+				
 				cmps = viewTabbed ? this.getTabbedViewComponents(vo.contentView['i:tab']) 
 								  : this.getNormalViewComponents(vo.contentView['i:component']);
 								  
@@ -69,13 +71,18 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			if (type == 'tabbed') {
 				var tabAttr = Ext.apply({title: pm['i:title']}, vo.contentView.attributes);				
 				delete tabAttr.type;
+				
 				meta = {
 					'attributes': vo.contentView.attributes,
 					'i:tab': {
-						'attributes': tabAttr,
-						'i:component': Ext.flatten(cmps)
+						'attributes': tabAttr
 					}
 				}
+				//if there are components add them 
+				if (!Ext.isEmpty(Ext.flatten(cmps))) {
+					meta['i:tab']['i:component'] = Ext.flatten(cmps);
+				}
+				
 			} else {
 				var viewAttr = Ext.apply({}, vo.contentView.attributes);				
 				viewAttr.layout = (viewAttr.layout > cmps.maxLayout) 
