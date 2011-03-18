@@ -26,12 +26,6 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,viewMetaPosition : 0
 	
 	/**
-	 * @property {Number} componentsNum (defaults to 0)
-	 * The components number in this view
-	 */
-	,componentsNum : 0
-	
-	/**
 	 * @property {Number} viewLayout (defaults to 1)
 	 * Default view layout type
 	 */
@@ -39,7 +33,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	
 	/**
 	 * @property {Object} viewLayoutConfig
-	 * 
+	 * Main layout types
+	 * For more details {@see http://www.appflower.com/docs/index.html#page-layouts}
 	 */
 	,viewLayoutConfig : {
 		1 : [1],
@@ -53,10 +48,18 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		9 : [0.4, 0.2, 0.2, 0.2]
 	}//eo viewLayoutConfig
 	
+	/**
+	 * Returns view's meta <tt>layout</tt> property.
+	 * @return {Number} layout type number
+	 */
 	,getViewLayout : function() {
 		return this.viewMeta.attributes.layout;		
 	}
 	
+	/**
+	 * Returns view's components metadata.
+	 * @return {Array/Object} component(s) metadata
+	 */
 	,getViewComponentsMetaData : function() {
 		return this.viewMeta['i:component'];
 	}
@@ -76,8 +79,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Object} config
 	 */	
 	,constructor : function(config) {		
-		config.viewMeta.attributes.layout = !Ext.isDefined(config.viewMeta.attributes.layout) 
-						? this.viewLayout : config.viewMeta.attributes.layout;		
+		config.viewMeta.attributes.layout = 
+			!Ext.isDefined(config.viewMeta.attributes.layout) 
+				? this.viewLayout : config.viewMeta.attributes.layout;		
 		
 		afStudio.layoutDesigner.view.NormalView.superclass.constructor.call(this, config);
 	}//eo constructor
@@ -127,9 +131,17 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		_this.on({
 			afterrender: 	 _this.initViewComponents,
+			
 			beforeclose: 	 _this.onBeforeCloseView,
+			
 			close:       	 _this.onCloseView,
+			
 			viewtitlechange: _this.onViewTitleChange,
+			
+			beforedrop:      _this.beforeComponentDrop,
+			
+			drop:            _this.dropComponent,
+			
 			scope: _this
 		});		
 				
@@ -162,24 +174,43 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		if (!Ext.isEmpty(cmpsMeta)) {
 			
 			if (Ext.isArray(cmpsMeta)) {				
-				_this.componentsNum = cmpsMeta.length;
-				
 				Ext.each(cmpsMeta, function(cm, i, allCmps) {
 					var cl = cm.attributes.column || 0,
-						 w = _this.createViewComponent(cm, null, i);
-						 
+						 w = _this.createViewComponent(cm, null);
 					_this.items.itemAt(cl).add(w);
 				});
 				
-			} else {				
+			} else {
 				var cl = cmpsMeta.attributes.column || 0,
-					 w = _this.createViewComponent(cmpsMeta, null, this.componentsNum);					 
+					 w = _this.createViewComponent(cmpsMeta, null);
 				_this.items.itemAt(cl).add(w);
 			}
 			
 			_this.doLayout();
 		}
 	}//eo initViewComponents
+	
+	,getComponentMetaIndex : function(cmpMeta, searchIn) {
+		var cm = searchIn ? searchIn : this.getViewComponentsMetaData();
+		
+		var index;
+
+		for (var i = 0, len = cm.length; i < len; i++) {
+			var found = true;
+			Ext.iterate(cmpMeta.attributes, function(key, value) {
+				if (cm[i]['attributes'][key] != value) {						
+					return (found = false);
+				}
+			});
+			
+			if (found) {
+				index = i;
+				break;
+			}
+		}
+		
+		return index;		
+	}//eo getComponentMetaIndex
 	
 	/**
 	 * Updates view's metadata and triggers changes inside the container
@@ -200,7 +231,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 */
 	,deleteViewMetaData : function() {
 		var container = this.ownerCt;
-
+		
+		//get a copy of metadata
 		var metadata = Ext.apply({}, this.viewMeta);
 		
 		delete this.viewMeta;
@@ -220,7 +252,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		if (Ext.isArray(vc)) {
 			vc.push(cmpMeta);
-		} else {
+			
+		} else {			
 			if (Ext.isDefined(vc)) { 
 				this.viewMeta['i:component'] = [vc, cmpMeta];	
 			} else {
@@ -240,23 +273,13 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		var vc = this.viewMeta['i:component'];
 		
 		if (Ext.isArray(vc)) {
-
-			for (var i = 0, len = vc.length; i < len; i++) {
-				var found = true;
-				
-				Ext.iterate(cmpMeta.attributes, function(key, value) {
-					if (vc[i]['attributes'][key] != value) {
-						found = false;
-					}
-				});
-				
-				if (found) {
-					delete vc[i];
-					break;
-				}
+			//delete
+			var cmpIndex = this.getComponentMetaIndex(cmpMeta);
+			if (Ext.isDefined(cmpIndex)) {
+				delete vc[cmpIndex];
 			}
-			
-			var compArr = [];			
+			//correct
+			var compArr = [];
 			for (var i = 0, len = vc.length; i < len; i++) {
 				if (Ext.isDefined(vc[i])) {
 					compArr.push(vc[i]);
@@ -265,14 +288,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			
 			if (compArr.length > 0) {
 				this.viewMeta['i:component'] = compArr;
-				this.componentsNum = compArr.length - 1; 
 			} else {
 				delete this.viewMeta['i:component'];
-				this.componentsNum = 0;
 			}
+			
 		} else {			
 			delete this.viewMeta['i:component'];
-			this.componentsNum = 0;
 		}
 		
 		this.updateViewMetaData();
@@ -316,13 +337,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {String} title The component's title
 	 */
 	,addViewComponent : function(cmpMeta, title) {
-		var mp = afStudio.layoutDesigner.view.MetaDataProcessor,
-			 w = this.createViewComponent(cmpMeta, title, this.componentsNum);
+		var w = this.createViewComponent(cmpMeta, title);
 		
-		this.componentsNum++;
-		
-		var column = 0;
-		
+		var column = 0;		
 		cmpMeta.attributes.column = column;
 		this.addViewComponentMetaData(cmpMeta);
 		
@@ -352,7 +369,10 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo createViewColumn
 	
 	/**
-	 * Creates view's component
+	 * Creates view's component.
+	 * 
+	 * Each component has a custom property:
+	 * <tt>componentMeta</tt> - contains metadata
 	 * 
 	 * @param {Object} cmpMeta The component metadata
 	 * @param {String} title 
@@ -367,8 +387,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			 pTitle = p.pageMeta['i:title'];
 			 
 		var w = new Ext.ux.Portlet({
-			componentMeta: cmpMeta,      //custom property
-			componentPosition: position, //custom property
+			componentMeta: cmpMeta, //custom property
 			frame: true,
 			title: String.format('{0} / {1}', cmpModule, cmpName),			
 			html: String.format('<br /><center>Widget {0} </center><br />', title || pTitle),
@@ -397,13 +416,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {String} module
 	 * @param {Object} cmpMeta
 	 */
-	,previewWidget : function(name, module, cmpMeta) {
-//		console.log('preview widget', name, module, cmpMeta);
-		
-		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;
-		
-//		console.log('widgetUri', widgetUri);
-		
+	,previewWidget : function(name, module, cmpMeta) {		
+		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;		
 		afApp.widgetPopup(widgetUri, widgetUri, null, null, afStudio);		
 	}//eo previewWidget
 	
@@ -436,7 +450,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			       var securityPath = response.meta.securityPath;		
 				   var widgetUri = String.format('{0}/{1}', module, name);
 
-					afStudio.vp.mask({region:'center'});
+					afStudio.vp.mask({region: 'center'});
 					
 					var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
 					widgetDefinition.on('datafetched', function(rootNode, definition){
@@ -477,7 +491,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * Removes component from this view. 
 	 * For detailed information look at {@link Ext.Panel#tools}
 	 */
-	,removeWidget: function(e, tool, panel) {
+	,removeWidget : function(e, tool, panel) {
 		var cmpMeta = panel.componentMeta;
 		this.deleteViewComponentMetaData(cmpMeta);		
 		panel.destroy();
@@ -497,8 +511,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * View <u>close</u> event listener.
 	 * @param {afStudio.layoutDesigner.view.NormalView} view The being closed view
 	 */
-	,onCloseView : function(view) {
-		
+	,onCloseView : function(view) {		
 		this.deleteViewMetaData();
 	}//eo onCloseView
 	
@@ -512,6 +525,106 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		this.updateViewMetaData();
 	}//eo onViewTitleChange
 	
+	/**
+	 * View <u>beforedrop</u> event listener.
+	 * Can be used to cancel <tt>drop</tt> event.
+	 * @param {Object} dropEvent For more details look at {@link Ext.ux.Portal#beforedrop}
+	 */
+	,beforeComponentDrop : Ext.emptyFn
+	
+	/**
+	 * Returns column view metadata 
+	 * @param {Number} columnNumber The column's index
+	 * @return {Object} {component: 'contains column meta components', index: 'components indexes in view meta'} 
+	 */
+	,getColumnMetaData : function(columnNumber) {
+		var clmMeta = {
+			component: [],
+			index: []
+		},
+		cm = this.getViewComponentsMetaData();
+		
+		if (Ext.isArray(cm)) {
+			Ext.iterate(cm, function(item, index, allItems) {
+				if ((item.attributes.column || 0) == columnNumber) {
+					clmMeta.component.push(item);
+					clmMeta.index.push(index);
+				}
+			});
+			
+		} else {
+			if ((cm.attributes.column || 0) == columnNumber) {
+				clmMeta.component.push(cm);
+				clmMeta.index.push(0);
+			}
+		}
+		
+		return clmMeta;
+	}//eo getColumnMetaData
+	
+	//TODO clear method
+	/**
+	 * View <u>drop</u> event listener. 
+	 * @param {Object} dropEvent For more details look at {@link Ext.ux.Portal#beforedrop}
+	 */
+	,dropComponent : function(dropEvent) {
+		var comp = dropEvent.panel,
+			compMeta = comp.componentMeta,
+			pos = dropEvent.position,
+			columnIndex = dropEvent.columnIndex;
+		
+		//update column 
+		compMeta.attributes.column = dropEvent.columnIndex;
+		
+		var columnMeta = this.getColumnMetaData(columnIndex);
+		
+		var cmpIdx = this.getComponentMetaIndex(compMeta, columnMeta.component);
+		
+		if (!Ext.isEmpty(columnMeta.component)) {
+			if (cmpIdx > pos) {
+				//console.log('shift right');
+
+				var iter = cmpIdx - pos;
+				var j = cmpIdx;
+				while (iter) {					
+					columnMeta.component[j] = columnMeta.component[j-1];
+					j--;
+					iter--;
+				}				
+				columnMeta.component[pos] = compMeta;
+				
+//				console.log('component', columnMeta.component);
+				
+				for (var i = 0, len = columnMeta.index.length; i < len; i++) {
+					this.viewMeta['i:component'][ columnMeta.index[i] ] = columnMeta.component[i];
+				}				
+				
+			} else if (cmpIdx < pos) {
+//				console.log('shift left');
+
+				var iter = pos - cmpIdx;
+				var j = cmpIdx;
+				while (iter) {					
+					columnMeta.component[j] = columnMeta.component[j+1];
+					j++;
+					iter--;
+				}				
+				columnMeta.component[pos] = compMeta;
+				
+//				console.log('component', columnMeta.component);
+				
+				for (var i = 0, len = columnMeta.index.length; i < len; i++) {
+					this.viewMeta['i:component'][ columnMeta.index[i] ] = columnMeta.component[i];
+				}
+			}
+		}
+
+		this.updateViewMetaData();
+		
+//		console.log('pos, columnIdx, compMeta', pos, columnIndex, compMeta, dropEvent);
+//		console.log('meta, compPos', this.viewMeta);
+//		console.log('-----------------------------------------------------------------');
+	}//eo dropComponent 
 });
 
 /**

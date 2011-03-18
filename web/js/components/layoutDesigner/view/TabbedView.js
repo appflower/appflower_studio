@@ -188,7 +188,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 	}//eo createTabView
 	
 	/**
-	 * Updates tab's metadata and applies changes to the owner container
+	 * Updates tab's metadata and applies changes to the owner container.
 	 * 
 	 * @param {Object} md The new tab's meta
 	 */
@@ -202,6 +202,11 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 		}));
 	}//eo updateMetaData	
 	
+	/**
+	 * Deletes tab's metadata and applies changes to the owner container.
+	 * 
+	 * @param {Object} md The tab's metadata being deleted
+	 */
 	,deleteViewMetaData : function(md) {
 	 	var container = this.ownerCt; //page		
 	 	
@@ -297,7 +302,6 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 	}//eo onAllTabsWereClosed
 	
 });
-
 
 /**
  * @type 'afStudio.layoutDesigner.view.tabbedView'
