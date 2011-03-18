@@ -1,12 +1,13 @@
 Ext.namespace('afStudio.layoutDesigner.view');
 
 /**
+ * Tabbed page view
  * 
  * @class afStudio.layoutDesigner.view.TabbedView
- * @extends Ext.TabPanel
+ * @extends afStudio.layoutDesigner.view.TabViewPanel
  * @author Nikolai
  */
-afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
+afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.view.TabViewPanel, {
 	
 	/**
 	 * @cfg {Object} viewMeta required
@@ -19,7 +20,10 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	 */
 	viewLayout : 1
 	
-	
+	/**
+	 * Returns view's layout metadata
+	 * @return {Number} 1-9 layout type number
+	 */
 	,getViewLayout : function() {
 		return this.viewMeta.attributes.layout;		
 	}
@@ -32,10 +36,48 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		return this.viewMeta['i:tab'];
 	}
 
+	/**
+	 * Adds <tt>new empty</tt> tab metadata to the end of <tt>i:tab</tt> metadata.
+	 *   
+	 * @return {Number} just added empty tab position
+	 */
+	,addEmptyTabMetaData : function() {
+		var tm = this.getViewTabsMetaData();
+		
+		var newTabIndex; 
+		
+		if (Ext.isArray(tm)) {
+			newTabIndex = this.viewMeta['i:tab'].push({});
+			newTabIndex--;
+		} else {
+			if (Ext.isDefined(tm)) {
+				this.viewMeta['i:tab'] = [tm, {}];
+				newTabIndex = 1;
+			} else {
+			//all tabs were removed/closed 
+				this.viewMeta['i:tab'] = [{}];
+				newTabIndex = 0;
+			}
+		}
+		
+		return newTabIndex;
+	}//eo addEmptyTabMetaData
+	
+	/**
+	 * Returns tab's metadata.
+	 * 
+	 * @param {Number} tabIndex The tab index number inside 'i:tab' metadata collection 
+	 * @return {Object} tab metadata
+	 */
 	,getViewTabMetaData : function(tabIndex) {
 		return this.getViewTabsMetaData()[tabIndex];
 	}
 
+	/**
+	 * Returns components metadata for the specified tab
+	 * @param {Number} tabIndex
+	 * @return {Object} components metadata
+	 */
 	,getViewTabComponentsMetaData : function(tabIndex) {
 		return this.getViewTabMetaData(tabIndex)['i:component'];
 	}	
@@ -58,9 +100,9 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		//area layout attribute
 		config.viewMeta.attributes.layout = 
 			!Ext.isDefined(config.viewMeta.attributes.layout) 
-			? this.viewLayout : config.viewMeta.attributes.layout;		
+				? this.viewLayout : config.viewMeta.attributes.layout;		
 		
-		afStudio.layoutDesigner.view.NormalView.superclass.constructor.call(this, config);
+		afStudio.layoutDesigner.view.TabbedView.superclass.constructor.call(this, config);
 	}//eo constructor
 	
 	/**
@@ -76,7 +118,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		return {
 			activeTab: 0,
 			anchor: '100%',
-			items: viewItems 
+			items: viewItems
 		}
 	}//eo _beforeInitComponent
 	
@@ -98,6 +140,11 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	 */	
 	,_afterInitComponent : function() {
 		var _this = this;
+		
+		_this.on({
+			alltabswereclosed: _this.onAllTabsWereClosed, 
+			scope: _this
+		});
 	}//eo _afterInitComponent
 	
 	/**
@@ -108,7 +155,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	,initView : function() {
 		var _this = this,
 		     tabs = this.getViewTabsMetaData(),			   
-		   layout = [];	   
+		   layout = [];
 		
 		Ext.each(tabs, function(tm, i, allTabs){
 			layout.push(_this.createTabView(tm, i));
@@ -119,6 +166,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 	
 	/**
 	 * Returns newly created view container.
+	 * 
 	 * @param {Object} tabMeta The view metadata
 	 * @param {Number} metaPosition The metadata position 
 	 * @return {afStudio.layoutDesigner.view.NormalView} view
@@ -127,31 +175,126 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(Ext.TabPanel, {
 		var _this = this;
 		var title = tabMeta.attributes.title;
 		
-		tabMeta.attributes.layout = this.getViewTabLayout(tabMeta);		
+		tabMeta.attributes.layout = this.getViewTabLayout(tabMeta);
 		
 		var view = new afStudio.layoutDesigner.view.NormalView({
 			title: title,
 			viewMeta: tabMeta,
-			viewMetaPosition: metaPosition 
+			viewMetaPosition: metaPosition,
+			closable: true
 		});
 		
-		return view;
-		
+		return view;		
 	}//eo createTabView
 	
 	/**
-	 * Updates tab's metadata and applies changes in the owner container
+	 * Updates tab's metadata and applies changes to the owner container
+	 * 
 	 * @param {Object} md The new tab's meta
 	 */
 	,updateMetaData : function(md) {
-	 	var container = this.ownerCt;
+	 	var container = this.ownerCt; //page
 		
 		Ext.apply(this.getViewTabMetaData(md.position), md.meta);
 		
 		container.updateMetaData(Ext.apply(md, {
 			meta: this.viewMeta
 		}));
-	}//eo updateMetaData
+	}//eo updateMetaData	
+	
+	,deleteViewMetaData : function(md) {
+	 	var container = this.ownerCt; //page		
+	 	
+		if (Ext.isArray(this.viewMeta['i:tab'])) {
+			var tv = this.viewMeta['i:tab'];
+			
+			for (var i = 0, len = tv.length; i < len; i++) {
+				var found = true;
+				
+				Ext.iterate(md.meta.attributes, function(key, value) {
+					if (tv[i]['attributes'][key] != value) {
+						found = false;
+					}
+				});
+				
+				if (found) {
+					delete tv[i];
+					break;
+				}
+			}
+			
+			var compArr = [];			
+			for (var i = 0, len = tv.length; i < len; i++) {
+				if (Ext.isDefined(tv[i])) {
+					compArr.push(tv[i]);
+				}
+			}
+			
+			if (compArr.length > 0) {
+				this.viewMeta['i:tab'] = compArr;
+			} else {
+				delete this.viewMeta['i:tab'];
+			}
+			
+		} else {
+			delete this.viewMeta['i:tab'];
+		}
+		
+		container.updateMetaData(Ext.apply(md, {
+			meta: this.viewMeta
+		}));
+	}//eo deleteViewMetaData
+	
+	/**
+	 * Adds new Tab component to this View.
+	 * 
+	 * @param {String} tabTitle The tab's title
+	 */
+	,addTabViewComponent : function(tabTitle) {
+		var _this = this;
+		
+		//empty tab metadata
+		var newTabMeta = {
+			'attributes': {
+				layout: 1,
+				title: tabTitle
+			}
+		};
+		
+		var tabPosition = _this.addEmptyTabMetaData();
+		
+		/**
+		 * @param {@link afStudio.layoutDesigner.DesignerPanel} designPanel
+		 * @context {@link afStudio.layoutDesigner.view.Page}
+		 */
+		function afterTabAdditionCallback(designPanel) {
+			this.refreshPageLayout();				
+			designPanel.layoutView.getContentView().setActiveTab(tabPosition);			
+		}
+		
+		_this.updateMetaData({
+			position: tabPosition,
+			meta: newTabMeta,
+			callback: afterTabAdditionCallback
+		});		
+	}//eo addTabViewComponent
+	
+	/**
+	 * View <u>alltabswereclosed</u> event listener
+	 */
+	,onAllTabsWereClosed : function() {
+		var pageContainer = this.ownerCt;
+		
+		/**
+		 * @param {@link afStudio.layoutDesigner.DesignerPanel} designPanel
+		 * @context {@link afStudio.layoutDesigner.view.Page}
+		 */
+		function afterAllTabsRemovalCallback(designPanel) {
+			this.refreshPageLayout();
+		}		
+		
+		Ext.util.Functions.createDelegate(afterAllTabsRemovalCallback, pageContainer, [pageContainer.designPanel])();
+	}//eo onAllTabsWereClosed
 	
 });
 

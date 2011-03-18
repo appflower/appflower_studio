@@ -12,7 +12,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	/**
 	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
 	 */
-	widgetMetaUrl : 'afsLayoutBuilder/getWidget'	
+	widgetMetaUrl : 'afsLayoutBuilder/getWidget'
 	
 	/**
 	 * @cfg {Object} viewMeta required
@@ -116,8 +116,20 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
+		_this.addEvents(
+			/**
+			 * @event 'viewtitlechange' Fires after view's title was changed
+			 * @param {afStudio.layoutDesigner.view.NormalView} view The view which title was changed
+			 * @param {String} newTitle The new view's title
+			 */
+			'viewtitlechange'
+		);
+		
 		_this.on({
-			afterrender:    _this.initViewComponents,
+			afterrender: 	 _this.initViewComponents,
+			beforeclose: 	 _this.onBeforeCloseView,
+			close:       	 _this.onCloseView,
+			viewtitlechange: _this.onViewTitleChange,
 			scope: _this
 		});		
 				
@@ -133,9 +145,10 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		  clsMeta = this.viewLayoutConfig[this.getViewLayout()],			   
 		   layout = [];	   
 		
-		Ext.each(clsMeta, function(cm, i, allCls){
+		Ext.each(clsMeta, function(cm, i, allCls) {
 			layout.push(_this.createViewColumn(i, cm));
 		});
+		
 		return layout;
 	}//eo initView
 	
@@ -148,14 +161,16 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		 
 		if (!Ext.isEmpty(cmpsMeta)) {
 			
-			if (Ext.isArray(cmpsMeta)) {
+			if (Ext.isArray(cmpsMeta)) {				
 				_this.componentsNum = cmpsMeta.length;
 				
 				Ext.each(cmpsMeta, function(cm, i, allCmps) {
 					var cl = cm.attributes.column || 0,
-						 w = _this.createViewComponent(cm, null, i);						 
+						 w = _this.createViewComponent(cm, null, i);
+						 
 					_this.items.itemAt(cl).add(w);
-				});				
+				});
+				
 			} else {				
 				var cl = cmpsMeta.attributes.column || 0,
 					 w = _this.createViewComponent(cmpsMeta, null, this.componentsNum);					 
@@ -180,6 +195,23 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo updateMetaData	
 	
 	/**
+	 * Deletes view's metadata and triggers changes inside the container.
+	 * Works only with Tabbed views after view was closed
+	 */
+	,deleteViewMetaData : function() {
+		var container = this.ownerCt;
+
+		var metadata = Ext.apply({}, this.viewMeta);
+		
+		delete this.viewMeta;
+		
+		container.deleteViewMetaData({
+			meta: metadata, 
+			position: this.viewMetaPosition
+		});		
+	}//eo deleteViewMetaData
+	
+	/**
 	 * Adds component's metadata to this view
 	 * @param {Object} cmpMeta The component metadata
 	 */
@@ -189,7 +221,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		if (Ext.isArray(vc)) {
 			vc.push(cmpMeta);
 		} else {
-			this.viewMeta['i:component'] = [vc, cmpMeta];
+			if (Ext.isDefined(vc)) { 
+				this.viewMeta['i:component'] = [vc, cmpMeta];	
+			} else {
+			//if undefined - the view is empty
+				this.viewMeta['i:component'] = cmpMeta;
+			}
 		}
 		
 		this.updateViewMetaData();
@@ -206,7 +243,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 
 			for (var i = 0, len = vc.length; i < len; i++) {
 				var found = true;
-
+				
 				Ext.iterate(cmpMeta.attributes, function(key, value) {
 					if (vc[i]['attributes'][key] != value) {
 						found = false;
@@ -250,25 +287,31 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		
 		var vc = this.viewMeta['i:component'];
 		
-		if (Ext.isArray(vc)) {
-			for (var i = 0, len = vc.length; i < len; i++) {
-				if (vc[i]['attributes']['column'] >= newLayout) {
-					vc[i]['attributes']['column'] = newLayout - 1;
+		//if this.viewMeta['i:component'] is undefined means view is empty
+		if (Ext.isDefined(vc)) {
+			
+			if (Ext.isArray(vc)) {
+				for (var i = 0, len = vc.length; i < len; i++) {
+					if (vc[i]['attributes']['column'] >= newLayout) {
+						vc[i]['attributes']['column'] = newLayout - 1;
+					}
 				}
-			}
-		} else {			
-			if (vc['attributes']['column'] >= newLayout) {
-				vc['attributes']['column'] = newLayout - 1;
+			} else {
+				if (vc['attributes']['column'] >= newLayout) {
+					vc['attributes']['column'] = newLayout - 1;
+				}
 			}
 		}
 		
 		this.updateViewMetaData(function() {
+			//"this" inside function = afStudio.layoutDesigner.view.Page
 			this.refreshPageLayout();
 		});
 	}//eo setLayoutMeta
 	
 	/**
-	 * Adds new component into the view
+	 * Adds new component(widget) into the view
+	 * 
 	 * @param {Object} cmpMeta The component's metadata
 	 * @param {String} title The component's title
 	 */
@@ -289,9 +332,11 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo addViewComponent
 	
 	/**
-	 * Creates view column 
-	 * @protected 
-	 * @param {Number} id The column's itemId property
+	 * Creates view column
+	 *  
+	 * @protected
+	 *  
+	 * @param {Number} id The index part of column's itemId property 
 	 * @param {Number} width The column's width
 	 * @return {Object} column configuration
 	 */
@@ -308,6 +353,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	
 	/**
 	 * Creates view's component
+	 * 
 	 * @param {Object} cmpMeta The component metadata
 	 * @param {String} title 
 	 * @param {Number} position
@@ -321,12 +367,13 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			 pTitle = p.pageMeta['i:title'];
 			 
 		var w = new Ext.ux.Portlet({
-			componentMeta: cmpMeta,
-			componentPosition: position,
+			componentMeta: cmpMeta,      //custom property
+			componentPosition: position, //custom property
 			frame: true,
 			title: String.format('{0} / {1}', cmpModule, cmpName),			
 			html: String.format('<br /><center>Widget {0} </center><br />', title || pTitle),
-			tools: [{
+			tools: [
+			{
 				id: 'close', 
 				handler: Ext.util.Functions.createDelegate(_this.removeWidget, _this)
 			}],
@@ -344,12 +391,26 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		return w;
 	}//eo createViewWidget
 	
+	/**
+	 * Shows widget preview
+	 * @param {String} name
+	 * @param {String} module
+	 * @param {Object} cmpMeta
+	 */
 	,previewWidget : function(name, module, cmpMeta) {
-		Ext.Msg.alert('Preview Widget', 'Under developing');
-		//console.log('preview widget', name, module, cmpMeta);
-	}
+//		console.log('preview widget', name, module, cmpMeta);
+		
+		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;
+		
+//		console.log('widgetUri', widgetUri);
+		
+		afApp.widgetPopup(widgetUri, widgetUri, null, null, afStudio);		
+	}//eo previewWidget
 	
 	/**
+	 * Runs WD (Widget Designer) for specified view component.
+	 * 
+	 * //TODO should be optimized
 	 * 
 	 * @param {String} name The widget action name
 	 * @param {String} module The widget module name
@@ -413,14 +474,43 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo editWidget 
 	
 	/**
-	 * Removes component from view
+	 * Removes component from this view. 
 	 * For detailed information look at {@link Ext.Panel#tools}
 	 */
 	,removeWidget: function(e, tool, panel) {
-		var cmpMeta = panel.componentMeta;		
+		var cmpMeta = panel.componentMeta;
 		this.deleteViewComponentMetaData(cmpMeta);		
 		panel.destroy();
 	}//eo removeWidget
+	
+	/**
+	 * View <u>beforeclose</u> event listener.
+	 * 
+	 * @param {afStudio.layoutDesigner.view.NormalView} view The closing view.
+	 * @param {Boolean} <tt>custom</tt> severalTabs optional Signalizes what we are going to close several views.
+	 * @param {Array} <tt>custom</tt> views optional If severalTabs = true, then views contains an array of
+	 * 					{@link afStudio.layoutDesigner.view.NormalView} being closed.   
+	 */
+	,onBeforeCloseView : Ext.emptyFn
+	
+	/**
+	 * View <u>close</u> event listener.
+	 * @param {afStudio.layoutDesigner.view.NormalView} view The being closed view
+	 */
+	,onCloseView : function(view) {
+		
+		this.deleteViewMetaData();
+	}//eo onCloseView
+	
+	/**
+	 * View <u>viewtitlechange</u> event listener.
+	 * @param {afStudio.layoutDesigner.view.NormalView} view The view which title was changed
+	 * @param {String} newTitle The new view's title
+	 */
+	,onViewTitleChange : function(view, newTitle) {
+		this.viewMeta.attributes.title = newTitle;
+		this.updateViewMetaData();
+	}//eo onViewTitleChange
 	
 });
 

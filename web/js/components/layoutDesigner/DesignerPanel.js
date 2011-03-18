@@ -1,7 +1,5 @@
 Ext.namespace('afStudio.layoutDesigner');
 
-//TODO should be cleaned & rewritten
-
 /**
  * @class afStudio.layoutDesigner.DesignerPanel
  * @extends Ext.Panel
@@ -23,29 +21,37 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * @cfg {String} layoutPage required
 	 * Opened in LD page belongs to {@link #layoutApp} application 
-	 */	
+	 */
 	
 	/**
 	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
 	 */
-	widgetMetaUrl : 'afsLayoutBuilder/getWidget'	
-
+	widgetMetaUrl : 'afsLayoutBuilder/getWidget'
 
 	/**
 	 * @cfg {String} saveLayoutUrl (defaults to 'afsLayoutBuilder/save')
 	 */
 	,saveLayoutUrl : 'afsLayoutBuilder/save'	
 	
-	
 	/**
 	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
 	 */
 	
 	/**
-	 * @property {afStudio.layoutDesigner.view.Page} layoutView
-	 * Layout page view
+	 * @property {Ext.Window} tabNamePickerWindow
 	 */
 	
+	/**
+	 * @property {afStudio.layoutDesigner.view.Page} layoutView
+	 * Layout page view
+	 */	
+	
+	/**
+	 * @property {Window} pagePreviewWindow (defaults to null)
+	 * Stores reference to open page preview window 
+	 */
+	,pagePreviewWindow : null
+
 	/**
 	 * Runs action 
 	 * 
@@ -57,7 +63,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 *   {String} loadingMessage optional
 	 *   {Object} scope
 	 */
-	,executeAction : function(action) {		
+	,executeAction : function(action) {
 		afStudio.vp.mask({
 			msg: action.loadingMessage 
 				 ? action.loadingMessage 
@@ -148,13 +154,16 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}//eo updateDesignerPanelControls	
 	
 	/**
-	 * Updates designer with specified view.   
+	 * Updates designer with specified view.
+	 * Removes previous page from designer.
+	 * 
 	 * @param {afStudio.layoutDesigner.view.Page} view The new view 
 	 */
 	,updateLayoutView : function(view) {
 		this.removeAll(true);
 		this.layoutView = this.add(view);
-		this.doLayout();		
+		this.doLayout();
+		this.updateDesignerPanelControls();
 	}//eo updateLayoutView
 	
 	/**
@@ -185,7 +194,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 					{
 						text: 'Type',
 						itemId: 'typeItem',
-						menu: {							
+						menu: {
 							defaults: {
 								xtype: 'menucheckitem',								
 								group: 'layoutType'
@@ -220,15 +229,17 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 								]
 							}]
 						}
-					},{
-						text: 'Re-size',
-						handler: _this.resizeItems, 
-						scope: _this
-					},{
-						text: 'Auto-Adjust', 
-						handler: _this.autoAdjust, 
-						scope: _this
-					},{
+					}
+//					,{ Will be imlemented in future release
+//						text: 'Re-size',
+//						handler: _this.resizeItems, 
+//						scope: _this
+//					},{
+//						text: 'Auto-Adjust', 
+//						handler: _this.autoAdjust, 
+//						scope: _this
+//					}
+					,{
 						itemId: 'addNewTab',
 						text: 'Add new Tab' 
 					}]
@@ -262,7 +273,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		);				
 		afStudio.layoutDesigner.DesignerPanel.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	/**
 	 * Initializes events & does post configuration
@@ -299,6 +310,11 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			scope: _this
 		});
 		
+		_this.getFormatMenuItem('addNewTab').on({
+			click: _this.onClickAddNewPagesTab,
+			scope: _this
+		});		
+		
 		_this.on('afterrender', _this.initDesignerPanel, _this);
 	}//eo _afterInitComponent
 	
@@ -311,9 +327,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}	
 	
 	/**
-	 * 
-	 * @param {} item The selected menu item
-	 * @param {} e The event object
+	 * Switches page type - normal/tabbed
+	 * layoutItem <u>itemclick</u> event listener
+	 * @param {Ext.menu.BaseItem} item The selected menu item
+	 * @param {Ext.EventObject} e The event object
 	 */
 	,onLayoutTypeChanged : function(item, e) {		
 		var _this = this,
@@ -356,13 +373,35 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	}//onSelectDesignerColumnsNumber
 	
 	/**
+	 * Add New Tab button <u>click</u> event listener
+	 * Opens/Creates tab name picker window
+	 */
+	,onClickAddNewPagesTab : function() {
+		if (!this.tabNamePickerWindow) {
+			this.tabNamePickerWindow = new afStudio.layoutDesigner.TabNamePickerWindow();			
+			this.tabNamePickerWindow.on('tabnamepicked', this.onAddNewPagesTab, this);
+		}
+		this.tabNamePickerWindow.show();
+	}//eo onAddNewPagesTab
+	
+	/**
+	 * Creates and adds new tab to the page
+	 * @param {String} tabTitle The tab title
+	 */
+	,onAddNewPagesTab : function(tabTitle) {		
+		var tabPanel = this.layoutView.getContentView();
+		
+		tabPanel.addTabViewComponent(tabTitle);		
+	}//eo onAddNewPagesTab 
+	
+	/**
 	 * New Widget button <u>click</u> event listener
 	 * Creates widget selector window if it is not exist or show it otherwise.
 	 * Widget selector window helps to select new widget to be added listing all modules and their widgets
 	 */
 	,onClickNewWidget : function() {		
 		if (!this.widgetSelectorWindow) {
-			this.widgetSelectorWindow = new afStudio.layoutDesigner.WidgetSelectorWindow();			
+			this.widgetSelectorWindow = new afStudio.layoutDesigner.WidgetSelectorTreeWindow();			
 			this.widgetSelectorWindow.on('widgetselect', this.onAddWidget, this);
 		}
 		this.widgetSelectorWindow.show();		
@@ -420,11 +459,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Shows the page opened inside layout designer
 	 */
 	,onPreviewPage : function() {		
-		var p = this.layoutPage;
+		var p = this.layoutPage,
+			pageName = p.substring(0, p.lastIndexOf('.xml'));
 		
-		var name = p.substring(0, p.lastIndexOf('.xml'));
-		
-		window.open('/pages/' + name, 'ldPagePreview');		
+		this.pagePreviewWindow = window.open('/#/pages/' + pageName, 'layoutDesignerPagePreview');		
 	}//eo onPreviewPage
 	
 	/**

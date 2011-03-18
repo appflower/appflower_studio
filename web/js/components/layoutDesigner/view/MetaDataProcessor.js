@@ -20,9 +20,14 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		}//eo isViewTabbed
 		
 		/**
-		 * Returns <u>content</u> view's metadata and its position
+		 * Returns <u>content</u> view's metadata and its position.
+		 * 
 		 * @param {Object} page metadata
 		 * @return {Object} content view's coordinates
+		 * {
+		 *    contentView: "content" view metadata,
+		 *    contentIdx: metadata position / undefined
+		 * }
 		 */
 		,getContentViewMeta : function(pm) {
 			var cm,   //view metadata
@@ -47,11 +52,17 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		}//eo getContentViewMeta
 		
 		/**
+		 * Switches (transforms page metadata) to specified <u>content</u> type (norma/tabbed).
+		 * Returns new built page metadata according to specified page type.
 		 * 
+		 * @param {String} type The result page's metadata type normal or tabbed
+		 * @param {Object} pm The page's metadata being transformed
 		 */
 		,changeContentViewMetaData : function(type, pm) {
 			var vo = this.getContentViewMeta(pm),
+			
 				viewTabbed = this.isViewTabbed(vo.contentView),
+				
 				cmps = viewTabbed ? this.getTabbedViewComponents(vo.contentView['i:tab']) 
 								  : this.getNormalViewComponents(vo.contentView['i:component']);
 								  
@@ -60,13 +71,18 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			if (type == 'tabbed') {
 				var tabAttr = Ext.apply({title: pm['i:title']}, vo.contentView.attributes);				
 				delete tabAttr.type;
+				
 				meta = {
 					'attributes': vo.contentView.attributes,
 					'i:tab': {
-						'attributes': tabAttr,
-						'i:component': Ext.flatten(cmps)
+						'attributes': tabAttr
 					}
 				}
+				//if there are components add them 
+				if (!Ext.isEmpty(Ext.flatten(cmps))) {
+					meta['i:tab']['i:component'] = Ext.flatten(cmps);
+				}
+				
 			} else {
 				var viewAttr = Ext.apply({}, vo.contentView.attributes);				
 				viewAttr.layout = (viewAttr.layout > cmps.maxLayout) 

@@ -72,6 +72,7 @@ class afStudioLayoutCommandHelper
 					$children['children'][] = array(
                         'app' => $name,
                         'module' => $module,
+					    'widget' => str_replace('.xml', '', $xmlName),
                         'widgetUri' => $module.'/'.str_replace('.xml', '', $xmlName),
                         'type' => 'xml',
                         'text' => $xmlName,

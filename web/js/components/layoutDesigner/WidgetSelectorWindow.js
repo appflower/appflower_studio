@@ -55,7 +55,7 @@ afStudio.layoutDesigner.WidgetSelectorWindow = Ext.extend(Ext.Window, {
 	 */
 	,loadModules : function() {
 		this.modulesCombo.getStore().load();
-	}
+	}//eo loadModules
 	
 	/**
 	 * Loads module's widgets
@@ -77,7 +77,7 @@ afStudio.layoutDesigner.WidgetSelectorWindow = Ext.extend(Ext.Window, {
 				wc.enable();
 			}
 		});
-	}
+	}//eo onModuleSelect
 	
 	/**
 	 * This <u>show</u> event listener
@@ -90,7 +90,7 @@ afStudio.layoutDesigner.WidgetSelectorWindow = Ext.extend(Ext.Window, {
 		f.getForm().reset();
 		_this.widgetsCombo.disable();
 		_this.loadModules();
-	}//modulesCombo	
+	}//eo onWidgetSelectorShow	
 	
 	/**
 	 * Initializes component
@@ -177,7 +177,6 @@ afStudio.layoutDesigner.WidgetSelectorWindow = Ext.extend(Ext.Window, {
 				handler: _this.closeWidgetSelectorWindow, 
 				scope: _this
 			}]
-			//buttonAlign: 'center'
 		}
 	}//eo _beforeInitComponent
 	
