@@ -17,12 +17,17 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 			listeners: {
 				//when node is clicked, path is stored in hidden field and displayed
 				click: function(node) {
-					var path = this.getPath(node);
+					var nextPath = currentPath = this.getPath(node).slice(4);
+					var projectNameField = _self.form.form.items.items[0];
 					var pathDisplayField = _self.form.form.items.items[1];
-					var pathField = _self.form.form.items.items[2];
-					
-					pathDisplayField.setValue('<small>'+path.slice(4)+'</small>');
-					pathField.setValue(path.slice(4));
+					var pathField = _self.form.form.items.items[2];					
+					var slug = afStudio.createSlug(projectNameField.getValue());
+
+					if(slug!='')
+					var nextPath = currentPath+'/'+slug;
+						
+					pathDisplayField.setValue('<small>'+nextPath+'</small>');
+					pathField.setValue(nextPath);
             	},
             	//this expands the nodes starting with root, until open dir node is the one the project sits in, also ensure scroll and selection for dir node
 				expandnode: function(node) {
@@ -54,7 +59,21 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 			border: false,
 			bodyBorder: false,
 			items: [
-				{xtype:'textfield', fieldLabel: 'Project name', anchor: '96%', name: 'name', allowBlank: false},
+				{xtype:'textfield', enableKeyEvents:true, fieldLabel: 'Project name', anchor: '96%', name: 'name', allowBlank: false, vtype: 'uniqueNode', listeners: {
+					keyup: function(field,e) {	
+						var slug = afStudio.createSlug(field.getValue());
+						var pathDisplayField = _self.form.form.items.items[1];
+						var pathField = _self.form.form.items.items[2];
+						var nextPath = currentPath = _self.getSelectedNodePath().slice(4);
+												
+						if(slug!='')
+						nextPath = currentPath+'/'+slug;
+						
+						pathDisplayField.setValue('<small>'+nextPath+'</small>');
+						pathField.setValue(nextPath);						
+					}					
+				}
+				},
 				{xtype:'label', html: 'Path to Project:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},							
 				{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small>'},
 				_self.tree,
@@ -143,5 +162,38 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 		        }
 		    });
 		}
+	},
+	
+	getSelectedNodePath: function()
+	{
+		var node = this.tree.getSelectionModel().getSelectedNode(), path = false;	
+		
+		if(node)
+		{	
+			path = this.tree.getPath(node);
+		}
+		
+		return path;
 	}
+});
+
+Ext.apply(Ext.form.VTypes, {
+    uniqueNode : function(value, field) {
+    	var tree = field.ownerCt.ownerCt.tree;
+    	var currentNode = tree.getSelectionModel().getSelectedNode();
+    	var slug = afStudio.createSlug(value);
+        if(currentNode.childNodes)
+		{
+			for(var i=0;i<currentNode.childNodes.length;i++)
+			{
+				if(!currentNode.childNodes[i].isLeaf()&&currentNode.childNodes[i].text == slug)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+    },
+ 
+    uniqueNodeText : 'Path to Project already exist! Please choose another Project Name!'
 });
