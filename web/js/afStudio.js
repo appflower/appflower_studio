@@ -171,5 +171,21 @@ var afStudio = function () {
                 return components[0];
             }
         }
+        //user to create a slug from some content
+        ,createSlug: function(slugcontent)
+        {
+		    // convert to lowercase (important: since on next step special chars are defined in lowercase only)
+		    slugcontent = slugcontent.toLowerCase();
+		    // convert special chars
+		    var   accents={a:/\u00e1/g,e:/u00e9/g,i:/\u00ed/g,o:/\u00f3/g,u:/\u00fa/g,n:/\u00f1/g}
+		    for (var i in accents) slugcontent = slugcontent.replace(accents[i],i);
+		
+			var slugcontent_hyphens = slugcontent.replace(/\s/g,'-');
+			var finishedslug = slugcontent_hyphens.replace(/[^a-zA-Z0-9\-\_]/g,'');
+		    finishedslug = finishedslug.toLowerCase();
+		    finishedslug = finishedslug.replace(/-+/g,'-');
+			finishedslug = finishedslug.replace(/(^-)|(-$)/g,'');
+		    return finishedslug;
+        }
 	}
 }();
