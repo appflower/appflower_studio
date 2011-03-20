@@ -57,8 +57,6 @@ class afsLayoutBuilderActions extends sfActions
         
         $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
         
-        $aResponse = array_merge($aResponse, array('temp' => tempnam(sys_get_temp_dir(), 'studio_la_lb'), 'temp_path' => sys_get_temp_dir(), 'is_writable' => is_writable(sys_get_temp_dir())));
-        
         return $this->renderJson($aResponse);
     }
     
@@ -76,9 +74,10 @@ class afsLayoutBuilderActions extends sfActions
         
         $afCU = new afConfigUtils($aParameters['module']);
         $aResponse['meta'] = array(
-            'actionPath' => $afCU->getActionFilePath('actions.class.php'),
-            'xmlPath' => $afCU->getConfigFilePath("{$aParameters['action']}.xml"),
-            'securityPath' => $afCU->getConfigFilePath("security.yml")
+            'actionPath'   => $afCU->getActionFilePath('actions.class.php'),
+            'xmlPath'      => $afCU->getConfigFilePath("{$aParameters['action']}.xml"),
+            'securityPath' => $afCU->getConfigFilePath("security.yml"),
+        	"widgetUri"    => "{$aParameters['module']}/{$aParameters['action']}"
         );
         
         return $this->renderJson($aResponse);
@@ -94,4 +93,53 @@ class afsLayoutBuilderActions extends sfActions
         return $this->renderJson($aResponse);
     }
     
+    /**
+     * Create new page functionality
+     */
+    public function executeNew(sfWebRequest $request)
+    {
+        $aParameters = array(
+            'app' => $request->getParameter('app', 'frontend'),
+            'page' => $request->getParameter('page'),
+            'title' => $request->getParameter('title', $request->getParameter('page')),
+            'is_new' => true
+        );
+        
+        $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
+        
+        return $this->renderJson($aResponse);
+    }
+    
+    /**
+     * Rename Page 
+     */
+    public function executeRename(sfWebRequest $request)
+    {
+        $aParameters = array(
+            'app'   => $request->getParameter('app', 'frontend'),
+            'page'  => $request->getParameter('page'),
+            'name'  => $request->getParameter('name')
+        );
+        
+        $aResponse = afStudioCommand::process('layout', 'rename', $aParameters);
+        
+        return $this->renderJson($aResponse);
+    }
+    
+    /**
+     * Delete Page functionality
+     */
+    public function executeDelete(sfWebRequest $request)
+    {
+        $aParameters = array(
+            'app'   => $request->getParameter('app', 'frontend'),
+            'page'  => $request->getParameter('page')
+        );
+        
+        $aResponse = afStudioCommand::process('layout', 'delete', $aParameters);
+        
+        return $this->renderJson($aResponse);
+    }
+    
 }
+

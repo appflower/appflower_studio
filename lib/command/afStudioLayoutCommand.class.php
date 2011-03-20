@@ -16,7 +16,29 @@ class afStudioLayoutCommand extends afBaseStudioCommand
      * Message for information, for example validation error message
      */
     private $message;
-     
+    
+    /**
+     * Page serialization options 
+     */
+    private $page_serialize_options = array(
+        'rootName' => 'i:view',
+        'attributesArray' => 'attributes',
+        'indent' => '    ',
+        'mode' => 'simplexml',
+        'addDecl' => true,
+        'encoding' => 'UTF-8'
+    );
+    
+    /**
+     * Page unserialization options
+     */
+    private $page_unserialize_options = array(
+        'parseAttributes' => true,
+        'attributesArray' => 'attributes',
+        'mode' => 'simplexml',
+        'complexType' => 'array'
+    );
+    
     /**
      * Getting tree list controller
      */
@@ -41,14 +63,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sPath = "{$root_dir}/apps/{$this->getParameter('app')}/config/pages/{$this->getParameter('page')}";
         
         if (file_exists($sPath)) {
-            $options = array(
-                'parseAttributes' => true,
-                'attributesArray' => 'attributes',
-                'mode' => 'simplexml',
-                'complexType' => 'array'
-            );
-    
-            $unserializer = new XML_Unserializer($options);
+            $unserializer = new XML_Unserializer($this->page_unserialize_options);
             $status = $unserializer->unserialize($sPath, true);
     
             if ($status) {
@@ -74,23 +89,19 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sApplication = $this->getParameter('app');
         $aDefinition = $this->getParameter('definition');
         
+        $bNew = $this->getParameter('is_new');
+        
+        if ($bNew) {
+            $aDefinition = $this->getNewDefitinition($this->getParameter('title'));
+        }
+        
         $root_dir = sfConfig::get('sf_root_dir');
-        $sPath = "{$root_dir}/apps/{$this->getParameter('app')}/config/pages/{$this->getParameter('page')}";
+        $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
         
         // Needs to define/initialize xml serialize constants
         $oXmlUtil = new XML_Util;
         
-        // Defining options for Serializing
-        $aOptions = array(
-            'rootName' => 'i:view',
-            'attributesArray' => 'attributes',
-            'indent' => '    ',
-            'mode' => 'simplexml',
-            'addDecl' => true,
-            'encoding' => 'UTF-8'
-        );
-        
-        $serializer = new XML_Serializer($aOptions);
+        $serializer = new XML_Serializer($this->page_serialize_options);
         $status = $serializer->serialize($aDefinition);
         
         if ($status) {
@@ -98,17 +109,14 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             
             $this->definition = $serializer->getSerializedData();
             
-            $afConsole = afStudioConsole::getInstance();
-            $consoleResult = $afConsole->execute('sf appflower:validate-cache frontend cache yes');
-            
             if ($this->validate()) {
                 // Save changes
                 file_put_contents($sPath, $this->definition);
                 
-                $return = $this->fetchSuccess('Page has been changed');
+                $message = (!$bNew) ? 'Page has been changed' : 'Page has been created';
+                $return = $this->fetchSuccess($message);
                 
-                $afConsole = afStudioConsole::getInstance();
-                $consoleResult = $afConsole->execute('sf appflower:validate-cache frontend cache yes');
+                afStudioConsole::getInstance()->execute('sf appflower:validator-cache frontend cache yes');
             } else {
                 // Getting error message from validation results, from $this->message
                 $return = $this->fetchError($this->message);
@@ -133,14 +141,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sPath = $afCU->getConfigFilePath("{$sAction}.xml");
         
         if (file_exists($sPath)) {
-            $options = array(
-                'parseAttributes' => true,
-                'attributesArray' => 'attributes',
-                'mode' => 'simplexml',
-                'complexType' => 'array'
-            );
-    
-            $unserializer = new XML_Unserializer($options);
+            $unserializer = new XML_Unserializer($this->page_unserialize_options);
             $status = $unserializer->unserialize($sPath, true);
     
             if ($status) {
@@ -179,6 +180,93 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         }        
         
         $this->result = $aData;
+    }
+    
+    /**
+     * Rename page processing
+     */
+    protected function processRename()
+    {
+        $sApplication = $this->getParameter('app');
+        $sPage = $this->getParameter('page');
+        $sName = $this->getParameter('name');
+        
+        $root_dir = sfConfig::get('sf_root_dir');
+        $sPagesPath = "{$root_dir}/apps/{$sApplication}/config/pages/";
+        
+        $sPath = $sPagesPath . $sPage;
+        
+        if (file_exists($sPath)) {
+            if (!file_exists($sPagesPath . $sName)) {
+                
+                $bRenamed = rename($sPath, $sPagesPath . $sName);
+                if ($bRenamed) {
+                    $return = $this->fetchSuccess("Page has successfully renamed");
+                } else {
+                    $return = $this->fetchError("Some probmlems appear when rename processing");
+                }
+            } else {
+                $return = $this->fetchError("Page with new name already exists");
+            }
+        } else {
+            $return = $this->fetchError("Page doesn't exists");
+        }
+        
+        $this->result = $return;
+        
+    }
+    
+    /**
+     * Rename page processing
+     */
+    protected function processDelete()
+    {
+        $sApplication = $this->getParameter('app');
+        $sPage = $this->getParameter('page');
+        
+        $root_dir = sfConfig::get('sf_root_dir');
+        $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
+        
+        if (file_exists($sPath)) {
+            $bDeleted = unlink($sPath);
+            if ($bDeleted) {
+                $return = $this->fetchSuccess("Page has successfully deleted");
+            } else {
+                $return = $this->fetchError("Some probmlems appear when delete processing");
+            }
+        } else {
+            $return = $this->fetchError("Page doesn't exists");
+        }
+        
+        $this->result = $return;
+        
+    }
+    
+    /**
+     * Getting definition array for new page
+     * 
+     * @param string $title - Page title
+     * @return array - definition array
+     */
+    private function getNewDefitinition($title)
+    {
+        $aDefinition = array(
+            'attributes' => array(
+                'type' => 'layout',
+                'xmlns:i' => 'http://www.appflower.com/schema/',
+                'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation' => 'http://www.appflower.com/schema/appflower.xsd'
+            ),
+            'i:title' => $title,
+            'i:area'  => array(
+                'attributes' => array(
+                    'layout' => 1, 
+                    'type'   => 'content'
+                )
+            )
+        );
+        
+        return $aDefinition;
     }
     
 	/**
@@ -256,6 +344,9 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_la_lb').'.xml';
         
         file_put_contents($tempPath, $this->definition);
+        
+        // Needs to validator clear cache
+        afStudioConsole::getInstance()->execute('sf appflower:validator-cache frontend cache yes');
 
         $validator = new XmlValidator(null, false, true);
         $validator->readXmlDocument($tempPath, true);
