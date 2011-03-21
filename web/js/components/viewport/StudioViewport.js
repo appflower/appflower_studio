@@ -38,7 +38,11 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 				]
 			}],
 			bodyStyle: 'background-image: url(/appFlowerStudioPlugin/images/bg/backgrond_3.6.2.jpg);background-position: 50% 50%;background-repeat: no-repeat;',
-			style: "padding-right:5px;"
+			style: "padding-right:5px;",
+			//Disable Drag&Drop functionality
+		    initEvents: function() {
+		        Ext.ux.Portal.superclass.initEvents.call(this);		        
+		    }			
 		});
 		
 		var  westPanel = new afStudio.viewport.WestPanel(),
