@@ -17,6 +17,17 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 */
 	,layoutMetaUrl : '/afsLayoutBuilder/get'
 
+    /**
+     * @cfg {Object} leafNodeCfg
+     * Default leaf node configuration object.
+     */
+    ,leafNodeCfg : {
+    	text: 'NewPage',
+    	iconCls: 'icon-layout',
+    	type: 'page',    	
+    	leaf: true
+    }
+	
 	/**
 	 * @property {Ext.menu.Menu} appContextMenu
 	 * "Application" node type context menu  
@@ -31,6 +42,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         listeners: {
             itemclick: function(item) {
             	var node = item.parentMenu.contextNode;
+            	var tree = node.getOwnerTree();
+            	tree.addLeafNode(node);
             }
         }
 	})//eo appContextMenu	
@@ -57,26 +70,30 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         listeners: {
             itemclick: function(item) {
             	var node = item.parentMenu.contextNode;
+            	
                 switch (item.itemId) {
                     case 'delete-model':
+                    
                 	break;
                 	
                     case 'edit-model':
+                    
                     break;
                     
                     case 'rename-model':
+                    
                     break;	                        
                 }
             }
         }
-	})//eo contextMenu	
+	})//eo pageContextMenu
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {		
+	,_beforeInitComponent : function() {
 		var treeLoader = new Ext.tree.TreeLoader({
 			url: this.baseUrl,
 			baseParams: {
@@ -93,7 +110,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				'->',
 				{
 					text: 'Add Page',
-					iconCls: 'icon-pages-add'
+					iconCls: 'icon-pages-add',
+					disabled: true
 				}]
 			}
 		};		
@@ -108,7 +126,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);				
 		afStudio.navigation.LayoutItem.superclass.initComponent.apply(this, arguments);
-	}//eo initComponent	
+	}//eo initComponent
 	
 	/**
 	 * Loads layout designer for the specified layoutNode 
@@ -131,11 +149,14 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			   afStudio.vp.unmask();
 			   var response = Ext.decode(xhr.responseText);
 			   if (response.success) {
-				   afStudio.vp.addToPortal(new afStudio.layoutDesigner.DesignerPanel({
-				       	layoutMeta: response.content,
-				       	layoutApp: app,
-				       	layoutPage: page
-				   }), true);			   	
+				   afStudio.vp.addToPortal(
+				      new afStudio.layoutDesigner.DesignerPanel({
+				       		layoutMeta: response.content,
+				       		layoutApp: app,
+				       		layoutPage: page				   
+				      }), 
+				   	  true
+				   );			   	
 			   } else {
 			   	   Ext.Msg.alert('Error', response.content);
 			   }
@@ -148,11 +169,12 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo loadLayout
 	
 	/**
-	 * Fires when a node is double clicked
+	 * Fires when a node is double clicked.
+	 * @override
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */
-	,onNodeDblClick : function(node, e) {			
+	,onNodeDblClick : function(node, e) {
         if (this.getNodeAttribute(node, 'type') == 'page') {
         	this.loadLayout(node);        	
         }				
@@ -160,6 +182,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	
 	/**
 	 * Fires when a node is right clicked.
+	 * @override
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */
@@ -181,6 +204,19 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         }
 	}//eo onItemContextMenu
 	
+	/**
+	 * @override 
+	 */
+	,isValidNodeName : function(node, name) {
+		return /^[^\d]\w*$/im.test(name) ? true : false;		
+	}//eo isValidNodeName
+	
+	/**
+	 * @override
+	 */
+	,addNodeController : function(node) {
+		//console.log('add node', node);
+	}//eo addNodeController
 });
 
 /**

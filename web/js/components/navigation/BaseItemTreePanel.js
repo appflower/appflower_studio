@@ -6,7 +6,7 @@ afStudio.navigation.BaseTreeEditor = Ext.extend(Ext.tree.TreeEditor, {
 });
 
 /**
- * BaseItemTreePanel the base navigation tree item 
+ * BaseItemTreePanel the base navigation tree item class. 
  * 
  * @class afStudio.navigation.BaseItemTreePanel
  * @extends Ext.tree.TreePanel
@@ -21,13 +21,25 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * @cfg {Boolean} animate (defaults to true)
 	 */
-    animate : true 
+    animate : true
 
     /**
      * @cfg {Boolean} autoScroll (defaults to true)   
      */
     ,autoScroll : true
-	
+    
+    /**
+     * @cfg {Object} leafNodeCfg (defaults to empty object)
+     * Default leaf node configuration object.
+     */
+    ,leafNodeCfg : {}
+
+    /**
+     * @cfg {Object} branchNodeCfg (defaults to empty object)
+     * Default branch node configuration object.
+     */
+    ,branchNodeCfg : {}
+    
     /**
      * Returns node's attribute
      * @param {Ext.tree.TreeNode} node required
@@ -36,9 +48,8 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
      * @return attribute / null
      */
     ,getNodeAttribute : function(node, attribute, defaultValue) {
-    	return node.attributes[attribute]
-    				? node.attributes[attribute] 
-    				: (defaultValue ? defaultValue : null);
+    	return node.attributes[attribute] ? node.attributes[attribute] 
+    			  : (defaultValue ? defaultValue : null);
     }//eo getNodeAttribute
     
     /**
@@ -78,7 +89,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			tools: [
 			{
 				id: 'refresh', 
-				handler: _this.loadItem, 
+				handler: _this.loadRootItem, 
 				scope: this
 			}]			
 		});
@@ -90,8 +101,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * Ext Template method
 	 * @private
 	 */
-	,initComponent : function() {
-		
+	,initComponent : function() {		
 		//activate treeEditor
 		this.treeEditor = new afStudio.navigation.BaseTreeEditor(this, {
 			cancelOnEsc: true,
@@ -104,6 +114,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
 	 * Ext Template method
+	 * Initializes events.
 	 * @private
 	 */
 	,initEvents : function() {
@@ -111,7 +122,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		var _this = this;
 	 
-		//Loader Events
+		//Loader
 		_this.loader.on({
 			 beforeload: function(loader,node,clb) {
 			 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
@@ -124,26 +135,47 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			 }
 		});
 		
-		//TreeEditor events
+		//TreeEditor
 		_this.treeEditor.on({
 			beforecomplete: _this.onEditorBeforeComplete,
 			complete: 		_this.onEditorComplete,
 			canceledit: 	_this.onEditorCancelEdit,
+			
 			scope: _this
 		});
 		
-		//Tree events
+		//Tree
 		_this.on({
-			contextmenu: _this.onNodeContextMenu,			
-			dblclick: _this.onNodeDblClick,			
+			contextmenu: _this.onNodeContextMenu,
+			click: _this.onNodeClick,
+			dblclick: _this.onNodeDblClick,
+			
 			scope: _this
 	    });
-	}//eo initEvents	
+	}//eo initEvents
+	
+	/**
+	 * Loads this tree.
+	 */
+	,loadRootItem : function() {
+		this.loader.load(this.root);		
+	}//eo loadItem
+	
+	/**
+	 * Abstract method called when tree's item was clicked.
+	 * afStudio.navigation.BaseItemTreePanel <u>click</u> event listener 
+	 * @protected
+	 * 
+	 * @param {Ext.data.Node} node The node
+	 * @param {Ext.EventObject} e The event object 
+	 */
+	,onNodeClick : Ext.emptyFn
 	
 	/**
 	 * Abstract method called when tree's item was double clicked.
-	 * <u>dblclick</u> event listener
+	 * afStudio.navigation.BaseItemTreePanel <u>dblclick</u> event listener
 	 * @protected
+	 * 
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e The event object
 	 */
@@ -151,7 +183,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
 	 * Abstract method called when tree's item contextmenu event was fired.
-	 * <u>contextmenu</u> event listener
+	 * afStudio.navigation.BaseItemTreePanel <u>contextmenu</u> event listener
 	 * For moere detailed information look at {@link Ext.tree.TreePanel#contextmenu} 
 	 * @protected
 	 *  
@@ -161,16 +193,146 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,onNodeContextMenu : Ext.emptyFn
 	
 	/**
-	 * Loads item
+	 * This method has no default implementation and returns true, so you must provide an
+     * implementation that does something to validate the node's name(text attribute)
+     * and returns true if <tt>name</tt> is valid.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} node The node whose text attribute is validated
+	 * @param {Mixed} name The node's text attribute to validate
+	 * @return {Boolean} true if name is valid otherwise false.
 	 */
-	,loadItem : function() {
-		this.loader.load(this.root);		
-	}//eo loadItem
+	,isValidNodeName : function(node, name) {
+		return true;
+	}//eo isValidNodeName 
 	
-	,onEditorBeforeComplete : Ext.emptyFn
+	/**
+	 * Fires after a change has been made to the field, but before the change is reflected in the underlying field.
+	 * BaseTreeEditor <u>beforecomplete</u> event listener.
+	 * For more details look at {@link Ext.tree.TreeEditor#beforecomplete} event.
+	 * By default this method uses {@link #isValidNodeName} function to check if <tt>newValue</tt> is valid for a node name. 
+	 * @protected
+	 * 
+	 * @param {Editor} editor
+	 * @param {Mixed} newValue The current field value
+	 * @param {Mixed} oldValue The original field value
+	 * @return {Boolean}
+	 */
+	,onEditorBeforeComplete : function(editor, newValue, oldValue) {
+		var node = editor.editNode;	
+		
+		//validates model
+		if (!this.isValidNodeName(node, newValue)) {			
+			return false;
+		}
+	}//eo onEditorBeforeComplete
 	
-	,onEditorComplete : Ext.emptyFn
+	/**
+	 * Fires after editing is complete and any changed value has been written to the underlying field.
+	 * BaseTreeEditor <u>complete</u> event listener.
+	 * @protected
+	 * 
+	 * @param {Editor} editor
+	 * @param {Mixed} value The current field value
+	 * @param {Mixed} startValue The original field value
+	 */
+	,onEditorComplete : function(editor, value, startValue) {
+		var node = editor.editNode;		
+		
+		//add
+		if (this.getNodeAttribute(node, 'NEW_NODE')) {
+			node.setText(value);			
+			this.addNodeController(node);
+		//rename	
+		} else {
+			if (value != startValue) {
+				this.renameNodeController(node, value, startValue);
+			}
+		}
+	}//eo onEditorComplete 
 	
-	,onEditorCancelEdit : Ext.emptyFn	
+	/**
+	 * Fires after editing has been canceled and the editor's value has been reset.
+	 * BaseTreeEditor <u>canceledit</u> event listener.
+	 * For more details look at {@link Ext.tree.TreePanel#canceledit} event.
+	 * @protected
+	 * 
+	 * @param {Editor} editor
+	 * @param {Mixed} value The user-entered field value that was discarded
+	 * @param {Mixed} startValue The original field value that was set back into the editor after cancel
+	 */
+	,onEditorCancelEdit : function (editor, value, startValue) {
+		var node = editor.editNode;
+		
+		if (this.getNodeAttribute(node, 'NEW_NODE')) {
+			node.remove();
+		}
+	}//eo onEditorCancelEdit
 	
+	/**
+	 * Abstract method called before tree's item was added but already named.
+	 * Controls the creation process of specific node.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} node The node being added & named
+	 */
+	,addNodeController : Ext.emptyFn
+	
+	/**
+	 * Abstract method called before tree's item was renamed.
+	 * Controls the rename process of specific node.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} node The node being renamed
+	 * @param {Mixed} value The current node's text attribute value
+	 * @param {Mixed} startValue The original node's text attribute value
+	 */
+	,renameNodeController : Ext.emptyFn
+	
+	/**
+	 * Adds a new <tt>leaf</tt> node to specified parent.
+	 * After addition, starts editing node's text attribute.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} parentNode The parent node
+	 * 
+	 */
+	,addLeafNode : function(parentNode) {
+		var nodeCfg = this.leafNodeCfg;
+		
+		nodeCfg.NEW_NODE = true;
+		this.addNode(parentNode, nodeCfg);
+	}//eo addLeafNode
+	
+	/**
+	 * Adds a new <tt>branch</tt> node to specified parent.
+	 * After addition, starts editing node's text attribute.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} parentNode The parent node
+	 */
+	,addBranchNode : function(parentNode) {
+		var nodeCfg = this.branchNodeCfg;
+		
+		nodeCfg.NEW_NODE = true;
+		this.addNode(parentNode, nodeCfg);
+	}//eo addBranchNode
+	
+	/**
+	 * Adds node and starts its name editing.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} parentNode The parent node
+	 * @param {Object} nodeCfg The node configuration object
+	 */
+	,addNode : function(parentNode, nodeCfg) {
+		var te = this.treeEditor,
+			newNode;
+			
+		newNode = parentNode.appendChild(
+			new Ext.tree.TreeNode(nodeCfg)
+		);
+		this.selectNode(newNode);
+		te.triggerEdit(newNode);
+	}//eo addNode
 });

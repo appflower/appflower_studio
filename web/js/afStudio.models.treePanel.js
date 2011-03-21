@@ -296,9 +296,9 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			
 		if (node.attributes.NEW_NODE) {
 			node.setText(newValue);
-			_this.addModel(node); 
+			_this.addModel(node);
 		} else {
-			if (newValue != oldValue) {				
+			if (newValue != oldValue) {			
 				_this.renameModel(node, newValue, oldValue);
 			}
 		}
@@ -451,7 +451,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		Ext.Msg.show({
 			title: 'Rename',
-			msg: _this.reallyWantText + ' rename model\'s phpName from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?',
+			msg: _this.reallyWantText + ' rename model\'s name from <b>' + oldValue + '</b> to <b>' + newValue + '</b>?',
 			icon: Ext.Msg.WARNING,
 			buttons: Ext.Msg.YESNO,
 			width: 400,			
