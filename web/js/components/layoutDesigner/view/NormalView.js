@@ -190,6 +190,14 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		}
 	}//eo initViewComponents
 	
+	/**
+	 * Returns component's metadata index from view's components metadata array. 
+	 * 
+	 * @param {Object} cmpMeta The component's metadata.
+	 * @param {Object} (optional) searchIn The collection we are going to search the component in 
+	 * 					instead of looking into this view metadata.
+	 * @return {Number} component's index on success otherwise undefined. 
+	 */
 	,getComponentMetaIndex : function(cmpMeta, searchIn) {
 		var cm = searchIn ? searchIn : this.getViewComponentsMetaData();
 		
@@ -562,68 +570,40 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		return clmMeta;
 	}//eo getColumnMetaData
 	
-	//TODO clear method
 	/**
-	 * View <u>drop</u> event listener. 
+	 * View <u>drop</u> event listener.
 	 * @param {Object} dropEvent For more details look at {@link Ext.ux.Portal#beforedrop}
 	 */
 	,dropComponent : function(dropEvent) {
 		var comp = dropEvent.panel,
 			compMeta = comp.componentMeta,
 			pos = dropEvent.position,
-			columnIndex = dropEvent.columnIndex;
+			columnIndex = dropEvent.columnIndex,
+			columnMeta = this.getColumnMetaData(columnIndex);
 		
-		//update column 
+		var updateViewComponentsMeta = Ext.util.Functions.createDelegate(
+			function(columnMeta) {
+				for (var i = 0, len = columnMeta.index.length; i < len; i++) {
+					this.viewMeta['i:component'][columnMeta.index[i]] = columnMeta.component[i];
+				}
+			}, this);
+			
+		//update component's "column" metadata 
 		compMeta.attributes.column = dropEvent.columnIndex;
 		
-		var columnMeta = this.getColumnMetaData(columnIndex);
-		
-		var cmpIdx = this.getComponentMetaIndex(compMeta, columnMeta.component);
-		
+		//update component's "position" metadata
+		var cmpIdx = this.getComponentMetaIndex(compMeta, columnMeta.component);		
 		if (!Ext.isEmpty(columnMeta.component)) {
 			if (cmpIdx > pos) {
-				//console.log('shift right');
-
-				var iter = cmpIdx - pos;
-				var j = cmpIdx;
-				while (iter) {					
-					columnMeta.component[j] = columnMeta.component[j-1];
-					j--;
-					iter--;
-				}				
-				columnMeta.component[pos] = compMeta;
-				
-//				console.log('component', columnMeta.component);
-				
-				for (var i = 0, len = columnMeta.index.length; i < len; i++) {
-					this.viewMeta['i:component'][ columnMeta.index[i] ] = columnMeta.component[i];
-				}				
-				
+				columnMeta.component.dragUp(cmpIdx, pos);
+				updateViewComponentsMeta(columnMeta);				
 			} else if (cmpIdx < pos) {
-//				console.log('shift left');
-
-				var iter = pos - cmpIdx;
-				var j = cmpIdx;
-				while (iter) {					
-					columnMeta.component[j] = columnMeta.component[j+1];
-					j++;
-					iter--;
-				}				
-				columnMeta.component[pos] = compMeta;
-				
-//				console.log('component', columnMeta.component);
-				
-				for (var i = 0, len = columnMeta.index.length; i < len; i++) {
-					this.viewMeta['i:component'][ columnMeta.index[i] ] = columnMeta.component[i];
-				}
+				columnMeta.component.dragDown(cmpIdx, pos);
+				updateViewComponentsMeta(columnMeta);				
 			}
 		}
 
 		this.updateViewMetaData();
-		
-//		console.log('pos, columnIdx, compMeta', pos, columnIndex, compMeta, dropEvent);
-//		console.log('meta, compPos', this.viewMeta);
-//		console.log('-----------------------------------------------------------------');
 	}//eo dropComponent 
 });
 

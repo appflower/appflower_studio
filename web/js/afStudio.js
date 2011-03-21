@@ -189,3 +189,43 @@ var afStudio = function () {
         }
 	}
 }();
+
+
+/**
+ * @class Array
+ */
+Ext.applyIf(Array.prototype, {
+	
+	/**
+	 * Drags up array's element.
+	 * @param {Number} from The beginning position to drag from. 
+	 * @param {Number} to The destination element position.
+	 */
+	dragUp : function(from, to) {
+		if (from < to) {
+			throw new RangeError('"dragUp": "from" index should be greater than "to"');
+		}		
+		var draggedEl = this[from];
+		for (var i = 0, iterNum = from - to, j = from; i < iterNum; i++, j--) {
+			this[j] = this[j-1];
+		}
+		this[to] = draggedEl;
+	}//eo dragUp
+	
+	/**
+	 * Drags down array's element.
+	 * @param {Number} from The beginning position to drag from.
+	 * @param {Number} to The destination element position.
+	 */
+	,dragDown : function(from, to) {
+		if (from > to) {
+			throw new RangeError('"dragDown": "from" index should be less than "to"');
+		}		
+		var draggedEl = this[from];
+		for (var i = 0, iterNum = to - from, j = from; i < iterNum; i++, j++) {
+			this[j] = this[j+1];
+		}
+		this[to] = draggedEl;
+	}//eo dragDown
+});
+
