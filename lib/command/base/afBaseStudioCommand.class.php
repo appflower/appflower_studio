@@ -89,17 +89,24 @@ abstract class afBaseStudioCommand
     /**
      * Fetching success, prepare for output
      */
-    protected function fetchSuccess($content)
+    protected function fetchSuccess($content, $console = false)
     {
-        return $this->fetch($content, true);
+        return $this->fetch($content, true, $console);
     }
     
     /**
      * Fetching output
      */
-    protected function fetch($content, $success)
+    protected function fetch($content, $success, $console)
     {
-        return array('success' => $success, 'content' => $content);
+        $return = array('success' => $success, 'content' => $content);
+        
+        if($console)
+        {
+        	$return = array_merge($return, array('console'=>$console));
+        }
+        
+        return $return;
     }
 }
 ?>
