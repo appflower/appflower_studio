@@ -109,18 +109,19 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             
             $this->definition = $serializer->getSerializedData();
             
-            if ($this->validate()) {
+            //todo: [radu] validate() is not working as expected !
+            //if ($this->validate()) {
                 // Save changes
                 file_put_contents($sPath, $this->definition);
                 
                 $message = (!$bNew) ? 'Page has been changed' : 'Page has been created';
-                $return = $this->fetchSuccess($message);
-                
-                afStudioConsole::getInstance()->execute('sf appflower:validator-cache frontend cache yes');
-            } else {
+                                
+                $console = afStudioConsole::getInstance()->execute(array('afs fix-perms','sf appflower:validator-cache frontend cache yes'));
+                $return = $this->fetchSuccess($message, $console);
+            //} else {
                 // Getting error message from validation results, from $this->message
-                $return = $this->fetchError($this->message);
-            }
+                //$return = $this->fetchError($this->message);
+            //}
         } else {
             $return = $this->fetchError('Some errors has beed found');
         }
