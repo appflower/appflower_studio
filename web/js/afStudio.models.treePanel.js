@@ -268,7 +268,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		if (root.hasChildNodes()) {
 			Ext.applyIf(node, {
 				iconCls: root.childNodes[0].attributes.iconCls
-			});						
+			});
 		}
 		
 		var newNode = _this.getRootNode().appendChild(new Ext.tree.TreeNode(node));
@@ -538,5 +538,3 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 // register xtype
 Ext.reg('afStudio.models.treePanel', afStudio.models.treePanel);
-
-// eof

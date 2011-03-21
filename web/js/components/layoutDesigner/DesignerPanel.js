@@ -332,7 +332,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @param {Ext.menu.BaseItem} item The selected menu item
 	 * @param {Ext.EventObject} e The event object
 	 */
-	,onLayoutTypeChanged : function(item, e) {		
+	,onLayoutTypeChanged : function(item, e) {
 		var _this = this,
 			   vt =	item.type,
 			   vm = _this.layoutView.getContentView().viewMeta,

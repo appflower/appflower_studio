@@ -172,7 +172,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         	case 'app' :
         		_this.appContextMenu.contextNode = node;
 		        _this.appContextMenu.showAt(e.getXY());
-        	break;        	
+        	break;
+        	
         	case 'page' :
         		_this.pageContextMenu.contextNode = node;
 		        _this.pageContextMenu.showAt(e.getXY());

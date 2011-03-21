@@ -57,13 +57,12 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,selectNode : function(node) {
 		this.selectPath(node.getPath());
 	}//eo selectNode
-    
+	
 	/**
-	 * Initializes component
-	 * @private
-	 * @return {Object} The configuration object 
+	 * Constructor
+	 * @param {Object} config
 	 */
-	,_beforeInitComponent : function() {
+	,constructor : function(config) {
 		var _this = this;
 		
 		var rootNode = new Ext.tree.AsyncTreeNode({
@@ -72,37 +71,44 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			draggable: false
 		});
 		
-		return {
+		Ext.apply(config, {
+			
 		    root: rootNode,
-		    rootVisible: false,			
-			tools: [{
+		    rootVisible: false,
+			tools: [
+			{
 				id: 'refresh', 
-				handler: function() {
-					this.loader.load(this.root);
-				}, 
+				handler: _this.loadItem, 
 				scope: this
-			}]
-		};
-	}//eo _beforeInitComponent
-	
+			}]			
+		});
+		
+		afStudio.navigation.BaseItemTreePanel.superclass.constructor.call(this, config);
+	}//eo constructor
 	
 	/**
 	 * Ext Template method
 	 * @private
 	 */
-	,initComponent : function() {		
-		Ext.apply(this, 
-			Ext.applyIf(this.initialConfig, afStudio.navigation.BaseItemTreePanel.prototype._beforeInitComponent.createDelegate(this)())
-		);				
+	,initComponent : function() {
+		
+		//activate treeEditor
+		this.treeEditor = new afStudio.navigation.BaseTreeEditor(this, {
+			cancelOnEsc: true,
+			completeOnEnter: true,
+			ignoreNoChange: true
+		});
+		
 		afStudio.navigation.BaseItemTreePanel.superclass.initComponent.apply(this, arguments);
-		afStudio.navigation.BaseItemTreePanel.prototype._afterInitComponent.createDelegate(this)();
-	}	
+	}//eo initComponent 
 	
 	/**
-	 * Initializes events & does post configuration
+	 * Ext Template method
 	 * @private
-	 */	
-	,_afterInitComponent : function() {
+	 */
+	,initEvents : function() {
+		afStudio.navigation.BaseItemTreePanel.superclass.initEvents.apply(this, arguments);
+
 		var _this = this;
 	 
 		//Loader Events
@@ -118,15 +124,24 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			 }
 		});
 		
+		//TreeEditor events
+		_this.treeEditor.on({
+			beforecomplete: _this.onEditorBeforeComplete,
+			complete: 		_this.onEditorComplete,
+			canceledit: 	_this.onEditorCancelEdit,
+			scope: _this
+		});
+		
 		//Tree events
 		_this.on({
-			contextmenu: _this.onNodeContextMenu,
-			dblclick: _this.onNodeDblClick,
+			contextmenu: _this.onNodeContextMenu,			
+			dblclick: _this.onNodeDblClick,			
 			scope: _this
 	    });
-	}//eo _afterInitComponent
+	}//eo initEvents	
 	
 	/**
+	 * Abstract method called when tree's item was double clicked.
 	 * <u>dblclick</u> event listener
 	 * @protected
 	 * @param {Ext.data.Node} node The node
@@ -135,12 +150,27 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,onNodeDblClick : Ext.emptyFn
 	
 	/**
+	 * Abstract method called when tree's item contextmenu event was fired.
 	 * <u>contextmenu</u> event listener
 	 * For moere detailed information look at {@link Ext.tree.TreePanel#contextmenu} 
-	 * @protected 
+	 * @protected
+	 *  
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e The event object 
 	 */
 	,onNodeContextMenu : Ext.emptyFn
+	
+	/**
+	 * Loads item
+	 */
+	,loadItem : function() {
+		this.loader.load(this.root);		
+	}//eo loadItem
+	
+	,onEditorBeforeComplete : Ext.emptyFn
+	
+	,onEditorComplete : Ext.emptyFn
+	
+	,onEditorCancelEdit : Ext.emptyFn	
 	
 });
