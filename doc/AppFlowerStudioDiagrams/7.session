@@ -1,0 +1,15 @@
+window_sizes 1280 999 323 951 805 120
+diagrams
+  active  sequencediagram_ref 128263 // WI initialization
+    951 805 100 4 0 0
+end
+show_stereotypes
+selected sequencediagram_ref 128263 // WI initialization
+open
+  classview_ref 128263 // classes
+  usecaseview_ref 128135 // actors
+  classview_ref 128647 // classes
+  class_ref 128519 // browser
+  classview_ref 128519 // classes
+end
+end
