@@ -282,6 +282,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 */
 	,deletePage : function(node) {		
 		var _this = this,
+			rootNode = this.getRootNode(),
 			appName = this.getParentNodeAttribute(node, 'text'),
 			pageName = this.getNodeAttribute(node, 'text'),
 			confirmText = String.format('Are you sure you want to delete page "{0}"?', pageName);
@@ -297,7 +298,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				    loadingMessage: String.format('"{0}" page deleting ...', pageName),
 				    scope: _this,
 				    run: function(response) {
-				    	this.reloadRootNode(function(){
+				    	this.reloadRootNode(function() {
+				    		rootNode.findChild('text', appName, false).expand();
 				    		afStudio.vp.clearPortal();	
 				    	});
 				    }

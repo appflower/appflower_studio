@@ -103,29 +103,30 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 
 		//Loader
 		_this.loader.on({
-			 beforeload: _this.onLoaderBeforeLoad,
-			 load: _this.onLoaderLoad,
-			 loadexception: _this.onLoaderLoadException,
-			 
-			 scope: _this
+			 scope: _this,
+			 beforeload:    _this.onLoaderBeforeLoad,
+			 load:          _this.onLoaderLoad,
+			 loadexception: _this.onLoaderLoadException
 		});
 		
 		//TreeEditor
 		_this.treeEditor.on({
+			scope: _this,
 			beforecomplete: _this.onEditorBeforeComplete,
-			complete: _this.onEditorComplete,
-			canceledit: _this.onEditorCancelEdit,
-			
-			scope: _this
+			complete:       _this.onEditorComplete,
+			canceledit:     _this.onEditorCancelEdit,
+//			startedit: function(boundEl, value) {
+//				console.log('value, boundEl', value, boundEl);
+//				boundEl.dom.innerHTML = 'kuku';
+//			}
 		});
 		
 		//Tree
 		_this.on({
+			scope: _this,
 			contextmenu: _this.onNodeContextMenu,
-			click: _this.onNodeClick,
-			dblclick: _this.onNodeDblClick,
-			
-			scope: _this
+			click:       _this.onNodeClick,
+			dblclick:    _this.onNodeDblClick
 	    });
 	}//eo initEvents
 	
@@ -471,7 +472,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		parentNode.expand();
 		
 		newNode = parentNode.appendChild(
-			new Ext.tree.TreeNode(nodeCfg)
+			new Ext.tree.TreeNode(Ext.apply({}, nodeCfg))
 		);
 		
 		this.selectNode(newNode);
