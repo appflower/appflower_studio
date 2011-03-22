@@ -87,20 +87,21 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         }],
         listeners: {
             itemclick: function(item) {
-            	var node = item.parentMenu.contextNode;
+            	var node = item.parentMenu.contextNode,
+            		tree = node.getOwnerTree();
             	
                 switch (item.itemId) {
-                    case 'delete-model':
-                    
-                	break;
-                	
-                    case 'edit-model':
-                    
+                    case 'edit-page':
+                    	tree.loadLayout(node);
                     break;
                     
-                    case 'rename-model':
+                    case 'rename-page':
+                    	tree.treeEditor.triggerEdit(node);
+                    break;
                     
-                    break;	                        
+                    case 'delete-page':
+                    	tree.deletePage(node);
+                	break;
                 }
             }
         }
@@ -147,7 +148,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo initComponent
 	
 	/**
-	 * Loads layout designer for the specified layoutNode 
+	 * Loads layout designer for the specified layoutNode. 
 	 * @param {Ext.tree.TreeNode} layoutNode
 	 */
 	,loadLayout : function(layoutNode) {
@@ -189,6 +190,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	/**
 	 * Fires when a node is double clicked.
 	 * @override
+	 * 
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */
@@ -201,6 +203,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	/**
 	 * Fires when a node is right clicked.
 	 * @override
+	 * 
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */
@@ -226,33 +229,82 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @override
 	 */
 	,addNodeController : function(node) {
-		var _this = this;
-		
- 		var appName = this.getParentNodeAttribute(node, 'text'),
- 			   page = this.getNodeAttribute(node, 'text');
-		
+		var _this = this,
+ 			appName = this.getParentNodeAttribute(node, 'text'),
+ 			pageTitle = this.getNodeAttribute(node, 'text'),
+ 			pageNodeText = pageTitle + '.xml';
+
 		this.executeAction({
 			url: _this.addNewPageUrl,
 			params: {
-	            app: appName,	            
-	            page: page + '.xml',
-	            title: page
+	            app: appName,
+	            page: pageNodeText,
+	            title: pageTitle
 		    },
 		    scope: _this,
 		    run: function(response) {
-		    	this.reloadRootNode();
+		    	this.refreshNode(appName, pageNodeText, this.loadLayout);
 		    },
-		    loadingMessage: String.format('"{0}" page creation...', page)
+		    loadingMessage: String.format('"{0}" page creation...', pageTitle)
 		});
 	}//eo addNodeController
 	
 	/**
 	 * @override
 	 */
-	,renameNodeController : function(node, value, startValue) {
-			
-		console.log('renameNodeController', node, value, startValue);
+	,renameNodeController : function(node, value, startValue) {			
+		var _this = this,
+ 			appName = this.getParentNodeAttribute(node, 'text'),
+ 			pageOldName = startValue,
+ 			pageNewName = value + '.xml';
+ 			
+		this.executeAction({
+			url: _this.renamePageUrl,
+			params: {
+	            app: appName,
+	            page: pageOldName,
+	            name: pageNewName
+		    },
+		    loadingMessage: String.format('"{0}" page renaming...', pageOldName),
+		    scope: _this,
+		    run: function(response) {
+		    	this.refreshNode(appName, pageNewName, this.loadLayout);
+		    },
+		    error: function(response) {
+		    	node.setText(pageOldName);
+		    }
+		});
 	}//eo renameNodeController
+	
+	/**
+	 * Deletes page.
+	 * @param {Ext.tree.TreeNode} node The page associated to this node being deleted
+	 */
+	,deletePage : function(node) {		
+		var _this = this,
+			appName = this.getParentNodeAttribute(node, 'text'),
+			pageName = this.getNodeAttribute(node, 'text'),
+			confirmText = String.format('Are you sure you want to delete page "{0}"?', pageName);
+		
+		Ext.Msg.confirm('Layout Designer', confirmText, function(buttonId) {
+			if (buttonId == 'yes') {
+				_this.executeAction({
+					url: _this.deletePageUrl,
+					params: {
+			            app: appName,
+			            page: pageName
+				    },
+				    loadingMessage: String.format('"{0}" page deleting ...', pageName),
+				    scope: _this,
+				    run: function(response) {
+				    	this.reloadRootNode(function(){
+				    		afStudio.vp.clearPortal();	
+				    	});
+				    }
+				});     		
+			}
+		});		
+	}//eo deletePage
 });
 
 /**

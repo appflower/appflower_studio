@@ -45,36 +45,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
      * Default branch node configuration object.
      */
     ,branchNodeCfg : {}
-    
-    /**
-     * Returns node's attribute
-     * @param {Ext.tree.TreeNode} node required
-     * @param {String} attribute required
-     * @param {Mixed} defaultValue optional
-     * @return attribute / null
-     */
-    ,getNodeAttribute : function(node, attribute, defaultValue) {
-    	return node.attributes[attribute] ? node.attributes[attribute] 
-    			  : (defaultValue ? defaultValue : null);
-    }//eo getNodeAttribute
-    
-    /**
-     * Returns parent node attribute of passed in node
-     * look at {@link #getNodeAttribute}
-     * @return attribute / null 
-     */
-    ,getParentNodeAttribute : function(node, attribute, defaultValue) {
-    	return this.getNodeAttribute(node.parentNode, attribute, defaultValue);
-    }
-    
-    /**
-	 * Selects node
-	 * @param {Ext.tree.TreeNode} node The node to be selected
-	 */
-	,selectNode : function(node) {
-		this.selectPath(node.getPath());
-	}//eo selectNode
-	
+
 	/**
 	 * Constructor
 	 * @param {Object} config
@@ -174,8 +145,74 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.body.unmask();
 	}//eo unmaskItemTree
 	
+    /**
+     * Returns node's attribute.
+     * @param {Ext.tree.TreeNode} node required
+     * @param {String} attribute required
+     * @param {Mixed} defaultValue optional
+     * @return attribute / null
+     */
+    ,getNodeAttribute : function(node, attribute, defaultValue) {
+    	return node.attributes[attribute] ? node.attributes[attribute] 
+    			  : (defaultValue ? defaultValue : null);
+    }//eo getNodeAttribute
+    
+    /**
+     * Returns parent node attribute of passed in node.
+     * look at {@link #getNodeAttribute}
+     * @return attribute / null 
+     */
+    ,getParentNodeAttribute : function(node, attribute, defaultValue) {
+    	return this.getNodeAttribute(node.parentNode, attribute, defaultValue);
+    }
+    
 	/**
-	 * Loads this tree.
+	 * Expands all parent nodes.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} (Required) node The node being expanded and all his parents
+	 */
+	,expandParentNodes : function(node) {
+		if (!Ext.isEmpty(node.parentNode)) {
+			this.expandParentNodes(node.parentNode);
+		}
+		node.expand();
+	}//eo expandParentNodes
+    
+    
+    /**
+	 * Selects node by its path (using node.getPath()).
+	 * @param {Ext.tree.TreeNode} node The node to be selected
+	 */
+	,selectNode : function(node) {
+		this.selectPath(node.getPath());
+	}//eo selectNode	
+	
+	/**
+	 * Selects child node by its <tt>text</tt> attribute.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} (Required) parent The parent of selecting child node 
+	 * @param {String} (Required) childText The searching in child node's text attribute
+	 * @return {Ext.tree.TreeNode} childNode The found and selected child node otherwise undefined 
+	 */
+	,selectChildNodeByText : function(parent, childText) {
+		var _this = this,
+			  tsm = this.getSelectionModel();
+	
+		this.expandParentNodes(parent);
+		
+		var childNode;
+		if (parent && !parent.isLeaf()) {
+			childNode = parent.findChild('text', childText, false);
+			tsm.select(childNode);
+		}
+		
+		return childNode;
+	}//eo selectChildNodeByText	
+	
+	/**
+	 * Loads this tree's root node.
 	 * @protected
 	 */
 	,loadRootNode : function() {
@@ -193,8 +230,32 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		var _this = this,
 			rootNode = this.getRootNode();
 		
-		Ext.isFunction(callback) ? rootNode.reload(callback, _this) : rootNode.reload(); 
-	}//eo 	
+		Ext.isFunction(callback) ? rootNode.reload(callback, _this) : rootNode.reload();
+	}//eo reloadRootNode
+	
+	/**
+	 * Reloads tree and selects child node finding it by its <tt>text</tt> attribute.
+	 * During selecting the child node expands all his parent nodes.
+	 * Nodes searching is based on <tt>text</tt> attributes, it must be unique within the tree.  
+	 * @protected
+	 * 
+	 * @param {String} (Required) parentTextAttr The parend node's <tt>text</tt> attribute
+	 * @param {String} (Required) childTextAttr The child node's <tt>text</tt> attribute
+	 * @param {Function} (Optional) callback The callback function, accepts refreshed childNode 
+	 */
+	,refreshNode : function(parentTextAttr, childTextAttr, callback) {
+		var _this = this;
+		
+    	this.reloadRootNode(function() {
+    		var root = this.getRootNode(),
+    			parentNode = root.findChild('text', parentTextAttr, true),    		
+    			childNode = this.selectChildNodeByText(parentNode, childTextAttr);
+    		
+    		if (Ext.isFunction(callback)) {
+    			Ext.util.Functions.createDelegate(callback, _this, [childNode])();
+    		}
+    	});		
+	}//eo refreshNode
 	
 	/**
 	 * This {@link Ext.tree.TreeLoader} loader <u>beforeload</u> event listener.
@@ -419,6 +480,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
 	 * Runs action 
+	 * @protected
 	 * 
 	 * @param {Object} action:<ul>  
 	 *   <li><b>url</b>: {String} (Required) The action URL.</li>
@@ -426,6 +488,8 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * 	 <li><b>run</b>: {Function} (Required) The action function to be run on success
 	 * 					  accepts result (response) object. Function accepts response parameter.</li>
 	 *  
+	 *   <li><b>error</b>: {Function} (Optional) The error callback function</li>
+	 *   
 	 *   <li><b>params</b>: {Object} (Optional) request parameters</li>
 	 *   
 	 *   <li><b>loadingMessage</b>: {String} (Optional) mask loading message</li>
@@ -458,6 +522,15 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			   	   )();			       				   	
 			   } else {
 			   	   Ext.Msg.alert('Error', response.content);
+			   	   
+			   	   if (Ext.isFunction(action.error)) {
+				   	   Ext.util.Functions.createDelegate(
+					       action.error, 
+			   		       action.scope ? action.scope : this, 
+			   			   [response],
+			   			   false
+				   	   )();
+			   	   }
 			   }
 		   },
 		   

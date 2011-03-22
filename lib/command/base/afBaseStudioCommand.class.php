@@ -81,9 +81,9 @@ abstract class afBaseStudioCommand
     /**
      * Fetching error, prepare for output
      */
-    protected function fetchError($content)
+    protected function fetchError($content, $console = false)
     {
-        return $this->fetch($content, false);
+        return $this->fetch($content, false, $console);
     }
     
     /**

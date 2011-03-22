@@ -42,15 +42,17 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	                    case 'delete-model':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().deleteModel(node);
-                        	break;
+                        break;
+                        
 	                    case 'edit-model':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().editModel(node);
-	                        break;
+	                    break;
+	                    
 	                    case 'rename-model':
 	                    	var node = item.parentMenu.contextNode;
 	                    	node.getOwnerTree().treeEditor.triggerEdit(node);	                    	
-	                        break;	                        
+	                    break;
 	                }
 	            }
 	        }
@@ -361,7 +363,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		      
 		        if (response.success && success) {
 		        	delete node.attributes.NEW_NODE;
-		        	var path = node.getPath();
+		        	
 					_this.reloadModels(function(){_this.selectModelNode(node);});
 					
 		      		if (response.console) {	
@@ -426,10 +428,8 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	  _this.reloadModels();
 				      	
 				      	 if (response.console) {	
-				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
-				      		console.body.dom.innerHTML += response.console;
-							console.body.scroll("bottom", 1000000, true );				      		
-				      	 }
+							afStudio.updateConsole(response.console);	
+						 }
 				      }
 				      
 				      Ext.Msg.show({
@@ -444,7 +444,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	}//eo deleteModel
 	
-	,renameModel : function(node, newValue, oldValue) { 
+	,renameModel : function(node, newValue, oldValue) {
 		var _this = this;		
 		
 		Ext.Msg.show({
@@ -485,9 +485,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 				      	_this.editModel(node);
 				      	
 				      	if (response.console) {
-				      		var console = afStudio.vp.layout.south.panel.getComponent('console');
-				      		console.body.dom.innerHTML += response.console;
-							console.body.scroll( "bottom", 1000000, true );
+				      		afStudio.updateConsole(response.console);	
 				      	}
 				      } else {
 				      	node.setText(oldValue);
