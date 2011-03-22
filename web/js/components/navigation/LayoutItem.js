@@ -13,16 +13,31 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	baseUrl : '/appFlowerStudio/layout'
 	
 	/**
-	 * @cfg {String} layoutMetaUrl (defaults to 'afsLayoutBuilder/get')
+	 * @cfg {String} layoutMetaUrl (defaults to '/afsLayoutBuilder/get')
 	 */
 	,layoutMetaUrl : '/afsLayoutBuilder/get'
 
+	/**
+	 * @cfg {String} addNewPageUrl (defaults to '/afsLayoutBuilder/new')
+	 */
+	,addNewPageUrl : '/afsLayoutBuilder/new'
+
+	/**
+	 * @cfg {String} renamePageUrl (defaults to '/afsLayoutBuilder/rename')
+	 */
+	,renamePageUrl : '/afsLayoutBuilder/rename'
+
+	/**
+	 * @cfg {String} deletePageUrl (defaults to '/afsLayoutBuilder/delete')
+	 */
+	,deletePageUrl : '/afsLayoutBuilder/delete'	
+	
     /**
      * @cfg {Object} leafNodeCfg
      * Default leaf node configuration object.
      */
     ,leafNodeCfg : {
-    	text: 'NewPage',
+    	text: 'newPage',
     	iconCls: 'icon-layout',
     	type: 'page',    	
     	leaf: true
@@ -30,7 +45,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	
 	/**
 	 * @property {Ext.menu.Menu} appContextMenu
-	 * "Application" node type context menu  
+	 * "Application" node type context menu.
+	 * @type {Object}  
 	 */
 	,appContextMenu : new Ext.menu.Menu({
         items: [
@@ -41,16 +57,18 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		}],
         listeners: {
             itemclick: function(item) {
-            	var node = item.parentMenu.contextNode;
-            	var tree = node.getOwnerTree();
+            	var node = item.parentMenu.contextNode,
+            		tree = node.getOwnerTree();
+            		
             	tree.addLeafNode(node);
-            }
+            }//eo itemclick 
         }
 	})//eo appContextMenu	
 	
 	/**
 	 * @property {Ext.menu.Menu} pageContextMenu
 	 * "Page" node type context menu
+	 * @type {Object}
 	 */
 	,pageContextMenu : new Ext.menu.Menu({		
         items: [
@@ -177,7 +195,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	,onNodeDblClick : function(node, e) {
         if (this.getNodeAttribute(node, 'type') == 'page') {
         	this.loadLayout(node);        	
-        }				
+        }
 	}//eo onNodeDblClick
 	
 	/**
@@ -205,18 +223,36 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo onItemContextMenu
 	
 	/**
-	 * @override 
+	 * @override
 	 */
-	,isValidNodeName : function(node, name) {
-		return /^[^\d]\w*$/im.test(name) ? true : false;		
-	}//eo isValidNodeName
+	,addNodeController : function(node) {
+		var _this = this;
+		
+ 		var appName = this.getParentNodeAttribute(node, 'text'),
+ 			   page = this.getNodeAttribute(node, 'text');
+		
+		this.executeAction({
+			url: _this.addNewPageUrl,
+			params: {
+	            app: appName,	            
+	            page: page + '.xml',
+	            title: page
+		    },
+		    scope: _this,
+		    run: function(response) {
+		    	this.reloadRootNode();
+		    },
+		    loadingMessage: String.format('"{0}" page creation...', page)
+		});
+	}//eo addNodeController
 	
 	/**
 	 * @override
 	 */
-	,addNodeController : function(node) {
-		//console.log('add node', node);
-	}//eo addNodeController
+	,renameNodeController : function(node, value, startValue) {
+			
+		console.log('renameNodeController', node, value, startValue);
+	}//eo renameNodeController
 });
 
 /**

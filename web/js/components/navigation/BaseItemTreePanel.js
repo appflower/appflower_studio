@@ -29,6 +29,12 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
     ,autoScroll : true
     
     /**
+     * @cfg {String} editorFieldInvalid (defaults to 'The value in this node is invalid')
+     * Text message is shown when node editor's value is invalid. 
+     */
+    ,editorFieldInvalid : 'The value in this node is invalid! <br /> accepts only alphanumeric symbols and "_", begins from "_" or alpha.'
+    
+    /**
      * @cfg {Object} leafNodeCfg (defaults to empty object)
      * Default leaf node configuration object.
      */
@@ -89,7 +95,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			tools: [
 			{
 				id: 'refresh', 
-				handler: _this.loadRootItem, 
+				handler: _this.loadRootNode, 
 				scope: this
 			}]			
 		});
@@ -101,7 +107,9 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * Ext Template method
 	 * @private
 	 */
-	,initComponent : function() {		
+	,initComponent : function() {
+		var _this = this;
+		
 		//activate treeEditor
 		this.treeEditor = new afStudio.navigation.BaseTreeEditor(this, {
 			cancelOnEsc: true,
@@ -124,22 +132,18 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 
 		//Loader
 		_this.loader.on({
-			 beforeload: function(loader,node,clb) {
-			 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
-			 }
-			 ,load: function(loader,node,resp) {
-				node.getOwnerTree().body.unmask();
-			 }
-			 ,loadexception: function(loader,node,resp) {
-				node.getOwnerTree().body.unmask();
-			 }
+			 beforeload: _this.onLoaderBeforeLoad,
+			 load: _this.onLoaderLoad,
+			 loadexception: _this.onLoaderLoadException,
+			 
+			 scope: _this
 		});
 		
 		//TreeEditor
 		_this.treeEditor.on({
 			beforecomplete: _this.onEditorBeforeComplete,
-			complete: 		_this.onEditorComplete,
-			canceledit: 	_this.onEditorCancelEdit,
+			complete: _this.onEditorComplete,
+			canceledit: _this.onEditorCancelEdit,
 			
 			scope: _this
 		});
@@ -155,11 +159,86 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	}//eo initEvents
 	
 	/**
-	 * Loads this tree.
+	 * Masking this item tree's body element
+	 * @protected
 	 */
-	,loadRootItem : function() {
+	,maskItemTree : function() {
+		this.body.mask('Loading, please Wait...');
+	}//eo maskItemTree
+	
+	/**
+	 * Unmasking this item tree's body element
+	 * @protected
+	 */
+	,unmaskItemTree : function() {
+		this.body.unmask();
+	}//eo unmaskItemTree
+	
+	/**
+	 * Loads this tree.
+	 * @protected
+	 */
+	,loadRootNode : function() {
 		this.loader.load(this.root);		
-	}//eo loadItem
+	}//eo loadRootNode
+	
+	/**
+	 * Reloads tree's root node.
+	 * For more details look at {@link  Ext.tree.AsyncTreeNode#reload} method. 
+	 * @protected
+	 * 
+	 * @param {Function} callback The callback function to be executed after reload.
+	 */
+	,reloadRootNode : function(callback) {
+		var _this = this,
+			rootNode = this.getRootNode();
+		
+		Ext.isFunction(callback) ? rootNode.reload(callback, _this) : rootNode.reload(); 
+	}//eo 	
+	
+	/**
+	 * This {@link Ext.tree.TreeLoader} loader <u>beforeload</u> event listener.
+	 * Fires before a network request is made to retrieve the Json text which specifies a node's children.
+	 * For more details look at {@link Ext.tree.TreeLoader#beforeload} event. 
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeLoader} loader
+	 * @param {Ext.tree.TreeNode} node The node being loaded
+	 * @param {Function} callback
+	 */
+	,onLoaderBeforeLoad : function(loader, node, callback) {
+		this.maskItemTree();
+	}//eo onLoaderBeforeLoad
+	
+	/**
+	 * This {@link Ext.tree.TreeLoader} loader <u>load</u> event listener.
+	 * Fires when the node has been successfuly loaded.
+	 * For more details look at {@link Ext.tree.TreeLoader#load} event.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeLoader} loader
+	 * @param {Ext.tree.TreeNode} node The node being loaded
+	 * @param {XMLHttpRequest} xhr
+	 */
+	,onLoaderLoad : function(loader, node, xhr) {
+		this.unmaskItemTree();
+	}//eo onLoaderLoad
+	
+	/**
+	 * This {@link Ext.tree.TreeLoader} loader <u>loadexception</u> event listener.
+	 * Fires if the network request failed.
+	 * For more details look at {@link Ext.tree.TreeLoader#loadexception} event.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeLoader} loader
+	 * @param {Ext.tree.TreeNode} node The node was tried to load
+	 * @param {XMLHttpRequest} xhr
+	 */
+	,onLoaderLoadException : function(loader, node, xhr) {
+		//xhr.status
+		//xhr.statusText
+		this.unmaskItemTree();
+	}//eo onLoaderLoadException
 	
 	/**
 	 * Abstract method called when tree's item was clicked.
@@ -190,7 +269,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e The event object 
 	 */
-	,onNodeContextMenu : Ext.emptyFn
+	,onNodeContextMenu : Ext.emptyFn	
 	
 	/**
 	 * This method has no default implementation and returns true, so you must provide an
@@ -198,12 +277,11 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
      * and returns true if <tt>name</tt> is valid.
 	 * @protected
 	 * 
-	 * @param {Ext.tree.TreeNode} node The node whose text attribute is validated
 	 * @param {Mixed} name The node's text attribute to validate
 	 * @return {Boolean} true if name is valid otherwise false.
 	 */
-	,isValidNodeName : function(node, name) {
-		return true;
+	,isValidNodeName : function(node, name) {		
+		return /^[^\d]\w*$/im.test(name) ? true : false;
 	}//eo isValidNodeName 
 	
 	/**
@@ -219,10 +297,10 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @return {Boolean}
 	 */
 	,onEditorBeforeComplete : function(editor, newValue, oldValue) {
-		var node = editor.editNode;	
+		var node = editor.editNode;
 		
-		//validates model
-		if (!this.isValidNodeName(node, newValue)) {			
+		if (!this.isValidNodeName(node, newValue)) {
+			editor.field.markInvalid(this.editorFieldInvalid);
 			return false;
 		}
 	}//eo onEditorBeforeComplete
@@ -328,11 +406,65 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,addNode : function(parentNode, nodeCfg) {
 		var te = this.treeEditor,
 			newNode;
-			
+		
+		parentNode.expand();
+		
 		newNode = parentNode.appendChild(
 			new Ext.tree.TreeNode(nodeCfg)
 		);
+		
 		this.selectNode(newNode);
 		te.triggerEdit(newNode);
 	}//eo addNode
+	
+	/**
+	 * Runs action 
+	 * 
+	 * @param {Object} action:<ul>  
+	 *   <li><b>url</b>: {String} (Required) The action URL.</li>
+	 *   
+	 * 	 <li><b>run</b>: {Function} (Required) The action function to be run on success
+	 * 					  accepts result (response) object. Function accepts response parameter.</li>
+	 *  
+	 *   <li><b>params</b>: {Object} (Optional) request parameters</li>
+	 *   
+	 *   <li><b>loadingMessage</b>: {String} (Optional) mask loading message</li>
+	 *    
+	 *   <li><b>scope</b>: {Object} (Optional) the {@link #run} function execution context</li>  
+	 * </ul>
+	 */
+	,executeAction : function(action) {
+		afStudio.vp.mask({
+			msg: action.loadingMessage ? action.loadingMessage : 'Loading...', 
+			region: 'center'
+		});
+		
+		Ext.Ajax.request({
+		   url: action.url,
+		   
+		   params: action.params,
+		   
+		   success: function(xhr, opt) {
+		   	
+			   afStudio.vp.unmask('center');
+			   var response = Ext.decode(xhr.responseText);
+			   
+			   if (response.success) {
+			   	   Ext.util.Functions.createDelegate(
+				       action.run, 
+		   		       action.scope ? action.scope : this, 
+		   			   [response], 
+		   			   false
+			   	   )();			       				   	
+			   } else {
+			   	   Ext.Msg.alert('Error', response.content);
+			   }
+		   },
+		   
+		   failure: function(xhr, opt) {
+		   	   afStudio.vp.unmask('center');
+		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
+		   }
+		});
+	}//eo executeAction	
 });

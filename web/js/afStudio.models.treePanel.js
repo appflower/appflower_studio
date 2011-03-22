@@ -365,9 +365,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 					_this.reloadModels(function(){_this.selectModelNode(node);});
 					
 		      		if (response.console) {	
-			      		var console = afStudio.vp.layout.south.panel.getComponent('console');
-			      		console.body.dom.innerHTML += response.console;
-						console.body.scroll("bottom", 1000000, true );				      		
+		      			afStudio.updateConsole(response.console);
 			      	}
 			      	
 			      	_this.editModel(node);
