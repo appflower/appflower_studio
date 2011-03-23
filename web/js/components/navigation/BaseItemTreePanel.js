@@ -46,6 +46,12 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
      */
     ,branchNodeCfg : {}
 
+    /**
+     * @property treeKeyMap
+     * Defines item's key map
+     * @type {Ext.KeyMap}
+     */
+    
 	/**
 	 * Constructor
 	 * @param {Object} config
@@ -88,7 +94,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			ignoreNoChange: true
 		});
 		
-		afStudio.navigation.BaseItemTreePanel.superclass.initComponent.apply(this, arguments);
+		afStudio.navigation.BaseItemTreePanel.superclass.initComponent.apply(this, arguments);		
 	}//eo initComponent 
 	
 	/**
@@ -104,6 +110,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		//Loader
 		_this.loader.on({
 			 scope: _this,
+			 
 			 beforeload:    _this.onLoaderBeforeLoad,
 			 load:          _this.onLoaderLoad,
 			 loadexception: _this.onLoaderLoadException
@@ -112,22 +119,52 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		//TreeEditor
 		_this.treeEditor.on({
 			scope: _this,
+			
 			beforecomplete: _this.onEditorBeforeComplete,
 			complete:       _this.onEditorComplete,
-			canceledit:     _this.onEditorCancelEdit,
-//			startedit: function(boundEl, value) {
-//				console.log('value, boundEl', value, boundEl);
-//				boundEl.dom.innerHTML = 'kuku';
-//			}
+			canceledit:     _this.onEditorCancelEdit
 		});
 		
 		//Tree
 		_this.on({
 			scope: _this,
+			
 			contextmenu: _this.onNodeContextMenu,
 			click:       _this.onNodeClick,
 			dblclick:    _this.onNodeDblClick
 	    });
+	    
+	    
+		_this.treeKeyMap = new Ext.KeyMap(this.el, [
+			{
+			    key: Ext.EventObject.ENTER,
+			    fn: function() {
+			    	var tsm = this.getSelectionModel(),
+			    		node = tsm.getSelectedNode();
+			    	
+			    	if (node.isLeaf()) {
+			    		this.runNode(node);
+			    	} else if (node.isExpandable() && !node.isExpanded()) {
+			    		node.expand();
+			    	}
+			    },
+			    scope: this
+    		}
+//    		{
+//			    key: Ext.EventObject.R,
+//			    ctrl: true,
+//			    stopEvent: true,
+//			    fn: function() {
+//			    	var tsm = this.getSelectionModel();
+//			    	var node = tsm.getSelectedNode();
+//			    	
+//			    	if (node.isLeaf()) {
+//			    		this.treeEditor.triggerEdit(node);
+//			    	}
+//			    },
+//			    scope: this    			
+//    		}
+		]);
 	}//eo initEvents
 	
 	/**
@@ -240,9 +277,10 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * Nodes searching is based on <tt>text</tt> attributes, it must be unique within the tree.  
 	 * @protected
 	 * 
-	 * @param {String} (Required) parentTextAttr The parend node's <tt>text</tt> attribute
-	 * @param {String} (Required) childTextAttr The child node's <tt>text</tt> attribute
-	 * @param {Function} (Optional) callback The callback function, accepts refreshed childNode 
+	 * @param {String} (Required) parentTextAttr The parend node's <tt>text</tt> attribute.
+	 * @param {String} (Required) childTextAttr The child node's <tt>text</tt> attribute.
+	 * @param {Function} (Optional) callback The callback function, accepts refreshed childNode.
+	 * 					 Callback function accepts just refreshed <tt>childNode</tt>.
 	 */
 	,refreshNode : function(parentTextAttr, childTextAttr, callback) {
 		var _this = this;
@@ -342,7 +380,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Mixed} name The node's text attribute to validate
 	 * @return {Boolean} true if name is valid otherwise false.
 	 */
-	,isValidNodeName : function(node, name) {		
+	,isValidNodeName : function(node, name) {
 		return /^[^\d]\w*$/im.test(name) ? true : false;
 	}//eo isValidNodeName 
 	
@@ -428,6 +466,14 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Mixed} startValue The original node's text attribute value
 	 */
 	,renameNodeController : Ext.emptyFn
+	
+	/**
+	 * Abstract method called when running actions associated with a node.
+	 * @protected
+	 * 
+	 * @param {Ext.tree.TreeNode} node The node being run
+	 */
+	,runNode : Ext.emptyFn
 	
 	/**
 	 * Adds a new <tt>leaf</tt> node to specified parent.
@@ -540,5 +586,5 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
 		   }
 		});
-	}//eo executeAction	
+	}//eo executeAction
 });

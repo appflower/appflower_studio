@@ -33,16 +33,22 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	,deletePageUrl : '/afsLayoutBuilder/delete'	
 	
     /**
+     * @cfg {String} editorFieldInvalid
+     * Text message is shown when node editor's value is invalid. 
+     */
+    ,editorFieldInvalid : 'Page name is invalid! <br /> accepts only alphanumeric symbols and "_", begins from "_" or alpha and ends with <b>.xml</b>.'
+	
+    /**
      * @cfg {Object} leafNodeCfg
      * Default leaf node configuration object.
      */
     ,leafNodeCfg : {
-    	text: 'newPage',
+    	text: 'newPage.xml',
     	iconCls: 'icon-layout',
     	type: 'page',    	
     	leaf: true
     }
-	
+    
 	/**
 	 * @property {Ext.menu.Menu} appContextMenu
 	 * "Application" node type context menu.
@@ -86,13 +92,13 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
             iconCls: 'icon-models-delete'
         }],
         listeners: {
-            itemclick: function(item) {
+            itemclick: function(item) {            	
             	var node = item.parentMenu.contextNode,
             		tree = node.getOwnerTree();
             	
                 switch (item.itemId) {
                     case 'edit-page':
-                    	tree.loadLayout(node);
+                    	tree.runNode(node);
                     break;
                     
                     case 'rename-page':
@@ -105,7 +111,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
                 }
             }
         }
-	})//eo pageContextMenu
+	})//eo pageContextMenu	
 	
 	/**
 	 * Initializes component
@@ -148,10 +154,12 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo initComponent
 	
 	/**
-	 * Loads layout designer for the specified layoutNode. 
+	 * Loads layout designer for the specified layout node.
+	 * @override
+	 *  
 	 * @param {Ext.tree.TreeNode} layoutNode
 	 */
-	,loadLayout : function(layoutNode) {
+	,runNode : function(layoutNode) {
 		var _this = this,
 			 page = _this.getNodeAttribute(layoutNode, 'text'),
 			  app = _this.getParentNodeAttribute(layoutNode, 'text');
@@ -185,7 +193,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		       Ext.Msg.alert('Error', String.format('Status code {0}, message {1}', xhr.status, xhr.statusText));
 		   }
 		});
-	}//eo loadLayout
+	}//eo runNode
 	
 	/**
 	 * Fires when a node is double clicked.
@@ -196,7 +204,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 */
 	,onNodeDblClick : function(node, e) {
         if (this.getNodeAttribute(node, 'type') == 'page') {
-        	this.loadLayout(node);        	
+        	this.runNode(node);        	
         }
 	}//eo onNodeDblClick
 	
@@ -226,26 +234,33 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo onItemContextMenu
 	
 	/**
+	 * @override 
+	 */
+	,isValidNodeName : function(node, name) {
+		return /^[^\d]\w*\.xml$/im.test(name) ? true : false;
+	}//eo isValidNodeName
+	
+	/**
 	 * @override
 	 */
 	,addNodeController : function(node) {
 		var _this = this,
  			appName = this.getParentNodeAttribute(node, 'text'),
- 			pageTitle = this.getNodeAttribute(node, 'text'),
- 			pageNodeText = pageTitle + '.xml';
+ 			page = this.getNodeAttribute(node, 'text'),
+ 			pageTitle = page.substring(0, page.lastIndexOf('.xml'));
 
 		this.executeAction({
 			url: _this.addNewPageUrl,
 			params: {
 	            app: appName,
-	            page: pageNodeText,
+	            page: page,
 	            title: pageTitle
 		    },
+		    loadingMessage: String.format('"{0}" page creation...', page),
 		    scope: _this,
 		    run: function(response) {
-		    	this.refreshNode(appName, pageNodeText, this.loadLayout);
-		    },
-		    loadingMessage: String.format('"{0}" page creation...', pageTitle)
+		    	this.refreshNode(appName, page, this.runNode);
+		    }
 		});
 	}//eo addNodeController
 	
@@ -254,24 +269,22 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 */
 	,renameNodeController : function(node, value, startValue) {			
 		var _this = this,
- 			appName = this.getParentNodeAttribute(node, 'text'),
- 			pageOldName = startValue,
- 			pageNewName = value + '.xml';
+ 			appName = this.getParentNodeAttribute(node, 'text');
  			
 		this.executeAction({
 			url: _this.renamePageUrl,
 			params: {
 	            app: appName,
-	            page: pageOldName,
-	            name: pageNewName
+	            page: startValue,
+	            name: value
 		    },
-		    loadingMessage: String.format('"{0}" page renaming...', pageOldName),
+		    loadingMessage: String.format('Renaming page "{0}" to {1} ...', startValue, value),
 		    scope: _this,
 		    run: function(response) {
-		    	this.refreshNode(appName, pageNewName, this.loadLayout);
+		    	this.refreshNode(appName, value, this.runNode);
 		    },
 		    error: function(response) {
-		    	node.setText(pageOldName);
+		    	node.setText(startValue);
 		    }
 		});
 	}//eo renameNodeController
