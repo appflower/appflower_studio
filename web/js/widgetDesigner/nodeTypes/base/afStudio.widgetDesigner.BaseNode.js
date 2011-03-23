@@ -113,7 +113,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             return;
         }
 
-        for(i=0;i<this.behaviors.length;i++) {
+        for(var i=0;i<this.behaviors.length;i++) {
             this.behaviors[i].propertyChanged(this, property);
         }
     },
