@@ -105,7 +105,7 @@ class afsXmlBuilder {
         $this->rootNode = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><i___view></i___view>");
         $this->rootNode->addAttribute('type', $widgetType);
         $this->rootNode->addAttribute('xmlns___xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-        $this->rootNode->addAttribute('xsi___schemaLocation', 'http://www.appflower.com /schema/appflower.xsd');
+        $this->rootNode->addAttribute('xsi___schemaLocation', 'http://www.appflower.com/schema/appflower.xsd');
         $this->rootNode->addAttribute('xmlns___i', 'http://www.appflower.com/schema/');
     }
     
