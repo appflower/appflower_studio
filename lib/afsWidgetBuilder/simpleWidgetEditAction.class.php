@@ -91,7 +91,7 @@ abstract class simpleWidgetEditAction extends sfAction
             $objectId = $this->getRequest()->getParameter('id');
             if ($objectId > 0) {
                 $this->object = call_user_func("$peerClassName::retrieveByPK", $objectId);
-                $this->id = $this->object->getId();
+                $this->id = $this->object->getPrimaryKey();
             }
         }
     }
