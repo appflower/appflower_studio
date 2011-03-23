@@ -420,7 +420,7 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
                 }
 		
 
-		afsWD.save(this);
+		afsWD.save(this, true);
 	},	
 	
 	/**
