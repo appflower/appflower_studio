@@ -77,6 +77,10 @@ abstract class simpleWidgetEditAction extends sfAction
         $fieldNames = $this->afsWBW->getDefinedFieldNames();
         $this->form->useFields($fieldNames);
 
+        // making form field default values available for widget XML config file placeholders
+        foreach ($fieldNames as $fieldName) {
+            $this->$fieldName = $this->object->getByName($fieldName, BasePeer::TYPE_FIELDNAME);
+        }
     }
 
     private function createNewObject($modelClassName)

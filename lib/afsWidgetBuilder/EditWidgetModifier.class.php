@@ -55,6 +55,7 @@ class EditWidgetModifier extends ConcreteWidgetModifier {
                 $relatedModelName = $relatedColumnTableMap->getPhpName();
 
                 $fieldDefinition['type'] = 'combo';
+                $fieldDefinition['selected'] = '{'.$columnName.'}';
                 $fieldDefinition['i:value'] = array(
                     'type' => 'orm',
                     'i:class' => 'ModelCriteriaFetcher',
