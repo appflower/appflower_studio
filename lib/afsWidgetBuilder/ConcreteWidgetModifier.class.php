@@ -10,10 +10,12 @@ abstract class ConcreteWidgetModifier
     /**
      * This method gets new widget representation created on JS side
      * It can modify it specially for concrete widget type and return modified definition
+     * This class will also get information regarding if modfified widget is new widget
      *
      * @param array $definition
+     * @param bool  $newWidgetMode
      * @return array modified definition
      */
-    abstract function modify(afsWidgetBuilderWidget $afsWBW);
+    abstract function modify(afsWidgetBuilderWidget $afsWBW, $newWidgetMode = false);
 }
 ?>

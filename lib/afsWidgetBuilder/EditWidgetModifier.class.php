@@ -6,10 +6,13 @@
  */
 class EditWidgetModifier extends ConcreteWidgetModifier {
 
-    public function modify(afsWidgetBuilderWidget $afsWBW) {
+    public function modify(afsWidgetBuilderWidget $afsWBW, $newWidgetMode = false) {
         $this->afsWBW = $afsWBW;
         $definition = $afsWBW->getDefinition();
-        $definition = $this->searchForAndModifyForeignTableFields($definition);
+
+        if ($newWidgetMode) {
+            $definition = $this->searchForAndModifyForeignTableFields($definition);
+        }
         return $definition;
     }
 

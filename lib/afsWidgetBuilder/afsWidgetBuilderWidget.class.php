@@ -68,7 +68,7 @@ class afsWidgetBuilderWidget {
         return json_encode($this->definition);
     }
 
-    function setDefinitionFromJSON($data)
+    function setDefinitionFromJSON($data, $newWidgetMode = false)
     {
         $this->definition = json_decode($data, true);
 
@@ -84,7 +84,7 @@ class afsWidgetBuilderWidget {
                 break;
         }
 
-        $this->definition = $widgetModifier->modify($this);
+        $this->definition = $widgetModifier->modify($this, $newWidgetMode);
     }
 
     private function validateAndSaveXml()

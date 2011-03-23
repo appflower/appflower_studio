@@ -44,14 +44,15 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
             this.widgetType = this.definition['type'];
         }
     },
-    save: function(widgetBuilderWindow){
+    save: function(widgetBuilderWindow, createNewWidget){
         var data = this.rootNode.dumpDataForWidgetDefinition();
 
         Ext.Ajax.request({
             url: window.afStudioWSUrls.getSaveWidgetUrl(this.widgetUri),
             params: {
                 'data': Ext.util.JSON.encode(data),
-                'widgetType': this.widgetType
+                'widgetType': this.widgetType,
+                'createNewWidget': createNewWidget ? true : false
             },
             success: function(response){
                 if (this.parseSaveResponse(response)) {
