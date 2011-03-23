@@ -47,8 +47,23 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
     ,branchNodeCfg : {}
 
     /**
+     * @property treeEditor
+     * Tree editor.
+     * 
+     * @type {afStudio.navigation.BaseTreeEditor}
+     */
+    
+    /**
+     * @property treeSorter
+     * Tree sorter.
+     * 
+     * @type {Ext.tree.TreeSorter}
+     */
+    
+    /**
      * @property treeKeyMap
-     * Defines item's key map
+     * Defines item's key map.
+     * 
      * @type {Ext.KeyMap}
      */
     
@@ -86,6 +101,12 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,initComponent : function() {
 		var _this = this;
+		
+		//activate treeSorter
+		this.treeSorter = new Ext.tree.TreeSorter(this, {
+		    folderSort: true,
+		    dir: "asc"
+		});
 		
 		//activate treeEditor
 		this.treeEditor = new afStudio.navigation.BaseTreeEditor(this, {
