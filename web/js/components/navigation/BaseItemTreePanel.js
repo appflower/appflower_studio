@@ -589,12 +589,10 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		   
 		   success: function(xhr, opt) {
 			   afStudio.vp.unmask('center');
-			   
 			   var response = Ext.decode(xhr.responseText);
 			   
 			   if (response.success) {
 			   	   Ext.util.Functions.createDelegate(action.run, this, [response],false)();
-			   	   
 			   	   //if there is something for console output,
 			   	   //then update console.
 				   if (response.console) {	
@@ -605,12 +603,12 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			           this.fireEvent("logmessage", this, action.logmessage);	
 			       }
 			   } else {
-			   	   Ext.Msg.alert('Error', response.content);
 			   	   
 			   	   if (Ext.isFunction(action.error)) {
 				   	   Ext.util.Functions.createDelegate(action.error, this, [response], false)();
 			   	   }
 			   }
+		       new Ext.ux.InstantNotification({title: 'Layout Designer', message: response.content});
 		   },
 		   
 		   failure: function(xhr, opt) {
