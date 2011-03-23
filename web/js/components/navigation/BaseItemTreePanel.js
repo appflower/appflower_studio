@@ -238,7 +238,6 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		node.expand();
 	}//eo expandParentNodes
     
-    
     /**
 	 * Selects node by its path (using node.getPath()).
 	 * @param {Ext.tree.TreeNode} node The node to be selected
@@ -550,22 +549,32 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * Runs action 
 	 * @protected
 	 * 
-	 * @param {Object} action:<ul>  
-	 *   <li><b>url</b>: {String} (Required) The action URL.</li>
+	 * @param {Object} action:
+	 * <ul>
 	 *   
-	 * 	 <li><b>run</b>: {Function} (Required) The action function to be run on success
-	 * 					  accepts result (response) object. Function accepts response parameter.</li>
-	 *  
-	 *   <li><b>error</b>: {Function} (Optional) The error callback function</li>
-	 *   
-	 *   <li><b>params</b>: {Object} (Optional) request parameters</li>
-	 *   
-	 *   <li><b>loadingMessage</b>: {String} (Optional) mask loading message</li>
+	 * <li><b>url</b>: {String} (Required) The action URL.</li>
 	 *    
-	 *   <li><b>scope</b>: {Object} (Optional) the {@link #run} function execution context</li>  
+	 * <li><b>run</b>: {Function} (Required) The action function to be run on success
+	 * 			     accepts result (response) object. Function accepts response parameter.
+	 * </li>
+	 *   
+	 * <li><b>error</b>: {Function} (Optional) The error callback function</li>
+	 * 
+	 * <li><b>params</b>: {Object} (Optional) request parameters</li>
+	 * 
+	 * <li><b>logmessage</b>: {String} (Required) The log message</li>
+	 *    
+	 * <li><b>loadingMessage</b>: {String} (Optional) mask loading message</li>
+	 *    
+	 * <li><b>scope</b>: {Object} (Optional) The {@link #run}/{@link #error} callback functions execution context.
+	 * 					 If it is not specified the default execution context is <tt>item's</tt> context. 
+	 * </li>
+	 *   
 	 * </ul>
 	 */
 	,executeAction : function(action) {
+		var _this = this;
+		
 		afStudio.vp.mask({
 			msg: action.loadingMessage ? action.loadingMessage : 'Loading...', 
 			region: 'center'
@@ -576,28 +585,30 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		   
 		   params: action.params,
 		   
+		   scope: action.scope ? action.scope : _this,
+		   
 		   success: function(xhr, opt) {
-		   	
 			   afStudio.vp.unmask('center');
+			   
 			   var response = Ext.decode(xhr.responseText);
 			   
 			   if (response.success) {
-			   	   Ext.util.Functions.createDelegate(
-				       action.run, 
-		   		       action.scope ? action.scope : this, 
-		   			   [response], 
-		   			   false
-			   	   )();			       				   	
+			   	   Ext.util.Functions.createDelegate(action.run, this, [response],false)();
+			   	   
+			   	   //if there is something for console output,
+			   	   //then update console.
+				   if (response.console) {	
+	      		       afStudio.updateConsole(response.console);
+			       }
+
+			       if (action.logmessage) {
+			           this.fireEvent("logmessage", this, action.logmessage);	
+			       }
 			   } else {
 			   	   Ext.Msg.alert('Error', response.content);
 			   	   
 			   	   if (Ext.isFunction(action.error)) {
-				   	   Ext.util.Functions.createDelegate(
-					       action.error, 
-			   		       action.scope ? action.scope : this, 
-			   			   [response],
-			   			   false
-				   	   )();
+				   	   Ext.util.Functions.createDelegate(action.error, this, [response], false)();
 			   	   }
 			   }
 		   },

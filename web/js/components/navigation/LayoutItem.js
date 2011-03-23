@@ -119,6 +119,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @return {Object} The configuration object 
 	 */
 	,_beforeInitComponent : function() {
+		var _this = this;
+		
 		var treeLoader = new Ext.tree.TreeLoader({
 			url: this.baseUrl,
 			baseParams: {
@@ -136,7 +138,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				{
 					text: 'Add Page',
 					iconCls: 'icon-pages-add',
-					disabled: true
+					handler: _this.onAddPageClick,
+					scope: _this
 				}]
 			}
 		};		
@@ -154,7 +157,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo initComponent
 	
 	/**
-	 * Loads layout designer for the specified layout node.
+	 * Loads a page associated with the node into Layout Designer.
 	 * @override
 	 *  
 	 * @param {Ext.tree.TreeNode} layoutNode
@@ -257,7 +260,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	            title: pageTitle
 		    },
 		    loadingMessage: String.format('"{0}" page creation...', page),
-		    scope: _this,
+		    logmessage: String.format('Layout Designer: page "{0}"  was created', page),
 		    run: function(response) {
 		    	this.refreshNode(appName, page, this.runNode);
 		    }
@@ -279,7 +282,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	            name: value
 		    },
 		    loadingMessage: String.format('Renaming page "{0}" to {1} ...', startValue, value),
-		    scope: _this,
+		    logmessage: String.format('Layout Designer: page "{0}" was renamed to "{1}"', startValue, value),
 		    run: function(response) {
 		    	this.refreshNode(appName, value, this.runNode);
 		    },
@@ -309,7 +312,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			            page: pageName
 				    },
 				    loadingMessage: String.format('"{0}" page deleting ...', pageName),
-				    scope: _this,
+				    logmessage: String.format('Layout Designer: page "{0}" was deleted', pageName),
 				    run: function(response) {
 				    	this.reloadRootNode(function() {
 				    		rootNode.findChild('text', appName, false).expand();
@@ -320,6 +323,30 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			}
 		});		
 	}//eo deletePage
+	
+	/**
+	 * Adds new page to an application.
+	 */
+	,onAddPageClick : function() {
+		var _this = this, 
+			rootNode = this.getRootNode(),
+			selectedNode = this.getSelectionModel().getSelectedNode();
+			
+		if (rootNode.hasChildNodes()) {
+			
+			if (!Ext.isEmpty(selectedNode)) {
+				
+				if (selectedNode.isLeaf()) {
+					this.addLeafNode(selectedNode.parentNode);				
+				} else {
+					this.addLeafNode(selectedNode);
+				}
+				
+			} else {
+				this.addLeafNode(rootNode.firstChild);
+			}
+		}
+	}//eo addPage 
 });
 
 /**
