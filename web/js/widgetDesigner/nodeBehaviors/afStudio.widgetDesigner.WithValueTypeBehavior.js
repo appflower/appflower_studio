@@ -150,6 +150,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
                 case 'source':
                         valueNode['i:source'] = {name: nodeWidgetData['sourceName']};
                         delete nodeWidgetData['sourceName'];
+                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
                     break;
                 case 'classAndMethod':
                         valueNode['i:class'] = nodeWidgetData['i:class'];
@@ -162,16 +163,18 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
                             delete nodeWidgetData['i:class'];
                             delete nodeWidgetData['i:method'];
                         }
+                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
                     break;
                 case 'item':
                         valueNode['i:source'] = {name: nodeWidgetData['name']};
+                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
                     break;
                 case 'static':
                         valueNode['i:source'] = {name: nodeWidgetData['name']};
+                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
                     break;
 
             }
-            nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
         }
 
         return nodeWidgetData;
