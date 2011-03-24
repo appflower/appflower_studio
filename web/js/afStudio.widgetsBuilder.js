@@ -416,7 +416,7 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 
                 if (items.length > 0) {
                     var modelFromFirstField = items[0].model;
-                    afsWD.rootNode.getDatasourceNode().setClassFromModel(modelFromFirstField);
+                    afsWD.rootNode.getDatasourceNode().setClassFromModel(modelFromFirstField, type);
                 }
 		
 
