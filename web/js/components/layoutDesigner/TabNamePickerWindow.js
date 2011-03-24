@@ -109,7 +109,7 @@ afStudio.layoutDesigner.TabNamePickerWindow = Ext.extend(Ext.Window, {
             buttonAlign: 'center',
 			buttons: [
 			{
-				text: 'Create now',
+				text: 'Save',
 				handler: _this.pickTabName, 
 				scope: _this				
 			},{
