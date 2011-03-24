@@ -13,14 +13,20 @@ afStudio.widgetDesigner.DatasourceNode = Ext.extend(afStudio.widgetDesigner.Cont
         };
     },
     setClassFromModel: function(model) {
-        var peerClass = model+'Peer';
+        this.properties['modelName'].set('value', model);
         this.behaviors[0].configureFor(this,{
            'type': 'orm',
-           'i:class': peerClass,
+           'i:class': 'ModelCriteriaFetcher',
            'i:method': {
-             'name': 'retrieveByPk',
-             'i:param': {name: 'id', _content: '{id}'}
+             'name': 'getDataForList',
+             'i:param': [{name: 'modelName', _content: model}]
            }
         });
+    },
+    createProperties: function(){
+        var properties = [
+            new afStudio.widgetDesigner.PropertyTypeString('modelName','Model Name').create(),
+        ];
+        this.addProperties(properties);
     }
 });
