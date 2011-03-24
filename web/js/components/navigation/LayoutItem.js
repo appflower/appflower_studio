@@ -281,11 +281,11 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	            page: startValue,
 	            name: value
 		    },
-		    loadingMessage: String.format('Renaming page "{0}" to {1} ...', startValue, value),
-		    logmessage: String.format('Layout Designer: page "{0}" was renamed to "{1}"', startValue, value),
+		    loadingMessage: String.format('Renaming page "{0}" to {1} ...', startValue, value),		    
+		    logmessage: String.format('Layout Designer: page "{0}" was renamed to "{1}"', startValue, value),		    
 		    run: function(response) {
 		    	this.refreshNode(appName, value, this.runNode);
-		    },
+		    },		    
 		    error: function(response) {
 		    	node.setText(startValue);
 		    }
