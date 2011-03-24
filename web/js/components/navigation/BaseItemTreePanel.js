@@ -74,7 +74,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,constructor : function(config) {
 		var _this = this;
 		
-		var rootNode = new Ext.tree.AsyncTreeNode({
+		var rootNode = new Ext.tree.TreeNode({
 			path:'root',
 			text: _this.title || '', 
 			draggable: false
@@ -152,7 +152,13 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			
 			contextmenu: _this.onNodeContextMenu,
 			click:       _this.onNodeClick,
-			dblclick:    _this.onNodeDblClick
+			dblclick:    _this.onNodeDblClick,
+			activate: {
+				fn: function() {
+					this.loadRootNode();
+				},
+				single: true
+			}
 	    });
 	    
 	    

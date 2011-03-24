@@ -16,19 +16,24 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 		//Create config option
 		var config = {
 			id: "west_panel",
-			region: "west",
 			title: "Navigation",
-			width: 220,
-			minWidth: 220,
+			region: "west",
 			split: true,
+			layout: "accordion",
 			layoutConfig: { 
 				animate: true 
 			},
+			width: 220,
+			minWidth: 220,
 			collapsible: true,
-			layout: "accordion",
+			activeItem: 'models',
 			listeners: {
-				beforerender: function() {
-					this.activeItem = this.findById("models")
+				afterlayout: {
+					fn: function() {				
+						var ai = this.layout.activeItem;
+						ai.fireEvent('activate', ai);
+					},
+					single: true
 				}
 			},
 			defaults: {
@@ -36,7 +41,10 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 			},
 			items: [				
 				new afStudio.models.treePanel({id:'models'}),
-				new afStudio.navigation.LayoutItem({id:'layoutdesigner'}),
+				{
+					xtype: 'afStudio.navigation.layoutItem',
+					id:'layoutdesigner'
+				},
 			    new afStudio.widgets.treePanel({id:'widgets'}),
 			    new afStudio.plugins.treePanel({id:'plugins'}),			    
 			    {

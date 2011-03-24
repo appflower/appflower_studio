@@ -66,7 +66,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	,_initCmp : function() {
 		var _this = this;
 		
-		var rootNode = new Ext.tree.AsyncTreeNode({
+		var rootNode = new Ext.tree.TreeNode({
 			path:'root',
 			text: 'ModelRoot', 
 			draggable: false
@@ -178,7 +178,14 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	            c.contextNode = node;
 	            c.showAt(e.getXY());
 	        },
-	        dblclick : Ext.util.Functions.createDelegate(_this.onModelDbClick, _this)
+	        dblclick : Ext.util.Functions.createDelegate(_this.onModelDbClick, _this),
+			activate: {
+				fn: function() {
+					this.loader.load(this.root);
+				},
+				single: true,
+				scope: _this
+			}	        
 		});
 	}
 	
