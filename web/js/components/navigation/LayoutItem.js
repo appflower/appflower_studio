@@ -313,9 +313,9 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				    },
 				    loadingMessage: String.format('"{0}" page deleting ...', pageName),
 				    logmessage: String.format('Layout Designer: page "{0}" was deleted', pageName),
-				    run: function(response) {
-				    	this.reloadRootNode(function() {
-				    		rootNode.findChild('text', appName, false).expand();
+				    run: function(response) {				    	
+				    	this.loadRootNode(function() {
+				    		this.selectChildNodeByText(rootNode, appName).expand();
 				    		afStudio.vp.clearPortal();	
 				    	});
 				    }

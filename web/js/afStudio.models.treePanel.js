@@ -231,8 +231,12 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Function} callback The callback to run after reloading
 	 */
 	,reloadModels : function(callback) {
-		Ext.isFunction(callback) ? this.getRootNode().reload(callback) 
-		: this.getRootNode().reload(); 
+		var l = this.loader,
+			rootNode = this.getRootNode();	
+			
+		Ext.isFunction(callback) 
+			? l.load(rootNode, callback) 
+			: l.load(rootNode); 
 	}
 	
 	/**
@@ -252,7 +256,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		Ext.each(this.getRootNode().childNodes, function(n){
 			if (n.text == node.text) {
 				_this.getSelectionModel().select(n);
-				return false;	
+				return false;
 			}
 		});		
 	}
@@ -307,7 +311,7 @@ afStudio.models.treePanel = Ext.extend(Ext.tree.TreePanel, {
 			node.setText(newValue);
 			_this.addModel(node);
 		} else {
-			if (newValue != oldValue) {			
+			if (newValue != oldValue) {
 				_this.renameModel(node, newValue, oldValue);
 			}
 		}

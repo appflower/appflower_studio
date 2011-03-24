@@ -80,8 +80,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			draggable: false
 		});
 		
-		Ext.apply(config, {
-			
+		Ext.applyIf(config, {
 		    root: rootNode,
 		    rootVisible: false,
 			tools: [
@@ -154,14 +153,12 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			click:       _this.onNodeClick,
 			dblclick:    _this.onNodeDblClick,
 			activate: {
-				fn: function() {
-					this.loadRootNode();
-				},
+				fn: _this.onItemActivate,
 				single: true
 			}
 	    });
 	    
-	    
+	    //Tree key map
 		_this.treeKeyMap = new Ext.KeyMap(this.el, [
 			{
 			    key: Ext.EventObject.ENTER,
@@ -177,20 +174,21 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			    },
 			    scope: this
     		}
-//    		{
-//			    key: Ext.EventObject.R,
-//			    ctrl: true,
-//			    stopEvent: true,
-//			    fn: function() {
-//			    	var tsm = this.getSelectionModel();
-//			    	var node = tsm.getSelectedNode();
-//			    	
-//			    	if (node.isLeaf()) {
-//			    		this.treeEditor.triggerEdit(node);
-//			    	}
-//			    },
-//			    scope: this    			
-//    		}
+    		/*for future key shortcuts usage
+    		{
+			    key: Ext.EventObject.R,
+			    ctrl: true,
+			    stopEvent: true,
+			    fn: function() {
+			    	var tsm = this.getSelectionModel();
+			    	var node = tsm.getSelectedNode();
+			    	
+			    	if (node.isLeaf()) {
+			    		this.treeEditor.triggerEdit(node);
+			    	}
+			    },
+			    scope: this    			
+    		}*/
 		]);
 	}//eo initEvents
 	
@@ -263,7 +261,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,selectChildNodeByText : function(parent, childText) {
 		var _this = this,
 			  tsm = this.getSelectionModel();
-	
+			  
 		this.expandParentNodes(parent);
 		
 		var childNode;
@@ -278,24 +276,39 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * Loads this tree's root node.
 	 * @protected
+	 * 
+	 * @param {Function} callback The callback function executed after the root node was loaded.
+	 * 					 The scope (<tt>this</tt>) inside the callback is <b>item</b> itself.  
 	 */
-	,loadRootNode : function() {
-		this.loader.load(this.root);		
+	,loadRootNode : function(callback) {
+		var _this = this,
+			    l = this.loader;
+		Ext.isFunction(callback) ? l.load(this.root, callback, _this) : l.load(this.root);		
 	}//eo loadRootNode
 	
 	/**
-	 * Reloads tree's root node.
-	 * For more details look at {@link  Ext.tree.AsyncTreeNode#reload} method. 
+	 * Sets initial <b>item</b> state.
 	 * @protected
-	 * 
-	 * @param {Function} callback The callback function to be executed after reload.
 	 */
-	,reloadRootNode : function(callback) {
-		var _this = this,
-			rootNode = this.getRootNode();
+	,initialItemState : function() {
+		var rootNode = this.getRootNode();
 		
-		Ext.isFunction(callback) ? rootNode.reload(callback, _this) : rootNode.reload();
-	}//eo reloadRootNode
+		if (!rootNode.isExpanded()) {
+			rootNode.expand();
+		}
+		
+		if (rootNode.firstChild && !rootNode.firstChild.isLeaf()) {
+			rootNode.firstChild.expand();
+		}
+	}//eo initialItemState
+	
+	/**
+	 * Executes only once during <b>item</b> activation.
+	 * @private
+	 */
+	,onItemActivate : function() {
+		this.loadRootNode(this.initialItemState);
+	}//eo onItemActivate 
 	
 	/**
 	 * Reloads tree and selects child node finding it by its <tt>text</tt> attribute.
@@ -311,7 +324,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,refreshNode : function(parentTextAttr, childTextAttr, callback) {
 		var _this = this;
 		
-    	this.reloadRootNode(function() {
+    	this.loadRootNode(function() {
     		var root = this.getRootNode(),
     			parentNode = root.findChild('text', parentTextAttr, true),    		
     			childNode = this.selectChildNodeByText(parentNode, childTextAttr);
@@ -319,7 +332,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
     		if (Ext.isFunction(callback)) {
     			Ext.util.Functions.createDelegate(callback, _this, [childNode])();
     		}
-    	});		
+    	});
 	}//eo refreshNode
 	
 	/**
