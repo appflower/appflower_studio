@@ -80,6 +80,7 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 				{xtype:'hidden', name: 'path'},
 				{xtype:'label', html: 'Project Description:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},
 				{xtype:'textarea', hideLabel: true, anchor: '100%', name: 'description', height: 57, style: 'margin-top: 5px;'},
+				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Use latest playground version (will be downloaded from appflower.com)', name: 'latest'},
 				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Auto-Deploy on Save', name: 'autodeploy'}
 			]
 		});
@@ -87,7 +88,7 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 		var config = {
 			title: 'Create new project', 
 			width:450,
-			height:430,
+			height:450,
 			closable: true,
 	        draggable: true, 
 	        modal: true, 
@@ -137,6 +138,8 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 		        failure:function(form,action){
 		                if(action.result)
 		                {
+		                	afStudio.updateConsole(action.result.console);
+		                	
 		                    if(action.result.message)
 		                    {
 		                        Ext.Msg.alert("Failure", action.result.message, function(){
@@ -150,6 +153,8 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 		        success:function(form,action){
 		                if(action.result)
 		                {
+		                	afStudio.updateConsole(action.result.console);
+		                	
 		                    if(action.result.message)
 		                    {
 		                        Ext.Msg.alert("Success", action.result.message, function(){
