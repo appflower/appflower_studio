@@ -11,14 +11,21 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 	
 	/**
 	 * @cfg {Object} viewMeta required
-	 * View metadata
+	 * View metadata.
 	 */
 	
 	/**
-	 * @property {Number} viewLayout (defaults to 1)
-	 * Default view layout type
+	 * @property viewLayout (defaults to 1)
+	 * Default view layout type.
+	 * @type {Number}
 	 */
 	viewLayout : 1
+	
+	/**
+	 * @cfg {Number} viewMetaPosition required (defaults to 0)
+	 * This view metadata position inside the page metadata.
+	 */
+	,viewMetaPosition : 0
 	
 	/**
 	 * Returns view's layout metadata
@@ -98,9 +105,9 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 	 */	
 	,constructor : function(config) {		
 		//area layout attribute
-		config.viewMeta.attributes.layout = 
-			!Ext.isDefined(config.viewMeta.attributes.layout) 
-				? this.viewLayout : config.viewMeta.attributes.layout;		
+		if (!Ext.isDefined(config.viewMeta.attributes.layout)) {
+			config.viewMeta.attributes.layout = this.viewLayout; 
+		}
 		
 		afStudio.layoutDesigner.view.TabbedView.superclass.constructor.call(this, config);
 	}//eo constructor
@@ -157,7 +164,7 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 		     tabs = this.getViewTabsMetaData(),			   
 		   layout = [];
 		
-		Ext.each(tabs, function(tm, i, allTabs){
+		Ext.each(tabs, function(tm, i, allTabs) {
 			layout.push(_this.createTabView(tm, i));
 		});   
 		
@@ -165,15 +172,15 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 	}//eo initView
 	
 	/**
-	 * Returns newly created view container.
+	 * Creates tab view {@link afStudio.layoutDesigner.view.NormalView}.
 	 * 
-	 * @param {Object} tabMeta The view metadata
-	 * @param {Number} metaPosition The metadata position 
+	 * @param {Object} tabMeta The view's metadata
+	 * @param {Number} metaPosition The view's metadata position. 
 	 * @return {afStudio.layoutDesigner.view.NormalView} view
 	 */
 	,createTabView : function(tabMeta, metaPosition) {
-		var _this = this;
-		var title = tabMeta.attributes.title;
+		var _this = this,
+			title = tabMeta.attributes.title;
 		
 		tabMeta.attributes.layout = this.getViewTabLayout(tabMeta);
 		
@@ -195,11 +202,15 @@ afStudio.layoutDesigner.view.TabbedView = Ext.extend(afStudio.layoutDesigner.vie
 	,updateMetaData : function(md) {
 	 	var container = this.ownerCt; //page
 		
+	 	//updates tab view meta
 		Ext.apply(this.getViewTabMetaData(md.position), md.meta);
 		
-		container.updateMetaData(Ext.apply(md, {
-			meta: this.viewMeta
-		}));
+		container.updateMetaData({
+			meta: this.viewMeta,
+			position: this.viewMetaPosition,
+			callback: md.callback			
+		});
+		
 	}//eo updateMetaData	
 	
 	/**

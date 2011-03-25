@@ -21,7 +21,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	
 	/**
 	 * @cfg {Number} viewMetaPosition required (defaults to 0)
-	 * Metadata position
+	 * This view metadata position inside the page metadata.
 	 */
 	,viewMetaPosition : 0
 	
@@ -78,11 +78,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * Constructor
 	 * @param {Object} config
 	 */	
-	,constructor : function(config) {		
-		config.viewMeta.attributes.layout = 
-			!Ext.isDefined(config.viewMeta.attributes.layout) 
-				? this.viewLayout : config.viewMeta.attributes.layout;		
+	,constructor : function(config) {
 		
+		if (!Ext.isDefined(config.viewMeta.attributes.layout)) {
+			config.viewMeta.attributes.layout = this.viewLayout;	
+		}
+
 		afStudio.layoutDesigner.view.NormalView.superclass.constructor.call(this, config);
 	}//eo constructor
 	
@@ -259,8 +260,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		var vc = this.viewMeta['i:component'];
 		
 		if (Ext.isArray(vc)) {
-			vc.push(cmpMeta);
-			
+			vc.push(cmpMeta);			
 		} else {			
 			if (Ext.isDefined(vc)) { 
 				this.viewMeta['i:component'] = [vc, cmpMeta];	
@@ -339,7 +339,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo setLayoutMeta
 	
 	/**
-	 * Adds new component(widget) into the view
+	 * Adds new component(widget) into the view.
 	 * 
 	 * @param {Object} cmpMeta The component's metadata
 	 * @param {String} title The component's title
@@ -575,12 +575,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Object} dropEvent For more details look at {@link Ext.ux.Portal#beforedrop}
 	 */
 	,dropComponent : function(dropEvent) {
+		
 		var comp = dropEvent.panel,
 			compMeta = comp.componentMeta,
 			pos = dropEvent.position,
-			columnIndex = dropEvent.columnIndex,
-			columnMeta = this.getColumnMetaData(columnIndex);
-		
+			columnIndex = dropEvent.columnIndex;
+			
 		var updateViewComponentsMeta = Ext.util.Functions.createDelegate(
 			function(columnMeta) {
 				for (var i = 0, len = columnMeta.index.length; i < len; i++) {
@@ -589,10 +589,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			}, this);
 			
 		//update component's "column" metadata 
-		compMeta.attributes.column = dropEvent.columnIndex;
+		compMeta.attributes.column = dropEvent.columnIndex;		
 		
 		//update component's "position" metadata
-		var cmpIdx = this.getComponentMetaIndex(compMeta, columnMeta.component);		
+		var columnMeta = this.getColumnMetaData(columnIndex),
+			    cmpIdx = this.getComponentMetaIndex(compMeta, columnMeta.component);
+
 		if (!Ext.isEmpty(columnMeta.component)) {
 			if (cmpIdx > pos) {
 				columnMeta.component.dragUp(cmpIdx, pos);

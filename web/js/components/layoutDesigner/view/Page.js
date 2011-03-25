@@ -156,25 +156,28 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	}//eo setActiveContentViewLayout
 	
 	/**
-	 * Updates {@link #pageMeta} metadata.
+	 * Updates {@link #pageMeta} page's view metadata.
 	 * 
-	 * @param {Object} md The new "content" view metadata
-	 * {
-	 *    meta: view metadata,
-	 *    callback: optional, function executed in this page context and accepted 
-	 *              {@link afStudio.layoutDesigner.DesignerPanel} designPanel parameter
-	 * }
+	 * @param {Object} md The new <tt>i:area</tt> view metadata
+	 * <ul>
+	 *    <li><b>meta</b> (Required) View's metadata.</li>
+	 *    
+	 *    <li><b>position</b> (Required) View's metadata position inside pages metadata.</li>
+	 *    
+	 *    <li><b>callback</b> (Optional) {Function} Callback executed in this page context and accepted 
+	 *              {@link afStudio.layoutDesigner.DesignerPanel} designPanel parameter.
+	 *    </li>           
+	 * </ul>
 	 */
 	,updateMetaData : function(md) {
-		var   mp = afStudio.layoutDesigner.view.MetaDataProcessor,
-		    vIdx = mp.getContentViewMeta(this.pageMeta).contentIdx;
-		
-		if (Ext.isDefined(vIdx)) {
-			this.pageMeta['i:area'][vIdx] = md.meta;	
+		var mp = afStudio.layoutDesigner.view.MetaDataProcessor;
+
+		if (Ext.isArray(this.pageMeta['i:area'])) {
+			this.pageMeta['i:area'][md.position] = md.meta;	
 		} else {
 			this.pageMeta['i:area'] = md.meta;
 		}
-
+		
 		if (Ext.isFunction(md.callback)) {
 			Ext.util.Functions.createDelegate(md.callback, this, [this.designPanel])();
 		}
