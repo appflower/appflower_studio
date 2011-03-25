@@ -1,7 +1,8 @@
 Ext.namespace('afStudio.layoutDesigner.view');
 
 /**
- * View Factory
+ * View Factory.
+ * 
  * @singleton
  * @author Nikolai
  */
@@ -14,35 +15,44 @@ afStudio.layoutDesigner.view.ViewFactory = function() {
 		 * 
 		 * @param {Object} meta The view meta/structure data
 		 */
-		buildLayout : function(meta) {			
+		buildLayout : function(meta) {
 			var view = [];
 			
 			if (Ext.isArray(meta['i:area'])) {
-				for (var i = 0, len = meta['i:area'].length; i < len; i++) {
-					view.push(this.createView(meta['i:area'][i]));
-				}
+				
+				Ext.each(meta['i:area'], function(vm, idx, all) {
+					view.push(this.createView(vm, idx));
+				}, this);
+				
 			} else {
-				view.push(this.createView(meta['i:area']));
+				view.push(this.createView(meta['i:area'], 0));
 			}
 			
 			return view;
 		}//eo buildLayout		
 		
 		/**
-		 * Creates page view
+		 * Creates page view <b>i:area</b>.
+		 * 
+		 * @param {Object} vm The view's metadata.
+		 * @param {Number} mPos The view's metadata position inside page metadata.
 		 */
-		,createView : function(vm) {
+		,createView : function(vm, mPos) {			
 			var region, //depends on view type
-				viewConfigObj = {},
+				viewConfigObj,
 				view;
-			
+				
 			switch (vm.attributes.type) {
 				case 'content':
-					viewConfigObj.region = 'center';
+					viewConfigObj = {
+						viewMetaPosition: mPos,
+						region: 'center'
+					}					
 				break;
 				
 				case 'sidebar':
 					viewConfigObj = {
+						viewMetaPosition : mPos,
 						region: 'west',
 						split: true,
 						collapseMode: 'mini',
@@ -52,6 +62,7 @@ afStudio.layoutDesigner.view.ViewFactory = function() {
 				
 				case 'footer':
 					viewConfigObj = {
+						viewMetaPosition : mPos,
 						region: 'south',
 						split: true,
 						collapseMode: 'mini',
@@ -63,8 +74,8 @@ afStudio.layoutDesigner.view.ViewFactory = function() {
 			viewConfigObj.viewMeta = vm;
 			
 			view = afStudio.layoutDesigner.view.MetaDataProcessor.isViewTabbed(vm) 
-					? new afStudio.layoutDesigner.view.TabbedView(viewConfigObj)
-					: new afStudio.layoutDesigner.view.NormalView(viewConfigObj);
+			           ? new afStudio.layoutDesigner.view.TabbedView(viewConfigObj)
+					   : new afStudio.layoutDesigner.view.NormalView(viewConfigObj);
 			
 			return view; 
 		}//eo createView
