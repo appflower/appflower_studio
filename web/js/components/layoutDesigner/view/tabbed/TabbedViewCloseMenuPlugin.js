@@ -63,6 +63,14 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
         return this.menu;
     }//eo createMenu
     
+    /**
+     * Setter for {@link #active} tab property.
+     * @param {Ext.Panel} tab The active tab
+     */
+    ,setActiveTabProperty : function(tab) {
+    	this.active = tab;
+    }//eo setActiveTabProperty 
+    
 	/**
 	 * Checks if TabPanel has no tabs, and if it is true fires <tt>alltabswereclosed</tt> event
 	 */
