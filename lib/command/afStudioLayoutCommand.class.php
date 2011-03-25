@@ -113,6 +113,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             //if ($this->validate()) {
                 // Save changes
                 file_put_contents($sPath, $this->definition);
+                chmod($sPath, 0755);
                 
                 $message = (!$bNew) ? 'Page has been changed' : 'Page has been created';
                                 
