@@ -96,7 +96,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	
 	/**
 	 * Returns page's <i>content</i> view container
-	 * @return {afStudio.layoutDesigner.view.NormalView} view The content view container
+	 * @return {afStudio.layoutDesigner.view.NormalView}/{afStudio.layoutDesigner.view.TabbedView} view The content view container
 	 */
 	,getContentView : function() {
 		var cv = this.find('region', 'center')[0];

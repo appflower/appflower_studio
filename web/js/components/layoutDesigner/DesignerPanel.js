@@ -230,15 +230,17 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 							}]
 						}
 					}
-//					,{ Will be imlemented in future release
-//						text: 'Re-size',
-//						handler: _this.resizeItems, 
-//						scope: _this
-//					},{
-//						text: 'Auto-Adjust', 
-//						handler: _this.autoAdjust, 
-//						scope: _this
-//					}
+					/*FUTURE release
+					,{ 
+						text: 'Re-size',
+						handler: _this.resizeItems, 
+						scope: _this
+					},{
+						text: 'Auto-Adjust', 
+						handler: _this.autoAdjust, 
+						scope: _this
+					}
+					*/
 					,{
 						itemId: 'addNewTab',
 						text: 'Add new Tab' 

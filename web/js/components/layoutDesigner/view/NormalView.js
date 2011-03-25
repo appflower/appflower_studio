@@ -49,6 +49,15 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	}//eo viewLayoutConfig
 	
 	/**
+	 * Returns real columns number for specified layout type.
+	 * @param {Number} layoutType The layout type.
+	 * @return {Number} columns number
+	 */
+	,getLayoutColumnsNumber : function(layoutType) {
+		return this.viewLayoutConfig[layoutType].length;
+	}//eo
+	
+	/**
 	 * Returns view's meta <tt>layout</tt> property.
 	 * @return {Number} layout type number
 	 */
@@ -312,29 +321,43 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Number} newLayout The new layout type
 	 */
 	,setLayoutMeta : function(newLayout) {
+		var vc = this.viewMeta['i:component'],
+			mp = afStudio.layoutDesigner.view.MetaDataProcessor,
+			container = this.ownerCt,
+			columnMaxValue = this.getLayoutColumnsNumber(newLayout) - 1;
+		
+		//updates layout type
 		this.viewMeta.attributes.layout = newLayout;
 		
-		var vc = this.viewMeta['i:component'];
-		
-		//if this.viewMeta['i:component'] is undefined means view is empty
+		//if this.viewMeta['i:component'] is undefined means that view is empty
 		if (Ext.isDefined(vc)) {
-			
+		//correct components column attribute to new layout type	
 			if (Ext.isArray(vc)) {
 				for (var i = 0, len = vc.length; i < len; i++) {
-					if (vc[i]['attributes']['column'] >= newLayout) {
-						vc[i]['attributes']['column'] = newLayout - 1;
+					if (vc[i]['attributes']['column'] >= columnMaxValue) {
+						vc[i]['attributes']['column'] = columnMaxValue;
 					}
 				}
 			} else {
-				if (vc['attributes']['column'] >= newLayout) {
-					vc['attributes']['column'] = newLayout - 1;
+				if (vc['attributes']['column'] >= columnMaxValue) {
+					vc['attributes']['column'] = columnMaxValue;
 				}
 			}
 		}
 		
-		this.updateViewMetaData(function() {
-			//"this" inside function = afStudio.layoutDesigner.view.Page
+		var idx;
+		if (container.viewMeta && mp.isViewTabbed(container.viewMeta)) {
+			var ai = container.getActiveTab();
+			idx = container.items.indexOf(ai);
+		}
+		
+		//scope inside callback is afStudio.layoutDesigner.view.Page
+		this.updateViewMetaData(function(ld) {
 			this.refreshPageLayout();
+			//if tabbed
+			if (idx) {
+				ld.layoutView.getContentView().setActiveTab(idx);
+			}
 		});
 	}//eo setLayoutMeta
 	
