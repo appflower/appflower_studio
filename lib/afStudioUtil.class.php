@@ -216,4 +216,13 @@ class afStudioUtil
     {
     	return sfContext::getInstance()->getRequest()->getUriPrefix();
     }
+    
+    /**
+     * @return an unique identifier for different purposes
+     * @author radu
+     */
+    public static function unique()
+    {
+    	return md5(time());
+    }
 }
