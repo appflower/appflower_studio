@@ -75,7 +75,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		var _this = this;
 		
 		var rootNode = new Ext.tree.TreeNode({
-			path:'root',
+			path: 'root',
 			text: _this.title || '', 
 			draggable: false
 		});
@@ -267,7 +267,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		var childNode;
 		if (parent && !parent.isLeaf()) {
 			childNode = parent.findChild('text', childText, false);
-			tsm.select(childNode);
+			childNode ? tsm.select(childNode) : null;
 		}
 		
 		return childNode;
@@ -313,21 +313,25 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * Reloads tree and selects child node finding it by its <tt>text</tt> attribute.
 	 * During selecting the child node expands all his parent nodes.
-	 * Nodes searching is based on <tt>text</tt> attributes, it must be unique within the tree.  
+	 * Nodes searching is based on <tt>text</tt> attribute, it must be unique within the tree.  
 	 * @protected
 	 * 
-	 * @param {String} (Required) parentTextAttr The parend node's <tt>text</tt> attribute.
+	 * @param {Mixed} (Required) parent The parend node. If parent passed in as string it will be searched by <tt>text</tt> attribute.
 	 * @param {String} (Required) childTextAttr The child node's <tt>text</tt> attribute.
 	 * @param {Function} (Optional) callback The callback function, accepts refreshed childNode.
 	 * 					 Callback function accepts just refreshed <tt>childNode</tt>.
 	 */
-	,refreshNode : function(parentTextAttr, childTextAttr, callback) {
+	,refreshNode : function(parent, childTextAttr, callback) {
 		var _this = this;
 		
     	this.loadRootNode(function() {
     		var root = this.getRootNode(),
-    			parentNode = root.findChild('text', parentTextAttr, true),    		
-    			childNode = this.selectChildNodeByText(parentNode, childTextAttr);
+    			parentNode = Ext.isString(parent) ? root.findChild('text', parent, true) : root,
+    			childNode;
+    			
+    			if (parentNode) {
+    				childNode = this.selectChildNodeByText(parentNode, childTextAttr);
+    			}
     		
     		if (Ext.isFunction(callback)) {
     			Ext.util.Functions.createDelegate(callback, _this, [childNode])();
@@ -581,7 +585,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * 
 	 * <li><b>params</b>: {Object} (Optional) request parameters</li>
 	 * 
-	 * <li><b>logmessage</b>: {String} (Required) The log message</li>
+	 * <li><b>logMessage</b>: {String} (Required) The log message</li>
 	 *    
 	 * <li><b>loadingMessage</b>: {String} (Optional) mask loading message</li>
 	 *    
@@ -611,23 +615,23 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			   var response = Ext.decode(xhr.responseText);
 			   
 			   if (response.success) {
-			   	   Ext.util.Functions.createDelegate(action.run, this, [response],false)();
-			   	   //if there is something for console output,
-			   	   //then update console.
+			   	   Ext.util.Functions.createDelegate(action.run, this, [response], false)();
+			   	   //update console
 				   if (response.console) {	
 	      		       afStudio.updateConsole(response.console);
 			       }
-
-			       if (action.logmessage) {
-			           this.fireEvent("logmessage", this, action.logmessage);	
+				   //log action
+			       if (action.logMessage) {
+			           this.fireEvent("logmessage", this, action.logMessage);	
 			       }
-			   } else {
-			   	   
+			   } else {			   	   
 			   	   if (Ext.isFunction(action.error)) {
 				   	   Ext.util.Functions.createDelegate(action.error, this, [response], false)();
 			   	   }
 			   }
-		       new Ext.ux.InstantNotification({title: 'Layout Designer', message: response.content});
+			   
+			   var message = response.content || response.message || 'Operation was successfully processed!';
+		       new Ext.ux.InstantNotification({title: 'Layout Designer', message: message});
 		   },
 		   
 		   failure: function(xhr, opt) {
