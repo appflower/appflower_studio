@@ -486,7 +486,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 					var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
 					widgetDefinition.on('datafetched', function(rootNode, definition){
 						afStudio.vp.addToPortal({
-							title: 'Plugin Designer',
+							title: 'Widget Designer',
 							collapsible: false,
 							draggable: false,
 							layout: 'fit',

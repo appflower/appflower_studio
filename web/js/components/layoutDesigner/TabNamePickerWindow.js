@@ -69,9 +69,9 @@ afStudio.layoutDesigner.TabNamePickerWindow = Ext.extend(Ext.Window, {
 	 * @return {Object} The configuration object 
 	 */
 	,_beforeInitComponent : function() {
-		var _this = this;		
+		var _this = this;
 		
-		//Window's form panel 
+		//Window's form panel
 		var pickerForm = new Ext.FormPanel({
 			ref: 'pickerForm',				
 			baseCls: 'x-plain',

@@ -702,7 +702,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
 		this.widgetDefinition.on('datafetched', function(rootNode, definition){
 			afStudio.vp.addToPortal({
-				title: 'Plugin Designer',
+				title: 'Widget Designer',
 				collapsible: false,
 				draggable: false,
 				layout: 'fit',
