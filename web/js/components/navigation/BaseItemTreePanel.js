@@ -617,6 +617,8 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		   success: function(xhr, opt) {
 			   afStudio.vp.unmask('center');
 			   var response = Ext.decode(xhr.responseText);
+
+			   var message = response.content || response.message || 'Operation was successfully processed!';
 			   
 			   if (response.success) {
 			   	   Ext.util.Functions.createDelegate(action.run, this, [response], false)();
@@ -628,19 +630,20 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			       if (action.logMessage) {
 			           this.fireEvent("logmessage", this, action.logMessage);	
 			       }
+			       
+			       afStudio.Msg.info(this.title || '', message);
 			   } else {			   	   
 			   	   if (Ext.isFunction(action.error)) {
 				   	   Ext.util.Functions.createDelegate(action.error, this, [response], false)();
 			   	   }
+			   	   
+			   	   afStudio.Msg.error(this.title || '', message);
 			   }
-			   
-			   var message = response.content || response.message || 'Operation was successfully processed!';
-		       new Ext.ux.InstantNotification({title: 'Layout Designer', message: message});
 		   },
 		   
 		   failure: function(xhr, opt) {
 		   	   afStudio.vp.unmask('center');
-		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
+		   	   afStudio.Msg.error('Server Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
 		   }
 		});
 	}//eo executeAction
