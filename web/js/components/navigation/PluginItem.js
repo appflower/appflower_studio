@@ -343,7 +343,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		 	refreshNode: this.getParentNodeAttribute(node, 'text'),
 		 	msg: 'widget'
 		};
-		
+
 		this.renameNode(renameParams, value, startValue);
 	}//eo renameNodeXml
 	

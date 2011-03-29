@@ -168,8 +168,8 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			    	
 			    	if (node.isLeaf()) {
 			    		this.runNode(node);
-			    	} else if (node.isExpandable() && !node.isExpanded()) {
-			    		node.expand();
+			    	} else if (node.isExpandable()) {
+			    		node.isExpanded() ? node.collapse() : node.expand();
 			    	}
 			    },
 			    scope: this
@@ -283,7 +283,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,loadRootNode : function(callback) {
 		var _this = this,
 			    l = this.loader;
-		Ext.isFunction(callback) ? l.load(this.root, callback, _this) : l.load(this.root);		
+		Ext.isFunction(callback) ? l.load(this.root, callback, _this) : l.load(this.root);
 	}//eo loadRootNode
 	
 	/**
@@ -291,14 +291,18 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @protected
 	 */
 	,initialItemState : function() {
-		var rootNode = this.getRootNode();
+		var rootNode = this.getRootNode(),
+			tsm = this.getSelectionModel();
 		
 		if (!rootNode.isExpanded()) {
 			rootNode.expand();
 		}
 		
 		if (rootNode.firstChild && !rootNode.firstChild.isLeaf()) {
-			rootNode.firstChild.expand();
+			rootNode.firstChild.expand(false, true, function(n) {
+				tsm.select(n);
+				n.ui.getEl().focus();				
+			});
 		}
 	}//eo initialItemState
 	
@@ -327,15 +331,15 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
     	this.loadRootNode(function() {
     		var root = this.getRootNode(),
     			parentNode = Ext.isString(parent) ? root.findChild('text', parent, true) : root,
-    			childNode;
+    			childNode;	
     			
-    			if (parentNode) {
-    				childNode = this.selectChildNodeByText(parentNode, childTextAttr);
-    			}
-    		
-    		if (Ext.isFunction(callback)) {
-    			Ext.util.Functions.createDelegate(callback, _this, [childNode])();
-    		}
+				if (parentNode) {
+					childNode = this.selectChildNodeByText(parentNode, childTextAttr);
+				}
+				
+	    		if (Ext.isFunction(callback)) {
+	    			Ext.util.Functions.createDelegate(callback, _this, [childNode])();
+	    		}
     	});
 	}//eo refreshNode
 	
