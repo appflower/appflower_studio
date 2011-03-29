@@ -82,9 +82,12 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <!-- Error -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/error/ApsError.js"></script>
 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/notification/MessageBox.js"></script>
+
 <!-- Navigation -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/BaseItemTreePanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/LayoutItem.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/PluginItem.js"></script>
 
 <!-- Viewport -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/StudioToolbar.js"></script>

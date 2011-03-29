@@ -50,9 +50,9 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
     }
     
 	/**
-	 * @property {Ext.menu.Menu} appContextMenu
+	 * @property appContextMenu
 	 * "Application" node type context menu.
-	 * @type {Object}  
+	 * @type {Ext.menu.Menu}  
 	 */
 	,appContextMenu : new Ext.menu.Menu({
         items: [
@@ -72,9 +72,9 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	})//eo appContextMenu	
 	
 	/**
-	 * @property {Ext.menu.Menu} pageContextMenu
+	 * @property pageContextMenu
 	 * "Page" node type context menu
-	 * @type {Object}
+	 * @type {Ext.menu.Menu}
 	 */
 	,pageContextMenu : new Ext.menu.Menu({		
         items: [
@@ -219,22 +219,26 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Ext.EventObject} e
 	 */
 	,onNodeContextMenu : function(node, e) {		
-		var _this = this;
+		var _this = this,
+			 menu;
 		
         node.select();
         
         switch (node.attributes.type) {
         	case 'app' :
-        		_this.appContextMenu.contextNode = node;
-		        _this.appContextMenu.showAt(e.getXY());
+        		menu = _this.appContextMenu;
         	break;
         	
         	case 'page' :
-        		_this.pageContextMenu.contextNode = node;
-		        _this.pageContextMenu.showAt(e.getXY());
+        		menu = _this.pageContextMenu;
         	break;
         }
-	}//eo onItemContextMenu
+        
+	    if (menu) {
+    		menu.contextNode = node;
+        	menu.showAt(e.getXY());
+		}
+	}//eo onNodeContextMenu
 	
 	/**
 	 * @override 
@@ -260,7 +264,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	            title: pageTitle
 		    },
 		    loadingMessage: String.format('"{0}" page creation...', page),
-		    logmessage: String.format('Layout Designer: page "{0}"  was created', page),
+		    logMessage: String.format('Layout Designer: page "{0}"  was created', page),
 		    run: function(response) {
 		    	this.refreshNode(appName, page, this.runNode);
 		    }
@@ -270,7 +274,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	/**
 	 * @override
 	 */
-	,renameNodeController : function(node, value, startValue) {			
+	,renameNodeController : function(node, value, startValue) {
 		var _this = this,
  			appName = this.getParentNodeAttribute(node, 'text');
  			
@@ -281,8 +285,8 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	            page: startValue,
 	            name: value
 		    },
-		    loadingMessage: String.format('Renaming page "{0}" to {1} ...', startValue, value),		    
-		    logmessage: String.format('Layout Designer: page "{0}" was renamed to "{1}"', startValue, value),		    
+		    loadingMessage: String.format('Renaming page from "{0}" to {1} ...', startValue, value),		    
+		    logMessage: String.format('Layout Designer: page "{0}" was renamed to "{1}"', startValue, value),		    
 		    run: function(response) {
 		    	this.refreshNode(appName, value, this.runNode);
 		    },		    
@@ -312,7 +316,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			            page: pageName
 				    },
 				    loadingMessage: String.format('"{0}" page deleting ...', pageName),
-				    logmessage: String.format('Layout Designer: page "{0}" was deleted', pageName),
+				    logMessage: String.format('Layout Designer: page "{0}" was deleted', pageName),
 				    run: function(response) {				    	
 				    	this.loadRootNode(function() {
 				    		this.selectChildNodeByText(rootNode, appName).expand();
