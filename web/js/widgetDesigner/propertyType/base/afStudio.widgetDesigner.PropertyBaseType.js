@@ -1,5 +1,7 @@
 /**
- * This class wraps creation of Ext.data.Record objects
+ * Each node that is inside WI tree can have many properties.
+ * Each of that property can be different type, one can be choice widget and other simple input field
+ * This class defines base class for all concrete properties
  */
 (function(){
 	afStudio.widgetDesigner.PropertyBaseType = function(fieldId, fieldLabel){

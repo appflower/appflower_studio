@@ -1,12 +1,14 @@
-window_sizes 1280 999 323 951 805 120
+window_sizes 1272 996 323 943 802 120
 diagrams
-  active  sequencediagram_ref 128263 // WI initialization
+  sequencediagram_ref 128263 // WI initialization
     951 805 100 4 0 0
+  active  classdiagram_ref 134791 // classes view
+    754 641 100 4 0 86
 end
 show_stereotypes
-selected sequencediagram_ref 128263 // WI initialization
+selected classview_ref 128263 // classes
 open
-  classview_ref 128263 // classes
+  classview_ref 135431 // concrete Behaviors classes
   usecaseview_ref 128135 // actors
   classview_ref 128647 // classes
   class_ref 128519 // browser

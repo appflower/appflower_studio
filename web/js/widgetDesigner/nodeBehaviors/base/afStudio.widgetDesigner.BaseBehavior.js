@@ -1,5 +1,8 @@
 /**
  * This is base class for all behavior classes
+ * Behavior can be use by Node objects
+ * Behavior has the chance to add any properties to Node that is using it
+ * Behavior will also be able to react on those parameters change
  **/
 Ext.namespace('afStudio.widgetDesigner');
 afStudio.widgetDesigner.BaseBehavior = function(){

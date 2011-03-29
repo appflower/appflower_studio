@@ -7,7 +7,6 @@
  *
  * When Widget is loaded from server there is 'datafetched' event emmited
  * In your handler for datafetched you should pass rootNode into WI ExtJS component
- *
  */
 afStudio.widgetDesigner.WidgetDefinition = function(widgetUri, widgetType){
     this.widgetUri = widgetUri;
