@@ -107,7 +107,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
                break;
        }
 
-       this.rootNode.setText(this.widgetUri);
+       this.rootNode.setText(this.widgetUri+' ['+this.widgetType+']');
    }
 
 });
