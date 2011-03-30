@@ -246,8 +246,7 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 				    loadingMessage: String.format('Model "{0}" deleting ...', model),
 				    logMessage: String.format('Models: model "{0}" was deleted', model),
 				    run: function(response) {
-				    	this.loadRootNode(function() {
-				    		this.refreshNode(rootNode, model);
+				    	this.loadRootNode(function() {				    		
 				    		afStudio.vp.clearPortal();
 				    	});
 				    }

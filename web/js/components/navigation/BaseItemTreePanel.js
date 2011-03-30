@@ -543,11 +543,15 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @protected
 	 * 
 	 * @param {Ext.tree.TreeNode} parentNode The parent node
+	 * @param {Object} (Optional) extraAttrs The additional attributes to branch node.
 	 */
-	,addBranchNode : function(parentNode) {
+	,addBranchNode : function(parentNode, extraAttrs) {
 		var nodeCfg = this.branchNodeCfg;
 		
 		nodeCfg.NEW_NODE = true;
+		if (extraAttrs && Ext.isObject(extraAttrs)) {
+			Ext.apply(nodeCfg, extraAttrs);
+		}
 		this.addNode(parentNode, nodeCfg);
 	}//eo addBranchNode
 	
@@ -659,7 +663,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText),
 			   	   msgTitle = String.format("Server Error {0}", this.title || '');
 		   	   afStudio.Msg.error(msgTitle, message);
-		   }
+		   }		   
 		});
 	}//eo executeAction
 });

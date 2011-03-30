@@ -159,7 +159,7 @@ var afStudio = function () {
 		}
 		
         ,getWidgetsTreePanel: function() {
-            var components = this.vp.findByType('afStudio.widgets.treePanel');
+            var components = this.vp.findByType('afStudio.navigation.widgetItem');
             if (components.length > 0) {
                 return components[0];
             }
