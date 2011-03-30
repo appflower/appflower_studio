@@ -89,6 +89,9 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sApplication = $this->getParameter('app');
         $aDefinition = $this->getParameter('definition');
         
+        //idXml is stored inside the portal_state table from appFlowerPlugin
+        $idXml = 'pages/'.str_replace('.xml','',basename($sPage));
+        
         $bNew = $this->getParameter('is_new');
         
         if ($bNew) {
@@ -117,7 +120,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 
                 $message = (!$bNew) ? 'Page has been changed' : 'Page has been created';
                                 
-                $console = afStudioConsole::getInstance()->execute(array('afs fix-perms','sf appflower:validator-cache frontend cache yes'));
+                $console = afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
                 $return = $this->fetchSuccess($message, $console);
             //} else {
                 // Getting error message from validation results, from $this->message
