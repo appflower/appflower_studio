@@ -157,6 +157,31 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo initComponent
 	
 	/**
+	 * Adds new page to <b>this</b> tree item.
+	 * "Add Page" <u>click</u> event listener.
+	 */
+	,onAddPageClick : function() {
+		var _this = this, 
+			rootNode = this.getRootNode(),
+			selectedNode = this.getSelectionModel().getSelectedNode();
+			
+		if (rootNode.hasChildNodes()) {
+			
+			if (!Ext.isEmpty(selectedNode)) {
+				
+				if (selectedNode.isLeaf()) {
+					this.addLeafNode(selectedNode.parentNode);				
+				} else {
+					this.addLeafNode(selectedNode);
+				}
+				
+			} else {
+				this.addLeafNode(rootNode.firstChild);
+			}
+		}
+	}//eo addPage	
+	
+	/**
 	 * Loads a page associated with the node into Layout Designer.
 	 * @override
 	 *  
@@ -264,9 +289,12 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	            title: pageTitle
 		    },
 		    loadingMessage: String.format('"{0}" page creation...', page),
-		    logMessage: String.format('Layout Designer: page "{0}"  was created', page),
+		    logMessage: String.format('Layout Designer: page "{0}" was created', page),
 		    run: function(response) {
 		    	this.refreshNode(appName, page, this.runNode);
+		    },
+		    error: function(response) {
+		    	node.remove();
 		    }
 		});
 	}//eo addNodeController
@@ -317,7 +345,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				    },
 				    loadingMessage: String.format('"{0}" page deleting ...', pageName),
 				    logMessage: String.format('Layout Designer: page "{0}" was deleted', pageName),
-				    run: function(response) {				    	
+				    run: function(response) {
 				    	this.loadRootNode(function() {
 				    		this.selectChildNodeByText(rootNode, appName).expand();
 				    		afStudio.vp.clearPortal();	
@@ -327,30 +355,6 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			}
 		});		
 	}//eo deletePage
-	
-	/**
-	 * Adds new page to an application.
-	 */
-	,onAddPageClick : function() {
-		var _this = this, 
-			rootNode = this.getRootNode(),
-			selectedNode = this.getSelectionModel().getSelectedNode();
-			
-		if (rootNode.hasChildNodes()) {
-			
-			if (!Ext.isEmpty(selectedNode)) {
-				
-				if (selectedNode.isLeaf()) {
-					this.addLeafNode(selectedNode.parentNode);				
-				} else {
-					this.addLeafNode(selectedNode);
-				}
-				
-			} else {
-				this.addLeafNode(rootNode.firstChild);
-			}
-		}
-	}//eo addPage 
 });
 
 /**

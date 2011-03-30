@@ -86,6 +86,7 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 
 <!-- Navigation -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/BaseItemTreePanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/ModelItem.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/LayoutItem.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/PluginItem.js"></script>
 

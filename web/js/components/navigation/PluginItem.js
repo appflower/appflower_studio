@@ -176,6 +176,9 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		afStudio.navigation.PluginItem.superclass.initComponent.apply(this, arguments);
 	}//eo initComponent
 	
+	/**
+	 * Adds new plugin to the this tree item.
+	 */
 	,onAddPluginClick : function() {
 		var _this = this, 
 			rootNode = this.getRootNode();
@@ -417,7 +420,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				_this.executeAction({
 					url: _this.baseUrl,
 					params: deleteObj.params,
-				    loadingMessage: String.format('"{0}" {1} deleting ...', deleteObj.msg, deleteObj.item),
+				    loadingMessage: String.format('{0} "{1}" deleting ...', deleteObj.msg, deleteObj.item),
 				    logMessage: String.format('Plugins: {0} "{1}" was deleted', deleteObj.msg, deleteObj.item),
 				    run: function(response) {
 				    	this.loadRootNode(function() {

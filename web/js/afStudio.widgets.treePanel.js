@@ -156,7 +156,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 	        }
 		});
 		
-		afStudio.models.treePanel.superclass.initComponent.apply(this, arguments);	
+		afStudio.widgets.treePanel.superclass.initComponent.apply(this, arguments);	
 	} //eo initComponent
 
     ,reloadTree: function() {
@@ -165,7 +165,7 @@ afStudio.widgets.treePanel = Ext.extend(Ext.tree.TreePanel, {
 
 	,onRender:function() {
 		// call parent
-		afStudio.models.treePanel.superclass.onRender.apply(this, arguments);
+		afStudio.widgets.treePanel.superclass.onRender.apply(this, arguments);
 		
 		this.root.expand();
 

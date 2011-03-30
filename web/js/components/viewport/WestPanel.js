@@ -39,30 +39,31 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 			defaults: {
 				border: false
 			},
-			items: [				
-				new afStudio.models.treePanel({id:'models'}),
-				{
-					id:'layoutdesigner',
-					xtype: 'afStudio.navigation.layoutItem'
-				},
-			    new afStudio.widgets.treePanel({id:'widgets'}),
-			    {
-			    	id: 'plugins',
-			    	xtype: 'afStudio.navigation.pluginItem'
-			    },{
-					id: "profile",
-					title: "My Profile",
-					autoScroll: true,
-					iconCls: "user",
-					html: "<div id='westpanel_link'>" +
-							"<div style='background-color:#f8f8f8; border:1px solid #ddd;font-size:11px;'>" +
-								"<b>Welcome, " + name + "</b><br>" +
-								"Username: " + username + "<br>" +
-								"<a href='#'>[Edit My Profile]</a>" +
-							"</div>" +
-						"</div>"
-				}
-			]
+			items: [
+			{
+				id: 'models',
+				xtype: 'afStudio.navigation.modelItem'
+			},{
+				id:'layoutdesigner',
+				xtype: 'afStudio.navigation.layoutItem'
+			},
+		    new afStudio.widgets.treePanel({id:'widgets'}),
+		    {
+		    	id: 'plugins',
+		    	xtype: 'afStudio.navigation.pluginItem'
+		    },{
+				id: "profile",
+				title: "My Profile",
+				autoScroll: true,
+				iconCls: "user",
+				html: "<div id='westpanel_link'>" +
+						"<div style='background-color:#f8f8f8; border:1px solid #ddd;font-size:11px;'>" +
+							"<b>Welcome, " + name + "</b><br>" +
+							"Username: " + username + "<br>" +
+							"<a href='#'>[Edit My Profile]</a>" +
+						"</div>" +
+					"</div>"
+			}]
 		};
 				
 		// apply config
