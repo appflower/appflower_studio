@@ -90,7 +90,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $aDefinition = $this->getParameter('definition');
         
         //idXml is stored inside the portal_state table from appFlowerPlugin
-        $idXml = 'page/'.str_replace('.xml','',basename($sPage))''
+        $idXml = 'page/'.str_replace('.xml','',basename($sPage));
         
         $bNew = $this->getParameter('is_new');
         
