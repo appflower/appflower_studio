@@ -292,8 +292,8 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,initialItemState : function() {
 		var rootNode = this.getRootNode(),
-			tsm = this.getSelectionModel();
-		
+			tsm = this.getSelectionModel();	
+	
 		if (!rootNode.isExpanded()) {
 			rootNode.expand();
 		}
@@ -303,6 +303,13 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 				tsm.select(n);
 				n.ui.getEl().focus();				
 			});
+			
+	        var cn = rootNode.childNodes,
+	            i,
+	            len = cn.length;
+	        for (i = 1; i < len; i++) {        	
+	            cn[i].expand();
+	        }
 		}
 	}//eo initialItemState
 	
