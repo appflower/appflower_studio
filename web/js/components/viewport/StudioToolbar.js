@@ -12,28 +12,38 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 		var config = {
 			items: [
 			{
-				text: "File",
+				text: "Studio",
+				iconCls: 'icon-studio',
 				menu: {
+					ignoreParentClicks: true,
 					items: [
 					{
 						text: 'Project',
+						iconCls: 'icon-studio-project',
 						listeners: {
-							added: function(menuItem)
-							{
+							added: function(menuItem) {
 								_self.setProjectMenu(menuItem);
 							},
-							activate: function(menuItem)
-							{
+							activate: function(menuItem) {
 								_self.setProjectMenu(menuItem);
 							}
-						}						
+						}
+					},{
+						text: 'Users', 
+						iconCls: 'icon-users',				
+						hidden: (is_visible_users) ? false : true,				
+						handler: function() {
+							(new afStudio.UsersList).show();
+						}
 					},{
 						text: 'Settings',
+						iconCls: 'icon-studio-settings',
 						handler: function(){
 							(new afStudio.Settings()).show();
 						}
 					},'-',{
 						text:'Help',
+						iconCls: 'icon-studio-help',
 						handler:function(b,e){
 							(new afStudio.Help()).show();
 						}
@@ -42,6 +52,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				
 			},{
 				text: 'Theme',
+				ignoreParentClicks: true,
 				menu: {
 					items: [
 					{
@@ -80,15 +91,6 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				},
 				*/
 			{
-				xtype: 'tbseparator'
-			},{
-				text: 'Users', 
-				iconCls: 'icon-users',				
-				hidden: (is_visible_users) ? false : true,				
-				handler: function() {
-					(new afStudio.UsersList).show();
-				}
-			},{
 				xtype: 'tbseparator',
 				hidden: (is_visible_users) ? false : true
 			},{
@@ -134,33 +136,34 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 		if (menuItem.menu) {
 			menuItem.menu.removeAll();
 		} else {	
-			menuItem.menu = new Ext.menu.Menu();
+			menuItem.menu = new Ext.menu.Menu({
+				ignoreParentClicks: true
+			});
 		}	
 		
 		menuItem.menu.addMenuItem({
-								text: 'Create new project',
-								handler: function (b,e)
-								{
-									(new afStudio.CreateProject()).show();
-								}
-							});
+			text: 'Create new project',
+			iconCls: 'icon-studio-create-project',
+			handler: function (b, e) {
+				(new afStudio.CreateProject()).show();
+			}
+		});
 							
 		menuItem.menu.addMenuItem({
-								text: 'Load project',
-								handler: function (b,e)
-								{									
-									(new afStudio.LoadProject()).show();
-								}
-							});
+			text: 'Load project',
+			iconCls: 'icon-studio-load-project',
+			handler: function (b,e) {									
+				(new afStudio.LoadProject()).show();
+			}
+		});
 				
-				
-		if(recentProjects.length>0)
-		{
+		if (recentProjects.length > 0) {
 			menuItem.menu.addSeparator();			
 			menuItem.menu.addMenuItem({
-								text: 'Recent projects',
-								menu: _self.getRecentProjectsMenu(recentProjects)
-							});
+				text: 'Recent projects',
+				iconCls: 'icon-studio-recent-projects',
+				menu: _self.getRecentProjectsMenu(recentProjects)
+			});
 		}
 		
 		menuItem.menu.doLayout();
