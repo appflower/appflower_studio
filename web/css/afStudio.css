@@ -1,3 +1,12 @@
+.icon-studio{background:url('/appFlowerStudioPlugin/images/studio.png') no-repeat center left !important;}
+.icon-studio-project{background:url('/appFlowerStudioPlugin/images/application_view_icons.png') no-repeat center left !important;}
+.icon-studio-create-project{background:url('/appFlowerStudioPlugin/images/application_add.png') no-repeat center left !important;}
+.icon-studio-load-project{background:url('/appFlowerStudioPlugin/images/application_get.png') no-repeat center left !important;}
+.icon-studio-recent-projects{background:url('/appFlowerStudioPlugin/images/application_cascade.png') no-repeat center left !important;}
+.icon-studio-settings{background:url('/appFlowerStudioPlugin/images/cog.png') no-repeat center left !important;}
+.icon-studio-help{background:url('/appFlowerStudioPlugin/images/help.png') no-repeat center left !important;}
+
+
 .icon-models{background:url('/appFlowerStudioPlugin/images/application_view_tile.png') no-repeat center left !important;}
 .icon-model{background:url('/appFlowerStudioPlugin/images/table.png') no-repeat center left !important;}
 

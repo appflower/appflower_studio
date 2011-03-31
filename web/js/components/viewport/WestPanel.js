@@ -44,11 +44,12 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 				id: 'models',
 				xtype: 'afStudio.navigation.modelItem'
 			},{
-				id:'layoutdesigner',
+				id: 'layoutdesigner',
 				xtype: 'afStudio.navigation.layoutItem'
-			},
-		    new afStudio.widgets.treePanel({id:'widgets'}),
-		    {
+			},{
+				id: 'widgets',
+				xtype: 'afStudio.navigation.widgetItem'
+			},{
 		    	id: 'plugins',
 		    	xtype: 'afStudio.navigation.pluginItem'
 		    },{

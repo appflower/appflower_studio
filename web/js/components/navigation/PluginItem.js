@@ -19,7 +19,8 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
     ,branchNodeCfg : {    
     	text: 'NewPlugin',
     	type: 'plugin',
-    	allowChildren: true,    	
+    	allowChildren: true,
+    	iconCls: 'icon-folder',
     	children: []
     }	
 	
@@ -205,8 +206,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			return this.constructor.superclass.isValidNodeName.call(this, node, name);
 		} else {
 			return /^[^\d]\w*\.xml$/im.test(name) ? true : false;
-		}
-		
+		}		
 	}//eo isValidNodeName
 	
 	/**
@@ -291,7 +291,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				schema: schema
 		    },
 		    loadingMessage: String.format('"{0}" plugin creation...', plugin),
-		    logmessage: String.format('Plugins: plugin "{0}" was created', plugin),
+		    logMessage: String.format('Plugins: plugin "{0}" was created', plugin),
 		    run: function(response) {
 		    	this.refreshNode(rootNode, plugin);
 		    }
@@ -393,7 +393,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		};
 		
 		this.deleteNode(deleteParams);
-	}//eo deleteNodePlugin
+	}//eo deleteNodeModule
 
 	,deleteNodeXml : function(node) {
 		var	deleteParams = {
@@ -408,7 +408,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		};
 		
 		this.deleteNode(deleteParams);
-	}//eo deleteNodePlugin
+	}//eo deleteNodeXml
 	
 	,deleteNode : function(deleteObj) {
 		var _this = this;
