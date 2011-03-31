@@ -50,22 +50,31 @@ EOF;
         '/',
         'schema.yml'
       ), array('', '', '', '_', 'schema.custom.yml'), $schema);
-      $customSchemas = sfFinder::type('file')->name($customSchemaFilename)->in($dirs);
-
-      foreach ($customSchemas as $customSchema)
-      {
-      	$this->getFilesystem()->chmod($customSchema, 0777);
-      }
-      
-      /**
-       * fixing perms on modules
-       */
-      $modules = sfFinder::type('any')->in(sfConfig::get('sf_root_dir').'/apps/');
-      
-      foreach ($modules as $module)
-      {
-      	$this->getFilesystem()->chmod($module, 0777);
+	  $customSchemas = sfFinder::type('file')->name($customSchemaFilename)->in($dirs);
+	
+	  foreach ($customSchemas as $customSchema)
+	  {
+	  	$this->getFilesystem()->chmod($customSchema, 0777);
 	  }
-      
+	  
+	  /**
+	   * fixing perms on modules
+	   */
+	  $modules = sfFinder::type('any')->in(sfConfig::get('sf_root_dir').'/apps/');
+	  
+	  foreach ($modules as $module)
+	  {
+	  	$this->getFilesystem()->chmod($module, 0777);
+	  }
+	  
+	  /**
+	   * fixing perms on all app.yml files
+	   */
+	  $appymls = sfFinder::type('file')->name('app.yml');
+	  
+      foreach ($appyml as $appyml)
+	  {
+	  	$this->getFilesystem()->chmod($appyml, 0777);
+	  }
   }
 }
