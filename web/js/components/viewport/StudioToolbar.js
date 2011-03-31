@@ -49,9 +49,9 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						}
 					}]
 				}
-				
 			},{
 				text: 'Theme',
+				iconCls: 'icon-theme',
 				ignoreParentClicks: true,
 				menu: {
 					items: [
@@ -73,12 +73,25 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 					}]
 				}
 			},{
-				xtype: 'tbseparator'
-			},{
-				text: 'DB Query',
-				iconCls: 'icon-dbquery',
-				handler: function (b, e) {
-					(new afStudio.dbQuery.QueryWindow()).show();
+				
+				text: 'Tools',
+				iconCls: 'icon-tools',
+				menu: {
+					items: [
+					{
+						text: 'Console',
+						iconCls: 'icon-tools-console'
+					},{
+						text: 'DB Query',
+						iconCls: 'icon-dbquery',
+						handler: function (b, e) {
+							(new afStudio.dbQuery.QueryWindow()).show();
+						}
+					},{
+						text: 'Git'
+					},{
+						text: 'Snapshots'
+					}]
 				}
 			},
 				/*{xtype: 'tbseparator'},
@@ -91,23 +104,40 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				},
 				*/
 			{
-				xtype: 'tbseparator',
-				hidden: (is_visible_users) ? false : true
+				text: 'Debug',
+				iconCls: 'icon-debug',
+				menu: {
+					items: [
+					{
+						text: 'AuditLog',
+						iconCls: 'icon-notifications'
+					},{
+						text: 'Debug',
+						iconCls: 'icon-debug-run'
+					}]
+				}
 			},{
-				text: 'Run', 
-				iconCls: 'icon-run',
-				scope: _self,
-				handler: _self.runProject
-			},{
-				xtype: 'tbseparator'
-			},{
-				text: 'Re-build', 
-				iconCls: 'icon-rebuild', 
-				handler: function() { alert('Re-build button pressed'); }
+				text: 'Run',
+				iconCls: 'icon-runs',
+				menu: {
+					items: [
+					{
+						text: 'Run',
+						iconCls: 'icon-run-run',
+						scope: _self,
+						handler: _self.runProject
+					},{
+						text: 'Re-build', 
+						iconCls: 'icon-run-rebuild', 
+						handler: function() { 
+							afStudio.Msg.info('Re-build button pressed'); 
+						}
+					}]
+				}
 			},{
 				xtype: "tbfill"
 			},{
-				text: "<img src=\"\/images\/famfamfam\/user_go.png\" border=\"0\">",
+				text: '<img src="/images/famfamfam/user_go.png" border="0">',
 				handler: function () { window.location.href="/afsAuthorize/signout"; },
 				tooltip: {
 					text: "Click to log out", 
@@ -188,7 +218,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	/**
 	 * Runs projects commands and opens project in a new browser's tab
 	 */
-	,runProject : function() {		
+	,runProject : function() {	
 		var runUrl = window.afStudioWSUrls.getProjectRunUrl();
 		
 		afStudio.vp.mask({
