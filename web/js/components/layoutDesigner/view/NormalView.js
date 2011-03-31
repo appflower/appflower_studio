@@ -26,6 +26,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,viewMetaPosition : 0
 	
 	/**
+	 * @cfg {String} emptyViewMessage
+	 * Holds <u>empty</u> view message.
+	 */
+	,emptyViewMessage : 'View has no widgets added yet, add you first widget to get started.'
+	
+	/**
 	 * @property {Number} viewLayout (defaults to 1)
 	 * Default view layout type
 	 */
@@ -43,6 +49,32 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * Contains reference to view message-box.
 	 * @type {afStudio.layoutDesigner.view.ViewMessageBox}
 	 */
+	
+	/**
+	 * If view's message-box is not instantiated instantiates it.
+	 * Returns {@link #viewMessageBox} reference.
+	 * 
+	 * @param {String} message The message to show.
+	 * @return {afStudio.layoutDesigner.view.ViewMessageBox} viewMessageBox
+	 */
+	,setViewMessageBox : function(message) {
+		if (!Ext.isDefined(this.viewMessageBox)) {
+			this.viewMessageBox = new afStudio.layoutDesigner.view.ViewMessageBox({
+				viewContainer: this.ownerCt,
+				viewMessage: message
+			});	
+		}
+		
+		return this.viewMessageBox;	
+	}//eo getViewMessageBox
+	
+	/**
+	 * Shows empty view message in view's {@link #viewMessageBox}
+	 */
+	,showEmptyViewMessage : function() {
+		this.setViewMessageBox(this.emptyViewMessage);
+		this.add(this.viewMessageBox);
+	}//eo showEmptyViewMessage
 	
 	/**
 	 * Returns view's meta <tt>layout</tt> property.
@@ -152,7 +184,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,initView : function() {
 		var _this = this,
 			vf = afStudio.layoutDesigner.view.ViewFactory,
-			vLayoutType = this.getViewLayout();
+			vLayoutType = this.getViewLayout(),
 		  	clsMeta = vf.getLayoutCfg(vLayoutType),
 		   	layout = [];	   
 		
@@ -190,9 +222,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			_this.doLayout();
 		} else {			
 			this.emptyView = true;
-			
-			_this.viewMessageBox = new afStudio.layoutDesigner.view.ViewMessageBox();
-			_this.add(_this.viewMessageBox);
+			this.showEmptyViewMessage();
 		}
 	}//eo initViewComponents
 	
