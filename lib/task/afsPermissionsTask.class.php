@@ -68,11 +68,11 @@ EOF;
 	  }
 	  
 	  /**
-	   * fixing perms on all app.yml files
+	   * fixing perms on all yml files
 	   */
-	  $appymls = sfFinder::type('file')->name('app.yml');
+	  $appymls = sfFinder::type('file')->name('*.yml')->prune('symfony')->in(sfConfig::get('sf_root_dir'));
 	  
-      foreach ($appyml as $appyml)
+	  foreach ($appymls as $appyml)
 	  {
 	  	$this->getFilesystem()->chmod($appyml, 0777);
 	  }
