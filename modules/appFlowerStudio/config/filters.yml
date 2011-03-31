@@ -1,4 +1,9 @@
 rendering:  ~
+
+apiKey:
+  enabled: false
+
+
 security:
   class: afsStudioBasicSecurityFilter
      
