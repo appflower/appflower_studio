@@ -95,15 +95,7 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	        	_this.centerPanel
 	        ],
 	        
-	        layout:'border',
-			buttons: [				
-			{
-				text: 'Cancel', 
-				iconCls: 'afs-icon-cancel',
-				handler: this.cancelBtnPressed, 
-				scope: this
-			}],
-			buttonAlign: 'right'
+	        layout:'border'
 		};		
 	}//eo _beforeInitComponent
 	
