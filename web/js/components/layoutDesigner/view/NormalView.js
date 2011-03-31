@@ -32,30 +32,17 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,viewLayout : 1
 	
 	/**
-	 * @property {Object} viewLayoutConfig
-	 * Main layout types
-	 * For more details {@see http://www.appflower.com/docs/index.html#page-layouts}
+	 * @property emptyView <i>Read-only</i> (defaults to true)
+	 * Contains view <b>empty</b> flag. If it is <b>true</b> then the View is <u>empty</u> otherwise View contains components.
+	 * @type Boolean
 	 */
-	,viewLayoutConfig : {
-		1 : [1],
-		2 : [0.5, 0.5],
-		3 : [0.25, 0.75],
-		4 : [0.75, 0.25],
-		5 : [0.33, 0.33,0.33],
-		6 : [0.5, 0.25, 0.25],
-		7 : [0.25, 0.5, 0.25],
-		8 : [0.25, 0.25, 0.25, 0.25],
-		9 : [0.4, 0.2, 0.2, 0.2]
-	}//eo viewLayoutConfig
+	,emptyView : true
 	
 	/**
-	 * Returns real columns number for specified layout type.
-	 * @param {Number} layoutType The layout type.
-	 * @return {Number} columns number
+	 * @property viewMessageBox
+	 * Contains reference to view message-box.
+	 * @type {afStudio.layoutDesigner.view.ViewMessageBox}
 	 */
-	,getLayoutColumnsNumber : function(layoutType) {
-		return this.viewLayoutConfig[layoutType].length;
-	}//eo
 	
 	/**
 	 * Returns view's meta <tt>layout</tt> property.
@@ -164,8 +151,10 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 */
 	,initView : function() {
 		var _this = this,
-		  clsMeta = this.viewLayoutConfig[this.getViewLayout()],			   
-		   layout = [];	   
+			vf = afStudio.layoutDesigner.view.ViewFactory,
+			vLayoutType = this.getViewLayout();
+		  	clsMeta = vf.getLayoutCfg(vLayoutType),
+		   	layout = [];	   
 		
 		Ext.each(clsMeta, function(cm, i, allCls) {
 			layout.push(_this.createViewColumn(i, cm));
@@ -180,13 +169,15 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,initViewComponents : function() {
 		var _this = this,
 		 cmpsMeta = this.getViewComponentsMetaData();
-		 
-		if (!Ext.isEmpty(cmpsMeta)) {
+		
+		if (!Ext.isEmpty(cmpsMeta)) {			
+			
+			this.emptyView = false;
 			
 			if (Ext.isArray(cmpsMeta)) {				
-				Ext.each(cmpsMeta, function(cm, i, allCmps) {
+				Ext.each(cmpsMeta, function(cm, i, allCmps) {					
 					var cl = cm.attributes.column || 0,
-						 w = _this.createViewComponent(cm, null);
+						 w = _this.createViewComponent(cm, null);					
 					_this.items.itemAt(cl).add(w);
 				});
 				
@@ -197,6 +188,11 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			}
 			
 			_this.doLayout();
+		} else {			
+			this.emptyView = true;
+			
+			_this.viewMessageBox = new afStudio.layoutDesigner.view.ViewMessageBox();
+			_this.add(_this.viewMessageBox);
 		}
 	}//eo initViewComponents
 	
@@ -323,8 +319,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,setLayoutMeta : function(newLayout) {
 		var vc = this.viewMeta['i:component'],
 			mp = afStudio.layoutDesigner.view.MetaDataProcessor,
+			vf = afStudio.layoutDesigner.view.ViewFactory,
 			container = this.ownerCt,
-			columnMaxValue = this.getLayoutColumnsNumber(newLayout) - 1;
+			columnMaxValue = vf.getLayoutColumnMaxValue(newLayout);
 		
 		//updates layout type
 		this.viewMeta.attributes.layout = newLayout;
@@ -374,6 +371,10 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		cmpMeta.attributes.column = column;
 		this.addViewComponentMetaData(cmpMeta);
 		
+		if (this.emptyView) {
+			this.remove(this.viewMessageBox, true);
+			this.emptyView = false;
+		}
 		this.items.itemAt(column).add(w);
 		
 		this.doLayout();

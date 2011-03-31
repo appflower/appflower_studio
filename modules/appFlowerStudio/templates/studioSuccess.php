@@ -128,6 +128,7 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/MetaDataProcessor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/tabbed/TabbedViewCloseMenuPlugin.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/tabbed/TabViewPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/ViewMessageBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/NormalView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/TabbedView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/Page.js"></script>
