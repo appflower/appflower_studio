@@ -30,7 +30,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
      * If defined - context menu will be displayed when given node is clicked with right mouse button
      */
     createContextMenu: Ext.emptyFn,
-    containsIParams: false,
+
     /**
      * This method should initialize this.properties with records for GridProperty
      */
@@ -58,9 +58,6 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
 
         property.WITreeNode = this;
         this.properties[property.id] = property;
-        if (property.get('oneOfIParam')){
-            this.containsIParams = true;
-        }
     },
     addProperties: function(properties){
         for(i=0; i<properties.length;i++) {
@@ -81,19 +78,6 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             var property = this.getProperty(id);
             property.set('value',value);
             this.propertyChanged(property);
-        } else if (
-                this.containsIParams &&
-                id == 'i:params' &&
-                value['i:param']
-            ){
-            if (!Ext.isArray(value['i:param'])) {
-                var iParams = [value['i:param']];
-            } else {
-                var iParams = value['i:param'];
-            }
-            for(var i=0; i<iParams.length;i++) {
-                this.configureForValue(iParams[i]['name'], iParams[i]['_content']);
-            }
         } else {
             var child = this.findChild('id', id);
             if (child){
@@ -155,7 +139,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
     },
     dumpPropertiesData: function(){
         var data = {};
-        var iParams = [];
+
         for(i in this.properties){
             var property = this.properties[i];
             var propertyValue = property.get('value');
@@ -165,15 +149,10 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             } else if (propertyValue === true){
                 propertyValue = 'true';
             }
-            if (property.get('oneOfIParam')) {
-                iParams.push({name: property.id, '_content': propertyValue});
-            } else {
-                data[property.id] = propertyValue;
-            }
+            
+            data[property.id] = propertyValue;
         }
-        if (iParams.length > 0){
-            data['i:params'] = {'i:param': iParams};
-        }
+        
         return data;
     },
 	
