@@ -21,7 +21,7 @@ afStudio.widgetDesigner.WithIParamsBehavior = Ext.extend(afStudio.widgetDesigner
     /**
      * Reading data from widget definition
      */
-    configureFor: function(node, widgetData) {
+    configureFor: function(widgetData) {
         if (widgetData['i:params']) {
             var iParams = widgetData['i:params'];
             delete widgetData['i:params'];
@@ -53,7 +53,7 @@ afStudio.widgetDesigner.WithIParamsBehavior = Ext.extend(afStudio.widgetDesigner
     /**
      * now we must build data that is send back to server 
      */
-    dumpDataForWidgetDefinition: function(node, nodeWidgetData)
+    dumpDataForWidgetDefinition: function(nodeWidgetData)
     {
         var iParams = [];
 

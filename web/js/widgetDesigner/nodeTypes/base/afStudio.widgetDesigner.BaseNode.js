@@ -70,7 +70,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             this.configureForValue(id, value);
         }
         for(i=0;i<this.behaviors.length;i++) {
-            this.behaviors[i].configureFor(this, widgetData);
+            this.behaviors[i].configureFor(widgetData);
         }
     },
     configureForValue: function(id, value){
@@ -98,7 +98,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         }
 
         for(var i=0;i<this.behaviors.length;i++) {
-            this.behaviors[i].propertyChanged(this, property);
+            this.behaviors[i].propertyChanged(property);
         }
     },
     dumpDataForWidgetDefinition: function(data){
@@ -117,7 +117,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         }
 
         for(i=0;i<this.behaviors.length;i++) {
-            childsData = this.behaviors[i].dumpDataForWidgetDefinition(this, childsData);
+            childsData = this.behaviors[i].dumpDataForWidgetDefinition(childsData);
         }
 
         if (this.id.substr(0, 6) == 'xnode-') {
@@ -174,6 +174,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
      * Adds behavior to given node
      */
     addBehavior: function(WITreeNodeBehavior){
+        WITreeNodeBehavior.setNode(this);
         this.behaviors.push(WITreeNodeBehavior);
         this.addProperties(WITreeNodeBehavior.createBehaviorProperties());
     }

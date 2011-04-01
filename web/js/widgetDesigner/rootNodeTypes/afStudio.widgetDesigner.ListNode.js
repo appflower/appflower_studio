@@ -13,7 +13,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
 	},
     constructor: function(){
         afStudio.widgetDesigner.ObjectRootNode.superclass.constructor.apply(this, arguments);
-        var behavior = new afStudio.widgetDesigner.WithIParamsBehavior;
+        var behavior = new afStudio.widgetDesigner.WithIParamsBehavior();
         behavior.setProperties([
             new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').setValue(10).create()
         ]);

@@ -43,11 +43,11 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
     /**
      * Reading data from widget definition
      */
-    configureFor: function(node, widgetData) {
+    configureFor: function(widgetData) {
         if (widgetData) {
             var valueTypeData = this.getValueTypeData(widgetData);
-            node.getProperty('valueType').set('value', valueTypeData['type']);
-            var valueSourceProperty = node.getProperty('valueSource');
+            this.node.getProperty('valueType').set('value', valueTypeData['type']);
+            var valueSourceProperty = this.node.getProperty('valueSource');
             if (valueTypeData['i:source']) {
                 valueSourceProperty.set('value', 'source');
             } else if (valueTypeData['i:class']) {
@@ -57,21 +57,21 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             } else if (valueTypeData['i:static']) {
                 valueSourceProperty.set('value', 'static');
             }
-            this.valueSourceChanged(node, valueTypeData);
+            this.valueSourceChanged(valueTypeData);
         }
     },
     /**
      * When valueSource is changed we are injecting ValueSource child
      */
-    valueSourceChanged: function(node, dataForNewNode){
+    valueSourceChanged: function(dataForNewNode){
         if (!dataForNewNode) {
             dataForNewNode = {};
         }
-        if (node.rendered) {
-            var childsCount = node.childNodes.length;
+        if (this.node.rendered) {
+            var childsCount = this.node.childNodes.length;
             if (childsCount > 0) {
                 for (i = (childsCount-1); i >= 0; i--) {
-                    var childNode = node.childNodes[i];
+                    var childNode = this.node.childNodes[i];
                     if (childNode.text == 'Value Source') {
                         childNode.destroy();
                     }
@@ -79,7 +79,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             }
         }
 
-        switch (node.getProperty('valueSource').get('value')) {
+        switch (this.node.getProperty('valueSource').get('value')) {
             case 'source':
                 var newNode= new afStudio.widgetDesigner.FieldNodeValueSourceSource();
                 if (dataForNewNode['i:source']) {
@@ -110,21 +110,21 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             if (nodeData) {
                 newNode.configureFor(nodeData);
             }
-            node.appendChild(newNode);
+            this.node.appendChild(newNode);
         }
     },
     /**
      * We need to detect when valueSource was changed
      */
-    propertyChanged: function(node, property){
+    propertyChanged: function(property){
         if (property.id == 'valueSource') {
-            this.valueSourceChanged(node);
+            this.valueSourceChanged();
         }
     },
     /**
      * now we must build data that is send back to server 
      */
-    dumpDataForWidgetDefinition: function(node, nodeWidgetData){
+    dumpDataForWidgetDefinition: function(nodeWidgetData){
         
         if (nodeWidgetData['valueType']) {
             delete nodeWidgetData.valueType;
@@ -134,8 +134,8 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             delete nodeWidgetData.valueSource;
         }
 
-        var valueType = node.getProperty('valueType').get('value');
-        var valueSource = node.getProperty('valueSource').get('value');
+        var valueType = this.node.getProperty('valueType').get('value');
+        var valueSource = this.node.getProperty('valueSource').get('value');
 
         var valueNode = {};
         
