@@ -44,8 +44,8 @@ afStudio.widgetDesigner.NodeBuilder = {
 
         return f;
     },
-    createCollectionNode: function(config){
-        var f = this.createContainerNode(config, afStudio.widgetDesigner.CollectionNode);
+    createCollectionNode: function(config, baseClass){
+        var f = this.createContainerNode(config, (baseClass ? baseClass : afStudio.widgetDesigner.CollectionNode));
         var p = f.prototype;
 
         if (config.addChildActionLabel) {

@@ -30,20 +30,5 @@ afStudio.widgetDesigner.ValidatorsNode = Ext.extend(afStudio.widgetDesigner.Coll
         }
 
         return childsData;
-    },
-    dumpChildsData: function(){
-        var data = [];
-        this.eachChild(function(childNode){
-            data.push(childNode.dumpDataForWidgetDefinition());
-        });
-
-        var ret = {};
-
-        if (data.length == 0 && !this.dumpEvenWhenEmpty) {
-            return ret;
-        }
-
-        ret[this.childNodeId] = data;
-        return ret;
     }
 });

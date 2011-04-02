@@ -1,17 +1,13 @@
-window_sizes 1278 972 323 949 778 120
+window_sizes 1247 772 323 918 578 120
 diagrams
-  active  sequencediagram_ref 128263 // WI initialization
+  sequencediagram_ref 128263 // WI initialization
     949 778 100 4 0 0
+  active  classdiagram_ref 134791 // classes view
+    754 622 120 4 0 11
 end
 show_stereotypes
-selected class_ref 136839 // Boolean
+selected classview_ref 128391 // classes
 open
-  class_ref 128135 // widgets.treePanel
-  classview_ref 128263 // classes
-  classview_ref 135175 // concrete Node classes
-  classview_ref 135303 // concrete Property types
-  usecaseview_ref 128135 // actors
-  classview_ref 128647 // classes
   class_ref 128519 // browser
   class_ref 128647 // server
 end

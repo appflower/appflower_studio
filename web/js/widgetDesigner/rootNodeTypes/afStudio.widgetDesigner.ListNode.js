@@ -51,7 +51,9 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            createChildConstructor: afStudio.widgetDesigner.ColumnNode,
            childNodeId: 'i:column',
            addChildActionLabel: 'Add column'
-        });
+        },
+        afStudio.widgetDesigner.FieldsNode
+    );
 
         return new fieldsNode;
     },
