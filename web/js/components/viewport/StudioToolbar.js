@@ -80,7 +80,10 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 					items: [
 					{
 						text: 'Console',
-						iconCls: 'icon-tools-console'
+						iconCls: 'icon-tools-console',
+						handler: function() {
+							afStudio.Cli.showConsole();
+						}
 					},{
 						text: 'DB Query',
 						iconCls: 'icon-dbquery',
@@ -110,10 +113,16 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 					items: [
 					{
 						text: 'AuditLog',
-						iconCls: 'icon-notifications'
+						iconCls: 'icon-notifications',
+						handler: function() {
+							afStudio.Cli.showAuditLog();
+						}
 					},{
 						text: 'Debug',
-						iconCls: 'icon-debug-run'
+						iconCls: 'icon-debug-run',
+						handler: function() {
+							afStudio.Cli.showDebug();
+						}
 					}]
 				}
 			},{

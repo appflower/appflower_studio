@@ -177,7 +177,12 @@ class appFlowerStudioActions extends sfActions
 		$afConsole=new afStudioConsole();
 		$result=$afConsole->execute($command);		
 		
-		return $this->renderJson(array('console'=>$result));
+		return $this->renderJson(
+			array(
+				'success' => true,
+				'console' => $result
+			)
+		);
 	}
 	
 	protected function renderJson($result)
@@ -302,6 +307,8 @@ class appFlowerStudioActions extends sfActions
                 break;
         }
 
+        $aResponse['success'] = true;
+        
         return $this->renderJson($aResponse);
     }
 

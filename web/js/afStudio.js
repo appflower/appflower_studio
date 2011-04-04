@@ -15,35 +15,25 @@ var afStudio = function () {
 	 * Studio view port
 	 */
 	
-	/**
-	 * @property {afStudio.console} console
-	 */
-	
 	return {
 		
-		initAjaxRedirect : function() {			
+		initAjaxRedirect : function() {
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
 				var response = Ext.decode(xhr.responseText);				
 				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
 					location.href = response.redirect;
 				}
 			});
-		}		
-		
+		}//eo initAjaxRedirect
+	
 		,setConsole : function(content) {
-			if (content) {
-				this.console.body.dom.innerHTML = content;
-				this.console.body.scroll("bottom", 1000000, true);
-			}
+			afStudio.cli.CommandLineMgr.setConsole(content);
 		}
 		
 		,updateConsole : function(content) {
-			if (content) {
-				this.console.body.dom.innerHTML += content;
-				this.console.body.scroll("bottom", 1000000, true);
-			}
+			afStudio.cli.CommandLineMgr.updateConsole(content);
 		}
-		
+ 
 		,log : function(message, messageType) {
 			messageType = messageType || false;
 			
@@ -55,17 +45,12 @@ var afStudio = function () {
 					message: message,
 					messageType: messageType
 				},
-				callback: function(options, success, response) {				
-					
-					response = Ext.decode(response.responseText);
-					
+				callback: function(options, success, response) {
+					response = Ext.decode(response.responseText);					
 					if (!success) {
 						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
-					}else{
-						Ext.getCmp('console').loadNotifications();
-					}					
+					}
 				}
-				
 			});		
 		}//eo log
 		
@@ -73,17 +58,15 @@ var afStudio = function () {
 			return this.vp;
 		}
 		
-		,getRecentProjects: function()
-		{
+		,getRecentProjects : function() {
 			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
-						
+			
 			recentProject = recentProjects.reverse();
 			
 			return recentProjects;
 		}
 		
-		,addCurrentProject: function()
-		{
+		,addCurrentProject : function() {
 			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
 			
 			Ext.Ajax.request({
@@ -131,7 +114,11 @@ var afStudio = function () {
 				}]
 			}, true);
 		}
-
+		
+		/**
+		 * Instantiates afStudio.
+		 * Main method.
+		 */
 		,init : function () { 
 		    Ext.QuickTips.init();
 		    Ext.apply(Ext.QuickTips.getQuickTip(), {
@@ -147,7 +134,7 @@ var afStudio = function () {
 			this.tb = new afStudio.viewport.StudioToolbar();
 			this.vp = new afStudio.viewport.StudioViewport();						  
 			
-			this.console = Ext.getCmp('console-console-tab');
+			afStudio.Cli.init();
 			
 			afApp.urlPrefix = '';
 			GLOBAL_JS_VAR = GLOBAL_CSS_VAR = new Array();
@@ -156,7 +143,7 @@ var afStudio = function () {
 			* this will add current project's url to the recent projects cookie
 			*/
 			this.addCurrentProject();
-		}
+		}//eo init
 		
         ,getWidgetsTreePanel: function() {
             var components = this.vp.findByType('afStudio.navigation.widgetItem');

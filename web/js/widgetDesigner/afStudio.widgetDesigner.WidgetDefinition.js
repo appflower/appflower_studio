@@ -35,7 +35,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
    },
    parseFetchedData: function(response){
         if (response.statusText != 'OK') {
-            console.log('response looks invalid');
+            afStudio.Msg.warning('response looks invalid');
         }
         var baseData = Ext.util.JSON.decode(response.responseText);
         if (baseData.success) {

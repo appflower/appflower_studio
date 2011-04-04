@@ -1,5 +1,6 @@
 /**
  * South region panel
+ * 
  * @class afStudio.viewport.SouthPanel
  * @extends Ext.Panel
  * @author Nikolai
@@ -13,14 +14,12 @@ afStudio.viewport.SouthPanel = Ext.extend(Ext.Panel, {
 	 */
 	_beforeInitComponent : function() {
 		return {
-			id: 'south_panel',
 			region: "south",
 			layout: 'fit',
 			height: 215,
 			split: true,			
 			collapseMode: 'mini',
 			items: [
-				new afStudio.console()
 			]
 		}		
 	}

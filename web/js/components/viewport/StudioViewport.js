@@ -1,20 +1,23 @@
 Ext.namespace('afStudio.viewport');
 
-afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, { 
-
+afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 	/**
-	 * @property {Object} viewRegions
-	 * Contains all regions of this viewport 
-	 * {
-	 *  north:  "north panel",
-	 *  center: "center panel",
-	 *  west:   "west panel",
-	 *  south:  "south panel"
-	 * }
+	 * @property viewRegions
+	 * Contains all regions of this viewport: 
+	 * <ul>
+	 *  <li><b>north</b>:  North panel</li>
+	 *  <li><b>center</b>: Center panel</li>
+	 *  <li><b>west</b>:   West panel</li>
+	 * </ul>
+	 * @type {Object}
 	 */
 	
-	initComponent : function() {
-		
+	/**
+	 * Initializes component
+	 * @private
+	 * @return {Object} The configuration object 
+	 */
+	_beforeInitComponent : function() {		
 		var northPanel = new Ext.Panel ({
 			id: "north_panel",
 			region: "north",
@@ -45,31 +48,35 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 		    }			
 		});
 		
-		var  westPanel = new afStudio.viewport.WestPanel(),
-		    southPanel = new afStudio.viewport.SouthPanel();
+		var westPanel = new afStudio.viewport.WestPanel();
 		
 		this.viewRegions = {
 			north: northPanel,
 			center: centerPanel,
-			west: westPanel,
-			south: southPanel
+			west: westPanel
 		};		
 		
-		var config = {
+		return {
+			id: "studio-viewport",
 			layout: "border",
-			id: "viewport",
 			items: [
 				northPanel,
 				westPanel,
-				centerPanel,
-				southPanel	
+				centerPanel	
 			]
-		};	
-		
-		// apply config
-		Ext.apply(this, Ext.apply(this.initialConfig, config));
+		};
+	}//eo _beforeInitComponent	
+	
+	/**
+	 * Ext Template method
+	 * @private
+	 */	
+	,initComponent : function() {
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, this._beforeInitComponent())
+		);
 		afStudio.viewport.StudioViewport.superclass.initComponent.apply(this, arguments);
-	}
+	}//eo initComponent
 	
 	/**
 	 * Puts a mask over afStudio.viewport or its region to disable user interaction.
