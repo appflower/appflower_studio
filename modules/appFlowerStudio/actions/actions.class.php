@@ -454,5 +454,24 @@ class appFlowerStudioActions extends sfActions
         
         return $this->renderJson($aResult);
 	}
-    
+
+	public function executeWelcome($request)
+	{
+		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+		
+		$data = array();
+		$vimeoService = new VimeoInstanceService();
+      	try{
+        	$data = $vimeoService->getDataFromRemoteServer();
+        	
+      	}catch(Exception $e){ 
+      		$this->data = array();	
+      	}
+        
+		$message = $this->getPartial('welcome', array('data'=>$data));
+		
+        $info=array('success'=>true, "message"=>$message);
+		return $this->renderJson($info);
+	}
+	
 }
