@@ -1,6 +1,6 @@
 format 76
 "WidgetDesigner" // ClientSide::afStudio::WidgetDesigner
-  revision 2
+  revision 5
   modified_by 7 "lukas"
   // class settings
   //class diagram settings
@@ -86,6 +86,19 @@ format 76
 	
       end
 
+      classrelation 138119 // (uses)
+	relation 137735 ---> name "uses"
+	  a role_name "" private
+	    classrelation_ref 138119 // (uses)
+	  b parent class_ref 135559 // RootNode
+      end
+
+      classrelation 138375 // <unidirectional association>
+	relation 137863 --->
+	  a role_name "" private
+	    classrelation_ref 138375 // <unidirectional association>
+	  b parent class_ref 145159 // Fields
+      end
     end
 
     class 128775 "ObjectRootNode"
@@ -113,7 +126,6 @@ format 76
 	    classrelation_ref 128007 // <generalisation>
 	  b parent class_ref 135559 // RootNode
       end
-
     end
 
     class 128903 "WidgetDesigner"
@@ -128,7 +140,7 @@ format 76
     end
 
     classdiagram 134791 "classes view"
-      draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+      draw_all_relations no hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
       size A4
     end
 
@@ -193,19 +205,17 @@ format 76
       explicit_switch_type ""
       
       classrelation 129159 // (uses)
-	relation 129159 ---- name "uses"
+	relation 129159 ---> name "uses"
 	  a role_name "" private
 	    classrelation_ref 129159 // (uses)
-	  b role_name "" private
-	    classrelation_ref 129287 // (uses)
+	  b parent class_ref 136711 // PropertyBaseType
       end
 
       classrelation 131207 // (uses)
-	relation 130951 ---- name "uses"
+	relation 130951 ---> name "uses"
 	  a role_name "" private
 	    classrelation_ref 131207 // (uses)
-	  b role_name "" private
-	    classrelation_ref 131335 // (uses)
+	  b parent class_ref 138375 // BaseBehavior
       end
     end
 
@@ -218,9 +228,6 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 129287 // (uses)
-	relation_ref 129159 // uses
-      end
     end
 
     class 138375 "BaseBehavior"
@@ -232,8 +239,22 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 131335 // (uses)
-	relation_ref 130951 // uses
+    end
+
+    class 145159 "Fields"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 138503 // (holds and manages)
+	relation 137991 *--> name "holds and manages"
+	  a role_name "" private
+	    classrelation_ref 138503 // (holds and manages)
+	  b parent class_ref 136455 // BaseNode
       end
     end
   end
@@ -255,7 +276,7 @@ format 76
     package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
     show_infonote default drawing_language default show_stereotype_properties default
     class 135943 "CollectionNode"
-      visibility package 
+      abstract visibility package 
       cpp_decl ""
       java_decl ""
       php_decl ""
@@ -272,7 +293,7 @@ format 76
     end
 
     class 136071 "ContainerNode"
-      visibility package 
+      abstract visibility package 
       cpp_decl ""
       java_decl ""
       php_decl ""
@@ -289,7 +310,7 @@ format 76
     end
 
     class 136199 "ValidatorNode"
-      visibility package 
+      abstract visibility package 
       cpp_decl ""
       java_decl ""
       php_decl ""
@@ -306,7 +327,7 @@ format 76
     end
 
     class 136327 "ValidatorsNode"
-      visibility package 
+      abstract visibility package 
       cpp_decl ""
       java_decl ""
       php_decl ""
@@ -421,6 +442,44 @@ format 76
 	  a public
 	    classrelation_ref 130439 // <generalisation>
 	  b parent class_ref 136071 // ContainerNode
+      end
+    end
+
+    class 151687 "FieldsNode"
+      abstract visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 145031 // <generalisation>
+	relation 144519 ---|>
+	  a public
+	    classrelation_ref 145031 // <generalisation>
+	  b parent class_ref 136199 // ValidatorNode
+      end
+
+      classrelation 145159 // <generalisation>
+	relation 144647 ---|>
+	  a public
+	    classrelation_ref 145159 // <generalisation>
+	  b parent class_ref 135943 // CollectionNode
+      end
+
+      classrelation 151687 // (manages order)
+	relation 151175 ---> name "manages order"
+	  a role_name "" private
+	    classrelation_ref 151687 // (manages order)
+	  b parent class_ref 138247 // FieldNode
+      end
+
+      classrelation 151815 // (manages order)
+	relation 151303 ---> name "manages order"
+	  a role_name "" private
+	    classrelation_ref 151815 // (manages order)
+	  b parent class_ref 137991 // ColumnNode
       end
     end
   end

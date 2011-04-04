@@ -30,7 +30,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
      * If defined - context menu will be displayed when given node is clicked with right mouse button
      */
     createContextMenu: Ext.emptyFn,
-    containsIParams: false,
+
     /**
      * This method should initialize this.properties with records for GridProperty
      */
@@ -58,9 +58,6 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
 
         property.WITreeNode = this;
         this.properties[property.id] = property;
-        if (property.get('oneOfIParam')){
-            this.containsIParams = true;
-        }
     },
     addProperties: function(properties){
         for(i=0; i<properties.length;i++) {
@@ -73,7 +70,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             this.configureForValue(id, value);
         }
         for(i=0;i<this.behaviors.length;i++) {
-            this.behaviors[i].configureFor(this, widgetData);
+            this.behaviors[i].configureFor(widgetData);
         }
     },
     configureForValue: function(id, value){
@@ -81,19 +78,6 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             var property = this.getProperty(id);
             property.set('value',value);
             this.propertyChanged(property);
-        } else if (
-                this.containsIParams &&
-                id == 'i:params' &&
-                value['i:param']
-            ){
-            if (!Ext.isArray(value['i:param'])) {
-                var iParams = [value['i:param']];
-            } else {
-                var iParams = value['i:param'];
-            }
-            for(var i=0; i<iParams.length;i++) {
-                this.configureForValue(iParams[i]['name'], iParams[i]['_content']);
-            }
         } else {
             var child = this.findChild('id', id);
             if (child){
@@ -114,7 +98,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         }
 
         for(var i=0;i<this.behaviors.length;i++) {
-            this.behaviors[i].propertyChanged(this, property);
+            this.behaviors[i].propertyChanged(property);
         }
     },
     dumpDataForWidgetDefinition: function(data){
@@ -133,7 +117,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         }
 
         for(i=0;i<this.behaviors.length;i++) {
-            childsData = this.behaviors[i].dumpDataForWidgetDefinition(this, childsData);
+            childsData = this.behaviors[i].dumpDataForWidgetDefinition(childsData);
         }
 
         if (this.id.substr(0, 6) == 'xnode-') {
@@ -155,7 +139,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
     },
     dumpPropertiesData: function(){
         var data = {};
-        var iParams = [];
+
         for(i in this.properties){
             var property = this.properties[i];
             var propertyValue = property.get('value');
@@ -165,15 +149,10 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             } else if (propertyValue === true){
                 propertyValue = 'true';
             }
-            if (property.get('oneOfIParam')) {
-                iParams.push({name: property.id, '_content': propertyValue});
-            } else {
-                data[property.id] = propertyValue;
-            }
+            
+            data[property.id] = propertyValue;
         }
-        if (iParams.length > 0){
-            data['i:params'] = {'i:param': iParams};
-        }
+        
         return data;
     },
 	
@@ -195,6 +174,7 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
      * Adds behavior to given node
      */
     addBehavior: function(WITreeNodeBehavior){
+        WITreeNodeBehavior.setNode(this);
         this.behaviors.push(WITreeNodeBehavior);
         this.addProperties(WITreeNodeBehavior.createBehaviorProperties());
     }

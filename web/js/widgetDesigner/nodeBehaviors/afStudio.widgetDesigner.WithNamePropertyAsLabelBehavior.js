@@ -9,12 +9,12 @@ afStudio.widgetDesigner.WithNamePropertyAsLabelBehavior = Ext.extend(afStudio.wi
     /**
      * We need to detect when valueSource was changed
      */
-    propertyChanged: function(node, property){
+    propertyChanged: function(property){
         if (property.id == 'name') {
-            this.namePropertyChanged(node, property);
+            this.namePropertyChanged(property);
         }
     },
-    namePropertyChanged: function(node, property){
-        node.setText(property.get('value'));
+    namePropertyChanged: function(property){
+        this.node.setText(property.get('value'));
     }
 });
