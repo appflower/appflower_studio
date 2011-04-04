@@ -92,7 +92,7 @@ class afStudioConsole
 				  $command = substr($command, 3);
 				  $exec = sprintf('%s "%s" %s', sfToolkit::getPhpCli(), afStudioUtil::getRootDir().'/symfony', $command);
 				}
-				elseif (substr($command, 0, 3) == "afs")
+				elseif (substr($command, 0, 3) == "afs"&&substr($command, 0, 8) != "afsbatch")
 				{
 				  $prefix='symfony ';
 				  $command = 'afs:'.substr($command, 4);
@@ -113,6 +113,23 @@ class afStudioConsole
 				  }
 				  else {
 				  	$exec = sprintf('%s%s', afStudioUtil::getRootDir().'/batch/', $command);
+				  }
+				}
+				elseif (substr($command, 0, 8) == "afsbatch")
+				{
+				  $prefix='../plugins/appFlowerStudioPlugin/batch/';
+				  $command = substr($command, 9);
+				  if($command=='')
+				  {
+				  	$files=sfFinder::type('file')->name('*.*')->in(afStudioUtil::getRootDir().'/plugins/appFlowerStudioPlugin/batch/');
+				  	foreach ($files as $file)
+				  	{
+				  		$baseFiles[]=basename($file);
+				  	}
+				  	$result[]=$this->renderCommand('../plugins/appFlowerStudioPlugin/batch/<file>').'<li class=\'afStudio_result_command\'><b>Usage:</b> afsbatch "file"<br><b>Found batches:</b> '.implode('; ',$baseFiles).'</li>';
+				  }
+				  else {
+				  	$exec = sprintf('%s%s', afStudioUtil::getRootDir().'/plugins/appFlowerStudioPlugin/batch/', $command);
 				  }
 				}
 				else

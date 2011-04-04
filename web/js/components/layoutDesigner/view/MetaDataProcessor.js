@@ -9,7 +9,6 @@ Ext.namespace('afStudio.layoutDesigner.view');
 afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 	
 	return {
-		
 		/**
 		 * Checks if view metadata is <i>tabbed</i>
 		 * @param {Object} view metadata
@@ -22,12 +21,12 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 		/**
 		 * Returns <u>content</u> view's metadata and its position.
 		 * 
-		 * @param {Object} page metadata
-		 * @return {Object} content view's coordinates
-		 * {
-		 *    contentView: "content" view metadata,
-		 *    contentIdx: metadata position / undefined
-		 * }
+		 * @param {Object} page The page's metadata
+		 * @return {Object} content The view's coordinates
+		 * <ul>
+		 *    <li><b>contentView</b>: "content" view metadata.</li>
+		 *    <li><b>contentIdx</b>: metadata position / undefined.</li>
+		 * </ul>
 		 */
 		,getContentViewMeta : function(pm) {
 			var cm,   //view metadata
@@ -84,9 +83,9 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 				}
 				
 			} else {
-				var viewAttr = Ext.apply({}, vo.contentView.attributes);				
-				viewAttr.layout = (viewAttr.layout > cmps.maxLayout) 
-								? viewAttr.layout : cmps.maxLayout;				
+				var viewAttr = Ext.apply({}, vo.contentView.attributes);
+				
+				viewAttr.layout = (viewAttr.layout > cmps.maxLayout) ? viewAttr.layout : cmps.maxLayout;				
 				meta = {
 					'attributes': viewAttr,
 					'i:component': Ext.flatten(cmps.components)
@@ -114,9 +113,12 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 				cmps = [];
 				
 				if (Ext.isArray(tm)) {
+					maxLayout = 1;
 					Ext.each(tm, function(t, i) {
 						if (t['i:component']) {
-							maxLayout = t.attributes.layout;						
+							if (t.attributes.layout > maxLayout) {
+								maxLayout = t.attributes.layout;
+							}
 							cmps.push(this.getNormalViewComponents(t['i:component']));
 						}		
 					}, this);		
@@ -151,7 +153,6 @@ afStudio.layoutDesigner.view.MetaDataProcessor = function() {
 			
 			return cmps;
 		}//eo getNormalViewComponents
-		
 		
 	}//eo afStudio.layoutDesigner.view.MetaDataProcessor
 }();

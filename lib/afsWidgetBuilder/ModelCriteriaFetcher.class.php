@@ -19,5 +19,15 @@ class ModelCriteriaFetcher
         $collection = $query->find();
         return $collection->toKeyValue('Id');
     }
+
+    /**
+     * Method just returns empty Criteria object so it cen be used in list widget to fetch data
+     */
+    static function getDataForList($modelName)
+    {
+        $queryClass = "{$modelName}Query";
+        $query = new $queryClass('propel', $modelName);
+        return $query;
+    }
 }
 ?>

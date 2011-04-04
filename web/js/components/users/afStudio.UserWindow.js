@@ -195,7 +195,6 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 		//Get CAPTCHA element
 		var el = Ext.get("verificationimage");
 		el.dom.src = [this.captchaSrc, '&', dc].join('');
-		console.log(el.dom.src);
 	},
 	
 	/**

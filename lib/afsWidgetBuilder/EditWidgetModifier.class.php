@@ -6,10 +6,13 @@
  */
 class EditWidgetModifier extends ConcreteWidgetModifier {
 
-    public function modify(afsWidgetBuilderWidget $afsWBW) {
+    public function modify(afsWidgetBuilderWidget $afsWBW, $newWidgetMode = false) {
         $this->afsWBW = $afsWBW;
         $definition = $afsWBW->getDefinition();
-        $definition = $this->searchForAndModifyForeignTableFields($definition);
+
+        if ($newWidgetMode) {
+            $definition = $this->searchForAndModifyForeignTableFields($definition);
+        }
         return $definition;
     }
 
@@ -52,6 +55,7 @@ class EditWidgetModifier extends ConcreteWidgetModifier {
                 $relatedModelName = $relatedColumnTableMap->getPhpName();
 
                 $fieldDefinition['type'] = 'combo';
+                $fieldDefinition['selected'] = '{'.$columnName.'}';
                 $fieldDefinition['i:value'] = array(
                     'type' => 'orm',
                     'i:class' => 'ModelCriteriaFetcher',

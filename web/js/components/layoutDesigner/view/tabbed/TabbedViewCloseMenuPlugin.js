@@ -63,6 +63,14 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
         return this.menu;
     }//eo createMenu
     
+    /**
+     * Setter for {@link #active} tab property.
+     * @param {Ext.Panel} tab The active tab
+     */
+    ,setActiveTabProperty : function(tab) {
+    	this.active = tab;
+    }//eo setActiveTabProperty 
+    
 	/**
 	 * Checks if TabPanel has no tabs, and if it is true fires <tt>alltabswereclosed</tt> event
 	 */
@@ -123,17 +131,25 @@ afStudio.layoutDesigner.view.TabbedViewCloseMenuPlugin = Ext.extend(Ext.ux.TabCl
 
 		if (!this.pickerWin) {
 			this.pickerWin = new afStudio.layoutDesigner.TabNamePickerWindow();			
-			this.pickerWin.on('tabnamepicked', function(tabTitle) {
-				activeTab.setTitle(tabTitle);
-				activeTab.fireEvent('viewtitlechange', activeTab, tabTitle);
-			}, this);
-		}
+			this.pickerWin.on('tabnamepicked', this.renameTab, this);
+		}		
 		this.pickerWin.show(activeTab, function() {
 			var tabTitleFld = this.pickerForm.tabNameField;
 			tabTitleFld.setValue(activeTab.title);
 			tabTitleFld.focus(true, 200);
 		});
-	}//eo onRename 
+	}//eo onRename
+	
+	/**
+	 * Renames <tt>active</tt> tab title and fires event <u>viewtitlechange</u>.
+	 * @private
+	 * @param {String} tabTitle
+	 */
+	,renameTab : function(tabTitle) {
+		var activeTab = this.active;
+		activeTab.setTitle(tabTitle);
+		activeTab.fireEvent('viewtitlechange', activeTab, tabTitle);
+	}//eo renameTab
 	
 	/**
 	 * "close" menu item's <u>click</u> event listener

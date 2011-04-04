@@ -21,9 +21,15 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	
 	/**
 	 * @cfg {Number} viewMetaPosition required (defaults to 0)
-	 * Metadata position
+	 * This view metadata position inside the page metadata.
 	 */
 	,viewMetaPosition : 0
+	
+	/**
+	 * @cfg {String} emptyViewMessage
+	 * Holds <u>empty</u> view message.
+	 */
+	,emptyViewMessage : 'View has no widgets added yet, add you first widget to get started.'
 	
 	/**
 	 * @property {Number} viewLayout (defaults to 1)
@@ -32,21 +38,43 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,viewLayout : 1
 	
 	/**
-	 * @property {Object} viewLayoutConfig
-	 * Main layout types
-	 * For more details {@see http://www.appflower.com/docs/index.html#page-layouts}
+	 * @property emptyView <i>Read-only</i> (defaults to true)
+	 * Contains view <b>empty</b> flag. If it is <b>true</b> then the View is <u>empty</u> otherwise View contains components.
+	 * @type Boolean
 	 */
-	,viewLayoutConfig : {
-		1 : [1],
-		2 : [0.5, 0.5],
-		3 : [0.25, 0.75],
-		4 : [0.75, 0.25],
-		5 : [0.33, 0.33,0.33],
-		6 : [0.5, 0.25, 0.25],
-		7 : [0.25, 0.5, 0.25],
-		8 : [0.25, 0.25, 0.25, 0.25],
-		9 : [0.4, 0.2, 0.2, 0.2]
-	}//eo viewLayoutConfig
+	,emptyView : true
+	
+	/**
+	 * @property viewMessageBox
+	 * Contains reference to view message-box.
+	 * @type {afStudio.layoutDesigner.view.ViewMessageBox}
+	 */
+	
+	/**
+	 * If view's message-box is not instantiated instantiates it.
+	 * Returns {@link #viewMessageBox} reference.
+	 * 
+	 * @param {String} message The message to show.
+	 * @return {afStudio.layoutDesigner.view.ViewMessageBox} viewMessageBox
+	 */
+	,setViewMessageBox : function(message) {
+		if (!Ext.isDefined(this.viewMessageBox)) {
+			this.viewMessageBox = new afStudio.layoutDesigner.view.ViewMessageBox({
+				viewContainer: this.ownerCt,
+				viewMessage: message
+			});	
+		}
+		
+		return this.viewMessageBox;	
+	}//eo getViewMessageBox
+	
+	/**
+	 * Shows empty view message in view's {@link #viewMessageBox}
+	 */
+	,showEmptyViewMessage : function() {
+		this.setViewMessageBox(this.emptyViewMessage);
+		this.add(this.viewMessageBox);
+	}//eo showEmptyViewMessage
 	
 	/**
 	 * Returns view's meta <tt>layout</tt> property.
@@ -78,11 +106,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * Constructor
 	 * @param {Object} config
 	 */	
-	,constructor : function(config) {		
-		config.viewMeta.attributes.layout = 
-			!Ext.isDefined(config.viewMeta.attributes.layout) 
-				? this.viewLayout : config.viewMeta.attributes.layout;		
+	,constructor : function(config) {
 		
+		if (!Ext.isDefined(config.viewMeta.attributes.layout)) {
+			config.viewMeta.attributes.layout = this.viewLayout;	
+		}
+
 		afStudio.layoutDesigner.view.NormalView.superclass.constructor.call(this, config);
 	}//eo constructor
 	
@@ -154,8 +183,10 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 */
 	,initView : function() {
 		var _this = this,
-		  clsMeta = this.viewLayoutConfig[this.getViewLayout()],			   
-		   layout = [];	   
+			vf = afStudio.layoutDesigner.view.ViewFactory,
+			vLayoutType = this.getViewLayout(),
+		  	clsMeta = vf.getLayoutCfg(vLayoutType),
+		   	layout = [];	   
 		
 		Ext.each(clsMeta, function(cm, i, allCls) {
 			layout.push(_this.createViewColumn(i, cm));
@@ -170,13 +201,15 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	,initViewComponents : function() {
 		var _this = this,
 		 cmpsMeta = this.getViewComponentsMetaData();
-		 
-		if (!Ext.isEmpty(cmpsMeta)) {
+		
+		if (!Ext.isEmpty(cmpsMeta)) {			
+			
+			this.emptyView = false;
 			
 			if (Ext.isArray(cmpsMeta)) {				
-				Ext.each(cmpsMeta, function(cm, i, allCmps) {
+				Ext.each(cmpsMeta, function(cm, i, allCmps) {					
 					var cl = cm.attributes.column || 0,
-						 w = _this.createViewComponent(cm, null);
+						 w = _this.createViewComponent(cm, null);					
 					_this.items.itemAt(cl).add(w);
 				});
 				
@@ -187,6 +220,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			}
 			
 			_this.doLayout();
+		} else {			
+			this.emptyView = true;
+			this.showEmptyViewMessage();
 		}
 	}//eo initViewComponents
 	
@@ -259,8 +295,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		var vc = this.viewMeta['i:component'];
 		
 		if (Ext.isArray(vc)) {
-			vc.push(cmpMeta);
-			
+			vc.push(cmpMeta);			
 		} else {			
 			if (Ext.isDefined(vc)) { 
 				this.viewMeta['i:component'] = [vc, cmpMeta];	
@@ -312,34 +347,49 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Number} newLayout The new layout type
 	 */
 	,setLayoutMeta : function(newLayout) {
+		var vc = this.viewMeta['i:component'],
+			mp = afStudio.layoutDesigner.view.MetaDataProcessor,
+			vf = afStudio.layoutDesigner.view.ViewFactory,
+			container = this.ownerCt,
+			columnMaxValue = vf.getLayoutColumnMaxValue(newLayout);
+		
+		//updates layout type
 		this.viewMeta.attributes.layout = newLayout;
 		
-		var vc = this.viewMeta['i:component'];
-		
-		//if this.viewMeta['i:component'] is undefined means view is empty
+		//if this.viewMeta['i:component'] is undefined means that view is empty
 		if (Ext.isDefined(vc)) {
-			
+		//correct components column attribute to new layout type	
 			if (Ext.isArray(vc)) {
 				for (var i = 0, len = vc.length; i < len; i++) {
-					if (vc[i]['attributes']['column'] >= newLayout) {
-						vc[i]['attributes']['column'] = newLayout - 1;
+					if (vc[i]['attributes']['column'] >= columnMaxValue) {
+						vc[i]['attributes']['column'] = columnMaxValue;
 					}
 				}
 			} else {
-				if (vc['attributes']['column'] >= newLayout) {
-					vc['attributes']['column'] = newLayout - 1;
+				if (vc['attributes']['column'] >= columnMaxValue) {
+					vc['attributes']['column'] = columnMaxValue;
 				}
 			}
 		}
 		
-		this.updateViewMetaData(function() {
-			//"this" inside function = afStudio.layoutDesigner.view.Page
+		var idx;
+		if (container.viewMeta && mp.isViewTabbed(container.viewMeta)) {
+			var ai = container.getActiveTab();
+			idx = container.items.indexOf(ai);
+		}
+		
+		//scope inside callback is afStudio.layoutDesigner.view.Page
+		this.updateViewMetaData(function(ld) {
 			this.refreshPageLayout();
+			//if tabbed
+			if (idx) {
+				ld.layoutView.getContentView().setActiveTab(idx);
+			}
 		});
 	}//eo setLayoutMeta
 	
 	/**
-	 * Adds new component(widget) into the view
+	 * Adds new component(widget) into the view.
 	 * 
 	 * @param {Object} cmpMeta The component's metadata
 	 * @param {String} title The component's title
@@ -351,6 +401,10 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		cmpMeta.attributes.column = column;
 		this.addViewComponentMetaData(cmpMeta);
 		
+		if (this.emptyView) {
+			this.remove(this.viewMessageBox, true);
+			this.emptyView = false;
+		}
 		this.items.itemAt(column).add(w);
 		
 		this.doLayout();
@@ -463,7 +517,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 					var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
 					widgetDefinition.on('datafetched', function(rootNode, definition){
 						afStudio.vp.addToPortal({
-							title: 'Plugin Designer',
+							title: 'Widget Designer',
 							collapsible: false,
 							draggable: false,
 							layout: 'fit',
@@ -575,12 +629,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Object} dropEvent For more details look at {@link Ext.ux.Portal#beforedrop}
 	 */
 	,dropComponent : function(dropEvent) {
+		
 		var comp = dropEvent.panel,
 			compMeta = comp.componentMeta,
 			pos = dropEvent.position,
-			columnIndex = dropEvent.columnIndex,
-			columnMeta = this.getColumnMetaData(columnIndex);
-		
+			columnIndex = dropEvent.columnIndex;
+			
 		var updateViewComponentsMeta = Ext.util.Functions.createDelegate(
 			function(columnMeta) {
 				for (var i = 0, len = columnMeta.index.length; i < len; i++) {
@@ -589,10 +643,12 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			}, this);
 			
 		//update component's "column" metadata 
-		compMeta.attributes.column = dropEvent.columnIndex;
+		compMeta.attributes.column = dropEvent.columnIndex;		
 		
 		//update component's "position" metadata
-		var cmpIdx = this.getComponentMetaIndex(compMeta, columnMeta.component);		
+		var columnMeta = this.getColumnMetaData(columnIndex),
+			    cmpIdx = this.getComponentMetaIndex(compMeta, columnMeta.component);
+
 		if (!Ext.isEmpty(columnMeta.component)) {
 			if (cmpIdx > pos) {
 				columnMeta.component.dragUp(cmpIdx, pos);

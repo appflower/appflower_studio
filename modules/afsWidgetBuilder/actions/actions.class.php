@@ -33,15 +33,16 @@ class afsWidgetBuilderActions extends sfActions
             $afsWBW = new afsWidgetBuilderWidget($request->getParameter('uri'));
             $data = $request->getParameter('data');
             $widgetType = $request->getParameter('widgetType');
+            $createNewWidget = ($request->getParameter('createNewWidget') == 'true' ? true : false);
 
             $afsWBW->setWidgetType($widgetType);
-            $afsWBW->setDefinitionFromJSON($data);
+            $afsWBW->setDefinitionFromJSON($data, $createNewWidget);
             $validationStatusOrError = $afsWBW->save();
 
             if ($validationStatusOrError === true) {
                 return array(
                     'success' => true,
-                    'message' => 'Widget was saved succesfully'
+                    'message' => $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved'
                 );
             } else {
                 return array(

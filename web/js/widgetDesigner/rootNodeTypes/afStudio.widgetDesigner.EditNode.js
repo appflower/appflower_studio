@@ -23,7 +23,9 @@ afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
                    new afStudio.widgetDesigner.PropertyTypeString('url','Url').setRequired().create()
                ];
             }
-        });
+        },
+        afStudio.widgetDesigner.FieldsNode
+    );
 
         return new fieldsNode;
     }

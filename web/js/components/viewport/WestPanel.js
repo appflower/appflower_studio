@@ -16,43 +16,55 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 		//Create config option
 		var config = {
 			id: "west_panel",
-			region: "west",
 			title: "Navigation",
-			width: 220,
-			minWidth: 220,
+			region: "west",
 			split: true,
+			layout: "accordion",
 			layoutConfig: { 
 				animate: true 
 			},
+			width: 220,
+			minWidth: 220,
 			collapsible: true,
-			layout: "accordion",
+			activeItem: 'models',
 			listeners: {
-				beforerender: function() {
-					this.activeItem = this.findById("models")
+				afterlayout: {
+					fn: function() {				
+						var ai = this.layout.activeItem;
+						ai.fireEvent('activate', ai);
+					},
+					single: true
 				}
 			},
 			defaults: {
 				border: false
 			},
-			items: [				
-				new afStudio.models.treePanel({id:'models'}),
-				new afStudio.navigation.LayoutItem({id:'layoutdesigner'}),
-			    new afStudio.widgets.treePanel({id:'widgets'}),
-			    new afStudio.plugins.treePanel({id:'plugins'}),			    
-			    {
-					id: "profile",
-					title: "My Profile",
-					autoScroll: true,
-					iconCls: "user",
-					html: "<div id='westpanel_link'>" +
-							"<div style='background-color:#f8f8f8; border:1px solid #ddd;font-size:11px;'>" +
-								"<b>Welcome, " + name + "</b><br>" +
-								"Username: " + username + "<br>" +
-								"<a href='#'>[Edit My Profile]</a>" +
-							"</div>" +
-						"</div>"
-				}
-			]
+			items: [
+			{
+				id: 'models',
+				xtype: 'afStudio.navigation.modelItem'
+			},{
+				id: 'layoutdesigner',
+				xtype: 'afStudio.navigation.layoutItem'
+			},{
+				id: 'widgets',
+				xtype: 'afStudio.navigation.widgetItem'
+			},{
+		    	id: 'plugins',
+		    	xtype: 'afStudio.navigation.pluginItem'
+		    },{
+				id: "profile",
+				title: "My Profile",
+				autoScroll: true,
+				iconCls: "user",
+				html: "<div id='westpanel_link'>" +
+						"<div style='background-color:#f8f8f8; border:1px solid #ddd;font-size:11px;'>" +
+							"<b>Welcome, " + name + "</b><br>" +
+							"Username: " + username + "<br>" +
+							"<a href='#'>[Edit My Profile]</a>" +
+						"</div>" +
+					"</div>"
+			}]
 		};
 				
 		// apply config

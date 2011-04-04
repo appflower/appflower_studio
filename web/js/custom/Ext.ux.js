@@ -1,16 +1,16 @@
 
-Ext.grid.CheckColumn = function(config){
+Ext.grid.CheckColumn = function(config) {
     Ext.apply(this, config);
-    if(!this.id){
+    if (!this.id) {
         this.id = Ext.id();
     }
     this.renderer = this.renderer.createDelegate(this);
 };
 
-Ext.grid.CheckColumn.prototype ={
-    init : function(grid){
+Ext.grid.CheckColumn.prototype = {
+    init : function(grid) {
         this.grid = grid;
-        this.grid.on('render', function(){
+        this.grid.on('render', function() {
             var view = this.grid.getView();
             view.mainBody.on('mousedown', this.onMouseDown, this);
         }, this);
@@ -178,38 +178,26 @@ Ext.ux.WidgetFieldDragZone = Ext.extend(Ext.dd.DragZone, {
     }
 });
 
-Ext.ux.LogMessageTab = Ext.extend(Ext.TabPanel, {
-	initComponent:function(){
-		Ext.ux.LogMessageTab.superclass.initComponent.call(this);
-		this.addEvents("logmessage");
-		this.on("logmessage",this.onLogMessage,this);
-	},
-	onLogMessage:function(cmp,message){
-		afStudio.log(message,"text");
-	}
-	
-})
 
-Ext.ux.LogMessagePanel = Ext.extend(Ext.Panel, {
-	initComponent:function(){
-		Ext.ux.LogMessagePanel.superclass.initComponent.call(this);
-		this.addEvents("logmessage");
-		this.on("logmessage",this.onLogMessage,this);
-	},
-	onLogMessage:function(cmp,message){
-		afStudio.log(message,"text");
-	}
+Ext.override(Ext.BoxComponent, {
 	
-})
-
-Ext.override(Ext.BoxComponent,{
-	initComponent : function(){
-		Ext.BoxComponent.superclass.initComponent.call(this);
-		this.addEvents("resize","move","logmessage");
-		this.on("logmessage",this.onLogMessage,this);
+	initComponent : function() {
+		Ext.BoxComponent.superclass.initComponent.apply(this, arguments);
+		
+		this.addEvents(
+			'resize',
+			
+			'move',
+			
+			'logmessage'
+		);
+		
+		this.on("logmessage", this.onLogMessage, this);
 	},
-	onLogMessage:function(cmp,message){
-		afStudio.log(message,"text");
-	}
-})
+	
+	onLogMessage : function(cmp, message) {
+		
+		afStudio.log(message, "text");
+	}//eo onLogMessage 
+});
 

@@ -82,9 +82,22 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <!-- Error -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/error/ApsError.js"></script>
 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/notification/MessageBox.js"></script>
+
+<!-- CLI -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/CommandLine.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/AuditLog.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/Console.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/Debug.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/WindowWrapper.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/CommandLineMgr.js"></script>
+
 <!-- Navigation -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/BaseItemTreePanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/ModelItem.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/LayoutItem.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/WidgetItem.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/navigation/PluginItem.js"></script>
 
 <!-- Viewport -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/StudioToolbar.js"></script>
@@ -123,6 +136,7 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/MetaDataProcessor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/tabbed/TabbedViewCloseMenuPlugin.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/tabbed/TabViewPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/ViewMessageBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/NormalView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/TabbedView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/view/Page.js"></script>

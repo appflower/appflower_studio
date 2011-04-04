@@ -95,7 +95,6 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Ext.EventObject} e
 	 */
 	,onModelClick : function(node, e) {
-		//console.log('yeah!');
 	}
 	
 	/**

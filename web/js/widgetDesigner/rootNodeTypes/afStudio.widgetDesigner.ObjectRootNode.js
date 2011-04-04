@@ -2,7 +2,7 @@
  * This is common object for edit and list widget types
  *
  * Each of them has datasource node and fields node
- * Fields is colleciont of "i:column" for list widget and collection of "i:field" for edit widget
+ * Fields is collecion of "i:column" for list widget and collection of "i:field" for edit widget
  **/
 afStudio.widgetDesigner.ObjectRootNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
     /**
