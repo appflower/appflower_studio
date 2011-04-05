@@ -171,7 +171,7 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 
 <!-- welcome popup -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery-1.4.4.min.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery.jscrollpane.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery.jscrollpane.min.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery.prettyPhoto.js"></script>
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
