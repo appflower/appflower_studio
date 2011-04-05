@@ -464,7 +464,7 @@ class appFlowerStudioActions extends sfActions
 
 	public function executeWelcome($request)
 	{
-		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+//		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
 		
 		$data = array();
 		$vimeoService = new VimeoInstanceService();
@@ -477,7 +477,8 @@ class appFlowerStudioActions extends sfActions
         
 		$message = $this->getPartial('welcome', array('data'=>$data));
 		
-        $info=array('success'=>true, "message"=>$message);
+//		return $this->renderText($message);
+        $info=array('success'=>true, "message"=>$message, "code"=>"jQuery('#studio_video_tours ul').jScrollPane();");
 		return $this->renderJson($info);
 	}
 	

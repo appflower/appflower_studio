@@ -1,3 +1,6 @@
+<?php echo stylesheet_tag('/appFlowerStudioPlugin/css/welcome.css') ?>
+<?php echo stylesheet_tag('/appFlowerStudioPlugin/css/prettyPhoto.css') ?>
+
  <div id="studio_popup">
     <div id="studio_popup_primary">
       <div id="popup_content">
@@ -11,16 +14,16 @@
       <h3>Video Tours</h3>
       <ul>
         
-          	<?php foreach ($data as $video): ?>
+          <?php foreach ($data as $video): ?>
             <li>
-              <a href="<?php echo $video['url']?>" rel="prettyPhoto"> <img src="<?php echo $video['thumbnail_small']?>" /> </a>
+              <a href="<?php echo $video['url']?>" rel="prettyPhoto" title="<?php echo $video['title'] ?>"> <img src="<?php echo $video['thumbnail_small']?>" /> </a>
               <div>
                 <p class="views"><span><?php echo $video['stats_number_of_plays']?> views</span></p>
                 <h5><?php echo substr( $video['title'], 0, 20 ) ?></h5>
                 <span><?php echo substr($video['description'], 0, 25)?></span>
               </div>
-            </li>
-            <?php endforeach; ?>
+            </li> 
+          <?php endforeach; ?>
             
      </ul>
     </div>

@@ -143,6 +143,11 @@ var afStudio = function () {
 			* this will add current project's url to the recent projects cookie
 			*/
 			this.addCurrentProject();
+			
+			if (Ext.util.Cookies.get('appFlowerStudioDontShowWelcomePopup')!='true') {
+				( new afStudio.Welcome() ).show();
+			}
+			
 		}//eo init
 		
         ,getWidgetsTreePanel: function() {

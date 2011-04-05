@@ -1,0 +1,66 @@
+@CHARSET "UTF-8";
+
+/** {
+	margin: 0;
+padding: 0;
+font: normal 11px tahoma,arial,helvetica,sans-serif;
+}
+	
+ul {
+	list-style: none;
+}*/
+
+
+/* Jscroll PLUGIN STYLE ============================================================================================================ */
+
+.jspContainer {overflow: hidden; position: relative;}
+.jspPane{position: absolute;}
+.jspVerticalBar{position: absolute; top: 0; right: 0; width: 6px; height: 100%; background: red;}
+.jspHorizontalBar{position: absolute; bottom: 0; left: 0; width: 100%; height: 16px; background: red;}
+.jspVerticalBar *,
+.jspHorizontalBar * {margin: 0; padding: 0;}
+.jspCap{display: none;}
+.jspHorizontalBar .jspCap{float: left;}
+.jspTrack{background: #e4e4e4; position: relative;}
+.jspDrag{background: #c1c1c1; position: relative; top: 0;left: 0; cursor: pointer;}
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag{float: left;height: 100%;}
+.jspArrow{background: #e4e4e4; text-indent: -20000px; display: block; cursor: pointer;}
+.jspArrow.jspDisabled{cursor: default; background: #e4e4e4;}
+.jspVerticalBar .jspArrow{height: 16px;}
+.jspHorizontalBar .jspArrow{width: 16px; float: left; height: 100%;}
+.jspVerticalBar .jspArrow:focus{outline: none;}
+.jspCorner{background: #e4e4e4;float: left;height: 100%;}
+* html .jspCorner{margin: 0 -3px 0 0;}
+
+
+/* Studio Popup
+=================================================================================*/
+#studio_popup {background:#fff; width:795px; height:490px; overflow:hidden; border:1px solid #99bbe8;}
+
+#studio_popup #studio_popup_primary {float:left; background:url(../images/studio/bg_popup.jpg) 50px 40px no-repeat; }
+#studio_popup #studio_popup_primary #popup_content {width:510px; margin:320px 0 0 45px;}
+#studio_popup #studio_popup_primary #popup_content h2 {font-size:27px; font-weight:bold; text-align:center; margin-bottom:20px;}
+#studio_popup #studio_popup_primary #popup_content p {font-size:14px; font-weight:bold; line-height:18px; text-align:center; margin-bottom:20px;}
+#studio_popup #studio_popup_primary #popup_content a {display:block; width:165px; height:33px; padding-top:10px; text-align: center; color:#fff; font-size:18px; font-weight:bold; background:url(../images/studio/btn_start.png) 0 0 no-repeat; margin-left:170px; text-shadow: #222 0px -1px 1px;}
+
+
+#studio_popup #studio_popup_secondary {float:right; height:490px; width:190px; border-left:3px solid #cdd9e8;}
+#studio_popup #studio_popup_secondary h3 {padding-bottom:15px; font-size:14px;}
+
+#studio_popup #studio_video_tours {height:295px; margin:8px;}
+#studio_popup #studio_video_tours ul {height:245px; overflow:scroll; border-bottom:1px solid #ddd;}
+#studio_popup #studio_video_tours li {float:left; clear:both; padding-bottom:10px; width:96%; border-bottom:1px dotted #999; margin-bottom:10px;}
+#studio_popup #studio_video_tours li img {height:53px; width:53px; background:#d1d1d1; border: 4px solid #eee; float:left; margin-right:10px;}
+#studio_popup #studio_video_tours li div h5 {font-size:12px; line-height:12px; font-weight:bold; padding-bottom:0px; padding-top:10px; color:#4c4c4c; overflow: hidden;}
+#studio_popup #studio_video_tours li div span {font-size:11px; color:#4c4c4c;}
+
+#studio_popup #studio_video_tours  p.views {float:left; color:#666; padding: 3px 6px 0 0; line-height:11px; margin-top:5px; clear:both;}
+#studio_popup #studio_video_tours .views span {background:url(../images/studio/ico_blue_eye.png) 0 3px no-repeat; padding-left:21px; font-size:10px; color:#666;}
+
+#studio_popup #quick_links {margin:8px;}
+#studio_popup #quick_links h3 {}
+#studio_popup #quick_links ul li {display:block; background:#d0def0 url(../images/studio/bg_list_item_sidebar.png) 0 0 repeat-x; color:#5f7186; padding:7px 10px;}
+#studio_popup #quick_links ul li:hover {background:#6f88a8 url(../images/studio/bg_list_item_sidebar_hover.png) 0 0   repeat-x; }
+#studio_popup #quick_links ul li a {display:block; background:url(../images/studio/ico_white_arrow.png) 0 0 no-repeat; color:#5f7186; padding-left:20px; font-size:12px;}
+#studio_popup #quick_links ul li:hover a {color:#fff;}

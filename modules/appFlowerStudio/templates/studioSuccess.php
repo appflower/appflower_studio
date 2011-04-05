@@ -169,6 +169,10 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <script type="text/javascript" src="/appFlowerStudioPlugin/<?php echo strstr($afStudioJsExtension, 'js'); ?>"></script>
 <?php }?>
 
+<!-- welcome popup -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery.jscrollpane.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery.prettyPhoto.js"></script>
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />

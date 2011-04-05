@@ -74,16 +74,26 @@ afStudio.Help = Ext.extend(Ext.Window, {
 afStudio.Welcome = Ext.extend(Ext.Window, { 
 	form: null,
 	initComponent: function(){
-	
 		
 		var config = {
-			title: 'Welcome to AppFlower Studio', width:810,height:520,
+			title: 'Welcome to AppFlower Studio', width:810,height:545,
 			closable: true,
 	        draggable: true, plain:true,
-	        modal: true, resizable: true,
+	        modal: true, resizable: false,
 	        bodyBorder: false, border: false,
 	        html: '<div id="welcome-box"> </div>',
-	        buttonAlign: 'center'
+	        buttonAlign: 'left',
+	        buttons: [{ xtype:'checkbox',
+	    	            boxLabel:'Do not show this popup next time',
+	    	            handler:  function(f,c){
+	        				if (c) {
+	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "true", new Date('12/22/2099'));
+	        				} else {
+	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "");
+	        				}
+	        			}
+	        }],
+	    	         
 		};
 				
 		// apply config
@@ -103,6 +113,9 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 		   success: function ( result, request) {
 			   var obj = Ext.decode(result.responseText);
 			   Ext.get('welcome-box').update(obj.message);
+			   jQuery("a[rel^='prettyPhoto']").prettyPhoto();
+			   
+			   setTimeout(function() {jQuery('#studio_video_tours ul').jScrollPane()} , 500); // requred for firefox
 		   }
 		});
 
