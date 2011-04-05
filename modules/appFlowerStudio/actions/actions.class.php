@@ -464,7 +464,7 @@ class appFlowerStudioActions extends sfActions
 
 	public function executeWelcome($request)
 	{
-//		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
 		
 		$data = array();
 		$vimeoService = new VimeoInstanceService();
@@ -472,12 +472,11 @@ class appFlowerStudioActions extends sfActions
         	$data = $vimeoService->getDataFromRemoteServer();
         	
       	}catch(Exception $e){ 
-      		$this->data = array();	
+      		$data = array();	
       	}
         
 		$message = $this->getPartial('welcome', array('data'=>$data));
 		
-//		return $this->renderText($message);
         $info=array('success'=>true, "message"=>$message, "code"=>"jQuery('#studio_video_tours ul').jScrollPane();");
 		return $this->renderJson($info);
 	}
