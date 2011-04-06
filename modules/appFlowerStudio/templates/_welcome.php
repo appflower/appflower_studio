@@ -6,7 +6,7 @@
       <div id="popup_content">
         <h2>Welcome to AppFlower Studio</h2>
         <p>There is going to be some description tetxt in this area. There is going to be some description tetxt in this area.</p>
-        <a href="http://vimeo.com/21965153" rel="prettyPhoto" title="AppFlower-003: Installing appflower vmdk on virtual box">Start</a>
+        <a href="javascript: return false" id="start-welcome-popup">Start</a>
       </div>
     </div>
     <div id="studio_popup_secondary">
