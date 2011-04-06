@@ -8,23 +8,42 @@
  * When Widget is loaded from server there is 'datafetched' event emmited
  * In your handler for datafetched you should pass rootNode into WI ExtJS component
  */
-afStudio.widgetDesigner.WidgetDefinition = function(widgetUri, widgetType){
+afStudio.widgetDesigner.WidgetDefinition = function(widgetUri, widgetType) {
     this.widgetUri = widgetUri;
     if (widgetType) {
         this.widgetType = widgetType;
     }
     this.addEvents('datafetched');
+    
+	afStudio.widgetDesigner.WidgetDefinition.superclass.constructor.call(this); 
 };
 
 afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, Ext.util.Observable, {
-    widgetUri: null,
-    definition: null,
-    widgetType: null,
+	
+	/**
+	 * @cfg {String} (required) widgetUri
+	 * Unique widget URI
+	 */
+    widgetUri : null,
+    
+    /**
+     * @cfg {String} widgetType
+     */
+    widgetType : null,
+    
+    /**
+     * Widget definition object.
+     * @property definition
+     * @type {Object} 
+     */
+    definition : null,
+    
     rootNode: null,
-    fetchAndConfigure: function(){
+    
+    fetchAndConfigure : function() {
         Ext.Ajax.request({
             url: window.afStudioWSUrls.getGetWidgetUrl(this.widgetUri),
-            success: function(response){
+            success: function(response) {
                 this.parseFetchedData(response);
                 this.createRootNode();
                 this.rootNode.configureFor(this.definition);
@@ -32,8 +51,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
             },
             scope: this
         });
-   },
-   parseFetchedData: function(response){
+	},
+	
+	parseFetchedData : function(response) {		
         if (response.statusText != 'OK') {
             afStudio.Msg.warning('response looks invalid');
         }
@@ -43,7 +63,8 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
             this.widgetType = this.definition['type'];
         }
     },
-    save: function(widgetBuilderWindow, createNewWidget){
+    
+	save : function(widgetBuilderWindow, createNewWidget) {
         var data = this.rootNode.dumpDataForWidgetDefinition();
 
         Ext.Ajax.request({
@@ -68,7 +89,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         });
    },
    
-   parseSaveResponse: function(response){
+   parseSaveResponse : function(response) {
    		//Unmask parent tree
    		var tree = this.rootNode.getOwnerTree()
         if (tree) {
@@ -97,7 +118,8 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
 
         return false;
    },
-   createRootNode: function(){
+   
+   createRootNode : function() {
        switch (this.widgetType) {
            case 'list':
                this.rootNode = new afStudio.widgetDesigner.ListNode();
@@ -106,8 +128,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
                this.rootNode = new afStudio.widgetDesigner.EditNode();
                break;
        }
-
-       this.rootNode.setText(this.widgetUri+' ['+this.widgetType+']');
+       this.rootNode.setText(this.widgetUri + ' [' + this.widgetType + ']');
    }
 
 });

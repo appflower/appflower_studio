@@ -544,7 +544,8 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		afStudio.vp.mask({region:'center'});
 		
 		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
-		this.widgetDefinition.on('datafetched', function(rootNode, definition){
+		
+		this.widgetDefinition.on('datafetched', function(rootNode, definition) {			
 			afStudio.vp.addToPortal({
 				title: 'Widget Designer',
 				collapsible: false,

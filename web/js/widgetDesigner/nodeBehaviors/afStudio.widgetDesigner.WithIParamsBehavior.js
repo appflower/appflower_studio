@@ -1,3 +1,5 @@
+Ext.namespace('afStudio.widgetDesigner');
+
 /**
  * Some nodes can have parameters defined like below
  * <i:params>
@@ -6,22 +8,32 @@
  *
  * Concrete example here would be list type widget and its maxperpage parameter
  *
- **/
-Ext.namespace('afStudio.widgetDesigner');
+ */
 afStudio.widgetDesigner.WithIParamsBehavior = Ext.extend(afStudio.widgetDesigner.BaseBehavior, {
-    setProperties: function(properties) {
+	
+	/**
+	 * Read-only. Contains array of behaviour properties. 
+	 * @property properties
+	 * @type {Array}
+	 */
+	
+    setProperties : function(properties) {
         this.properties = properties;
-    },
+    }
+    
     /**
      * Adding custom properties
+     * @override
      */
-    createBehaviorProperties: function() {
+    ,createBehaviorProperties : function() {
         return this.properties;
-    },
+    }
+    
     /**
      * Reading data from widget definition
+     * @override
      */
-    configureFor: function(widgetData) {
+    ,configureFor : function(widgetData) {
         if (widgetData['i:params']) {
             var iParams = widgetData['i:params'];
             delete widgetData['i:params'];
@@ -49,17 +61,19 @@ afStudio.widgetDesigner.WithIParamsBehavior = Ext.extend(afStudio.widgetDesigner
                 }
             }
         }
-    },
+    }//eo configureFor
+    
     /**
-     * now we must build data that is send back to server 
+     * now we must build data that is send back to server
+     * @override 
      */
-    dumpDataForWidgetDefinition: function(nodeWidgetData)
-    {
+    ,dumpDataForWidgetDefinition : function(nodeWidgetData) {
         var iParams = [];
 
         for (var i = 0; i < this.properties.length; i++) {
-            var currentProperty = this.properties[i];
-            var propertyName = currentProperty.id;
+            var currentProperty = this.properties[i],
+            	   propertyName = currentProperty.id;
+            	   
             if (nodeWidgetData[propertyName]) {
                 iParams.push({
                     'name': propertyName,
@@ -74,5 +88,6 @@ afStudio.widgetDesigner.WithIParamsBehavior = Ext.extend(afStudio.widgetDesigner
         };
 
         return nodeWidgetData;
-    }
+    }//eo dumpDataForWidgetDefinition
+    
 });

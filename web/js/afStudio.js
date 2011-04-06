@@ -3,7 +3,7 @@ Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
 Ext.ns('afStudio');
 
-var afStudio = function () { 
+var afStudio = function () {
 
 	/**
 	 * @property {afStudio.viewport.StudioToolbar} tb
@@ -144,8 +144,8 @@ var afStudio = function () {
 			*/
 			this.addCurrentProject();
 			
-			if (Ext.util.Cookies.get('appFlowerStudioDontShowWelcomePopup')!='true') {
-				( new afStudio.Welcome() ).show();
+			if (Ext.util.Cookies.get('appFlowerStudioDontShowWelcomePopup') != 'true') {
+				new afStudio.Welcome().show();
 			}
 			
 		}//eo init

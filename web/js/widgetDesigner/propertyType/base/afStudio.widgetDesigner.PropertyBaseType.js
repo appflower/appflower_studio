@@ -4,6 +4,12 @@
  * This class defines base class for all concrete properties
  */
 (function(){
+	/**
+	 * PropertyBaseType constructor
+	 * @constructor
+	 * @param {String} fieldId
+	 * @param {String} fieldLabel
+	 */
 	afStudio.widgetDesigner.PropertyBaseType = function(fieldId, fieldLabel){
 		this.id = fieldId;
         this.label = fieldLabel;
@@ -12,45 +18,51 @@
 
 Ext.apply(afStudio.widgetDesigner.PropertyBaseType.prototype, {
 	/**
-	 * @var {Mixed} value
 	 * Property value
+	 * @property value
+	 * @type {Mixed}
 	 */
-	value: undefined,
+	
     /**
      * Used when value was not set. This should be set by class implementing concrete type
      */
-    defaultValue: '',
-    id: undefined,
-    label: undefined,
-    type: 'string',
+    defaultValue : '',
+    
+    /**
+     * @property id
+     * @type String
+     */
+
+    /**
+     * @property label
+     * @type String
+     */
+    
+    type : 'string',
 
 	/**
-	 * @var {Boolean} required
-	 * Is field required
+	 * Contains flag if this field is required.
+	 * @property required
+	 * @type {Boolean} 
 	 */
-	required: false,
+	required : false,
 	 	
-	setRequired: function(){
+	setRequired : function() {
 		this.required = true;
 		return this;
 	},
 	
-	setValue: function(v){
+	setValue : function(v) {
 		this.value = v;
 		return this;
 	},
-    create: function(){
-        var recordConstructor = Ext.data.Record.create(
-            {
-                name:'name',
-                type:'string'
-            },
-            {
-                name:'value',
-                type:this.type
-            },
+	
+    create : function() {
+        var recordConstructor = Ext.data.Record.create([
+            {name: 'name', type: 'string'},
+            {name: 'value', type: this.type},
             'required'
-        );
+        ]);
         
         var r = new recordConstructor({
             name: this.label,

@@ -1,8 +1,9 @@
 afStudio.widgetDesigner.PropertyTypeChoice = Ext.extend(afStudio.widgetDesigner.PropertyBaseType, {
-	type: 'choice',
-	defaultValue: '',
+	type : 'choice',
 	
-	setChoices: function(store){
+	defaultValue : '',
+	
+	setChoices: function(store) {
 		this.store = store;
 		return this;
 	}

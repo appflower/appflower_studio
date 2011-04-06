@@ -1,46 +1,95 @@
-/**
- * BaseNode is common class for all nodes displayed in WI tree
- * It can contain nested elements which are some specific NodeTypes but even childs are based on BaseNode
- * It can also contain parameters which are accessed through Properties Grid displayed under WI tree
- *
- * This class is abstract class - you should not use it. Instead use CollectionNode or ContainerNode class
- **/
 Ext.namespace('afStudio.widgetDesigner');
 
-N = afStudio.widgetDesigner;
-
 /**
- * BaseNode is common class for all other WI node types
- * @param {Object} 
+ * Abstract class.
+ * BaseNode is common class for all other WI node types.
+ * It can contain nested elements which are some specific NodeTypes but even childs are based on BaseNode.
+ * It can also contain parameters which are accessed through Properties Grid displayed under WI tree.
+ *
+ * This class is <b>abstract</b> class - you should not use it. Instead use CollectionNode or ContainerNode class.
+ * 
+ * @class afStudio.widgetDesigner.BaseNode
+ * @extends Ext.tree.TreeNode
  */
-N.BaseNode = function(config){
-    if (!config) {
-        config = this.getNodeConfig();
-    }
-    this.createContextMenu();
-    afStudio.widgetDesigner.BaseNode.superclass.constructor.apply(this, [config]);
-    this._initEvents();
-    this.createProperties();
-    this.addRequiredChilds();
-    this.behaviors = [];
-};
-Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
+afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
+	/**
+	 * Read-only. Contains reference to this node context-menu.
+	 * To set up this property use {@link #createContextMenu} method.
+	 * @property contextMenu
+	 * @type {Ext.menu.Menu}
+	 */
+	
+	/**
+	 * BaseNode constructor.
+	 * @param {Object} config The base node configuration object
+	 */
+	constructor : function(config) {
+		config = config || this.getNodeConfig();
+	    this.createContextMenu();
+	    
+	    afStudio.widgetDesigner.BaseNode.superclass.constructor.call(this, config);
+	    
+	    this._initEvents();
+	    this.createProperties();
+	    this.addRequiredChilds();
+	    this.behaviors = [];
+	},
+	
     /**
-     * This method should create an instance of Ext.menu.Menu class and place it in this.contextMenu variable
-     * If defined - context menu will be displayed when given node is clicked with right mouse button
+     * Abstract template method.
+     * Returns node configuration, something like: {text: 'sadads', iconCls: 'icon'}
+     * @protected
      */
-    createContextMenu: Ext.emptyFn,
+    getNodeConfig : Ext.emptyFn,
+	
+    /**
+     * Abstract template method.
+     *  
+     * This method should create an instance of Ext.menu.Menu class and place it in {@link #contextMenu} property.
+     * If defined - context menu will be displayed when given node is clicked with right mouse button.
+     * @protected
+     */
+    createContextMenu : Ext.emptyFn,
+    
+    /**
+     * Template method.
+     * @protected
+     */
+    _initEvents : function() {
+        if (Ext.isFunction(this.onContextMenuClick)) {
+            this.on('contextmenu', this.onContextMenuClick);
+        }
+    },
+    
+    /**
+     * Abstract event listener.
+     * Handles this node <u>contextmenu</u> event.
+     * @protected
+     */
+    onContextMenuClick : Ext.emptyFn,
+    
+    /**
+     * Abstract template method. 
+     * This method should initialize this.properties with records for GridProperty
+     * @protected
+     */
+    createProperties : function() {
+		return [];
+	},
 
     /**
-     * This method should initialize this.properties with records for GridProperty
+     * Template method.
+     * If given node should have some childs when builded - this method should do this.
+     * @protected
      */
-    createProperties: function(){return []},
+    addRequiredChilds : Ext.emptyFn,
+	
     /**
      * Returns fields for properties grid
      *
      * @return array
      */
-	getProperties: function(){
+	getProperties : function() {
         var properties = [];
         for(i in this.properties) {
             properties.push(this.properties[i]);
@@ -48,10 +97,12 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
 
         return properties;
 	},
-    getProperty: function(id){
+	
+    getProperty : function(id) {
         return this.properties[id];
     },
-    addProperty: function(property){
+    
+    addProperty : function(property) {
         if (!this.properties) {
             this.properties = {};
         }
@@ -59,32 +110,44 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         property.WITreeNode = this;
         this.properties[property.id] = property;
     },
-    addProperties: function(properties){
-        for(i=0; i<properties.length;i++) {
+    
+    addProperties : function(properties) {
+        for (var i = 0; i < properties.length; i++) {
             this.addProperty(properties[i]);
         }
     },
-    configureFor: function(widgetData){
-        for(id in widgetData){
+    
+    /**
+     * @protected
+     * @param {} widgetData
+     */
+    configureFor : function(widgetData) {
+        for (var id in widgetData) {
             var value = widgetData[id];
             this.configureForValue(id, value);
         }
-        for(i=0;i<this.behaviors.length;i++) {
+        for (var i = 0; i < this.behaviors.length; i++) {
             this.behaviors[i].configureFor(widgetData);
         }
     },
-    configureForValue: function(id, value){
+    
+    /**
+     * @protected
+     * @param {String} id
+     * @param {Mixed} value
+     */
+    configureForValue : function(id, value) {
         if (this.properties && this.properties[id]) {
             var property = this.getProperty(id);
-            property.set('value',value);
+            property.set('value', value);
             this.propertyChanged(property);
         } else {
             var child = this.findChild('id', id);
-            if (child){
+            if (child) {
                 child.configureFor(value);
             } else {
                 child = this.findChild('childNodeId', id);
-                if (child){
+                if (child) {
                     var tmpObj = {};
                     tmpObj[id] = value;
                     child.configureFor(tmpObj);
@@ -92,16 +155,18 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
             }
         }
     },
-    propertyChanged: function(property) {
+
+    propertyChanged : function(property) {
         if (!property) {
             return;
         }
 
-        for(var i=0;i<this.behaviors.length;i++) {
+        for (var i = 0; i < this.behaviors.length; i++) {
             this.behaviors[i].propertyChanged(property);
         }
     },
-    dumpDataForWidgetDefinition: function(data){
+    
+    dumpDataForWidgetDefinition : function(data) {
         if (!data) {
             data = {};
         }
@@ -110,13 +175,13 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
 
         //my array merge :)
         //TODO: properties are overwriting values that came from childs - this can be dangerous
-        for(key in propertiesData) {
+        for (key in propertiesData) {
             if (propertiesData[key] != '') {
                 childsData[key] = propertiesData[key];
             }
         }
 
-        for(i=0;i<this.behaviors.length;i++) {
+        for (var i = 0; i < this.behaviors.length; i++) {
             childsData = this.behaviors[i].dumpDataForWidgetDefinition(childsData);
         }
 
@@ -130,14 +195,16 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         
         return data;
     },
-    dumpChildsData: function(){
+    
+    dumpChildsData : function() {
         var data = {};
         this.eachChild(function(childNode){
             data = childNode.dumpDataForWidgetDefinition(data);
         });
         return data;
     },
-    dumpPropertiesData: function(){
+    
+    dumpPropertiesData : function() {
         var data = {};
 
         for(i in this.properties){
@@ -155,25 +222,14 @@ Ext.extend(N.BaseNode, Ext.tree.TreeNode, {
         
         return data;
     },
-	
-    /**
-     * Returns node configuration, something like: {text: 'sadads', iconCls: 'icon'}
-     */
-    getNodeConfig: Ext.emptyFn,
-    _initEvents: function(){
-        if (this.contextMenuHandler) {
-            this.on('contextmenu', this.contextMenuHandler);
-        }
-    },
-    getPropertyRecordCfg: Ext.emptyFn,
-    /**
-     * If given node should have some childs when builded - this method should do this
-     */
-    addRequiredChilds: Ext.emptyFn,
+    
+    getPropertyRecordCfg : Ext.emptyFn,
+    
     /**
      * Adds behavior to given node
+     * @protected
      */
-    addBehavior: function(WITreeNodeBehavior){
+    addBehavior : function(WITreeNodeBehavior) {
         WITreeNodeBehavior.setNode(this);
         this.behaviors.push(WITreeNodeBehavior);
         this.addProperties(WITreeNodeBehavior.createBehaviorProperties());
