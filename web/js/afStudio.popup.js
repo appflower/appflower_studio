@@ -104,6 +104,7 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 	},
 	
 	getHtmlData: function(){
+		var popupWindow = this;
 		Ext.Ajax.request({
 		   url: window.afStudioWSUrls.buildUrlFor('/appFlowerStudio/Welcome'),
 		   failure: function ( result, request) {
@@ -117,8 +118,14 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 			   
 			   setTimeout(function() {jQuery('#studio_video_tours ul').jScrollPane()} , 500); // requred for firefox
 			   
-			   Ext.get('create-project').on('click',  function(){  (new afStudio.CreateProject()).show(); }, this);
-			   Ext.get('open-project').on('click',  function(){  (new afStudio.LoadProject()).show(); }, this);
+			   Ext.get('create-project').on('click',  function(){  
+				   popupWindow.close();
+				   (new afStudio.CreateProject()).show();
+			   }, this);
+			   Ext.get('open-project').on('click',  function(){  
+				   popupWindow.close();
+				   (new afStudio.LoadProject()).show(); 
+			   }, this);
 			   
 		   }
 		});
