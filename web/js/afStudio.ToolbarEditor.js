@@ -43,7 +43,7 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 		this.codeEditor = new Ext.ux.CodePress({
 			delayedStart: false, 
 			closable:true,
-			file: 'root/apps/frontend/lib/helper/ImmExtjsToolbarHelper.php', 
+			file: 'root/apps/frontend/lib/helper/afExtjsToolbarHelper.php', 
 			language: 'php'
 		});
 		

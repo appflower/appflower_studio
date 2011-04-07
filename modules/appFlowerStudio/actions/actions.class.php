@@ -11,7 +11,7 @@ class appFlowerStudioActions extends sfActions
 	public function preExecute()
 	{
 		$this->realRoot=sfConfig::get('sf_root_dir');
-		$this->immExtjs=ImmExtjs::getInstance();
+		$this->afExtjs=afExtjs::getInstance();
         
 		$this->userinfo = afStudioUser::getInstance()->getInfo();
 	}	
@@ -28,7 +28,7 @@ class appFlowerStudioActions extends sfActions
 			
 	public function executeCodepress($request)
 	{
-		$this->codepress_path=$this->immExtjs->getExamplesDir().'codepress/';
+		$this->codepress_path=$this->afExtjs->getExamplesDir().'codepress/';
 		
 		$this->language=(($this->hasRequestParameter('language')&&$this->getRequestParameter('language')!='undefined')?$this->getRequestParameter('language'):'generic');
 		
@@ -364,7 +364,7 @@ class appFlowerStudioActions extends sfActions
 	public function executeToolbarHelperFileSave(){
 		$result=true;
 		$JDATA=file_get_contents("php://input");
-		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/ImmExtjsToolbarHelper.php';
+		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/afExtjsToolbarHelper.php';
 		try{
 			$fp = fopen($filePath,"w");
 			if(!$fp)throw new Exception("file open error");
@@ -387,19 +387,19 @@ class appFlowerStudioActions extends sfActions
 	}
 	
 	/**
-	 * Check if file exists and if not there create a new one based on the template (_ImmExtjsToolbarHelper.php).
+	 * Check if file exists and if not there create a new one based on the template (_afExtjsToolbarHelper.php).
 	 */
 	public function executeCheckToolbarHelperFileExist(){
 		$result = true;
 		$message = "";
 		
-		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/ImmExtjsToolbarHelper.php';
+		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/afExtjsToolbarHelper.php';
 		
 		if (!file_exists($filePath)) {
 			try{
-				$_ImmExtjsToolbarHelper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_ImmExtjsToolbarHelper.php', true);
+				$_afExtjsToolbarHelper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_afExtjsToolbarHelper.php', true);
 				$fp = fopen($filePath,"w");
-				fWrite($fp,$_ImmExtjsToolbarHelper);
+				fWrite($fp,$_afExtjsToolbarHelper);
 				fclose($fp);
 			}catch (Exception $e) {
 				$result=false;

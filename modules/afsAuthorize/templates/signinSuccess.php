@@ -13,35 +13,35 @@
     <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/users/afStudio.UserWindow.js"></script>
     
 <?php
-$layout = new ImmExtjsSfGuardLayout();
+$layout = new afExtjsSfGuardLayout();
 
 
 /**
  * EXTJS SIGN IN FORM
  */
 
-$form = new ImmExtjsForm(array('action' => '/afsAuthorize/signin', "columnWidth" => ".88"/*,'fileUpload'=>true*/));
+$form = new afExtjsForm(array('action' => '/afsAuthorize/signin', "columnWidth" => ".88"/*,'fileUpload'=>true*/));
 
 $fieldset=$form->startFieldset(array('legend' => 'Login', 'collapsible' => 'false'));
 $columns = $fieldset->startColumns(array("columnWidth" => 1));
 $col = $columns->startColumn(array("columnWidth" => 1));
 
-$username = new ImmExtjsFieldInput($col,array('name' => 'signin[username]','label' => 'Username', 'value' => '', 'help' => "Enter the username", 'emptyText' => 'write your username', 'width' => '150'));
+$username = new afExtjsFieldInput($col,array('name' => 'signin[username]','label' => 'Username', 'value' => '', 'help' => "Enter the username", 'emptyText' => 'write your username', 'width' => '150'));
 
-$password = new ImmExtjsFieldInput($col,array('name' => 'signin[password]', 'label' => 'Password', 'value' => '', 'help' => "Enter the password", 'emptyText' => 'write your password', 'width' => '150', 'PasswordFocus' => 'true'));
+$password = new afExtjsFieldInput($col,array('name' => 'signin[password]', 'label' => 'Password', 'value' => '', 'help' => "Enter the password", 'emptyText' => 'write your password', 'width' => '150', 'PasswordFocus' => 'true'));
 
 $captchaEnabled = in_array( 'sfCaptchaPlugin', sfProjectConfiguration::getActive()->getPlugins());
 
-$remember = new ImmExtjsFieldCheckbox($col, array('name' => 'signin[remember]', 'label' => 'Remember', 'checked' => true));
+$remember = new afExtjsFieldCheckbox($col, array('name' => 'signin[remember]', 'label' => 'Remember', 'checked' => true));
 
 $columns->endColumn($col);
 $fieldset->endColumns($columns);
 $form->endFieldset($fieldset);
 
-new ImmExtjsSubmitButton($form,array('action' => '/afsAuthorize/signin'));
-new ImmExtjsLinkButton($form,array('url' => url_for('/afsAuthorize/passwordRequest'), 'load' => 'page', 'label' => 'Forgot your password?', 'icon' => '/appFlowerStudioPlugin/images/email_go.png'));
+new afExtjsSubmitButton($form,array('action' => '/afsAuthorize/signin'));
+new afExtjsLinkButton($form,array('url' => url_for('/afsAuthorize/passwordRequest'), 'load' => 'page', 'label' => 'Forgot your password?', 'icon' => '/appFlowerStudioPlugin/images/email_go.png'));
 
-new ImmExtjsLinkButton(
+new afExtjsLinkButton(
     $form,
     array(
         'url' => '#', 
@@ -64,7 +64,7 @@ $layout->addItem('center',
 $layout->addItem('center', $form);
 //$layout->addItem('west',array('title'=>'xxxxx','width'=>'51'));
 
-$tools=new ImmExtjsTools();
+$tools=new afExtjsTools();
 //$tools->addItem(array('id'=>'gear','handler'=>array('source'=>"Ext.Msg.alert('Message', 'The Settings tool was clicked.');")));
 //$tools->addItem(array('id'=>'close','handler'=>array('parameters'=>'e,target,panel','source'=>"panel.ownerCt.remove(panel, true);")));
 

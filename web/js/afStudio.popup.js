@@ -98,7 +98,7 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 				
 		// apply config
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		afStudio.Help.superclass.initComponent.apply(this, arguments);
+		afStudio.Welcome.superclass.initComponent.apply(this, arguments);
 		
 		this.getHtmlData();
 	},

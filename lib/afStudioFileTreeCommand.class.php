@@ -6,12 +6,12 @@
  */
 class afStudioFileTreeCommand
 {
-	public $immExtjs=null;	
+	public $afExtjs=null;	
 	public $request=null,$result=null,$realRoot=null,$files=null;
 							
 	public function __construct($realRoot)
 	{		
-		$this->immExtjs=ImmExtjs::getInstance();
+		$this->afExtjs=afExtjs::getInstance();
 		$this->request=sfContext::getInstance()->getRequest();
 		$this->filesystem=new afStudioFilesystem();
 		
