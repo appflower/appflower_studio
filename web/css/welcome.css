@@ -38,10 +38,10 @@ ul {
 =================================================================================*/
 #studio_popup {background:#fff; width:795px; height:490px; overflow:hidden; border:1px solid #99bbe8;}
 
-#studio_popup #studio_popup_primary {float:left; background:url(../images/studio/bg_popup.jpg) 50px 40px no-repeat; }
-#studio_popup #studio_popup_primary #popup_content {width:510px; margin:320px 0 0 45px;}
+#studio_popup #studio_popup_primary {float:left; }
+#studio_popup #studio_popup_primary #popup_content {width:510px; margin:33px 0 0 45px;}
 #studio_popup #studio_popup_primary #popup_content h2 {font-size:27px; font-weight:bold; text-align:center; margin-bottom:20px;}
-#studio_popup #studio_popup_primary #popup_content p {font-size:14px; font-weight:bold; line-height:18px; text-align:center; margin-bottom:20px;}
+#studio_popup #studio_popup_primary #popup_content p {font-size:14px; line-height:18px; text-align:center; margin-bottom:20px;}
 #studio_popup #studio_popup_primary #popup_content a {display:block; width:165px; height:33px; padding-top:10px; text-align: center; color:#fff; font-size:18px; font-weight:bold; background:url(../images/studio/btn_start.png) 0 0 no-repeat; margin-left:170px; text-shadow: #222 0px -1px 1px;}
 
 

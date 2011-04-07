@@ -84,12 +84,13 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 	        html: '<div id="welcome-box"> </div>',
 	        buttonAlign: 'left',
 	        buttons: [{ xtype:'checkbox',
-	    	            boxLabel:'Do not show this popup next time',
+	    	            boxLabel:'Show this window when Studio opens',
+	    	            checked: true,
 	    	            handler:  function(f,c){
 	        				if (c) {
-	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "true", new Date('12/22/2099'));
-	        				} else {
 	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "");
+	        				} else {
+	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "true", new Date('12/22/2099'));
 	        				}
 	        			}
 	        }]
