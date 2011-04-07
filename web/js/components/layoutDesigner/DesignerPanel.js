@@ -81,7 +81,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 			   	   Ext.util.Functions.createDelegate(
 		   			 action.run, 
 		   			 action.scope ? action.scope : this, 
-		   			 [response], 
+		   			 [response],
 		   			 false
 			   	   )();			       				   	
 			   } else {
@@ -450,7 +450,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 		    },
 		    scope: _this,
 		    run: function(response) {
-		    	//response.content success message here
+		    	afStudio.Msg.info('Layout Designer', response.content);
 		   		this.fireEvent("logmessage", this, "layout saved"); 	
 		    },
 		    loadingMessage: 'Saving...'

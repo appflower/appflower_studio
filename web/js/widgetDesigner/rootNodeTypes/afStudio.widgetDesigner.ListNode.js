@@ -4,22 +4,36 @@
  * If needed - already existing widget definition can be loaded into this structure
  */
 afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRootNode, {
-    widgetType: 'list',
-	getNodeConfig: function(){
+	
+    widgetType : 'list'
+    
+    /**
+     * Returns configuration object for ListNode.
+     * @override
+     */
+	,getNodeConfig : function() {
         var node = {
             text: 'New list widget'
         };
+        
         return node;
-	},
-    constructor: function(){
+	}
+	
+	/**
+	 * ListNode constructor
+	 */
+    ,constructor : function() {
         afStudio.widgetDesigner.ListNode.superclass.constructor.apply(this, arguments);
+        
         var behavior = new afStudio.widgetDesigner.WithIParamsBehavior();
+        
         behavior.setProperties([
-            new afStudio.widgetDesigner.PropertyTypeString('maxperpage','Max records per page').setValue(10).create()
+            new afStudio.widgetDesigner.PropertyTypeString('maxperpage', 'Max records per page').setValue(10).create()
         ]);
         this.addBehavior(behavior);
-    },
-	addRequiredChilds: function(){
+    }//eo constructor 
+    
+	,addRequiredChilds: function(){
         afStudio.widgetDesigner.ListNode.superclass.addRequiredChilds.apply(this);
         var actionsNode = this.buildActionsNode(afStudio.widgetDesigner.ActionNode);
         var rowactionsNode = this.buildRowactionsNode(afStudio.widgetDesigner.ActionNode);
@@ -30,8 +44,9 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         this.appendChild(new rowactionsNode);
         this.appendChild(new moreactionsNode);
         this.appendChild(new proxyNode);
-	},
-    buildProxyNode: function(){
+	}
+	
+    ,buildProxyNode: function(){
         var proxyNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'Proxy',
            id: 'i:proxy',
@@ -43,8 +58,9 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         });
 
         return proxyNode;
-    },
-    buildFieldsNode: function(){
+    }
+    
+    ,buildFieldsNode: function(){
         var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Fields',
            id: 'i:fields',
@@ -53,11 +69,12 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            addChildActionLabel: 'Add column'
         },
         afStudio.widgetDesigner.FieldsNode
-    );
+    	);
 
         return new fieldsNode;
-    },
-    buildActionsNode: function(actionNodeConstructor){
+    }
+    
+    ,buildActionsNode : function(actionNodeConstructor) {
         var actionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Actions',
            id: 'i:actions',
@@ -67,8 +84,9 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            dumpEvenWhenEmpty: false
         });
         return actionsNode;
-    },
-    buildRowactionsNode: function(actionNodeConstructor){
+    }
+    
+    ,buildRowactionsNode: function(actionNodeConstructor){
         var rowactionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Row Actions',
            id: 'i:rowactions',
@@ -78,8 +96,9 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
            dumpEvenWhenEmpty: false
         });
         return rowactionsNode;
-    },
-    buildMoreactionsNode: function(actionNodeConstructor){
+    }
+    
+    ,buildMoreactionsNode: function(actionNodeConstructor){
         var moreactionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'More Actions',
            id: 'i:moreactions',

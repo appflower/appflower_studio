@@ -1,14 +1,16 @@
-window_sizes 1247 772 323 918 578 120
+window_sizes 1278 968 286 986 774 120
 diagrams
   sequencediagram_ref 128263 // WI initialization
     949 778 100 4 0 0
   active  classdiagram_ref 134791 // classes view
-    754 622 120 4 0 11
+    986 774 119 4 72 0
 end
 show_stereotypes
-selected classview_ref 128391 // classes
+selected class_ref 136455 // BaseNode
 open
-  class_ref 128519 // browser
-  class_ref 128647 // server
+  class_ref 136455 // BaseNode
+  classview_ref 128391 // classes
+  
+package_ref 128647 // ServerSide
 end
 end

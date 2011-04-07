@@ -4,14 +4,17 @@
  * If needed - already existing widget definition can be loaded into this structure
  */
 afStudio.widgetDesigner.EditNode = Ext.extend(afStudio.widgetDesigner.ObjectRootNode, {
-    widgetType: 'edit',
-	getNodeConfig: function(){
+	
+    widgetType : 'edit',
+    
+	getNodeConfig : function() {
         var node = {
             text: 'New edit widget'
         };
         return node;
 	},
-    buildFieldsNode: function(){
+	
+    buildFieldsNode : function() {
         var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
            text: 'Fields',
            id: 'i:fields',

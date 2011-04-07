@@ -94,9 +94,4 @@ afStudio.layoutDesigner.view.ViewMessageBox = Ext.extend(Ext.Panel, {
 		this.setPosition(x, y);
 	}//eo onAfterRender 
 	
-//	,setMessage : function() {
-//		
-//		this.messageHolder.update('View has no widgets added yet, add you first widget to get started.');
-//		//				html: 'View has no widgets added yet, add you first widget to get started.'
-//	}
 });

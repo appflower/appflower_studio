@@ -93,7 +93,7 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "true", new Date('12/22/2099'));
 	        				}
 	        			}
-	        }],
+	        }]
 	    	         
 		};
 				
@@ -104,15 +104,16 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 		this.getHtmlData();
 	},
 	
-	getHtmlData: function(){
+	getHtmlData : function() {
 		var popupWindow = this;
+		
 		Ext.Ajax.request({
-		   url: window.afStudioWSUrls.buildUrlFor('/appFlowerStudio/Welcome'),
-		   failure: function ( result, request) {
-				var obj = Ext.decode(result.responseText);
-				Ext.MessageBox.alert('Failed', result.responseText); 
+		   url: afStudioWSUrls.buildUrlFor('/appFlowerStudio/Welcome'),
+		   failure: function (xhr, request) {
+			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
+			   afStudio.Msg.error('Server side error', message);
 		   },
-		   success: function ( result, request) {
+		   success: function (result, request) {
 			   var obj = Ext.decode(result.responseText);
 			   Ext.get('welcome-box').update(obj.message);
 			   jQuery("a[rel^='prettyPhoto']").prettyPhoto();
@@ -127,10 +128,12 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 				   popupWindow.close();
 				   (new afStudio.LoadProject()).show(); 
 			   }, this);
-			   
+			   Ext.get('start-welcome-popup').on('click',  function(){  
+				   popupWindow.close();
+			   }, this);
 		   }
 		});
 
-	},
+	}
 	
 });

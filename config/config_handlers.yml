@@ -1,0 +1,2 @@
+config/filters.yml:
+  class:    afFilterConfigHandler

@@ -4,14 +4,15 @@
  * Returned constructor can be used to create many instances of defined node type
  */
 afStudio.widgetDesigner.NodeBuilder = {
-    createContainerNode: function(config, baseClass){
+	
+    createContainerNode : function(config, baseClass) {
         if (!baseClass){
             baseClass = afStudio.widgetDesigner.ContainerNode;
         }
         var f = Ext.extend(baseClass, {});
         var p = f.prototype;
 
-        p.getNodeConfig = function(){
+        p.getNodeConfig = function() {
             var nodeConfig = {};
             if (config.id) {
                nodeConfig.id = config.id;
@@ -26,42 +27,42 @@ afStudio.widgetDesigner.NodeBuilder = {
         }
 
         if (config.createProperties) {
-            p.createProperties = function(){
+            p.createProperties = function() {
                 var properties = config.createProperties();
                 this.addProperties(properties);
             };
         }
 
         if (config.createRequiredChilds) {
-            p.addRequiredChilds = function(){
+            p.addRequiredChilds = function() {
                 var childs = config.createRequiredChilds();
-                for(var i=0; i<childs.length;i++){
+                for (var i = 0; i < childs.length; i++) {
                     this.appendChild(childs[i]);
                 }
             };
         }
-
-
+        
         return f;
     },
-    createCollectionNode: function(config, baseClass){
+    
+    createCollectionNode : function(config, baseClass) {
         var f = this.createContainerNode(config, (baseClass ? baseClass : afStudio.widgetDesigner.CollectionNode));
         var p = f.prototype;
 
         if (config.addChildActionLabel) {
             p.addChildActionLabel = config.addChildActionLabel;
         }
+        
         if (config.childNodeId) {
             p.childNodeId = config.childNodeId;
         }
 
-        if (config.dumpEvenWhenEmpty != undefined) {
+        if (Ext.isDefined(config.dumpEvenWhenEmpty)) {
             p.dumpEvenWhenEmpty = config.dumpEvenWhenEmpty;
         }
 
-
         if (config.createChildConstructor) {
-            p.createChild = function(){
+            p.createChild = function() {
                 return new config.createChildConstructor;
             }
         }
