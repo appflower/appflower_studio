@@ -91,9 +91,11 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 							(new afStudio.dbQuery.QueryWindow()).show();
 						}
 					},{
-						text: 'Git'
+						text: 'Git',
+						iconCls: 'icon-tools-git'
 					},{
-						text: 'Snapshots'
+						text: 'Snapshots',
+						iconCls: 'icon-tools-snapshot'
 					}]
 				}
 			},
