@@ -31,22 +31,28 @@ afStudio.widgetDesigner.FieldsNode = Ext.extend(afStudio.widgetDesigner.Collecti
     //TODO: I violated DRY principle here, BaseNode::dumpChildsData() should be refactored
     // There is also custom implementation of dumpChildsData inisde CollectioNode class
     dumpChildsData : function() {
-        var data = [];
-        var childNodes = [];
-        for (var i=0; i < this.childIdsOrdered.length; i++) {
-            childNodes.push(this.findChild('id', this.childIdsOrdered[i]));
+        var data = [],
+        	childNodes = [],
+        	ret = {};
+        	
+        for (var i = 0; i < this.childIdsOrdered.length; i++) {
+        	//TODO error here thus is used if construction
+        	//after the 2nd time of creation of new widget js error appeares due to
+        	//childIdsOrdered array contains null elements.
+        	var n = this.findChild('id', this.childIdsOrdered[i]);
+        	if (n) {
+            	childNodes.push(n);
+        	}
         }
-        for (var i=0; i < childNodes.length; i++) {
+        for (var i = 0; i < childNodes.length; i++) {
+        	console.log();
             data.push(childNodes[i].dumpDataForWidgetDefinition());
         }
-
-        var ret = {};
-
         if (data.length == 0 && !this.dumpEvenWhenEmpty) {
             return ret;
         }
-
         ret[this.childNodeId] = data;
+        
         return ret;
     },
     
