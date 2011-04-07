@@ -128,9 +128,6 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 				   popupWindow.close();
 				   (new afStudio.LoadProject()).show(); 
 			   }, this);
-			   Ext.get('start-welcome-popup').on('click',  function(){  
-				   popupWindow.close();
-			   }, this);
 		   }
 		});
 
