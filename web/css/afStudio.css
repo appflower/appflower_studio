@@ -17,7 +17,7 @@
 /* "Debug" menu icons */
 .icon-debug{background:url('/appFlowerStudioPlugin/images/bug.png') no-repeat center left !important;}
 .icon-debug-run{background:url('/appFlowerStudioPlugin/images/bug_go.png') no-repeat center left !important;}
-.icon-notifications{background:url('/appFlowerStudioPlugin/images/information.png') no-repeat center left !important;}
+.icon-debug-auditlog{background:url('/appFlowerStudioPlugin/images/user_gray.png') no-repeat center left !important;}
 
 /* "Run" menu icons */
 .icon-runs{background:url('/appFlowerStudioPlugin/images/server_go.png') no-repeat center left !important;}
