@@ -24,7 +24,9 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
 	 * @param {Object} config The base node configuration object
 	 */
 	constructor : function(config) {
-		config = config || this.getNodeConfig();
+		config = Ext.apply(config || this.getNodeConfig(), {
+			editable: false
+		});
 	    this.createContextMenu();
 	    
 	    afStudio.widgetDesigner.BaseNode.superclass.constructor.call(this, config);
