@@ -13,6 +13,7 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.Containe
     }//eo constructor
 
     /**
+     * template method
      * @override
      * @return {Object} this node configuration object
      */
@@ -24,6 +25,7 @@ afStudio.widgetDesigner.ColumnNode = Ext.extend(afStudio.widgetDesigner.Containe
     }//eo getNodeConfig
     
     /**
+     * template method
      * @override
      */
     ,createProperties : function() {

@@ -396,7 +396,10 @@ afStudio.widgetsBuilder = Ext.extend(Ext.Window, {
 		var action = this.actionInput.getValue();
 		var type = this.typeCombo.getValue();
 		
-		var afsWD = new afStudio.widgetDesigner.WidgetDefinition(module+'/'+action, type);
+		var afsWD = new afStudio.widgetDesigner.WidgetDefinition({
+			widgetUri: module + '/' + action, 
+			widgetType: type
+		});
 
 		afsWD.createRootNode();
                 afsWD.rootNode.setTitle('new widget');

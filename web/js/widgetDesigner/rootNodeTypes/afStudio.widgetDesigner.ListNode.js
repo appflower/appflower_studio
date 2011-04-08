@@ -39,6 +39,7 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
     }//eo constructor 
     
     /**
+     * Creates all required this node children.
      * template method
      * @override
      */
@@ -46,14 +47,35 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         afStudio.widgetDesigner.ListNode.superclass.addRequiredChilds.apply(this);
         
         var childNodes = [];
- 		childNodes.push(new (this.buildActionsNode(afStudio.widgetDesigner.ActionNode)));
- 		childNodes.push(new (this.buildRowactionsNode(afStudio.widgetDesigner.ActionNode)));
- 		childNodes.push(new (this.buildMoreactionsNode(afStudio.widgetDesigner.ActionNode)));
- 		childNodes.push(this.buildProxyNode());
- 		
+ 		childNodes.push(this.buildActionsNode(afStudio.widgetDesigner.ActionNode));
+ 		childNodes.push(this.buildRowactionsNode(afStudio.widgetDesigner.ActionNode));
+ 		childNodes.push(this.buildMoreactionsNode(afStudio.widgetDesigner.ActionNode));
+ 		childNodes.push(this.buildProxyNode()); 		
 		this.appendChild(childNodes);
-	}//eo addRequiredChilds
+	}//eo addRequiredChilds	
 	
+    /**
+     * Creates fields node.
+     * template method
+     * @override
+     * @return {afStudio.widgetDesigner.CollectionNode} instanciated fields node object, descendant of CollectionNode
+     */
+    ,buildFieldsNode : function() {
+        var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({        		
+        	id: 'i:fields',
+            text: 'Fields',           
+            createChildConstructor: afStudio.widgetDesigner.ColumnNode,
+            childNodeId: 'i:column',
+            addChildActionLabel: 'Add column'
+        }, afStudio.widgetDesigner.FieldsNode);
+
+        return new fieldsNode;
+    }//eo buildFieldsNode
+	
+	/**
+	 * Creates and Instantiates proxy node.
+	 * @return {afStudio.widgetDesigner.ContainerNode} instanciated proxy object, descendant of ContainerNode
+	 */
     ,buildProxyNode : function() {
         var proxyNode = afStudio.widgetDesigner.NodeBuilder.createContainerNode({
            text: 'Proxy',
@@ -66,57 +88,59 @@ afStudio.widgetDesigner.ListNode = Ext.extend(afStudio.widgetDesigner.ObjectRoot
         });
 
         return new proxyNode;
-    }//eo buildProxyNode
+    }//eo buildProxyNode    
     
     /**
-     * @override
-     * @return {}
+     * Creates and Instantiates <b>i:action</b> node.
+     * @param {Function} actionNodeConstructor The {@link afStudio.widgetDesigner.ActionNode} node constructor 
+     * @return {afStudio.widgetDesigner.CollectionNode} instanciated action node object, descendant of CollectionNode
      */
-    ,buildFieldsNode: function(){
-        var fieldsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({        		
-        	id: 'i:fields',
-            text: 'Fields',           
-            createChildConstructor: afStudio.widgetDesigner.ColumnNode,
-            childNodeId: 'i:column',
-            addChildActionLabel: 'Add column'
-        }, afStudio.widgetDesigner.FieldsNode);
-
-        return new fieldsNode;
-    }//eo buildFieldsNode
-    
     ,buildActionsNode : function(actionNodeConstructor) {
         var actionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
-           text: 'Actions',
            id: 'i:actions',
+           text: 'Actions',
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
            addChildActionLabel: 'Add action',
            dumpEvenWhenEmpty: false
         });
-        return actionsNode;
+        
+        return new actionsNode;
     }//eo buildActionsNode
     
-    ,buildRowactionsNode: function(actionNodeConstructor){
+    /**
+     * Creates and Instantiates <b>i:rowactions</b> node.
+     * @param {Function} actionNodeConstructor The {@link afStudio.widgetDesigner.ActionNode} node constructor
+     * @return {afStudio.widgetDesigner.CollectionNode} instanciated rowactions node object, descendant of CollectionNode
+     */
+    ,buildRowactionsNode : function(actionNodeConstructor) {
         var rowactionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
-           text: 'Row Actions',
            id: 'i:rowactions',
+           text: 'Row Actions',           
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
            addChildActionLabel: 'Add row action',
            dumpEvenWhenEmpty: false
         });
-        return rowactionsNode;
+        
+        return new rowactionsNode;
     }//eo buildRowactionsNode
     
-    ,buildMoreactionsNode: function(actionNodeConstructor){
+    /**
+     * Creates and Instantiates <b>i:moreactions</b> node.
+     * @param {Function} actionNodeConstructor The {@link afStudio.widgetDesigner.ActionNode} node constructor
+     * @return {afStudio.widgetDesigner.CollectionNode} instanciated moreactions node object, descendant of CollectionNode
+     */
+    ,buildMoreactionsNode : function(actionNodeConstructor) {
         var moreactionsNode = afStudio.widgetDesigner.NodeBuilder.createCollectionNode({
-           text: 'More Actions',
            id: 'i:moreactions',
+           text: 'More Actions',
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
            addChildActionLabel: 'Add "more action"',
            dumpEvenWhenEmpty: false
         });
-        return moreactionsNode;
+        
+        return new moreactionsNode;
     }//eo buildMoreactionsNode
 });

@@ -540,31 +540,35 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         this.addWidgetDesigner(widgetUri, actionPath, securityPath);
     }
     
-	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {
+	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {		
 		afStudio.vp.mask({region:'center'});
 		
-		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
-		
-		this.widgetDefinition.on('datafetched', function(rootNode, definition) {			
-			afStudio.vp.addToPortal({
-				title: 'Widget Designer',
-				collapsible: false,
-				draggable: false,
-				layout: 'fit',
-				items: [{
-					xtype: 'afStudio.widgetDesigner',
-					actionPath: actionPath,
-					securityPath: securityPath,
-	                widgetUri: widgetUri,
-	                rootNodeEl: rootNode
-				}]
-			}, true);
+		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition({
+			widgetUri: widgetUri,
+			listeners: {
+				datafetched: function(rootNode, definition) {			
+					afStudio.vp.addToPortal({
+						title: 'Widget Designer',
+						collapsible: false,
+						draggable: false,
+						layout: 'fit',
+						items: [
+						{
+							xtype: 'afStudio.widgetDesigner',
+							actionPath: actionPath,
+							securityPath: securityPath,
+			                widgetUri: widgetUri,
+			                rootNodeEl: rootNode
+						}]
+					}, true);
 
-           var WI = afStudio.getWidgetInspector();
-           WI.setRootNode(rootNode);
+		            var WI = afStudio.getWidgetInspector();
+		            WI.setRootNode(rootNode);
 
-	       afStudio.vp.unmask('center');
-		});
+	       			afStudio.vp.unmask('center');
+				}	
+			}
+		});		
 		this.widgetDefinition.fetchAndConfigure();
 	}//eo addWidgetDesigner
 	
