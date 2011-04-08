@@ -11,7 +11,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		var config = {
 			title: 'Your new Project', width: 463,
 			closable: true, draggable: true, 
-	        plain:true, modal: true, resizable: true,
+	        plain:true, modal: true, resizable: false,
 	        bodyBorder: false, border: false, 
 	        items: [this.form1, this.form2, this.form3, this.form4],
 			buttons: [
