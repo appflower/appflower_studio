@@ -1,4 +1,3 @@
-
 /**
  * Node that represents list or edit widgets fields
  * Widgets like list and edit contains many fields (i:field or i:column elements).

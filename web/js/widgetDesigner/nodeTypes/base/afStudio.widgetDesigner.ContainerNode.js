@@ -7,4 +7,5 @@
  * @extends afStudio.widgetDesigner.BaseNode
  */ 
 afStudio.widgetDesigner.ContainerNode = Ext.extend(afStudio.widgetDesigner.BaseNode, {
+	
 });
