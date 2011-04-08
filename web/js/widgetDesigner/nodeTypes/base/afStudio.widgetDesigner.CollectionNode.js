@@ -11,26 +11,26 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
 	 * @property addChildActionLabel
 	 * @type String
 	 */
-    addChildActionLabel : 'Add child',
+    addChildActionLabel : 'Add child'
     
     /**
      * @property childNodeId
      * @type {String}
      */
-    childNodeId : 'i:child',
+    ,childNodeId : 'i:child'
     
     /**
      * Dump empty node or not.
      * @property dumpEvenWhenEmpty 
      * @type Boolean
      */
-    dumpEvenWhenEmpty : true,
+    ,dumpEvenWhenEmpty : true
     
     /**
      * template method
      * @override
      */
-    createContextMenu : function() {
+    ,createContextMenu : function() {
         this.contextMenu = new Ext.menu.Menu({
             items: [
             {
@@ -40,17 +40,18 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
                 scope: this
             }]
         });
-    },
+    }//eo createContextMenu
     
     /**
+     * @protected
      * @override
      * @param {} node
      * @param {} e
      */
-    onContextMenuClick : function(node, e) {
+    ,onContextMenuClick : function(node, e) {
         node.select();
         this.contextMenu.showAt(e.getXY());
-    },
+    }//eo onContextMenuClick
     
     /**
      * Adds new child note to this one.
@@ -59,7 +60,7 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
      * 
      * @return {Ext.tree.TreeNode} created new child node
      */
-    addChild : function() {
+    ,addChild : function() {
         var newNode = this.createChild();
         this.appendChild(newNode);
         if (this.rendered) {
@@ -67,7 +68,7 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
         }
         
         return newNode;
-    },
+    }//eo addChild
     
     /**
      * @override
@@ -75,7 +76,7 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
      * @param {String} id
      * @param {Mixed} value
      */
-    configureForValue : function(id, value) {
+    ,configureForValue : function(id, value) {
         if (id == this.childNodeId) {
             if (!Ext.isArray(value)) {
                 value = [value];
@@ -87,13 +88,13 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
         } else {
             afStudio.widgetDesigner.CollectionNode.superclass.configureForValue.apply(this, arguments);
         }
-    },
+    }//eo configureForValue
     
     /**
      * @override
      * @return {}
      */
-    dumpChildsData : function() {
+    ,dumpChildsData : function() {
         var data = [],
         	 ret = {};
         	 
@@ -106,7 +107,7 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
         ret[this.childNodeId] = data;
         
         return ret;
-    },
+    }//eo dumpChildsData
     
     /**
      * Abstract method.
@@ -115,6 +116,6 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
      * 
      * @return {Ext.tree.TreeNode}
      */
-    createChild : Ext.emptyFn
+    ,createChild : Ext.emptyFn
     
 });

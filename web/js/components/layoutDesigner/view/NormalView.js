@@ -514,7 +514,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 
 					afStudio.vp.mask({region: 'center'});
 					
-					var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition(widgetUri);
+					var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition({
+						widgetUri: widgetUri
+					});
 					widgetDefinition.on('datafetched', function(rootNode, definition){
 						afStudio.vp.addToPortal({
 							title: 'Widget Designer',

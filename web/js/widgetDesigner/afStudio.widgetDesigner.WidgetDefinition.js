@@ -7,64 +7,83 @@
  *
  * When Widget is loaded from server there is 'datafetched' event emmited
  * In your handler for datafetched you should pass rootNode into WI ExtJS component
+ *  
+ * @class afStudio.widgetDesigner.WidgetDefinition
+ * @extends Ext.util.Observable
  */
-afStudio.widgetDesigner.WidgetDefinition = function(widgetUri, widgetType) {
-    this.widgetUri = widgetUri;
-    if (widgetType) {
-        this.widgetType = widgetType;
-    }
-    this.addEvents('datafetched');
-    
-	afStudio.widgetDesigner.WidgetDefinition.superclass.constructor.call(this); 
-};
-
-afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.WidgetDefinition, Ext.util.Observable, {
+afStudio.widgetDesigner.WidgetDefinition = Ext.extend(Ext.util.Observable, {
 	
 	/**
 	 * @cfg {String} (required) widgetUri
 	 * Unique widget URI
 	 */
-    widgetUri : null,
     
     /**
-     * @cfg {String} widgetType
+     * @cfg {String} (optional) widgetType
+     * Contains one of view's (widget's) types: <u>list, edit, show, html</u> 
      */
-    widgetType : null,
     
     /**
-     * Widget definition object.
+     * Widget definition object. Contains view's metadata
      * @property definition
      * @type {Object} 
      */
-    definition : null,
     
-    rootNode: null,
+	/**
+	 * WI root node reference. 
+	 * @property rootNode
+	 * @type {Ext.tree.TreeNode}
+	 */
     
-    fetchAndConfigure : function() {
+	/**
+	 * WidgetDefinition constructor. 
+	 * @constructor
+	 * @param {Object} config
+	 */
+	constructor : function(config) {
+		config = config || {};
+		Ext.apply(this, config);
+		
+	    this.addEvents(
+			/**
+			 * @event 'datafetched' Fires after view/widget definition data was loaded and parsed.
+			 * @param {Ext.tree.TreeNode} WI root node for fetched definition data.
+			 * @param {Object} view definition.
+			 */    
+	    	'datafetched'
+	    );
+	    
+		afStudio.widgetDesigner.WidgetDefinition.superclass.constructor.call(this);		
+	}//eo constructor	
+	
+    ,fetchAndConfigure : function() {
+    	//TODO should be developed centrilised afStudio.Ajax package for all single ajax requests
+    	//to make ajax request more simpler and handling/logging errors in one place
         Ext.Ajax.request({
-            url: window.afStudioWSUrls.getGetWidgetUrl(this.widgetUri),
+            url: afStudioWSUrls.getGetWidgetUrl(this.widgetUri),
+            scope: this,
             success: function(response) {
                 this.parseFetchedData(response);
                 this.createRootNode();
                 this.rootNode.configureFor(this.definition);
                 this.fireEvent('datafetched', this.rootNode, this.definition);
             },
-            scope: this
+            failure : function(xhr, reqOpt) {
+			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
+			   afStudio.Msg.error('Server side error', message);	
+            }
         });
-	},
+	}//eo fetchAndConfigure
 	
-	parseFetchedData : function(response) {		
-        if (response.statusText != 'OK') {
-            afStudio.Msg.warning('response looks invalid');
-        }
+	,parseFetchedData : function(response) {		
         var baseData = Ext.util.JSON.decode(response.responseText);
         if (baseData.success) {
             this.definition = Ext.util.JSON.decode(baseData.data);
             this.widgetType = this.definition['type'];
         }
-    },
+    }//eo parseFetchedData
     
-	save : function(widgetBuilderWindow, createNewWidget) {
+	,save : function(widgetBuilderWindow, createNewWidget) {
         var data = this.rootNode.dumpDataForWidgetDefinition();
 
         Ext.Ajax.request({
@@ -87,9 +106,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
             },
             scope: this
         });
-   },
+   }//eo save
    
-   parseSaveResponse : function(response) {
+   ,parseSaveResponse : function(response) {
    		//Unmask parent tree
    		var tree = this.rootNode.getOwnerTree()
         if (tree) {
@@ -117,9 +136,9 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
         }
 
         return false;
-   },
+   }//eo parseSaveResponse
    
-   createRootNode : function() {
+   ,createRootNode : function() {
        switch (this.widgetType) {
            case 'list':
                this.rootNode = new afStudio.widgetDesigner.ListNode();
@@ -129,6 +148,6 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(afStudio.widgetDesigner.Wi
                break;
        }
        this.rootNode.setText(this.widgetUri + ' [' + this.widgetType + ']');
-   }
+   }//eo createRootNode
 
 });

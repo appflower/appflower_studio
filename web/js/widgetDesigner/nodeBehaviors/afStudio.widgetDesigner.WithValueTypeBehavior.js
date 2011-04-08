@@ -9,20 +9,32 @@ Ext.namespace('afStudio.widgetDesigner');
  **/
 afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesigner.BaseBehavior, {
     
+	/**
+	 * Value data key.
+	 * @property key
+	 * @type {String}
+	 */
+	
     setValueTypeDataKey : function(key) {
         this.key = key;
     }
     
     /**
      * Adding custom properties
+     * @override
      */
     ,createBehaviorProperties : function() {
         return [
             new afStudio.widgetDesigner.ValueType().create(),
             new afStudio.widgetDesigner.ValueSource().create()
         ];
-    }
+    }//eo createBehaviorProperties
     
+    /**
+     * Returns data for {@link #key} key value type.
+     * @param {Object} widgetData The widget metadata.
+     * @return {Object}
+     */
     ,getValueTypeData : function(widgetData) {
         if (this.key) {
             if (widgetData[this.key]) {
@@ -33,8 +45,14 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
         } else {
             return widgetData;
         }
-    }
+    }//eo getValueTypeData
     
+    /**
+     * 
+     * @param {Object} widgetData
+     * @param {Object} valueTypeData
+     * @return {Object} widget merged metadata
+     */
     ,mergeInValueTypeData : function(widgetData, valueTypeData) {
         if (this.key) {
             widgetData[this.key] = valueTypeData;
@@ -44,10 +62,11 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             }
         }
         return widgetData;
-    }
+    }//eo mergeInValueTypeData
     
     /**
      * Reading data from widget definition
+     * @override
      */
     ,configureFor : function(widgetData) {
         if (widgetData) {
@@ -65,7 +84,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             }
             this.valueSourceChanged(valueTypeData);
         }
-    }
+    }//eo configureFor
     
     /**
      * When valueSource is changed we are injecting ValueSource child
@@ -77,7 +96,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
         if (this.node.rendered) {
             var childsCount = this.node.childNodes.length;
             if (childsCount > 0) {
-                for (i = (childsCount-1); i >= 0; i--) {
+                for (var i = (childsCount - 1); i >= 0; i--) {
                     var childNode = this.node.childNodes[i];
                     if (childNode.text == 'Value Source') {
                         childNode.destroy();
@@ -110,7 +129,6 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
                     var nodeData = dataForNewNode['i:static'];
                 }
                 break;
-
         }
 
         if (newNode) {
@@ -119,19 +137,21 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
             }
             this.node.appendChild(newNode);
         }
-    }
+    }//eo valueSourceChanged
     
     /**
      * We need to detect when valueSource was changed
+     * @override
      */
-    ,propertyChanged: function(property){
+    ,propertyChanged : function(property) {
         if (property.id == 'valueSource') {
             this.valueSourceChanged();
         }
-    }
+    }//eo propertyChanged
     
     /**
-     * now we must build data that is send back to server 
+     * now we must build data that is send back to server
+     * @override 
      */
     ,dumpDataForWidgetDefinition: function(nodeWidgetData){
         

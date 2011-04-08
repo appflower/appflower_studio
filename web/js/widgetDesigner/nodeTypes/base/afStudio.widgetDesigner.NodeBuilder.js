@@ -5,6 +5,13 @@
  */
 afStudio.widgetDesigner.NodeBuilder = {
 	
+	/**
+	 * Extends base class instance and returns its new descendant.
+	 * If base class wasn't specified is used {@link afStudio.widgetDesigner.ContainerNode} as a base class.
+	 * @param {Object} config The new class configuration object
+	 * @param {Function} (optional) baseClass The base class being extended
+	 * @return {Function} subclass of baseClass
+	 */
     createContainerNode : function(config, baseClass) {
         if (!baseClass){
             baseClass = afStudio.widgetDesigner.ContainerNode;
@@ -43,9 +50,17 @@ afStudio.widgetDesigner.NodeBuilder = {
         }
         
         return f;
-    },
+    }//eo createContainerNode
     
-    createCollectionNode : function(config, baseClass) {
+    /**
+     * Creates collection node function.
+	 * Extends base class instance and returns its new descendant.
+	 * If base class wasn't specified is used {@link afStudio.widgetDesigner.CollectionNode} as a base class. 
+	 * @param {Object} config The new class configuration object
+	 * @param {Function} (optional) baseClass The base class being extended
+	 * @return {Function} subclass of baseClass
+     */
+    ,createCollectionNode : function(config, baseClass) {
         var f = this.createContainerNode(config, (baseClass ? baseClass : afStudio.widgetDesigner.CollectionNode));
         var p = f.prototype;
 
@@ -68,6 +83,6 @@ afStudio.widgetDesigner.NodeBuilder = {
         }
 
         return f;
-    }
+    }//eo createCollectionNode
 
 };

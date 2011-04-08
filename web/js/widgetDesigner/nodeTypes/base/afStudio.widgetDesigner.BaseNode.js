@@ -20,6 +20,12 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
 	 */
 	
 	/**
+	 * This node behaviors array.
+	 * @property behaviors
+	 * @type {Array}
+	 */
+	
+	/**
 	 * BaseNode constructor.
 	 * @param {Object} config The base node configuration object
 	 */
@@ -35,14 +41,14 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
 	    this.createProperties();
 	    this.addRequiredChilds();
 	    this.behaviors = [];
-	},
+	}//eo constructor
 	
     /**
      * Abstract template method.
      * Returns node configuration, something like: {text: 'sadads', iconCls: 'icon'}
      * @protected
      */
-    getNodeConfig : Ext.emptyFn,
+    ,getNodeConfig : Ext.emptyFn
 	
     /**
      * Abstract template method.
@@ -51,94 +57,106 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      * If defined - context menu will be displayed when given node is clicked with right mouse button.
      * @protected
      */
-    createContextMenu : Ext.emptyFn,
+    ,createContextMenu : Ext.emptyFn
     
     /**
      * Template method.
      * @protected
      */
-    _initEvents : function() {
+    ,_initEvents : function() {
         if (Ext.isFunction(this.onContextMenuClick)) {
             this.on('contextmenu', this.onContextMenuClick);
         }
-    },
+    }
     
     /**
      * Abstract event listener.
      * Handles this node <u>contextmenu</u> event.
      * @protected
      */
-    onContextMenuClick : Ext.emptyFn,
+    ,onContextMenuClick : Ext.emptyFn
     
     /**
      * Abstract template method. 
      * This method should initialize this.properties with records for GridProperty
      * @protected
      */
-    createProperties : function() {
+    ,createProperties : function() {
 		return [];
-	},
+	}
 
     /**
      * Template method.
      * If given node should have some childs when builded - this method should do this.
      * @protected
      */
-    addRequiredChilds : Ext.emptyFn,
+    ,addRequiredChilds : Ext.emptyFn
 	
     /**
      * Returns fields for properties grid
      *
      * @return array
      */
-	getProperties : function() {
+	,getProperties : function() {
         var properties = [];
         for(i in this.properties) {
             properties.push(this.properties[i]);
         }
 
         return properties;
-	},
+	}//eo getProperties
 	
-    getProperty : function(id) {
+	/**
+	 * Returns property.
+	 * @param {String} id The property ID
+	 * @return {Object} property
+	 */
+    ,getProperty : function(id) {
         return this.properties[id];
-    },
+    }//eo getProperty
     
-    addProperty : function(property) {
+    /**
+     * Adds property to {@link #properties} properties array.
+     * @param {PropertyBaseType} property
+     */
+    ,addProperty : function(property) {
         if (!this.properties) {
             this.properties = {};
         }
 
         property.WITreeNode = this;
         this.properties[property.id] = property;
-    },
+    }//eo addProperty
     
-    addProperties : function(properties) {
+    /**
+     * Adds properties.
+     * @param {Array} properties
+     */
+    ,addProperties : function(properties) {
         for (var i = 0; i < properties.length; i++) {
             this.addProperty(properties[i]);
         }
-    },
+    }//eo addProperties
     
     /**
      * @protected
-     * @param {} widgetData
+     * @param {Object} widgetData
      */
-    configureFor : function(widgetData) {
+    ,configureFor : function(widgetData) {
         for (var id in widgetData) {
-            var value = widgetData[id];
-            this.configureForValue(id, value);
+            this.configureForValue(id, widgetData[id]);
         }
         for (var i = 0; i < this.behaviors.length; i++) {
             this.behaviors[i].configureFor(widgetData);
         }
-    },
+    }//eo configureFor
     
     /**
      * @protected
      * @param {String} id
      * @param {Mixed} value
      */
-    configureForValue : function(id, value) {
+    ,configureForValue : function(id, value) {
         if (this.properties && this.properties[id]) {
             var property = this.getProperty(id);
             property.set('value', value);
@@ -156,9 +174,14 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
                 }
             }
         }
-    },
+    }//eo configureForValue
 
-    propertyChanged : function(property) {
+    /**
+     * Reflects node behavior to changed property.
+     * @protected
+     * @param {PropertyBaseType} property The changed property
+     */
+    ,propertyChanged : function(property) {
         if (!property) {
             return;
         }
@@ -166,9 +189,14 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         for (var i = 0; i < this.behaviors.length; i++) {
             this.behaviors[i].propertyChanged(property);
         }
-    },
+    }//eo propertyChanged
     
-    dumpDataForWidgetDefinition : function(data) {
+    /**
+     * @protected
+     * @param {Object} (optional) data
+     * @return {Object} dumped this node widget object object
+     */
+    ,dumpDataForWidgetDefinition : function(data) {
         if (!data) {
             data = {};
         }
@@ -196,17 +224,25 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         }
         
         return data;
-    },
+    }//eo dumpDataForWidgetDefinition
     
-    dumpChildsData : function() {
+    /**
+     * @protected
+     * @return {Object}
+     */
+    ,dumpChildsData : function() {
         var data = {};
         this.eachChild(function(childNode){
             data = childNode.dumpDataForWidgetDefinition(data);
         });
         return data;
-    },
+    }//eo dumpChildsData
     
-    dumpPropertiesData : function() {
+    /**
+     * @protected
+     * @return {Object}
+     */
+    ,dumpPropertiesData : function() {
         var data = {};
 
         for(i in this.properties){
@@ -223,17 +259,22 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         }
         
         return data;
-    },
-    
-    getPropertyRecordCfg : Ext.emptyFn,
+    }//eo dumpPropertiesData
     
     /**
-     * Adds behavior to given node
-     * @protected
+     * Abstract method.
+     * @protected 
      */
-    addBehavior : function(WITreeNodeBehavior) {
+    ,getPropertyRecordCfg : Ext.emptyFn
+    
+    /**
+     * Adds behavior to given node.
+     * @protected
+     * @param {BaseBehavior} WITreeNodeBehavior The node behavior (subclass of {@link BaseBehavior})
+     */
+    ,addBehavior : function(WITreeNodeBehavior) {
         WITreeNodeBehavior.setNode(this);
         this.behaviors.push(WITreeNodeBehavior);
         this.addProperties(WITreeNodeBehavior.createBehaviorProperties());
-    }
+    }//eo addBehavior
 });
