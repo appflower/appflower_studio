@@ -112,7 +112,7 @@ class DatabaseConfigurationManager {
 
         @file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
         
-        afsNotificationPeer::log('Database Settings have been modified','Settings');
+        afsNotificationPeer::log('Database Settings have been modified','settings');
         
         $result = true;
 		
