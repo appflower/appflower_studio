@@ -139,6 +139,8 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     }//eo addProperties
     
     /**
+     * 
+     * 
      * @protected
      * @param {Object} widgetData
      */
@@ -153,8 +155,8 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     
     /**
      * @protected
-     * @param {String} id
-     * @param {Mixed} value
+     * @param {String} id The metadata key (i.e. i:datasource, i:fields, i:column, i:title, type)
+     * @param {Mixed} value The key's value
      */
     ,configureForValue : function(id, value) {
         if (this.properties && this.properties[id]) {
@@ -163,7 +165,7 @@ afStudio.widgetDesigner.BaseNode = Ext.extend(Ext.tree.TreeNode, {
             this.propertyChanged(property);
         } else {
             var child = this.findChild('id', id);
-            if (child) {
+            if (child) {            	
                 child.configureFor(value);
             } else {
                 child = this.findChild('childNodeId', id);

@@ -566,9 +566,9 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		            WI.setRootNode(rootNode);
 
 	       			afStudio.vp.unmask('center');
-				}	
+				}
 			}
-		});		
+		});
 		this.widgetDefinition.fetchAndConfigure();
 	}//eo addWidgetDesigner
 	

@@ -153,7 +153,7 @@ afStudio.widgetDesigner.WithValueTypeBehavior = Ext.extend(afStudio.widgetDesign
      * now we must build data that is send back to server
      * @override 
      */
-    ,dumpDataForWidgetDefinition: function(nodeWidgetData){
+    ,dumpDataForWidgetDefinition: function(nodeWidgetData) {
         
         if (nodeWidgetData['valueType']) {
             delete nodeWidgetData.valueType;

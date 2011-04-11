@@ -1,35 +1,42 @@
 Ext.namespace('afStudio.widgetDesigner');
 
-N = afStudio.widgetDesigner;
-
 /**
  * Widget Designer
  * @class afStudio.widgetDesigner
  * @extends Ext.TabPanel
  */
-N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
-	/**
-	* paths
-	*/
-	actionPath: false,
-	securityPath: false,
-	mask: false,
-	/**
-	 * ExtJS template method
-	 * @private
-	 */
-	initComponent : function() {
-		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
-		afStudio.widgetDesigner.DesignerTabPanel.superclass.initComponent.apply(this, arguments);
-		this._initEvents();
-	},
+afStudio.widgetDesigner.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 
 	/**
-	 * Initialises component
-	 * @return {Object} the component initial literal
-	 * @private
+	 * @cfg actionPath
+	 * Widget's action path
 	 */
-	_initCmp : function() {
+	actionPath : false
+	
+	/**
+	 * @cfg securityPath
+	 * Widget's security path
+	 */
+	,securityPath : false
+	
+	/**
+	 * @cfg {String} (required) widgetUri
+	 * Unique widget URI
+	 */
+    
+	/**
+	 * @cfg {Ext.tree.TreeNode} (required) rootNodeEl
+	 * WI tree's root node.
+	 */
+	
+	,mask : false
+	
+	/**
+	 * Initializes component
+	 * @private
+	 * @return {Object} The configuration object 
+	 */
+	,_beforeInitComponent : function() {
 
 		var _this = this;
 /***		
@@ -54,15 +61,76 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 **/		
 		return {
-			itemId: 'widget-designer',
 			id: 'widget-designer-panel',
+			itemId: 'widget-designer',
 			activeTab: 0,
 			items: [
-				{itemId: 'designer', title: 'Widget Designer', layout: 'fit'}
-			],
+			{
+				itemId: 'designer', 
+				title: 'Widget Designer', 
+				layout: 'fit'
+			}],
 			plugins: new Ext.ux.TabMenu()
 		}
-	},
+	}//eo _beforeInitComponent
+	
+	/**
+	 * ExtJS template method
+	 * @private
+	 */
+	,initComponent : function() {
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, this._beforeInitComponent())
+		);
+		afStudio.widgetDesigner.DesignerTabPanel.superclass.initComponent.apply(this, arguments);		
+		this._afterInitComponent();
+	}//eo initComponent
+	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	,_afterInitComponent : function() {
+		var _this = this,
+			designerTab = _this.getComponent('designer');		
+					
+		this.on({
+			render: function(cmp) {
+				cmp.addCodeEditorTab('security.yml', _this.securityPath, _this.securityPath, _this.securityPath);
+				cmp.addCodeEditorTab('actions.class.php', _this.actionPath, _this.actionPath, _this.actionPath);
+			}
+		});
+		
+		designerTab.on({
+			scope: this,			
+			beforerender: function(cmp) {
+				cmp.add({
+					xtype: 'afStudio.widgetDesigner.designer',
+                    widgetUri: this.widgetUri,
+                    rootNodeEl: this.rootNodeEl,
+                    listeners: {
+                    	logmessage: function(cmp, message) {
+                    		this.fireEvent("logmessage", cmp, message);
+                    	},
+                    	scope: this
+                    }
+				});
+			}
+		});
+
+		if (this.mask) {
+			this.mask.hide.defer(1000, this.mask);
+		}
+
+        this.on('beforetabchange', function(tabPanel, newTab, oldTab) {
+            if (oldTab && oldTab.iframe) {
+                 oldTab.toggleIframe();
+            }
+            if (newTab && newTab.iframe) {
+                 newTab.toggleIframe();
+            }
+		}, this);
+	}//eo _afterInitComponent	
 	
 	/**
 	 * Function addCodeEditorTab
@@ -71,15 +139,15 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 * @param {String} tabTip - Tab panel tooltip string
 	 * @param {String} file - File
 	 */
-	addCodeEditorTab: function(fileName, path, tabTip, file){
+	,addCodeEditorTab : function(fileName, path, tabTip, file) {
 		var codePress = new Ext.ux.CodePress({
-			title: fileName, path: path,
-			tabTip: tabTip, file: file,
-			closable:true, tabPanel:this,
-			
+			title: fileName, 
+			path: path,
+			tabTip: tabTip, 
+			file: file,
+			closable: true, 
+			tabPanel: this,			
 			ctCls: 'codeEditorCls'
-			
-
 		});
 		
         var codeBrowserTree = new Ext.ux.FileTreePanel({
@@ -134,8 +202,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	        	failure: function() {
 					Ext.Msg.alert("Failure","The server can't save the file !");
 				}
-	        });
-	    	
+	        });	    	
 		}
 		
 		/**
@@ -147,56 +214,7 @@ N.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		*/
 		
 		this.add(panel);
-	},
-	
-	_initEvents : function() {
-
-		var _this = this,
-			designerTab = _this.getComponent('designer');		
-		
-		this.on({
-			render: function(cmp){
-				cmp.addCodeEditorTab('security.yml', _this.securityPath, _this.securityPath, _this.securityPath);
-				cmp.addCodeEditorTab('actions.class.php', _this.actionPath, _this.actionPath, _this.actionPath);
-			}
-		})
-		
-		designerTab.on({
-			beforerender : function(cmp) {
-				cmp.add({
-					xtype: 'afStudio.widgetDesigner.designer',
-                    widgetUri: this.widgetUri,
-                    rootNodeEl: this.rootNodeEl,
-                    listeners:{
-                    	logmessage:function(cmp,message){
-                    		this.fireEvent("logmessage",cmp,message);
-                    	},
-                    	scope:this
-                    }
-				});
-			},
-			
-            scope: this
-		});
-
-		if(this.mask)
-		{
-			this.mask.hide.defer(1000,this.mask);
-		}
-
-        this.on('beforetabchange', function(tabPanel,newTab,oldTab){
-            if(oldTab&&oldTab.iframe){
-                 oldTab.toggleIframe();
-            }
-            if(newTab&&newTab.iframe){
-                 newTab.toggleIframe();
-            }
-		}, this);
-
-	}// eo _initEvents
-
+	}//eo addCodeEditorTab
 });
 
-Ext.reg('afStudio.widgetDesigner', N.DesignerTabPanel);
-
-delete N;
+Ext.reg('afStudio.widgetDesigner', afStudio.widgetDesigner.DesignerTabPanel);

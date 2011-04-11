@@ -116,6 +116,5 @@ afStudio.widgetDesigner.CollectionNode = Ext.extend(afStudio.widgetDesigner.Base
      * 
      * @return {Ext.tree.TreeNode}
      */
-    ,createChild : Ext.emptyFn
-    
+    ,createChild : Ext.emptyFn    
 });

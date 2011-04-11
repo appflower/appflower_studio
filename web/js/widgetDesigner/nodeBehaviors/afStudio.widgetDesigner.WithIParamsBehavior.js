@@ -54,8 +54,8 @@ afStudio.widgetDesigner.WithIParamsBehavior = Ext.extend(afStudio.widgetDesigner
             }
 
             for (var i = 0; i < this.properties.length; i++) {
-                var currentProperty = this.properties[i];
-                var propertyName = currentProperty.id;
+                var currentProperty = this.properties[i],
+                       propertyName = currentProperty.id;
                 if (iParamsByName[propertyName]) {
                     currentProperty.set('value', iParamsByName[propertyName]);
                 }

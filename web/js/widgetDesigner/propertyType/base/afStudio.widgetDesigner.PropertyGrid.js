@@ -1,3 +1,5 @@
+Ext.ns('afStudio.widgetDesigner');
+
 /**
  * @class afStudio.widgetDesigner.PropertyRecord
  * A specific {@link Ext.data.Record} type that represents a name/value pair and groupField is made to work with the
@@ -6,9 +8,10 @@
  * @param {Object} config A data object in the format: {name: [name], value: [value], groupField: [groupField]}.  
  * The specified value's type will be read automatically by the grid to determine the type of editor to use when displaying it.
  */
-Ext.ns('afStudio.widgetDesigner');
 afStudio.widgetDesigner.PropertyRecord = Ext.data.Record.create([
-    {name:'name', type:'string'}, 'value', 'required'
+    {name: 'name', type: 'string'}, 
+    'value', 
+    'required'
 ]);
 
 /**
@@ -28,8 +31,8 @@ afStudio.widgetDesigner.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
     	afStudio.widgetDesigner.PropertyStore.superclass.constructor.call(this);
         this.grid = grid;
         this.store = new Ext.data.GroupingStore({
-            recordType : afStudio.widgetDesigner.PropertyRecord,
-            groupField:'required'
+            recordType: afStudio.widgetDesigner.PropertyRecord,
+            groupField: 'required'
         });
         this.store.on('update', this.onUpdate,  this);
         if(source){
@@ -53,7 +56,6 @@ afStudio.widgetDesigner.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
  * @param {afStudio.widgetDesigner.PropertyGrid} grid The grid this store will be bound to
  * @param {Object} source The source data config object
  */
-
 afStudio.widgetDesigner.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnModel, {
     constructor : function(grid, store){
         var g = Ext.grid,
@@ -239,4 +241,5 @@ afStudio.widgetDesigner.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.
         return this.propStore.getSource();
     }
 });
+
 Ext.reg("widgetdesignerpropertygrid", afStudio.widgetDesigner.PropertyGrid);

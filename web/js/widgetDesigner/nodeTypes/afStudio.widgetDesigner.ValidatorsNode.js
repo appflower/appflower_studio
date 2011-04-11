@@ -1,20 +1,26 @@
 /**
  * This class contains Validators node
+ * @class afStudio.widgetDesigner.ValidatorsNode
+ * @extends afStudio.widgetDesigner.CollectionNode
  */
 afStudio.widgetDesigner.ValidatorsNode = Ext.extend(afStudio.widgetDesigner.CollectionNode, {
-    getNodeConfig: function(){
+
+    addChildActionLabel : 'Add Validator'
+    
+    ,childNodeId : 'i:validator'	
+	
+	,getNodeConfig : function() {
         return {
             'text': 'Validators',
             'childNodeId': 'i:validator'
         };
-    },
-    createChild: function() {
+    }//eo getNodeConfig
+    
+    ,createChild : function() {
         return new afStudio.widgetDesigner.ValidatorNode();
-    },
-    addChildActionLabel: 'Add Validator',
-    childNodeId: 'i:validator',
-    dumpDataForWidgetDefinition: function(){
-
+    }//eo createChild
+    
+    ,dumpDataForWidgetDefinition : function() {
         var childsData = this.dumpChildsData();
         var propertiesData = this.dumpPropertiesData();
 
@@ -30,5 +36,5 @@ afStudio.widgetDesigner.ValidatorsNode = Ext.extend(afStudio.widgetDesigner.Coll
         }
 
         return childsData;
-    }
+    }//eo dumpDataForWidgetDefinition
 });

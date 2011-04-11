@@ -23,6 +23,7 @@ Ext.apply(afStudio.widgetDesigner.BaseBehavior.prototype, {
     },
     
     /**
+     * Abstract method.
      * This method should configure node for given widgetData that was read from XML file
      * @protected
      * @param {Object} widgetData The widget metadata
@@ -31,6 +32,7 @@ Ext.apply(afStudio.widgetDesigner.BaseBehavior.prototype, {
     },
     
     /**
+     * Abstract method.
      * If this is needed - this method should detect if some property value has changed
      * and do needed actions
      * @protected

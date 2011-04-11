@@ -85,7 +85,7 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(Ext.util.Observable, {
     
 	,save : function(widgetBuilderWindow, createNewWidget) {
         var data = this.rootNode.dumpDataForWidgetDefinition();
-
+        
         Ext.Ajax.request({
             url: window.afStudioWSUrls.getSaveWidgetUrl(this.widgetUri),
             params: {
@@ -98,30 +98,28 @@ afStudio.widgetDesigner.WidgetDefinition = Ext.extend(Ext.util.Observable, {
                     var widgetsTreePanel = afStudio.getWidgetsTreePanel();
                     if (widgetBuilderWindow) {
                         widgetBuilderWindow.close();
-                        widgetsTreePanel.reloadTree()
+                        widgetsTreePanel.loadRootNode();
                     }
                     widgetsTreePanel.addWidgetDesigner(this.widgetUri);
                 }
-
             },
+            failure: function(xhr, reqOpt) {
+			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
+			   afStudio.Msg.error('Server side error', message);	
+            },            
             scope: this
         });
    }//eo save
    
    ,parseSaveResponse : function(response) {
    		//Unmask parent tree
-   		var tree = this.rootNode.getOwnerTree()
+   		var tree = this.rootNode.getOwnerTree();
         if (tree) {
             tree.body.unmask();
-        }
-   		
-        if (response.statusText != 'OK') {
-            afStudio.Msg.error('System Message', 'Response looks invalid');
-        }
-
+        }   		
         var actionResponse = Ext.util.JSON.decode(response.responseText);
         if (actionResponse.success !== true) {
-            afStudio.Msg.error('System Message', 'An error occured: '+actionResponse.message);
+            afStudio.Msg.error('System Message', 'An error occured: ' + actionResponse.message);
         } else {
             afStudio.Msg.info('System Message', actionResponse.message);
         }
