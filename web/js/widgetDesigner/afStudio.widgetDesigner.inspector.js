@@ -3,46 +3,48 @@
  * @class afStudio.widgetDesigner.inspector
  * @extends Ext.Container
  */
-afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
-	
-	xtype: 'panel', 
-
-	layout: 'accordion',
-	style: 'border-top: 1px solid #99BBE8',
+afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, { 
 
 	/**
-	 * @var {Object} widgetInspectorTree
-	 * Ext.TreePanel component
+	 * @cfg {String} layout (sets to 'accordion') 
 	 */
-	widgetInspectorTree: null,
+	layout : 'accordion'
+	
+	/**
+	 * @cfg {String} style
+	 */
+	,style: 'border-top: 1px solid #99BBE8;'
 
 	/**
-	 * @var {Object} propertiesGrid
-	 * Ext.grid.PropertyGrid component
-	 */	
-	propertiesGrid: null,
+	 * @property widgetInspectorTree
+	 * @type {Ext.tree.TreePanel}
+	 */
 
 	/**
-	 * @var {Object} treeEditor
-	 * Ext.tree.TreeEditor component
-	 */		
-	treeEditor: null,
+	 * @property propertiesGrid
+	 * @type {Ext.grid.PropertyGrid}
+	 */
+
+	/**
+	 * @property treeEditor
+	 * @type {Ext.tree.TreeEditor}
+	 */
 	
 	/**
 	 * initComponent method
 	 * @private
 	 */
-	initComponent : function() {
-		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
+	,initComponent : function() {
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, this._beforeInitComponent())
+		);
 		afStudio.widgetDesigner.inspector.superclass.initComponent.apply(this, arguments);
-		this._initEvents();
 		
 		//TODO: calculate and width to the WidgetInpectorTree and Properties grid
 		(function(){
-			var h1 = this.propertiesGrid.getHeight();
-			var h2 = this.widgetInspectorTree.getHeight();
-			
-			var h = (h1+h2)/2;
+			var h1 = this.propertiesGrid.getHeight(),
+				h2 = this.widgetInspectorTree.getHeight(),			
+				 h = (h1 + h2) / 2;
 			
 			this.propertiesGrid.setHeight(h);
 			this.widgetInspectorTree.setHeight(h);
@@ -51,59 +53,47 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 			this.layout.setActiveItem(1);
 			this.layout.setActiveItem(0);
 		}).defer(100, this);
-	}
+	}//eo initComponent
 	
 	/**
-	 * Create user interface
-	 * @return {Object} the component instance
+	 * Initializes component
 	 * @private
+	 * @return {Object} The configuration object 
 	 */
-	,_initCmp : function() {
-    
-//		this.propertiesGrid = new Ext.grid.PropertyGrid({
+	,_beforeInitComponent : function() {
+   
 		this.propertiesGrid = new afStudio.widgetDesigner.PropertyGrid({
 			region: 'south',
 			split: true,
-	        frame: true,
-			
-			height: 150,
-			
+	        frame: true,			
+			height: 150,			
 	        propertyNames: {
 //	            valueType: 'Value Type',
 //	            valueChoice: 'Value Choice'
-	        },
-	        
+	        },	        
 	        listeners: {
-	        	'render': function(cmp){
-
-	        		
+	        	'render': function(cmp) {	        		
 	        	},
-	        	'afteredit': function(e){
+	        	'afteredit': function(e) {
 	        		//Create tooltip for edited row.
 	        		this.onGridRefresh(e.grid.getView());
                     if (e.record && e.record.WITreeNode) {
                         e.record.WITreeNode.propertyChanged(e.record);
                     }
-	        	}, scope: this
-	        },
-	        
+	        	}, 
+	        	scope: this
+	        },	        
 	        customRenderers: {},
-	        customEditors: {},
-	        
-	        layout: 'fit',
-	        
-	        source: {},
-	       
+	        customEditors: {},	        
+	        layout: 'fit',	        
+	        source: {},	       
 			view: new Ext.grid.GroupingView({
 				scrollOffset: 19,
-				forceFit:true,
+				forceFit: true,
 	            showGroupName: false,
 	            groupTextTpl: '{text}'
 	        })
     	});
-    	
-    	
-    	
     	
 		this.propertiesGrid.getView().on('refresh', this.onGridRefresh, this);
 		
@@ -111,46 +101,44 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
 		var scope = this;
 		this.widgetInspectorTree = new Ext.tree.TreePanel({
 			region: 'center',
-            animate:true, autoScroll:true, 
+            animate: true,
+            containerScroll: true,
+            autoScroll: true, 
 			frame: true,
-			
-			bodyStyle: 'border-bottom: 1px solid #99BBE8',
-			
+			bodyStyle: 'border-bottom: 1px solid #99BBE8',			
+			layout: 'fit',
 			bbar: [
-				{
-                    text: 'Save',
-                    handler: function(){
-                        this.widgetInspectorTree.body.mask('Loading, please Wait...', 'x-mask-loading');
-                        var widgetsTreePanel = afStudio.getWidgetsTreePanel()
-                        widgetsTreePanel.saveWidgetDefinition();
-                    },
-                    scope: this}
-			],
-			
+			{
+	            text: 'Save',
+	            handler: function() {
+	                this.widgetInspectorTree.body.mask('Loading, please Wait...', 'x-mask-loading');
+	                var widgetsTreePanel = afStudio.getWidgetsTreePanel()
+	                widgetsTreePanel.saveWidgetDefinition();
+	            },
+	            scope: this
+	        }],
             listeners: {
-            	'click': function(node, e){
+            	'click': function(node, e) {
     				var fields = node.getProperties();
     				this.propertiesGrid.setSource(fields);
-            	}, scope: scope
-            },			
-			
-            containerScroll: true, 
-            layout: 'fit'
+            	}, 
+            	scope: scope
+            }
         });
         
-        //Create and setup root item
+  		//Create and setup root item
         var root = new Ext.tree.AsyncTreeNode({
             expanded: true,
             text: 'Widget Inspector',
 			id: 'widgetinspector'
-        });
+        });        
         new Ext.tree.TreeSorter(this.widgetInspectorTree, {folderSort:true});
 		this.widgetInspectorTree.setRootNode(root);
 		
 		this.treeEditor = new Ext.tree.TreeEditor(this.widgetInspectorTree, {}, {
-	        allowBlank:false,
+	        allowBlank: false,
 	        blankText: 'A field is required',
-	        selectOnFocus:true,
+	        selectOnFocus: true,
 	        
 	        listeners: {
 	        	'beforestartedit': function(editor, boundEl, value){
@@ -190,8 +178,9 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
         var widgetInspector = new Ext.Panel({
             title: 'Widget Inspector',
             layout: 'border',
-            items:[
-            	this.widgetInspectorTree, this.propertiesGrid
+            items: [
+            	this.widgetInspectorTree, 
+            	this.propertiesGrid
             ]
         });
         
@@ -202,22 +191,22 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
             	this.codeBrowserTree
             ]
         });
-
 		
 		return {
 			itemId: 'inspector',	
 			items: [
-				widgetInspector, codeBrowser
+				widgetInspector, 
+				codeBrowser
 			]
-		}
-	},
+		};
+	}//eo _beforeInitComponent
 	
 	/**
 	 * Function onGridRefresh
 	 * Creates QTips for each row in grid
 	 * @param {Objectt} view - grid view
 	 */
-	onGridRefresh: function(view){
+	,onGridRefresh: function(view){
 		var grid = view.grid;
    		var ds = grid.getStore();
     	for (var i=0, rcnt=ds.getCount(); i<rcnt; i++) {
@@ -235,16 +224,12 @@ afStudio.widgetDesigner.inspector = Ext.extend(Ext.Container, {
     		}
 		}
 		grid.hideMandatoryCheckers();
-	},	
-	
-	/**
-	 * Function _initEvents
-	 */
-	_initEvents: function(){
-	},
-    setRootNode: function(rootNode){
+	}//eo onGridRefresh
+		
+    ,setRootNode: function(rootNode){
         this.widgetInspectorTree.setRootNode(rootNode);
         this.widgetInspectorTree.expandAll();
-    }
+    }//eo setRootNode
 });
+
 Ext.reg('afStudio.widgetDesigner.inspector', afStudio.widgetDesigner.inspector);
