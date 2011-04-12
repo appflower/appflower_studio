@@ -415,9 +415,9 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 //			}
 //  		});		
 //		
-		var wb = new afStudio.widgetsBuilder({
-			modelsUrl: window.afStudioWSUrls.getModelsUrl(),
-			fieldsUrl: window.afStudioWSUrls.getModelsUrl()
+		var wb = new afStudio.wd.WidgetsBuilder({
+			modelsUrl: afStudioWSUrls.getModelsUrl(),
+			fieldsUrl: afStudioWSUrls.getModelsUrl()
 		});
 		wb.show()
 	}//eo onAddWidget
@@ -543,7 +543,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {		
 		afStudio.vp.mask({region:'center'});
 		
-		this.widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition({
+		this.widgetDefinition = new afStudio.wd.WidgetDefinition({
 			widgetUri: widgetUri,
 			listeners: {
 				datafetched: function(rootNode, definition) {			
@@ -552,9 +552,11 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 						collapsible: false,
 						draggable: false,
 						layout: 'fit',
+						frame: false,
 						items: [
 						{
-							xtype: 'afStudio.widgetDesigner',
+							xtype: 'afStudio.wd.designerTabPanel',
+							border: false,
 							actionPath: actionPath,
 							securityPath: securityPath,
 			                widgetUri: widgetUri,

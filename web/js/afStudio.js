@@ -106,7 +106,7 @@ var afStudio = function () {
 				draggable: false,
 				layout: 'fit',
 				items: [{
-					xtype: 'afStudio.widgetDesigner',
+					xtype: 'afStudio.wd.designerTabPanel',
 					actionPath: action,
 					securityPath: security,
 	                widgetUri: widget,
@@ -157,15 +157,14 @@ var afStudio = function () {
             }
         }
         
-        ,getWidgetInspector: function() {
-            var components = this.vp.findByType('afStudio.widgetDesigner.inspector');
+        ,getWidgetInspector : function() {
+            var components = this.vp.findByType('afStudio.wd.inspector');
             if (components.length > 0) {
                 return components[0];
             }
         }
         //user to create a slug from some content
-        ,createSlug: function(slugcontent)
-        {
+        ,createSlug : function(slugcontent) {
 		    // convert to lowercase (important: since on next step special chars are defined in lowercase only)
 		    slugcontent = slugcontent.toLowerCase();
 		    // convert special chars

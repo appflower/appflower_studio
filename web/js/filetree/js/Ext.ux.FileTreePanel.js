@@ -918,37 +918,35 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		form.submit();
 	}
+	
 	/**
 	* open the file into a tab from the center tabpanel
 	*/
-	,openFile:function(node,path) {		
-		
+	,openFile : function(node, path) {
 		var id = Ext.id();
 		
-
+		var tabPanel = this.findParentByType('afStudio.wd.designerTabPanel');
 		//TODO: think about this snippet later
-		var tabPanel = this.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt.ownerCt;
-		if('widget-designer' != tabPanel.itemId){
+		/*
+		if ('widget-designer' != tabPanel.itemId) {
 			var tabPanel = this.ownerCt.ownerCt.ownerCt;
 		}
+		*/
 
-		var currentTabs=tabPanel.items.items;
-		var fileName=this.getFileName(path);
+		var currentTabs = tabPanel.items.items;
+		var fileName = this.getFileName(path);
 		
 		//find if the current path is opened
-		var opened_tabs = tabPanel.find('filePath',path);
+		var opened_tabs = tabPanel.find('filePath', path);
 		
-		if(opened_tabs.length>0)
-		{
-			var opened_tab=opened_tabs[0];
+		if (opened_tabs.length > 0) {
+			var opened_tab = opened_tabs[0];
 			opened_tab.show();
-		}
-		else{
+		} else {
 			tabPanel.addCodeEditorTab(fileName, path, path, path);
 		}
 	}
-	// }}}
-	// {{{
+	
 	/**
 	 * returns (and lazy create) the context menu
 	 * @private

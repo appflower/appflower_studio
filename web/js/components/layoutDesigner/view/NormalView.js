@@ -514,7 +514,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 
 					afStudio.vp.mask({region: 'center'});
 					
-					var widgetDefinition = new afStudio.widgetDesigner.WidgetDefinition({
+					var widgetDefinition = new afStudio.wd.WidgetDefinition({
 						widgetUri: widgetUri
 					});
 					widgetDefinition.on('datafetched', function(rootNode, definition){
@@ -524,7 +524,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 							draggable: false,
 							layout: 'fit',
 							items: [{
-								xtype: 'afStudio.widgetDesigner',
+								xtype: 'afStudio.wd.designerTabPanel',
 								actionPath: actionPath,
 								securityPath: securityPath,
 				                widgetUri: widgetUri,
