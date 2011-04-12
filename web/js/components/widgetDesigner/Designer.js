@@ -12,7 +12,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Container, {
 	,layoutConfig : {
 	    align: 'stretch',
 	    pack: 'start'
-	}	
+	}
 	
 	/**
 	 * ExtJS template method
@@ -259,7 +259,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Container, {
 				panel, 
 				{
 					xtype: 'panel', 
-					flex: 1, 
+					flex: 1,
 					layout: 'fit',
 					items: [
 					{

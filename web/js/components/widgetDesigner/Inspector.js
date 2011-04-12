@@ -36,11 +36,11 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 	 * @return {Object} The configuration object 
 	 */
 	,_beforeInitComponent : function() {
-   
+   		var _this = this;
+		
 		this.propertiesGrid = new afStudio.wi.PropertyGrid({
 			region: 'south',
-			split: true,
-	        frame: true,			
+			split: true,			
 			height: 150,			
 	        propertyNames: {
 //	            valueType: 'Value Type',
@@ -73,13 +73,11 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 		this.propertiesGrid.getView().on('refresh', this.onGridRefresh, this);
 		
 		//Create widget inspector tree item
-		var scope = this;
 		this.widgetInspectorTree = new Ext.tree.TreePanel({
-			region: 'center',
+			region: 'center',			
             animate: true,
             containerScroll: true,
             autoScroll: true, 
-			frame: true,
 			bodyStyle: 'border-bottom: 1px solid #99BBE8',			
 			layout: 'fit',
 			bbar: [
@@ -97,7 +95,7 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
     				var fields = node.getProperties();
     				this.propertiesGrid.setSource(fields);
             	}, 
-            	scope: scope
+            	scope: _this
             }
         });
         
@@ -113,8 +111,7 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 		this.treeEditor = new Ext.tree.TreeEditor(this.widgetInspectorTree, {}, {
 	        allowBlank: false,
 	        blankText: 'A field is required',
-	        selectOnFocus: true,
-	        
+	        selectOnFocus: true,	        
 	        listeners: {
 	        	'beforestartedit': function(editor, boundEl, value){
 	        		var cmp = Ext.getCmp('widget-inspector-menu');
@@ -133,21 +130,19 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 	    });
 		
         this.codeBrowserTree = new Ext.ux.FileTreePanel({
-        	region: 'center',
-        	
-			url:window.afStudioWSUrls.getFiletreeUrl()
-			,width:248
-			,height:500
-			,id:'ftp'
-			,rootPath:'root'
-			,rootVisible:true
-			,rootText:'Home'
-			,maxFileSize:524288*2*10
-			,topMenu:false
-			,autoScroll:true
-			,enableProgress:false
-			,singleUpload:true
-			,frame:true
+        	id: 'ftp',
+        	title: 'Code Browser',
+			url: afStudioWSUrls.getFiletreeUrl(),
+			width: 248,
+			height: 500,			
+			rootPath: 'root',
+			rootVisible: true,
+			rootText: 'Home',
+			maxFileSize: 524288 * 2 * 10,
+			topMenu: false,
+			autoScroll: true,
+			enableProgress: false,
+			singleUpload: true
 		});
 
         var widgetInspector = new Ext.Panel({
@@ -157,21 +152,13 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
             	this.widgetInspectorTree, 
             	this.propertiesGrid
             ]
-        });
+        });     
         
-        var codeBrowser = new Ext.Panel({
-            title: 'Code Browser',
-            layout: 'border',
-            items:[
-            	this.codeBrowserTree
-            ]
-        });
-		
 		return {
-			itemId: 'inspector',	
+			itemId: 'inspector',
 			items: [
-				widgetInspector, 
-				codeBrowser
+				widgetInspector,
+				this.codeBrowserTree
 			]
 		};
 	}//eo _beforeInitComponent	
