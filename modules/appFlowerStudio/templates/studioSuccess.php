@@ -150,15 +150,47 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileUploader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
 
+<!-- widgetDesigner -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeBehaviors/base/afStudio.widgetDesigner.BaseBehavior.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.BaseNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.ContainerNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.CollectionNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/nodeTypes/base/afStudio.widgetDesigner.NodeBuilder.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/rootNodeTypes/afStudio.widgetDesigner.ObjectRootNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/propertyType/base/afStudio.widgetDesigner.PropertyBaseType.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/widgetDesigner/propertyType/base/afStudio.widgetDesigner.PropertyTypeChoice.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/base/BaseBehavior.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithIParamsBehavior.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithNamePropertyAsLabelBehavior.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithValueTypeBehavior.js"></script>
+	<!-- wi nodeTypes -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/BaseNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/ContainerNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/CollectionNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/FieldsNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/NodeBuilder.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ActionNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ColumnNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/DatasourceNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/FieldNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/FieldNodeValueSourceNodes.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ParamNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ValidatorNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ValidatorsNode.js"></script>
+	<!-- wi propertyType -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyGrid.js"></script>	
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyBaseType.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeBoolean.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeChoice.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeString.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/FieldType.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/ValueSource.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/ValueType.js"></script>
+	<!-- wi rootNodeTypes -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/ObjectRootNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/EditNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/ListNode.js"></script>
+	<!-- wd -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/Designer.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/Inspector.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDesigner.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDefinition.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>
+<!-- end of widgetDesigner -->
+
 <?php 
 $appFlowerStudioPluginJsPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';
 
