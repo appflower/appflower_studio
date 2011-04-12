@@ -39,35 +39,15 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	,_beforeInitComponent : function() {
 
 		var _this = this;
-/***		
-		this.codeEditorAction = new Ext.ux.CodePress({
-			iconCls:'icon-script-edit',
-			title:'actions.class.php',
-			closable:true,
-			path:_this.actionPath,
-			tabTip:_this.actionPath,
-			file:_this.actionPath,
-			tabPanel:_this
-		});
-
-		this.codeEditorSecurity = new Ext.ux.CodePress({
-			iconCls:'icon-script-edit',
-			title:'security.yml',
-			closable:true,
-			path:_this.securityPath,
-			tabTip:_this.securityPath,
-			file:_this.securityPath,
-			tabPanel:_this
-		});
-**/		
+		
 		return {
-			id: 'widget-designer-panel',
+//			id: 'widget-designer-panel',
 			itemId: 'widget-designer',
 			activeTab: 0,
 			items: [
 			{
-				itemId: 'designer', 
-				title: 'Widget Designer', 
+				itemId: 'designer',
+				title: 'Widget Designer',
 				layout: 'fit'
 			}],
 			plugins: new Ext.ux.TabMenu()
@@ -151,41 +131,59 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 		
         var codeBrowserTree = new Ext.ux.FileTreePanel({
-			rootPath:'root', rootVisible:true, rootText:'Home',
-			url:window.afStudioWSUrls.getFiletreeUrl(), maxFileSize:524288*2*10,
-			topMenu:false, autoScroll:true, 
-			enableProgress:false, singleUpload:true
+			title: 'Code Browser',
+			flex: 1,
+			frame: true,
+			rootPath: 'root', 
+			rootVisible: true, 
+			rootText: 'Home',
+			url: afStudioWSUrls.getFiletreeUrl(), 
+			maxFileSize: 524288 * 2 * 10,
+			topMenu: false, 
+			autoScroll: true, 
+			enableProgress: false, 
+			singleUpload: true
 		});
 				
 		var panel = new Ext.Panel({
-			layout: 'hbox',
-            layoutConfig: {align: 'stretch'},
-            
-			iconCls: 'icon-script-edit',
 			title: fileName,
-			
+			iconCls: 'icon-script-edit',
+			layout: 'hbox',
+            layoutConfig: {
+            	align: 'stretch'
+            },
+            closable: true,
+            //custom cfg property
 			filePath: path,
-			
-			closable: true,
-			tbar: [{text: 'Save', iconCls: 'icon-save', handler: onSaveBtnClick,scope:this}],
+			tbar: [
+			{
+				text: 'Save', 
+				iconCls: 'icon-save', 
+				handler: onSaveBtnClick,
+				scope: this
+			}],
+			defaults : {
+				frame: true,
+				style: 'padding: 5px;'
+			},
 			items: [
-				{xtype: 'panel', flex: 3, style: 'padding: 5px', layout: 'fit',
-					
-					title: 'Code Editor', frame: true,
-					
-					items: [
-						{xtype: 'panel', items: codePress, layout: 'fit'}
-					]
-				},
+			{
+				xtype: 'panel',
+				title: 'Code Editor',
+				flex: 3,
+				layout: 'fit',
+				items: [
 				{
-					xtype: 'panel', flex: 1, frame: true, layout: 'fit',
-					title: 'Code Browser', style: 'padding: 5px;',
-					items: codeBrowserTree
-				}
+					xtype: 'panel', 
+					items: codePress, 
+					layout: 'fit'
+				}]
+			}, 
+				codeBrowserTree
 			]
 		});
 		
-		function onSaveBtnClick(){
+		function onSaveBtnClick() {
 			var self = this;
 	    	//TODO: move to public function and it as ContextMenu "Save" item handler in Ext.ux.TabMenu
 	    	Ext.Ajax.request({
@@ -204,14 +202,6 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				}
 	        });	    	
 		}
-		
-		/**
-			var new_tab = this.add(panel).show();
-			(function(){
-				panel.doLayout();
-				new_tab.doLayout();
-			}).defer(100);
-		*/
 		
 		this.add(panel);
 	}//eo addCodeEditorTab

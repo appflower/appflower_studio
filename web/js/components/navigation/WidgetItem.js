@@ -552,9 +552,11 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 						collapsible: false,
 						draggable: false,
 						layout: 'fit',
+						frame: false,
 						items: [
 						{
 							xtype: 'afStudio.wd.designerTabPanel',
+							border: false,
 							actionPath: actionPath,
 							securityPath: securityPath,
 			                widgetUri: widgetUri,
