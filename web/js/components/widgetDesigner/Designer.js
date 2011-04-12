@@ -173,7 +173,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Container, {
 	}//eo preview
 	
 	,saveDesigner:function(){
-		this.fireEvent("logmessage",this,"widget designer "+this.ownerCt.ownerCt.widgetUri+" saved");
+		this.fireEvent("logmessage", this, "widget designer " + this.ownerCt.ownerCt.widgetUri + " saved");
 	}
 	
 	/**

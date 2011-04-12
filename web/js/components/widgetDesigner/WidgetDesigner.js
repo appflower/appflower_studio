@@ -46,9 +46,11 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			activeTab: 0,
 			items: [
 			{
+				xtype: 'afStudio.wd.designer',
 				itemId: 'designer',
-				title: 'Widget Designer',
-				layout: 'fit'
+				title: 'Widget Designer',				
+                widgetUri: this.widgetUri,
+                rootNodeEl: this.rootNodeEl
 			}],
 			plugins: new Ext.ux.TabMenu()
 		}
@@ -81,23 +83,6 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			}
 		});
 		
-		designerTab.on({
-			scope: this,			
-			beforerender: function(cmp) {
-				cmp.add({
-					xtype: 'afStudio.wd.designer',
-                    widgetUri: this.widgetUri,
-                    rootNodeEl: this.rootNodeEl,
-                    listeners: {
-                    	logmessage: function(cmp, message) {
-                    		this.fireEvent("logmessage", cmp, message);
-                    	},
-                    	scope: this
-                    }
-				});
-			}
-		});
-
 		if (this.mask) {
 			this.mask.hide.defer(1000, this.mask);
 		}
