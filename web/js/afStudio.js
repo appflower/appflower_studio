@@ -163,6 +163,7 @@ var afStudio = function () {
                 return components[0];
             }
         }
+        
         //user to create a slug from some content
         ,createSlug : function(slugcontent) {
 		    // convert to lowercase (important: since on next step special chars are defined in lowercase only)

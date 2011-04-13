@@ -189,6 +189,7 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDesigner.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDefinition.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetPanel.js"></script>
 <!-- end of widgetDesigner -->
 
 <?php 

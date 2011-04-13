@@ -172,7 +172,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Container, {
 		}
 	}//eo preview
 	
-	,saveDesigner:function(){
+	,saveDesigner: function() {
 		this.fireEvent("logmessage", this, "widget designer " + this.ownerCt.ownerCt.widgetUri + " saved");
 	}
 	
@@ -214,8 +214,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Container, {
 		//the container panel for the widget designer
 		var panel = new Ext.Panel({		
 			id: 'widget-designer-panel',
-			flex: 3,			
-			frame: true,
+			flex: 3,
 			border: true,
 			autoScroll: true,
 			layout: 'fit',

@@ -80,7 +80,7 @@ afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
         if (baseData.success) {
             this.definition = Ext.util.JSON.decode(baseData.data);
             this.widgetType = this.definition['type'];
-        }
+		}
     }//eo parseFetchedData
     
 	,save : function(widgetBuilderWindow, createNewWidget) {

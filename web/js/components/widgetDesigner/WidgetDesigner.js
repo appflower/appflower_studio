@@ -48,7 +48,7 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 			{
 				xtype: 'afStudio.wd.designer',
 				itemId: 'designer',
-				title: 'Widget Designer',				
+				title: 'Widget Designer',
                 widgetUri: this.widgetUri,
                 rootNodeEl: this.rootNodeEl
 			}],
@@ -118,7 +118,6 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
         var codeBrowserTree = new Ext.ux.FileTreePanel({
 			title: 'Code Browser',
 			flex: 1,
-			frame: true,
 			rootPath: 'root', 
 			rootVisible: true, 
 			rootText: 'Home',
@@ -148,7 +147,6 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				scope: this
 			}],
 			defaults : {
-				frame: true,
 				style: 'padding: 5px;'
 			},
 			items: [
@@ -159,9 +157,11 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				layout: 'fit',
 				items: [
 				{
-					xtype: 'panel', 
-					items: codePress, 
-					layout: 'fit'
+					xtype: 'panel',
+					border: false,
+					layout: 'fit',
+					items: codePress 
+					
 				}]
 			}, 
 				codeBrowserTree

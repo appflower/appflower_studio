@@ -541,37 +541,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
     }
     
 	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {		
-		afStudio.vp.mask({region:'center'});
-		
-		this.widgetDefinition = new afStudio.wd.WidgetDefinition({
-			widgetUri: widgetUri,
-			listeners: {
-				datafetched: function(rootNode, definition) {			
-					afStudio.vp.addToPortal({
-						title: 'Widget Designer',
-						collapsible: false,
-						draggable: false,
-						layout: 'fit',
-						frame: false,
-						items: [
-						{
-							xtype: 'afStudio.wd.designerTabPanel',
-							border: false,
-							actionPath: actionPath,
-							securityPath: securityPath,
-			                widgetUri: widgetUri,
-			                rootNodeEl: rootNode
-						}]
-					}, true);
-
-		            var WI = afStudio.getWidgetInspector();
-		            WI.setRootNode(rootNode);
-
-	       			afStudio.vp.unmask('center');
-				}
-			}
+		var wp = new afStudio.wd.WidgetPanel({
+			actionPath: actionPath,
+			securityPath: securityPath,
+	        widgetUri: widgetUri			
 		});
-		this.widgetDefinition.fetchAndConfigure();
+		afStudio.vp.addToPortal(wp, true);		
 	}//eo addWidgetDesigner
 	
     ,saveWidgetDefinition : function() {
