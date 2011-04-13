@@ -95,23 +95,11 @@ var afStudio = function () {
 		}
 		
 		,showWidgetDesigner : function(widget, action, security) {
-  			//FIXME should be used afStudio.vp.mask({region: 'center'}) or afStudio.vp.mask(), read the jsdocs
-			var mask = new Ext.LoadMask(afStudio.vp.layout.center.panel.body, {msg: 'Loading, please Wait...', removeMask:true});
-			mask.show();
-			
-			//FIXME should not pass mask in the component just to have ability to remove it in the component
 			afStudio.vp.addToPortal({
-				title: widget + ' Widget Designer',
-				collapsible: false,
-				draggable: false,
-				layout: 'fit',
-				items: [{
-					xtype: 'afStudio.wd.designerTabPanel',
-					actionPath: action,
-					securityPath: security,
-	                widgetUri: widget,
-					mask: mask
-				}]
+				xtype: 'afStudio.wd.widgetPanel',
+				actionPath: action,
+				securityPath: security,
+		        widgetUri: widget
 			}, true);
 		}
 		

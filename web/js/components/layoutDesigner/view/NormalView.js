@@ -510,13 +510,13 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			       var actionPath = response.meta.actionPath,
 			           securityPath = response.meta.securityPath,		
 				       widgetUri = String.format('{0}/{1}', module, name);
-
-					   var wp = new afStudio.wd.WidgetPanel({
+				       
+					   afStudio.vp.addToPortal({
+							xtype: 'afStudio.wd.widgetPanel',
 							actionPath: actionPath,
 							securityPath: securityPath,
-					        widgetUri: widgetUri			
-					   });
-					   afStudio.vp.addToPortal(wp, true);			       	 
+					        widgetUri: widgetUri
+					   }, true);
 			   } else {
 			       afStudio.Msg.warning(response.content)
 			   }

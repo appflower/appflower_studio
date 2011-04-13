@@ -925,13 +925,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,openFile : function(node, path) {
 		var id = Ext.id();
 		
-		var tabPanel = this.findParentByType('afStudio.wd.designerTabPanel');
-		//TODO: think about this snippet later
-		/*
-		if ('widget-designer' != tabPanel.itemId) {
-			var tabPanel = this.ownerCt.ownerCt.ownerCt;
-		}
-		*/
+		var tabPanel = this.findParentByType('afStudio.wd.widgetTabPanel');
 
 		var currentTabs = tabPanel.items.items;
 		var fileName = this.getFileName(path);

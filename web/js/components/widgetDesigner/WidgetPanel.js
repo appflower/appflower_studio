@@ -7,18 +7,15 @@ Ext.namespace('afStudio.wd');
  * @extends Ext.Panel
  * @author Nikolai
  */
-afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
-	
+afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {	
 	/**
 	 * @cfg {String} (required) actionPath
 	 * Widget action path 
-	 */
-	
+	 */	
 	/**
 	 * @cfg {String} (required) securityPath
 	 * Widget security path  
-	 */
-	
+	 */	
 	/**
 	 * @cfg {String} (required) widgetUri
 	 * Widget URI  
@@ -27,34 +24,61 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	layout : 'fit'
 	
 	/**
+	 * Widget definition component.
 	 * @property widgetDefinition
 	 * @type {afStudio.wd.WidgetDefinition}
 	 */
 	
 	/**
-	 * Initializes component
-	 * @private
-	 * @return {Object} The configuration object 
+	 * Widget meta data object:
+	 * <u>
+	 *   <li><b>actionPath</b>: Path to widget's action controller.</li>
+	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
+	 *   <li><b>widgetUri</b>: Widget URI</li>
+	 *   <li><b>definition</b>: Widget's metadata definition.</li>
+	 * </ul> 
+	 * @property widgetMetaData
+	 * @type {Object}
 	 */
-	,_beforeInitComponent : function() {
+	
+	/**
+	 * WidgetPanel constructor.
+	 * @constructor
+	 * @param {Object} config The configuration object
+	 */
+	,constructor : function(config) {
+		config = config || {};
+		config.widgetMetaData = {};
 		
-		this.widgetDefinition = new afStudio.wd.WidgetDefinition({
-			widgetUri: this.widgetUri
+		if (config.actionPath) {
+			config.widgetMetaData.actionPath = config.actionPath;
+			delete config.actionPath;
+		}
+		if (config.securityPath) {
+			config.widgetMetaData.securityPath = config.securityPath;
+			delete config.securityPath;
+		}
+		if (config.widgetUri) {
+			config.widgetMetaData.widgetUri = config.widgetUri;
+			delete config.widgetUri;
+		}
+		
+		Ext.apply(config, {
+			title: config.widgetMetaData.widgetUri
 		});
 		
-		return {
-			title: this.widgetUri
-		};
-	}//eo _beforeInitComponent
-	
+		this.widgetDefinition = new afStudio.wd.WidgetDefinition({
+			widgetUri: config.widgetMetaData.widgetUri
+		});		
+		
+		afStudio.wd.WidgetPanel.superclass.constructor.call(this, config);
+	}//eo constructor
+		
 	/**
 	 * Ext Template method
 	 * @private
 	 */
 	,initComponent : function() {
-		Ext.apply(this, 
-			Ext.apply(this.initialConfig, this._beforeInitComponent())
-		);				
 		afStudio.wd.WidgetPanel.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
 	}//eo initComponent	
@@ -66,7 +90,7 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
-		this.widgetDefinition.on('datafetched', this.onWidgetDataFetched, this); 
+		this.widgetDefinition.on('datafetched', this.onWidgetDataFetched, this);
 		
 		this.on({
 			scope: _this,
@@ -81,6 +105,7 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 */
 	,initWidgetPanel : function() {
 		afStudio.vp.mask({region: 'center'});
+		//start fetching  widget's data
 		this.widgetDefinition.fetchAndConfigure();
 	}//eo initWidgetPanel
 	
@@ -89,15 +114,13 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 * @param {Ext.tree.TreeNode} rootNode The root node of WI tree.
 	 * @param {Object} definition The widget metadata.
 	 */
-	,onWidgetDataFetched : function(rootNode, definition) {		
+	,onWidgetDataFetched : function(rootNode, definition) {
+		//add definition into widget's metadata
+		this.widgetMetaData.definition = definition;
+		
 		this.add({
-			xtype: 'afStudio.wd.designerTabPanel',
-			border: false,
-			frame: false,
-			actionPath: this.actionPath,
-			securityPath: this.securityPath,
-            widgetUri: this.widgetUri,
-            rootNodeEl: rootNode			
+			xtype: 'afStudio.wd.widgetTabPanel',
+			widgetMeta: this.widgetMetaData
 		});		
 		this.doLayout();
 		
@@ -107,3 +130,8 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
         afStudio.vp.unmask('center');
 	}//eo onWidgetDataFetched	
 });
+
+/**
+ * @type 'afStudio.wd.widgetPanel'
+ */
+Ext.reg('afStudio.wd.widgetPanel', afStudio.wd.WidgetPanel);

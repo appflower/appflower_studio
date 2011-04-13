@@ -1,3 +1,5 @@
+Ext.namespace('afStudio.wd');
+
 /**
  * Widget Inspector Container
  * @class afStudio.wd.inspector
@@ -77,8 +79,7 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 			region: 'center',			
             animate: true,
             containerScroll: true,
-            autoScroll: true, 
-			bodyStyle: 'border-bottom: 1px solid #99BBE8',			
+            autoScroll: true,
 			layout: 'fit',
 			bbar: [
 			{
@@ -105,7 +106,7 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
             text: 'Widget Inspector',
 			id: 'widgetinspector'
         });        
-        new Ext.tree.TreeSorter(this.widgetInspectorTree, {folderSort:true});
+        new Ext.tree.TreeSorter(this.widgetInspectorTree, {folderSort: true});
 		this.widgetInspectorTree.setRootNode(root);
 		
 		this.treeEditor = new Ext.tree.TreeEditor(this.widgetInspectorTree, {}, {
@@ -193,17 +194,17 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 	 * Creates QTips for each row in grid
 	 * @param {Objectt} view - grid view
 	 */
-	,onGridRefresh: function(view){
-		var grid = view.grid;
-   		var ds = grid.getStore();
-    	for (var i=0, rcnt=ds.getCount(); i<rcnt; i++) {
-    		
+	,onGridRefresh : function(view) {
+		var grid = view.grid,
+   			  ds = grid.getStore();
+   			  
+    	for (var i = 0, rcnt = ds.getCount(); i < rcnt; i++) {    		
     		var rec = ds.getAt(i);
     		var html = '<b>' + rec.get('name') + ':</b> ' + rec.get('value');
 			
         	var row = view.getRow(i);
         	var els = Ext.get(row).select('.x-grid3-cell-inner');
-    		for (var j=0, ccnt=els.getCount(); j<ccnt; j++) {
+    		for (var j = 0, ccnt = els.getCount(); j < ccnt; j++) {
           		Ext.QuickTips.register({
             		target: els.item(j),
             		text: html
@@ -213,7 +214,7 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 		grid.hideMandatoryCheckers();
 	}//eo onGridRefresh
 		
-    ,setRootNode: function(rootNode){
+    ,setRootNode : function(rootNode) {
         this.widgetInspectorTree.setRootNode(rootNode);
         this.widgetInspectorTree.expandAll();
     }//eo setRootNode

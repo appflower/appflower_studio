@@ -511,9 +511,8 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Object} deleteObj
 	 */
 	,deleteNode : function(deleteObj) {
-		var _this = this;
-		
-		var confirmText = String.format('Are you sure you want to delete {0} "{1}"?', deleteObj.msg, deleteObj.item);
+		var _this = this,		
+			confirmText = String.format('Are you sure you want to delete {0} "{1}"?', deleteObj.msg, deleteObj.item);
 		
 		Ext.Msg.confirm('Plugins', confirmText, function(buttonId) {
 			if (buttonId == 'yes') {
@@ -541,12 +540,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
     }
     
 	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {		
-		var wp = new afStudio.wd.WidgetPanel({
+		afStudio.vp.addToPortal({
+			xtype: 'afStudio.wd.widgetPanel',
 			actionPath: actionPath,
 			securityPath: securityPath,
-	        widgetUri: widgetUri			
-		});
-		afStudio.vp.addToPortal(wp, true);		
+	        widgetUri: widgetUri
+		}, true);		
 	}//eo addWidgetDesigner
 	
     ,saveWidgetDefinition : function() {
