@@ -48,14 +48,14 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			items: [
 			{
 				xtype: 'afStudio.wd.designerPanel',
-				flex: 3,
-				widgetMeta: this.widgetMeta				
+				widgetMeta: this.widgetMeta,
+				flex: 3								
 			},{ 
 				xtype: 'container',
 				flex: 1,				
 				items: [
 				{
-					xtype: 'afStudio.wd.inspector',					
+					xtype: 'afStudio.wi.inspectorPalette',
 					widgetMeta: this.widgetMeta
                 }]
 			}]

@@ -1,20 +1,20 @@
+Ext.ns('afStudio.wi');
+
 /**
+ * PropertyBaseType constructor.
+ * @constructor
+ * 
  * Each node that is inside WI tree can have many properties.
  * Each of that property can be different type, one can be choice widget and other simple input field
  * This class defines base class for all concrete properties
+ * 
+ * @param {String} fieldId
+ * @param {String} fieldLabel
  */
-(function(){
-	/**
-	 * PropertyBaseType constructor
-	 * @constructor
-	 * @param {String} fieldId
-	 * @param {String} fieldLabel
-	 */
-	afStudio.wi.PropertyBaseType = function(fieldId, fieldLabel){
-		this.id = fieldId;
-        this.label = fieldLabel;
-	};
-})();
+afStudio.wi.PropertyBaseType = function(fieldId, fieldLabel) {
+	this.id = fieldId;
+    this.label = fieldLabel;
+};
 
 Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
 	/**

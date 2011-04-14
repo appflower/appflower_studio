@@ -183,12 +183,17 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/ObjectRootNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/EditNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/ListNode.js"></script>
+	<!-- wi components -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/WidgetInspectorTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPalette.js"></script>
 	<!-- wd -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/Inspector.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetFactory.js"></script>	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDefinition.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/DesignerPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/DesignerTab.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/CodeEditorTab.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetTabPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetPanel.js"></script>
 <!-- end of widgetDesigner -->

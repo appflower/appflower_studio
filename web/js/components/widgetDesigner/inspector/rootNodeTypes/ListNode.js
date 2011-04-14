@@ -64,9 +64,9 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
      * @return {afStudio.wi.CollectionNode} instanciated fields node object, descendant of CollectionNode
      */
     ,buildFieldsNode : function() {
-        var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({        		
+        var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({
         	id: 'i:fields',
-            text: 'Fields',           
+            text: 'Fields',
             createChildConstructor: afStudio.wi.ColumnNode,
             childNodeId: 'i:column',
             addChildActionLabel: 'Add column'

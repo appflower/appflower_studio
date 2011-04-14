@@ -20,11 +20,16 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 * @cfg {String} (required) widgetUri
 	 * Widget URI  
 	 */
-		
+
+	/**
+	 * @cfg {String} layout
+	 * Layout type.
+	 */
 	layout : 'fit'
 	
 	/**
 	 * Widget definition component.
+	 * 
 	 * @property widgetDefinition
 	 * @type {afStudio.wd.WidgetDefinition}
 	 */
@@ -36,7 +41,8 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
 	 *   <li><b>widgetUri</b>: Widget URI</li>
 	 *   <li><b>definition</b>: Widget's metadata definition.</li>
-	 * </ul> 
+	 * </ul>
+	 * 
 	 * @property widgetMetaData
 	 * @type {Object}
 	 */
@@ -106,15 +112,14 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	,initWidgetPanel : function() {
 		afStudio.vp.mask({region: 'center'});
 		//start fetching  widget's data
-		this.widgetDefinition.fetchAndConfigure();
+		this.widgetDefinition.fetchDefinition();
 	}//eo initWidgetPanel
 	
 	/**
 	 * {@link #widgetDefinition} <u>datafetched</u> event listener.
-	 * @param {Ext.tree.TreeNode} rootNode The root node of WI tree.
 	 * @param {Object} definition The widget metadata.
 	 */
-	,onWidgetDataFetched : function(rootNode, definition) {
+	,onWidgetDataFetched : function(definition) {
 		//add definition into widget's metadata
 		this.widgetMetaData.definition = definition;
 		
@@ -123,10 +128,7 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 			widgetMeta: this.widgetMetaData
 		});		
 		this.doLayout();
-		
-        var WI = afStudio.getWidgetInspector();
-        WI.setRootNode(rootNode);	
-        
+		        
         afStudio.vp.unmask('center');
 	}//eo onWidgetDataFetched	
 });
