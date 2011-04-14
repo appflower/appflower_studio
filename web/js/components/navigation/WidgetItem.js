@@ -511,9 +511,8 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Object} deleteObj
 	 */
 	,deleteNode : function(deleteObj) {
-		var _this = this;
-		
-		var confirmText = String.format('Are you sure you want to delete {0} "{1}"?', deleteObj.msg, deleteObj.item);
+		var _this = this,		
+			confirmText = String.format('Are you sure you want to delete {0} "{1}"?', deleteObj.msg, deleteObj.item);
 		
 		Ext.Msg.confirm('Plugins', confirmText, function(buttonId) {
 			if (buttonId == 'yes') {
@@ -541,37 +540,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
     }
     
 	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {		
-		afStudio.vp.mask({region:'center'});
-		
-		this.widgetDefinition = new afStudio.wd.WidgetDefinition({
-			widgetUri: widgetUri,
-			listeners: {
-				datafetched: function(rootNode, definition) {			
-					afStudio.vp.addToPortal({
-						title: 'Widget Designer',
-						collapsible: false,
-						draggable: false,
-						layout: 'fit',
-						frame: false,
-						items: [
-						{
-							xtype: 'afStudio.wd.designerTabPanel',
-							border: false,
-							actionPath: actionPath,
-							securityPath: securityPath,
-			                widgetUri: widgetUri,
-			                rootNodeEl: rootNode
-						}]
-					}, true);
-
-		            var WI = afStudio.getWidgetInspector();
-		            WI.setRootNode(rootNode);
-
-	       			afStudio.vp.unmask('center');
-				}
-			}
-		});
-		this.widgetDefinition.fetchAndConfigure();
+		afStudio.vp.addToPortal({
+			xtype: 'afStudio.wd.widgetPanel',
+			actionPath: actionPath,
+			securityPath: securityPath,
+	        widgetUri: widgetUri
+		}, true);		
 	}//eo addWidgetDesigner
 	
     ,saveWidgetDefinition : function() {

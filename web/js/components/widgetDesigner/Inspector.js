@@ -1,3 +1,5 @@
+Ext.namespace('afStudio.wd');
+
 /**
  * Widget Inspector Container
  * @class afStudio.wd.inspector
@@ -36,11 +38,11 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 	 * @return {Object} The configuration object 
 	 */
 	,_beforeInitComponent : function() {
-   
+   		var _this = this;
+		
 		this.propertiesGrid = new afStudio.wi.PropertyGrid({
 			region: 'south',
-			split: true,
-	        frame: true,			
+			split: true,			
 			height: 150,			
 	        propertyNames: {
 //	            valueType: 'Value Type',
@@ -73,14 +75,11 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 		this.propertiesGrid.getView().on('refresh', this.onGridRefresh, this);
 		
 		//Create widget inspector tree item
-		var scope = this;
 		this.widgetInspectorTree = new Ext.tree.TreePanel({
-			region: 'center',
+			region: 'center',			
             animate: true,
             containerScroll: true,
-            autoScroll: true, 
-			frame: true,
-			bodyStyle: 'border-bottom: 1px solid #99BBE8',			
+            autoScroll: true,
 			layout: 'fit',
 			bbar: [
 			{
@@ -97,7 +96,7 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
     				var fields = node.getProperties();
     				this.propertiesGrid.setSource(fields);
             	}, 
-            	scope: scope
+            	scope: _this
             }
         });
         
@@ -107,14 +106,13 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
             text: 'Widget Inspector',
 			id: 'widgetinspector'
         });        
-        new Ext.tree.TreeSorter(this.widgetInspectorTree, {folderSort:true});
+        new Ext.tree.TreeSorter(this.widgetInspectorTree, {folderSort: true});
 		this.widgetInspectorTree.setRootNode(root);
 		
 		this.treeEditor = new Ext.tree.TreeEditor(this.widgetInspectorTree, {}, {
 	        allowBlank: false,
 	        blankText: 'A field is required',
-	        selectOnFocus: true,
-	        
+	        selectOnFocus: true,	        
 	        listeners: {
 	        	'beforestartedit': function(editor, boundEl, value){
 	        		var cmp = Ext.getCmp('widget-inspector-menu');
@@ -133,21 +131,19 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 	    });
 		
         this.codeBrowserTree = new Ext.ux.FileTreePanel({
-        	region: 'center',
-        	
-			url:window.afStudioWSUrls.getFiletreeUrl()
-			,width:248
-			,height:500
-			,id:'ftp'
-			,rootPath:'root'
-			,rootVisible:true
-			,rootText:'Home'
-			,maxFileSize:524288*2*10
-			,topMenu:false
-			,autoScroll:true
-			,enableProgress:false
-			,singleUpload:true
-			,frame:true
+        	id: 'ftp',
+        	title: 'Code Browser',
+			url: afStudioWSUrls.getFiletreeUrl(),
+			width: 248,
+			height: 500,			
+			rootPath: 'root',
+			rootVisible: true,
+			rootText: 'Home',
+			maxFileSize: 524288 * 2 * 10,
+			topMenu: false,
+			autoScroll: true,
+			enableProgress: false,
+			singleUpload: true
 		});
 
         var widgetInspector = new Ext.Panel({
@@ -157,21 +153,13 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
             	this.widgetInspectorTree, 
             	this.propertiesGrid
             ]
-        });
+        });     
         
-        var codeBrowser = new Ext.Panel({
-            title: 'Code Browser',
-            layout: 'border',
-            items:[
-            	this.codeBrowserTree
-            ]
-        });
-		
 		return {
-			itemId: 'inspector',	
+			itemId: 'inspector',
 			items: [
-				widgetInspector, 
-				codeBrowser
+				widgetInspector,
+				this.codeBrowserTree
 			]
 		};
 	}//eo _beforeInitComponent	
@@ -206,17 +194,17 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 	 * Creates QTips for each row in grid
 	 * @param {Objectt} view - grid view
 	 */
-	,onGridRefresh: function(view){
-		var grid = view.grid;
-   		var ds = grid.getStore();
-    	for (var i=0, rcnt=ds.getCount(); i<rcnt; i++) {
-    		
+	,onGridRefresh : function(view) {
+		var grid = view.grid,
+   			  ds = grid.getStore();
+   			  
+    	for (var i = 0, rcnt = ds.getCount(); i < rcnt; i++) {    		
     		var rec = ds.getAt(i);
     		var html = '<b>' + rec.get('name') + ':</b> ' + rec.get('value');
 			
         	var row = view.getRow(i);
         	var els = Ext.get(row).select('.x-grid3-cell-inner');
-    		for (var j=0, ccnt=els.getCount(); j<ccnt; j++) {
+    		for (var j = 0, ccnt = els.getCount(); j < ccnt; j++) {
           		Ext.QuickTips.register({
             		target: els.item(j),
             		text: html
@@ -226,7 +214,7 @@ afStudio.wd.Inspector = Ext.extend(Ext.Container, {
 		grid.hideMandatoryCheckers();
 	}//eo onGridRefresh
 		
-    ,setRootNode: function(rootNode){
+    ,setRootNode : function(rootNode) {
         this.widgetInspectorTree.setRootNode(rootNode);
         this.widgetInspectorTree.expandAll();
     }//eo setRootNode

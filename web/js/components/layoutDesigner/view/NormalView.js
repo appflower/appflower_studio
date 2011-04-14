@@ -492,7 +492,8 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {String} module The widget module name
 	 * @param {} cmpMeta
 	 */
-	,editWidget : function(name, module, cmpMeta) {
+	,editWidget : function(name, module, cmpMeta) {		
+		afStudio.vp.mask({region: 'center'});
 		
 		Ext.Ajax.request({
 		   url: this.widgetMetaUrl,
@@ -500,55 +501,32 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		       module_name: module,
 		       action_name: name
 		   },
-		   success: function(xhr, opt) {
-		   	
+		   success: function(xhr, opt) {		   	
 			   afStudio.vp.unmask('center');
 			   
 			   var response = Ext.decode(xhr.responseText);
 			   
-			   if (response.success) {
-			   	
-			       var actionPath = response.meta.actionPath;
-			       var securityPath = response.meta.securityPath;		
-				   var widgetUri = String.format('{0}/{1}', module, name);
-
-					afStudio.vp.mask({region: 'center'});
-					
-					var widgetDefinition = new afStudio.wd.WidgetDefinition({
-						widgetUri: widgetUri
-					});
-					widgetDefinition.on('datafetched', function(rootNode, definition){
-						afStudio.vp.addToPortal({
-							title: 'Widget Designer',
-							collapsible: false,
-							draggable: false,
-							layout: 'fit',
-							items: [{
-								xtype: 'afStudio.wd.designerTabPanel',
-								actionPath: actionPath,
-								securityPath: securityPath,
-				                widgetUri: widgetUri,
-				                rootNodeEl: rootNode
-							}]
-						}, true);
-			
-			           var WI = afStudio.getWidgetInspector();
-			           WI.setRootNode(rootNode);
-			
-				       afStudio.vp.unmask('center');
-					});
-					widgetDefinition.fetchAndConfigure();
-			       	 
+			   if (response.success) {			   	
+			       var actionPath = response.meta.actionPath,
+			           securityPath = response.meta.securityPath,		
+				       widgetUri = String.format('{0}/{1}', module, name);
+				       
+					   afStudio.vp.addToPortal({
+							xtype: 'afStudio.wd.widgetPanel',
+							actionPath: actionPath,
+							securityPath: securityPath,
+					        widgetUri: widgetUri
+					   }, true);
 			   } else {
-			   	   Ext.Msg.alert('Error', response.content);
+			       afStudio.Msg.warning(response.content)
 			   }
 		   },
 		   failure: function(xhr, opt) {
 		   	   afStudio.vp.unmask('center');
-		       Ext.Msg.alert('Error', String.format('Status code {0}, message {1}', xhr.status, xhr.statusText));
+			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
+			   afStudio.Msg.error('Server side error', message);
 		   }
-		});
-		
+		});		
 	}//eo editWidget 
 	
 	/**

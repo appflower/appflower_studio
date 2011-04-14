@@ -1,54 +1,41 @@
 Ext.namespace('afStudio.wd');
 
 /**
- * Widget Designer
- * @class afStudio.wd.DesignerTabPanel
+ * 
+ * @class afStudio.wd.WidgetTabPanel
  * @extends Ext.TabPanel
  */
-afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
+afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 
 	/**
-	 * @cfg actionPath
-	 * Widget's action path
+	 * Widget meta data.
+	 * @cfg {Object} widgetMeta
 	 */
-	actionPath : false
 	
 	/**
-	 * @cfg securityPath
-	 * Widget's security path
-	 */
-	,securityPath : false
-	
-	/**
-	 * @cfg {String} (required) widgetUri
-	 * Unique widget URI
-	 */
-    
-	/**
-	 * @cfg {Ext.tree.TreeNode} (required) rootNodeEl
-	 * WI tree's root node.
-	 */
-	
-	,mask : false
-	
+	 * Reference to the this tabs panel container - widget panel
+	 * @property widgetPanel
+	 * @type {afStudio.wd.WidgetPanel}
+	 */ 
+	 
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
-
+	_beforeInitComponent : function() {
 		var _this = this;
 		
+		this.widgetPanel = this.ownerCt;
+		
 		return {
-//			id: 'widget-designer-panel',
 			itemId: 'widget-designer',
+			border: false,			
 			activeTab: 0,
 			items: [
 			{
-				itemId: 'designer',
-				title: 'Widget Designer',
-				layout: 'fit'
+				xtype: 'afStudio.wd.designerTab',				
+				widgetMeta: this.widgetMeta
 			}],
 			plugins: new Ext.ux.TabMenu()
 		}
@@ -62,7 +49,7 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
-		afStudio.wd.DesignerTabPanel.superclass.initComponent.apply(this, arguments);		
+		afStudio.wd.WidgetTabPanel.superclass.initComponent.apply(this, arguments);		
 		this._afterInitComponent();
 	}//eo initComponent
 	
@@ -71,38 +58,12 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 	 * @private
 	 */	
 	,_afterInitComponent : function() {
-		var _this = this,
-			designerTab = _this.getComponent('designer');		
-					
-		this.on({
-			render: function(cmp) {
-				cmp.addCodeEditorTab('security.yml', _this.securityPath, _this.securityPath, _this.securityPath);
-				cmp.addCodeEditorTab('actions.class.php', _this.actionPath, _this.actionPath, _this.actionPath);
-			}
-		});
+		var _this = this;		
+
+//		cmp.addCodeEditorTab('security.yml', _this.securityPath, _this.securityPath, _this.securityPath);
+//		cmp.addCodeEditorTab('actions.class.php', _this.actionPath, _this.actionPath, _this.actionPath);		
 		
-		designerTab.on({
-			scope: this,			
-			beforerender: function(cmp) {
-				cmp.add({
-					xtype: 'afStudio.wd.designer',
-                    widgetUri: this.widgetUri,
-                    rootNodeEl: this.rootNodeEl,
-                    listeners: {
-                    	logmessage: function(cmp, message) {
-                    		this.fireEvent("logmessage", cmp, message);
-                    	},
-                    	scope: this
-                    }
-				});
-			}
-		});
-
-		if (this.mask) {
-			this.mask.hide.defer(1000, this.mask);
-		}
-
-        this.on('beforetabchange', function(tabPanel, newTab, oldTab) {
+        this.on('beforetabchange', function(tabPanel, newTab, oldTab) {        	
             if (oldTab && oldTab.iframe) {
                  oldTab.toggleIframe();
             }
@@ -110,7 +71,7 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
                  newTab.toggleIframe();
             }
 		}, this);
-	}//eo _afterInitComponent	
+	}//eo _afterInitComponent
 	
 	/**
 	 * Function addCodeEditorTab
@@ -133,7 +94,6 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
         var codeBrowserTree = new Ext.ux.FileTreePanel({
 			title: 'Code Browser',
 			flex: 1,
-			frame: true,
 			rootPath: 'root', 
 			rootVisible: true, 
 			rootText: 'Home',
@@ -163,7 +123,6 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				scope: this
 			}],
 			defaults : {
-				frame: true,
 				style: 'padding: 5px;'
 			},
 			items: [
@@ -174,9 +133,11 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 				layout: 'fit',
 				items: [
 				{
-					xtype: 'panel', 
-					items: codePress, 
-					layout: 'fit'
+					xtype: 'panel',
+					border: false,
+					layout: 'fit',
+					items: codePress 
+					
 				}]
 			}, 
 				codeBrowserTree
@@ -208,6 +169,6 @@ afStudio.wd.DesignerTabPanel = Ext.extend(Ext.TabPanel, {
 });
 
 /**
- * @type 'afStudio.wd.designerTabPanel'
+ * @type 'afStudio.wd.widgetTabPanel'
  */
-Ext.reg('afStudio.wd.designerTabPanel', afStudio.wd.DesignerTabPanel);
+Ext.reg('afStudio.wd.widgetTabPanel', afStudio.wd.WidgetTabPanel);

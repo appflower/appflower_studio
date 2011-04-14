@@ -402,7 +402,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		});
 
 		afsWD.createRootNode();
-                afsWD.rootNode.setTitle('new widget');
+        afsWD.rootNode.setTitle('new widget');
 		
 		for (k = 0; k < items.length; k++) {
             var field = afsWD.rootNode.getFieldsNode().addChild();
