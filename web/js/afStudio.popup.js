@@ -122,7 +122,7 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 			   
 			   Ext.get('create-project').on('click',  function(){  
 				   popupWindow.close();
-				   (new afStudio.CreateProject()).show();
+				   ( new afStudio.CreateProjectWizard ).show();
 			   }, this);
 			   Ext.get('open-project').on('click',  function(){  
 				   popupWindow.close();
