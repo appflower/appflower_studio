@@ -404,7 +404,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			widgetUri = module + '/' + action,
 			type = this.typeCombo.getValue();
 		
-		var widgetDefinition = afStudio.wd.WidgetFactory.buildWidgetDefinition(items, type);
+		var widgetMetaData = afStudio.wd.WidgetFactory.buildWidgetDefinition(items, type);
 		
 		var afsWD = new afStudio.wd.WidgetDefinition({
 			widgetUri: widgetUri,
@@ -416,7 +416,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			this.close();
 		}, this);
 		
-		afsWD.saveDefinition(widgetDefinition, callback, true);
+		afsWD.saveDefinition(widgetMetaData, callback, true);
 	},	
 	
 	/**

@@ -53,6 +53,21 @@ afStudio.wd.WidgetFactory = function() {
 	        }
 			
 	        return rootNode.dumpDataForWidgetDefinition();
-		}//eo buildWidgetDefinition		
+		}//eo buildWidgetDefinition
+		
+		/**
+		 * Creates and Opens {@link afStudio.wd.WidgetPanel} widget designer panel.
+		 * @param {String} widgetUri The widget URI
+		 * @param {String} action The action path
+		 * @param {String} security The security path
+		 */
+		,showWidgetDesigner : function(widgetUri, action, security) {
+			afStudio.vp.addToPortal({
+				xtype: 'afStudio.wd.widgetPanel',
+				actionPath: action,
+				securityPath: security,
+		        widgetUri: widgetUri
+			}, true);
+		}//eo showWidgetDesigner
 	};
 }();

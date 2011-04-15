@@ -92,16 +92,7 @@ var afStudio = function () {
 				  Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate,'/','');
 			   }
 			});
-		}
-		
-		,showWidgetDesigner : function(widget, action, security) {
-			afStudio.vp.addToPortal({
-				xtype: 'afStudio.wd.widgetPanel',
-				actionPath: action,
-				securityPath: security,
-		        widgetUri: widget
-			}, true);
-		}
+		}//eo addCurrentProject	
 		
 		/**
 		 * Instantiates afStudio.
@@ -137,21 +128,7 @@ var afStudio = function () {
 			}
 			
 		}//eo init
-		
-        ,getWidgetsTreePanel: function() {
-            var components = this.vp.findByType('afStudio.navigation.widgetItem');
-            if (components.length > 0) {
-                return components[0];
-            }
-        }
-        
-        ,getWidgetInspector : function() {
-            var components = this.vp.findByType('afStudio.wd.inspector');
-            if (components.length > 0) {
-                return components[0];
-            }
-        }
-        
+		                
         //user to create a slug from some content
         ,createSlug : function(slugcontent) {
 		    // convert to lowercase (important: since on next step special chars are defined in lowercase only)

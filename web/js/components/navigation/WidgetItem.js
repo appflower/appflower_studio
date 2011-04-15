@@ -214,10 +214,20 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		return app;
 	}//eo getNodeApp
 	
+	/**
+	 * Returns node's <u>actionPath</u> attribute
+	 * @param {Ext.tree.TreeNode} node
+	 * @return {String} actionPath
+	 */
 	,getNodeActionPath : function(node) {
 		return this.getNodeAttribute(node, 'actionPath');
 	}
 	
+	/**
+	 * Returns node's <u>securityPath</u> attribute
+	 * @param {Ext.tree.TreeNode} node
+	 * @return {String} actionPath
+	 */
 	,getNodeSecurityPath : function(node) {
 		return this.getNodeAttribute(node, 'securityPath');
 	}
@@ -272,7 +282,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @override
 	 */
 	,runNode : function(node) {
-		this.addWidgetDesignerForNode(node);		
+		this.showWidgetDesignerForNode(node);		
 	}//eo runNode
 	
 	/**
@@ -345,7 +355,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				widgetcreated: function(widgetUri, response) {
 					_this.onItemActivate();					
 					//TODO action and security path needed
-					afStudio.showWidgetDesigner(widgetUri);
+					afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri);
 				}
 			}
 		});
@@ -483,23 +493,18 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		});				
 	}//eo deleteNode
 
-    ,addWidgetDesignerForNode : function(node) {
+	/**
+	 * Opens widget designer for specified node.
+	 * @private
+	 * @param {Ext.tree.TreeNode} node
+	 */
+    ,showWidgetDesignerForNode : function(node) {
         var actionPath = this.getNodeActionPath(node),
         	securityPath = this.getNodeSecurityPath(node),
         	widgetUri = node.attributes.widgetUri;
 	
-        this.addWidgetDesigner(widgetUri, actionPath, securityPath);
-    }
-    
-	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {		
-		afStudio.vp.addToPortal({
-			xtype: 'afStudio.wd.widgetPanel',
-			actionPath: actionPath,
-			securityPath: securityPath,
-	        widgetUri: widgetUri
-		}, true);		
-	}//eo addWidgetDesigner	
- 
+        afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri, actionPath, securityPath);
+    }//eo showWidgetDesignerForNode
 }); 
 
 /**

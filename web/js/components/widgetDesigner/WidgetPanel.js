@@ -96,8 +96,6 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
-		this.widgetDefinition.on('datafetched', this.onWidgetDataFetched, this);
-		
 		this.on({
 			scope: _this,
 			afterrender: _this.initWidgetPanel
@@ -111,26 +109,39 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 */
 	,initWidgetPanel : function() {
 		afStudio.vp.mask({region: 'center'});
+		
 		//start fetching  widget's data
-		this.widgetDefinition.fetchDefinition();
+		this.widgetDefinition.fetchDefinition({
+			scope: this,
+			
+			success: function(metadata) {
+				afStudio.vp.unmask('center');
+				//add definition into widget's metadata
+				this.widgetMetaData.definition = metadata;
+				
+				this.openWidgetDesigner(metadata);
+			},
+			
+			error: function(response) {
+				afStudio.vp.unmask('center');
+				var msg = String.format('Fetching widget "{0}" data failed. <br/> {1}',
+								this.widgetMetaData.widgetUri, response.message);
+				afStudio.Msg.error(msg);				 
+			}
+		});
 	}//eo initWidgetPanel
 	
 	/**
-	 * {@link #widgetDefinition} <u>datafetched</u> event listener.
+	 * Opens widget designer based on passed in definition.
 	 * @param {Object} definition The widget metadata.
 	 */
-	,onWidgetDataFetched : function(definition) {
-		//add definition into widget's metadata
-		this.widgetMetaData.definition = definition;
-		
+	,openWidgetDesigner : function(definition) {		
 		this.add({
 			xtype: 'afStudio.wd.widgetTabPanel',
 			widgetMeta: this.widgetMetaData
 		});		
-		this.doLayout();
-		        
-        afStudio.vp.unmask('center');
-	}//eo onWidgetDataFetched	
+		this.doLayout();       
+	}//eo openWidgetDesigner
 });
 
 /**
