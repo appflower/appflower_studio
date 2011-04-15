@@ -170,7 +170,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		afStudio.navigation.WidgetItem.superclass.initComponent.apply(this, arguments);
 	}//eo initComponent
 	
-    ,getModule : function(node) {
+	/**
+	 * Returns module name for the node.
+	 * @param {Ext.tree.TreePanel} node
+	 * @return {String} application name
+	 */
+    ,getNodeModule : function(node) {
 		var module;
 
 		switch (node.attributes.type) {
@@ -186,54 +191,14 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         }
 
 		return module;
-	}
+	}//eo getNodeModule
 	
-	,getXmlPath : function(node) {
-		var path;
-
-		switch (node.attributes.type) {
-			case "app": case "module":
-        		path = false;
-    		break;
-        	case "xml":
-                path = node.attributes.xmlPath;
-    		break;	
-        }
-
-		return path;
-	}
-	
-	,getActionPath : function(node) {
-		var path;
-
-		switch (node.attributes.type) {
-			case "app": case "module":
-        		path = false;
-    		break;
-        	case "xml":
-        		path = node.attributes.actionPath;
-    		break;
-        }
-
-		return path;
-	}
-	
-	,getSecurityPath : function(node) {
-		var path;
-
-		switch (node.attributes.type) {
-			case "app": case "module":
-        		path = false;
-    		break;
-        	case "xml":
-        		path = node.attributes.securityPath;
-    		break;
-        }
-
-		return path;
-	}
-	
-	,getApp : function(node) {
+	/**
+	 * Returns application name for the node.
+	 * @param {Ext.tree.TreePanel} node
+	 * @return {String} application name
+	 */
+	,getNodeApp : function(node) {
 		var nodeType = this.getNodeAttribute(node, 'type'),
 			app;
 
@@ -247,7 +212,15 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         }
 
 		return app;
-	}//eo getApp
+	}//eo getNodeApp
+	
+	,getNodeActionPath : function(node) {
+		return this.getNodeAttribute(node, 'actionPath');
+	}
+	
+	,getNodeSecurityPath : function(node) {
+		return this.getNodeAttribute(node, 'securityPath');
+	}
 	
 	/**
 	 * Handles {@link #appContextMenu} menu's <b>itemclick</b> event listener and 
@@ -270,7 +243,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				}
 			}
 		}
-		this.addBranchNode(node, {app: this.getApp(node)});
+		this.addBranchNode(node, {app: this.getNodeApp(node)});
 	}//eo onAddModule
 		
 	/**
@@ -381,12 +354,13 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo onAddWidget
 	
 	/**
-	 * Adds "module" node type.
+	 * Adds module.
+	 * @param {Ext.tree.TreeNode} node The node being added
 	 */
 	,addNodeModule : function(node) {
 		var _this = this,
-			module = this.getModule(node),
-			app = this.getApp(node);
+			module = this.getNodeModule(node),
+			app = this.getNodeApp(node);
 		
 		this.executeAction({
 			url: _this.baseUrl,
@@ -406,15 +380,21 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		});
 	}//eo addNodeModule
 	
+	/**
+	 * Renames module.
+	 * @param {Ext.tree.TreeNode} node The node being renamed
+	 * @param {String} value The new node's value
+	 * @param {String} startValue The old node's value
+	 */
 	,renameNodeModule : function(node, value, startValue) {
 		var renameParams = {
 		 	params: {
 				cmd: 'renameModule',
 				moduleName: startValue,
 				renamedModule: value,
-				app: this.getApp(node)		
+				app: this.getNodeApp(node)		
 		 	},
-		 	refreshNode: this.getApp(node),
+		 	refreshNode: this.getNodeApp(node),
 		 	msg: 'module'
 		};
 		
@@ -428,6 +408,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		afStudio.Msg.info('Renaming "xml" node', 'back-end is not implemented');
 	}//eo renameNodeXml
 	
+	/**
+	 * Basic method executes node rename action.
+	 * @param {Object} renameObj
+	 * @param {String} newNodeValue
+	 * @param {String} oldNodeValue
+	 */
 	,renameNode : function(renameObj, newNodeValue, oldNodeValue) {
 		var _this = this,
 			refresh = renameObj.refreshNode ? renameObj.refreshNode : this.getRootNode();
@@ -446,12 +432,16 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		});
 	}//eo renameNode 	
 	
+	/**
+	 * Deletes module.
+	 * @param {Ext.tree.TreeNode} node
+	 */
 	,deleteNodeModule : function(node) {
 		var	deleteParams = {
 			params: {
 				 cmd: 'deleteModule',
-				 moduleName: this.getModule(node),
-				 app: this.getApp(node)
+				 moduleName: this.getNodeModule(node),
+				 app: this.getNodeApp(node)
 			},
 			item: node.text,
 			msg: 'module'
@@ -460,12 +450,16 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		this.deleteNode(deleteParams);
 	}//eo deleteNodeModule
 
+	/**
+	 * Deletes widget.
+	 * @param {Ext.tree.TreeNode} node
+	 */
 	,deleteNodeXml : function(node) {
 		afStudio.Msg.info('Delete "xml" node', 'back-end is not implemented');
 	}//eo deleteNodeXml
 	
 	/**
-	 * Basic node delete method.
+	 * Basic method executes node delete action.
 	 * @param {Object} deleteObj
 	 */
 	,deleteNode : function(deleteObj) {
@@ -490,10 +484,10 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo deleteNode
 
     ,addWidgetDesignerForNode : function(node) {
-        var actionPath = this.getActionPath(node);
-        var securityPath = this.getSecurityPath(node);
-        var widgetUri = node.attributes.widgetUri;
-
+        var actionPath = this.getNodeActionPath(node),
+        	securityPath = this.getNodeSecurityPath(node),
+        	widgetUri = node.attributes.widgetUri;
+	
         this.addWidgetDesigner(widgetUri, actionPath, securityPath);
     }
     

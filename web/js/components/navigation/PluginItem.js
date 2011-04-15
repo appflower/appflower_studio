@@ -213,6 +213,9 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @override
 	 */
 	,runNode : function(node) {
+		
+		
+		
 		afStudio.getWidgetsTreePanel().addWidgetDesignerForNode(node);
 	}//eo runNode
 	

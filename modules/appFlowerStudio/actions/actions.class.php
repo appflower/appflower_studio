@@ -28,8 +28,9 @@ class appFlowerStudioActions extends sfActions
 			
 	public function executeCodepress($request)
 	{
-		$this->codepress_path=$this->afExtjs->getExamplesDir().'codepress/';
-		
+		$this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';
+		//$this->afExtjs->getExamplesDir().'codepress/';
+				
 		$this->language=(($this->hasRequestParameter('language')&&$this->getRequestParameter('language')!='undefined')?$this->getRequestParameter('language'):'generic');
 		
 		return $this->renderPartial('codepress');		

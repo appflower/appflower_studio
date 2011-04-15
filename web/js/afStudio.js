@@ -19,7 +19,7 @@ var afStudio = function () {
 		
 		initAjaxRedirect : function() {
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
-				var response = Ext.decode(xhr.responseText);				
+				var response = Ext.decode(xhr.responseText);
 				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
 					location.href = response.redirect;
 				}
@@ -107,7 +107,7 @@ var afStudio = function () {
 		 * Instantiates afStudio.
 		 * Main method.
 		 */
-		,init : function () { 
+		,init : function () {
 		    Ext.QuickTips.init();
 		    Ext.apply(Ext.QuickTips.getQuickTip(), {
 			    trackMouse: true

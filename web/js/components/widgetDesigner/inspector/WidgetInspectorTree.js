@@ -38,13 +38,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
         var bootomBar = new Ext.Toolbar({
 			items: [{
 	            text: 'Save'
-	            //TODO refactor!
-//	            handler: function() {
-//	                this.widgetInspectorTree.body.mask('Loading, please Wait...', 'x-mask-loading');
-//	                var widgetsTreePanel = afStudio.getWidgetsTreePanel()
-//	                widgetsTreePanel.saveWidgetDefinition();
-//	            },
-//	            scope: this
+	            //TODO WidgetDefinition->save
 	        }]
         });            
         
