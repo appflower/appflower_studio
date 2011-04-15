@@ -17,6 +17,11 @@ var afStudio = function () {
 	
 	return {
 		
+		/**
+		 * Redirects browser to specified URL during ajax requests.
+		 * URL is specified in <u>redirect</u> response property.
+		 * {@link Ext.Ajax#requestcomplete} event listener.
+		 */
 		initAjaxRedirect : function() {
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
 				var response = Ext.decode(xhr.responseText);
@@ -26,19 +31,31 @@ var afStudio = function () {
 			});
 		}//eo initAjaxRedirect
 	
+		/**
+		 * Sets CLI console text.
+		 * @param {String} content The content being set, it can as plain as well as html content. 
+		 */
 		,setConsole : function(content) {
 			afStudio.cli.CommandLineMgr.setConsole(content);
 		}
 		
+		/**
+		 * Appends content to the end of the console CLI.
+		 */
 		,updateConsole : function(content) {
 			afStudio.cli.CommandLineMgr.updateConsole(content);
 		}
  
+		/**
+		 * Logs messages.
+		 * @param {String} message The message being logged.
+		 * @param {String} messageType The message type
+		 */
 		,log : function(message, messageType) {
 			messageType = messageType || false;
 			
 			Ext.Ajax.request({
-				url: window.afStudioWSUrls.getNotificationsUrl(),
+				url: afStudioWSUrls.getNotificationsUrl(),
 				method: 'POST',
 				params: {
 					cmd: 'set',
@@ -48,12 +65,16 @@ var afStudio = function () {
 				callback: function(options, success, response) {
 					response = Ext.decode(response.responseText);					
 					if (!success) {
-						Ext.Msg.alert('Failure','Server-side failure with status code: ' + response.status);
+						afStudio.Msg.error('Failure', 'Server-side failure with status code: ' + response.status);
 					}
 				}
 			});		
 		}//eo log
 		
+		/**
+		 * Returns studio's viewport.
+		 * @return {@link afStudio.viewport.StudioViewport} viewport
+		 */
 		,getViewport : function() {
 			return this.vp;
 		}
