@@ -207,3 +207,17 @@ Ext.applyIf(Array.prototype, {
 	}//eo dragDown
 });
 
+/**
+ * @class String
+ */
+Ext.applyIf(String.prototype, {
+	
+	/**
+	 * Checks if string value represents boolean true value.  
+	 * Case insensitive. 
+	 * @return {Boolean} true if string value equals to "true" otherwise false.
+	 */
+	boolean : function() {
+		return (/^true$/i).test(this);
+	}	
+});

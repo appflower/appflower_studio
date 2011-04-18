@@ -7,7 +7,7 @@ afStudio.wd.WidgetFactory = function() {
 		/**
 		 * Creates WI root node
 		 * @param {String} type The widget type
-		 * @return root node 
+		 * @return {afStudio.wi.ObjectRootNode} concrete implementation of WI root node 
 		 */
 		createWIRootNode : function(type) {
 			var root;

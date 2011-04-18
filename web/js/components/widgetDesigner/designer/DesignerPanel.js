@@ -11,12 +11,29 @@ Ext.namespace('afStudio.wd');
 afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	
 	/**
+	 * @cfg {String} layout (sets to 'fit')
+	 */
+	layout : 'fit'
+	
+	/**
+	 * Widget meta data object:
+	 * <u>
+	 *   <li><b>actionPath</b>: Path to widget's action controller.</li>
+	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
+	 *   <li><b>widgetUri</b>: Widget URI</li>
+	 *   <li><b>definition</b>: Widget's metadata definition.</li>
+	 * </ul>
+	 * @cfg {Object} widgetMeta
+	 */	
+	
+	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	_beforeInitComponent : function() {
-		var _this = this;
+	,_beforeInitComponent : function() {
+		var _this = this,
+			   gf = afStudio.wd.GuiFactory;
 		
 		var columnsMenu = {
 			items: [
@@ -42,9 +59,12 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 			}]
 		};
 		
+		var view = gf.buildGui(this.widgetMeta.definition);
+		
 		return {
 			border: true,
 			autoScroll: true,
+			bodyStyle: 'padding: 4px;',
 			tbar: {
 				items: [
 				{
@@ -67,7 +87,10 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 					handler: this.preview,
 					scope: this
 				}]
-			}			
+			},
+			items: [
+				view
+			]
 		};
 	}//eo _beforeInitComponent	
 	

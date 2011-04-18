@@ -22,13 +22,14 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 * Function onWndShow
 	 * Creates Drag/DropZones for FieldsGrid and relataions grid
 	 */
-	onWndShow: function(){
+	onWndShow : function() {
 		var _this = this;
 	    
 	    /**
 	     * DZ for relations grid
 	     */
 	    var relGridDropTargetEl =  this.relationsGrid.getView().scroller.dom;
+	    
 	    new Ext.dd.DropTarget(relGridDropTargetEl, {
             ddGroup    : 'widgetsBuilder',
             notifyDrop : function(ddSource, e, data){
@@ -92,14 +93,14 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				}
 			}
 		});
-	},
+	}
 	
 	/**
 	 * Loads Model's Fields
 	 * @param {Ext.tree.TreeNode} modelNode
 	 * @param {Function} callback
 	 */
-	loadModelFields : function(modelNode, callback) {
+	,loadModelFields : function(modelNode, callback) {
 		var s = this.modelsTree.getSchema(modelNode),
 			m = this.modelsTree.getModel(modelNode);
 			
@@ -107,27 +108,27 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			params: {schema: s, model: m},
 			callback: callback || Ext.emptyFn
 		});
-	},
+	}
 	
 	/**
 	 * ModelTree <u>click</u> event listener
 	 * @param {Ext.tree.TreeNode} node
 	 * @param {Ext.EventObject} e
 	 */
-	onModelClick : function(node, e) {
+	,onModelClick : function(node, e) {
 		this.fieldsGrid.show();
 		this.loadModelFields(node);
-	},
+	}
 	
 	/**
 	 * ModelTree <u>modelsload</u> event listener
 	 * @param {Ext.tree.Loader} loader
 	 * @param {XMLHttpRequest} response
 	 */
-	onModelsLoad : function(loader, response) {
+	,onModelsLoad : function(loader, response) {
 		this.fieldsGrid.getStore().removeAll();
 		this.fieldsGrid.hide();
-	},
+	}
 	
 	/**
 	 * Function onRelGridRefresh
@@ -135,7 +136,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 *  
 	 * @param {Object} GridView
 	 */
-	onRelGridRefresh: function(view){
+	,onRelGridRefresh: function(view){
 		var grid = view.grid;
    		var ds = grid.getStore();
     	for (var i=0, rcnt=ds.getCount(); i<rcnt; i++) {
@@ -163,50 +164,42 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
         		});
     		}
 		}
-	},
+	}
 	
 	/**
-	 * ExtJS template method
-	 * @private
-	 */
-	initComponent: function() {
-		Ext.apply(this, Ext.apply(this.initialConfig, this._initCmp()));
-		afStudio.wd.WidgetsBuilder.superclass.initComponent.apply(this, arguments);
-		this._initEvents();
-	},
-
-	/**
 	 * Initializes component
-	 * @return {Object} The config object
 	 * @private
+	 * @return {Object} The configuration object 
 	 */
-	_initCmp : function() {
+	,_beforeInitComponent : function() {
 		var _this = this;
 		
 		this.RelationRec = Ext.data.Record.create([
-		    {name: 'id', mapping: 'id'},
-		    {name: 'model', mapping: 'model'},
-		    {name: 'name', mapping: 'name'},
-		    {name: 'field', mapping: 'field'},
-		    {name: 'type', mapping: 'type'},
-		    {name: 'size', mapping: 'size'}
+		    'id',
+		    'model',
+		    'name',
+		    'field',
+		    'type',
+		    'size'
 		])
 		
 		this.relationsGrid = new Ext.grid.GridPanel({
-			flex: 1, id: 'rel-grid',
+			id: 'rel-grid',
+			flex: 1, 
 			width: 234,
-			ddGroup: 'widgetsBuilderRel', enableDragDrop: true,
+			ddGroup: 'widgetsBuilderRel', 
+			enableDragDrop: true,
 			store: new Ext.data.ArrayStore({
-			    idIndex: 0,  
+			    idIndex: 0,
 			    fields: [
-			       'id', {name: 'model'}, {name: 'name'},
-			       {name: 'field'}, {name: 'type'}, {name: 'size'}
+			       'id', 'model', 'name', 'field', 'type', 'size'
 			    ]
 			}),
-			
-			viewConfig: {scrollOffset: 19, forceFit: true},
-			
-			columns : [
+			viewConfig: {
+				scrollOffset: 19, 
+				forceFit: true
+			},
+			columns: [
 				{header: 'Selected fields', sortable: true, width: 170, dataIndex: 'name'}
 			],
 			loadMask: true,
@@ -216,13 +209,16 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		});
 		
 		this.fieldsGrid = new Ext.grid.GridPanel({
-			ddGroup: 'widgetsBuilder',
-			enableDragDrop   : true,
 			id: 'fields-grid',
+			ref: '../fieldsGrid',
+			ddGroup: 'widgetsBuilder',
+			enableDragDrop: true,			
 			store: new Ext.data.JsonStore({
-				autoLoad: false,
 				url: _this.fieldsUrl,
-				baseParams: {xaction: 'read'},
+				autoLoad: false,				
+				baseParams: {
+					xaction: 'read'
+				},
 				root: 'rows',
 				idProperty: 'id',    							
 				fields: ['id', 'name', 'type', 'size', 'required']
@@ -230,7 +226,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			sm: new Ext.grid.RowSelectionModel({
 				singleSelect: true
 			}),
-			columns : [
+			columns: [
 				{header: 'Name', sortable: true, width: 150, dataIndex: 'name'},
 				{header: 'Type', sortable: true, width: 110, dataIndex: 'type'},
 				{header: 'Size', sortable: true, width: 60, dataIndex: 'size'}
@@ -238,27 +234,30 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			loadMask: true,
 			border: false,
 			autoScroll: true,
-			hidden: true,
-			ref: '../fieldsGrid'
+			hidden: true
 		});
 		
 		this.basket = new Ext.Panel({
-			xtype: 'panel', id: 'widgets-basket', 
+			id: 'widgets-basket',
+			xtype: 'panel',  
 			html: '<center><br>Drop Item here,<br> to remove it</br></center>', 
-			bodyStyle: 'padding: 5px;', height: 70, width: 234
+			bodyStyle: 'padding: 5px;', 
+			height: 70, 
+			width: 234
 		});
 		
 		this.modulesCombo = new Ext.ux.form.GroupingComboBox({
             fieldLabel: 'Module Location',
 			loadingText: 'Please wait...',
 			emptyText: 'Please select the module location...',
-            store: new Ext.data.Store({
-	            proxy: new Ext.data.HttpProxy({url: window.afStudioWSUrls.getModulesUrl()}),
-	            baseParams: {cmd: 'getGrouped'},
-	            reader: new Ext.data.JsonReader(
-	                {totalProperty: 'total', id: 'value'},
-	                ['value', 'text', 'group']
-	        	),
+            store: new Ext.data.JsonStore({
+	            url: afStudioWSUrls.getModulesUrl(),
+	            baseParams: {
+	            	cmd: 'getGrouped'
+	            },
+	            totalProperty: 'total', 
+	            idProperty: 'value',
+	            fields: ['value', 'text', 'group'],	        	
                 remoteSort: true
             }),
             displayField: 'text',
@@ -357,14 +356,51 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				scope: this
 			}]
 		};	
-	},
+	}//eo _beforeInitComponent	
+	
+	/**
+	 * ExtJS template method
+	 * @private
+	 */
+	,initComponent: function() {
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, this._beforeInitComponent())
+		);		
+		afStudio.wd.WidgetsBuilder.superclass.initComponent.apply(this, arguments);
+		this._afterInitComponent();
+	}
+
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	,_afterInitComponent : function() {
+		
+		this.addEvents(
+			/**
+			 * @event 'widgetcreated' Fires when widget is created.
+			 * @param {String} widgetUri The created widget's URI
+			 * @param {Object} response The create request response object.
+			 */
+			'widgetcreated'
+		);
+		
+		this.on('show', this.onWndShow, this);
+		
+		this.relationsGrid.getView().on('refresh', this.onRelGridRefresh);
+		
+		this.modelsTree.on({
+			'click' : Ext.util.Functions.createDelegate(this.onModelClick, this),
+			'modelsload' : Ext.util.Functions.createDelegate(this.onModelsLoad, this)			
+		});
+	}//eo _afterInitComponent	
 	
 	/**
 	 * Function chStep
 	 * Changes wizard step and prepares page UI
 	 * @param {Number}  stepNo - New step number
 	 */
-	chStep: function(stepNo){
+	,chStep: function(stepNo){
 		var panel = Ext.getCmp(this.id);
 		if(1 == stepNo) {
 			var size = {width: 840, height: 450};
@@ -383,13 +419,13 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		this.setSize(size);
 		this.setPagePosition( (Ext.getBody().getWidth()-size.width)/2, 150);		
 		panel.getLayout().setActiveItem(stepNo);
-	},
+	}
 	
 	/**
 	 * Function create
 	 * Handler for "Create Widget" operation
 	 */
-	create: function(){
+	,create: function(){
 		var items = [];
 		
 		//each item contains data.field, data.id, data.model, data.name, data.size, data.type
@@ -417,38 +453,15 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		}, this);
 		
 		afsWD.saveDefinition(widgetMetaData, callback, true);
-	},	
+	}	
 	
 	/**
 	 * Function cancel
 	 * Close window
 	 */
-	cancel : function() {
+	,cancel : function() {
 		this.close();
-	},
+	}
 	
-	/**
-	 * Initializes events
-	 * @private
-	 */
-	_initEvents : function() {
-		
-		this.addEvents(
-			/**
-			 * @event 'widgetcreated' Fires when widget is created.
-			 * @param {String} widgetUri The created widget's URI
-			 * @param {Object} response The create request response object.
-			 */
-			'widgetcreated'
-		);
-		
-		this.on('show', this.onWndShow, this);
-		
-		this.relationsGrid.getView().on('refresh', this.onRelGridRefresh);
-		
-		this.modelsTree.on({
-			'click' : Ext.util.Functions.createDelegate(this.onModelClick, this),
-			'modelsload' : Ext.util.Functions.createDelegate(this.onModelsLoad, this)			
-		});
-	}//eo _initEvents
+
 });
