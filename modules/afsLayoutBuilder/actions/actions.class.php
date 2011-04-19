@@ -8,7 +8,7 @@
  */
 class afsLayoutBuilderActions extends sfActions
 {
-    
+
     /**
      * Catching executing ajax queries from direct call
      */
@@ -18,7 +18,7 @@ class afsLayoutBuilderActions extends sfActions
             $this->forward404("This action should be used only for ajax requests");
         }
     }
-    
+
     /**
      * Rendering json
      */
@@ -27,7 +27,7 @@ class afsLayoutBuilderActions extends sfActions
         $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
         return $this->renderText(json_encode($result));
     }
-    
+
     /**
      * Getting page definition controller
      */
@@ -38,12 +38,12 @@ class afsLayoutBuilderActions extends sfActions
             'app' => $request->getParameter('app', 'frontend'),
             'page' => $request->getParameter('page', ''),
         );
-        
+
         $aResponse = afStudioCommand::process('layout', 'get', $aParameters);
-        
+
         return $this->renderJson($aResponse);
     }
-    
+
     /**
      * Saving changes in page definition
      */
@@ -54,12 +54,12 @@ class afsLayoutBuilderActions extends sfActions
             'page' => $request->getParameter('page', ''),
             'definition' => json_decode($request->getParameter('definition'), true)
         );
-        
+
         $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
-        
+
         return $this->renderJson($aResponse);
     }
-    
+
     /**
      * Getting widget info
      */
@@ -69,9 +69,9 @@ class afsLayoutBuilderActions extends sfActions
             'module' => $request->getParameter('module_name'),
             'action' => $request->getParameter('action_name'),
         );
-        
+
         $aResponse = afStudioCommand::process('layout', 'getWidget', $aParameters);
-        
+
         $afCU = new afConfigUtils($aParameters['module']);
         $aResponse['meta'] = array(
             'actionPath'   => $afCU->getActionFilePath('actions.class.php'),
@@ -79,20 +79,20 @@ class afsLayoutBuilderActions extends sfActions
             'securityPath' => $afCU->getConfigFilePath("security.yml"),
         	"widgetUri"    => "{$aParameters['module']}/{$aParameters['action']}"
         );
-        
+
         return $this->renderJson($aResponse);
     }
-    
+
     /**
      * Get widget list
      */
     public function executeGetWidgetList(sfWebRequest $request)
     {
         $aResponse = afStudioCommand::process('layout', 'getWidgetList');
-        
+
         return $this->renderJson($aResponse);
     }
-    
+
     /**
      * Create new page functionality
      */
@@ -104,14 +104,14 @@ class afsLayoutBuilderActions extends sfActions
             'title' => $request->getParameter('title', $request->getParameter('page')),
             'is_new' => true
         );
-        
+
         $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
-        
+
         return $this->renderJson($aResponse);
     }
-    
+
     /**
-     * Rename Page 
+     * Rename Page
      */
     public function executeRename(sfWebRequest $request)
     {
@@ -120,12 +120,12 @@ class afsLayoutBuilderActions extends sfActions
             'page'  => $request->getParameter('page'),
             'name'  => $request->getParameter('name')
         );
-        
+
         $aResponse = afStudioCommand::process('layout', 'rename', $aParameters);
-        
+
         return $this->renderJson($aResponse);
     }
-    
+
     /**
      * Delete Page functionality
      */
@@ -135,11 +135,11 @@ class afsLayoutBuilderActions extends sfActions
             'app'   => $request->getParameter('app', 'frontend'),
             'page'  => $request->getParameter('page')
         );
-        
+
         $aResponse = afStudioCommand::process('layout', 'delete', $aParameters);
-        
+
         return $this->renderJson($aResponse);
     }
-    
+
 }
 

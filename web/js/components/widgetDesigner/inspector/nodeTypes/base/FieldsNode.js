@@ -10,12 +10,16 @@
  */ 
 afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
     
-	/**
-	 * Ordered array of children nodes.
-	 * @property childIdsOrdered
-	 * @type {Array}
-	 */
-    childIdsOrdered : [],
+	constructor : function(config) {
+		/**
+		 * Ordered array of children nodes.
+		 * @property childIdsOrdered
+		 * @type {Array}
+		 */
+	    this.childIdsOrdered = [];
+	    
+	    afStudio.wi.FieldsNode.superclass.constructor.apply(this, arguments);	    
+	},//eo constructor    
     
     /**
      * @override

@@ -37,13 +37,14 @@ afStudio.wd.GuiFactory = function() {
 		 * @param {Object} meta The view metadata
 		 */
 		,buildGui : function(meta) {
-			var viewType = meta.type,
+			var viewType = meta.definition.type,
 				view;
 			
 			switch (viewType) {
 				case this.LIST:					
 					view = new afStudio.wd.list.SimpleListView({
-						viewMeta: meta
+						viewMeta: meta.definition,
+						widgetUri: meta.widgetUri
 					});
 				break;
 				

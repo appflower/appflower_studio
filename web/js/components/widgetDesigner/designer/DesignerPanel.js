@@ -59,7 +59,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 			}]
 		};
 		
-		var view = gf.buildGui(this.widgetMeta.definition);
+		var view = gf.buildGui(this.widgetMeta);
 		
 		return {
 			border: true,

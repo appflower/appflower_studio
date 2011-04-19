@@ -14,6 +14,8 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	layout : 'fit'
 	
+	,id: 'wd-inspector-tree'
+	
 	/**
 	 * Widget metadata.
 	 * @cfg {Object} widgetMeta

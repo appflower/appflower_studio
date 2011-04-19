@@ -39,23 +39,23 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	,_beforeInitComponent : function() {
 		var _this = this,
-			   vm = this.viewMeta;
-	
+			   vm = this.viewMeta,
+		  columns = [];
+		
 		if (!Ext.isEmpty(vm['i:fields']['i:column'])) {
 			var clm = vm['i:fields']['i:column'];
 			
-			var columns = [];
-			
 			if (Ext.isArray(clm)) {
 				for (var i = 0; i < clm.length; i++) {
-					var c = clm[i];				
+					var c = clm[i];			
 					columns.push({
 						header:   c.label,
+						name:     c.name,
 						width:    c.width ? c.width : this.columnWidth,
 						hidden:   c.hidden ? c.hidden.boolean() : false,
 						hideable: c.hideable ? c.hideable.boolean() : true,
 						fixed:    c.resizable ? c.resizable.boolean() : false
-					});				
+					});
 				}
 				for (var i = columns.length - 1; i <= this.maxColumns; i++) {
 					columns.push({
@@ -68,13 +68,13 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 				
 			} else {
 				columns.push({
-					header:   clm.label,
-					width:    clm.width ? clm.width : this.columnWidth,
-					hidden:   clm.hidden ? clm.hidden.boolean() : false,
-					hideable: clm.hideable ? clm.hideable.boolean() : true,
-					fixed:    clm.resizable ? clm.resizable.boolean() : false					
-				});
-				
+					header:    clm.label,
+					name:      clm.name,
+					width:     clm.width ? clm.width : this.columnWidth,
+					hidden:    clm.hidden ? clm.hidden.boolean() : false,
+					hideable:  clm.hideable ? clm.hideable.boolean() : true,
+					fixed:     clm.resizable ? clm.resizable.boolean() : false					
+				});				
 				for (var i = 1; i <= this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
@@ -88,10 +88,9 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 
 		var store = new Ext.data.ArrayStore({
 			idIndex: 0,
-			data: [],
+			data: [[]],
 			fields: []
 		});
-
 		
 		return {
 			title: vm['i:title'],
@@ -128,30 +127,28 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 				
 				this.on({
 					scope: this,
-					columnmove: function(oldIndex, newIndex) {				
+					columnmove: function(oldIndex, newIndex) {
 						if (oldIndex != newIndex) {
-//							console.log('column was moved', oldIndex, newIndex);
-//							
-//							var t = Ext.getCmp('wd-inspector-tree');
-//							var fn = t.getRootNode().getFieldsNode();
-//							console.log('field nodes', fn.childIdsOrdered);
-//							console.log('fields meta', fn.dumpChildsData());
-//							console.log('widget meta', t.getRootNode().dumpDataForWidgetDefinition());
-//							
-//							console.log('gui meta', this.viewMeta);
-//							
-//							
-//							var wdef = new afStudio.wd.WidgetDefinition({
-//								widgetUri: 'pages/A',
-//								widgetType: afStudio.wd.GuiFactory.LIST
-//							});
-//							
-//							this.viewMeta['i:fields']['i:column'].push({
-//								label: 'test',
-//								name: 'test_field'
-//							});
-//							
-//							wdef.saveDefinition(this.viewMeta, function(){ afStudio.Msg.info('OK!'); });
+							var clmName = this.getColumnModel().config[newIndex].name;
+							
+							var t = Ext.getCmp('wd-inspector-tree');
+							var fn = t.getRootNode().getFieldsNode();
+							
+							if (fn && fn.findChild('text', clmName)) {
+								if (oldIndex > newIndex) {
+									fn.childIdsOrdered.dragUp(oldIndex, newIndex);
+								} else {
+									fn.childIdsOrdered.dragDown(oldIndex, newIndex);
+								}
+							}
+							
+							var definition = t.getRootNode().dumpDataForWidgetDefinition();
+							
+							var wdef = new afStudio.wd.WidgetDefinition({
+								widgetUri: this.widgetUri,
+								widgetType: this.viewMeta.type
+							});
+							wdef.saveDefinition(definition);
 						}
 					}
 				});
