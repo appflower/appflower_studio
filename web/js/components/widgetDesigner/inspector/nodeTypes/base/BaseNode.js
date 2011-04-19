@@ -145,7 +145,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      * @param {Object} widgetData
      */
     ,configureFor : function(widgetData) {
-        for (var id in widgetData) {
+        for (var id in widgetData) {        	
             this.configureForValue(id, widgetData[id]);
         }
         for (var i = 0; i < this.behaviors.length; i++) {

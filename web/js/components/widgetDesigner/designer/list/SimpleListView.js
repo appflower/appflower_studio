@@ -112,7 +112,58 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);		
 		afStudio.wd.list.SimpleListView.superclass.initComponent.apply(this, arguments);
-	}//eo initComponent		
+		this._afterInitComponent();
+	}//eo initComponent
+	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	,_afterInitComponent : function() {
+		var _this = this;
+		
+		_this.on({
+			scope: _this,
+			afterrender: function() {
+				
+				this.on({
+					scope: this,
+					columnmove: function(oldIndex, newIndex) {				
+						if (oldIndex != newIndex) {
+//							console.log('column was moved', oldIndex, newIndex);
+//							
+//							var t = Ext.getCmp('wd-inspector-tree');
+//							var fn = t.getRootNode().getFieldsNode();
+//							console.log('field nodes', fn.childIdsOrdered);
+//							console.log('fields meta', fn.dumpChildsData());
+//							console.log('widget meta', t.getRootNode().dumpDataForWidgetDefinition());
+//							
+//							console.log('gui meta', this.viewMeta);
+//							
+//							
+//							var wdef = new afStudio.wd.WidgetDefinition({
+//								widgetUri: 'pages/A',
+//								widgetType: afStudio.wd.GuiFactory.LIST
+//							});
+//							
+//							this.viewMeta['i:fields']['i:column'].push({
+//								label: 'test',
+//								name: 'test_field'
+//							});
+//							
+//							wdef.saveDefinition(this.viewMeta, function(){ afStudio.Msg.info('OK!'); });
+						}
+					}
+				});
+				
+				
+			},
+			contextmenu: function(e) {
+				e.preventDefault();
+			}
+		});
+		
+	}//eo _afterInitComponent
 });
 
 /**

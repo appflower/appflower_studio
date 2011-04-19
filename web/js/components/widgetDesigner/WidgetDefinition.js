@@ -69,7 +69,7 @@ afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
             success: function(xhr) {
 		        var response = Ext.util.JSON.decode(xhr.responseText);
 		        if (response.success) {
-		            var definition = Ext.util.JSON.decode(response.data);
+		            var definition = response.data;
 		            
 		            if (Ext.isFunction(options.success)) {
 		            	Ext.util.Functions.createDelegate(options.success, this, [definition], false)();

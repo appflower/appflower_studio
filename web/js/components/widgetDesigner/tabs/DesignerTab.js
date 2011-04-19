@@ -48,6 +48,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			items: [
 			{
 				xtype: 'afStudio.wd.designerPanel',
+				ref: 'designerPanel',
 				widgetMeta: this.widgetMeta,
 				flex: 3								
 			},{ 
@@ -71,15 +72,40 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);		
 		afStudio.wd.DesignerTab.superclass.initComponent.apply(this, arguments);
+		this._afterInitComponent();
 	}//eo initComponent	
+	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	,_afterInitComponent : function() {
+		var _this = this;
+		
+		_this.on({
+			scope: this,
 			
+			afterrender: function() {
+				
+//				var v = this.designerPanel.items.itemAt(0);
+//				
+//				console.log('the wd gui view', v);
+//					
+//				
+//				var t = Ext.getCmp('wd-inspector-tree');
+//				console.log('WI tree', t);
+//				var fn = t.getRootNode().getFieldsNode();						
+//				console.log('field nodes', fn);
+//				
+			}
+		})
+	}//eo _afterInitComponent
+	
+	//TODO refactor/reimplement
 	,preview : function() {
 		afApp.widgetPopup(this.widgetUri, this.rootNode.text, null, "iconCls:\'" + "\',width:800,height:600,maximizable: false", afStudio);
 	}//eo preview
-	
-	,saveDesigner: function() {
-	}	
-	
+		
 });
 
 /**

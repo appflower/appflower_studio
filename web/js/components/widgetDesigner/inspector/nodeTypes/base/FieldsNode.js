@@ -44,7 +44,6 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
         	}
         }
         for (var i = 0; i < childNodes.length; i++) {
-        	console.log();
             data.push(childNodes[i].dumpDataForWidgetDefinition());
         }
         if (data.length == 0 && !this.dumpEvenWhenEmpty) {
