@@ -39,13 +39,8 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
         	ret = {};
         	
         for (var i = 0; i < this.childIdsOrdered.length; i++) {
-        	//TODO error here thus is used if construction
-        	//after the 2nd time of creation of new widget js error appeares due to
-        	//childIdsOrdered array contains null elements.
         	var n = this.findChild('id', this.childIdsOrdered[i]);
-        	if (n) {
-            	childNodes.push(n);
-        	}
+        	childNodes.push(n);
         }
         for (var i = 0; i < childNodes.length; i++) {
             data.push(childNodes[i].dumpDataForWidgetDefinition());

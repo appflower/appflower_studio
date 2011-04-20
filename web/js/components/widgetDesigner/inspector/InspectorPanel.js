@@ -90,7 +90,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 		
 		this.propertyGrid.on({
 			scope: _this,
-        	'afteredit' : _this.onPropertyGridAfterEdit
+        	afteredit: _this.onPropertyGridAfterEdit
 		});		
 		this.propertyGrid.getView().on('refresh', _this.onGridRefresh, _this);
 	}//eo _afterInitComponent	
@@ -115,6 +115,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 		this.onGridRefresh(e.grid.getView());
 		
         if (e.record && e.record.WITreeNode) {
+        	console.log('behaviors', e.record.WITreeNode.behaviors);
             e.record.WITreeNode.propertyChanged(e.record);
         }
 	}//eo onPropertyGridAfterEdit
@@ -124,7 +125,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 * Creates QTips for each row in grid
 	 * @param {Objectt} view - grid view
 	 */
-	,onGridRefresh : function(view) {		
+	,onGridRefresh : function(view) {
 		var grid = view.grid,
    			  ds = grid.getStore();
    			  

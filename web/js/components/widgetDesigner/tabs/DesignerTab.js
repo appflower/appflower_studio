@@ -1,7 +1,10 @@
 Ext.namespace('afStudio.wd');
 
 /**
- * Designer tab panel
+ * Designer tab panel. 
+ * Contains from two parts: {@link afStudio.wd.DesignerPanel} and {@link afStudio.wi.InspectorPalett}.
+ * DesignerPanel is a GUI for building widget.
+ * InspectorPalett is a palett of instruments dedicated for building/manipulating of widget's properties.
  * 
  * @class afStudio.wd.DesignerTab
  * @extends Ext.Panel
@@ -33,6 +36,20 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 */	
 	
 	/**
+	 * Reference to DesignerPanel.
+	 * 
+	 * @property designerPanel
+	 * @type {afStudio.wd.DesignerPanel}
+	 */
+	
+	/**
+	 * Reference to InspectorPalette.
+	 * 
+	 * @property inspectorPalette
+	 * @type {afStudio.wi.InspectorPalett}
+	 */
+	
+	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
@@ -57,6 +74,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 				items: [
 				{
 					xtype: 'afStudio.wi.inspectorPalette',
+					ref: '../inspectorPalette',
 					widgetMeta: this.widgetMeta
                 }]
 			}]
@@ -82,24 +100,66 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
+		/**
+		 * @property designerView
+		 * @type {Ext.Container}
+		 */
+		this.designerView = this.designerPanel.getDesignerView(); 
+ 		
+		/**
+		 * @property viewProperty
+		 * @type {afStudio.wi.PropertyGrid}
+		 */
+		this.viewProperty = this.inspectorPalette.getPropertyGrid();
+		
+		/**
+		 * @property viewInspector
+		 * @type {afStudio.wi.WidgetInspectorTree}
+		 */
+		this.viewInspector = this.inspectorPalette.getInspectorTree();
+		
+		this.relayEvents(this.designerView, ['changeColumnPosition']);
+		
+		
 		_this.on({
-			scope: this,
-			
+			scope: this,			
+			changeColumnPosition: this.onListViewChangeColumnPosition,
 			afterrender: function() {
-				
-//				var v = this.designerPanel.items.itemAt(0);
-//				
-//				console.log('the wd gui view', v);
-//					
-//				
-//				var t = Ext.getCmp('wd-inspector-tree');
-//				console.log('WI tree', t);
-//				var fn = t.getRootNode().getFieldsNode();						
-//				console.log('field nodes', fn);
-//				
 			}
 		})
 	}//eo _afterInitComponent
+	
+	/**
+	 * Handles columns reordering in List view
+	 * <u>changeColumnPosition</u> event listener.
+	 */
+	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {
+		
+		var widgetUri = this.widgetMeta.widgetUri,
+			widgetType = afStudio.wd.GuiFactory.getWidgetType(this.widgetMeta),
+			vi = this.viewInspector,
+			viRoot = vi.getRootNode(),
+			fn = viRoot.getFieldsNode();
+		
+		
+		if (fn && fn.findChild('text', clm.name)) {
+			if (oldPos > newPos) {
+				fn.childIdsOrdered.dragUp(oldPos, newPos);
+			} else {
+				fn.childIdsOrdered.dragDown(oldPos, newPos);
+			}
+		}
+		
+		//TODO move to "save" button handler
+		var definition = viRoot.dumpDataForWidgetDefinition();	
+		
+		var wdef = new afStudio.wd.WidgetDefinition({
+			widgetUri: widgetUri,
+			widgetType: widgetType
+		});
+		wdef.saveDefinition(definition);
+		//----		
+	}//eo onListViewChangeColumnPosition
 	
 	//TODO refactor/reimplement
 	,preview : function() {

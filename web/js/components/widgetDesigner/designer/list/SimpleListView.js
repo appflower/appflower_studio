@@ -119,48 +119,40 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @private
 	 */	
 	,_afterInitComponent : function() {
-		var _this = this;
+		var _this = this;		
 		
-		_this.on({
+		this.addEvents(
+			/**
+			 * @event 'changeColumnPosition' Fires when a column was moved from his previous position.
+			 * @param {Ext.grid.Column} clm The column being moved.
+			 * @param {Number} oldPos The column's previous(old) position.
+			 * @param {Number} newPos The column's new position where it was moved.
+			 */
+			'changeColumnPosition'
+		);
+		
+		this.on({
 			scope: _this,
-			afterrender: function() {
-				
-				this.on({
-					scope: this,
-					columnmove: function(oldIndex, newIndex) {
-						if (oldIndex != newIndex) {
-							var clmName = this.getColumnModel().config[newIndex].name;
-							
-							var t = Ext.getCmp('wd-inspector-tree');
-							var fn = t.getRootNode().getFieldsNode();
-							
-							if (fn && fn.findChild('text', clmName)) {
-								if (oldIndex > newIndex) {
-									fn.childIdsOrdered.dragUp(oldIndex, newIndex);
-								} else {
-									fn.childIdsOrdered.dragDown(oldIndex, newIndex);
-								}
-							}
-							
-							var definition = t.getRootNode().dumpDataForWidgetDefinition();
-							
-							var wdef = new afStudio.wd.WidgetDefinition({
-								widgetUri: this.widgetUri,
-								widgetType: this.viewMeta.type
-							});
-							wdef.saveDefinition(definition);
-						}
-					}
-				});
-				
-				
-			},
+			
+			columnmove: _this.onColumnMove,
+			
 			contextmenu: function(e) {
 				e.preventDefault();
 			}
 		});
-		
 	}//eo _afterInitComponent
+	
+	/**
+	 * Handler of <u>columnmove</u> event.
+	 * @param {Number} oldIndex
+	 * @param {Number} newIndex
+	 */
+	,onColumnMove : function(oldIndex, newIndex) {
+		if (oldIndex != newIndex) {
+			var clm = this.getColumnModel().config[newIndex];
+			this.fireEvent('changeColumnPosition', clm, oldIndex, newIndex);					
+		}
+	}//eo onColumnMove
 });
 
 /**

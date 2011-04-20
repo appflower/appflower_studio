@@ -11,7 +11,6 @@ afStudio.wd.GuiFactory = function() {
 	return {
 		
 		/**
-		 * 
 		 * @constant
 		 */
 		LIST : 'list'
@@ -32,6 +31,15 @@ afStudio.wd.GuiFactory = function() {
 		,HTML : 'html'
 		
 		/**
+		 * Returns widget type
+		 * @param {Object} meta The widget metadata or definition 
+		 * @return {String} widget type
+		 */
+		,getWidgetType : function(meta) {
+			return meta.definition ? meta.definition.type : meta.type;
+		}
+		
+		/**
 		 * Factory method.
 		 * 
 		 * @param {Object} meta The view metadata
@@ -43,8 +51,7 @@ afStudio.wd.GuiFactory = function() {
 			switch (viewType) {
 				case this.LIST:					
 					view = new afStudio.wd.list.SimpleListView({
-						viewMeta: meta.definition,
-						widgetUri: meta.widgetUri
+						viewMeta: meta.definition
 					});
 				break;
 				
@@ -69,60 +76,9 @@ afStudio.wd.GuiFactory = function() {
 					};				
 				break;
 			}
-			
-//			var gui = [];
 									
 			return view;
-		}//eo buildLayout		
+		}//eo buildGui
 		
-		/**
-		 * Creates page view <b>i:area</b>.
-		 * 
-		 * @param {Object} vm The view's metadata.
-		 * @param {Number} mPos The view's metadata position inside page metadata.
-		 */
-		,createView : function(vm, mPos) {			
-			var region, //depends on view type
-				viewConfigObj,
-				view;
-				
-			switch (vm.attributes.type) {
-				case 'content':
-					viewConfigObj = {
-						viewMetaPosition: mPos,
-						region: 'center'
-					}					
-				break;
-				
-				case 'sidebar':
-					viewConfigObj = {
-						viewMetaPosition : mPos,
-						region: 'west',
-						split: true,
-						collapseMode: 'mini',
-						width: vm.attributes.width ? vm.attributes.width : 200
-					}
-				break;
-				
-				case 'footer':
-					viewConfigObj = {
-						viewMetaPosition : mPos,
-						region: 'south',
-						split: true,
-						collapseMode: 'mini',
-						height: 130
-					}
-				break;
-			}
-			
-			viewConfigObj.viewMeta = vm;
-			
-			view = afStudio.layoutDesigner.view.MetaDataProcessor.isViewTabbed(vm) 
-			           ? new afStudio.layoutDesigner.view.TabbedView(viewConfigObj)
-					   : new afStudio.layoutDesigner.view.NormalView(viewConfigObj);
-			
-			return view; 
-		}//eo createView
-		
-	}//eo afStudio.layoutDesigner.view.ViewFactory
+	};
 }();

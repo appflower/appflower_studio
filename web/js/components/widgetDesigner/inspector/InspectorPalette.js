@@ -1,5 +1,13 @@
 Ext.namespace('afStudio.wi');
 
+/**
+ * InspectorPalette is the palette of instruments dedicated for browsing/building/manipulating of
+ * widget's metadata/properties and handling its appearance. 
+ * 
+ * @class afStudio.wi.InspectorPalette
+ * @extends Ext.Container
+ * @author Nikolai
+ */
 afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 	
 	/**
@@ -14,18 +22,18 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 	
 	/**
 	 * Widget metadata.
-	 * @cfg {Object} widgetMeta
+	 * @cfg {Object} (Required) widgetMeta
 	 */
 	
 	/**
-	 * Widget inspector panel.
+	 * Reference to Widget inspector panel.
 	 * 
 	 * @property inspectorPanel
 	 * @type {afStudio.wi.InspectorPanel}
 	 */
 	
 	/**
-	 * Code browser tree component.
+	 * Reference to Code browser.
 	 * 
 	 * @property codeBrowser
 	 * @type {Ext.ux.FileTreePanel}
@@ -38,32 +46,26 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 	 */
 	,_beforeInitComponent : function() {
    		var _this = this;
-		
-        this.codeBrowser = new Ext.ux.FileTreePanel({
-        	title: 'Code Browser',
-			url: afStudioWSUrls.getFiletreeUrl(),
-			width: 248,
-			height: 500,			
-			rootPath: 'root',
-			rootVisible: true,
-			rootText: 'Home',
-			maxFileSize: 524288 * 2 * 10,
-			topMenu: false,
-			autoScroll: true,
-			enableProgress: false,
-			singleUpload: true
-		});
         
 		return {
-			itemId: 'inspector',
 			items: [
 			{
 				xtype: 'afStudio.wi.inspectorPanel',				
 				ref: 'inspectorPanel',
 				widgetMeta: this.widgetMeta
-			},
-				this.codeBrowser
-			]
+			},{
+				xtype: 'filetreepanel',
+				ref: 'codeBrowser',
+	        	title: 'Code Browser',
+				url: afStudioWSUrls.getFiletreeUrl(),
+				rootText: 'Home',
+				rootPath: 'root',
+				rootVisible: true,				
+				maxFileSize: 524288 * 2 * 10,
+				autoScroll: true,
+				enableProgress: false,
+				singleUpload: true				
+			}]
 		};
 	}//eo _beforeInitComponent	
 	
@@ -106,8 +108,17 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 					this.layout.setActiveItem(0);
 				}).defer(100, this);
 			}
-		});			
+		});
+		
 	}//eo _afterInitComponent
+	
+	,getPropertyGrid : function() {
+		return this.inspectorPanel.propertyGrid;
+	}
+	
+	,getInspectorTree : function() {
+		return this.inspectorPanel.inspectorTree;
+	}
 	
 });
 

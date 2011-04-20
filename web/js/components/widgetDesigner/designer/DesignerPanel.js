@@ -68,7 +68,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 			tbar: {
 				items: [
 				{
-					text: 'Save', 
+					text: 'Save',
 					iconCls: 'icon-save'
 //					handler: this.saveDesigner,
 //					scope: this
@@ -104,6 +104,15 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		);		
 		afStudio.wd.DesignerPanel.superclass.initComponent.apply(this, arguments);
 	}//eo initComponent	
+	
+	/**
+	 * Returns designer GUI view component.
+	 * @return {Ext.Container} view
+	 */
+	,getDesignerView : function() {
+		return this.items.itemAt(0);
+	}//eo getDesignerView
+	
 });
 
 

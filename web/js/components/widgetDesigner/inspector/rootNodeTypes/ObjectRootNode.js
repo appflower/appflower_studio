@@ -92,17 +92,4 @@ afStudio.wi.ObjectRootNode = Ext.extend(afStudio.wi.BaseNode, {
 	 * @protected
 	 */
 	,buildFieldsNode : Ext.emptyFn
-     
-	/**
-	 * @protected
-	 * @override
-	 * @return {Object}
-	 */
-    ,dumpDataForWidgetDefinition : function() {
-        var data = {};
-        
-        afStudio.wi.ObjectRootNode.superclass.dumpDataForWidgetDefinition.call(this, data);
-        return data;
-    }//eo dumpDataForWidgetDefinition
-    
 });
