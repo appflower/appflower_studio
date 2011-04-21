@@ -213,11 +213,19 @@ Ext.applyIf(Array.prototype, {
 Ext.applyIf(String.prototype, {
 	
 	/**
-	 * Checks if string value represents boolean true value.  
+	 * Makes a string's first character uppercase.
+	 * @return {String} string with first letter in uppercase
+	 */
+	ucfirst : function() {
+    	return this.substr(0, 1).toUpperCase() + this.substr(1);
+	}	
+	
+	/**
+	 * Checks if string value represents boolean <tt>true</tt> value.  
 	 * Case insensitive. 
 	 * @return {Boolean} true if string value equals to "true" otherwise false.
 	 */
-	boolean : function() {
+	,boolean : function() {
 		return (/^true$/i).test(this);
 	}	
 });

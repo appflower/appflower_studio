@@ -102,14 +102,14 @@ afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
                 createNewWidget: createNewWidget ? true : false
             },
             success: function(xhr) {
-				var response = Ext.decode(xhr.responseText);				
+				var response = Ext.decode(xhr.responseText);
 				if (response.success) {
 					afStudio.Msg.info(response.message);
 					if (Ext.isFunction(callback)) {
-						callback(response);	
+						callback(response);
 					}
 				} else {
-					afStudio.Msg.error(response.message);					
+					afStudio.Msg.error(response.message);				
 				}
             },
             failure: function(xhr, reqOpt) {

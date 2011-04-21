@@ -34,62 +34,32 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	,_beforeInitComponent : function() {
 		var _this = this,
 			   gf = afStudio.wd.GuiFactory;
+				
+		var gui = gf.buildGui(this.widgetMeta);
 		
-		var columnsMenu = {
-			items: [
+		var topBarItems = [
 			{
-				text: 'Columns',
-				menu: {
-					items: [
-    				{
-						xtype: 'combo', 
-						triggerAction: 'all', 
-						mode: 'local', 
-						emptyText: 'Select an item...',
-						store: [        
-							[1, '1 columns'],
-							[2, '2 columns'],
-							[3, '3 columns'],
-							[4, '4 columns']
-						]
-					}]
-				}
-			},{
-				text: 'Re-size' 
-			}]
-		};
+				text: 'Save',
+				itemId: 'saveBtn',
+				iconCls: 'icon-save'
+			},'-',{
+				text: 'Preview', 
+				itemId: 'previewBtn',
+				iconCls: 'icon-preview' 
+			}
+		];		
+		Ext.flatten(topBarItems.splice(2, 0, gui.controls));
 		
-		var view = gf.buildGui(this.widgetMeta);
 		
 		return {
 			border: true,
 			autoScroll: true,
 			bodyStyle: 'padding: 4px;',
-			tbar: {
-				items: [
-				{
-					text: 'Save',
-					iconCls: 'icon-save'
-//					handler: this.saveDesigner,
-//					scope: this
-				},'-',{
-					text: 'Add Field', 
-					iconCls: 'icon-add'
-//					handler: this.addField,
-//					scope: this
-				},'-',{
-					text: 'Format', 
-					iconCls: 'icon-format', 
-					menu: columnsMenu
-				},'-',{
-					text: 'Preview', 
-					iconCls: 'icon-preview', 
-					handler: this.preview,
-					scope: this
-				}]
-			},
+			tbar: new Ext.Toolbar({
+				items: topBarItems
+			}),
 			items: [
-				view
+				gui.view
 			]
 		};
 	}//eo _beforeInitComponent	
@@ -113,6 +83,14 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		return this.items.itemAt(0);
 	}//eo getDesignerView
 	
+	/**
+	 * Returns top toolbar item.
+	 * @param {String} item The itemId property  
+	 * @return {Ext.Toolbar.Item} top toolbar item
+	 */
+	,getMenuItem : function(item) {		
+		return this.getTopToolbar().getComponent(item);
+	}//eo getMenuItem
 });
 
 

@@ -67,10 +67,10 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 				xtype: 'afStudio.wd.designerPanel',
 				ref: 'designerPanel',
 				widgetMeta: this.widgetMeta,
-				flex: 3								
+				flex: 3
 			},{ 
 				xtype: 'container',
-				flex: 1,				
+				flex: 1,
 				items: [
 				{
 					xtype: 'afStudio.wi.inspectorPalette',
@@ -98,49 +98,123 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private
 	 */	
 	,_afterInitComponent : function() {
-		var _this = this;
+		var _this = this,
+			   gf = afStudio.wd.GuiFactory,
+			widgetType = gf.getWidgetType(this.widgetMeta);
 		
 		/**
 		 * @property designerView
 		 * @type {Ext.Container}
 		 */
-		this.designerView = this.designerPanel.getDesignerView(); 
- 		
+		this.designerView = this.designerPanel.getDesignerView();
 		/**
 		 * @property viewProperty
 		 * @type {afStudio.wi.PropertyGrid}
 		 */
 		this.viewProperty = this.inspectorPalette.getPropertyGrid();
-		
 		/**
 		 * @property viewInspector
 		 * @type {afStudio.wi.WidgetInspectorTree}
 		 */
-		this.viewInspector = this.inspectorPalette.getInspectorTree();
+		this.viewInspector = this.inspectorPalette.getInspectorTree();		
 		
-		this.relayEvents(this.designerView, ['changeColumnPosition']);
+		//Save button
+		this.designerPanel.getMenuItem('saveBtn').on('click', this.onSaveWidgetView, this);
 		
+		//Preview button
+		this.designerPanel.getMenuItem('previewBtn').on('click', this.onPreviewWidgetView, this);		
+		
+		if (gf.isWidgetTypeValid(widgetType)) {
+			this['init' + widgetType.ucfirst() + 'DesignerView']();
+		} else {
+			afStudio.Msg.error('Widget Designer', String.format('Unknown widget type <b>{0}</b>', widgetType));
+		}
 		
 		_this.on({
-			scope: this,			
-			changeColumnPosition: this.onListViewChangeColumnPosition,
+			scope: this,
 			afterrender: function() {
 			}
-		})
+		});
 	}//eo _afterInitComponent
+	
+	/**
+	 * Initializes <b>List</b> view.
+	 * @private 
+	 */
+	,initListDesignerView : function() {
+		this.relayEvents(this.designerView, ['changeColumnPosition']);
+		
+		//Preview button
+		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
+			afStudio.Msg.info('Add column click');
+		}, this);		
+		
+		
+		this.on({
+			scope: this,
+			changeColumnPosition: this.onListViewChangeColumnPosition
+		});
+	}//eo initListDesignerView
+	
+	/**
+	 * @private
+	 */
+	,initEditDesignerView : function() {		
+	}//eo initEditDesignerView
+	
+	/**
+	 * @private
+	 */
+	,initShowDesignerView : function() {		
+	}//eo initShowDesignerView
+	
+	/**
+	 * @private
+	 */
+	,initHtmlDesignerView : function() {		
+	}//eo initHtmlDesignerView
+	
+	/**
+	 * WD <i>Save button</i> <u>click</u> event listener.
+	 * Saves widget view.
+	 */
+	,onSaveWidgetView : function() {
+		var widgetUri = this.widgetMeta.widgetUri,
+			widgetType = afStudio.wd.GuiFactory.getWidgetType(this.widgetMeta),		
+			vi = this.viewInspector,
+			viRoot = vi.getRootNode();		
+		
+		var viewDefinition = viRoot.dumpDataForWidgetDefinition();	
+		
+		var wdef = new afStudio.wd.WidgetDefinition({
+			widgetUri: widgetUri,
+			widgetType: widgetType
+		});
+		wdef.saveDefinition(viewDefinition);		
+	}//eo onSaveWidgetView
+
+	/**
+	 * WD <i>Preview</i> button <u>click</u> event listener.
+	 * Shows widget preview.
+	 */	
+	,onPreviewWidgetView : function() {
+		var widgetUri = this.widgetMeta.widgetUri,			
+			viRootNode = this.viewInspector.getRootNode();		
+		
+//		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);		
+		afStudio.Msg.info('Widget Designer', '<b>Preview</b> functionality is under construction. <br /> Comming soon.');
+	}//eo onPreviewWidgetView
 	
 	/**
 	 * Handles columns reordering in List view
 	 * <u>changeColumnPosition</u> event listener.
 	 */
-	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {
-		
+	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {		
 		var widgetUri = this.widgetMeta.widgetUri,
 			widgetType = afStudio.wd.GuiFactory.getWidgetType(this.widgetMeta),
 			vi = this.viewInspector,
 			viRoot = vi.getRootNode(),
-			fn = viRoot.getFieldsNode();
-		
+			fn = viRoot.getFieldsNode();		
 		
 		if (fn && fn.findChild('text', clm.name)) {
 			if (oldPos > newPos) {
@@ -148,24 +222,9 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			} else {
 				fn.childIdsOrdered.dragDown(oldPos, newPos);
 			}
-		}
-		
-		//TODO move to "save" button handler
-		var definition = viRoot.dumpDataForWidgetDefinition();	
-		
-		var wdef = new afStudio.wd.WidgetDefinition({
-			widgetUri: widgetUri,
-			widgetType: widgetType
-		});
-		wdef.saveDefinition(definition);
-		//----		
-	}//eo onListViewChangeColumnPosition
-	
-	//TODO refactor/reimplement
-	,preview : function() {
-		afApp.widgetPopup(this.widgetUri, this.rootNode.text, null, "iconCls:\'" + "\',width:800,height:600,maximizable: false", afStudio);
-	}//eo preview
-		
+		}		
+	}//eo onListViewChangeColumnPosition	
+			
 });
 
 /**

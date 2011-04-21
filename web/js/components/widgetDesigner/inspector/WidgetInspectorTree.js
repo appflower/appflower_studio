@@ -78,7 +78,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * This tree <u>afterrender</u> event listener.
 	 * @private
 	 */	
-	,initWidgetInspectorTree : function() {		
+	,initWidgetInspectorTree : function() {
 		this.expandAll();
 	}//eo initWidgetInspectorTree 
 	

@@ -14,7 +14,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * Widget metadata.
 	 * @cfg {Object} widgetMeta
-	 */	
+	 */
 	
 	/**
 	 * Inspector property grid.
@@ -115,7 +115,6 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 		this.onGridRefresh(e.grid.getView());
 		
         if (e.record && e.record.WITreeNode) {
-        	console.log('behaviors', e.record.WITreeNode.behaviors);
             e.record.WITreeNode.propertyChanged(e.record);
         }
 	}//eo onPropertyGridAfterEdit
