@@ -151,7 +151,8 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      * @param {Object} widgetData
      */
     ,configureFor : function(widgetData) {
-        for (var id in widgetData) {        	
+        for (var id in widgetData) {
+        	//console.log('id, widgetData[id]', id, widgetData[id]);
             this.configureForValue(id, widgetData[id]);
         }
         for (var i = 0; i < this.behaviors.length; i++) {
@@ -171,7 +172,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
             this.propertyChanged(property);
         } else {
             var child = this.findChild('id', id);
-            if (child) {            	
+            if (child) {
                 child.configureFor(value);
             } else {
                 child = this.findChild('childNodeId', id);

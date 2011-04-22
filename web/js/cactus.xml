@@ -1,0 +1,42 @@
+<cactus>		
+	<needles>
+		
+		<!-- Widget Designer -->		
+		<needle>
+			<output>wd.js</output>
+			<files>
+				<file>custom/Ext.ux.TabMenu.js</file>
+				<file>components/widgetDesigner/inspector/nodeBehaviors/base</file>
+				<file>components/widgetDesigner/inspector/nodeBehaviors</file>
+				<!-- wi nodeTypes -->
+				<file>components/widgetDesigner/inspector/nodeTypes/base/BaseNode.js</file>
+				<file>components/widgetDesigner/inspector/nodeTypes/base/ContainerNode.js</file>
+				<file>components/widgetDesigner/inspector/nodeTypes/base/CollectionNode.js</file>
+				<file>components/widgetDesigner/inspector/nodeTypes/base/FieldsNode.js</file>
+				<file>components/widgetDesigner/inspector/nodeTypes/base/NodeBuilder.js</file>
+				<file>components/widgetDesigner/inspector/nodeTypes</file>
+				<!-- wi propertyType -->
+				<file>components/widgetDesigner/inspector/propertyType/base/PropertyGrid.js</file>
+				<file>components/widgetDesigner/inspector/propertyType/base/PropertyBaseType.js</file>
+				<file>components/widgetDesigner/inspector/propertyType/base/PropertyTypeBoolean.js</file>
+				<file>components/widgetDesigner/inspector/propertyType/base/PropertyTypeChoice.js</file>
+				<file>components/widgetDesigner/inspector/propertyType/base/PropertyTypeString.js</file>
+				<file>components/widgetDesigner/inspector/propertyType</file>
+				<!-- wi rootNodeTypes -->
+				<file>components/widgetDesigner/inspector/rootNodeTypes/ObjectRootNode.js</file>
+				<file>components/widgetDesigner/inspector/rootNodeTypes/EditNode.js</file>
+				<file>components/widgetDesigner/inspector/rootNodeTypes/ListNode.js</file>
+				<!-- wi components -->
+				<file>components/widgetDesigner/inspector</file>
+				<!-- wd gui -->
+				<file>components/widgetDesigner/designer/list</file>
+				<file>components/widgetDesigner/designer/GuiFactory.js</file>
+				<file>components/widgetDesigner/designer/DesignerPanel.js</file>				
+				<!-- wd -->
+				<file>components/widgetDesigner/tabs</file>	
+				<file>components/widgetDesigner</file>
+			</files>
+		</needle>
+		
+	</needles>
+</cactus>

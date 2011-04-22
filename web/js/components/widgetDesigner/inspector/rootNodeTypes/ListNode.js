@@ -38,7 +38,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         behavior.setProperties([
             new afStudio.wi.PropertyTypeString('maxperpage', 'Max records per page').setValue(10).create()
         ]);
-        this.addBehavior(behavior);
+        this.addBehavior(behavior);        
     }//eo constructor 
     
     /**

@@ -23,7 +23,7 @@ class appFlowerStudioActions extends sfActions
 	
 	public function executeStudio()
 	{
-		$this->setTemplate(sfConfig::get('afs_debug')?'devStudio':'prodStudio');				
+		$this->setTemplate(sfConfig::get('afs_debug') ? 'devStudio' : 'prodStudio');				
 	}
 			
 	public function executeCodepress($request)
