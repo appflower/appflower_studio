@@ -51,10 +51,10 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 					columns.push({
 						header:   c.label,
 						name:     c.name,
-						width:    c.width ? c.width : this.columnWidth
-//						hidden:   (c.hidden ? c.hidden.boolean() : false),
-//						hideable: (c.hideable ? c.hideable.boolean() : true),
-//						fixed:    (c.resizable ? c.resizable.boolean() : false)
+						width:    c.width ? c.width : this.columnWidth,
+						hidden:   (c.hidden ? c.hidden.bool() : false),
+						hideable: (c.hideable ? c.hideable.bool() : true),
+						fixed:    (c.resizable ? c.resizable.bool() : false)
 					});
 				}
 				for (var i = columns.length - 1; i <= this.maxColumns; i++) {
@@ -70,10 +70,10 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 				columns.push({
 					header:    clm.label,
 					name:      clm.name,
-					width:     clm.width ? clm.width : this.columnWidth
-//					hidden:    clm.hidden ? clm.hidden.boolean() : false,
-//					hideable:  clm.hideable ? clm.hideable.boolean() : true,
-//					fixed:     clm.resizable ? clm.resizable.boolean() : false					
+					width:     clm.width ? clm.width : this.columnWidth,
+					hidden:    clm.hidden ? clm.hidden.bool() : false,
+					hideable:  clm.hideable ? clm.hideable.bool() : true,
+					fixed:     clm.resizable ? clm.resizable.bool() : false					
 				});				
 				for (var i = 1; i <= this.maxColumns; i++) {
 					columns.push({

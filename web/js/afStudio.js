@@ -225,7 +225,7 @@ Ext.applyIf(String.prototype, {
 	 * Case insensitive. 
 	 * @return {Boolean} true if string value equals to "true" otherwise false.
 	 */
-	,boolean : function() {
+	,bool : function() {
 		return (/^true$/i).test(this);
 	}	
 });
