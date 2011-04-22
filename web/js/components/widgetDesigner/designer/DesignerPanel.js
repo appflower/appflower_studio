@@ -11,63 +11,56 @@ Ext.namespace('afStudio.wd');
 afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	
 	/**
+	 * @cfg {String} layout (sets to 'fit')
+	 */
+	layout : 'fit'
+	
+	/**
+	 * Widget meta data object:
+	 * <u>
+	 *   <li><b>actionPath</b>: Path to widget's action controller.</li>
+	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
+	 *   <li><b>widgetUri</b>: Widget URI</li>
+	 *   <li><b>definition</b>: Widget's metadata definition.</li>
+	 * </ul>
+	 * @cfg {Object} widgetMeta
+	 */	
+	
+	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	_beforeInitComponent : function() {
-		var _this = this;
+	,_beforeInitComponent : function() {
+		var _this = this,
+			   gf = afStudio.wd.GuiFactory;
+				
+		var gui = gf.buildGui(this.widgetMeta);
 		
-		var columnsMenu = {
-			items: [
+		var topBarItems = [
 			{
-				text: 'Columns',
-				menu: {
-					items: [
-    				{
-						xtype: 'combo', 
-						triggerAction: 'all', 
-						mode: 'local', 
-						emptyText: 'Select an item...',
-						store: [        
-							[1, '1 columns'],
-							[2, '2 columns'],
-							[3, '3 columns'],
-							[4, '4 columns']
-						]
-					}]
-				}
-			},{
-				text: 'Re-size' 
-			}]
-		};
+				text: 'Save',
+				itemId: 'saveBtn',
+				iconCls: 'icon-save'
+			},'-',{
+				text: 'Preview', 
+				itemId: 'previewBtn',
+				iconCls: 'icon-preview' 
+			}
+		];		
+		Ext.flatten(topBarItems.splice(2, 0, gui.controls));
+		
 		
 		return {
 			border: true,
 			autoScroll: true,
-			tbar: {
-				items: [
-				{
-					text: 'Save', 
-					iconCls: 'icon-save'
-//					handler: this.saveDesigner,
-//					scope: this
-				},'-',{
-					text: 'Add Field', 
-					iconCls: 'icon-add'
-//					handler: this.addField,
-//					scope: this
-				},'-',{
-					text: 'Format', 
-					iconCls: 'icon-format', 
-					menu: columnsMenu
-				},'-',{
-					text: 'Preview', 
-					iconCls: 'icon-preview', 
-					handler: this.preview,
-					scope: this
-				}]
-			}			
+			bodyStyle: 'padding: 4px;',
+			tbar: new Ext.Toolbar({
+				items: topBarItems
+			}),
+			items: [
+				gui.view
+			]
 		};
 	}//eo _beforeInitComponent	
 	
@@ -81,6 +74,23 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		);		
 		afStudio.wd.DesignerPanel.superclass.initComponent.apply(this, arguments);
 	}//eo initComponent	
+	
+	/**
+	 * Returns designer GUI view component.
+	 * @return {Ext.Container} view
+	 */
+	,getDesignerView : function() {
+		return this.items.itemAt(0);
+	}//eo getDesignerView
+	
+	/**
+	 * Returns top toolbar item.
+	 * @param {String} item The itemId property  
+	 * @return {Ext.Toolbar.Item} top toolbar item
+	 */
+	,getMenuItem : function(item) {		
+		return this.getTopToolbar().getComponent(item);
+	}//eo getMenuItem
 });
 
 

@@ -84,11 +84,12 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 	}//eo _afterInitComponent
 	
 	/**
-	 * Function addCodeEditorTab
-	 * @param {String} fileName - File Name
-	 * @param {String} path - File Path
-	 * @param {String} tabTip - Tab panel tooltip string
-	 * @param {String} file - File
+	 * Adds {@link afStudio.wd.CodeEditorTab} code editor tab.
+	 * 
+	 * @param {String} fileName The file Name
+	 * @param {String} path The file Path
+	 * @param {String} tabTip The tab panel tooltip string
+	 * @param {String} file  The file
 	 */
 	,addCodeEditorTab : function(fileName, path, tabTip, file) {
 		var t = this.add({

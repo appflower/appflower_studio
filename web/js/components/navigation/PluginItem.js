@@ -212,11 +212,8 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	/**
 	 * @override
 	 */
-	,runNode : function(node) {
-		
-		
-		
-		afStudio.getWidgetsTreePanel().addWidgetDesignerForNode(node);
+	,runNode : function(node) {		
+		this.showWidgetDesignerForNode(node);
 	}//eo runNode
 	
 	/**
@@ -435,6 +432,19 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			}
 		});				
 	}//eo deleteNode
+	
+	/**
+	 * Opens widget designer for specified node.
+	 * @private
+	 * @param {Ext.tree.TreeNode} node
+	 */
+    ,showWidgetDesignerForNode : function(node) {
+        var actionPath = this.getNodeAttribute(node, 'actionPath'),
+        	securityPath = this.getNodeAttribute(node, 'securityPath'),
+        	widgetUri = this.getNodeAttribute(node, 'widgetUri');
+	
+        afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri, actionPath, securityPath);
+    }//eo showWidgetDesignerForNode	
 }); 
 
 /**

@@ -26,6 +26,12 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
 	 */
 	
 	/**
+	 * Node properties.
+	 * @property properties
+	 * @type {Object}
+	 */
+	
+	/**
 	 * BaseNode constructor.
 	 * @param {Object} config The base node configuration object
 	 */
@@ -145,7 +151,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      * @param {Object} widgetData
      */
     ,configureFor : function(widgetData) {
-        for (var id in widgetData) {
+        for (var id in widgetData) {        	
             this.configureForValue(id, widgetData[id]);
         }
         for (var i = 0; i < this.behaviors.length; i++) {
@@ -194,9 +200,11 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     }//eo propertyChanged
     
     /**
+     * Returns dumped node's object containing all node's properties and children data.
      * @protected
+     * 
      * @param {Object} (optional) data
-     * @return {Object} dumped this node widget object object
+     * @return {Object} node's dumped object
      */
     ,dumpDataForWidgetDefinition : function(data) {
         if (!data) {
@@ -211,7 +219,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
             if (propertiesData[key] != '') {
                 childsData[key] = propertiesData[key];
             }
-        }
+        }        
 
         for (var i = 0; i < this.behaviors.length; i++) {
             childsData = this.behaviors[i].dumpDataForWidgetDefinition(childsData);
@@ -224,7 +232,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         } else {
             data[this.id] = childsData;
         }
-        
+
         return data;
     }//eo dumpDataForWidgetDefinition
     
@@ -234,7 +242,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      */
     ,dumpChildsData : function() {
         var data = {};
-        this.eachChild(function(childNode){
+        this.eachChild(function(childNode) {
             data = childNode.dumpDataForWidgetDefinition(data);
         });
         return data;
@@ -265,6 +273,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     
     /**
      * Abstract method.
+     * Not used for now anywhere.
      * @protected 
      */
     ,getPropertyRecordCfg : Ext.emptyFn

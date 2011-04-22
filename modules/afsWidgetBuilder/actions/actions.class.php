@@ -8,23 +8,38 @@
  */
 class afsWidgetBuilderActions extends sfActions
 {
+
+    /**
+     * Returns data encoded in json format,
+     * adds json content-type header to the response.
+     *  
+     * @param mixed $result
+     */
+    protected function renderJson($data)
+    {
+	    $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+		return $this->renderText(json_encode($data));
+    }
+    
     function executeGetWidget(sfWebRequest $request)
     {
         try {
             $afsWBW = new afsWidgetBuilderWidget($request->getParameter('uri'));
             $afsWBW->loadXml();
 
-            return array(
+            $response = array(
                 'success' => true,
-                'data' => $afsWBW->getDefinitionAsJSON()
+                'data' => $afsWBW->getDefinition()
             );
-
+            
         } catch( Exception $e ) {
-            return array(
+            $response = array(
                 'success' => false,
                 'message' => $e->getMessage()
             );
         }
+        
+        return $this->renderJson($response);
     }
 
     function executeSaveWidget(sfWebRequest $request)
@@ -40,22 +55,24 @@ class afsWidgetBuilderActions extends sfActions
             $validationStatusOrError = $afsWBW->save();
 
             if ($validationStatusOrError === true) {
-                return array(
+                $response = array(
                     'success' => true,
                     'message' => $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved'
                 );
             } else {
-                return array(
+                $response = array(
                     'success' => false,
                     'message' => $validationStatusOrError
                 );
             }
 
         } catch( Exception $e ) {
-            return array(
+            $response = array(
                 'success' => false,
                 'message' => $e->getMessage()
             );
         }
+        
+        return $this->renderJson($response);
     }
 }

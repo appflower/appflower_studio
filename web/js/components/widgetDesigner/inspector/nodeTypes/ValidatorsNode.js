@@ -31,7 +31,7 @@ afStudio.wi.ValidatorsNode = Ext.extend(afStudio.wi.CollectionNode, {
             }
         }
 
-        for(i=0;i<this.behaviors.length;i++) {
+        for (i = 0; i < this.behaviors.length; i++) {
             childsData = this.behaviors[i].dumpDataForWidgetDefinition(this, childsData);
         }
 

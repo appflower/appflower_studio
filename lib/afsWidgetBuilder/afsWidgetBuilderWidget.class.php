@@ -46,6 +46,11 @@ class afsWidgetBuilderWidget {
 
         $options = array(
             'parseAttributes' => true
+        /*
+          	'attributesArray' => 'attributes',
+        	'mode' => 'simplexml',
+        	'complexType' => 'array'
+        */
         );
 
         $unserializer = new XML_Unserializer($options);

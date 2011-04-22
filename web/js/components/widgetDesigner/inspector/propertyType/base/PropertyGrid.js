@@ -63,9 +63,29 @@ afStudio.wi.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnModel, {
 	        
 	    this.grid = grid;
 	    g.PropertyColumnModel.superclass.constructor.call(this, [
-	        {header: this.nameText, width:50, sortable: true, dataIndex:'name', id: 'name', menuDisabled:true},
-	        {header: this.valueText, width:50, resizable:false, dataIndex: 'value', id: 'value', menuDisabled:true},
-	        {header: 'RequiredHeader', width:50, resizable:false, dataIndex: 'required', id: 'required', menuDisabled:true, hidden: true}
+	        {
+	        	header: this.nameText,
+	        	id: 'name',
+	        	dataIndex: 'name',
+	        	width: 50, 
+	        	sortable: true, 
+	        	menuDisabled: true
+	        },{
+	        	header: this.valueText, 
+	        	id: 'value',
+	        	dataIndex: 'value',
+	        	width: 50, 
+	        	resizable: false,
+	        	menuDisabled: true
+	        },{
+	        	header: 'RequiredHeader', 
+	        	id: 'required',
+	        	dataIndex: 'required',
+	        	width: 50,
+	        	resizable: false,
+	        	menuDisabled: true,
+	        	hidden: true
+	    	}
 	    ]);
 	    this.store = store;
 	
@@ -123,19 +143,24 @@ afStudio.wi.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnModel, {
  * @constructor
  * @param {Object} config The grid config object
  */
-afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.grid.PropertyGrid**/, {
+afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     // private config overrides
-    enableColumnMove:false,
-    stripeRows:false,
-    trackMouseOver: false,
-    clicksToEdit:1,
+    enableColumnMove : false,
+    
+    stripeRows : false,
+    
+    trackMouseOver : false,
+    
+    clicksToEdit : 1,
+    
     enableHdMenu : false,
+    
     viewConfig : {
-        forceFit:true
+        forceFit: true
     },
 
     // private
-    initComponent : function(){
+    initComponent : function() {
     	
         this.customRenderers = this.customRenderers || {};
         this.customEditors = this.customEditors || {};
@@ -145,7 +170,30 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.grid.Propert
         var cm = new afStudio.wi.PropertyColumnModel(this, store);
         store.store.sort('name', 'ASC');
         
-        this.addEvents('beforepropertychange', 'propertychange');
+        this.addEvents(        
+			/**
+			 * @event beforepropertychange
+             * Fires before a property value changes.  Handlers can return false to cancel the property change
+             * (this will internally call {@link Ext.data.Record#reject} on the property's record).
+             * @param {Object} source The source data object for the grid (corresponds to the same object passed in
+             * as the {@link #source} config property).
+             * @param {String} recordId The record's id in the data store
+             * @param {Mixed} value The current edited property value
+             * @param {Mixed} oldValue The original property value prior to editing
+			 */
+        	'beforepropertychange',
+        	
+        	/**
+        	 * @event propertychange
+             * Fires after a property value has changed.
+             * @param {Object} source The source data object for the grid (corresponds to the same object passed in
+             * as the {@link #source} config property).
+             * @param {String} recordId The record's id in the data store
+             * @param {Mixed} value The current edited property value
+             * @param {Mixed} oldValue The original property value prior to editing 
+        	 */
+        	'propertychange'
+        );
         
         this.cm = cm;
         this.ds = store.store;
@@ -194,25 +242,24 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.grid.Propert
 	addCustomEditorsAndRenderers: function(source){
 		for(var i = 0, l = source.length; i<l; i++){
 			//TODO: maybe we need to create another flag..
-			if('choice' == source[i].type){
-				if(!this.customEditors[source[i].id]){
+			if ('choice' == source[i].type) {
+				if (!this.customEditors[source[i].id]) {
 					var store = [];
 					for(var key in source[i].originalStore){
 						store.push([key, source[i].originalStore[key]]);
 					}
 					
 					this.customEditors[source[i].id] = new Ext.grid.GridEditor(new Ext.form.ComboBox({
-        				selectOnFocus:true, 
+        				selectOnFocus: true,
         				value: source[i].get('value'),
         				tpl: '<tpl for="."><div ext:qtip="{field2}" class="x-combo-list-item">{field2}</div></tpl>',
-//	        			store: [['1', 'First'], ['2', 'Second'], ['3', 'Third']],
 						store: store,
 	        			triggerAction: 'all'
     	    		}));
 				}
 				
-				if(!this.customRenderers[source[i].id]){
-					this.customRenderers[source[i].id] = function(v, md, r){
+				if (!this.customRenderers[source[i].id]) {
+					this.customRenderers[source[i].id] = function(v, md, r) {
 		        		return r.originalStore[v];
 		        	};
 				}
@@ -226,8 +273,8 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel/*Ext.grid.Propert
 	 */
 	hideMandatoryCheckers: function(){
         //Hide mandatory checkers
-        var hd = Ext.select('DIV[id*="-gp-required-Mandatory-hd"]');
-		if(hd){
+        var hd = Ext.select('div[id*="-gp-required-Mandatory-hd"]');
+		if (hd) {
 			hd.setStyle({display: 'none'});
 		}		
 	},

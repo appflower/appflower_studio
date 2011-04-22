@@ -204,7 +204,6 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			case 'addfa':
 				var _index = this.getUninitColumn();
 				this.cm.config[_index].uninit = false;
-				this.cm.config[_index].uninit = false;
 				this.cm.moveColumn(_index, index + 1);
 				this.cm.setHidden(index + 1, false);
 				break;
@@ -212,14 +211,12 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 			case 'addfb' :
 				var _index = this.getUninitColumn();
 				this.cm.config[_index].uninit = false;
-				this.cm.config[_index].uninit = false;
 				this.cm.moveColumn(_index, index);
 				this.cm.setHidden(index, false);
 				break;
 				
 			case 'dupb':
 				var _index = this.getUninitColumn();
-				this.cm.config[_index].uninit = false;
 				this.cm.config[_index].uninit = false;
 				this.cm.moveColumn(_index, index + 1);
 				var header = this.cm.getColumnHeader(index);
@@ -359,7 +356,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView,{
 				break;
 				
 			default:
-				alert(item.itemId);
+				//alert(item.itemId);
 		}
 		return true;
 	},

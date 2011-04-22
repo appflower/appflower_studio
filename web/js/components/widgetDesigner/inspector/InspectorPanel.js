@@ -14,7 +14,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * Widget metadata.
 	 * @cfg {Object} widgetMeta
-	 */	
+	 */
 	
 	/**
 	 * Inspector property grid.
@@ -90,7 +90,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 		
 		this.propertyGrid.on({
 			scope: _this,
-        	'afteredit' : _this.onPropertyGridAfterEdit
+        	afteredit: _this.onPropertyGridAfterEdit
 		});		
 		this.propertyGrid.getView().on('refresh', _this.onGridRefresh, _this);
 	}//eo _afterInitComponent	
@@ -124,7 +124,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 * Creates QTips for each row in grid
 	 * @param {Objectt} view - grid view
 	 */
-	,onGridRefresh : function(view) {		
+	,onGridRefresh : function(view) {
 		var grid = view.grid,
    			  ds = grid.getStore();
    			  

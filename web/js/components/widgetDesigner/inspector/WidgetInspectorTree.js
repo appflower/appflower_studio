@@ -34,13 +34,6 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 		var _this = this;
 		
         var root = this.createRootNode();
-
-        var bootomBar = new Ext.Toolbar({
-			items: [{
-	            text: 'Save'
-	            //TODO WidgetDefinition->save
-	        }]
-        });            
         
         this.treeSorter = new Ext.tree.TreeSorter(this, {
         	folderSort: true
@@ -50,8 +43,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			root: root,			
             animate: true,
             containerScroll: true,
-            autoScroll: true,
-            bbar: bootomBar
+            autoScroll: true
 		};
 	}//eo _beforeInitComponent
 	
@@ -86,7 +78,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * This tree <u>afterrender</u> event listener.
 	 * @private
 	 */	
-	,initWidgetInspectorTree : function() {		
+	,initWidgetInspectorTree : function() {
 		this.expandAll();
 	}//eo initWidgetInspectorTree 
 	
@@ -97,17 +89,9 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
    ,createRootNode : function() {
    	    var wUri = this.widgetMeta.widgetUri,
    	    	df = this.widgetMeta.definition,
-   	    	root;
+   	    	root = afStudio.wd.WidgetFactory.createWIRootNode(df.type);   	    
    	    
-       	switch (df.type) {
-           case 'list':
-               root = new afStudio.wi.ListNode();
-           break;
-           case 'edit':
-               root = new afStudio.wi.EditNode();
-           break;
-       	}
-       	root.setText(wUri + ' [' + df.type + ']');       
+       	root.setText(wUri + ' [' + df.type + ']');
        	root.configureFor(df);
        
        	return root;
