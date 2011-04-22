@@ -16,14 +16,9 @@ class appFlowerStudioActions extends sfActions
 		$this->userinfo = afStudioUser::getInstance()->getInfo();
 	}	
 	
-	public function executeIndex()
-	{
-		
-	}
-	
 	public function executeStudio()
 	{
-		
+		$this->setTemplate(sfConfig::get('afs_debug')?'devStudio':'prodStudio');				
 	}
 			
 	public function executeCodepress($request)

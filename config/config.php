@@ -9,5 +9,10 @@ sfConfig::set(  'sf_enabled_modules',
                             $modules
                 )
 );
+/**
+ * use this to set the production:false/development:true environment of Studio
+ */
+sfConfig::set( 'afs_debug', true );
+
 
 //todo: automatic insertion of schema.yml tables into existing db
