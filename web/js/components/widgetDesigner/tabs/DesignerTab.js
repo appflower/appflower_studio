@@ -201,8 +201,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var widgetUri = this.widgetMeta.widgetUri,			
 			viRootNode = this.viewInspector.getRootNode();		
 		
-//		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);		
-		afStudio.Msg.info('Widget Designer', '<b>Preview</b> functionality is under construction. <br /> Comming soon.');
+		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);
 	}//eo onPreviewWidgetView
 	
 	/**

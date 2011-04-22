@@ -96,7 +96,7 @@ afStudio.wd.GuiFactory = function() {
 					iconCls: 'icon-add'
 				},
 				'-'			
-			);		
+			);
 		}//eo createListViewToolbar
 		
 		,createEditViewToolbar : function() {
