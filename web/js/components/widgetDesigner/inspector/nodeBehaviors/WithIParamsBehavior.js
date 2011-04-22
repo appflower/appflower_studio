@@ -74,12 +74,13 @@ afStudio.wi.WithIParamsBehavior = Ext.extend(afStudio.wi.BaseBehavior, {
 
         for (var i = 0; i < this.properties.length; i++) {
             var currentProperty = this.properties[i],
-            	   propertyName = currentProperty.id;
+            	   propertyName = currentProperty.id,
+            	   propertyValue = currentProperty.get('value');
             	   
             if (nodeWidgetData[propertyName]) {
                 iParams.push({
                     'name': propertyName,
-                    '_content': currentProperty.get('value')
+                    '_content': propertyValue
                 });
             }
             delete nodeWidgetData[propertyName];

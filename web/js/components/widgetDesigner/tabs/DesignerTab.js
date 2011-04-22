@@ -149,7 +149,6 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			afStudio.Msg.info('Add column click');
 		}, this);		
 		
-		
 		this.on({
 			scope: this,
 			changeColumnPosition: this.onListViewChangeColumnPosition
@@ -185,6 +184,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			viRoot = vi.getRootNode();		
 		
 		var viewDefinition = viRoot.dumpDataForWidgetDefinition();	
+		
+//		console.log('view definition', viewDefinition);
 		
 		var wdef = new afStudio.wd.WidgetDefinition({
 			widgetUri: widgetUri,

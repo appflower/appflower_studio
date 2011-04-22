@@ -214,12 +214,9 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         var propertiesData = this.dumpPropertiesData();
 
         //my array merge :)
-        //TODO: properties are overwriting values that came from childs - this can be dangerous
-        for (key in propertiesData) {
-            if (propertiesData[key] != '') {
-                childsData[key] = propertiesData[key];
-            }
-        }        
+        //TODO: properties are overwriting values that came from childs - this can be dangerous        
+        //console.log(this.text, '\t childsData, propertiesData', childsData, propertiesData);
+        Ext.apply(childsData, propertiesData);
 
         for (var i = 0; i < this.behaviors.length; i++) {
             childsData = this.behaviors[i].dumpDataForWidgetDefinition(childsData);
@@ -242,7 +239,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      */
     ,dumpChildsData : function() {
         var data = {};
-        this.eachChild(function(childNode) {
+        this.eachChild(function(childNode) {        	
             data = childNode.dumpDataForWidgetDefinition(data);
         });
         return data;
@@ -255,17 +252,19 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     ,dumpPropertiesData : function() {
         var data = {};
 
-        for(i in this.properties){
+        for (i in this.properties) {
             var property = this.properties[i];
             var propertyValue = property.get('value');
             // for boolean values we want them to travel as 'true' and 'false' strings
             if (propertyValue === false) {
                 propertyValue = 'false';
-            } else if (propertyValue === true){
+            } else if (propertyValue === true) {
                 propertyValue = 'true';
             }
             
-            data[property.id] = propertyValue;
+            if (!Ext.isEmpty(property.id)) {
+            	data[property.id] = propertyValue;	
+            }
         }
         
         return data;

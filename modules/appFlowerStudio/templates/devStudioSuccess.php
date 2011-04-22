@@ -187,6 +187,11 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/WidgetInspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPalette.js"></script>
+	<!-- wd gui -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/ListGridView.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/SimpleListView.js"></script>	
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/GuiFactory.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/DesignerPanel.js"></script>
 	<!-- wd -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetFactory.js"></script>	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDefinition.js"></script>

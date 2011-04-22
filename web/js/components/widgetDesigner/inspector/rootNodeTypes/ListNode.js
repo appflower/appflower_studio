@@ -34,7 +34,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
     ,constructor : function() {
         afStudio.wi.ListNode.superclass.constructor.apply(this, arguments);
         
-        var behavior = new afStudio.wi.WithIParamsBehavior();        
+        var behavior = new afStudio.wi.WithIParamsBehavior();
         behavior.setProperties([
             new afStudio.wi.PropertyTypeString('maxperpage', 'Max records per page').setValue(10).create()
         ]);
