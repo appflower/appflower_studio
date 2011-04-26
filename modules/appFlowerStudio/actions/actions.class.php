@@ -158,9 +158,14 @@ class appFlowerStudioActions extends sfActions
 	 	if($result) {
 		    $success = true;
 		    $message = 'File saved successfully';
+		    
+		    afsNotificationPeer::log('Css file ['.$cssPath.$node.'] saved successfully', 'css_editor');
+		    
 		} else {
 		    $success = false;
 		    $message =  'Error while saving file to disk!';
+		    
+		    afsNotificationPeer::log('Error while saving file to disk! ['.$cssPath.$node.']', 'css_editor');
 		}
 		
 		$info=array('success'=>$success, "message"=>$message);
@@ -377,9 +382,13 @@ class appFlowerStudioActions extends sfActions
 	 	if($result) {
 		    $success = true;
 		    $message = 'File saved successfully';
+		    
+		    afsNotificationPeer::log('File saved successfully ['.$filePath.']', 'toolbar_editor');
 		} else {
 		    $success = false;
 		    $message =  'Error while saving file to disk!';
+		    
+		    afsNotificationPeer::log('Error while saving file to disk! ['.$filePath.']', 'toolbar_editor');
 		}
 		
 		$info=array('success'=>$success, "message"=>$message);
