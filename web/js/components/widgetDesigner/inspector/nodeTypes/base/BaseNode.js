@@ -26,6 +26,12 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
 	 */
 	
 	/**
+	 * Node properties.
+	 * @property properties
+	 * @type {Object}
+	 */
+	
+	/**
 	 * BaseNode constructor.
 	 * @param {Object} config The base node configuration object
 	 */
@@ -109,7 +115,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
 	/**
 	 * Returns property.
 	 * @param {String} id The property ID
-	 * @return {Object} property
+	 * @return {Ext.data.Record} property
 	 */
     ,getProperty : function(id) {
         return this.properties[id];
@@ -165,7 +171,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
             this.propertyChanged(property);
         } else {
             var child = this.findChild('id', id);
-            if (child) {            	
+            if (child) {
                 child.configureFor(value);
             } else {
                 child = this.findChild('childNodeId', id);
@@ -187,16 +193,18 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         if (!property) {
             return;
         }
-
+        
         for (var i = 0; i < this.behaviors.length; i++) {
             this.behaviors[i].propertyChanged(property);
         }
     }//eo propertyChanged
     
     /**
+     * Returns dumped node's object containing all node's properties and children data.
      * @protected
+     * 
      * @param {Object} (optional) data
-     * @return {Object} dumped this node widget object object
+     * @return {Object} node's dumped object
      */
     ,dumpDataForWidgetDefinition : function(data) {
         if (!data) {
@@ -205,13 +213,8 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         var childsData = this.dumpChildsData();
         var propertiesData = this.dumpPropertiesData();
 
-        //my array merge :)
         //TODO: properties are overwriting values that came from childs - this can be dangerous
-        for (key in propertiesData) {
-            if (propertiesData[key] != '') {
-                childsData[key] = propertiesData[key];
-            }
-        }
+        Ext.apply(childsData, propertiesData);
 
         for (var i = 0; i < this.behaviors.length; i++) {
             childsData = this.behaviors[i].dumpDataForWidgetDefinition(childsData);
@@ -224,7 +227,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         } else {
             data[this.id] = childsData;
         }
-        
+
         return data;
     }//eo dumpDataForWidgetDefinition
     
@@ -234,7 +237,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      */
     ,dumpChildsData : function() {
         var data = {};
-        this.eachChild(function(childNode){
+        this.eachChild(function(childNode) {        	
             data = childNode.dumpDataForWidgetDefinition(data);
         });
         return data;
@@ -247,17 +250,19 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     ,dumpPropertiesData : function() {
         var data = {};
 
-        for(i in this.properties){
+        for (i in this.properties) {
             var property = this.properties[i];
             var propertyValue = property.get('value');
             // for boolean values we want them to travel as 'true' and 'false' strings
             if (propertyValue === false) {
                 propertyValue = 'false';
-            } else if (propertyValue === true){
+            } else if (propertyValue === true) {
                 propertyValue = 'true';
             }
             
-            data[property.id] = propertyValue;
+            if (!Ext.isEmpty(property.id)) {
+            	data[property.id] = propertyValue;	
+            }
         }
         
         return data;
@@ -265,6 +270,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     
     /**
      * Abstract method.
+     * Not used for now anywhere.
      * @protected 
      */
     ,getPropertyRecordCfg : Ext.emptyFn

@@ -34,11 +34,11 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
     ,constructor : function() {
         afStudio.wi.ListNode.superclass.constructor.apply(this, arguments);
         
-        var behavior = new afStudio.wi.WithIParamsBehavior();        
+        var behavior = new afStudio.wi.WithIParamsBehavior();
         behavior.setProperties([
             new afStudio.wi.PropertyTypeString('maxperpage', 'Max records per page').setValue(10).create()
         ]);
-        this.addBehavior(behavior);
+        this.addBehavior(behavior);        
     }//eo constructor 
     
     /**
@@ -64,9 +64,9 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
      * @return {afStudio.wi.CollectionNode} instanciated fields node object, descendant of CollectionNode
      */
     ,buildFieldsNode : function() {
-        var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({        		
+        var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({
         	id: 'i:fields',
-            text: 'Fields',           
+            text: 'Fields',
             createChildConstructor: afStudio.wi.ColumnNode,
             childNodeId: 'i:column',
             addChildActionLabel: 'Add column'

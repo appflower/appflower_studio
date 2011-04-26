@@ -14,7 +14,7 @@ afStudio.models.TypeBuilder = (function() {
 		/**
 		 * Invalid field name message
 		 */
-		invalidFieldName : 'Field name must contains only characters, digits or "_" and starts from "_" or character'
+		invalidFieldName : 'Field name must contain only characters, digits or "_" and start from character or "_"'
 		
 		/**
 		 * Creates editor depends on data type

@@ -1,13 +1,13 @@
+Ext.ns('afStudio.wd');
+
 /**
  * Responsibilities:
- *  * fetch cocnrete widget definition from Server
- *  * initialize root node of WI tree
- *  * populate fetched values into already intialized Widget Inspector
- *  * save modified values back to server and handle any server side errors
- *
+ * <ul>
+ *  <li>fetch cocnrete widget definition from Server</li>
+ *  <li>save modified values back to server and handle any server side errors</li>
+ * </ul>
  * When Widget is loaded from server there is 'datafetched' event emmited
- * In your handler for datafetched you should pass rootNode into WI ExtJS component
- *  
+ *
  * @class afStudio.wd.WidgetDefinition
  * @extends Ext.util.Observable
  */
@@ -18,23 +18,10 @@ afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
 	 * Unique widget URI
 	 */
     
-    /**
-     * @cfg {String} (optional) widgetType
-     * Contains one of view's (widget's) types: <u>list, edit, show, html</u> 
-     */
-    
-    /**
-     * Widget definition object. Contains view's metadata
-     * @property definition
-     * @type {Object} 
-     */
-    
 	/**
-	 * WI root node reference. 
-	 * @property rootNode
-	 * @type {Ext.tree.TreeNode}
+	 * @cfg {String} widgetType
 	 */
-    
+	
 	/**
 	 * WidgetDefinition constructor. 
 	 * @constructor
@@ -47,104 +34,89 @@ afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
 	    this.addEvents(
 			/**
 			 * @event 'datafetched' Fires after view/widget definition data was loaded and parsed.
-			 * @param {Ext.tree.TreeNode} WI root node for fetched definition data.
 			 * @param {Object} view definition.
 			 */    
-	    	'datafetched'
+	    	'datafetched',
+	    	
+	    	/**
+	    	 * @event 'fetchingexception' Fires after server response and if <u>success</u> response property is <b>false</b>.
+	    	 * @param {Object} response.
+	    	 */
+	    	'fetchingexception'
 	    );
 	    
 		afStudio.wd.WidgetDefinition.superclass.constructor.call(this);		
 	}//eo constructor	
 	
-    ,fetchAndConfigure : function() {
-    	//TODO should be developed centrilised afStudio.Ajax package for all single ajax requests
-    	//to make ajax request more simpler and handling/logging errors in one place
+	/**
+	 * 
+	 * @param {Object} options The fetching object which may contain the following properties:
+	 * <ul>
+	 *   <li><b>success</b>: (Optional) {Function} The function is called on success of the fetching request.
+	 *   	 				 To the function is passed just fetched view defintion object.</li>
+	 *   <li><b>error</b>: (Optional) {Function} The function is called <u>success</u> property of the response is false.</li>
+	 *   <li><b>scope</b>: (Optional) The execution context (scope) of success and error functions. Default is WidgetDefinition scope.</li>
+	 * </ul>
+	 */
+    ,fetchDefinition : function(options) {
+    	var _this = this;
+    	
         Ext.Ajax.request({
             url: afStudioWSUrls.getGetWidgetUrl(this.widgetUri),
-            scope: this,
-            success: function(response) {
-                this.parseFetchedData(response);
-                this.createRootNode();
-                this.rootNode.configureFor(this.definition);
-                this.fireEvent('datafetched', this.rootNode, this.definition);
+            
+            scope: options.scope ? options.scope : _this,
+            
+            success: function(xhr) {
+		        var response = Ext.util.JSON.decode(xhr.responseText);
+		        if (response.success) {
+		            var definition = response.data;
+		            
+		            if (Ext.isFunction(options.success)) {
+		            	Ext.util.Functions.createDelegate(options.success, this, [definition], false)();
+		            }
+		            _this.fireEvent('datafetched', definition);
+				} else {
+		            if (Ext.isFunction(options.error)) {
+		            	Ext.util.Functions.createDelegate(options.error, this, [response], false)();
+		            }
+					_this.fireEvent('fetchingexception', response);
+				}
             },
+            
             failure : function(xhr, reqOpt) {
 			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
 			   afStudio.Msg.error('Server side error', message);	
             }
         });
-	}//eo fetchAndConfigure
-	
-	,parseFetchedData : function(response) {		
-        var baseData = Ext.util.JSON.decode(response.responseText);
-        if (baseData.success) {
-            this.definition = Ext.util.JSON.decode(baseData.data);
-            this.widgetType = this.definition['type'];
-		}
-    }//eo parseFetchedData
+	}//eo fetchDefinition
     
-	,save : function(widgetBuilderWindow, createNewWidget) {
-        var data = this.rootNode.dumpDataForWidgetDefinition();
-        
+	,saveDefinition : function(definition, callback, createNewWidget) {
+        var _this = this,
+		definition = Ext.util.JSON.encode(definition);
+		
         Ext.Ajax.request({
-            url: window.afStudioWSUrls.getSaveWidgetUrl(this.widgetUri),
+            url: afStudioWSUrls.getSaveWidgetUrl(this.widgetUri),
             params: {
-                'data': Ext.util.JSON.encode(data),
-                'widgetType': this.widgetType,
-                'createNewWidget': createNewWidget ? true : false
+                data: definition,
+                widgetType: this.widgetType,
+                createNewWidget: createNewWidget ? true : false
             },
-            success: function(response){
-                if (this.parseSaveResponse(response)) {
-                    var widgetsTreePanel = afStudio.getWidgetsTreePanel();
-                    if (widgetBuilderWindow) {
-                        widgetBuilderWindow.close();
-                        widgetsTreePanel.loadRootNode();
-                    }
-                    widgetsTreePanel.addWidgetDesigner(this.widgetUri);
-                }
+            success: function(xhr) {
+				var response = Ext.decode(xhr.responseText);
+				if (response.success) {
+					afStudio.Msg.info(response.message);
+					if (Ext.isFunction(callback)) {
+						callback(response);
+					}
+				} else {
+					afStudio.Msg.error(response.message);				
+				}
             },
             failure: function(xhr, reqOpt) {
 			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
 			   afStudio.Msg.error('Server side error', message);	
-            },            
-            scope: this
+            }
         });
-   }//eo save
-   
-   ,parseSaveResponse : function(response) {
-   		//Unmask parent tree
-   		var tree = this.rootNode.getOwnerTree();
-        if (tree) {
-            tree.body.unmask();
-        }   		
-        var actionResponse = Ext.util.JSON.decode(response.responseText);
-        if (actionResponse.success !== true) {
-            afStudio.Msg.error('System Message', 'An error occured: ' + actionResponse.message);
-        } else {
-            afStudio.Msg.info('System Message', actionResponse.message);
-        }
+   }//eo saveDefinition
 
-        //Reload Widget inspector tree
-        if (tree && actionResponse.success === true) {
-            tree.fireEvent('afterrender', tree);
-            return true;
-        } else if (actionResponse.success === true) {
-            afStudio.showWidgetDesigner(this.widgetUri);
-            return true;
-        }
-
-        return false;
-   }//eo parseSaveResponse
-   
-   ,createRootNode : function() {
-       switch (this.widgetType) {
-           case 'list':
-               this.rootNode = new afStudio.wi.ListNode();
-               break;
-           case 'edit':
-               this.rootNode = new afStudio.wi.EditNode();
-               break;
-       }
-       this.rootNode.setText(this.widgetUri + ' [' + this.widgetType + ']');
-   }//eo createRootNode
 });

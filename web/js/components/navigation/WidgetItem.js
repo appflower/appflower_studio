@@ -170,7 +170,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		afStudio.navigation.WidgetItem.superclass.initComponent.apply(this, arguments);
 	}//eo initComponent
 	
-    ,getModule : function(node) {
+	/**
+	 * Returns module name for the node.
+	 * @param {Ext.tree.TreePanel} node
+	 * @return {String} application name
+	 */
+    ,getNodeModule : function(node) {
 		var module;
 
 		switch (node.attributes.type) {
@@ -186,54 +191,14 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         }
 
 		return module;
-	}
+	}//eo getNodeModule
 	
-	,getXmlPath : function(node) {
-		var path;
-
-		switch (node.attributes.type) {
-			case "app": case "module":
-        		path = false;
-    		break;
-        	case "xml":
-                path = node.attributes.xmlPath;
-    		break;	
-        }
-
-		return path;
-	}
-	
-	,getActionPath : function(node) {
-		var path;
-
-		switch (node.attributes.type) {
-			case "app": case "module":
-        		path = false;
-    		break;
-        	case "xml":
-        		path = node.attributes.actionPath;
-    		break;
-        }
-
-		return path;
-	}
-	
-	,getSecurityPath : function(node) {
-		var path;
-
-		switch (node.attributes.type) {
-			case "app": case "module":
-        		path = false;
-    		break;
-        	case "xml":
-        		path = node.attributes.securityPath;
-    		break;
-        }
-
-		return path;
-	}
-	
-	,getApp : function(node) {
+	/**
+	 * Returns application name for the node.
+	 * @param {Ext.tree.TreePanel} node
+	 * @return {String} application name
+	 */
+	,getNodeApp : function(node) {
 		var nodeType = this.getNodeAttribute(node, 'type'),
 			app;
 
@@ -247,7 +212,25 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         }
 
 		return app;
-	}//eo getApp
+	}//eo getNodeApp
+	
+	/**
+	 * Returns node's <u>actionPath</u> attribute
+	 * @param {Ext.tree.TreeNode} node
+	 * @return {String} actionPath
+	 */
+	,getNodeActionPath : function(node) {
+		return this.getNodeAttribute(node, 'actionPath');
+	}
+	
+	/**
+	 * Returns node's <u>securityPath</u> attribute
+	 * @param {Ext.tree.TreeNode} node
+	 * @return {String} actionPath
+	 */
+	,getNodeSecurityPath : function(node) {
+		return this.getNodeAttribute(node, 'securityPath');
+	}
 	
 	/**
 	 * Handles {@link #appContextMenu} menu's <b>itemclick</b> event listener and 
@@ -270,7 +253,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				}
 			}
 		}
-		this.addBranchNode(node, {app: this.getApp(node)});
+		this.addBranchNode(node, {app: this.getNodeApp(node)});
 	}//eo onAddModule
 		
 	/**
@@ -299,7 +282,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @override
 	 */
 	,runNode : function(node) {
-		this.addWidgetDesignerForNode(node);		
+		this.showWidgetDesignerForNode(node);		
 	}//eo runNode
 	
 	/**
@@ -359,76 +342,35 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         }	
 	}//eo renameNodeController
 	
+	/**
+	 * Add Widget button handler.
+	 */
 	,onAddWidget : function() {
-		var form = new Ext.FormPanel({
-		    url: '', defaultType: 'textfield', width: 450, frame: true, 
-			labelWidth: 100, title: false,
-			items: [
-				{xtype:'textfield', fieldLabel: 'Widget name', anchor: '96%', name: 'widget_name', allowBlank: false},
-				{xtype:'textfield', fieldLabel: 'Path to prohect', anchor: '96%', name: 'project_path', allowBlank: false}
-			]
-		});
-				
-				//TYPES: List, Grid, Edit or Show
-				
-/**
-* 3. Clicked "add widget", a popup will appear, which will ask
-* 3.1) Name of widget, and under which model to place it.
-* 3.2) which fields to pre-select for the widget. 
-* Almost like the relational picker except, you can add multiple fields across multiple models. 
-* That means i might select 3 fields from sfGuardUser and 2 fields from sfGuardGroup.
-*/
-				
-		var wnd = new Ext.Window({
-			title: 'Add new widget', width: 463,
-			autoHeight: true, closable: true,
-            draggable: true, plain:true,
-            modal: true, resizable: false,
-            bodyBorder: false, border: false,
-            items: form,
-			buttons: [
-				{text: 'Add widget'},
-				{text: 'Cancel', handler: function(){wnd.close}}
-			],
-			buttonAlign: 'center'
-		});
-//		wnd.show();
+		var _this = this;
 		
-		
-//		_this.relationPicker = new afStudio.models.RelationPicker({
-//
-//			closable: true,
-//			closeAction: 'hide',
-//			listeners: {
-//				relationpicked : function(relation) {					
-//					if (_this.fieldsGrid) {						
-//						var cell = _this.fieldsGrid.getSelectionModel().getSelectedCell();
-//						_this.fieldsGrid.startEditing(cell[0], cell[1]);
-//						if (relation) {
-//							_this.setValue(relation);
-//						}
-//						_this.fieldsGrid.stopEditing();
-//					} else {
-//						_this.setValue(relation);
-//					}
-//				}
-//			}
-//  		});		
-//		
 		var wb = new afStudio.wd.WidgetsBuilder({
 			modelsUrl: afStudioWSUrls.getModelsUrl(),
-			fieldsUrl: afStudioWSUrls.getModelsUrl()
+			fieldsUrl: afStudioWSUrls.getModelsUrl(),
+			listeners: {
+				widgetcreated: function(widgetUri, response) {
+					_this.onItemActivate();					
+					//TODO action and security path needed
+					afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri);
+				}
+			}
 		});
-		wb.show()
-	}//eo onAddWidget
 		
+		wb.show();
+	}//eo onAddWidget
+	
 	/**
-	 * Adds "module" node type.
+	 * Adds module.
+	 * @param {Ext.tree.TreeNode} node The node being added
 	 */
 	,addNodeModule : function(node) {
 		var _this = this,
-			module = this.getModule(node),
-			app = this.getApp(node);
+			module = this.getNodeModule(node),
+			app = this.getNodeApp(node);
 		
 		this.executeAction({
 			url: _this.baseUrl,
@@ -448,15 +390,21 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		});
 	}//eo addNodeModule
 	
+	/**
+	 * Renames module.
+	 * @param {Ext.tree.TreeNode} node The node being renamed
+	 * @param {String} value The new node's value
+	 * @param {String} startValue The old node's value
+	 */
 	,renameNodeModule : function(node, value, startValue) {
 		var renameParams = {
 		 	params: {
 				cmd: 'renameModule',
 				moduleName: startValue,
 				renamedModule: value,
-				app: this.getApp(node)		
+				app: this.getNodeApp(node)		
 		 	},
-		 	refreshNode: this.getApp(node),
+		 	refreshNode: this.getNodeApp(node),
 		 	msg: 'module'
 		};
 		
@@ -470,6 +418,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		afStudio.Msg.info('Renaming "xml" node', 'back-end is not implemented');
 	}//eo renameNodeXml
 	
+	/**
+	 * Basic method executes node rename action.
+	 * @param {Object} renameObj
+	 * @param {String} newNodeValue
+	 * @param {String} oldNodeValue
+	 */
 	,renameNode : function(renameObj, newNodeValue, oldNodeValue) {
 		var _this = this,
 			refresh = renameObj.refreshNode ? renameObj.refreshNode : this.getRootNode();
@@ -488,12 +442,16 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		});
 	}//eo renameNode 	
 	
+	/**
+	 * Deletes module.
+	 * @param {Ext.tree.TreeNode} node
+	 */
 	,deleteNodeModule : function(node) {
 		var	deleteParams = {
 			params: {
 				 cmd: 'deleteModule',
-				 moduleName: this.getModule(node),
-				 app: this.getApp(node)
+				 moduleName: this.getNodeModule(node),
+				 app: this.getNodeApp(node)
 			},
 			item: node.text,
 			msg: 'module'
@@ -502,12 +460,16 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		this.deleteNode(deleteParams);
 	}//eo deleteNodeModule
 
+	/**
+	 * Deletes widget.
+	 * @param {Ext.tree.TreeNode} node
+	 */
 	,deleteNodeXml : function(node) {
 		afStudio.Msg.info('Delete "xml" node', 'back-end is not implemented');
 	}//eo deleteNodeXml
 	
 	/**
-	 * Basic node delete method.
+	 * Basic method executes node delete action.
 	 * @param {Object} deleteObj
 	 */
 	,deleteNode : function(deleteObj) {
@@ -531,26 +493,18 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		});				
 	}//eo deleteNode
 
-    ,addWidgetDesignerForNode : function(node) {
-        var actionPath = this.getActionPath(node);
-        var securityPath = this.getSecurityPath(node);
-        var widgetUri = node.attributes.widgetUri;
-
-        this.addWidgetDesigner(widgetUri, actionPath, securityPath);
-    }
-    
-	,addWidgetDesigner : function(widgetUri, actionPath, securityPath) {		
-		afStudio.vp.addToPortal({
-			xtype: 'afStudio.wd.widgetPanel',
-			actionPath: actionPath,
-			securityPath: securityPath,
-	        widgetUri: widgetUri
-		}, true);		
-	}//eo addWidgetDesigner
+	/**
+	 * Opens widget designer for specified node.
+	 * @private
+	 * @param {Ext.tree.TreeNode} node
+	 */
+    ,showWidgetDesignerForNode : function(node) {
+        var actionPath = this.getNodeActionPath(node),
+        	securityPath = this.getNodeSecurityPath(node),
+        	widgetUri = node.attributes.widgetUri;
 	
-    ,saveWidgetDefinition : function() {
-        this.widgetDefinition.save();
-    }
+        afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri, actionPath, securityPath);
+    }//eo showWidgetDesignerForNode
 }); 
 
 /**

@@ -11,6 +11,7 @@
 	else if(ua.match('Gecko')) engine = 'gecko';
 		
 	document.write('<scr'+'ipt type="text/javascript" src="<?php echo $codepress_path; ?>engines/'+engine+'.js?ts=<?php echo time(); ?>"></scr'+'ipt>');
+
 	</script>
 	
 	<link type="text/css" href="<?php echo $codepress_path; ?>codepress.css?ts=<?php echo time(); ?>" rel="stylesheet" />

@@ -59,7 +59,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
      * @private
      */
     ,initBehavior : function() {
-        var behavior = new afStudio.wi.WithValueTypeBehavior;        
+        var behavior = new afStudio.wi.WithValueTypeBehavior;
         behavior.setValueTypeDataKey('i:value');
         this.addBehavior(behavior);
         this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);

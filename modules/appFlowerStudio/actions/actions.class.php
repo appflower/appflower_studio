@@ -10,26 +10,26 @@ class appFlowerStudioActions extends sfActions
 {
 	public function preExecute()
 	{
-		$this->realRoot=sfConfig::get('sf_root_dir');
-		$this->afExtjs=afExtjs::getInstance();
-        
+		$this->realRoot = sfConfig::get('sf_root_dir');
+		$this->afExtjs = afExtjs::getInstance();        
 		$this->userinfo = afStudioUser::getInstance()->getInfo();
 	}	
 	
-	public function executeIndex()
+	protected function renderJson($result)
 	{
-		
+	    $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+		return $this->renderText(json_encode($result));
 	}
 	
 	public function executeStudio()
 	{
-		
+		$this->setTemplate(sfConfig::get('afs_debug') ? 'devStudio' : 'prodStudio');				
 	}
 			
 	public function executeCodepress($request)
 	{
-		$this->codepress_path=$this->afExtjs->getExamplesDir().'codepress/';
-		
+		$this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';
+						
 		$this->language=(($this->hasRequestParameter('language')&&$this->getRequestParameter('language')!='undefined')?$this->getRequestParameter('language'):'generic');
 		
 		return $this->renderPartial('codepress');		
@@ -92,42 +92,33 @@ class appFlowerStudioActions extends sfActions
 	
 	public function executeModels()
 	{
-		//TODO: debug only
-		//return $this->renderJson(array('console'=>'test'));
-		
-		$models_command = new afStudioModelsCommand();		
-		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-		
+		$models_command = new afStudioModelsCommand();
 		return $this->renderText($models_command->end());
 	}
 	
 	public function executeModules()
 	{
-		//TODO: debug only
-		//return $this->renderJson(array('console'=>'test'));
-
-		$modules_command=new afStudioModulesCommand();
-		
+		$modules_command = new afStudioModulesCommand();		
 		return $this->renderText($modules_command->end());
 	}
 
 	public function executePlugins()
 	{
-		//TODO: debug only
-		//return $this->renderJson(array('console'=>'test'));
-		
-		$modules_command=new afStudioPluginsCommand();
-
+		$modules_command = new afStudioPluginsCommand();
 		return $this->renderText($modules_command->end());
 	}
 
 	public function executeCssfilestree(){
-		$cssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
-		$cssExtensions=sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
-		$i=0;
-		foreach ($cssExtensions as $cssExtension){
+		$cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
+		$cssExtensions = sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
+		$i = 0;
+		foreach ($cssExtensions as $cssExtension) {
 			$cssExtension = str_replace(sfConfig::get('sf_root_dir')."/plugins/appFlowerStudioPlugin/web/css/","",$cssExtension);
-			$nodes[$i]=array('text' => $cssExtension, 'id' => 'css/'.$cssExtension, 'leaf' => true);
+			$nodes[$i] = array(
+				'text' => $cssExtension, 
+				'id' => 'css/'.$cssExtension, 
+				'leaf' => true
+		    );
 			$i++;
 		}
 		/*
@@ -173,10 +164,7 @@ class appFlowerStudioActions extends sfActions
 	}
 	
 	public function executeConsole(sfWebRequest $request)
-	{
-		//TODO: debug only
-		//return $this->renderJson(array('console'=>'test'));
-		
+	{		
 		$command = trim($request->getParameter("command"));
 		
 		$afConsole=new afStudioConsole();
@@ -188,12 +176,7 @@ class appFlowerStudioActions extends sfActions
 				'console' => $result
 			)
 		);
-	}
-	
-	protected function renderJson($result)
-	{
-		 return $this->renderText(json_encode($result));
-	}
+	}	
 
     public function executeLoadDatabaseConnectionSettings(sfWebRequest $request)
     {
@@ -319,8 +302,7 @@ class appFlowerStudioActions extends sfActions
 
     public function executeNotifications()
 	{
-		$notifications_command=new afStudioNotificationsCommand($this->realRoot);
-		
+		$notifications_command = new afStudioNotificationsCommand($this->realRoot);		
 		return $this->renderText($notifications_command->end());
 	}    
     
@@ -347,11 +329,6 @@ class appFlowerStudioActions extends sfActions
      */
     public function executeLayout(sfWebRequest $request)
     {
-		//TODO: debug only
-		//return $this->renderJson(array('console'=>'test'));    	
-    	
-    	$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-    	
         $sCommand = $request->getParameter('cmd');        
         $aResult = afStudioCommand::process('layout', $sCommand);
         
@@ -428,11 +405,8 @@ class appFlowerStudioActions extends sfActions
 	 * @author radu
 	 */
 	public function executeLoadProjectTree($request)
-	{
-		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        
-        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'),array('request'=>$request));
-        
+	{        
+        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'),array('request'=>$request));        
         return $this->renderJson($aResult);
 	}
 	
@@ -442,16 +416,12 @@ class appFlowerStudioActions extends sfActions
 	 * @author startsev.sergey@gmail.com
 	 */
 	public function executeRun()
-	{
-        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        
-        $aResult = afStudioCommand::process('execute', 'run');
-        
+	{        
+        $aResult = afStudioCommand::process('execute', 'run');        
         $aResult = array_merge(
             $aResult, 
             array('homepage' => sfContext::getInstance()->getController()->genUrl('@homepage'))
-        );
-        
+        );        
         afsNotificationPeer::log('[run] Run was executed on the project');
         
         return $this->renderJson($aResult);
@@ -463,30 +433,27 @@ class appFlowerStudioActions extends sfActions
 	 * @author radu
 	 */
 	public function executeCreateProject($request)
-	{
-		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        
-        $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));
-        
+	{        
+        $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));        
         return $this->renderJson($aResult);
 	}
 
 	public function executeWelcome($request)
-	{
-		$this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-		
+	{		
 		$data = array();
 		$vimeoService = new VimeoInstanceService();
-      	try{
-        	$data = $vimeoService->getDataFromRemoteServer();
-        	
-      	}catch(Exception $e){ 
-      		$data = array();	
-      	}
+      	try {
+        	$data = $vimeoService->getDataFromRemoteServer();        	
+      	} catch (Exception $e) { 
+      		$data = array();
+      	}        
+		$message = $this->getPartial('welcome', array('data'=>$data));		
+        $info = array(
+        	"success" => true, 
+        	"message" => $message, 
+        	"code" => "jQuery('#studio_video_tours ul').jScrollPane();"
+        );
         
-		$message = $this->getPartial('welcome', array('data'=>$data));
-		
-        $info=array('success'=>true, "message"=>$message, "code"=>"jQuery('#studio_video_tours ul').jScrollPane();");
 		return $this->renderJson($info);
 	}
 	

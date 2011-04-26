@@ -11,16 +11,15 @@ Ext.namespace('afStudio.wi');
  * @extends afStudio.wi.BaseBehavior
  */
 afStudio.wi.WithValueTypeBehavior = Ext.extend(afStudio.wi.BaseBehavior, {
-    
-	/**
-	 * Value data key.
-	 * @property key
-	 * @type {String}
-	 */
 	
     setValueTypeDataKey : function(key) {
+		/**
+		 * Data key.
+		 * @property key
+		 * @type {String}
+		 */    	
         this.key = key;
-    }
+    }//eo setValueTypeDataKey
     
     /**
      * Adding custom properties
@@ -92,7 +91,7 @@ afStudio.wi.WithValueTypeBehavior = Ext.extend(afStudio.wi.BaseBehavior, {
     /**
      * When valueSource is changed we are injecting ValueSource child
      */
-    ,valueSourceChanged: function(dataForNewNode){
+    ,valueSourceChanged : function(dataForNewNode) {
         if (!dataForNewNode) {
             dataForNewNode = {};
         }
@@ -107,31 +106,34 @@ afStudio.wi.WithValueTypeBehavior = Ext.extend(afStudio.wi.BaseBehavior, {
                 }
             }
         }
-
+        
         switch (this.node.getProperty('valueSource').get('value')) {
             case 'source':
-                var newNode= new afStudio.wi.FieldNodeValueSourceSource();
+                var newNode = new afStudio.wi.FieldNodeValueSourceSource();
                 if (dataForNewNode['i:source']) {
                     var nodeData = dataForNewNode['i:source'];
                     nodeData['sourceName'] = nodeData['name'];
                 }
-                break;
+            break;
+            
             case 'classAndMethod':
-                var newNode= new afStudio.wi.FieldNodeValueSourceMethod();
+                var newNode = new afStudio.wi.FieldNodeValueSourceMethod();
                 var nodeData = dataForNewNode;
-                break;
+            break;
+            
             case 'item':
                 var newNode= new afStudio.wi.FieldNodeValueSourceItem();
                 if (dataForNewNode['i:item']) {
                     var nodeData = dataForNewNode['i:item'];
                 }
-                break;
+            break;
+            
             case 'static':
                 var newNode= new afStudio.wi.FieldNodeValueSourceStatic();
                 if (dataForNewNode['i:static']) {
                     var nodeData = dataForNewNode['i:static'];
                 }
-                break;
+            break;
         }
 
         if (newNode) {
@@ -156,7 +158,7 @@ afStudio.wi.WithValueTypeBehavior = Ext.extend(afStudio.wi.BaseBehavior, {
      * now we must build data that is send back to server
      * @override 
      */
-    ,dumpDataForWidgetDefinition: function(nodeWidgetData) {
+    ,dumpDataForWidgetDefinition : function(nodeWidgetData) {
         
         if (nodeWidgetData['valueType']) {
             delete nodeWidgetData.valueType;
@@ -180,32 +182,34 @@ afStudio.wi.WithValueTypeBehavior = Ext.extend(afStudio.wi.BaseBehavior, {
         if (valueNode['type'] == 'orm') {
             switch (valueSource) {
                 case 'source':
-                        valueNode['i:source'] = {name: nodeWidgetData['sourceName']};
-                        delete nodeWidgetData['sourceName'];
-                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                    break;
+                    valueNode['i:source'] = {name: nodeWidgetData['sourceName']};
+                    delete nodeWidgetData['sourceName'];
+                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+                break;
+                
                 case 'classAndMethod':
-                        valueNode['i:class'] = nodeWidgetData['i:class'];
-                        if (nodeWidgetData['i:method'] && nodeWidgetData['i:method'] != '') {
-                            valueNode['i:method'] = {
-                                name: nodeWidgetData['i:method'],
-                                'i:param': nodeWidgetData['i:param']
-                            }
-                            delete nodeWidgetData['i:param'];
-                            delete nodeWidgetData['i:class'];
-                            delete nodeWidgetData['i:method'];
+                    valueNode['i:class'] = nodeWidgetData['i:class'];
+                    if (nodeWidgetData['i:method'] && nodeWidgetData['i:method'] != '') {
+                        valueNode['i:method'] = {
+                            name: nodeWidgetData['i:method'],
+                            'i:param': nodeWidgetData['i:param']
                         }
-                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                    break;
+                        delete nodeWidgetData['i:param'];
+                        delete nodeWidgetData['i:class'];
+                        delete nodeWidgetData['i:method'];
+                    }
+                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+                break;
+                
                 case 'item':
-                        valueNode['i:source'] = {name: nodeWidgetData['name']};
-                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                    break;
+                    valueNode['i:source'] = {name: nodeWidgetData['name']};
+                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+                break;
+                
                 case 'static':
-                        valueNode['i:source'] = {name: nodeWidgetData['name']};
-                        nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                    break;
-
+                    valueNode['i:source'] = {name: nodeWidgetData['name']};
+                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+                break;
             }
         }
 

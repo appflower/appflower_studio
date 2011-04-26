@@ -20,11 +20,16 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 * @cfg {String} (required) widgetUri
 	 * Widget URI  
 	 */
-		
+
+	/**
+	 * @cfg {String} layout
+	 * Layout type.
+	 */
 	layout : 'fit'
 	
 	/**
 	 * Widget definition component.
+	 * 
 	 * @property widgetDefinition
 	 * @type {afStudio.wd.WidgetDefinition}
 	 */
@@ -36,7 +41,8 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
 	 *   <li><b>widgetUri</b>: Widget URI</li>
 	 *   <li><b>definition</b>: Widget's metadata definition.</li>
-	 * </ul> 
+	 * </ul>
+	 * 
 	 * @property widgetMetaData
 	 * @type {Object}
 	 */
@@ -90,8 +96,6 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	,_afterInitComponent : function() {
 		var _this = this;
 		
-		this.widgetDefinition.on('datafetched', this.onWidgetDataFetched, this);
-		
 		this.on({
 			scope: _this,
 			afterrender: _this.initWidgetPanel
@@ -105,30 +109,39 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 */
 	,initWidgetPanel : function() {
 		afStudio.vp.mask({region: 'center'});
+		
 		//start fetching  widget's data
-		this.widgetDefinition.fetchAndConfigure();
+		this.widgetDefinition.fetchDefinition({
+			scope: this,
+			
+			success: function(metadata) {
+				afStudio.vp.unmask('center');
+				//add definition into widget's metadata
+				this.widgetMetaData.definition = metadata;
+				
+				this.openWidgetDesigner(metadata);
+			},
+			
+			error: function(response) {
+				afStudio.vp.unmask('center');
+				var msg = String.format('Fetching widget "{0}" data failed. <br/> {1}',
+								this.widgetMetaData.widgetUri, response.message);
+				afStudio.Msg.error(msg);				 
+			}
+		});
 	}//eo initWidgetPanel
 	
 	/**
-	 * {@link #widgetDefinition} <u>datafetched</u> event listener.
-	 * @param {Ext.tree.TreeNode} rootNode The root node of WI tree.
+	 * Opens widget designer based on passed in definition.
 	 * @param {Object} definition The widget metadata.
 	 */
-	,onWidgetDataFetched : function(rootNode, definition) {
-		//add definition into widget's metadata
-		this.widgetMetaData.definition = definition;
-		
+	,openWidgetDesigner : function(definition) {		
 		this.add({
 			xtype: 'afStudio.wd.widgetTabPanel',
 			widgetMeta: this.widgetMetaData
 		});		
-		this.doLayout();
-		
-        var WI = afStudio.getWidgetInspector();
-        WI.setRootNode(rootNode);	
-        
-        afStudio.vp.unmask('center');
-	}//eo onWidgetDataFetched	
+		this.doLayout();       
+	}//eo openWidgetDesigner
 });
 
 /**
