@@ -128,7 +128,15 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			 * @param {Number} oldPos The column's previous(old) position.
 			 * @param {Number} newPos The column's new position where it was moved.
 			 */
-			'changeColumnPosition'
+			'changeColumnPosition',
+			
+			/**
+			 * @event 'changeColumnLabel' Fires when a column's header was modified 
+			 * @param {Ext.grid.Column} clm The column which header was modified.
+			 * @param {Number} clmIndex The column index inside {@link Ext.grid.ColumnModel}.
+			 * @param {String} value The header's new value.
+			 */
+			'changeColumnLabel'
 		);
 		
 		this.on({

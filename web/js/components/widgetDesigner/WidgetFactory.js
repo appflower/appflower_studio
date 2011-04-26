@@ -31,7 +31,7 @@ afStudio.wd.WidgetFactory = function() {
 		 * @return {Object} widget definition
 		 */
 		,buildWidgetDefinition : function(data, type) {
-			var rootNode = this.createWIRootNode(type);			
+			var rootNode = this.createWIRootNode(type);
 		
         	rootNode.setTitle('new widget');
 		

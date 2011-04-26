@@ -57,7 +57,8 @@ afStudio.wi.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
  * @param {Object} source The source data config object
  */
 afStudio.wi.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnModel, {
-    constructor : function(grid, store){
+   
+	constructor : function(grid, store){
         var g = Ext.grid,
 	        f = Ext.form;
 	        
@@ -207,7 +208,6 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         }, this);
         
     },
-
 
     // private
     onRender : function(){

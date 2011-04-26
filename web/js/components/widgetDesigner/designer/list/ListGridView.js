@@ -251,9 +251,13 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	 */
 	,onHeadColumnEditComplete : function(ed, v, sv) {
 		var index = ed._index,
+			 grid = this.grid,
 			   cm = this.cm;
-			   
-		cm.setColumnHeader(index, v);
+
+		if (v != sv) {
+			cm.setColumnHeader(index, v);
+			grid.fireEvent('changeColumnLabel', cm.config[index], index, v);
+		}
 	}//eo onHeadColumnEditComplete	
 	
     /**
@@ -288,7 +292,8 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	        
 	        menu.show(t, 'tl-bl?');
 	        
-		} else {			
+		} else {
+			//Start header editing 
 			this.editHeadColumn(hd.firstChild, index);
 		}
 	}//eo handleHdDown

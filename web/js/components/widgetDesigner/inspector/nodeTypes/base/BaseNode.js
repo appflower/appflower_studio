@@ -115,7 +115,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
 	/**
 	 * Returns property.
 	 * @param {String} id The property ID
-	 * @return {Object} property
+	 * @return {Ext.data.Record} property
 	 */
     ,getProperty : function(id) {
         return this.properties[id];
@@ -152,7 +152,6 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      */
     ,configureFor : function(widgetData) {
         for (var id in widgetData) {
-        	//console.log('id, widgetData[id]', id, widgetData[id]);
             this.configureForValue(id, widgetData[id]);
         }
         for (var i = 0; i < this.behaviors.length; i++) {
@@ -194,7 +193,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         if (!property) {
             return;
         }
-
+        
         for (var i = 0; i < this.behaviors.length; i++) {
             this.behaviors[i].propertyChanged(property);
         }
@@ -214,9 +213,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         var childsData = this.dumpChildsData();
         var propertiesData = this.dumpPropertiesData();
 
-        //my array merge :)
-        //TODO: properties are overwriting values that came from childs - this can be dangerous        
-        //console.log(this.text, '\t childsData, propertiesData', childsData, propertiesData);
+        //TODO: properties are overwriting values that came from childs - this can be dangerous
         Ext.apply(childsData, propertiesData);
 
         for (var i = 0; i < this.behaviors.length; i++) {

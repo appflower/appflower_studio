@@ -48,8 +48,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 				iconCls: 'icon-preview' 
 			}
 		];		
-		Ext.flatten(topBarItems.splice(2, 0, gui.controls));
-		
+		Ext.flatten(topBarItems.splice(2, 0, gui.controls));		
 		
 		return {
 			border: true,

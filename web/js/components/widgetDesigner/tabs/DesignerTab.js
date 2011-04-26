@@ -142,7 +142,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private 
 	 */
 	,initListDesignerView : function() {
-		this.relayEvents(this.designerView, ['changeColumnPosition']);
+		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel']);
 		
 		//Preview button
 		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
@@ -151,7 +151,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		
 		this.on({
 			scope: this,
-			changeColumnPosition: this.onListViewChangeColumnPosition
+			changeColumnPosition: this.onListViewChangeColumnPosition,
+			changeColumnLabel: this.onListViewChangeColumnLabel
 		});
 	}//eo initListDesignerView
 	
@@ -183,9 +184,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			vi = this.viewInspector,
 			viRoot = vi.getRootNode();		
 		
-		var viewDefinition = viRoot.dumpDataForWidgetDefinition();	
-		
-//		console.log('view definition', viewDefinition);
+		var viewDefinition = viRoot.dumpDataForWidgetDefinition();
 		
 		var wdef = new afStudio.wd.WidgetDefinition({
 			widgetUri: widgetUri,
@@ -209,12 +208,10 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * Handles columns reordering in List view
 	 * <u>changeColumnPosition</u> event listener.
 	 */
-	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {		
-		var widgetUri = this.widgetMeta.widgetUri,
-			widgetType = afStudio.wd.GuiFactory.getWidgetType(this.widgetMeta),
-			vi = this.viewInspector,
+	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {
+		var vi = this.viewInspector,
 			viRoot = vi.getRootNode(),
-			fn = viRoot.getFieldsNode();		
+			fn = viRoot.getFieldsNode();
 		
 		if (fn && fn.findChild('text', clm.name)) {
 			if (oldPos > newPos) {
@@ -222,9 +219,28 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			} else {
 				fn.childIdsOrdered.dragDown(oldPos, newPos);
 			}
-		}		
+		}
 	}//eo onListViewChangeColumnPosition	
-			
+	
+	/**
+	 * Handles columns header modifications in List view.
+	 * <u>changeColumnLabel</u> event listener.
+	 * For detailed information look at {@link afStudio.wd.list.SimpleListView#changeColumnLabel}.
+	 * @param {Ext.grid.Column} clm
+	 * @param {Number} clmIndex
+	 * @param {String} value
+	 */
+	,onListViewChangeColumnLabel : function(clm, clmIndex, value) {
+		var vi = this.viewInspector,
+			viRoot = vi.getRootNode(),
+			fn = viRoot.getFieldsNode(),
+			viClmNode;
+		
+		if (fn && (viClmNode = fn.findChild('text', clm.name))) {			
+			var lp = viClmNode.getProperty('label');
+			lp.set('value', value);			
+		}
+	}//eo onListViewChangeColumnLabel
 });
 
 /**
