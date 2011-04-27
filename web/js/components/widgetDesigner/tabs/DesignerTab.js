@@ -266,7 +266,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 							var nodeName = node.getProperty('name').data.value,
 								clms = cm.getColumnsBy(function(c) {						
 									return c.name == nodeName;
-								});							
+								});
+							console.log(value);	
 							cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
 						break;
 						
