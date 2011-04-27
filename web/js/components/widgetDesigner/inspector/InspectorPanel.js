@@ -116,8 +116,8 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 		this.onGridRefresh(e.grid.getView());
 		
         if (e.record && e.record.WITreeNode) {
-        	var n = e.record.WITreeNode;        	
-        	this.propertyGrid.fireEvent('metaPropertyChange', n, e.value, e.originalValue);        	
+        	var n = e.record.WITreeNode;
+        	this.propertyGrid.fireEvent('metaPropertyChange', n, e.record.id, e.value, e.originalValue);        	
             n.propertyChanged(e.record);
         }
 	}//eo onPropertyGridAfterEdit

@@ -253,18 +253,30 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @param {String} value
 	 * @param {String} originalValue
 	 */
-	,onListViewMetaPropertyChange : function(node, value, originalValue) {
+	,onListViewMetaPropertyChange : function(node, propId, value, originalValue) {
 		var mf = node.attributes.metaField;
 		
 		if (Ext.isDefined(mf)) {
 			switch (mf) {
 				case 'i:column' :
-					var cm = this.designerView.getColumnModel(),
-						nodeName = node.getProperty('name').data.value,
-						clms = cm.getColumnsBy(function(c) {						
-  							return c.name == nodeName;
-						});
-					cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
+					var cm = this.designerView.getColumnModel();
+					
+					switch (propId) {
+						case 'label' :
+							var nodeName = node.getProperty('name').data.value,
+								clms = cm.getColumnsBy(function(c) {						
+									return c.name == nodeName;
+								});							
+							cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
+						break;
+						
+						case 'name' :
+							var clms = cm.getColumnsBy(function(c) {						
+								return c.name == originalValue;
+							});
+							clms[0].name = value;
+						break;
+					}
 				break;
 			}
 		}
