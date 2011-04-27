@@ -1,18 +1,24 @@
 window_sizes 1598 823 375 1217 677 72
 diagrams
-  active  classdiagram_ref 134791 // classes view
-    1217 677 100 4 0 0
   sequencediagram_ref 128263 // WI initialization
+    973 541 100 4 0 0
+  classdiagram_ref 134791 // classes view
+    973 541 100 4 0 0
+  active  classdiagram_ref 134651 // WD
     973 541 100 4 0 0
 end
 show_stereotypes
-selected 
-package_ref 128519 // WidgetDesigner
+selected classdiagram_ref 134651 // WD
 open
   classview_ref 128135 // classes
   classview_ref 128263 // classes
+  classview_ref 134651 // basic
+  classview_ref 134779 // widget tabs
+  classview_ref 141307 // inspector
+  classview_ref 141435 // designer
+  classview_ref 141563 // designer list
   classview_ref 128391 // classes
   
-package_ref 128647 // ServerSide
+  package_ref 128647 // ServerSide
 end
 end

@@ -1,6 +1,6 @@
 format 76
-"WidgetDesigner" // ClientSide::afStudio::WidgetDesigner
-  revision 6
+"gui" // ClientSide::afStudio::WidgetDesigner::gui
+  revision 3
   modified_by 123 "nikolai"
   // class settings
   //class diagram settings
@@ -26,7 +26,7 @@ format 76
   package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
   show_infonote default drawing_language default show_stereotype_properties default
   
-  classview 128263 "classes"
+  classview 134651 "basic"
     //class diagram settings
     draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
     //collaboration diagram settings
@@ -42,12 +42,7 @@ format 76
     //activity diagram settings
     package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
     show_infonote default drawing_language default show_stereotype_properties default
-    sequencediagram 128263 "WI initialization"
-      show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
-      overlapping_bars size A4
-    end
-
-    class 128263 "WidgetDefinition"
+    class 134651 "WidgetPanel"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -56,210 +51,52 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      operation 128391 "fetchAndConfigure"
-	public explicit_return_type ""
-	nparams 0
-	
-	
-	
-	
-	
-      end
-
-      operation 128647 "parseFetchedData"
-	public explicit_return_type ""
-	nparams 0
-	
-	
-	
-	
-	
-      end
-
-      operation 128775 "createRootNode"
-	public explicit_return_type ""
-	nparams 0
-	
-	
-	
-	
-	
-      end
-
-      classrelation 138119 // (uses)
-	relation 137735 ---> name "uses"
+      classrelation 134651 // <composition>
+	relation 134651 *---
 	  a role_name "" private
-	    classrelation_ref 138119 // (uses)
-	  b parent class_ref 135559 // RootNode
+	    classrelation_ref 134651 // <composition>
+	  b role_name "" private
+	    classrelation_ref 134779 // <composition>
+      end
+    end
+
+    class 134779 "WidgetTabPanel"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 134779 // <composition>
+	relation_ref 134651 // <composition>
       end
 
-      classrelation 138375 // <unidirectional association>
-	relation 137863 --->
+      classrelation 134907 // <composition>
+	relation 134779 *---
 	  a role_name "" private
-	    classrelation_ref 138375 // <unidirectional association>
-	  b parent class_ref 145159 // Fields
+	    classrelation_ref 134907 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135035 // <composition>
+      end
+
+      classrelation 135163 // <composition>
+	relation 134907 *---
+	  a role_name "" private
+	    classrelation_ref 135163 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135291 // <composition>
       end
     end
 
-    class 128775 "ObjectRootNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      operation 128903 "configureFor"
-	public explicit_return_type ""
-	nparams 0
-	
-	
-	
-	
-	
-      end
-
-      classrelation 128007 // <generalisation>
-	relation 128007 ---|>
-	  a public
-	    classrelation_ref 128007 // <generalisation>
-	  b parent class_ref 135559 // RootNode
-      end
-    end
-
-    class 128903 "WidgetDesigner"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-    end
-
-    classdiagram 134791 "classes view"
+    classdiagram 134651 "WD"
       draw_all_relations no hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
       size A4
     end
-
-    class 135559 "RootNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 128391 // <generalisation>
-	relation 128391 ---|>
-	  a public
-	    classrelation_ref 128391 // <generalisation>
-	  b parent class_ref 136455 // BaseNode
-      end
-    end
-
-    class 135687 "ListNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 128135 // <generalisation>
-	relation 128135 ---|>
-	  a public
-	    classrelation_ref 128135 // <generalisation>
-	  b parent class_ref 128775 // ObjectRootNode
-      end
-    end
-
-    class 135815 "EditNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 128263 // <generalisation>
-	relation 128263 ---|>
-	  a public
-	    classrelation_ref 128263 // <generalisation>
-	  b parent class_ref 128775 // ObjectRootNode
-      end
-    end
-
-    class 136455 "BaseNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 129159 // (uses)
-	relation 129159 ---> name "uses"
-	  a role_name "" private
-	    classrelation_ref 129159 // (uses)
-	  b parent class_ref 136711 // PropertyBaseType
-      end
-
-      classrelation 131207 // (uses)
-	relation 130951 ---> name "uses"
-	  a role_name "" private
-	    classrelation_ref 131207 // (uses)
-	  b parent class_ref 138375 // BaseBehavior
-      end
-    end
-
-    class 136711 "PropertyBaseType"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-    end
-
-    class 138375 "BaseBehavior"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-    end
-
-    class 145159 "Fields"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 138503 // (holds and manages)
-	relation 137991 *--> name "holds and manages"
-	  a role_name "" private
-	    classrelation_ref 138503 // (holds and manages)
-	  b parent class_ref 136455 // BaseNode
-      end
-    end
   end
 
-  classview 135175 "concrete Node classes"
+  classview 134779 "widget tabs"
     //class diagram settings
     draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
     //collaboration diagram settings
@@ -275,75 +112,7 @@ format 76
     //activity diagram settings
     package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
     show_infonote default drawing_language default show_stereotype_properties default
-    class 135943 "CollectionNode"
-      abstract visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 128519 // <generalisation>
-	relation 128519 ---|>
-	  a public
-	    classrelation_ref 128519 // <generalisation>
-	  b parent class_ref 136455 // BaseNode
-      end
-    end
-
-    class 136071 "ContainerNode"
-      abstract visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 128647 // <generalisation>
-	relation 128647 ---|>
-	  a public
-	    classrelation_ref 128647 // <generalisation>
-	  b parent class_ref 136455 // BaseNode
-      end
-    end
-
-    class 136199 "ValidatorNode"
-      abstract visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 128775 // <generalisation>
-	relation 128775 ---|>
-	  a public
-	    classrelation_ref 128775 // <generalisation>
-	  b parent class_ref 135943 // CollectionNode
-      end
-    end
-
-    class 136327 "ValidatorsNode"
-      abstract visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 128903 // <generalisation>
-	relation 128903 ---|>
-	  a public
-	    classrelation_ref 128903 // <generalisation>
-	  b parent class_ref 135943 // CollectionNode
-      end
-    end
-
-    class 137607 "DatasourceNode"
+    class 134907 "DesignerTab"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -352,139 +121,100 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 130567 // <generalisation>
-	relation 130311 ---|>
-	  a public
-	    classrelation_ref 130567 // <generalisation>
-	  b parent class_ref 136071 // ContainerNode
-      end
-    end
-
-    class 137735 "ActionNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 130695 // <generalisation>
-	relation 130439 ---|>
-	  a public
-	    classrelation_ref 130695 // <generalisation>
-	  b parent class_ref 136071 // ContainerNode
-      end
-    end
-
-    class 137863 "ParamNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 130823 // <generalisation>
-	relation 130567 ---|>
-	  a public
-	    classrelation_ref 130823 // <generalisation>
-	  b parent class_ref 136071 // ContainerNode
-      end
-    end
-
-    class 137991 "ColumnNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 131079 // <generalisation>
-	relation 130823 ---|>
-	  a public
-	    classrelation_ref 131079 // <generalisation>
-	  b parent class_ref 136071 // ContainerNode
-      end
-    end
-
-    class 138119 "FieldValueNodeSources"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 130951 // <generalisation>
-	relation 130695 ---|>
-	  a public
-	    classrelation_ref 130951 // <generalisation>
-	  b parent class_ref 136071 // ContainerNode
-      end
-    end
-
-    class 138247 "FieldNode"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 130439 // <generalisation>
-	relation 130183 ---|>
-	  a public
-	    classrelation_ref 130439 // <generalisation>
-	  b parent class_ref 136071 // ContainerNode
-      end
-    end
-
-    class 151687 "FieldsNode"
-      abstract visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 145031 // <generalisation>
-	relation 144519 ---|>
-	  a public
-	    classrelation_ref 145031 // <generalisation>
-	  b parent class_ref 136199 // ValidatorNode
+      classrelation 135035 // <composition>
+	relation_ref 134779 // <composition>
       end
 
-      classrelation 145159 // <generalisation>
-	relation 144647 ---|>
-	  a public
-	    classrelation_ref 145159 // <generalisation>
-	  b parent class_ref 135943 // CollectionNode
-      end
-
-      classrelation 151687 // (manages order)
-	relation 151175 ---> name "manages order"
+      classrelation 135419 // <composition>
+	relation 135035 *---
 	  a role_name "" private
-	    classrelation_ref 151687 // (manages order)
-	  b parent class_ref 138247 // FieldNode
+	    classrelation_ref 135419 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135547 // <composition>
       end
 
-      classrelation 151815 // (manages order)
-	relation 151303 ---> name "manages order"
+      classrelation 135675 // <composition>
+	relation 135163 *---
 	  a role_name "" private
-	    classrelation_ref 151815 // (manages order)
-	  b parent class_ref 137991 // ColumnNode
+	    classrelation_ref 135675 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135803 // <composition>
+      end
+
+      classrelation 135931 // <association>
+	relation 135291 ----
+	  a role_name "" private
+	    classrelation_ref 135931 // <association>
+	  b role_name "" private
+	    classrelation_ref 136059 // <association>
+      end
+
+      classrelation 136187 // <composition>
+	relation 135419 *---
+	  a role_name "" private
+	    classrelation_ref 136187 // <composition>
+	  b role_name "" private
+	    classrelation_ref 136315 // <composition>
+      end
+
+      classrelation 137467 // <composition>
+	relation 136059 *---
+	  a role_name "" private
+	    classrelation_ref 137467 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137595 // <composition>
+      end
+
+      classrelation 137723 // <composition>
+	relation 136187 *---
+	  a role_name "" private
+	    classrelation_ref 137723 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137851 // <composition>
+      end
+
+      classrelation 138491 // <association>
+	relation 136571 ----
+	  a role_name "" private
+	    classrelation_ref 138491 // <association>
+	  b role_name "" private
+	    classrelation_ref 138619 // <association>
+      end
+
+      classrelation 138747 // <association>
+	relation 136699 ----
+	  a role_name "" private
+	    classrelation_ref 138747 // <association>
+	  b role_name "" private
+	    classrelation_ref 138875 // <association>
+      end
+
+      classrelation 139003 // <association>
+	relation 136827 ----
+	  a role_name "" private
+	    classrelation_ref 139003 // <association>
+	  b role_name "" private
+	    classrelation_ref 139131 // <association>
       end
     end
+
+    class 135035 "CodeEditorTab"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 135291 // <composition>
+	relation_ref 134907 // <composition>
+      end
+    end
+
   end
 
-  classview 135303 "concrete Property types"
+  classview 141307 "inspector"
     //class diagram settings
     draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
     //collaboration diagram settings
@@ -500,7 +230,7 @@ format 76
     //activity diagram settings
     package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
     show_infonote default drawing_language default show_stereotype_properties default
-    class 136839 "Boolean"
+    class 141563 "InspectorPalette"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -509,15 +239,32 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 129671 // <generalisation>
-	relation 129415 ---|>
-	  a public
-	    classrelation_ref 129671 // <generalisation>
-	  b parent class_ref 136711 // PropertyBaseType
+      classrelation 135547 // <composition>
+	relation_ref 135035 // <composition>
+      end
+
+      classrelation 137851 // <composition>
+	relation_ref 136187 // <composition>
+      end
+
+      classrelation 137979 // <composition>
+	relation 136315 *---
+	  a role_name "" private
+	    classrelation_ref 137979 // <composition>
+	  b role_name "" private
+	    classrelation_ref 138107 // <composition>
+      end
+
+      classrelation 138235 // <composition>
+	relation 136443 *---
+	  a role_name "" private
+	    classrelation_ref 138235 // <composition>
+	  b role_name "" private
+	    classrelation_ref 138363 // <composition>
       end
     end
 
-    class 136967 "String"
+    class 141691 "InspectorPanel"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -526,15 +273,28 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 129799 // <generalisation>
-	relation 129543 ---|>
-	  a public
-	    classrelation_ref 129799 // <generalisation>
-	  b parent class_ref 136711 // PropertyBaseType
+      classrelation 136955 // <composition>
+	relation 135803 *---
+	  a role_name "" private
+	    classrelation_ref 136955 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137083 // <composition>
+      end
+
+      classrelation 137211 // <composition>
+	relation 135931 *---
+	  a role_name "" private
+	    classrelation_ref 137211 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137339 // <composition>
+      end
+
+      classrelation 138107 // <composition>
+	relation_ref 136315 // <composition>
       end
     end
 
-    class 137095 "Choice"
+    class 141819 "WidgetInspectorTree"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -543,15 +303,16 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 129927 // <generalisation>
-	relation 129671 ---|>
-	  a public
-	    classrelation_ref 129927 // <generalisation>
-	  b parent class_ref 136711 // PropertyBaseType
+      classrelation 137083 // <composition>
+	relation_ref 135803 // <composition>
+      end
+
+      classrelation 139131 // <association>
+	relation_ref 136827 // <association>
       end
     end
 
-    class 137223 "FieldType"
+    class 141947 "PropertyGrid"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -560,15 +321,16 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 130055 // <generalisation>
-	relation 129799 ---|>
-	  a public
-	    classrelation_ref 130055 // <generalisation>
-	  b parent class_ref 137095 // Choice
+      classrelation 137339 // <composition>
+	relation_ref 135931 // <composition>
+      end
+
+      classrelation 138875 // <association>
+	relation_ref 136699 // <association>
       end
     end
 
-    class 137351 "ValueSource"
+    class 142587 "FileTreePanel"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -577,33 +339,13 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 130311 // <generalisation>
-	relation 130055 ---|>
-	  a public
-	    classrelation_ref 130311 // <generalisation>
-	  b parent class_ref 137095 // Choice
-      end
-    end
-
-    class 137479 "ValueType"
-      visibility package 
-      cpp_decl ""
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      
-      classrelation 130183 // <generalisation>
-	relation 129927 ---|>
-	  a public
-	    classrelation_ref 130183 // <generalisation>
-	  b parent class_ref 137095 // Choice
+      classrelation 138363 // <composition>
+	relation_ref 136443 // <composition>
       end
     end
   end
 
-  classview 135431 "concrete Behaviors classes"
+  classview 141435 "designer"
     //class diagram settings
     draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
     //collaboration diagram settings
@@ -619,7 +361,7 @@ format 76
     //activity diagram settings
     package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
     show_infonote default drawing_language default show_stereotype_properties default
-    class 138503 "WithNamePropertyAsLabelBehavior"
+    class 142075 "DesignerPanel"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -628,15 +370,32 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 131463 // <generalisation>
-	relation 131079 ---|>
-	  a public
-	    classrelation_ref 131463 // <generalisation>
-	  b parent class_ref 138375 // BaseBehavior
+      classrelation 135803 // <composition>
+	relation_ref 135163 // <composition>
+      end
+
+      classrelation 136059 // <association>
+	relation_ref 135291 // <association>
+      end
+
+      classrelation 136315 // <composition>
+	relation_ref 135419 // <composition>
+      end
+
+      classrelation 136443 // <composition>
+	relation 135547 *---
+	  a role_name "" private
+	    classrelation_ref 136443 // <composition>
+	  b role_name "" private
+	    classrelation_ref 136571 // <composition>
+      end
+
+      classrelation 137595 // <composition>
+	relation_ref 136059 // <composition>
       end
     end
 
-    class 138631 "WithValueTypeBehavior"
+    class 142203 "GuiFactory"
       visibility package 
       cpp_decl ""
       java_decl ""
@@ -645,14 +404,64 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
-      classrelation 131591 // <generalisation>
-	relation 131207 ---|>
-	  a public
-	    classrelation_ref 131591 // <generalisation>
-	  b parent class_ref 138375 // BaseBehavior
-      end
     end
   end
 
-  package_ref 128123 // gui
+  classview 141563 "designer list"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default class_drawing_mode default drawing_language default package_name_in_tab default show_context default show_msg_context default draw_all_relations default shadow default show_stereotype_properties default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+    show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+    show_infonote default drawing_language default show_stereotype_properties default
+    class 142331 "SimpleListView"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+    end
+
+    class 142459 "ListGridView"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 136571 // <composition>
+	relation_ref 135547 // <composition>
+      end
+
+      classrelation 136699 // <composition>
+	relation 135675 *---
+	  a role_name "" private
+	    classrelation_ref 136699 // <composition>
+	  b role_name "" private
+	    classrelation_ref 136827 // <composition>
+      end
+
+      classrelation 136827 // <composition>
+	relation_ref 135675 // <composition>
+      end
+
+      classrelation 138619 // <association>
+	relation_ref 136571 // <association>
+      end
+    end
+  end
 end
