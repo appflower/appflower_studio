@@ -10,7 +10,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
 	 * @constructor
 	 */
     constructor : function() {
-        afStudio.wi.ColumnNode.superclass.constructor.apply(this, arguments);        
+        afStudio.wi.ColumnNode.superclass.constructor.apply(this, arguments);
         this.initBehavior();
     }//eo constructor
 
@@ -22,7 +22,8 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
     ,getNodeConfig : function() {
         return {
             'text': 'new column',
-            'iconCls': 'icon-field'
+            'iconCls': 'icon-field',
+            'metaField': 'i:column'
         };
     }//eo getNodeConfig
     

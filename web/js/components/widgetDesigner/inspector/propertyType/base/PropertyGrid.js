@@ -193,7 +193,9 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
              * @param {Mixed} value The current edited property value
              * @param {Mixed} oldValue The original property value prior to editing 
         	 */
-        	'propertychange'
+        	'propertychange',
+        	
+        	'metaPropertyChange'
         );
         
         this.cm = cm;

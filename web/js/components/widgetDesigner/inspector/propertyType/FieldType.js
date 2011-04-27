@@ -4,20 +4,21 @@
  * @extends afStudio.wi.PropertyTypeChoice
  */ 
 afStudio.wi.FieldType = Ext.extend(afStudio.wi.PropertyTypeChoice, {
-    defaultValue : '',
+    defaultValue : ''
     
-    constructor : function() {
-        afStudio.wi.FieldType.superclass.constructor.apply(this, ['type','Type']);
+    ,constructor : function() {
+        afStudio.wi.FieldType.superclass.constructor.apply(this, ['type', 'Type']);
+        
         this.setChoices({
-           'input': 'input',
-           'textarea': 'textarea',
-           'checkbox': 'checkbox',
-           'hidden': 'hidden',
-           'password': 'password',
-           'radio': 'radio',
-           'file': 'file',
-           'combo': 'combo',
-           'multicombo':'multicombo'
+           'input':       'input',
+           'textarea':    'textarea',
+           'checkbox':    'checkbox',
+           'hidden':      'hidden',
+           'password':    'password',
+           'radio':       'radio',
+           'file':        'file',
+           'combo':       'combo',
+           'multicombo':  'multicombo'
         });
-    }
+    }//eo constructor
 });

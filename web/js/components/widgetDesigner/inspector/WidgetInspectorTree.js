@@ -65,7 +65,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @private
 	 */
 	,_afterInitComponent : function() {
-		var _this = this;
+		var _this = this;		
 		
 		this.on({
 			scope: _this,			

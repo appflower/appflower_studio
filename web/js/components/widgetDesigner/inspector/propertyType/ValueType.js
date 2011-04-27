@@ -4,16 +4,18 @@
  * @extends afStudio.wi.PropertyTypeChoice
  */ 
 afStudio.wi.ValueType = Ext.extend(afStudio.wi.PropertyTypeChoice, {
-    defaultValue : '',
+    defaultValue : ''
     
-    constructor : function() {
+    ,constructor : function() {
         afStudio.wi.ValueType.superclass.constructor.apply(this, ['valueType', 'Value Type']);
+        
         this.setChoices({
-           'default': '&#x20;',
-           'orm': 'orm',
-           'static': 'static',
-           'file': 'file'
+           'default': 'default',
+           'orm':     'orm',
+           'static':  'static',
+           'file':    'file'
         });
+        
         this.setRequired();
-    }
+    }//eo constructor
 });

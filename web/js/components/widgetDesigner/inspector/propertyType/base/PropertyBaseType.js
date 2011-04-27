@@ -12,7 +12,16 @@ Ext.ns('afStudio.wi');
  * @param {String} fieldLabel
  */
 afStudio.wi.PropertyBaseType = function(fieldId, fieldLabel) {
+    /**
+     * @property id
+     * @type String
+     */	
 	this.id = fieldId;
+	
+    /**
+     * @property label
+     * @type String
+     */	
     this.label = fieldLabel;
 };
 
@@ -26,38 +35,28 @@ Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
     /**
      * Used when value was not set. This should be set by class implementing concrete type
      */
-    defaultValue : '',
+    defaultValue : ''
     
-    /**
-     * @property id
-     * @type String
-     */
-
-    /**
-     * @property label
-     * @type String
-     */
-    
-    type : 'string',
+    ,type : 'string'
 
 	/**
 	 * Contains flag if this field is required.
 	 * @property required
 	 * @type {Boolean} 
 	 */
-	required : false,
+	,required : false
 	 	
-	setRequired : function() {
+	,setRequired : function() {
 		this.required = true;
 		return this;
-	},
+	}
 	
-	setValue : function(v) {
+	,setValue : function(v) {
 		this.value = v;
 		return this;
-	},
+	}
 	
-    create : function() {
+    ,create : function() {
         var recordConstructor = Ext.data.Record.create([
             {name: 'name', type: 'string'},
             {name: 'value', type: this.type},
@@ -76,5 +75,6 @@ Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
         r.originalStore = this.store;
         
         return r;
-    }
+    }//eo create
+    
 });

@@ -40,7 +40,7 @@ afStudio.wi.FieldNode = Ext.extend(afStudio.wi.ContainerNode, {
             new afStudio.wi.PropertyTypeString('label','Label').create(),
             new afStudio.wi.FieldType().create(),
             new afStudio.wi.PropertyTypeString('state','State').create(),
-            new afStudio.wi.PropertyTypeString('style','Style').create(),
+            new afStudio.wi.PropertyTypeString('style','Style').create()
        ];
 
        this.addProperties(properties);

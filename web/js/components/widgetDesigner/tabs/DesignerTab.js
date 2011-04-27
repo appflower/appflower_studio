@@ -124,6 +124,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		//Preview button
 		this.designerPanel.getMenuItem('previewBtn').on('click', this.onPreviewWidgetView, this);		
 		
+		//init specific view component
 		if (gf.isWidgetTypeValid(widgetType)) {
 			this['init' + widgetType.ucfirst() + 'DesignerView']();
 		} else {
@@ -142,8 +143,9 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private 
 	 */
 	,initListDesignerView : function() {
-		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel']);
-		
+		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel']);		
+		this.relayEvents(this.viewProperty, ['metaPropertyChange']);
+
 		//Preview button
 		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
 			afStudio.Msg.info('Add column click');
@@ -152,7 +154,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		this.on({
 			scope: this,
 			changeColumnPosition: this.onListViewChangeColumnPosition,
-			changeColumnLabel: this.onListViewChangeColumnLabel
+			changeColumnLabel: this.onListViewChangeColumnLabel,
+			metaPropertyChange: this.onListViewMetaPropertyChange
 		});
 	}//eo initListDesignerView
 	
@@ -204,6 +207,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);
 	}//eo onPreviewWidgetView
 	
+	/*------------------------------ List view ----------------------------- */
+	
 	/**
 	 * Handles columns reordering in List view
 	 * <u>changeColumnPosition</u> event listener.
@@ -236,11 +241,35 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			fn = viRoot.getFieldsNode(),
 			viClmNode;
 		
-		if (fn && (viClmNode = fn.findChild('text', clm.name))) {			
+		if (fn && (viClmNode = fn.findChild('text', clm.name))) {
 			var lp = viClmNode.getProperty('label');
 			lp.set('value', value);			
 		}
 	}//eo onListViewChangeColumnLabel
+	
+	/**
+	 * 
+	 * @param {} node
+	 * @param {String} value
+	 * @param {String} originalValue
+	 */
+	,onListViewMetaPropertyChange : function(node, value, originalValue) {
+		var mf = node.attributes.metaField;
+		
+		if (Ext.isDefined(mf)) {
+			switch (mf) {
+				case 'i:column' :
+					var cm = this.designerView.getColumnModel(),
+						nodeName = node.getProperty('name').data.value,
+						clms = cm.getColumnsBy(function(c) {						
+  							return c.name == nodeName;
+						});
+					cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
+				break;
+			}
+		}
+	}//eo onListViewMetaPropertyChange
+	
 });
 
 /**
