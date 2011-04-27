@@ -2,7 +2,7 @@ format 76
 
 classcanvas 128251 class_ref 134651 // WidgetPanel
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyzwh 17 45 2000 93 83
+  xyzwh 18 11 2000 101 83
 end
 classcanvas 128379 class_ref 134779 // WidgetTabPanel
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
@@ -10,11 +10,11 @@ classcanvas 128379 class_ref 134779 // WidgetTabPanel
 end
 classcanvas 128891 class_ref 134907 // DesignerTab
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyzwh 438 124 2000 101 49
+  xyzwh 439 124 2000 103 89
 end
 classcanvas 129019 class_ref 135035 // CodeEditorTab
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyzwh 438 51 2000 101 51
+  xyzwh 438 21 2000 101 51
 end
 classcanvas 129659 class_ref 142075 // DesignerPanel
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
@@ -24,34 +24,47 @@ note 129787 "WidgetTabPanel is the container or any kind of WD GUI tabs."
   xyzwh 149 15 2000 201 51
 classcanvas 129915 class_ref 141563 // InspectorPalette
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyzwh 611 199 2000 107 57
-end
-classcanvas 131579 class_ref 142459 // ListGridView
-  draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyzwh 54 331 2000 105 71
+  xyzwh 595 270 2000 107 57
 end
 classcanvas 131835 class_ref 141691 // InspectorPanel
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyz 571 295 2000
+  xyz 555 366 2000
 end
 classcanvas 131963 class_ref 141819 // WidgetInspectorTree
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyz 505 393 2000
+  xyz 489 464 2000
 end
 classcanvas 132091 class_ref 141947 // PropertyGrid
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyz 404 393 2005
+  xyz 388 464 2005
 end
 classcanvas 132219 class_ref 142587 // FileTreePanel
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
-  xyz 720 295 2000
+  xyz 704 366 2000
 end
 classcanvas 132347 class_ref 142459 // ListGridView
   draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
   xyz 63 435 2000
 end
 note 132603 "GUI List"
-  xyzwh 163 345 2000 71 39
+  xyzwh 163 347 2000 71 39
+classcanvas 134011 class_ref 142331 // SimpleListView
+  draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+  xyzwh 62 347 2000 99 51
+end
+note 134523 "Inspector Property Grid
+"
+  xyzwh 328 509 2000 151 35
+note 134651 "WI"
+  xyzwh 626 465 2000 35 35
+note 134779 "DesignerTab - is the main WD tab. It relays events from 3 main UI components: GUI View, WI Tree, WI PropertyGrid."
+  xyzwh 556 121 2000 275 85
+classcanvas 134907 class_ref 149115 // WidgetDefinition
+  draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+  xyzwh 18 117 2000 105 47
+end
+note 135163 "CodeEditorTab is used to create security and actions code-editor tabs."
+  xyzwh 557 19 2000 237 51
 relationcanvas 128507 relation_ref 134651 // <composition>
   decenter_begin 384
   from ref 128251 z 2001 to ref 128379
@@ -70,16 +83,6 @@ relationcanvas 129531 relation_ref 134907 // <composition>
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
 end
-relationcanvas 131707 relation_ref 135547 // <composition>
-  from ref 129659 z 2001 to ref 131579
-  no_role_a no_role_b
-  no_multiplicity_a no_multiplicity_b
-end
-relationcanvas 132475 relation_ref 135675 // <composition>
-  from ref 131579 z 2001 to ref 132347
-  no_role_a no_role_b
-  no_multiplicity_a no_multiplicity_b
-end
 relationcanvas 132731 relation_ref 135803 // <composition>
   decenter_begin 504
   from ref 131835 z 2001 to ref 131963
@@ -87,20 +90,20 @@ relationcanvas 132731 relation_ref 135803 // <composition>
   no_multiplicity_a no_multiplicity_b
 end
 relationcanvas 132859 relation_ref 135931 // <composition>
-  decenter_begin 382
+  decenter_begin 381
   from ref 131835 z 2006 to ref 132091
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
 end
 relationcanvas 133115 relation_ref 136059 // <composition>
-  decenter_begin 815
-  decenter_end 542
+  decenter_begin 814
+  decenter_end 541
   from ref 128891 z 2001 to ref 129659
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
 end
 relationcanvas 133243 relation_ref 136187 // <composition>
-  decenter_begin 815
+  decenter_begin 814
   from ref 128891 z 2001 to ref 129915
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
@@ -115,12 +118,6 @@ relationcanvas 133499 relation_ref 136443 // <composition>
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
 end
-relationcanvas 133627 relation_ref 136571 // <association>
-  decenter_begin 158
-  from ref 128891 z 2001 to ref 131579
-  no_role_a no_role_b
-  no_multiplicity_a no_multiplicity_b
-end
 relationcanvas 133755 relation_ref 136699 // <association>
   decenter_begin 305
   from ref 128891 z 2006 to ref 132091
@@ -130,6 +127,29 @@ end
 relationcanvas 133883 relation_ref 136827 // <association>
   decenter_begin 495
   from ref 128891 z 2001 to ref 131963
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+end
+relationcanvas 134139 relation_ref 143355 // <composition>
+  from ref 129659 z 2001 to ref 134011
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+end
+relationcanvas 134267 relation_ref 143483 // <composition>
+  from ref 134011 z 2001 to ref 132347
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+end
+relationcanvas 134395 relation_ref 143611 // <association>
+  decenter_begin 898
+  from ref 128891 z 2001 to ref 134011
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+end
+relationcanvas 135035 relation_ref 143739 // <association>
+  decenter_begin 569
+  decenter_end 405
+  from ref 128251 z 2001 to ref 134907
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
 end

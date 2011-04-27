@@ -1,6 +1,6 @@
 format 76
 "gui" // ClientSide::afStudio::WidgetDesigner::gui
-  revision 3
+  revision 4
   modified_by 123 "nikolai"
   // class settings
   //class diagram settings
@@ -58,6 +58,24 @@ format 76
 	  b role_name "" private
 	    classrelation_ref 134779 // <composition>
       end
+
+      classrelation 146427 // <association>
+	relation 143739 ----
+	  a role_name "" private
+	    classrelation_ref 146427 // <association>
+	  b role_name "" private
+	    classrelation_ref 146555 // <association>
+      end
+
+      attribute 128507 "widgetMetaData"
+	public explicit_type ""
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
     end
 
     class 134779 "WidgetTabPanel"
@@ -94,6 +112,20 @@ format 76
       draw_all_relations no hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
       size A4
     end
+
+    class 149115 "WidgetDefinition"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 146555 // <association>
+	relation_ref 143739 // <association>
+      end
+    end
   end
 
   classview 134779 "widget tabs"
@@ -121,6 +153,8 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
+      ncouples 1
+      key "" value ""
       classrelation 135035 // <composition>
 	relation_ref 134779 // <composition>
       end
@@ -196,6 +230,44 @@ format 76
 	  b role_name "" private
 	    classrelation_ref 139131 // <association>
       end
+
+      attribute 128123 "designerView"
+	public type class_ref 142331 // SimpleListView
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      classrelation 146171 // <association>
+	relation 143611 ----
+	  a role_name "" private
+	    classrelation_ref 146171 // <association>
+	  b role_name "" private
+	    classrelation_ref 146299 // <association>
+      end
+
+      attribute 128251 "viewProperty"
+	public type class_ref 141947 // PropertyGrid
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 128379 "viewInspector"
+	public type class_ref 141819 // WidgetInspectorTree
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
     end
 
     class 135035 "CodeEditorTab"
@@ -211,7 +283,6 @@ format 76
 	relation_ref 134907 // <composition>
       end
     end
-
   end
 
   classview 141307 "inspector"
@@ -393,6 +464,14 @@ format 76
       classrelation 137595 // <composition>
 	relation_ref 136059 // <composition>
       end
+
+      classrelation 145659 // <composition>
+	relation 143355 *---
+	  a role_name "" private
+	    classrelation_ref 145659 // <composition>
+	  b role_name "" private
+	    classrelation_ref 145787 // <composition>
+      end
     end
 
     class 142203 "GuiFactory"
@@ -432,6 +511,21 @@ format 76
       idl_decl ""
       explicit_switch_type ""
       
+      classrelation 145787 // <composition>
+	relation_ref 143355 // <composition>
+      end
+
+      classrelation 145915 // <composition>
+	relation 143483 *---
+	  a role_name "" private
+	    classrelation_ref 145915 // <composition>
+	  b role_name "" private
+	    classrelation_ref 146043 // <composition>
+      end
+
+      classrelation 146299 // <association>
+	relation_ref 143611 // <association>
+      end
     end
 
     class 142459 "ListGridView"
@@ -461,6 +555,10 @@ format 76
 
       classrelation 138619 // <association>
 	relation_ref 136571 // <association>
+      end
+
+      classrelation 146043 // <composition>
+	relation_ref 143483 // <composition>
       end
     end
   end
