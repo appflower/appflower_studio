@@ -47,14 +47,14 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			
 			if (Ext.isArray(clm)) {
 				for (var i = 0; i < clm.length; i++) {
-					var c = clm[i];			
+					var c = clm[i];
 					columns.push({
 						header:   c.label,
 						name:     c.name,
 						width:    c.width ? c.width : this.columnWidth,
-						hidden:   (c.hidden ? c.hidden.bool() : false),
-						hideable: (c.hideable ? c.hideable.bool() : true),
-						fixed:    (c.resizable ? c.resizable.bool() : false)
+						hidden:   c.hidden ? c.hidden.bool() : false,
+						hideable: c.hideable ? c.hideable.bool() : true,
+						fixed:    c.resizable ? !c.resizable.bool() : true
 					});
 				}
 				for (var i = columns.length - 1; i <= this.maxColumns; i++) {
@@ -62,6 +62,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
+						fixed: true,
 						uninit: true
 					});
 				}
@@ -73,13 +74,14 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 					width:     clm.width ? clm.width : this.columnWidth,
 					hidden:    clm.hidden ? clm.hidden.bool() : false,
 					hideable:  clm.hideable ? clm.hideable.bool() : true,
-					fixed:     clm.resizable ? clm.resizable.bool() : false					
+					fixed:     clm.resizable ? !clm.resizable.bool() : true					
 				});				
 				for (var i = 1; i <= this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
+						fixed: true,
 						uninit: true
 					});
 				}				
