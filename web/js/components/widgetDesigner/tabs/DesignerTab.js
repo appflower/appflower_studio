@@ -249,7 +249,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * 
-	 * @param {} node
+	 * @param {Ext.tree.TreeNode} node
 	 * @param {String} value
 	 * @param {String} originalValue
 	 */
@@ -257,6 +257,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var mf = node.attributes.metaField;
 		
 		if (Ext.isDefined(mf)) {
+			
 			switch (mf) {
 				case 'i:column' :
 					var cm = this.designerView.getColumnModel();
@@ -266,8 +267,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 							var nodeName = node.getProperty('name').data.value,
 								clms = cm.getColumnsBy(function(c) {						
 									return c.name == nodeName;
-								});
-							console.log(value);	
+								});	
 							cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
 						break;
 						
@@ -280,6 +280,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 					}
 				break;
 			}
+			
 		}
 	}//eo onListViewMetaPropertyChange
 	
