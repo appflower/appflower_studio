@@ -119,10 +119,12 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		this.viewInspector = this.inspectorPalette.getInspectorTree();		
 		
 		//Save button
-		this.designerPanel.getMenuItem('saveBtn').on('click', this.onSaveWidgetView, this);
-		
+		this.designerPanel.getMenuItem('saveBtn').on('click', this.onSaveWidgetView, this);		
 		//Preview button
 		this.designerPanel.getMenuItem('previewBtn').on('click', this.onPreviewWidgetView, this);		
+		
+		
+		this.relayEvents(this.viewInspector, ['append']);
 		
 		//init specific view component
 		if (gf.isWidgetTypeValid(widgetType)) {
@@ -133,8 +135,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		
 		_this.on({
 			scope: this,
-			afterrender: function() {
-			}
+			append: this.onViewInspectorAppendProperty
 		});
 	}//eo _afterInitComponent
 	
@@ -144,7 +145,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 */
 	,initListDesignerView : function() {
 		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel']);		
-		this.relayEvents(this.viewProperty, ['metaPropertyChange']);
+		this.relayEvents(this.viewProperty, ['metaPropertyChange']);		
 
 		//Preview button
 		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
@@ -207,6 +208,22 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);
 	}//eo onPreviewWidgetView
 	
+	,onViewInspectorAppendProperty : function(vi, parent, node, index) {		
+		
+		this.viewProperty.setSource(node.getProperties());
+		(function() {
+			this.viewInspector.getSelectionModel().select(node);
+		}).defer(100, this);
+		
+		var vCm = this.designerView.getColumnModel();		
+		var _index = this.designerView.getView().getUninitColumn();
+		vCm.config[_index].uninit = false;
+		vCm.config[_index].header = node.getProperty('label').get('value');
+		vCm.config[_index].name   = node.getProperty('name').get('value');		
+		vCm.moveColumn(_index, vCm.config.length - 1);
+		vCm.setHidden(vCm.config.length - 1, false);		
+	}//eo onViewInspectorAppendProperty
+	
 	/*------------------------------ List view ----------------------------- */
 	
 	/**
@@ -248,8 +265,9 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	}//eo onListViewChangeColumnLabel
 	
 	/**
-	 * 
+	 * <u>metaPropertyChange</u> event listener. 
 	 * @param {Ext.tree.TreeNode} node
+	 * @param {String} propId
 	 * @param {String} value
 	 * @param {String} originalValue
 	 */
@@ -267,15 +285,19 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 							var nodeName = node.getProperty('name').data.value,
 								clms = cm.getColumnsBy(function(c) {						
 									return c.name == nodeName;
-								});	
-							cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
+								});
+							if (clms[0]) {	
+								cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
+							}
 						break;
 						
 						case 'name' :
 							var clms = cm.getColumnsBy(function(c) {						
 								return c.name == originalValue;
 							});
-							clms[0].name = value;
+							if (clms[0]) {
+								clms[0].name = value;
+							}
 						break;
 					}
 				break;

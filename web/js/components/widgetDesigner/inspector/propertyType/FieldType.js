@@ -7,7 +7,7 @@ afStudio.wi.FieldType = Ext.extend(afStudio.wi.PropertyTypeChoice, {
     defaultValue : ''
     
     ,constructor : function() {
-        afStudio.wi.FieldType.superclass.constructor.apply(this, ['type', 'Type']);
+        afStudio.wi.FieldType.superclass.constructor.call(this, {id: 'type', label: 'Type'});
         
         this.setChoices({
            'input':       'input',

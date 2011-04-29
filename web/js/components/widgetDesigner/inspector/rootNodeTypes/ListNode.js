@@ -36,7 +36,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         
         var behavior = new afStudio.wi.WithIParamsBehavior();
         behavior.setProperties([
-            new afStudio.wi.PropertyTypeString('maxperpage', 'Max records per page').setValue(10).create()
+            new afStudio.wi.PropertyTypeString({id: 'maxperpage', label: 'Max records per page', value: 10}).create()
         ]);
         this.addBehavior(behavior);        
     }//eo constructor 
@@ -67,9 +67,9 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({
         	id: 'i:fields',
             text: 'Fields',
-            createChildConstructor: afStudio.wi.ColumnNode,
+            addChildActionLabel: 'Add column',
             childNodeId: 'i:column',
-            addChildActionLabel: 'Add column'
+            createChildConstructor: afStudio.wi.ColumnNode                        
         }, afStudio.wi.FieldsNode);
 
         return new fieldsNode;
@@ -85,7 +85,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
            id: 'i:proxy',
            createProperties: function() {
                return [
-                   new afStudio.wi.PropertyTypeString('url','Url').setRequired().create()
+                   new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url', required: true}).create()
                ];
            }
         });

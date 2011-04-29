@@ -5,10 +5,14 @@
  * @extends afStudio.wi.PropertyTypeChoice
  */ 
 afStudio.wi.ValueSource = Ext.extend(afStudio.wi.PropertyTypeChoice, {
-    defaultValue : ''
+    id: 'valueSource'
+    
+    ,label : 'Value Source'
+    
+    ,defaultValue : ''
     
     ,constructor : function() {
-        afStudio.wi.ValueSource.superclass.constructor.apply(this, ['valueSource', 'Value Source']);
+        afStudio.wi.ValueSource.superclass.constructor.apply(this, arguments);
         
         this.setChoices({
            'source':         'source',

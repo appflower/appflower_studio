@@ -1,31 +1,22 @@
 Ext.ns('afStudio.wi');
 
 /**
- * PropertyBaseType constructor.
- * @constructor
  * 
  * Each node that is inside WI tree can have many properties.
  * Each of that property can be different type, one can be choice widget and other simple input field
  * This class defines base class for all concrete properties
  * 
- * @param {String} fieldId
- * @param {String} fieldLabel
- */
-afStudio.wi.PropertyBaseType = function(fieldId, fieldLabel) {
-    /**
-     * @property id
-     * @type String
-     */	
-	this.id = fieldId;
-	
-    /**
-     * @property label
-     * @type String
-     */	
-    this.label = fieldLabel;
-};
+ */ 
 
-Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
+afStudio.wi.PropertyBaseType = Ext.extend(Object, {
+    /**
+     * @cfg {Stdung} (Required) id
+     */    
+	
+	/**
+     * @cfg {String} (Required) label
+     */
+	
 	/**
 	 * Property value
 	 * @property value
@@ -37,14 +28,24 @@ Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
      */
     defaultValue : ''
     
-    ,type : 'string'
-
+    ,type : 'string'	
+    
 	/**
 	 * Contains flag if this field is required.
-	 * @property required
-	 * @type {Boolean} 
+	 * @cfg {Boolean} required (defaults to false)  
 	 */
 	,required : false
+
+	/**
+	 * PropertyBaseType constructor.
+	 * @constructor
+	 */
+	,constructor : function(config) {
+		config = config || {};
+		
+		Ext.apply(this, config);		
+			
+	}//eo constructor
 	 	
 	,setRequired : function() {
 		this.required = true;
@@ -76,5 +77,5 @@ Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
         
         return r;
     }//eo create
-    
+   
 });

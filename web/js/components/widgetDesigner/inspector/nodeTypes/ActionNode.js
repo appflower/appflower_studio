@@ -33,15 +33,15 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
      */
     ,createProperties : function() {
        var properties = [
-           new afStudio.wi.PropertyTypeString('name', 'Name').setRequired().create(),
-           new afStudio.wi.PropertyTypeString('url', 'Url').setRequired().create(),
-           new afStudio.wi.PropertyTypeString('iconCls', 'Icon CSS class').create(),
-           new afStudio.wi.PropertyTypeString('icon', 'Icon URL').create(),
-           new afStudio.wi.PropertyTypeBoolean('forceSelection', 'Force selection').create(),
-           new afStudio.wi.PropertyTypeBoolean('post', 'Post').create(),
-           new afStudio.wi.PropertyTypeString('tooltip', 'Tooltip').create(),
-           new afStudio.wi.PropertyTypeString('confirmMsg', 'Confirm message').create(),
-           new afStudio.wi.PropertyTypeString('condition', 'Condition').create()
+           new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name'}).setRequired().create(),
+           new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url'}).setRequired().create(),
+           new afStudio.wi.PropertyTypeString({id: 'iconCls', label: 'Icon CSS class'}).create(),
+           new afStudio.wi.PropertyTypeString({id: 'icon', label: 'Icon URL'}).create(),
+           new afStudio.wi.PropertyTypeBoolean({id: 'forceSelection', label: 'Force selection'}).create(),
+           new afStudio.wi.PropertyTypeBoolean({id: 'post', label: 'Post'}).create(),
+           new afStudio.wi.PropertyTypeString({id: 'tooltip', label: 'Tooltip'}).create(),
+           new afStudio.wi.PropertyTypeString({id: 'confirmMsg', label: 'Confirm message'}).create(),
+           new afStudio.wi.PropertyTypeString({id: 'condition', label: 'Condition'}).create()
        ];
 
        this.addProperties(properties);

@@ -26,7 +26,7 @@ afStudio.wi.EditNode = Ext.extend(afStudio.wi.ObjectRootNode, {
            addChildActionLabel: 'Add field',
            createProperties: function(){
                return [
-                   new afStudio.wi.PropertyTypeString('url','Url').setRequired().create()
+                   new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url'}).setRequired().create()
                ];
             }
         }, afStudio.wi.FieldsNode);

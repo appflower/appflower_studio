@@ -3,11 +3,16 @@
  * @class afStudio.wi.ValueType
  * @extends afStudio.wi.PropertyTypeChoice
  */ 
-afStudio.wi.ValueType = Ext.extend(afStudio.wi.PropertyTypeChoice, {
-    defaultValue : ''
+afStudio.wi.ValueType = Ext.extend(afStudio.wi.PropertyTypeChoice, {    
+    
+    id : 'valueType'
+    
+    ,label : 'Value Type'
+    
+    ,defaultValue : ''
     
     ,constructor : function() {
-        afStudio.wi.ValueType.superclass.constructor.apply(this, ['valueType', 'Value Type']);
+        afStudio.wi.ValueType.superclass.constructor.apply(this, arguments);
         
         this.setChoices({
            'default': 'default',

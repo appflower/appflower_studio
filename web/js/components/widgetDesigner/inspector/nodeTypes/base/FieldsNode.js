@@ -19,21 +19,21 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
 	    this.childIdsOrdered = [];
 	    
 	    afStudio.wi.FieldsNode.superclass.constructor.apply(this, arguments);	    
-	},//eo constructor    
+	}//eo constructor    
     
     /**
      * @override
      */
-    addChild : function() {
+    ,addChild : function() {
         var newNode = afStudio.wi.FieldsNode.superclass.addChild.apply(this, arguments);
         this.childIdsOrdered.push(newNode.id);
 
         return newNode;
-    },
+    }//eo addChild 
     
     //TODO: I violated DRY principle here, BaseNode::dumpChildsData() should be refactored
     // There is also custom implementation of dumpChildsData inisde CollectioNode class
-    dumpChildsData : function() {
+    ,dumpChildsData : function() {
         var data = [],
         	childNodes = [],
         	ret = {};
@@ -51,9 +51,9 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
         ret[this.childNodeId] = data;
         
         return ret;
-    },
+    }//eo dumpChildsData
     
-    setChildsOrder : function(childIdsOrdered) {
+    ,setChildsOrder : function(childIdsOrdered) {
         this.childIdsOrdered = childIdsOrdered;
     }
 });

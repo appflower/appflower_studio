@@ -34,9 +34,9 @@ afStudio.wi.CollectionNode = Ext.extend(afStudio.wi.BaseNode, {
         this.contextMenu = new Ext.menu.Menu({
             items: [
             {
-                text: this.addChildActionLabel,
+                text: this.addChildActionLabel,                
                 iconCls: 'icon-add',
-                handler: this.addChild,
+                handler: this.onContextAddChildItemClick,
                 scope: this
             }]
         });
@@ -45,30 +45,20 @@ afStudio.wi.CollectionNode = Ext.extend(afStudio.wi.BaseNode, {
     /**
      * @protected
      * @override
-     * @param {} node
-     * @param {} e
+     * @param {Ext.tree.TreeNode} node
+     * @param {Ext.EventObject} e
      */
     ,onContextMenuClick : function(node, e) {
         node.select();
         this.contextMenu.showAt(e.getXY());
-    }//eo onContextMenuClick
+    }//eo onContextMenuClick    
     
     /**
-     * Adds new child note to this one.
-     * Also this method is addChild contexmenu item's <u>click</u> event listener.
-     * @protected
-     * 
-     * @return {Ext.tree.TreeNode} created new child node
+     * Context menu addChild <u>click</u> event listener.
      */
-    ,addChild : function() {
-        var newNode = this.createChild();
-        this.appendChild(newNode);
-        if (this.rendered) {
-            this.expand();
-        }
-        
-        return newNode;
-    }//eo addChild
+    ,onContextAddChildItemClick : function(item, e) {
+    	var newNode = this.addChild();
+    }//eo onContextAddChildItemClick
     
     /**
      * @override
@@ -89,6 +79,22 @@ afStudio.wi.CollectionNode = Ext.extend(afStudio.wi.BaseNode, {
             afStudio.wi.CollectionNode.superclass.configureForValue.apply(this, arguments);
         }
     }//eo configureForValue
+    
+    /**
+     * Adds a child node. 
+     * @protected
+     * 
+     * @return {Ext.tree.TreeNode} created new child node
+     */
+    ,addChild : function() {
+        var newNode = this.createChild();
+        this.appendChild(newNode);
+        if (this.rendered) {
+            this.expand();
+        }
+
+        return newNode;
+    }//eo addChild    
     
     /**
      * @override
