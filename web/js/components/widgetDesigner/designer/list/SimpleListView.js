@@ -18,7 +18,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @cfg {String} columnName (defaults to "NewColumn")
 	 * Default column name text. 
 	 */
-	columnName : 'NewColumn'	
+	columnName : 'newcolumn'	
 	
 	/**
 	 * @cfg {Number} columnWidth (defaults to 80)
@@ -138,7 +138,9 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			 * @param {Number} clmIndex The column index inside {@link Ext.grid.ColumnModel}.
 			 * @param {String} value The header's new value.
 			 */
-			'changeColumnLabel'
+			'changeColumnLabel',
+			
+			'deleteColumn'
 		);
 		
 		this.on({

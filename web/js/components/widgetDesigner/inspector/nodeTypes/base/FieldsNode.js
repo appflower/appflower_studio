@@ -29,7 +29,18 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
         this.childIdsOrdered.push(newNode.id);
         
         return newNode;
-    }//eo addChild 
+    }//eo addChild
+    
+    /**
+     * Deletes child node.
+     * @param {Ext.tree.TreeNode} node
+     */
+    ,deleteChild : function(node) {
+    	if (this.childIdsOrdered.indexOf(node.id)) {
+	    	this.childIdsOrdered.remove(node.id);
+	    	node.destroy();    	
+    	}
+    }//eo deleteChild
     
     //TODO: I violated DRY principle here, BaseNode::dumpChildsData() should be refactored
     // There is also custom implementation of dumpChildsData inisde CollectioNode class

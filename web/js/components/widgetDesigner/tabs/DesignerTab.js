@@ -150,7 +150,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private 
 	 */
 	,initListDesignerView : function() {
-		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel']);		
+		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel', 'deleteColumn']);		
 		this.relayEvents(this.viewProperty, ['metaPropertyChange']);		
 
 		//Add column button
@@ -163,6 +163,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			scope: this,
 			changeColumnPosition: this.onListViewChangeColumnPosition,
 			changeColumnLabel: this.onListViewChangeColumnLabel,
+			deleteColumn: this.onListViewDeleteColumn,
 			metaPropertyChange: this.onListViewMetaPropertyChange
 		});
 	}//eo initListDesignerView
@@ -269,7 +270,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var vi 		= this.viewInspector,
 			viRoot  = vi.getRootNode(),
 			fn      = viRoot.getFieldsNode();
-		
+			
+//		console.log(fn.childIdsOrdered, oldPos, newPos);	
 		if (fn && fn.findChild('text', clm.name)) {
 			if (oldPos > newPos) {
 				fn.childIdsOrdered.dragUp(oldPos, newPos);
@@ -298,6 +300,16 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			lp.set('value', value);			
 		}
 	}//eo onListViewChangeColumnLabel
+	
+	,onListViewDeleteColumn : function(clmName) {
+		var vi = this.viewInspector,
+			fn = vi.getRootNode().getFieldsNode(),
+			viClmNode;
+		
+		if (fn && (viClmNode = fn.findChild('text', clmName))) {
+			fn.deleteChild(viClmNode);
+		}		
+	}//eo onListViewDeleteColumn
 	
 	/**
 	 * <u>metaPropertyChange</u> event listener. 

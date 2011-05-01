@@ -211,9 +211,18 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 			case 'deleteClm':
 				var visibleCount = cm.getColumnCount(true);
 				if (visibleCount > 1) {
+					var clmName = cm.config[index].name;
 					cm.setHidden(index, true);
 					cm.config[index].uninit = true;
 					cm.config[index].header = this.grid.columnName;
+					delete cm.config[index].name;
+					//correct indexes
+					if (index < visibleCount - 1) {
+						for (var i = index; i < visibleCount; i++) {
+							cm.moveColumn(i, i + 1);	
+						}	
+					}
+					this.grid.fireEvent('deleteColumn', clmName);					
 				}
 			break;
 		}
