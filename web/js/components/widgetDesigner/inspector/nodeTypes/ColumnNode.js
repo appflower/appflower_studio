@@ -21,7 +21,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
      */
     ,getNodeConfig : function() {
         return {
-            'text': 'new column',
+            'text': 'newcolumn',
             'iconCls': 'icon-field',
             'metaField': 'i:column'
         };

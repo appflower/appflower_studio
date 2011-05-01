@@ -98,10 +98,16 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private
 	 */	
 	,_afterInitComponent : function() {
-		var _this = this,
-			   gf = afStudio.wd.GuiFactory,
-			widgetType = gf.getWidgetType(this.widgetMeta);
+		var _this  = this,
+			gf     = afStudio.wd.GuiFactory;
 		
+		/**
+		 * View type.
+		 * @property widgetType
+		 * @type {String}
+		 */	
+		this.widgetType  = gf.getWidgetType(this.widgetMeta);
+			
 		/**
 		 * @property designerView
 		 * @type {Ext.Container}
@@ -127,10 +133,10 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		this.relayEvents(this.viewInspector, ['append']);
 		
 		//init specific view component
-		if (gf.isWidgetTypeValid(widgetType)) {
-			this['init' + widgetType.ucfirst() + 'DesignerView']();
+		if (gf.isWidgetTypeValid(this.widgetType)) {
+			this['init' + this.widgetType.ucfirst() + 'DesignerView']();
 		} else {
-			afStudio.Msg.error('Widget Designer', String.format('Unknown widget type <b>{0}</b>', widgetType));
+			afStudio.Msg.error('Widget Designer', String.format('Unknown widget type <b>{0}</b>', this.widgetType));
 		}
 		
 		_this.on({
@@ -147,10 +153,11 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel']);		
 		this.relayEvents(this.viewProperty, ['metaPropertyChange']);		
 
-		//Preview button
-		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
-			afStudio.Msg.info('Add column click');
-		}, this);		
+		//Add column button
+//TODO will be added in future release		
+//		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
+//			afStudio.Msg.info('Add column click');
+//		}, this);		
 		
 		this.on({
 			scope: this,
@@ -208,20 +215,48 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);
 	}//eo onPreviewWidgetView
 	
-	,onViewInspectorAppendProperty : function(vi, parent, node, index) {		
+	/**
+	 * 
+	 * @param {} vi
+	 * @param {} parent
+	 * @param {} node
+	 * @param {} index
+	 */
+	,onViewInspectorAppendProperty : function(vi, parent, node, index) {
+		var gf   = afStudio.wd.GuiFactory,
+			vd   = this.designerView,
+			vpg	 = this.viewProperty,
+			vit  = this.viewInspector;
+		 
+		switch (this.widgetType) {
+			
+			case gf.LIST :
+			
+				var	vCm      = vd.getColumnModel(),		
+					startIdx = vd.getView().getUninitColumn(),
+					endIdx   = vCm.getColumnCount(true);
+				
+				if (startIdx != -1) {
+					vpg.setSource(node.getProperties());
+					(function() {
+						vit.getSelectionModel().select(node);
+					}).defer(100, this);
 		
-		this.viewProperty.setSource(node.getProperties());
-		(function() {
-			this.viewInspector.getSelectionModel().select(node);
-		}).defer(100, this);
+					vCm.config[startIdx].uninit = false;
+					vCm.config[startIdx].header = node.getProperty('label').get('value');
+					vCm.config[startIdx].name   = node.getProperty('name').get('value');		
+					vCm.moveColumn(startIdx, endIdx);
+					vCm.setHidden(endIdx, false);
+				} else {
+					(function() {
+						node.destroy();
+						vpg.setSource([]);
+					}).defer(100, this);
+					afStudio.Msg.info('Widget Designer: List View', String.format('Max columns size <u>{0}</u>', vd.maxColumns));
+				}			
+			break;			
+		}	
 		
-		var vCm = this.designerView.getColumnModel();		
-		var _index = this.designerView.getView().getUninitColumn();
-		vCm.config[_index].uninit = false;
-		vCm.config[_index].header = node.getProperty('label').get('value');
-		vCm.config[_index].name   = node.getProperty('name').get('value');		
-		vCm.moveColumn(_index, vCm.config.length - 1);
-		vCm.setHidden(vCm.config.length - 1, false);		
 	}//eo onViewInspectorAppendProperty
 	
 	/*------------------------------ List view ----------------------------- */
@@ -231,9 +266,9 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * <u>changeColumnPosition</u> event listener.
 	 */
 	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {
-		var vi = this.viewInspector,
-			viRoot = vi.getRootNode(),
-			fn = viRoot.getFieldsNode();
+		var vi 		= this.viewInspector,
+			viRoot  = vi.getRootNode(),
+			fn      = viRoot.getFieldsNode();
 		
 		if (fn && fn.findChild('text', clm.name)) {
 			if (oldPos > newPos) {

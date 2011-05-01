@@ -89,14 +89,16 @@ afStudio.wd.GuiFactory = function() {
 		}//eo buildGui
 		
 		,createListViewToolbar : function() {
-			return new Array(
-				{
-					text: 'Add Column',
-					itemId: 'addColumnBtn',
-					iconCls: 'icon-add'
-				},
-				'-'			
-			);
+			return []; 
+//TODO will be added in future release	
+//			new Array(
+//				{
+//					text: 'Add Column',
+//					itemId: 'addColumnBtn',
+//					iconCls: 'icon-add'
+//				},
+//				'-'			
+//			);
 		}//eo createListViewToolbar
 		
 		,createEditViewToolbar : function() {

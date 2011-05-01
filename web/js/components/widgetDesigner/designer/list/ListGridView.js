@@ -99,8 +99,9 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 			});
 			
 			this.hmenu.add(
-				{itemId: "addClmBefore", text: 'Add Column Before'},
-				{itemId: "addClmAfter", text: 'Add Column After'},
+//TODO will be added in future release			
+//				{itemId: "addClmBefore", text: 'Add Column Before'},
+//				{itemId: "addClmAfter", text: 'Add Column After'},
 				{itemId: "renameClm", text: 'Rename Column'},				
 				{itemId: 'deleteClm', text: 'Delete Column'},
 				'-',
@@ -169,7 +170,7 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 			}
 		}
 		
-		return 0;
+		return -1;
 	}//eo getUninitColumn
 	
 	/**

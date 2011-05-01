@@ -57,7 +57,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 						fixed:    c.resizable ? !c.resizable.bool() : true
 					});
 				}
-				for (var i = columns.length - 1; i <= this.maxColumns; i++) {
+				for (var i = columns.length - 1; i < this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
 						width: this.columnWidth,
@@ -76,7 +76,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 					hideable:  clm.hideable ? clm.hideable.bool() : true,
 					fixed:     clm.resizable ? !clm.resizable.bool() : true					
 				});				
-				for (var i = 1; i <= this.maxColumns; i++) {
+				for (var i = 1; i < this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
 						width: this.columnWidth,

@@ -27,7 +27,7 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
     ,addChild : function() {
         var newNode = afStudio.wi.FieldsNode.superclass.addChild.apply(this, arguments);
         this.childIdsOrdered.push(newNode.id);
-
+        
         return newNode;
     }//eo addChild 
     
