@@ -1,1 +1,1 @@
-java -jar cactus-tool.jar -d ../web/js -o cache
+java -jar cactus-tool.jar -c ../config -d ../web -o cache
