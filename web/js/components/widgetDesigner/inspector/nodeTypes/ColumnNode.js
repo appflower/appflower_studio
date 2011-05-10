@@ -31,20 +31,24 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
      * template method
      * @override
      */
-    ,createProperties : function() {
-       var properties = [
+    ,createProperties : function() {    	
+		var properties = [
        		new afStudio.wi.PropertyTypeString({id: 'label', label: 'Label', value: 'NewColumn', required: true}).create(),
             new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name', value: 'newcolumn', required: true}).create(),
+            new afStudio.wi.PropertyTypeBoolean({id: 'qtip', label: 'Qtip', defaultValue: false}).create(),
+            new afStudio.wi.PropertyBaseType({id: 'width', label: 'Width', type: 'posint', defaultValue: 0}).create(), 
             new afStudio.wi.PropertyTypeBoolean({id: 'sortable', label: 'Sortable'}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'editable', label: 'Editable'}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'resizable', label: 'Resizable'}).create(),
+            new afStudio.wi.PropertyTypeBoolean({id: 'groupField', label: 'GroupField'}).create(),
+            new afStudio.wi.AlignType().create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'hidden', label: 'Hidden'}).create(),            
             new afStudio.wi.PropertyTypeBoolean({id: 'hideable', label: 'Hideable', defaultValue: true}).create(),
             new afStudio.wi.PropertyTypeString({id: 'style', label: 'Style'}).create(),            
             new afStudio.wi.PropertyTypeString({id: 'filter', label: 'Filter'}).create()
-       ];
+		];
 
-       this.addProperties(properties);
+		this.addProperties(properties);
     }//eo createProperties
     
     /**

@@ -231,29 +231,32 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		 
 		switch (this.widgetType) {
 			
-			case gf.LIST :
-			
-				var	vCm      = vd.getColumnModel(),		
-					startIdx = vd.getView().getUninitColumn(),
-					endIdx   = vCm.getColumnCount(true);
+			case gf.LIST :			
+				switch (parent.id) {
+					case 'i:fields':					
+						var	vCm      = vd.getColumnModel(),		
+							startIdx = vd.getView().getUninitColumn(),
+							endIdx   = vCm.getColumnCount(true);
+						
+						if (startIdx != -1) {
+							vpg.setSource(node.getProperties());
+							(function() {
+								vit.getSelectionModel().select(node);
+							}).defer(100, this);
 				
-				if (startIdx != -1) {
-					vpg.setSource(node.getProperties());
-					(function() {
-						vit.getSelectionModel().select(node);
-					}).defer(100, this);
-		
-					vCm.config[startIdx].uninit = false;
-					vCm.config[startIdx].header = node.getProperty('label').get('value');
-					vCm.config[startIdx].name   = node.getProperty('name').get('value');		
-					vCm.moveColumn(startIdx, endIdx);
-					vCm.setHidden(endIdx, false);
-				} else {
-					(function() {
-						node.destroy();
-						vpg.setSource([]);
-					}).defer(100, this);
-					afStudio.Msg.info('Widget Designer: List View', String.format('Max columns size <u>{0}</u>', vd.maxColumns));
+							vCm.config[startIdx].uninit = false;
+							vCm.config[startIdx].header = node.getProperty('label').get('value');
+							vCm.config[startIdx].name   = node.getProperty('name').get('value');		
+							vCm.moveColumn(startIdx, endIdx);
+							vCm.setHidden(endIdx, false);
+						} else {
+							(function() {
+								node.destroy();
+								vpg.setSource([]);
+							}).defer(100, this);
+							afStudio.Msg.info('Widget Designer: List View', String.format('Max columns size <u>{0}</u>', vd.maxColumns));
+						}
+					break;
 				}			
 			break;			
 		}	
@@ -271,7 +274,6 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			viRoot  = vi.getRootNode(),
 			fn      = viRoot.getFieldsNode();
 			
-//		console.log(fn.childIdsOrdered, oldPos, newPos);	
 		if (fn && fn.findChild('text', clm.name)) {
 			if (oldPos > newPos) {
 				fn.childIdsOrdered.dragUp(oldPos, newPos);

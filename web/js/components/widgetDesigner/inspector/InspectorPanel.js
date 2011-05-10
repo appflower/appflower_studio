@@ -103,7 +103,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 */
 	,onInspectorTreeNodeClick : function(node, e) {
 		var fields = node.getProperties();
-		this.propertyGrid.setSource(fields);		
+		this.propertyGrid.setSource(fields);
 	}//eo onInspectorTreeNodeClick
 	
 	/**

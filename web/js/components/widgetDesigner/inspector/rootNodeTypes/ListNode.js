@@ -38,7 +38,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         behavior.setProperties([
             new afStudio.wi.PropertyTypeString({id: 'maxperpage', label: 'Max records per page', value: 10}).create()
         ]);
-        this.addBehavior(behavior);        
+        this.addBehavior(behavior);       
     }//eo constructor 
     
     /**
@@ -69,7 +69,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
             text: 'Fields',
             addChildActionLabel: 'Add column',
             childNodeId: 'i:column',
-            createChildConstructor: afStudio.wi.ColumnNode                        
+            createChildConstructor: afStudio.wi.ColumnNode
         }, afStudio.wi.FieldsNode);
 
         return new fieldsNode;
