@@ -2,15 +2,8 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all.js"></script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/cache/af.js"></script>
-
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
 <script type="text/javascript">
-	afStudioWSUrls = new afStudio.WSUrlsClass();
-</script>
-
-<script type="text/javascript">
-var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>';
+var afStudioConsoleCommands = '<?php echo afStudioConsole::getCommands(false); ?>';
 var is_visible_users = <?php echo (int)$userinfo['is_admin']; ?>;
 var userinfo = {
     'username': "<?php echo $userinfo['username'] ?>",
@@ -23,7 +16,6 @@ var afStudioHost = {
 <?php $projectPath = sfConfig::get('sf_root_dir'); $projectInPath = explode('/',$projectPath); unset($projectInPath[count($projectInPath)-1]); $projectInPath = implode('/',$projectInPath);?>
 var afProjectInPath = '<?php echo $projectInPath; ?>';
 </script>
-
 <script type="text/javascript" src="/appFlowerStudioPlugin/cache/afStudio.js"></script>
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />

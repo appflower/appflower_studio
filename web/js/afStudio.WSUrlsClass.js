@@ -1,3 +1,5 @@
+Ext.ns('afStudio');
+
 /**
  * In this class we'll store all URL used to fetch project related data with ajax calls
  * We need to have those in one place
@@ -91,3 +93,5 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return url;
     }
 });
+
+afStudioWSUrls = new afStudio.WSUrlsClass();

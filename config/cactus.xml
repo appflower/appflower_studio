@@ -1,9 +1,11 @@
-<cactus>		
+<?xml version="1.0" encoding="UTF-8" ?>
+<cactus>	
 	
+	<!-- JavaScript files -->
 	<js>	
 		<needles>
 			
-			<!-- AppFlower --> 	
+			<!-- AppFlower Engine  (40) --> 	
 			<needle>
 				<output>af.js</output>
 				<files>
@@ -50,13 +52,13 @@
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/groupingcombobox/Ext.ux.form.GroupingComboBox.js</file>		
 				</files>
 			</needle>
-		-->	
-			<!-- AppFlower Studio -->		
+			
+			<!-- AppFlower Studio (84) -->		
 			<needle>
-				<output>afStudio.js</output>
-				
+				<output>afStudio.js</output>				
 				<files>		
 					<file>js/afStudio.js</file>		
+					<file>js/afStudio.WSUrlsClass.js</file>		
 					
 					<file>js/custom</file>
 					<file>js/custom/form</file>
@@ -73,8 +75,7 @@
 					<file>js/afStudio.popup.js</file>
 					<file>js/afStudio.settings.js</file>
 					<file>js/afStudio.TemplateSelector.js</file>
-					<file>js/afStudio.ToolbarEditor.js</file>
-					<file>js/afStudio.WSUrlsClass.js</file>
+					<file>js/afStudio.ToolbarEditor.js</file>					
 					<file>js/afStudio.overrides.js</file>
 					
 					<!-- Error -->
@@ -179,8 +180,11 @@
 		</needles>	
 	</js>
 	
+	<!-- Css files -->
 	<css>
 		<needles>
+			
+			<!--AppFlower Engine & Studio (15) -->
 			<needle>
 				<output>afStudio.css</output>
 				<files>					

@@ -1,16 +1,11 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base-debug.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all-debug.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/js/custom/Ext.CrossDomain.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
-<script type="text/javascript">
-window.afStudioWSUrls = new afStudio.WSUrlsClass();
-</script>
 
+<script type="text/javascript" src="/appFlowerPlugin/js/custom/Ext.CrossDomain.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/widgetJS.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/BorderLayoutOverride.js"></script>
-
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/gridUtil.js"></script>
+
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/overrides/Override.Ext.data.SortTypes.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/overrides/Override.Ext.form.Field.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/overrides/Override.Fixes.js"></script>
@@ -71,6 +66,7 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 </script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/GroupingComboBox.js"></script>
