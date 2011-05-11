@@ -20,11 +20,10 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
      * @override
      */
 	,getNodeConfig : function() {
-        var node = {
-            text: 'New list widget'
+        return {
+            text: 'New list widget',
+            metaField: 'root'
         };
-        
-        return node;
 	}//eo getNodeConfig
 	
 	/**

@@ -21,9 +21,9 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
      */
     ,getNodeConfig : function() {
         return {
-            'text': 'newcolumn',
-            'iconCls': 'icon-field',
-            'metaField': 'i:column'
+            text: 'newcolumn',
+            iconCls: 'icon-field',
+            metaField: 'i:column'
         };
     }//eo getNodeConfig
     
@@ -36,7 +36,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
        		new afStudio.wi.PropertyTypeString({id: 'label', label: 'Label', value: 'NewColumn', required: true}).create(),
             new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name', value: 'newcolumn', required: true}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'qtip', label: 'Qtip', defaultValue: false}).create(),
-            new afStudio.wi.PropertyBaseType({id: 'width', label: 'Width', type: 'posint', defaultValue: 0}).create(), 
+            new afStudio.wi.PropertyBaseType({id: 'width', label: 'Width', type: 'posint'}).create(), 
             new afStudio.wi.PropertyTypeBoolean({id: 'sortable', label: 'Sortable'}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'editable', label: 'Editable'}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'resizable', label: 'Resizable'}).create(),

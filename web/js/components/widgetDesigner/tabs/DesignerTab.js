@@ -129,10 +129,10 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		//Preview button
 		this.designerPanel.getMenuItem('previewBtn').on('click', this.onPreviewWidgetView, this);		
 		
-		
+		//Relaying Events
 		this.relayEvents(this.viewInspector, ['append']);
 		
-		//init specific view component
+		//Init specific view component
 		if (gf.isWidgetTypeValid(this.widgetType)) {
 			this['init' + this.widgetType.ucfirst() + 'DesignerView']();
 		} else {
@@ -154,10 +154,10 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		this.relayEvents(this.viewProperty, ['metaPropertyChange']);		
 
 		//Add column button
-//TODO will be added in future release		
-//		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
-//			afStudio.Msg.info('Add column click');
-//		}, this);		
+		//TODO will be added in future release		
+		//		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
+		//			afStudio.Msg.info('Add column click');
+		//		}, this);		
 		
 		this.on({
 			scope: this,
@@ -314,20 +314,25 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	}//eo onListViewDeleteColumn
 	
 	/**
-	 * <u>metaPropertyChange</u> event listener. 
+	 * ListView <u>metaPropertyChange</u> event listener. 
 	 * @param {Ext.tree.TreeNode} node
 	 * @param {String} propId
 	 * @param {String} value
 	 * @param {String} originalValue
 	 */
-	,onListViewMetaPropertyChange : function(node, propId, value, originalValue) {
-		var mf = node.attributes.metaField;
-		
+	,onListViewMetaPropertyChange : function(node, propId, value, originalValue) {		
+		var gf   = afStudio.wd.GuiFactory,
+			vd   = this.designerView,
+			vpg	 = this.viewProperty,
+			vit  = this.viewInspector,
+			mf   = node.attributes.metaField;
+				
 		if (Ext.isDefined(mf)) {
 			
 			switch (mf) {
+				//Column node <i:column>
 				case 'i:column' :
-					var cm = this.designerView.getColumnModel();
+					var cm = vd.getColumnModel();
 					
 					switch (propId) {
 						case 'label' :
@@ -350,11 +355,29 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 						break;
 					}
 				break;
+				//Root node
+				case 'root' :
+					switch (propId) {
+						case 'i:title':
+							vd.setTitle(value);
+						break;
+						
+						case 'i:description':
+							var descCmp = vd.getTopToolbar().getComponent('desc');
+							descCmp.get(0).setText(value);							
+							if (Ext.util.Format.trim(value)) {
+								descCmp.show();	
+							} else {
+								descCmp.hide();
+							}							
+							vd.doLayout();
+						break;
+					}					
+				break;
 			}
 			
 		}
-	}//eo onListViewMetaPropertyChange
-	
+	}//eo onListViewMetaPropertyChange	
 });
 
 /**

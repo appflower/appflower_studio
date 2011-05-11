@@ -86,7 +86,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 					});
 				}				
 			}
-		}
+		}//eo columns
 
 		var store = new Ext.data.ArrayStore({
 			idIndex: 0,
@@ -94,12 +94,41 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			fields: []
 		});
 		
+		//<i:description>
+		var iDescription = {
+    		itemId: 'desc',
+    		hidden: true,
+        	items: {
+        		xtype: 'tbtext',
+        		style: 'white-space: normal;',
+        		text: ''
+        	}
+		};
+		if (vm['i:description'] && !Ext.isEmpty(Ext.util.Format.trim(vm['i:description']))) {
+			iDescription.hidden = false;			
+			iDescription.items.text = vm['i:description'];			
+		}
+		
 		return {
 			title: vm['i:title'],
 	        store: store,      
 			columns: columns,
 	        view: new afStudio.wd.list.ListGridView(),
-	        columnLines: true
+	        columnLines: true,
+	        tbar: {
+	        	xtype: 'container',
+	        	defaults: {
+	        		xtype: 'toolbar',
+	        		hidden: true
+	        	},
+	        	items: [
+	        	{	
+	        		itemId: 'actions',
+		        	items: []
+	        	},
+	        		iDescription
+	        	]
+	        }
 		};
 		
 	}//eo _beforeInitComponent	
@@ -140,6 +169,9 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			 */
 			'changeColumnLabel',
 			
+			/**
+			 * @event 'deleteColumn'
+			 */
 			'deleteColumn'
 		);
 		
