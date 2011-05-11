@@ -32,12 +32,15 @@ afStudio.wi.NodeBuilder = {
             if (config.iconCls) {
                 nodeConfig.iconCls = config.iconCls;
             }
+            if (config.metaField) {
+            	nodeConfig.metaField = config.metaField            	
+            }
             return nodeConfig;
         }
 
         if (config.createProperties) {
             p.createProperties = function() {
-                var properties = config.createProperties();
+                var properties = config.createProperties.call(this);
                 this.addProperties(properties);
             };
         }

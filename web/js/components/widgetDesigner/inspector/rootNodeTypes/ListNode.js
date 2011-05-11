@@ -66,9 +66,27 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({
         	id: 'i:fields',
             text: 'Fields',
+            metaField: 'i:fields',
             addChildActionLabel: 'Add column',
             childNodeId: 'i:column',
-            createChildConstructor: afStudio.wi.ColumnNode
+            createChildConstructor: afStudio.wi.ColumnNode,
+            createProperties: function() {
+            	//call parent class' method
+           		this.constructor.superclass.createProperties.call(this);
+           		
+            	return [
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'tree', label: 'Tree'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'selectable', label: 'Selectable', defaultValue: true}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'exportable', label: 'Exportable', defaultValue: true}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'select', label: 'Select'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'pager', label: 'Pager', defaultValue: true}).create(),       		
+		       		new afStudio.wi.PropertyTypeString({id: 'pagerTemplate', label: 'Pager Template'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'remoteSort', label: 'Remote Sort'}).create(),
+		       		new afStudio.wi.PropertyTypeString({id: 'iconCls', label: 'Icon Cls'}).create(),
+		       		new afStudio.wi.PropertyTypeString({id: 'icon', label: 'Icon', defaultValue: '/images/famfamfam/accept.png'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'remoteFilter', label: 'Remote Filter'}).create()
+            	];
+            }            
         }, afStudio.wi.FieldsNode);
 
         return new fieldsNode;

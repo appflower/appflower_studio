@@ -128,6 +128,12 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	        	},
 	        		iDescription
 	        	]
+	        },
+	        bbar: {
+	        	xtype: 'paging',
+	        	hidden: Ext.isDefined(vm['i:fields'].pager) ? !(vm['i:fields'].pager.bool()) : false,
+		        store: store,
+		        displayInfo: true
 	        }
 		};
 		

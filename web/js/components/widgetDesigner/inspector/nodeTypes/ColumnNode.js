@@ -33,6 +33,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
      */
     ,createProperties : function() {    	
 		var properties = [
+			new afStudio.wi.AlignType().create(),
        		new afStudio.wi.PropertyTypeString({id: 'label', label: 'Label', value: 'NewColumn', required: true}).create(),
             new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name', value: 'newcolumn', required: true}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'qtip', label: 'Qtip', defaultValue: false}).create(),
@@ -40,8 +41,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
             new afStudio.wi.PropertyTypeBoolean({id: 'sortable', label: 'Sortable'}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'editable', label: 'Editable'}).create(),
             new afStudio.wi.PropertyTypeBoolean({id: 'resizable', label: 'Resizable'}).create(),
-            new afStudio.wi.PropertyTypeBoolean({id: 'groupField', label: 'GroupField'}).create(),
-            new afStudio.wi.AlignType().create(),
+            new afStudio.wi.PropertyTypeBoolean({id: 'groupField', label: 'GroupField'}).create(),            
             new afStudio.wi.PropertyTypeBoolean({id: 'hidden', label: 'Hidden'}).create(),            
             new afStudio.wi.PropertyTypeBoolean({id: 'hideable', label: 'Hideable', defaultValue: true}).create(),
             new afStudio.wi.PropertyTypeString({id: 'style', label: 'Style'}).create(),            
@@ -66,9 +66,11 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
      * @private
      */
     ,initBehavior : function() {
+    	/* i:column doesn't have nested elements only attributes
         var behavior = new afStudio.wi.WithValueTypeBehavior;
         behavior.setValueTypeDataKey('i:value');
         this.addBehavior(behavior);
+        */
         this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
     }//eo initBehavior
 });

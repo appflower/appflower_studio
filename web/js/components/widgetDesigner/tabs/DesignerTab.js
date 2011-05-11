@@ -326,37 +326,11 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			vpg	 = this.viewProperty,
 			vit  = this.viewInspector,
 			mf   = node.attributes.metaField;
-				
-		if (Ext.isDefined(mf)) {
 			
+		if (Ext.isDefined(mf)) {			
 			switch (mf) {
-				//Column node <i:column>
-				case 'i:column' :
-					var cm = vd.getColumnModel();
-					
-					switch (propId) {
-						case 'label' :
-							var nodeName = node.getProperty('name').data.value,
-								clms = cm.getColumnsBy(function(c) {						
-									return c.name == nodeName;
-								});
-							if (clms[0]) {	
-								cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
-							}
-						break;
-						
-						case 'name' :
-							var clms = cm.getColumnsBy(function(c) {						
-								return c.name == originalValue;
-							});
-							if (clms[0]) {
-								clms[0].name = value;
-							}
-						break;
-					}
-				break;
 				//Root node
-				case 'root' :
+				case 'root':
 					switch (propId) {
 						case 'i:title':
 							vd.setTitle(value);
@@ -369,14 +343,51 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 								descCmp.show();	
 							} else {
 								descCmp.hide();
-							}							
+							}
 							vd.doLayout();
 						break;
 					}					
+				break;				
+				//Column node <i:column>
+				case 'i:column':
+					var cm = vd.getColumnModel();
+					
+					switch (propId) {
+						case 'label':
+							var nodeName = node.getProperty('name').data.value,
+								clms = cm.getColumnsBy(function(c) {						
+									return c.name == nodeName;
+								});
+							if (clms[0]) {	
+								cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
+							}
+						break;
+						
+						case 'name':
+							var clms = cm.getColumnsBy(function(c) {						
+								return c.name == originalValue;
+							});
+							if (clms[0]) {
+								clms[0].name = value;
+							}
+						break;
+					}
 				break;
-			}
-			
-		}
+				//Fields node <i:fields>
+				case 'i:fields':
+					switch (propId) {
+						case 'pager':
+							if (value === false) {
+								vd.getBottomToolbar().hide();	
+							} else {
+								vd.getBottomToolbar().show();
+							}
+							vd.doLayout();
+						break;					
+					}					
+				break;
+			}//eo switch		
+		}//eo if
 	}//eo onListViewMetaPropertyChange	
 });
 
