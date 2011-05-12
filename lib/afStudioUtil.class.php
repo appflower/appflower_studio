@@ -225,4 +225,20 @@ class afStudioUtil
     {
     	return md5(time());
     }
+    
+    /**
+     * 
+     */
+    public static function getTemplateConfig()
+    {
+    	$pluginTemplateConfig=sfYaml::load(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/config/template.yml');
+    	$appTemplateConfig=sfYaml::load(sfConfig::get('sf_root_dir').'/config/template.yml');
+    	
+    	if(isset($appTemplateConfig['template']['current']))
+    	{
+    		$pluginTemplateConfig['template']['current'] = $appTemplateConfig['template']['current']; 
+    	}
+    	
+    	return $pluginTemplateConfig;
+    }
 }
