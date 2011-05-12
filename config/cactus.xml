@@ -173,9 +173,9 @@
 					<file>js/jquery/jquery.prettyPhoto.js</file>	
 					
 					<!-- Template Designer -->
-					<file>js/components/templateDesigner/afStudio.TemplateSelector.js</file>
-					<file>js/components/templateDesigner/editors/afStudio.ToolbarEditor.js</file>
-					<file>js/components/templateDesigner/editors/afStudio.CssEditor.js</file>
+					<file>js/components/theme/afStudio.TemplateSelector.js</file>
+					<file>js/components/theme/editors/afStudio.ToolbarEditor.js</file>
+					<file>js/components/theme/editors/afStudio.CssEditor.js</file>
 				</files>
 			</needle>
 			
