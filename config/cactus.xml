@@ -69,13 +69,10 @@
 	
 					<file>js/afStudio.CreateProject.js</file>
 					<file>js/afStudio.CreateProjectWizard.js</file>
-					<file>js/afStudio.CssEditor.js</file>
 					<file>js/afStudio.databaseConnectionSettings.js</file>
 					<file>js/afStudio.LoadProject.js</file>
 					<file>js/afStudio.popup.js</file>
 					<file>js/afStudio.settings.js</file>
-					<file>js/afStudio.TemplateSelector.js</file>
-					<file>js/afStudio.ToolbarEditor.js</file>					
 					<file>js/afStudio.overrides.js</file>
 					
 					<!-- Error -->
@@ -174,6 +171,11 @@
 					<file>js/jquery/jquery-1.4.4.min.js</file>
 					<file>js/jquery/jquery.jscrollpane.min.js</file>
 					<file>js/jquery/jquery.prettyPhoto.js</file>	
+					
+					<!-- Template Designer -->
+					<file>js/components/templateDesigner/afStudio.TemplateSelector.js</file>
+					<file>js/components/templateDesigner/editors/afStudio.ToolbarEditor.js</file>
+					<file>js/components/templateDesigner/editors/afStudio.CssEditor.js</file>
 				</files>
 			</needle>
 			
