@@ -23,7 +23,8 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
      */
     ,getNodeConfig : function() {
         return {
-            'text': 'new action'
+            text: 'new action',
+            metaField: 'i:action'
         };
     }//eo getNodeConfig
     
@@ -33,8 +34,9 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
      */
     ,createProperties : function() {
        var properties = [
-           new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name'}).setRequired().create(),
-           new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url'}).setRequired().create(),
+           new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name', required: true}).create(),
+           new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url', required: true}).create(),
+           new afStudio.wi.PropertyTypeString({id: 'text', label: 'Text'}).create(),
            new afStudio.wi.PropertyTypeString({id: 'iconCls', label: 'Icon CSS class'}).create(),
            new afStudio.wi.PropertyTypeString({id: 'icon', label: 'Icon URL'}).create(),
            new afStudio.wi.PropertyTypeBoolean({id: 'forceSelection', label: 'Force selection'}).create(),

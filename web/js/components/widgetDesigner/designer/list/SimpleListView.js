@@ -94,6 +94,27 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			fields: []
 		});
 		
+		//<i:actions>
+		var iActions = {	        	
+    		itemId: 'actions',
+        	items: [        	
+        	'->',
+        	{
+        		itemId: 'more',
+    			text: 'More Actions',
+				menu: {
+					items: [
+					{
+						itemId: 'sel-all',
+						text: 'Select All'
+					},{
+						itemId: 'desel-all',
+						text: 'Deselect All'
+					}]
+				}        			
+        	}]
+		};		
+		
 		//<i:description>
 		var iDescription = {
     		itemId: 'desc',
@@ -118,16 +139,9 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	        tbar: {
 	        	xtype: 'container',
 	        	defaults: {
-	        		xtype: 'toolbar',
-	        		hidden: true
+	        		xtype: 'toolbar'
 	        	},
-	        	items: [
-	        	{	
-	        		itemId: 'actions',
-		        	items: []
-	        	},
-	        		iDescription
-	        	]
+	        	items: [iActions, iDescription]
 	        },
 	        bbar: {
 	        	xtype: 'paging',
@@ -135,8 +149,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		        store: store,
 		        displayInfo: true
 	        }
-		};
-		
+		};		
 	}//eo _beforeInitComponent	
 	
 	/**
@@ -158,6 +171,8 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	,_afterInitComponent : function() {
 		var _this = this;		
 		
+		this.configureView();
+		
 		this.addEvents(
 			/**
 			 * @event 'changeColumnPosition' Fires when a column was moved from his previous position.
@@ -176,7 +191,8 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			'changeColumnLabel',
 			
 			/**
-			 * @event 'deleteColumn'
+			 * @event 'deleteColumn' Fires after a column was deleted
+			 * @param {String} clmName The colomn <tt>name</tt> attribute
 			 */
 			'deleteColumn'
 		);
@@ -193,6 +209,65 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	}//eo _afterInitComponent
 	
 	/**
+	 * After construction view configuration 
+	 */
+	,configureView : function() {
+		var vm = this.viewMeta,
+		    bbar  = this.getTopToolbar(),
+		    aBar  = bbar.getComponent('actions'),
+		    aMore = aBar.getComponent('more');    
+		
+		//Actions    
+		if (!Ext.isEmpty(vm['i:actions'])) {
+			var act = vm['i:actions']['i:action'];
+			//TODO add tooltip, icon, iconCls
+			if (Ext.isArray(act)) {
+				Ext.iterate(act, function(a, idx, array){	
+					aBar.insertButton(0, {
+						text: a.text ? a.text : a.name
+					});
+				});
+			} else {				
+				if (Ext.isDefined(act)) {
+					aBar.insertButton(0, {
+						text: act.text ? act.text : act.name
+					});
+				}
+			}
+		}
+		
+		//More Actions
+		var moreActions = false;
+		if (vm['i:fields']) {
+			var selectable = vm['i:fields'].selectable ? vm['i:fields'].selectable.bool() : true;
+			var exportable = vm['i:fields'].exportable ? vm['i:fields'].exportable.bool() : true;
+			
+			moreActions = selectable || exportable; 
+			if (moreActions) {
+				aMore.show();
+			} else {
+				aMore.hide();
+			}
+			
+			if (selectable) {
+				aMore.menu.getComponent('sel-all').enable();
+				aMore.menu.getComponent('desel-all').enable();				
+			} else {
+				aMore.menu.getComponent('sel-all').disable();			
+				aMore.menu.getComponent('desel-all').disable();				
+			}
+		}
+		
+		if (aBar.items.getCount() <= 2 && !moreActions) {
+			aBar.hide();
+		} else {
+			aBar.show();	
+		}
+		//eo Actions
+		
+	}//eo configureView
+	
+	/**
 	 * Handler of <u>columnmove</u> event.
 	 * @param {Number} oldIndex
 	 * @param {Number} newIndex
@@ -204,6 +279,11 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		}
 	}//eo onColumnMove
 });
+
+/**
+ * Adds Mixin ListMetaProcessor Class
+ */
+Ext.apply(afStudio.wd.list.SimpleListView.prototype, afStudio.wd.list.ListMetaProcessor);
 
 /**
  * @type 'afStudio.wd.list.simpleListView'
