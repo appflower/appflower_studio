@@ -1,5 +1,11 @@
 Ext.ns('afStudio.wd.list');
 
+/**
+ * Mixin class dedicated for {@link afStudio.wd.list.SimpleListView}
+ * 
+ * @singleton
+ * @author Nikolai Babinski
+ */
 afStudio.wd.list.ListMetaProcessor = (function() {
 	
 	return {
@@ -17,7 +23,6 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 */
 		processMeta : function(e) {
 			var mf = e.node.attributes.metaField;		
-//			console.log('meta \t', e.node, e.name, e.value, e.oldValue);
 			
 			if (Ext.isDefined(mf)) {
 				var t = mf;
@@ -100,10 +105,8 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 					this.doLayout();
 				break;
 			}
-		}//eo processRootTag			
-		
-	};
-	
+		}//eo processRootTag
+	};	
 })();
 
 
