@@ -321,73 +321,14 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @param {String} originalValue
 	 */
 	,onListViewMetaPropertyChange : function(node, propId, value, originalValue) {		
-		var gf   = afStudio.wd.GuiFactory,
-			vd   = this.designerView,
-			vpg	 = this.viewProperty,
-			vit  = this.viewInspector,
-			mf   = node.attributes.metaField;
-			
-		if (Ext.isDefined(mf)) {			
-			switch (mf) {
-				//Root node
-				case 'root':
-					switch (propId) {
-						case 'i:title':
-							vd.setTitle(value);
-						break;
-						
-						case 'i:description':
-							var descCmp = vd.getTopToolbar().getComponent('desc');
-							descCmp.get(0).setText(value);							
-							if (Ext.util.Format.trim(value)) {
-								descCmp.show();	
-							} else {
-								descCmp.hide();
-							}
-							vd.doLayout();
-						break;
-					}					
-				break;				
-				//Column node <i:column>
-				case 'i:column':
-					var cm = vd.getColumnModel();
-					
-					switch (propId) {
-						case 'label':
-							var nodeName = node.getProperty('name').data.value,
-								clms = cm.getColumnsBy(function(c) {						
-									return c.name == nodeName;
-								});
-							if (clms[0]) {	
-								cm.setColumnHeader(cm.getIndexById(clms[0].id), value);
-							}
-						break;
-						
-						case 'name':
-							var clms = cm.getColumnsBy(function(c) {						
-								return c.name == originalValue;
-							});
-							if (clms[0]) {
-								clms[0].name = value;
-							}
-						break;
-					}
-				break;
-				//Fields node <i:fields>
-				case 'i:fields':
-					switch (propId) {
-						case 'pager':
-							if (value === false) {
-								vd.getBottomToolbar().hide();	
-							} else {
-								vd.getBottomToolbar().show();
-							}
-							vd.doLayout();
-						break;					
-					}					
-				break;
-			}//eo switch		
-		}//eo if
+		var vd = this.designerView;	
+		
+		vd.processMeta({
+			node: node, 
+			name: propId, 
+			value: value, 
+			oldValue: originalValue
+		});
 	}//eo onListViewMetaPropertyChange	
 });
 

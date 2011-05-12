@@ -176,7 +176,8 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			'changeColumnLabel',
 			
 			/**
-			 * @event 'deleteColumn'
+			 * @event 'deleteColumn' Fires after a column was deleted
+			 * @param {String} clmName The colomn <tt>name</tt> attribute
 			 */
 			'deleteColumn'
 		);
@@ -204,6 +205,11 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		}
 	}//eo onColumnMove
 });
+
+/**
+ * Adds Mixin ListMetaProcessor Class
+ */
+Ext.apply(afStudio.wd.list.SimpleListView.prototype, afStudio.wd.list.ListMetaProcessor);
 
 /**
  * @type 'afStudio.wd.list.simpleListView'

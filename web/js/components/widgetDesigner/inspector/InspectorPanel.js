@@ -41,7 +41,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
    		var _this = this;
 
 		return {
-            title: 'Widget Inspector',            
+            title: 'Widget Inspector',
 			items: [
 			{
 				xtype: 'afStudio.wi.widgetInspectorTree',
