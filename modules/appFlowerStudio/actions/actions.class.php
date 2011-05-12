@@ -457,4 +457,15 @@ class appFlowerStudioActions extends sfActions
 		return $this->renderJson($info);
 	}
 	
+	/**
+	 * @return json for templateSelector
+	 * 
+	 * @author radu
+	 */
+	public function executeTemplateSelector($request)
+	{        
+        $aResult = afStudioCommand::process('templateSelector', $request->getParameter('cmd'),array('request'=>$request));        
+        return $this->renderJson($aResult);
+	}
+	
 }

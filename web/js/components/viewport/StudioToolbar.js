@@ -61,16 +61,16 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 							(new afStudio.TemplateSelector()).show();
 						}
 					},{
-						text: 'CSS Editor',
+						text: 'Template Designer',
 						handler: function (b, e) {
-							(new afStudio.CssEditor()).show();
+							(new afStudio.TemplateDesigner()).show();
 						}
-					},{
+					}/*,{
 						text: 'Toolbar Editor',
 						handler: function (b, e) {
 							(new afStudio.ToolbarEditor()).show();
 						}
-					}]
+					}*/]
 				}
 			},{
 				

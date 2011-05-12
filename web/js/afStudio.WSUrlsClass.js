@@ -89,6 +89,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getProjectRunUrl: function() {
     	return this.buildUrlFor('/appFlowerStudio/run');
     },
+    getTemplateSelectorUrl: function() {
+    	return this.buildUrlFor('/appFlowerStudio/templateSelector');
+    },
     buildUrlFor: function(url) {
         return url;
     }

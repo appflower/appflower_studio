@@ -15,6 +15,7 @@ var afStudioHost = {
 };
 <?php $projectPath = sfConfig::get('sf_root_dir'); $projectInPath = explode('/',$projectPath); unset($projectInPath[count($projectInPath)-1]); $projectInPath = implode('/',$projectInPath);?>
 var afProjectInPath = '<?php echo $projectInPath; ?>';
+var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig()); ?>;
 </script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/cache/afStudio.js"></script>
 

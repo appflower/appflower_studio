@@ -4,12 +4,6 @@
 }
 .thumb img{
 	border:1px solid white;
-/**
-	height: 60px;
-	width: 80px;
-*/	
-
-	width: 100px;
 }
 .thumb-wrap{
 	float: left;
