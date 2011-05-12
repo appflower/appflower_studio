@@ -227,7 +227,7 @@ class afStudioUtil
     }
     
     /**
-     * 
+     * @author radu
      */
     public static function getTemplateConfig()
     {
