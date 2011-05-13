@@ -174,9 +174,10 @@
 					<file>js/jquery/jquery.jscrollpane.min.js</file>
 					<file>js/jquery/jquery.prettyPhoto.js</file>	
 					
-					<!-- Template Designer -->
+					<!-- Theme - template designer, template selector, editors -->
 					<file>js/components/theme/afStudio.TemplateSelector.js</file>
-					<file>js/components/theme/editors/afStudio.ToolbarEditor.js</file>
+					<file>js/components/theme/afStudio.TemplateDesigner.js</file>
+					<file>js/components/theme/editors/afStudio.BaseEditor.js</file>
 					<file>js/components/theme/editors/afStudio.CssEditor.js</file>
 				</files>
 			</needle>

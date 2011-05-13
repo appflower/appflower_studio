@@ -65,11 +65,13 @@ afStudio.TemplateDesigner = Ext.extend(Ext.Window, {
 	
 	customize: function(){
 		if(this.dataview.getSelectedIndexes()){
+			var id = this.dataview.getSelectedRecords()[0].get('id');
+			var name = this.dataview.getSelectedRecords()[0].get('name');
 			var editor = this.dataview.getSelectedRecords()[0].get('editor');
 			
 			if(editor!='')
 			{
-				eval('new '+editor+'().show()');
+				eval('new '+editor+'({helper: \''+id+'\',title:\''+name+'\'}).show()');
 			}
 			else
 			{

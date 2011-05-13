@@ -343,10 +343,13 @@ class appFlowerStudioActions extends sfActions
         return $this->renderText($result);
     }
     
-	public function executeToolbarHelperFileSave(){
+	public function executeHelperFileSave($request){
 		$result=true;
 		$JDATA=file_get_contents("php://input");
-		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/afExtjsToolbarHelper.php';
+		
+		$helper = $request->getParameter('helper');
+		
+		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/'.$helper.'Helper.php';
 		try{
 			$fp = fopen($filePath,"w");
 			if(!$fp)throw new Exception("file open error");
@@ -360,12 +363,12 @@ class appFlowerStudioActions extends sfActions
 		    $success = true;
 		    $message = 'File saved successfully';
 		    
-		    afsNotificationPeer::log('File saved successfully ['.$filePath.']', 'toolbar_editor');
+		    afsNotificationPeer::log('File saved successfully ['.$filePath.']', $helper);
 		} else {
 		    $success = false;
 		    $message =  'Error while saving file to disk!';
 		    
-		    afsNotificationPeer::log('Error while saving file to disk! ['.$filePath.']', 'toolbar_editor');
+		    afsNotificationPeer::log('Error while saving file to disk! ['.$filePath.']', $helper);
 		}
 		
 		$info=array('success'=>$success, "message"=>$message);
@@ -373,19 +376,21 @@ class appFlowerStudioActions extends sfActions
 	}
 	
 	/**
-	 * Check if file exists and if not there create a new one based on the template (_afExtjsToolbarHelper.php).
+	 * Check if file exists and if not there create a new one based on the template
 	 */
-	public function executeCheckToolbarHelperFileExist(){
+	public function executeCheckHelperFileExist($request){
 		$result = true;
 		$message = "";
 		
-		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/afExtjsToolbarHelper.php';
+		$helper = $request->getParameter('helper');
+		
+		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/'.$helper.'Helper.php';
 		
 		if (!file_exists($filePath)) {
 			try{
-				$_afExtjsToolbarHelper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_afExtjsToolbarHelper.php', true);
+				$_helper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_'.$helper.'Helper.php', true);
 				$fp = fopen($filePath,"w");
-				fWrite($fp,$_afExtjsToolbarHelper);
+				fWrite($fp,$_helper);
 				fclose($fp);
 			}catch (Exception $e) {
 				$result=false;

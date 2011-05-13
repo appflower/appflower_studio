@@ -1,22 +1,22 @@
 /**
- * Css Editor
- * Widget Designer
- * @class afStudio.CssEditor
- * @extends Ext.TabPanel
- * @author milos_silni
+ * BaseEditor for all other Editors
+ * @author radu
  */
-afStudio.ToolbarEditor = Ext.extend(Ext.Window, { 
-
+afStudio.BaseEditor = Ext.extend(Ext.Window, { 
+	
 	/**
+	 * needed configs:
+	 * this.helper, this.title
+	 *
 	 * initComponent method
 	 * ExtJS template method
 	 * @private
 	 */
 	initComponent: function(){
-		this.checkToolbarHelperFileExist();
+		this.checkHelperFileExist();
 		this.createRegions();
 		var config = {
-			title: 'Toolbar Editor', width: 813,
+			width: 813,
 			height: 550, closable: true,
 	        draggable: true, 
 	        modal: true, resizable: false,
@@ -32,7 +32,7 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 		};
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		afStudio.ToolbarEditor.superclass.initComponent.apply(this, arguments);	
+		afStudio.BaseEditor.superclass.initComponent.apply(this, arguments);	
 	},
 	
 	/**
@@ -43,7 +43,7 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 		this.codeEditor = new Ext.ux.CodePress({
 			delayedStart: false, 
 			closable:true,
-			file: 'root/apps/frontend/lib/helper/afExtjsToolbarHelper.php', 
+			file: 'root/apps/frontend/lib/helper/'+this.helper+'Helper.php', 
 			language: 'php'
 		});
 		
@@ -58,25 +58,30 @@ afStudio.ToolbarEditor = Ext.extend(Ext.Window, {
 	
 	save: function(){
 		Ext.Ajax.request({
-		   url: window.afStudioWSUrls.getToolbarHelperFileSaveUrl(),
+		   url: window.afStudioWSUrls.getHelperFileSaveUrl(),
+		   params: {
+		   	helper: this.helper
+		   },
 		   xmlData:this.codeEditor.getValue(),
 		   success: function(result,request){
 			   var obj = Ext.decode(result.responseText);
-			   Ext.Msg.alert("Information",obj.message);
+			   afStudio.Msg.info(obj.message);
 		   }
 		});
 
 	},
 	
-	checkToolbarHelperFileExist: function(){
+	checkHelperFileExist: function(){
 		Ext.Ajax.request({
-		   url: window.afStudioWSUrls.buildUrlFor('/appFlowerStudio/checkToolbarHelperFileExist'),
+		   url: window.afStudioWSUrls.getCheckHelperFileExistUrl(),
+		   params: {
+		   	 helper: this.helper
+		   },
 		   failure: function ( result, request) {
 				var obj = Ext.decode(result.responseText);
-				Ext.MessageBox.alert('Failed', result.responseText); 
+				afStudio.Msg.error(result.responseText);
 		   }
 		});
-
 	},
 	
 	/**

@@ -4,11 +4,11 @@ template:
   helpers:
     desktop: 
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.CssEditor]
-      - [afExtjsDesktopStartMenu, 'Start Menu Editor', template_editor_default.png]
-      - [afExtjsDesktopIcons, 'Desktop Icons Editor', template_editor_default.png]
+      - [afExtjsDesktopStartMenu, 'Start Menu Editor', template_editor_default.png, afStudio.BaseEditor]
+      - [afExtjsDesktopLinks, 'Desktop Links Editor', template_editor_default.png]
     viewport: 
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.CssEditor]
-      - [afExtjsToolbar, 'Menu Toolbar Editor', template_editor_default.png, afStudio.ToolbarEditor]
-      - [afExtjsWest, 'West Panel Editor', template_editor_default.png]
-      - [afExtjsSouth, 'South Panel Editor', template_editor_default.png]
-      - [afExtjsEast, 'East Panel Editor', template_editor_default.png]
+      - [afExtjsToolbar, 'Menu Toolbar Editor', template_editor_default.png, afStudio.BaseEditor]
+      - [afExtjsWest, 'West Panel Editor', template_editor_default.png, afStudio.BaseEditor]
+      - [afExtjsSouth, 'South Panel Editor', template_editor_default.png, afStudio.BaseEditor]
+      - [afExtjsEast, 'East Panel Editor', template_editor_default.png, afStudio.BaseEditor]

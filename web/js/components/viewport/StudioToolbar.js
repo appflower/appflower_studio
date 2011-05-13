@@ -55,22 +55,18 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				ignoreParentClicks: true,
 				menu: {
 					items: [
-					{
-						text: 'Template Selector',
-						handler: function(){
-							(new afStudio.TemplateSelector()).show();
+						{
+							text: 'Template Selector',
+							handler: function(){
+								(new afStudio.TemplateSelector()).show();
+							}
+						},{
+							text: 'Template Designer',
+							handler: function (b, e) {
+								(new afStudio.TemplateDesigner()).show();
+							}
 						}
-					},{
-						text: 'Template Designer',
-						handler: function (b, e) {
-							(new afStudio.TemplateDesigner()).show();
-						}
-					}/*,{
-						text: 'Toolbar Editor',
-						handler: function (b, e) {
-							(new afStudio.ToolbarEditor()).show();
-						}
-					}*/]
+					]
 				}
 			},{
 				
