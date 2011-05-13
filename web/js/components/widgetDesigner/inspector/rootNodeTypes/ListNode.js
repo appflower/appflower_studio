@@ -78,6 +78,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
 		       		new afStudio.wi.PropertyTypeBoolean({id: 'tree', label: 'Tree'}).create(),
 		       		new afStudio.wi.PropertyTypeBoolean({id: 'selectable', label: 'Selectable', defaultValue: true}).create(),
 		       		new afStudio.wi.PropertyTypeBoolean({id: 'exportable', label: 'Exportable', defaultValue: true}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'expandButton', label: 'Expand Button'}).create(),
 		       		new afStudio.wi.PropertyTypeBoolean({id: 'select', label: 'Select'}).create(),
 		       		new afStudio.wi.PropertyTypeBoolean({id: 'pager', label: 'Pager', defaultValue: true}).create(),       		
 		       		new afStudio.wi.PropertyTypeString({id: 'pagerTemplate', label: 'Pager Template'}).create(),

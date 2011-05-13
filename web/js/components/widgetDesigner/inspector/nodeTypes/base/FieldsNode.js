@@ -31,8 +31,7 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
        		new afStudio.wi.PropertyTypeString({id: 'action', label: 'Action'}).create(),
        		new afStudio.wi.PropertyTypeBoolean({id: 'classic', label: 'Classic'}).create(),
        		new afStudio.wi.PropertyTypeString({id: 'bodyStyle', label: 'Body Style'}).create(),
-       		new afStudio.wi.PropertyTypeString({id: 'redirect', label: 'Redirect'}).create(),
-       		new afStudio.wi.PropertyTypeBoolean({id: 'expandButton', label: 'Expand Button'}).create(),
+       		new afStudio.wi.PropertyTypeString({id: 'redirect', label: 'Redirect'}).create(),       		
        		new afStudio.wi.PropertyTypeBoolean({id: 'remoteLoad', label: 'Remote Load'}).create(),
        		new afStudio.wi.PropertyTypeString({id: 'plugin', label: 'Plugin'}).create()
 		]);

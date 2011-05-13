@@ -7,8 +7,7 @@ Ext.ns('afStudio.wd.list');
  * @extends Ext.grid.GridPanel
  * @author Nikolai
  */
-afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
-	
+afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {	
 	/**
 	 * @cfg {Object} viewMeta
 	 * View metadata object.
@@ -100,6 +99,10 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
         	items: [        	
         	'->',
         	{
+        		itemId: 'expanded-view',
+        		text: 'Expanded View',
+        		iconCls: 'icon-application-split'
+        	},{
         		itemId: 'more',
     			text: 'More Actions',
 				menu: {
@@ -222,7 +225,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		    aBar   = bbar.getComponent('actions'),
 		    aMore  = aBar.getComponent('more');    
 		
-		//Actions    
+		//Actions
 		if (vm['i:actions'] && vm['i:actions']['i:action']) {
 			var act = vm['i:actions']['i:action'];
 			if (Ext.isArray(act)) {
@@ -232,16 +235,14 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			} else {
 				_this.addIAction(act, aBar);
 			}
-		}
-		
+		}		
 		//More Actions
-		var AreMoreActions = false;
 		if (vm['i:fields']) {
-			var selectable = vm['i:fields'].selectable ? vm['i:fields'].selectable.bool() : true;
-			var exportable = vm['i:fields'].exportable ? vm['i:fields'].exportable.bool() : true;
+			var selectable = vm['i:fields'].selectable ? vm['i:fields'].selectable.bool() : true,
+				exportable = vm['i:fields'].exportable ? vm['i:fields'].exportable.bool() : true,
+				expandedView = vm['i:fields'].expandButton ? vm['i:fields'].expandButton.bool() : false;
 			
-			AreMoreActions = selectable || exportable;
-			if (AreMoreActions) {
+			if (selectable || exportable) {
 				aMore.show();
 			} else {
 				aMore.hide();
@@ -260,13 +261,14 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			} else {
 				aMore.menu.getComponent('exports').hide();
 			}
+			
+			if (expandedView) {
+				aBar.getComponent('expanded-view').show();
+			} else {
+				aBar.getComponent('expanded-view').hide();
+			}
 		}
-		
-		if (aBar.items.getCount() <= 2 && !AreMoreActions) {
-			aBar.hide();
-		} else {
-			aBar.show();	
-		}
+		this.updateActionBarVisibilityState();
 		//eo Actions
 		
 	}//eo configureView

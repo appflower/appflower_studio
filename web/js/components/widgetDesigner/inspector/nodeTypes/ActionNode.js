@@ -6,6 +6,10 @@
  */
 afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
 	
+	/**
+	 * @cfg {String} deleteNodeActionLabel
+	 * Delete node context menu's item. 
+	 */
 	deleteNodeActionLabel : 'Delete Action'
 	
 	/**

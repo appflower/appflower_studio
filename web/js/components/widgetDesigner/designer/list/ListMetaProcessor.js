@@ -83,6 +83,13 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 					this.updateActionBarVisibilityState();				
 				break;
 				
+				case 'expandButton':
+					var	bExpView = aBar.getComponent('expanded-view');
+					t.value ? bExpView.show() : bExpView.hide();
+					this.updateMoreActionVisibilityState();
+					this.updateActionBarVisibilityState();					
+				break;
+				
 				case 'pager':
 					if (t.value === false) {
 						bbar.hide();	
@@ -152,7 +159,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 */
 		,processIActionTag : function(t) {
 			var aBar     = this.getTopToolbar().getComponent('actions'),
-				aNum     = aBar.items.getCount() - 2,
+				aNum     = aBar.items.getCount() - 3,
 				nodeName = t.node.getProperty('name').data.value,
 				action;
 				
