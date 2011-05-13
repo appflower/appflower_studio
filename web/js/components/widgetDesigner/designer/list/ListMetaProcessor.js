@@ -11,7 +11,28 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 	return {
 	
 		/**
-		 * Processes meta data changes.
+		 * Adds new action to the view's action bar.
+		 * @param {Object} a The action object being added
+		 * @param {Ext.Toolbar} aBar The action toolbar 
+		 */
+		addIAction : function(a, aBar) {			
+			var action = {
+				name: a.name,
+				text: a.text ? a.text : a.name,
+				tooltip: a.tooltip ? a.tooltip : null,
+				style: a.style ? a.style : null
+			};
+			
+			var icon = a.iconCls ? 'iconCls' : (a.icon ? 'icon' : null);
+			if (icon) {
+				action[icon] = a[icon];
+			}
+			
+			aBar.insertButton(0, action);			
+		}//eo addIAction
+		
+		/**
+		 * Meta-data processing Controller.
 		 * 
 		 * @param {Object} e The meta-change event object:
 		 * <ul>
@@ -21,7 +42,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 * <li><b>oldValue</b>: The old property value</li>
 		 * </ul>
 		 */
-		processMeta : function(e) {
+		,processMeta : function(e) {
 			var mf = e.node.attributes.metaField;		
 			
 			if (Ext.isDefined(mf)) {
@@ -42,8 +63,26 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
 		 */
 		,processIFieldsTag : function(t) {
-			var bbar = this.getBottomToolbar();
+			var bbar  = this.getBottomToolbar(),
+				aBar  = this.getTopToolbar().getComponent('actions'),
+				aMore = aBar.getComponent('more');
+			
 			switch (t.name) {
+				case 'exportable':
+					var bExport = aMore.menu.getComponent('exports');
+					t.value ? bExport.show() : bExport.hide();
+					this.updateMoreActionVisibilityState();
+					this.updateActionBarVisibilityState();
+				break;
+				
+				case 'selectable':
+					var	bSel   = aMore.menu.getComponent('sel-all'),
+						bDesel = aMore.menu.getComponent('desel-all');					
+					t.value ? (bSel.enable(), bDesel.enable()) : (bSel.disable(), bDesel.disable());
+					this.updateMoreActionVisibilityState();
+					this.updateActionBarVisibilityState();				
+				break;
+				
 				case 'pager':
 					if (t.value === false) {
 						bbar.hide();	
@@ -51,7 +90,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 						bbar.show();
 					}
 					this.doLayout();
-				break;					
+				break;
 			}					
 		}//eo processIFieldsTag
 		
@@ -68,7 +107,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 						clms     = cm.getColumnsBy(function(c) {						
 										return c.name == nodeName;
 								   });
-					if (clms[0]) {	
+					if (clms[0]) {
 						cm.setColumnHeader(cm.getIndexById(clms[0].id), t.value);
 					}
 				break;
@@ -88,7 +127,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 * Handles <u>root</u> node changes.
 		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
 		 */
-		,processRootTag : function(t) {		
+		,processRootTag : function(t) {	
 			switch (t.name) {
 				case 'i:title':
 					this.setTitle(t.value);
@@ -106,6 +145,57 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				break;
 			}
 		}//eo processRootTag
+		
+		/**
+		 * Handles <u>i:action</u> tag changes.
+		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
+		 */
+		,processIActionTag : function(t) {
+			var aBar     = this.getTopToolbar().getComponent('actions'),
+				aNum     = aBar.items.getCount() - 2,
+				nodeName = t.node.getProperty('name').data.value,
+				action;
+				
+			if (t.name == 'name') {
+				nodeName = t.oldValue;
+			}
+			
+			aBar.items.each(function(a, idx, len) {
+				if (idx < aNum) {
+					if (a.name == nodeName) {
+						action = a;
+						return false;
+					}
+				} else {
+					return false;
+				}
+			});
+							
+			switch (t.name) {
+				case 'name':
+					action.name = t.value;
+					if (Ext.isEmpty(action.text)) {
+						action.setText(action.name);
+					}
+					break;				
+				case 'text':
+					action.setText(t.value);
+					break;				
+				case 'iconCls':
+					action.setIconClass(t.value);
+					break;				
+				case 'icon':
+					action.setIcon(t.value);
+					break;				
+				case 'tooltip':
+					action.setTooltip(t.value);
+					break;				
+				case 'style':						
+					action.el.dom.removeAttribute('style', '');
+					action.el.applyStyles(t.value);
+					break;				
+			}
+		}//eo processIActionTag
 	};	
 })();
 

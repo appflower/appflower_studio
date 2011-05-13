@@ -130,8 +130,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		this.designerPanel.getMenuItem('previewBtn').on('click', this.onPreviewWidgetView, this);		
 		
 		//Relaying Events
-		this.relayEvents(this.viewInspector, ['append']);
-		
+		this.relayEvents(this.viewInspector, ['append', 'remove']);
+
 		//Init specific view component
 		if (gf.isWidgetTypeValid(this.widgetType)) {
 			this['init' + this.widgetType.ucfirst() + 'DesignerView']();
@@ -141,7 +141,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		
 		_this.on({
 			scope: this,
-			append: this.onViewInspectorAppendProperty
+			append: this.onViewInspectorAppendProperty,
+			remove: this.onViewInspectorRemoveProperty
 		});
 	}//eo _afterInitComponent
 	
@@ -228,11 +229,28 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			vd   = this.designerView,
 			vpg	 = this.viewProperty,
 			vit  = this.viewInspector;
-		 
+			
 		switch (this.widgetType) {
 			
 			case gf.LIST :			
 				switch (parent.id) {
+					case 'i:actions':						
+						vpg.setSource(node.getProperties());
+						(function() {
+							vit.getSelectionModel().select(node);
+						}).defer(100, this);						
+						
+						var aBar = vd.getTopToolbar().getComponent('actions');
+						if (aBar.hidden) {
+							aBar.show();							
+							vd.doLayout();
+						}
+						vd.addIAction({
+							name: node.getProperty('name').get('value') 
+						}, aBar);
+						aBar.doLayout();
+					break;
+					
 					case 'i:fields':					
 						var	vCm      = vd.getColumnModel(),		
 							startIdx = vd.getView().getUninitColumn(),
@@ -259,10 +277,43 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 					break;
 				}			
 			break;			
-		}	
-		
+		}		
 	}//eo onViewInspectorAppendProperty
 	
+	
+	,onViewInspectorRemoveProperty : function(vi, parent, node) {
+		var gf   = afStudio.wd.GuiFactory,
+			vd   = this.designerView,
+			vpg	 = this.viewProperty,
+			vit  = this.viewInspector;
+			
+		switch (this.widgetType) {
+			
+			case gf.LIST :
+				switch (parent.id) {					
+					case 'i:actions':						
+						vpg.setSource({});
+						
+						var actionName = node.getProperty('name').get('value'),						
+							aBar       = vd.getTopToolbar().getComponent('actions'),
+							aNum       = aBar.items.getCount() - 2;
+						
+						aBar.items.each(function(a, idx, len) {
+							if (idx < aNum) {
+								if (a.name == actionName) {
+									a.destroy();
+									return false;
+								}
+							} else {
+								return false;
+							}
+						});
+						vd.updateActionBarVisibilityState();
+					break;					
+				}			
+			break;			
+		}//eo switch	
+	}//eo onViewInspectorRemoveProperty
 	/*------------------------------ List view ----------------------------- */
 	
 	/**

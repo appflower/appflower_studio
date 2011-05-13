@@ -105,6 +105,10 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 				menu: {
 					items: [
 					{
+						itemId: 'exports',
+						text: 'Exports',
+						iconCls: 'icon-database-save'
+					},{
 						itemId: 'sel-all',
 						text: 'Select All'
 					},{
@@ -212,38 +216,32 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	 * After construction view configuration 
 	 */
 	,configureView : function() {
-		var vm = this.viewMeta,
-		    bbar  = this.getTopToolbar(),
-		    aBar  = bbar.getComponent('actions'),
-		    aMore = aBar.getComponent('more');    
+		var _this  = this,
+			vm     = this.viewMeta,
+		    bbar   = this.getTopToolbar(),
+		    aBar   = bbar.getComponent('actions'),
+		    aMore  = aBar.getComponent('more');    
 		
 		//Actions    
-		if (!Ext.isEmpty(vm['i:actions'])) {
+		if (vm['i:actions'] && vm['i:actions']['i:action']) {
 			var act = vm['i:actions']['i:action'];
-			//TODO add tooltip, icon, iconCls
 			if (Ext.isArray(act)) {
-				Ext.iterate(act, function(a, idx, array){	
-					aBar.insertButton(0, {
-						text: a.text ? a.text : a.name
-					});
+				Ext.iterate(act, function(a, idx, array) {
+					_this.addIAction(a, aBar);
 				});
-			} else {				
-				if (Ext.isDefined(act)) {
-					aBar.insertButton(0, {
-						text: act.text ? act.text : act.name
-					});
-				}
+			} else {
+				_this.addIAction(act, aBar);
 			}
 		}
 		
 		//More Actions
-		var moreActions = false;
+		var AreMoreActions = false;
 		if (vm['i:fields']) {
 			var selectable = vm['i:fields'].selectable ? vm['i:fields'].selectable.bool() : true;
 			var exportable = vm['i:fields'].exportable ? vm['i:fields'].exportable.bool() : true;
 			
-			moreActions = selectable || exportable; 
-			if (moreActions) {
+			AreMoreActions = selectable || exportable;
+			if (AreMoreActions) {
 				aMore.show();
 			} else {
 				aMore.hide();
@@ -256,9 +254,15 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 				aMore.menu.getComponent('sel-all').disable();			
 				aMore.menu.getComponent('desel-all').disable();				
 			}
+			
+			if (exportable) {
+				aMore.menu.getComponent('exports').show();
+			} else {
+				aMore.menu.getComponent('exports').hide();
+			}
 		}
 		
-		if (aBar.items.getCount() <= 2 && !moreActions) {
+		if (aBar.items.getCount() <= 2 && !AreMoreActions) {
 			aBar.hide();
 		} else {
 			aBar.show();	
@@ -278,6 +282,53 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			this.fireEvent('changeColumnPosition', clm, oldIndex, newIndex);					
 		}
 	}//eo onColumnMove
+	
+	/**
+	 * Updates action bar <u>visibility</u> state. 
+	 */
+	,updateActionBarVisibilityState : function() {
+		var aBar = this.getTopToolbar().getComponent('actions'),		
+			aHidden = 0;
+			
+		aBar.items.each(function(i) {
+			if (i.hidden) {
+				aHidden++;
+			}
+		});
+		
+		if (aHidden > 0 && ((aHidden + 1)  == aBar.items.getCount())) {
+			aBar.hide();
+		} else {
+			aBar.show();
+		}
+		this.doLayout();
+	}//eo updateActionBarVisibilityState
+	
+	/**
+	 * Updates <i>more actions</i> <u>visibility</u> state.
+	 */
+	,updateMoreActionVisibilityState : function() {
+		var aBar   = this.getTopToolbar().getComponent('actions'),		
+			aMore  = aBar.getComponent('more'),
+			bSel   = aMore.menu.getComponent('sel-all'),
+			bDesel = aMore.menu.getComponent('desel-all');				
+		
+		if (bSel.disabled && bDesel.disabled) {
+			var ic = 2;	
+			aMore.menu.items.each(function(i) {
+				if (i.hidden) {
+					ic++;
+				}
+			});
+			if (ic == aMore.menu.items.getCount()) {
+				aMore.hide();
+			} else {
+				aMore.show();
+			}
+		} else {
+			aMore.show();
+		}
+	}//eo updateMoreActionVisibilityState
 });
 
 /**

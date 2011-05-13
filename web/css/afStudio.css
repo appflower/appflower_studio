@@ -1,3 +1,6 @@
+/*----------------------------------------------*/
+/*                   Top Menu                   */
+/*----------------------------------------------*/
 /* "Studio" menu icons */
 .icon-studio{background:url('/appFlowerStudioPlugin/images/studio.png') no-repeat center left !important;}
 .icon-studio-project{background:url('/appFlowerStudioPlugin/images/application.png') no-repeat center left !important;}
@@ -25,6 +28,11 @@
 .icon-runs{background:url('/appFlowerStudioPlugin/images/server_go.png') no-repeat center left !important;}
 .icon-run-run{background: url('/appFlowerStudioPlugin/images/application_go.png') no-repeat 0 0 !important;}
 .icon-run-rebuild{background: url('/appFlowerStudioPlugin/images/arrow_refresh.png') no-repeat 0 0 !important;}
+/*----------------------------------------------*/
+/*                END of Top Menu               */
+/*----------------------------------------------*/
+
+.icon-database-save{background:url('/appFlowerStudioPlugin/images/database_save.png') no-repeat center left !important;}
 
 .icon-models{background:url('/appFlowerStudioPlugin/images/application_view_tile.png') no-repeat center left !important;}
 .icon-model{background:url('/appFlowerStudioPlugin/images/table.png') no-repeat center left !important;}
