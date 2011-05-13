@@ -30,7 +30,8 @@ afStudio.TemplateDesigner = Ext.extend(Ext.Window, {
 	        fields: [
 	           {name: 'id'},
 	           {name: 'name'},
-	           {name: 'img'}
+	           {name: 'img'},
+	           {name: 'editor'}
 	        ]
 	    });
 	    
@@ -64,11 +65,19 @@ afStudio.TemplateDesigner = Ext.extend(Ext.Window, {
 	
 	customize: function(){
 		if(this.dataview.getSelectedIndexes()){
-			var name = this.dataview.getSelectedRecords()[0].get('name');
-			alert('Template ' + name + ' selected');
+			var editor = this.dataview.getSelectedRecords()[0].get('editor');
+			
+			if(editor!='')
+			{
+				eval('new '+editor+'().show()');
+			}
+			else
+			{
+				afStudio.Msg.error('There is not javascript Editor set for this button.');
+			}
+			
+			this.close();
 		}
-		
-		this.dataview
 	},
 	
 	cancel:function(){

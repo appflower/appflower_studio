@@ -3,9 +3,12 @@ template:
   types: [ desktop, viewport ]
   helpers:
     desktop: 
-      - [afExtjsDesktopStartMenu, 'Start Menu', template_editor_default.png]
+      - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.CssEditor]
+      - [afExtjsDesktopStartMenu, 'Start Menu Editor', template_editor_default.png]
+      - [afExtjsDesktopIcons, 'Desktop Icons Editor', template_editor_default.png]
     viewport: 
-      - [afExtjsToolbar, 'Menu Toolbar', template_editor_default.png]
-      - [afExtjsWest, 'West Panel', template_editor_default.png]
-      - [afExtjsSouth, 'South Panel', template_editor_default.png]
-      - [afExtjsEast, 'East Panel', template_editor_default.png]
+      - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.CssEditor]
+      - [afExtjsToolbar, 'Menu Toolbar Editor', template_editor_default.png, afStudio.ToolbarEditor]
+      - [afExtjsWest, 'West Panel Editor', template_editor_default.png]
+      - [afExtjsSouth, 'South Panel Editor', template_editor_default.png]
+      - [afExtjsEast, 'East Panel Editor', template_editor_default.png]
