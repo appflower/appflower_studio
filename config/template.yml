@@ -2,5 +2,10 @@ template:
   current: desktop
   types: [ desktop, viewport ]
   helpers:
-    desktop: [ afExtjsDesktopStartMenu ]
-    viewport: [ afExtjsToolbar, afExtjsWest, afExtjsSouth, afExtjsEast ]
+    desktop: 
+      - [afExtjsDesktopStartMenu, 'Start Menu', template_editor_default.png]
+    viewport: 
+      - [afExtjsToolbar, 'Menu Toolbar', template_editor_default.png]
+      - [afExtjsWest, 'West Panel', template_editor_default.png]
+      - [afExtjsSouth, 'South Panel', template_editor_default.png]
+      - [afExtjsEast, 'East Panel', template_editor_default.png]

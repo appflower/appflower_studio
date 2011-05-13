@@ -1,16 +1,13 @@
-afStudio.TemplateSelector = Ext.extend(Ext.Window, { 
+afStudio.TemplateDesigner = Ext.extend(Ext.Window, { 
 
 	dataview: null,
 	
 	initComponent: function(){
 		this.initDataview();
 		var config = {
-			title: 'Template Selector', width: 463,
+			title: 'Template Designer', width: 463,
 			height: 250, closable: true,
-	        draggable: true, 
-	        
-//	        plain:true,
-	        
+	        draggable: true,
 	        modal: true, resizable: false,
 	        bodyBorder: false, border: false,
 	        layout: 'fit',
@@ -27,21 +24,18 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 	},
 	
 	initDataview: function(){
-    var myData = [
-        ['desktoptemplate', 'Desktop', 'template_web_desktop.png']
-    ];
-    var store = new Ext.data.SimpleStore({
-        fields: [
-           {name: 'id'},
-           {name: 'name'},
-           {name: 'img'}
-        ],
-        sortInfo: {
-            field: 'name', direction: 'ASC'
-        }
-    });
-    
-    store.loadData(myData);		
+    	var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];
+    	
+    	var store = new Ext.data.SimpleStore({
+	        fields: [
+	           {name: 'id'},
+	           {name: 'name'},
+	           {name: 'img'}
+	        ]
+	    });
+	    
+	    store.loadData(myData);	
+	    	
 		this.dataview = new Ext.DataView({
 	        itemSelector: 'div.thumb-wrap',
 	        style:'overflow:auto',
@@ -61,7 +55,7 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 	        tpl: new Ext.XTemplate(
 	            '<tpl for=".">',
 	            '<div class="thumb-wrap" id="{id}">',
-	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}" class="thumb-img"></div>',
+	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}"></div>',
 	            '<span>{name}</span></div>',
 	            '</tpl>'
 	        )

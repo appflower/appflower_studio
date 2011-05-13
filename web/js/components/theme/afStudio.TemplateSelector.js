@@ -4,6 +4,7 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 	
 	initComponent: function(){
 		this.initDataview();
+				
 		var config = {
 			title: 'Template Selector', width: 463,
 			height: 250, closable: true,
@@ -16,7 +17,19 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 				{text: 'Set Template', handler: this.customize, scope: this, id: this.id + '-customize-btn', disabled: true},
 				{text: 'Cancel', handler: this.cancel, scope: this}
 			],
-			buttonAlign: 'center'
+			buttonAlign: 'center',
+			listeners: {
+				show: function()
+				{
+					//select the current selected template from the project using afTemplateConfig.template.current
+					for (var item in this.dataview.store.data.items)
+					{
+						if(this.dataview.store.data.items[item].json&&afTemplateConfig.template.current==this.dataview.store.data.items[item].json[1].toLowerCase()){
+							this.dataview.selectRange(item,item);
+						}
+					}
+				}
+			}
 		};
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
@@ -59,7 +72,7 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 	        store: store,
 	        tpl: new Ext.XTemplate(
 	            '<tpl for=".">',
-	            '<div class="thumb-wrap x-view-selected" id="{id}">',
+	            '<div class="thumb-wrap" id="{id}">',
 	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}"></div>',
 	            '<span>{name}</span></div>',
 	            '</tpl>'
