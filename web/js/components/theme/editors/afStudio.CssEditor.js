@@ -44,38 +44,6 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		this.loader = new Ext.tree.TreeLoader({
 			 dataUrl: window.afStudioWSUrls.getCssFilestreeUrl()
 		});
-
-		//Create west region
-		/*this.westPanel = new Ext.tree.TreePanel( {
-			split: true, title: 'Files',  iconCls: 'icon-models',
-			url: window.afStudioWSUrls.getCssFilestreeUrl(),
-			loader: this.loader, method: 'post',
-			tools:[{id:'refresh', 
-				handler:function(){
-					this.loader.load(root);
-				}, scope: this
-			}],
-			listeners: {
-				'render': function(){
-					root.expand(false, false)
-				},
-				'click': function(node, e){
-					if(node.leaf){
-						this.codeEditor.loadFile('appFlowerStudioPlugin/' + node.id);
-					}
-				}, scope: this
-			},
-			region: 'west',
-			width: 220
-		});
-		
-        // set the root node
-        var root = new Ext.tree.AsyncTreeNode({
-            text: 'CSS', 
-            draggable:false, // disable root node dragging
-            id:'css'
-        });		
-		this.westPanel.setRootNode(root);*/
 		
 		this.westPanel = new Ext.ux.FileTreePanel({
 			split: true, title: 'Files',  iconCls: 'icon-models',
@@ -130,7 +98,9 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		this.centerPanel = new Ext.Panel({
 			layout: 'fit', region: 'center', items: [this.codeEditor],
 			tbar: [
-				{text: 'Save', iconCls: 'icon-save', handler: this.save, scope: this}
+				{text: 'Save', iconCls: 'icon-save', handler: this.save, scope: this},
+				'->',
+				{text: 'Template Designer', iconCls: 'icon-run-run', handler: this.tdshortcut, scope: this}
 			]
 		})
 	},
@@ -140,10 +110,9 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		   url: window.afStudioWSUrls.getCssFilesSaveUrl(),
 		   params: { node: this.westPanel.getSelectionModel().getSelectedNode().text},
 		   xmlData:this.codeEditor.getValue(),
-		   success: function(result,request){
-			   //alert(result.responseText);
+		   success: function(result,request){			   
 			   var obj = Ext.decode(result.responseText);
-			   Ext.Msg.alert("Information",obj.message);
+			   afStudio.Msg.info(obj.message);
 		   }
 		});
 
@@ -156,5 +125,13 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	 */
 	cancel: function(){
 		this.close();
+	},
+	
+	/**
+	* Template Designer shortcut
+	*/
+	tdshortcut: function(){
+		this.close();
+		(new afStudio.TemplateDesigner()).show();
 	}
 });

@@ -37,6 +37,9 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 	},
 	
 	initDataview: function(){
+		
+		var _self = this;
+		
 	    var myData = [
 	        ['desktoptemplate', 'Desktop', 'template_desktop.png'],
 	        ['viewporttemplate', 'Viewport', 'template_viewport.png']
@@ -65,9 +68,13 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 						btn.enable();
 					} else {
 						btn.disable();
-					}
-					
-				}, scope: this
+					}	
+				},
+				'dblclick': function(dataview,index,node,e){
+					_self.customize();
+					_self.close();
+				},
+				scope: this
 			},
 	        store: store,
 	        tpl: new Ext.XTemplate(
@@ -81,6 +88,9 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 	},
 	
 	customize: function(){
+		
+		var _self = this;
+		
 		if(this.dataview.getSelectedIndexes()){
 			var templateName = this.dataview.getSelectedRecords()[0].get('name');
 			
@@ -102,6 +112,8 @@ afStudio.TemplateSelector = Ext.extend(Ext.Window, {
 						afTemplateConfig.template.current = templateName.toLowerCase();
 						
 						afStudio.Msg.info(response.message);
+						
+						_self.close();
 					}
 				}
 				

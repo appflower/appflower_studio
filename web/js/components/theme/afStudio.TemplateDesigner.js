@@ -24,6 +24,9 @@ afStudio.TemplateDesigner = Ext.extend(Ext.Window, {
 	},
 	
 	initDataview: function(){
+		
+		var _self = this;
+		
     	var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];
     	
     	var store = new Ext.data.SimpleStore({
@@ -50,7 +53,12 @@ afStudio.TemplateDesigner = Ext.extend(Ext.Window, {
 						btn.disable();
 					}
 					
-				}, scope: this
+				},
+				'dblclick': function(dataview,index,node,e){
+					_self.customize();
+					_self.close();
+				},
+				scope: this
 			},
 	        store: store,
 	        tpl: new Ext.XTemplate(

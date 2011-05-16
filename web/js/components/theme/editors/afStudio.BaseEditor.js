@@ -50,7 +50,9 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
 		this.centerPanel = new Ext.Panel({
 			layout: 'fit', region: 'center', items: [this.codeEditor],
 			tbar: [
-				{text: 'Save', iconCls: 'icon-save', handler: this.save, scope: this}
+				{text: 'Save', iconCls: 'icon-save', handler: this.save, scope: this},
+				'->',
+				{text: 'Template Designer', iconCls: 'icon-run-run', handler: this.tdshortcut, scope: this}
 			]
 		})
 		
@@ -90,5 +92,13 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
 	 */
 	cancel: function(){
 		this.close();
+	},
+	
+	/**
+	* Template Designer shortcut
+	*/
+	tdshortcut: function(){
+		this.close();
+		(new afStudio.TemplateDesigner()).show();
 	}
 });
