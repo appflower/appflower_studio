@@ -68,6 +68,33 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				aMore = aBar.getComponent('more');
 			
 			switch (t.name) {
+				case 'select':
+					var cmCfg = this.getColumnModel().config;
+					if (t.value) {						
+						if (cmCfg[0] && (cmCfg[0].id != 'checker')) {
+							var cSm = new Ext.grid.CheckboxSelectionModel();
+							Ext.destroy(this.selModel);
+							this.selModel = cSm;
+							this.selModel.init(this);
+							cmCfg.unshift(cSm);
+							var cm    = new Ext.grid.ColumnModel(cmCfg),
+								store = this.getStore();
+							this.reconfigure(store, cm);							
+						}
+					} else {						
+						if (cmCfg[0] && (cmCfg[0].id == 'checker')) {
+							var cSm = new Ext.grid.RowSelectionModel();
+							Ext.destroy(this.selModel);
+							this.selModel = cSm;
+							this.selModel.init(this);
+							cmCfg.shift();
+							var cm    = new Ext.grid.ColumnModel(cmCfg),
+								store = this.getStore();
+							this.reconfigure(store, cm);							
+						}
+					}
+				break;
+				
 				case 'exportable':
 					var bExport = aMore.menu.getComponent('exports');
 					t.value ? bExport.show() : bExport.hide();
