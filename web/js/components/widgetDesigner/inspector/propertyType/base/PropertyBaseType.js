@@ -1,22 +1,19 @@
 Ext.ns('afStudio.wi');
 
 /**
- * PropertyBaseType constructor.
- * @constructor
- * 
  * Each node that is inside WI tree can have many properties.
  * Each of that property can be different type, one can be choice widget and other simple input field
  * This class defines base class for all concrete properties
- * 
- * @param {String} fieldId
- * @param {String} fieldLabel
  */
-afStudio.wi.PropertyBaseType = function(fieldId, fieldLabel) {
-	this.id = fieldId;
-    this.label = fieldLabel;
-};
-
-Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
+afStudio.wi.PropertyBaseType = Ext.extend(Object, {
+    /**
+     * @cfg {Stdung} (Required) id
+     */    
+	
+	/**
+     * @cfg {String} (Required) label
+     */
+	
 	/**
 	 * Property value
 	 * @property value
@@ -24,40 +21,49 @@ Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
 	 */
 	
     /**
-     * Used when value was not set. This should be set by class implementing concrete type
+     * @cfg {Mixed} defaultValue (defaults to '') 
+     * Used when value was not set. 
+     * This should be set by class implementing concrete type
      */
-    defaultValue : '',
+    defaultValue : ''
     
-    /**
-     * @property id
-     * @type String
-     */
-
-    /**
-     * @property label
-     * @type String
-     */
+    ,type : 'string'	
     
-    type : 'string',
-
 	/**
 	 * Contains flag if this field is required.
-	 * @property required
-	 * @type {Boolean} 
+	 * @cfg {Boolean} required (defaults to false)  
 	 */
-	required : false,
+	,required : false
+
+	/**
+	 * PropertyBaseType constructor.
+	 * @constructor
+	 */
+	,constructor : function(config) {
+		config = config || {};
+		Ext.apply(this, config);
+	}//eo constructor
 	 	
-	setRequired : function() {
+	,setRequired : function() {
 		this.required = true;
 		return this;
-	},
+	}//eo setRequired
 	
-	setValue : function(v) {
+	,setValue : function(v) {
 		this.value = v;
 		return this;
-	},
+	}//eo setValue
 	
-    create : function() {
+	/**
+	 * Creates record:
+	 * <ul>
+	 * <li><b>name</b>: The unique property-name inside properties records.</li>
+	 * <li><b>value</b>: Property's value</li>
+	 * <li><b>required</b>: This property is required or not.</li>
+	 * </ul>
+	 * @return {Ext.data.Record} record 
+	 */
+    ,create : function() {
         var recordConstructor = Ext.data.Record.create([
             {name: 'name', type: 'string'},
             {name: 'value', type: this.type},
@@ -66,15 +72,13 @@ Ext.apply(afStudio.wi.PropertyBaseType.prototype, {
         
         var r = new recordConstructor({
             name: this.label,
-            //TODO: will not work for boolean type! because if current value == false you will return defaultValue instead of original
-            value: this.value || this.defaultValue,
+            value: Ext.isDefined(this.value) ? this.value : this.defaultValue,
             required: this.required ? "Mandatory" : 'Optional'
         }, this.id);
-
-        //Set type of record
+        
         r.type = this.type;
         r.originalStore = this.store;
         
         return r;
-    }
+    }//eo create   
 });

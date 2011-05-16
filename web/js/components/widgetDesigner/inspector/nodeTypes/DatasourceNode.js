@@ -28,7 +28,7 @@ afStudio.wi.DatasourceNode = Ext.extend(afStudio.wi.ContainerNode, {
      */    
     ,createProperties : function() {
         var properties = [
-            new afStudio.wi.PropertyTypeString('modelName', 'Model Name').create()
+            new afStudio.wi.PropertyTypeString({id: 'modelName', label: 'Model Name'}).create()
         ];
         this.addProperties(properties);
     }//eo createProperties
@@ -42,7 +42,7 @@ afStudio.wi.DatasourceNode = Ext.extend(afStudio.wi.ContainerNode, {
     ,setClassFromModel : function(model, widgetType) {
         if (widgetType == 'list') {
             this.properties['modelName'].set('value', model);
-            this.behaviors[0].configureFor(this,{
+            this.behaviors[0].configureFor(this, {
                'type': 'orm',
                'i:class': 'ModelCriteriaFetcher',
                'i:method': {

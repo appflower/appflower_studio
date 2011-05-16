@@ -3,17 +3,24 @@
  * @class afStudio.wi.ValueType
  * @extends afStudio.wi.PropertyTypeChoice
  */ 
-afStudio.wi.ValueType = Ext.extend(afStudio.wi.PropertyTypeChoice, {
-    defaultValue : '',
+afStudio.wi.ValueType = Ext.extend(afStudio.wi.PropertyTypeChoice, {    
     
-    constructor : function() {
-        afStudio.wi.ValueType.superclass.constructor.apply(this, ['valueType', 'Value Type']);
+    id : 'valueType'
+    
+    ,label : 'Value Type'
+    
+    ,defaultValue : ''
+    
+    ,constructor : function() {
+        afStudio.wi.ValueType.superclass.constructor.apply(this, arguments);
+        
         this.setChoices({
-           'default': '&#x20;',
-           'orm': 'orm',
-           'static': 'static',
-           'file': 'file'
+           'default': 'default',
+           'orm':     'orm',
+           'static':  'static',
+           'file':    'file'
         });
+        
         this.setRequired();
-    }
+    }//eo constructor
 });

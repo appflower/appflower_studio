@@ -69,8 +69,8 @@ afStudio.wi.ObjectRootNode = Ext.extend(afStudio.wi.BaseNode, {
      * @override
      */
     ,createProperties : function() {
-        this.addProperty(new afStudio.wi.PropertyTypeString('i:title', 'Title').create());
-        this.addProperty(new afStudio.wi.PropertyTypeString('i:description', 'Description').create());
+        this.addProperty(new afStudio.wi.PropertyTypeString({id: 'i:title', label: 'Title'}).create());
+        this.addProperty(new afStudio.wi.PropertyTypeString({id: 'i:description', label: 'Description'}).create());
     }//eo createProperties
     
     /**

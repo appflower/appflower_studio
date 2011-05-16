@@ -5,16 +5,22 @@
  * @extends afStudio.wi.PropertyTypeChoice
  */ 
 afStudio.wi.ValueSource = Ext.extend(afStudio.wi.PropertyTypeChoice, {
-    defaultValue : '',
+    id: 'valueSource'
     
-    constructor : function() {
-        afStudio.wi.ValueSource.superclass.constructor.apply(this, ['valueSource', 'Value Source']);
+    ,label : 'Value Source'
+    
+    ,defaultValue : ''
+    
+    ,constructor : function() {
+        afStudio.wi.ValueSource.superclass.constructor.apply(this, arguments);
+        
         this.setChoices({
-           'source': 'source',
+           'source':         'source',
            'classAndMethod': 'class and method',
-           'static': 'static',
-           'file': 'file'
+           'static':         'static',
+           'file':           'file'
         });
+        
         this.setRequired();
-    }
+    }//eo constructor 
 });

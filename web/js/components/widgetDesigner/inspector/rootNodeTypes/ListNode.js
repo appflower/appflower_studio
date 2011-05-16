@@ -20,11 +20,10 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
      * @override
      */
 	,getNodeConfig : function() {
-        var node = {
-            text: 'New list widget'
+        return {
+            text: 'New list widget',
+            metaField: 'root'
         };
-        
-        return node;
 	}//eo getNodeConfig
 	
 	/**
@@ -36,9 +35,9 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         
         var behavior = new afStudio.wi.WithIParamsBehavior();
         behavior.setProperties([
-            new afStudio.wi.PropertyTypeString('maxperpage', 'Max records per page').setValue(10).create()
+            new afStudio.wi.PropertyTypeString({id: 'maxperpage', label: 'Max records per page', value: 10}).create()
         ]);
-        this.addBehavior(behavior);        
+        this.addBehavior(behavior);
     }//eo constructor 
     
     /**
@@ -67,9 +66,28 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({
         	id: 'i:fields',
             text: 'Fields',
-            createChildConstructor: afStudio.wi.ColumnNode,
+            metaField: 'i:fields',
+            addChildActionLabel: 'Add column',
             childNodeId: 'i:column',
-            addChildActionLabel: 'Add column'
+            createChildConstructor: afStudio.wi.ColumnNode,
+            createProperties: function() {
+            	//call parent class' method
+           		this.constructor.superclass.createProperties.call(this);
+           		
+            	return [
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'tree', label: 'Tree'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'selectable', label: 'Selectable', defaultValue: true}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'exportable', label: 'Exportable', defaultValue: true}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'expandButton', label: 'Expand Button'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'select', label: 'Select'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'pager', label: 'Pager', defaultValue: true}).create(),       		
+		       		new afStudio.wi.PropertyTypeString({id: 'pagerTemplate', label: 'Pager Template'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'remoteSort', label: 'Remote Sort'}).create(),
+		       		new afStudio.wi.PropertyTypeString({id: 'iconCls', label: 'Icon Cls'}).create(),
+		       		new afStudio.wi.PropertyTypeString({id: 'icon', label: 'Icon', defaultValue: '/images/famfamfam/accept.png'}).create(),
+		       		new afStudio.wi.PropertyTypeBoolean({id: 'remoteFilter', label: 'Remote Filter'}).create()
+            	];
+            }            
         }, afStudio.wi.FieldsNode);
 
         return new fieldsNode;
@@ -85,7 +103,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
            id: 'i:proxy',
            createProperties: function() {
                return [
-                   new afStudio.wi.PropertyTypeString('url','Url').setRequired().create()
+                   new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url', required: true}).create()
                ];
            }
         });
@@ -102,6 +120,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         var actionsNode = afStudio.wi.NodeBuilder.createCollectionNode({
            id: 'i:actions',
            text: 'Actions',
+           metaField: 'i:actions',
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
            addChildActionLabel: 'Add action',

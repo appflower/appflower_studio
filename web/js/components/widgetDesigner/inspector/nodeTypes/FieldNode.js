@@ -36,11 +36,11 @@ afStudio.wi.FieldNode = Ext.extend(afStudio.wi.ContainerNode, {
      */    
     ,createProperties: function(){
        var properties = [
-            new afStudio.wi.PropertyTypeString('name','Name').setRequired().create(),
-            new afStudio.wi.PropertyTypeString('label','Label').create(),
+            new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name'}).setRequired().create(),
+            new afStudio.wi.PropertyTypeString({id: 'label', label: 'Label'}).create(),
             new afStudio.wi.FieldType().create(),
-            new afStudio.wi.PropertyTypeString('state','State').create(),
-            new afStudio.wi.PropertyTypeString('style','Style').create(),
+            new afStudio.wi.PropertyTypeString({id: 'state', label: 'State'}).create(),
+            new afStudio.wi.PropertyTypeString({id: 'style', label: 'Style'}).create()
        ];
 
        this.addProperties(properties);

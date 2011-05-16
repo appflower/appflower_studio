@@ -99,10 +99,19 @@ afStudio.wi.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnModel, {
 	            return this.el.dom.value == 'true';
 	        }
 	    });
+	    
+	    var posIntField = new f.NumberField({
+			selectOnFocus: true,
+			allowDecimals: false,
+			allowNegative: false,
+			style: 'text-align:left;'	    	
+	    });
+	    	    
 	    this.editors = {
 	        'date' : new g.GridEditor(new f.DateField({selectOnFocus:true})),
 	        'string' : new g.GridEditor(new f.TextField({selectOnFocus:true})),
 	        'number' : new g.GridEditor(new f.NumberField({selectOnFocus:true, style:'text-align:left;'})),
+	        'posint' : new g.GridEditor(posIntField),
 	        'boolean' : new g.GridEditor(bfield, {
 	            autoSize: 'both'
 	        })
@@ -112,37 +121,46 @@ afStudio.wi.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnModel, {
     },
     
     // private
-    getCellEditor : function(colIndex, rowIndex){
+    getCellEditor : function(colIndex, rowIndex) {
     	//TODO: Using n = p.id instead of n = p.data.name because,
     	//Because we are using custom records models instead of simple name => value model
     	
         var p = this.store.getProperty(rowIndex),
             n = p.id, 
             val = p.data.value;
-        if(this.grid.customEditors[n]){
+            
+        if (this.grid.customEditors[n]) {
             return this.grid.customEditors[n];
         }
-        if(Ext.isDate(val)){
-            return this.editors.date;
-        }else if(typeof val == 'number'){
-            return this.editors.number;
-        }else if(typeof val == 'boolean'){
-            return this.editors['boolean'];
-        }else{
-            return this.editors.string;
+        
+        if (this.editors[p.type]) {
+        	return this.editors[p.type];
         }
-    }
-    
+        
+        if (Ext.isDate(val)) {
+            return this.editors.date;
+        } else if (typeof val == 'number') {
+			return this.editors.number;
+		} else if (typeof val == 'boolean') {
+			return this.editors['boolean'];
+		} else {
+			return this.editors.string;			
+		}
+    }//eo getCellEditor    
 });
 
 /**
  * @class afStudio.wi.PropertyGrid
- * @extends Ext.grid.EditorGridPanel(can't extend from Ext.grid.PropertyGrid because it overrides GroupingStore)
- * A specialized grid implementation intended to mimic the traditional property grid as typically seen in
- * development IDEs.  Each row in the grid represents a property of some object, and the data is stored
- * as a set of name/value pairs with groupField in {@link afStudio.wi.PropertyRecord}s.
+ * @extends Ext.grid.EditorGridPanel(can't extend from Ext.grid.PropertyGrid
+ *          because it overrides GroupingStore) A specialized grid
+ *          implementation intended to mimic the traditional property grid as
+ *          typically seen in development IDEs. Each row in the grid represents
+ *          a property of some object, and the data is stored as a set of
+ *          name/value pairs with groupField in
+ *          {@link afStudio.wi.PropertyRecord}s.
  * @constructor
- * @param {Object} config The grid config object
+ * @param {Object}
+ *            config The grid config object
  */
 afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     // private config overrides
@@ -164,7 +182,7 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     initComponent : function() {
     	
         this.customRenderers = this.customRenderers || {};
-        this.customEditors = this.customEditors || {};
+        this.customEditors = this.customEditors || {};        
         this.lastEditRow = null;
         var store = new afStudio.wi.PropertyStore(this);
         this.propStore = store;
@@ -193,20 +211,25 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
              * @param {Mixed} value The current edited property value
              * @param {Mixed} oldValue The original property value prior to editing 
         	 */
-        	'propertychange'
+        	'propertychange',
+        	
+        	/**
+        	 * @event metaPropertyChange
+        	 */
+        	'metaPropertyChange'
         );
         
         this.cm = cm;
         this.ds = store.store;
+        
         afStudio.wi.PropertyGrid.superclass.initComponent.call(this);
 
 		this.mon(this.selModel, 'beforecellselect', function(sm, rowIndex, colIndex){
-            if(colIndex === 0){
+            if (colIndex === 0) {
                 this.startEditing.defer(200, this, [rowIndex, 1]);
                 return false;
             }
-        }, this);
-        
+        }, this);        
     },
 
     // private
@@ -240,7 +263,7 @@ afStudio.wi.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * @param {Array} source 
 	 */
 	addCustomEditorsAndRenderers: function(source){
-		for(var i = 0, l = source.length; i<l; i++){
+		for (var i = 0, l = source.length; i < l; i++) {			
 			//TODO: maybe we need to create another flag..
 			if ('choice' == source[i].type) {
 				if (!this.customEditors[source[i].id]) {

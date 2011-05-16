@@ -1,0 +1,565 @@
+format 76
+"gui" // ClientSide::afStudio::WidgetDesigner::gui
+  revision 4
+  modified_by 123 "nikolai"
+  // class settings
+  //class diagram settings
+  draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+  //use case diagram settings
+  package_name_in_tab default show_context default auto_label_position default draw_all_relations default class_drawing_mode default shadow default show_stereotype_properties default
+  //sequence diagram settings
+  show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
+  //collaboration diagram settings
+  show_full_operations_definition default show_hierarchical_rank default write_horizontally default class_drawing_mode default drawing_language default package_name_in_tab default show_context default show_msg_context default draw_all_relations default shadow default show_stereotype_properties default
+  //object diagram settings
+   write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+  //component diagram settings
+  package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default
+  draw_component_as_icon default show_component_req_prov default show_component_rea default show_stereotype_properties default
+  //deployment diagram settings
+  package_name_in_tab default show_context default write_horizontally default auto_label_position default draw_all_relations default shadow default
+  draw_component_as_icon default show_component_req_prov default show_component_rea default show_stereotype_properties default
+  //state diagram settings
+  package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+  show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+  //activity diagram settings
+  package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+  show_infonote default drawing_language default show_stereotype_properties default
+  
+  classview 134651 "basic"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default class_drawing_mode default drawing_language default package_name_in_tab default show_context default show_msg_context default draw_all_relations default shadow default show_stereotype_properties default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+    show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+    show_infonote default drawing_language default show_stereotype_properties default
+    class 134651 "WidgetPanel"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 134651 // <composition>
+	relation 134651 *---
+	  a role_name "" private
+	    classrelation_ref 134651 // <composition>
+	  b role_name "" private
+	    classrelation_ref 134779 // <composition>
+      end
+
+      classrelation 146427 // <association>
+	relation 143739 ----
+	  a role_name "" private
+	    classrelation_ref 146427 // <association>
+	  b role_name "" private
+	    classrelation_ref 146555 // <association>
+      end
+
+      attribute 128507 "widgetMetaData"
+	public explicit_type ""
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+    end
+
+    class 134779 "WidgetTabPanel"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 134779 // <composition>
+	relation_ref 134651 // <composition>
+      end
+
+      classrelation 134907 // <composition>
+	relation 134779 *---
+	  a role_name "" private
+	    classrelation_ref 134907 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135035 // <composition>
+      end
+
+      classrelation 135163 // <composition>
+	relation 134907 *---
+	  a role_name "" private
+	    classrelation_ref 135163 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135291 // <composition>
+      end
+    end
+
+    classdiagram 134651 "WD"
+      draw_all_relations no hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+      size A4
+    end
+
+    class 149115 "WidgetDefinition"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 146555 // <association>
+	relation_ref 143739 // <association>
+      end
+    end
+  end
+
+  classview 134779 "widget tabs"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default class_drawing_mode default drawing_language default package_name_in_tab default show_context default show_msg_context default draw_all_relations default shadow default show_stereotype_properties default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+    show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+    show_infonote default drawing_language default show_stereotype_properties default
+    class 134907 "DesignerTab"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      ncouples 1
+      key "" value ""
+      classrelation 135035 // <composition>
+	relation_ref 134779 // <composition>
+      end
+
+      classrelation 135419 // <composition>
+	relation 135035 *---
+	  a role_name "" private
+	    classrelation_ref 135419 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135547 // <composition>
+      end
+
+      classrelation 135675 // <composition>
+	relation 135163 *---
+	  a role_name "" private
+	    classrelation_ref 135675 // <composition>
+	  b role_name "" private
+	    classrelation_ref 135803 // <composition>
+      end
+
+      classrelation 135931 // <association>
+	relation 135291 ----
+	  a role_name "" private
+	    classrelation_ref 135931 // <association>
+	  b role_name "" private
+	    classrelation_ref 136059 // <association>
+      end
+
+      classrelation 136187 // <composition>
+	relation 135419 *---
+	  a role_name "" private
+	    classrelation_ref 136187 // <composition>
+	  b role_name "" private
+	    classrelation_ref 136315 // <composition>
+      end
+
+      classrelation 137467 // <composition>
+	relation 136059 *---
+	  a role_name "" private
+	    classrelation_ref 137467 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137595 // <composition>
+      end
+
+      classrelation 137723 // <composition>
+	relation 136187 *---
+	  a role_name "" private
+	    classrelation_ref 137723 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137851 // <composition>
+      end
+
+      classrelation 138491 // <association>
+	relation 136571 ----
+	  a role_name "" private
+	    classrelation_ref 138491 // <association>
+	  b role_name "" private
+	    classrelation_ref 138619 // <association>
+      end
+
+      classrelation 138747 // <association>
+	relation 136699 ----
+	  a role_name "" private
+	    classrelation_ref 138747 // <association>
+	  b role_name "" private
+	    classrelation_ref 138875 // <association>
+      end
+
+      classrelation 139003 // <association>
+	relation 136827 ----
+	  a role_name "" private
+	    classrelation_ref 139003 // <association>
+	  b role_name "" private
+	    classrelation_ref 139131 // <association>
+      end
+
+      attribute 128123 "designerView"
+	public type class_ref 142331 // SimpleListView
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      classrelation 146171 // <association>
+	relation 143611 ----
+	  a role_name "" private
+	    classrelation_ref 146171 // <association>
+	  b role_name "" private
+	    classrelation_ref 146299 // <association>
+      end
+
+      attribute 128251 "viewProperty"
+	public type class_ref 141947 // PropertyGrid
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+
+      attribute 128379 "viewInspector"
+	public type class_ref 141819 // WidgetInspectorTree
+	multiplicity "1"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+      end
+    end
+
+    class 135035 "CodeEditorTab"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 135291 // <composition>
+	relation_ref 134907 // <composition>
+      end
+    end
+  end
+
+  classview 141307 "inspector"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default class_drawing_mode default drawing_language default package_name_in_tab default show_context default show_msg_context default draw_all_relations default shadow default show_stereotype_properties default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+    show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+    show_infonote default drawing_language default show_stereotype_properties default
+    class 141563 "InspectorPalette"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 135547 // <composition>
+	relation_ref 135035 // <composition>
+      end
+
+      classrelation 137851 // <composition>
+	relation_ref 136187 // <composition>
+      end
+
+      classrelation 137979 // <composition>
+	relation 136315 *---
+	  a role_name "" private
+	    classrelation_ref 137979 // <composition>
+	  b role_name "" private
+	    classrelation_ref 138107 // <composition>
+      end
+
+      classrelation 138235 // <composition>
+	relation 136443 *---
+	  a role_name "" private
+	    classrelation_ref 138235 // <composition>
+	  b role_name "" private
+	    classrelation_ref 138363 // <composition>
+      end
+    end
+
+    class 141691 "InspectorPanel"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 136955 // <composition>
+	relation 135803 *---
+	  a role_name "" private
+	    classrelation_ref 136955 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137083 // <composition>
+      end
+
+      classrelation 137211 // <composition>
+	relation 135931 *---
+	  a role_name "" private
+	    classrelation_ref 137211 // <composition>
+	  b role_name "" private
+	    classrelation_ref 137339 // <composition>
+      end
+
+      classrelation 138107 // <composition>
+	relation_ref 136315 // <composition>
+      end
+    end
+
+    class 141819 "WidgetInspectorTree"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 137083 // <composition>
+	relation_ref 135803 // <composition>
+      end
+
+      classrelation 139131 // <association>
+	relation_ref 136827 // <association>
+      end
+    end
+
+    class 141947 "PropertyGrid"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 137339 // <composition>
+	relation_ref 135931 // <composition>
+      end
+
+      classrelation 138875 // <association>
+	relation_ref 136699 // <association>
+      end
+    end
+
+    class 142587 "FileTreePanel"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 138363 // <composition>
+	relation_ref 136443 // <composition>
+      end
+    end
+  end
+
+  classview 141435 "designer"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default class_drawing_mode default drawing_language default package_name_in_tab default show_context default show_msg_context default draw_all_relations default shadow default show_stereotype_properties default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+    show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+    show_infonote default drawing_language default show_stereotype_properties default
+    class 142075 "DesignerPanel"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 135803 // <composition>
+	relation_ref 135163 // <composition>
+      end
+
+      classrelation 136059 // <association>
+	relation_ref 135291 // <association>
+      end
+
+      classrelation 136315 // <composition>
+	relation_ref 135419 // <composition>
+      end
+
+      classrelation 136443 // <composition>
+	relation 135547 *---
+	  a role_name "" private
+	    classrelation_ref 136443 // <composition>
+	  b role_name "" private
+	    classrelation_ref 136571 // <composition>
+      end
+
+      classrelation 137595 // <composition>
+	relation_ref 136059 // <composition>
+      end
+
+      classrelation 145659 // <composition>
+	relation 143355 *---
+	  a role_name "" private
+	    classrelation_ref 145659 // <composition>
+	  b role_name "" private
+	    classrelation_ref 145787 // <composition>
+      end
+    end
+
+    class 142203 "GuiFactory"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+    end
+  end
+
+  classview 141563 "designer list"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default hide_getset_operations default show_members_full_definition default show_members_visibility default show_members_stereotype default show_members_context default show_members_multiplicity default show_members_initialization default show_attribute_modifiers default member_max_width 0 show_parameter_dir default show_parameter_name default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default show_relation_modifiers default show_relation_visibility default show_infonote default shadow default show_stereotype_properties default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default class_drawing_mode default drawing_language default package_name_in_tab default show_context default show_msg_context default draw_all_relations default shadow default show_stereotype_properties default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default draw_all_relations default shadow default show_stereotype_properties default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default class_drawing_mode default drawing_language default draw_all_relations default shadow default show_stereotype_properties default show_class_context_mode default show_msg_context_mode default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default draw_all_relations default shadow default
+    show_activities default region_horizontally default drawing_language default show_stereotype_properties default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default draw_all_relations default shadow default
+    show_infonote default drawing_language default show_stereotype_properties default
+    class 142331 "SimpleListView"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 145787 // <composition>
+	relation_ref 143355 // <composition>
+      end
+
+      classrelation 145915 // <composition>
+	relation 143483 *---
+	  a role_name "" private
+	    classrelation_ref 145915 // <composition>
+	  b role_name "" private
+	    classrelation_ref 146043 // <composition>
+      end
+
+      classrelation 146299 // <association>
+	relation_ref 143611 // <association>
+      end
+    end
+
+    class 142459 "ListGridView"
+      visibility package 
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 136571 // <composition>
+	relation_ref 135547 // <composition>
+      end
+
+      classrelation 136699 // <composition>
+	relation 135675 *---
+	  a role_name "" private
+	    classrelation_ref 136699 // <composition>
+	  b role_name "" private
+	    classrelation_ref 136827 // <composition>
+      end
+
+      classrelation 136827 // <composition>
+	relation_ref 135675 // <composition>
+      end
+
+      classrelation 138619 // <association>
+	relation_ref 136571 // <association>
+      end
+
+      classrelation 146043 // <composition>
+	relation_ref 143483 // <composition>
+      end
+    end
+  end
+end

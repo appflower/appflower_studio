@@ -1,3 +1,5 @@
+Ext.ns('afStudio');
+
 /**
  * In this class we'll store all URL used to fetch project related data with ajax calls
  * We need to have those in one place
@@ -17,9 +19,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     },
     getCssFilesSaveUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/cssfilesSave');
-    },
-    getToolbarHelperFileSaveUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/toolbarHelperFileSave');
     },
     getModulesUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/modules');
@@ -87,7 +86,18 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getProjectRunUrl: function() {
     	return this.buildUrlFor('/appFlowerStudio/run');
     },
+    getTemplateSelectorUrl: function() {
+    	return this.buildUrlFor('/appFlowerStudio/templateSelector');
+    },
+    getHelperFileSaveUrl: function() {
+        return this.buildUrlFor('/appFlowerStudio/helperFileSave');
+    },
+    getCheckHelperFileExistUrl: function() {
+    	return this.buildUrlFor('/appFlowerStudio/checkHelperFileExist');
+    },
     buildUrlFor: function(url) {
         return url;
     }
 });
+
+afStudioWSUrls = new afStudio.WSUrlsClass();

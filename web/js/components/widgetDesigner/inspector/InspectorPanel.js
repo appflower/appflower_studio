@@ -18,6 +18,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Inspector property grid.
+	 * Referenced by <tt>ref</tt> cfg option.
 	 * 
 	 * @property propertyGrid
 	 * @type {afStudio.wi.PropertyGrid}
@@ -28,7 +29,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 * Referenced by <tt>ref</tt> cfg option.
 	 * 
 	 * @property inspectorTree
-	 * @type {}
+	 * @type {afStudio.wi.WidgetInspectorTree}
 	 */
 	
 	/**
@@ -40,7 +41,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
    		var _this = this;
 
 		return {
-            title: 'Widget Inspector',            
+            title: 'Widget Inspector',
 			items: [
 			{
 				xtype: 'afStudio.wi.widgetInspectorTree',
@@ -102,7 +103,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 */
 	,onInspectorTreeNodeClick : function(node, e) {
 		var fields = node.getProperties();
-		this.propertyGrid.setSource(fields);		
+		this.propertyGrid.setSource(fields);
 	}//eo onInspectorTreeNodeClick
 	
 	/**
@@ -115,7 +116,9 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 		this.onGridRefresh(e.grid.getView());
 		
         if (e.record && e.record.WITreeNode) {
-            e.record.WITreeNode.propertyChanged(e.record);
+        	var n = e.record.WITreeNode;
+        	this.propertyGrid.fireEvent('metaPropertyChange', n, e.record.id, e.value, e.originalValue);        	
+            n.propertyChanged(e.record);
         }
 	}//eo onPropertyGridAfterEdit
 	

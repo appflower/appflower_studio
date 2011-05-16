@@ -1,16 +1,11 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base-debug.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all-debug.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/js/custom/Ext.CrossDomain.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
-<script type="text/javascript">
-window.afStudioWSUrls = new afStudio.WSUrlsClass();
-</script>
 
+<script type="text/javascript" src="/appFlowerPlugin/js/custom/Ext.CrossDomain.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/widgetJS.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/BorderLayoutOverride.js"></script>
-
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/gridUtil.js"></script>
+
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/overrides/Override.Ext.data.SortTypes.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/overrides/Override.Ext.form.Field.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/overrides/Override.Fixes.js"></script>
@@ -68,9 +63,11 @@ var afStudioHost = {
 };
 <?php $projectPath = sfConfig::get('sf_root_dir'); $projectInPath = explode('/',$projectPath); unset($projectInPath[count($projectInPath)-1]); $projectInPath = implode('/',$projectInPath);?>
 var afProjectInPath = '<?php echo $projectInPath; ?>';
+var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig()); ?>;
 </script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/GroupingComboBox.js"></script>
@@ -179,6 +176,7 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/FieldType.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/ValueSource.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/ValueType.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/AlignType.js"></script>
 	<!-- wi rootNodeTypes -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/ObjectRootNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/EditNode.js"></script>
@@ -188,8 +186,9 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPalette.js"></script>
 	<!-- wd gui -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/ListMetaProcessor.js"></script>	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/ListGridView.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/SimpleListView.js"></script>	
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/SimpleListView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/GuiFactory.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/DesignerPanel.js"></script>
 	<!-- wd -->

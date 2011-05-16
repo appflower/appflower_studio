@@ -24,7 +24,7 @@ afStudio.wi.ValidatorNode = Ext.extend(afStudio.wi.CollectionNode, {
     
     ,createProperties : function() {
         var properties = [
-            new afStudio.wi.PropertyTypeString('name', 'Name').setRequired().create()
+            new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name'}).setRequired().create()
         ];
         this.addProperties(properties);
     }

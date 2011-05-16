@@ -19,21 +19,48 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
 	    this.childIdsOrdered = [];
 	    
 	    afStudio.wi.FieldsNode.superclass.constructor.apply(this, arguments);	    
-	},//eo constructor    
-    
+	}//eo constructor    
+   
+    /**
+     * template method
+     * @override
+     */
+    ,createProperties : function() {
+		this.addProperties([
+       		new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url'}).create(),
+       		new afStudio.wi.PropertyTypeString({id: 'action', label: 'Action'}).create(),
+       		new afStudio.wi.PropertyTypeBoolean({id: 'classic', label: 'Classic'}).create(),
+       		new afStudio.wi.PropertyTypeString({id: 'bodyStyle', label: 'Body Style'}).create(),
+       		new afStudio.wi.PropertyTypeString({id: 'redirect', label: 'Redirect'}).create(),       		
+       		new afStudio.wi.PropertyTypeBoolean({id: 'remoteLoad', label: 'Remote Load'}).create(),
+       		new afStudio.wi.PropertyTypeString({id: 'plugin', label: 'Plugin'}).create()
+		]);
+    }//eo createProperties	
+	
     /**
      * @override
      */
-    addChild : function() {
+    ,addChild : function() {
         var newNode = afStudio.wi.FieldsNode.superclass.addChild.apply(this, arguments);
         this.childIdsOrdered.push(newNode.id);
-
+        
         return newNode;
-    },
+    }//eo addChild
+    
+    /**
+     * Deletes child node.
+     * @param {Ext.tree.TreeNode} node
+     */
+    ,deleteChild : function(node) {
+    	if (this.childIdsOrdered.indexOf(node.id)) {
+	    	this.childIdsOrdered.remove(node.id);
+	    	node.destroy();    	
+    	}
+    }//eo deleteChild
     
     //TODO: I violated DRY principle here, BaseNode::dumpChildsData() should be refactored
     // There is also custom implementation of dumpChildsData inisde CollectioNode class
-    dumpChildsData : function() {
+    ,dumpChildsData : function() {
         var data = [],
         	childNodes = [],
         	ret = {};
@@ -51,9 +78,9 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
         ret[this.childNodeId] = data;
         
         return ret;
-    },
+    }//eo dumpChildsData
     
-    setChildsOrder : function(childIdsOrdered) {
+    ,setChildsOrder : function(childIdsOrdered) {
         this.childIdsOrdered = childIdsOrdered;
     }
 });

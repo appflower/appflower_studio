@@ -19,7 +19,7 @@ afStudio.wi.FieldNodeValueSourceBase = Ext.extend(afStudio.wi.ContainerNode, {
 afStudio.wi.FieldNodeValueSourceSource = Ext.extend(afStudio.wi.FieldNodeValueSourceBase, {
     createProperties : function() {
        this.addProperty(
-           new afStudio.wi.PropertyTypeString('sourceName', 'Name').setRequired().create()
+           new afStudio.wi.PropertyTypeString({id: 'sourceName', label: 'Name'}).setRequired().create()
        );
     }
 });
@@ -44,8 +44,8 @@ afStudio.wi.FieldNodeValueSourceMethod = Ext.extend(afStudio.wi.CollectionNode, 
     },
     
     createProperties : function() {
-       this.addProperty(new afStudio.wi.PropertyTypeString('i:class','Class').setRequired().create());
-       this.addProperty(new afStudio.wi.PropertyTypeString('i:method','Method').setRequired().create());
+       this.addProperty(new afStudio.wi.PropertyTypeString({id: 'i:class', label: 'Class'}).setRequired().create());
+       this.addProperty(new afStudio.wi.PropertyTypeString({id: 'i:method', label: 'Method'}).setRequired().create());
     },
     
     configureFor : function(widgetData) {
@@ -72,7 +72,7 @@ afStudio.wi.FieldNodeValueSourceMethod = Ext.extend(afStudio.wi.CollectionNode, 
 afStudio.wi.FieldNodeValueSourceItem = Ext.extend(afStudio.wi.FieldNodeValueSourceBase, {
     createProperties : function() {
         this.addProperty(
-        	new afStudio.wi.PropertyTypeString('i:item', 'Item').setRequired().create()
+        	new afStudio.wi.PropertyTypeString({id: 'i:item', label: 'Item'}).setRequired().create()
         );
     }
 });
@@ -84,7 +84,7 @@ afStudio.wi.FieldNodeValueSourceItem = Ext.extend(afStudio.wi.FieldNodeValueSour
 afStudio.wi.FieldNodeValueSourceStatic = Ext.extend(afStudio.wi.FieldNodeValueSourceBase, {
     createProperties : function() {
        this.addProperty(
-           new afStudio.wi.PropertyTypeString('i:static', 'Callback function').setRequired().create()
+           new afStudio.wi.PropertyTypeString({id: 'i:static', label: 'Callback function'}).setRequired().create()
        );
     }
 });

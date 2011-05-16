@@ -52,11 +52,10 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		
 		return {
 			border: true,
-			autoScroll: true,
 			bodyStyle: 'padding: 4px;',
-			tbar: new Ext.Toolbar({
+			tbar: {
 				items: topBarItems
-			}),
+			},
 			items: [
 				gui.view
 			]

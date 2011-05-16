@@ -98,10 +98,16 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private
 	 */	
 	,_afterInitComponent : function() {
-		var _this = this,
-			   gf = afStudio.wd.GuiFactory,
-			widgetType = gf.getWidgetType(this.widgetMeta);
+		var _this  = this,
+			gf     = afStudio.wd.GuiFactory;
 		
+		/**
+		 * View type.
+		 * @property widgetType
+		 * @type {String}
+		 */	
+		this.widgetType  = gf.getWidgetType(this.widgetMeta);
+			
 		/**
 		 * @property designerView
 		 * @type {Ext.Container}
@@ -119,21 +125,24 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		this.viewInspector = this.inspectorPalette.getInspectorTree();		
 		
 		//Save button
-		this.designerPanel.getMenuItem('saveBtn').on('click', this.onSaveWidgetView, this);
-		
+		this.designerPanel.getMenuItem('saveBtn').on('click', this.onSaveWidgetView, this);		
 		//Preview button
 		this.designerPanel.getMenuItem('previewBtn').on('click', this.onPreviewWidgetView, this);		
 		
-		if (gf.isWidgetTypeValid(widgetType)) {
-			this['init' + widgetType.ucfirst() + 'DesignerView']();
+		//Relaying Events
+		this.relayEvents(this.viewInspector, ['append', 'remove']);
+
+		//Init specific view component
+		if (gf.isWidgetTypeValid(this.widgetType)) {
+			this['init' + this.widgetType.ucfirst() + 'DesignerView']();
 		} else {
-			afStudio.Msg.error('Widget Designer', String.format('Unknown widget type <b>{0}</b>', widgetType));
+			afStudio.Msg.error('Widget Designer', String.format('Unknown widget type <b>{0}</b>', this.widgetType));
 		}
 		
 		_this.on({
 			scope: this,
-			afterrender: function() {
-			}
+			append: this.onViewInspectorAppendProperty,
+			remove: this.onViewInspectorRemoveProperty
 		});
 	}//eo _afterInitComponent
 	
@@ -142,17 +151,21 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private 
 	 */
 	,initListDesignerView : function() {
-		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel']);
-		
-		//Preview button
-		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
-			afStudio.Msg.info('Add column click');
-		}, this);		
+		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel', 'deleteColumn']);		
+		this.relayEvents(this.viewProperty, ['metaPropertyChange']);		
+
+		//Add column button
+		//TODO will be added in future release		
+		//		this.designerPanel.getMenuItem('addColumnBtn').on('click', function() {
+		//			afStudio.Msg.info('Add column click');
+		//		}, this);		
 		
 		this.on({
 			scope: this,
 			changeColumnPosition: this.onListViewChangeColumnPosition,
-			changeColumnLabel: this.onListViewChangeColumnLabel
+			changeColumnLabel: this.onListViewChangeColumnLabel,
+			deleteColumn: this.onListViewDeleteColumn,
+			metaPropertyChange: this.onListViewMetaPropertyChange
 		});
 	}//eo initListDesignerView
 	
@@ -205,14 +218,113 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	}//eo onPreviewWidgetView
 	
 	/**
+	 * 
+	 * @param {} vi
+	 * @param {} parent
+	 * @param {} node
+	 * @param {} index
+	 */
+	,onViewInspectorAppendProperty : function(vi, parent, node, index) {
+		var gf   = afStudio.wd.GuiFactory,
+			vd   = this.designerView,
+			vpg	 = this.viewProperty,
+			vit  = this.viewInspector;
+			
+		switch (this.widgetType) {
+			
+			case gf.LIST :			
+				switch (parent.id) {
+					case 'i:actions':						
+						vpg.setSource(node.getProperties());
+						(function() {
+							vit.getSelectionModel().select(node);
+						}).defer(100, this);						
+						
+						var aBar = vd.getTopToolbar().getComponent('actions');
+						if (aBar.hidden) {
+							aBar.show();							
+							vd.doLayout();
+						}
+						vd.addIAction({
+							name: node.getProperty('name').get('value') 
+						}, aBar);
+						aBar.doLayout();
+					break;
+					
+					case 'i:fields':					
+						var	vCm      = vd.getColumnModel(),		
+							startIdx = vd.getView().getUninitColumn(),
+							endIdx   = vCm.getColumnCount(true);
+						
+						if (startIdx != -1) {
+							vpg.setSource(node.getProperties());
+							(function() {
+								vit.getSelectionModel().select(node);
+							}).defer(100, this);
+				
+							vCm.config[startIdx].uninit = false;
+							vCm.config[startIdx].header = node.getProperty('label').get('value');
+							vCm.config[startIdx].name   = node.getProperty('name').get('value');		
+							vCm.moveColumn(startIdx, endIdx);
+							vCm.setHidden(endIdx, false);
+						} else {
+							(function() {
+								node.destroy();
+								vpg.setSource([]);
+							}).defer(100, this);
+							afStudio.Msg.info('Widget Designer: List View', String.format('Max columns size <u>{0}</u>', vd.maxColumns));
+						}
+					break;
+				}			
+			break;			
+		}		
+	}//eo onViewInspectorAppendProperty
+	
+	
+	,onViewInspectorRemoveProperty : function(vi, parent, node) {
+		var gf   = afStudio.wd.GuiFactory,
+			vd   = this.designerView,
+			vpg	 = this.viewProperty,
+			vit  = this.viewInspector;
+			
+		switch (this.widgetType) {
+			
+			case gf.LIST :
+				switch (parent.id) {					
+					case 'i:actions':						
+						vpg.setSource({});
+						
+						var actionName = node.getProperty('name').get('value'),						
+							aBar       = vd.getTopToolbar().getComponent('actions'),
+							aNum       = aBar.items.getCount() - 2;
+						
+						aBar.items.each(function(a, idx, len) {
+							if (idx < aNum) {
+								if (a.name == actionName) {
+									a.destroy();
+									return false;
+								}
+							} else {
+								return false;
+							}
+						});
+						vd.updateActionBarVisibilityState();
+					break;					
+				}			
+			break;			
+		}//eo switch	
+	}//eo onViewInspectorRemoveProperty
+	/*------------------------------ List view ----------------------------- */
+	
+	/**
 	 * Handles columns reordering in List view
 	 * <u>changeColumnPosition</u> event listener.
 	 */
 	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {
-		var vi = this.viewInspector,
-			viRoot = vi.getRootNode(),
-			fn = viRoot.getFieldsNode();
-		
+		var vi 		= this.viewInspector,
+			viRoot  = vi.getRootNode(),
+			fn      = viRoot.getFieldsNode();
+			
 		if (fn && fn.findChild('text', clm.name)) {
 			if (oldPos > newPos) {
 				fn.childIdsOrdered.dragUp(oldPos, newPos);
@@ -236,11 +348,39 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			fn = viRoot.getFieldsNode(),
 			viClmNode;
 		
-		if (fn && (viClmNode = fn.findChild('text', clm.name))) {			
+		if (fn && (viClmNode = fn.findChild('text', clm.name))) {
 			var lp = viClmNode.getProperty('label');
 			lp.set('value', value);			
 		}
 	}//eo onListViewChangeColumnLabel
+	
+	,onListViewDeleteColumn : function(clmName) {
+		var vi = this.viewInspector,
+			fn = vi.getRootNode().getFieldsNode(),
+			viClmNode;
+		
+		if (fn && (viClmNode = fn.findChild('text', clmName))) {
+			fn.deleteChild(viClmNode);
+		}		
+	}//eo onListViewDeleteColumn
+	
+	/**
+	 * ListView <u>metaPropertyChange</u> event listener. 
+	 * @param {Ext.tree.TreeNode} node
+	 * @param {String} propId
+	 * @param {String} value
+	 * @param {String} originalValue
+	 */
+	,onListViewMetaPropertyChange : function(node, propId, value, originalValue) {		
+		var vd = this.designerView;	
+		
+		vd.processMeta({
+			node: node, 
+			name: propId, 
+			value: value, 
+			oldValue: originalValue
+		});
+	}//eo onListViewMetaPropertyChange	
 });
 
 /**

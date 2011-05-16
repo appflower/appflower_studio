@@ -8,6 +8,10 @@ afStudio.wi.PropertyTypeChoice = Ext.extend(afStudio.wi.PropertyBaseType, {
 	,defaultValue : ''
 	
 	,setChoices : function(store) {
+		/**
+		 * @property store
+		 * @type {Object}
+		 */
 		this.store = store;		
 		return this;
 	}

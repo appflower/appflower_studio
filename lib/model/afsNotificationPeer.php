@@ -36,7 +36,7 @@ class afsNotificationPeer extends BaseafsNotificationPeer {
 		$afsNotification->setMessage($message);
 		$afsNotification->setMessageType($messageType);
 		$afsNotification->setUser($user);
-		$afsNotification->setIp(myToolkit::getIP());
+		$afsNotification->setIp(afsToolkit::getIP());
 		$afsNotification->save();
 	}
 	

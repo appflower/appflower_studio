@@ -4,19 +4,17 @@ Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 Ext.ns('afStudio');
 
 var afStudio = function () {
-
 	/**
 	 * @property {afStudio.viewport.StudioToolbar} tb
 	 * Studio toolbar
-	 */
+	 */	
 	
 	/**
 	 * @property {afStudio.viewport.StudioViewport} vp
 	 * Studio view port
 	 */
 	
-	return {
-		
+	return {		
 		/**
 		 * Redirects browser to specified URL during ajax requests.
 		 * URL is specified in <u>redirect</u> response property.

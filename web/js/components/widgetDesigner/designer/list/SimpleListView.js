@@ -7,8 +7,7 @@ Ext.ns('afStudio.wd.list');
  * @extends Ext.grid.GridPanel
  * @author Nikolai
  */
-afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
-	
+afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {	
 	/**
 	 * @cfg {Object} viewMeta
 	 * View metadata object.
@@ -18,7 +17,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @cfg {String} columnName (defaults to "NewColumn")
 	 * Default column name text. 
 	 */
-	columnName : 'NewColumn'	
+	columnName : 'newcolumn'	
 	
 	/**
 	 * @cfg {Number} columnWidth (defaults to 80)
@@ -47,21 +46,22 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			
 			if (Ext.isArray(clm)) {
 				for (var i = 0; i < clm.length; i++) {
-					var c = clm[i];			
+					var c = clm[i];
 					columns.push({
 						header:   c.label,
 						name:     c.name,
 						width:    c.width ? c.width : this.columnWidth,
-						hidden:   (c.hidden ? c.hidden.bool() : false),
-						hideable: (c.hideable ? c.hideable.bool() : true),
-						fixed:    (c.resizable ? c.resizable.bool() : false)
+						hidden:   c.hidden ? c.hidden.bool() : false,
+						hideable: c.hideable ? c.hideable.bool() : true,
+						fixed:    c.resizable ? !c.resizable.bool() : true
 					});
 				}
-				for (var i = columns.length - 1; i <= this.maxColumns; i++) {
+				for (var i = columns.length - 1; i < this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
+						fixed: true,
 						uninit: true
 					});
 				}
@@ -73,18 +73,19 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 					width:     clm.width ? clm.width : this.columnWidth,
 					hidden:    clm.hidden ? clm.hidden.bool() : false,
 					hideable:  clm.hideable ? clm.hideable.bool() : true,
-					fixed:     clm.resizable ? clm.resizable.bool() : false					
+					fixed:     clm.resizable ? !clm.resizable.bool() : true					
 				});				
-				for (var i = 1; i <= this.maxColumns; i++) {
+				for (var i = 1; i < this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
+						fixed: true,
 						uninit: true
 					});
 				}				
 			}
-		}
+		}//eo columns
 
 		var store = new Ext.data.ArrayStore({
 			idIndex: 0,
@@ -92,14 +93,70 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			fields: []
 		});
 		
+		//<i:actions>
+		var iActions = {	        	
+    		itemId: 'actions',
+        	items: [        	
+        	'->',
+        	{
+        		itemId: 'expanded-view',
+        		text: 'Expanded View',
+        		iconCls: 'icon-application-split'
+        	},{
+        		itemId: 'more',
+    			text: 'More Actions',
+				menu: {
+					items: [
+					{
+						itemId: 'exports',
+						text: 'Exports',
+						iconCls: 'icon-database-save'
+					},{
+						itemId: 'sel-all',
+						text: 'Select All'
+					},{
+						itemId: 'desel-all',
+						text: 'Deselect All'
+					}]
+				}        			
+        	}]
+		};		
+		
+		//<i:description>
+		var iDescription = {
+    		itemId: 'desc',
+    		hidden: true,
+        	items: {
+        		xtype: 'tbtext',
+        		style: 'white-space: normal;',
+        		text: ''
+        	}
+		};
+		if (vm['i:description'] && !Ext.isEmpty(Ext.util.Format.trim(vm['i:description']))) {
+			iDescription.hidden = false;			
+			iDescription.items.text = vm['i:description'];			
+		}
+		
 		return {
 			title: vm['i:title'],
 	        store: store,      
 			columns: columns,
 	        view: new afStudio.wd.list.ListGridView(),
-	        columnLines: true
-		};
-		
+	        columnLines: true,
+	        tbar: {
+	        	xtype: 'container',
+	        	defaults: {
+	        		xtype: 'toolbar'
+	        	},
+	        	items: [iActions, iDescription]
+	        },
+	        bbar: {
+	        	xtype: 'paging',
+	        	hidden: Ext.isDefined(vm['i:fields'].pager) ? !(vm['i:fields'].pager.bool()) : false,
+		        store: store,
+		        displayInfo: true
+	        }
+		};		
 	}//eo _beforeInitComponent	
 	
 	/**
@@ -121,6 +178,8 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	,_afterInitComponent : function() {
 		var _this = this;		
 		
+		this.configureView();
+		
 		this.addEvents(
 			/**
 			 * @event 'changeColumnPosition' Fires when a column was moved from his previous position.
@@ -136,7 +195,13 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			 * @param {Number} clmIndex The column index inside {@link Ext.grid.ColumnModel}.
 			 * @param {String} value The header's new value.
 			 */
-			'changeColumnLabel'
+			'changeColumnLabel',
+			
+			/**
+			 * @event 'deleteColumn' Fires after a column was deleted
+			 * @param {String} clmName The colomn <tt>name</tt> attribute
+			 */
+			'deleteColumn'
 		);
 		
 		this.on({
@@ -151,6 +216,64 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	}//eo _afterInitComponent
 	
 	/**
+	 * After construction view configuration 
+	 */
+	,configureView : function() {
+		var _this  = this,
+			vm     = this.viewMeta,
+		    bbar   = this.getTopToolbar(),
+		    aBar   = bbar.getComponent('actions'),
+		    aMore  = aBar.getComponent('more');    
+		
+		//Actions
+		if (vm['i:actions'] && vm['i:actions']['i:action']) {
+			var act = vm['i:actions']['i:action'];
+			if (Ext.isArray(act)) {
+				Ext.iterate(act, function(a, idx, array) {
+					_this.addIAction(a, aBar);
+				});
+			} else {
+				_this.addIAction(act, aBar);
+			}
+		}		
+		//More Actions
+		if (vm['i:fields']) {
+			var selectable = vm['i:fields'].selectable ? vm['i:fields'].selectable.bool() : true,
+				exportable = vm['i:fields'].exportable ? vm['i:fields'].exportable.bool() : true,
+				expandedView = vm['i:fields'].expandButton ? vm['i:fields'].expandButton.bool() : false;
+			
+			if (selectable || exportable) {
+				aMore.show();
+			} else {
+				aMore.hide();
+			}
+			
+			if (selectable) {
+				aMore.menu.getComponent('sel-all').enable();
+				aMore.menu.getComponent('desel-all').enable();				
+			} else {
+				aMore.menu.getComponent('sel-all').disable();			
+				aMore.menu.getComponent('desel-all').disable();				
+			}
+			
+			if (exportable) {
+				aMore.menu.getComponent('exports').show();
+			} else {
+				aMore.menu.getComponent('exports').hide();
+			}
+			
+			if (expandedView) {
+				aBar.getComponent('expanded-view').show();
+			} else {
+				aBar.getComponent('expanded-view').hide();
+			}
+		}
+		this.updateActionBarVisibilityState();
+		//eo Actions
+		
+	}//eo configureView
+	
+	/**
 	 * Handler of <u>columnmove</u> event.
 	 * @param {Number} oldIndex
 	 * @param {Number} newIndex
@@ -161,7 +284,59 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			this.fireEvent('changeColumnPosition', clm, oldIndex, newIndex);					
 		}
 	}//eo onColumnMove
+	
+	/**
+	 * Updates action bar <u>visibility</u> state. 
+	 */
+	,updateActionBarVisibilityState : function() {
+		var aBar = this.getTopToolbar().getComponent('actions'),		
+			aHidden = 0;
+			
+		aBar.items.each(function(i) {
+			if (i.hidden) {
+				aHidden++;
+			}
+		});
+		
+		if (aHidden > 0 && ((aHidden + 1)  == aBar.items.getCount())) {
+			aBar.hide();
+		} else {
+			aBar.show();
+		}
+		this.doLayout();
+	}//eo updateActionBarVisibilityState
+	
+	/**
+	 * Updates <i>more actions</i> <u>visibility</u> state.
+	 */
+	,updateMoreActionVisibilityState : function() {
+		var aBar   = this.getTopToolbar().getComponent('actions'),		
+			aMore  = aBar.getComponent('more'),
+			bSel   = aMore.menu.getComponent('sel-all'),
+			bDesel = aMore.menu.getComponent('desel-all');				
+		
+		if (bSel.disabled && bDesel.disabled) {
+			var ic = 2;	
+			aMore.menu.items.each(function(i) {
+				if (i.hidden) {
+					ic++;
+				}
+			});
+			if (ic == aMore.menu.items.getCount()) {
+				aMore.hide();
+			} else {
+				aMore.show();
+			}
+		} else {
+			aMore.show();
+		}
+	}//eo updateMoreActionVisibilityState
 });
+
+/**
+ * Adds Mixin ListMetaProcessor Class
+ */
+Ext.apply(afStudio.wd.list.SimpleListView.prototype, afStudio.wd.list.ListMetaProcessor);
 
 /**
  * @type 'afStudio.wd.list.simpleListView'
