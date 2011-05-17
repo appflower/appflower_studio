@@ -43,7 +43,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		
 		//<i:column>
 		//TODO resolve issue with column's fixed conf. property
-		if (!Ext.isEmpty(vm['i:fields']['i:column'])) {
+		if (!Ext.isEmpty(vm['i:fields']) && vm['i:fields']['i:column']) {
 			var clm = vm['i:fields']['i:column'];			
 			
 			if (Ext.isArray(clm)) {
@@ -89,12 +89,19 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			}
 		}
 		
+		//<i:fields>[select]
 		var sm = new Ext.grid.RowSelectionModel();
 		if (!Ext.isEmpty(vm['i:fields']) && vm['i:fields'].select && vm['i:fields'].select.bool()) {
 			sm = new Ext.grid.CheckboxSelectionModel();
-			columns.unshift(sm);			
+			columns.unshift(sm);
 		}
-		//eo columns
+		
+		//<i:rowactions>
+		if (!Ext.isEmpty(vm['i:rowactions']) && vm['i:rowactions']['i:action']) {			
+			var actionClm = this.createRowActionColumn(vm['i:rowactions']['i:action']);
+			columns.push(actionClm);
+		}
+		//eo <i:column>
 
 		var store = new Ext.data.ArrayStore({
 			idIndex: 0,

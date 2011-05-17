@@ -218,20 +218,20 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	}//eo onPreviewWidgetView
 	
 	/**
-	 * 
-	 * @param {} vi
-	 * @param {} parent
-	 * @param {} node
-	 * @param {} index
+	 * WidgetInspectorTree <u>append</u> event listener.
+	 * For more details look at {@link Ext.tree.TreePanel#append}.
+	 * @param {afStudio.wi.WidgetInspectorTree} vi
+	 * @param {Node} parent
+	 * @param {Node} node
+	 * @param {Number} index
 	 */
 	,onViewInspectorAppendProperty : function(vi, parent, node, index) {
 		var gf   = afStudio.wd.GuiFactory,
 			vd   = this.designerView,
 			vpg	 = this.viewProperty,
-			vit  = this.viewInspector;
+			vit  = this.viewInspector;		
 			
-		switch (this.widgetType) {
-			
+		switch (this.widgetType) {			
 			case gf.LIST :			
 				switch (parent.id) {
 					case 'i:actions':						
@@ -242,13 +242,24 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 						
 						var aBar = vd.getTopToolbar().getComponent('actions');
 						if (aBar.hidden) {
-							aBar.show();							
+							aBar.show();
 							vd.doLayout();
 						}
 						vd.addIAction({
 							name: node.getProperty('name').get('value') 
 						}, aBar);
 						aBar.doLayout();
+					break;
+					
+					case 'i:rowactions':
+						vpg.setSource(node.getProperties());
+						(function() {
+							vit.getSelectionModel().select(node);
+						}).defer(100, this);
+						
+						vd.addIRowaction({
+							name: node.getProperty('name').get('value')
+						});
 					break;
 					
 					case 'i:fields':					
@@ -280,7 +291,14 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		}		
 	}//eo onViewInspectorAppendProperty
 	
-	
+	/**
+	 * WidgetInspectorTree <u>remove</u> event listener.
+	 * For more details look at {@link Ext.tree.TreePanel#remove}.
+	 * @param {afStudio.wi.WidgetInspectorTree} vi
+	 * @param {Node} parent
+	 * @param {Node} node
+	 * @param {Number} index
+	 */
 	,onViewInspectorRemoveProperty : function(vi, parent, node) {
 		var gf   = afStudio.wd.GuiFactory,
 			vd   = this.designerView,
@@ -309,8 +327,14 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 							}
 						});
 						vd.updateActionBarVisibilityState();
+					break;
+					
+					case 'i:rowactions':						
+						var actionName = node.getProperty('name').get('value');
+						vpg.setSource({});						
+						vd.deleteIRowaction(actionName);
 					break;					
-				}			
+				}
 			break;			
 		}//eo switch	
 	}//eo onViewInspectorRemoveProperty

@@ -241,11 +241,11 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 			headerName = this.cm.getColumnHeader(index);
 		
 		var ed = new Ext.grid.GridEditor(new Ext.form.TextField({
-			allowBlank: false,
-			maskRe: /[\w]/,
-			validator: function(value) {
-				return /^[^\d]\w*$/im.test(value) ? true : _this.invalidColumnName;					
-			}
+			allowBlank: false
+//			maskRe: /[\w]/,
+//			validator: function(value) {
+//				return /^[^\d]\w*$/im.test(value) ? true : _this.invalidColumnName;					
+//			}
 		}));
 		
 		ed._index = index;		
@@ -303,11 +303,16 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	        menu.show(t, 'tl-bl?');
 	        
 		} else {
-			//don't edit checkbox selection model
-			if (this.cm.getColumnId(index) == 'checker') {
-				return false;
+			var clmId  = this.cm.getColumnId(index);		
+			if (Ext.isDefined(clmId)) {			
+				var clm = this.cm.getColumnById(clmId);
+				//checkbox selection model column and rowactions column are not editable 
+				if (clmId == 'checker' || clm.xtype == 'actioncolumn') {
+					return false;
+				}
 			}
-			//Start header editing 
+			
+			//Start header editing
 			this.editHeadColumn(hd.firstChild, index);
 		}
 	}//eo handleHdDown
@@ -330,11 +335,18 @@ afStudio.wd.list.ListGridView.ColumnDragZone = Ext.extend(Ext.grid.GridView.Colu
      * @return {Boolean} isValid True if the drag event is valid, else false to cancel
      */	
    	onBeforeDrag : function(data, e) {
-		var index = this.view.findCellIndex(data.header);
-		//{@link Ext.grid.CheckboxSelectionModel} shouldn't be draggable
-        if (index !== false && (this.view.cm.getColumnId(index) == 'checker')) {
-        	return false;
-        }
+		var cm    = this.view.cm,
+			index = this.view.findCellIndex(data.header),
+			clmId = index !== false ? cm.getColumnId(index) : null;
+		
+		if (Ext.isDefined(clmId)) {
+			var clm = cm.getColumnById(clmId);			
+			//checker {@link Ext.grid.CheckboxSelectionModel} 
+			//and actions column should not be draggable
+			if (clmId == 'checker' || clm.xtype == 'actioncolumn') {
+				return false;
+			}
+		}
         
         return true;
 	}//eo onBeforeDrag
@@ -348,12 +360,19 @@ afStudio.wd.list.ListGridView.ColumnDragZone = Ext.extend(Ext.grid.GridView.Colu
      * @return {Boolean} isValid True if the drag drop event is valid, else false to cancel
 	 */
 	,beforeDragDrop : function(target, e, id) {		
-		var ddData = this.getDragData(e),		
-			clmIdx = this.view.findCellIndex(ddData.header);
-		//The others columns shouldn't be drop on {@link Ext.grid.CheckboxSelectionModel} column	
-		if (clmIdx !== false && (this.view.cm.getColumnId(clmIdx) == 'checker')) {
-			this.onInvalidDrop(target, e, id);
-			return false;
+		var cm     = this.view.cm,
+			data = this.getDragData(e),
+			index  = this.view.findCellIndex(data.header),
+			clmId  = index !== false ? cm.getColumnId(index) : undefined;
+		
+		if (Ext.isDefined(clmId)) {			
+			var clm = cm.getColumnById(clmId);
+			//The others columns shouldn't be drop onto checker {@link Ext.grid.CheckboxSelectionModel}
+			//and actions columns
+			if (clmId == 'checker' || clm.xtype == 'actioncolumn') {
+				this.onInvalidDrop(target, e, id);
+				return false;
+			}
 		}
 		
 		return true;

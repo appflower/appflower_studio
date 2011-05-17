@@ -113,7 +113,7 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
     
     /**
      * Creates and Instantiates <b>i:action</b> node.
-     * @param {Function} actionNodeConstructor The {@link afStudio.wi.ActionNode} node constructor 
+     * @param {Function} actionNodeConstructor The {@link afStudio.wi.ActionNode} constructor 
      * @return {afStudio.wi.CollectionNode} instanciated action node object, descendant of CollectionNode
      */
     ,buildActionsNode : function(actionNodeConstructor) {
@@ -132,17 +132,36 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
     
     /**
      * Creates and Instantiates <b>i:rowactions</b> node.
-     * @param {Function} actionNodeConstructor The {@link afStudio.wi.ActionNode} node constructor
+     * @param {Function} actionNodeConstructor The {@link afStudio.wi.ActionNode} constructor
      * @return {afStudio.wi.CollectionNode} instanciated rowactions node object, descendant of CollectionNode
      */
     ,buildRowactionsNode : function(actionNodeConstructor) {
+    	//extending afStudio.wi.ActionNode class
+    	actionNodeConstructor = Ext.extend(actionNodeConstructor, {
+    		getNodeConfig : function() {
+    			var attr = actionNodeConstructor.superclass.getNodeConfig.call(this);
+    			return Ext.apply(attr, {
+    				metaField: 'i:rowaction'
+    			});
+    		}
+    		
+            ,createProperties : function() {
+            	//call parent's method
+            	actionNodeConstructor.superclass.createProperties.call(this);
+            	this.addProperties([
+		       		new afStudio.wi.PropertyTypeString({id: 'params', label: 'URL Parameters'}).create()
+            	]);
+            }
+    	});
+    	
         var rowactionsNode = afStudio.wi.NodeBuilder.createCollectionNode({
-           id: 'i:rowactions',
-           text: 'Row Actions',           
-           createChildConstructor: actionNodeConstructor,
-           childNodeId: 'i:action',
-           addChildActionLabel: 'Add row action',
-           dumpEvenWhenEmpty: false
+        	id: 'i:rowactions',
+            text: 'Row Actions',  
+            metaField: 'i:rowactions',
+            createChildConstructor: actionNodeConstructor,
+            childNodeId: 'i:action',
+            addChildActionLabel: 'Add Row Action',
+            dumpEvenWhenEmpty: false			
         });
         
         return new rowactionsNode;
