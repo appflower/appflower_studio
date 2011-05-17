@@ -189,7 +189,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.form2 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
+			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			hidden: true,
 			defaults: {allowBlank: false, anchor: '95%'},
@@ -220,7 +220,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.form3 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
+			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			hidden: true,
 			defaults: {allowBlank: false, anchor: '95%'},
@@ -236,7 +236,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.form4 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
+			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			hidden: true,
 			defaults: {allowBlank: false, anchor: '95%'},
