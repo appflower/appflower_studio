@@ -1,8 +1,9 @@
 Ext.ns('afStudio.wd.list');
 
 /**
- * Mixin class dedicated for {@link afStudio.wd.list.SimpleListView}
- * 
+ * Mixin class dedicated for {@link afStudio.wd.list.SimpleListView}.
+ * Responsible for visual reflection of view's metadata changes.  
+ *  
  * @singleton
  * @author Nikolai Babinski
  */
@@ -40,10 +41,12 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				name: a.name,
 				altText: a.text ? a.text : a.name,
 				tooltip: a.tooltip ? a.tooltip : null
-			};					
-			var icon = a.iconCls ? 'iconCls' : (a.icon ? 'icon' : null);
-			if (icon) {
-				rowAction[icon] = a[icon];
+			};			
+			if (a.iconCls && Ext.util.Format.trim(a.iconCls)) {
+				rowAction.iconCls = a.iconCls;
+			}
+			if (a.icon && Ext.util.Format.trim(a.icon)) {
+				rowAction.icon = a.icon;
 			}
 			
 			return rowAction;
@@ -119,18 +122,18 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 
 			var actions = [];
 			Ext.iterate(aClm.items, function(a, idx) {
-				if (a.name == actionName) {
-					delete aClm.items[idx];
-				} else {
+				if (a.name != actionName) {
 					actions.push(a);
 				}
-			});		
-			  
+			});
+			
 			cm.config.pop();
-			aClm = this.createRowActionColumn(actions);
-			cm.config.push(aClm);
+			if (actions.length > 0) {
+				aClm = this.createRowActionColumn(actions);
+				cm.config.push(aClm);
+			}
 			cm = new Ext.grid.ColumnModel(cm.config);			
-			this.reconfigure(s, cm);			
+			this.reconfigure(s, cm);				
 		}//eo deleteIRowaction
 		
 		/**
@@ -379,7 +382,6 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 						action.tooltip = t.value;
 					break;				
 				}
-				
 				cm.config.pop();
 				aClm = this.createRowActionColumn(aClm.items);
 				cm.config.push(aClm);
