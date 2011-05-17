@@ -36,17 +36,17 @@ ul {
 
 /* Studio Popup
 =================================================================================*/
-#studio_popup {background:#fff; z-index:10; width:795px; height:490px; overflow:hidden; border:1px solid #99bbe8;}
+#studio_popup {background:#fff; z-index:10; width:795px; height:460px; overflow:hidden; border:1px solid #99bbe8;}
 
 #studio_popup #studio_popup_primary {float:left; background:url(../images/studio/bg_popup.jpg) 50px 40px no-repeat; }
 #studio_popup #studio_popup_primary #popup_content {width:510px; margin:320px 0 0 45px;}
 #studio_popup #studio_popup_primary #popup_content h2 {font-size:27px; font-weight:bold; text-align:center; margin-bottom:20px;}
-#studio_popup #studio_popup_primary #popup_content p {font-size:14px; font-weight:bold; line-height:18px; text-align:center; margin-bottom:20px;}
+#studio_popup #studio_popup_primary #popup_content p {font-size:14px; font-weight:bold; line-height:18px; text-align:center; margin-bottom:20px;color: #666;}
 
 #studio_popup #studio_popup_primary #popup_content a {display:block; width:229px; height:229px; background:url(../images/studio/btn_play.png) 0 0 no-repeat; position:absolute; margin: -345px 0 0 150px; text-indent:-9999px;}
 
 
-#studio_popup #studio_popup_secondary {float:right; height:490px; width:190px; border-left:3px solid #cdd9e8;}
+#studio_popup #studio_popup_secondary {float:right; height:460px; width:190px; border-left:3px solid #cdd9e8;}
 #studio_popup #studio_popup_secondary h3 {padding-bottom:15px; font-size:14px;}
 
 #studio_popup #studio_video_tours {height:295px; margin:8px;}
@@ -63,7 +63,7 @@ ul {
 #studio_popup #studio_video_tours .views span {background:url(../images/studio/ico_blue_eye.png) 0 3px no-repeat; padding-left:21px; font-size:10px; color:#666;}
 
 #studio_popup #quick_links {margin:8px;}
-#studio_popup #quick_links h3 {}
+#studio_popup #quick_links h3 {color: #666;}
 #studio_popup #quick_links ul li {display:block; background:#093b76 url(../images/studio/bg_list_item_sidebar.png) 0 0 repeat-x; color:#fff; padding:7px 10px;}
 #studio_popup #quick_links ul li:hover {background:#3878c5 url(../images/studio/bg_list_item_sidebar_hover.png) 0 0 repeat-x; }
 #studio_popup #quick_links ul li a {display:block; background:url(../images/studio/ico_white_arrow.png) 0 0 no-repeat; color:#fff; padding-left:20px; font-size:12px;}

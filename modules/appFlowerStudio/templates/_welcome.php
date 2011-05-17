@@ -16,7 +16,7 @@
       
           <?php foreach ($data as $video): ?>
             <li>
-	          <img src="<?php echo $video['thumbnail_small']?>" alt="<?php echo $video['title'] ?>" width="57" height="57">
+	          <img src="/appFlowerStudioPlugin/images/studio/img_sample.jpg" alt="<?php echo $video['title'] ?>" width="57" height="57">
 	          <div>
 	            <h5><a href="<?php echo $video['url']?>" rel="prettyPhoto" title="<?php echo $video['title'] ?>"><?php echo $video['title'] ?></a></h5>
 	            <p class="views"><span><?php echo $video['stats_number_of_plays']?> views</span></p>
