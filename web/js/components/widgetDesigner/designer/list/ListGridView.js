@@ -72,7 +72,7 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
         }
 
         if (grid.enableColumnMove) {
-            this.columnDrag = new Ext.grid.GridView.ColumnDragZone(grid, this.innerHd);
+            this.columnDrag = new afStudio.wd.list.ListGridView.ColumnDragZone(grid, this.innerHd);            
             this.columnDrop = new Ext.grid.HeaderDropZone(grid, this.mainHd.dom);
         }
         
@@ -99,9 +99,9 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 			});
 			
 			this.hmenu.add(
-//TODO will be added in future release			
-//				{itemId: "addClmBefore", text: 'Add Column Before'},
-//				{itemId: "addClmAfter", text: 'Add Column After'},
+				//TODO will be added in future release			
+				//{itemId: "addClmBefore", text: 'Add Column Before'},
+				//{itemId: "addClmAfter", text: 'Add Column After'},
 				{itemId: "renameClm", text: 'Rename Column'},				
 				{itemId: 'deleteClm', text: 'Delete Column'},
 				'-',
@@ -303,9 +303,59 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	        menu.show(t, 'tl-bl?');
 	        
 		} else {
+			//don't edit checkbox selection model
+			if (this.cm.getColumnId(index) == 'checker') {
+				return false;
+			}
 			//Start header editing 
 			this.editHeadColumn(hd.firstChild, index);
 		}
 	}//eo handleHdDown
 	
+});
+
+/**
+ * ColumnDragZone is responsible for dragging List View columns.
+ * @class afStudio.wd.list.ListGridView.ColumnDragZone
+ * @extends Ext.grid.GridView.ColumnDragZone
+ * @author Nikolai
+ */
+afStudio.wd.list.ListGridView.ColumnDragZone = Ext.extend(Ext.grid.GridView.ColumnDragZone, {
+	
+    /**
+     * Before drag event handler.
+     * For more information look at {@link Ext.dd.DragZone#onBeforeDrag} 
+     * @param {Object} data An object containing arbitrary data to be shared with drop targets
+     * @param {Event} e The event object
+     * @return {Boolean} isValid True if the drag event is valid, else false to cancel
+     */	
+   	onBeforeDrag : function(data, e) {
+		var index = this.view.findCellIndex(data.header);
+		//{@link Ext.grid.CheckboxSelectionModel} shouldn't be draggable
+        if (index !== false && (this.view.cm.getColumnId(index) == 'checker')) {
+        	return false;
+        }
+        
+        return true;
+	}//eo onBeforeDrag
+	
+	/**
+	 * Before the dragged item is dropped onto the target and optionally cancel the onDragDrop.
+	 * For more information look at {@link Ext.dd.DragZone#beforeDragDrop}
+     * @param {Ext.dd.DragDrop} target The drop target
+     * @param {Event} e The event object
+     * @param {String} id The id of the dragged element
+     * @return {Boolean} isValid True if the drag drop event is valid, else false to cancel
+	 */
+	,beforeDragDrop : function(target, e, id) {		
+		var ddData = this.getDragData(e),		
+			clmIdx = this.view.findCellIndex(ddData.header);
+		//The others columns shouldn't be drop on {@link Ext.grid.CheckboxSelectionModel} column	
+		if (clmIdx !== false && (this.view.cm.getColumnId(clmIdx) == 'checker')) {
+			this.onInvalidDrop(target, e, id);
+			return false;
+		}
+		
+		return true;
+	}//eo beforeDragDrop
 });

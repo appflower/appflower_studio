@@ -322,10 +322,16 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 */
 	,onListViewChangeColumnPosition : function(clm, oldPos, newPos) {
 		var vi 		= this.viewInspector,
+			vdCm    = this.designerView.getColumnModel(),
 			viRoot  = vi.getRootNode(),
 			fn      = viRoot.getFieldsNode();
 			
 		if (fn && fn.findChild('text', clm.name)) {
+			//correct indexes having in mind that in column model can be checker (check box sm)
+			if (vdCm.config[0] && vdCm.config[0].id == 'checker') {
+				oldPos--;
+				newPos--;
+			}
 			if (oldPos > newPos) {
 				fn.childIdsOrdered.dragUp(oldPos, newPos);
 			} else {
