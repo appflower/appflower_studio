@@ -9,7 +9,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.initForm4();
 		
 		var config = {
-			title: 'Your new Project', width: 463,
+			title: 'Your new Project', width: 493,
 			closable: true, draggable: true, 
 	        plain:true, modal: true, resizable: false,
 	        bodyBorder: false, border: false, 
@@ -20,7 +20,19 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			    {text: 'Save Project', handler: this.save, scope: this, hidden: true},
 				
 			],
-			buttonAlign: 'right'
+			buttonAlign: 'right',
+			listeners: {
+				show: function()
+				{
+					//select the current selected template from the project using afTemplateConfig.template.current
+					for (var item in this.dataview.store.data.items)
+					{
+						if(this.dataview.store.data.items[item].json&&afTemplateConfig.template.current==this.dataview.store.data.items[item].json[1].toLowerCase()){
+							this.dataview.selectRange(item,item);
+						}
+					}
+				}
+			}
 		};
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
@@ -113,7 +125,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.form1 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
+			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			defaults: {allowBlank: false, anchor: '95%'},
 			items: formItems
@@ -123,7 +135,8 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	
 	initDataview: function(){
 	    var myData = [
-	        ['desktoptemplate', 'Desktop', 'template_web_desktop.png']
+	        ['desktoptemplate', 'Desktop', 'template_desktop.png'],
+	        ['viewporttemplate', 'Viewport', 'template_viewport.png']
 	    ];
 	    var store = new Ext.data.SimpleStore({
 	        fields: [
@@ -145,7 +158,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	        tpl: new Ext.XTemplate(
 	            '<tpl for=".">',
 	            '<div class="thumb-wrap" id="{id}">',
-	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}" class="thumb-img"></div>',
+	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}"></div>',
 	            '<span>{name}</span></div>',
 	            '</tpl>'
 	        )
@@ -176,7 +189,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.form2 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
+			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			hidden: true,
 			defaults: {allowBlank: false, anchor: '95%'},
@@ -207,7 +220,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.form3 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
+			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			hidden: true,
 			defaults: {allowBlank: false, anchor: '95%'},
@@ -223,7 +236,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.form4 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
-			width: 450, labelWidth: 70,
+			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			hidden: true,
 			defaults: {allowBlank: false, anchor: '95%'},

@@ -41,8 +41,10 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			   vm = this.viewMeta,
 		  columns = [];
 		
+		//<i:column>
+		//TODO resolve issue with column's fixed conf. property
 		if (!Ext.isEmpty(vm['i:fields']['i:column'])) {
-			var clm = vm['i:fields']['i:column'];
+			var clm = vm['i:fields']['i:column'];			
 			
 			if (Ext.isArray(clm)) {
 				for (var i = 0; i < clm.length; i++) {
@@ -52,8 +54,8 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 						name:     c.name,
 						width:    c.width ? c.width : this.columnWidth,
 						hidden:   c.hidden ? c.hidden.bool() : false,
-						hideable: c.hideable ? c.hideable.bool() : true,
-						fixed:    c.resizable ? !c.resizable.bool() : true
+						hideable: c.hideable ? c.hideable.bool() : true
+//						fixed:    c.resizable ? !c.resizable.bool() : true
 					});
 				}
 				for (var i = columns.length - 1; i < this.maxColumns; i++) {
@@ -61,7 +63,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
-						fixed: true,
+//						fixed: true,
 						uninit: true
 					});
 				}
@@ -72,20 +74,27 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 					name:      clm.name,
 					width:     clm.width ? clm.width : this.columnWidth,
 					hidden:    clm.hidden ? clm.hidden.bool() : false,
-					hideable:  clm.hideable ? clm.hideable.bool() : true,
-					fixed:     clm.resizable ? !clm.resizable.bool() : true					
+					hideable:  clm.hideable ? clm.hideable.bool() : true
+//					fixed:     clm.resizable ? !clm.resizable.bool() : true					
 				});				
 				for (var i = 1; i < this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
-						fixed: true,
+//						fixed: true,
 						uninit: true
 					});
-				}				
+				}
 			}
-		}//eo columns
+		}
+		
+		var sm = new Ext.grid.RowSelectionModel();
+		if (!Ext.isEmpty(vm['i:fields']) && vm['i:fields'].select && vm['i:fields'].select.bool()) {
+			sm = new Ext.grid.CheckboxSelectionModel();
+			columns.unshift(sm);			
+		}
+		//eo columns
 
 		var store = new Ext.data.ArrayStore({
 			idIndex: 0,
@@ -139,7 +148,8 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		
 		return {
 			title: vm['i:title'],
-	        store: store,      
+	        store: store,
+	        selModel: sm,
 			columns: columns,
 	        view: new afStudio.wd.list.ListGridView(),
 	        columnLines: true,
@@ -281,7 +291,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	,onColumnMove : function(oldIndex, newIndex) {
 		if (oldIndex != newIndex) {
 			var clm = this.getColumnModel().config[newIndex];
-			this.fireEvent('changeColumnPosition', clm, oldIndex, newIndex);					
+			this.fireEvent('changeColumnPosition', clm, oldIndex, newIndex);	
 		}
 	}//eo onColumnMove
 	
