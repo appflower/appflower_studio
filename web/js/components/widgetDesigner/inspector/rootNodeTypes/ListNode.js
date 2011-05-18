@@ -173,9 +173,20 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
      * @return {afStudio.wi.CollectionNode} instanciated moreactions node object, descendant of CollectionNode
      */
     ,buildMoreactionsNode : function(actionNodeConstructor) {
+    	//extending afStudio.wi.ActionNode class
+    	actionNodeConstructor = Ext.extend(actionNodeConstructor, {
+    		getNodeConfig : function() {
+    			var attr = actionNodeConstructor.superclass.getNodeConfig.call(this);
+    			return Ext.apply(attr, {
+    				metaField: 'i:moreaction'
+    			});
+    		}
+    	});
+    	
         var moreactionsNode = afStudio.wi.NodeBuilder.createCollectionNode({
            id: 'i:moreactions',
            text: 'More Actions',
+           metaField: 'i:moreactions',
            createChildConstructor: actionNodeConstructor,
            childNodeId: 'i:action',
            addChildActionLabel: 'Add "more action"',
