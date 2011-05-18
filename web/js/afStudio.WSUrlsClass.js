@@ -97,7 +97,10 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     },
     buildUrlFor: function(url) {
         return url;
-    }
+    },
+    getProjectCreateWizardUrl: function() {
+    	return this.buildUrlFor('/appFlowerStudio/createProjectWizard');
+    },
 });
 
 afStudioWSUrls = new afStudio.WSUrlsClass();

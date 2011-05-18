@@ -123,7 +123,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		];
 		
 		this.form1 = new Ext.FormPanel({
-		    url: '',
+		    url: window.afStudioWSUrls.getProjectCreateUrl()+'?cmd=save',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -184,10 +184,11 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			{name: 'username', fieldLabel: 'Username'},
 			{name: 'password', inputType: 'password', fieldLabel: 'Password'},
 			{name: 'email', fieldLabel: 'Email', vtype: 'email'},
+			{name: 'role', inputType: 'hidden', value: 'admin'},
 		];
 		
 		this.form2 = new Ext.FormPanel({
-		    url: '',
+			url: window.afStudioWSUrls.getConfigureProjectUrl()+'?type=save',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -214,7 +215,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				]
 			},
 			{xtype:'textfield', fieldLabel: 'Username', anchor: '96%', name: 'username', allowBlank: false},
-			{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false},
+			{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password'},
 		];
 		
 		this.form3 = new Ext.FormPanel({
@@ -247,11 +248,14 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	currentItem: 0,
 	
 	next:function(){
-		this.items.get(this.currentItem).hide();
-		this.currentItem++;
-		this.items.get(this.currentItem).show();
+		if (this.items.get(this.currentItem).getForm().isValid()) 
+		{
+			this.items.get(this.currentItem).hide();
+			this.currentItem++;
+			this.items.get(this.currentItem).show();
 		
-		this.setWindowTitle();
+			this.setWindowTitle();
+		}
 	},
 	
 	previous:function(){
@@ -262,8 +266,34 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.setWindowTitle();
 	},
 	
-	save:function(){
-		// save project
+	save:function(){ // save
+		Ext.Ajax.request({
+			url: window.afStudioWSUrls.getProjectCreateWizardUrl(),
+			params: { 
+				name: this.form1.getForm().findField('name').getValue(),
+				path: this.form1.getForm().findField('path').getValue(),
+				description: this.form1.getForm().findField('description').getValue(),
+				template: this.dataview.getSelectedRecords()[0].get('name'),
+				
+				username: this.form2.getForm().findField('username').getValue(),
+				user: Ext.encode(this.form2.getForm().getValues()),
+				
+				database: this.form3.getForm().findField('database').getValue(),
+				host: this.form3.getForm().findField('host').getValue(),
+				port: this.form3.getForm().findField('port').getValue(),
+				db_user: this.form3.getForm().findField('username').getValue(),
+				db_pass: this.form3.getForm().findField('password').getValue(),
+			},
+			success: function(result,request){			   
+				var obj = Ext.decode(result.responseText);
+				afStudio.Msg.info(obj.message);
+		   },
+		   failure:function(result,request){
+			   var obj = Ext.decode(result.responseText);
+			   afStudio.Msg.info(obj.message);
+		   },
+		});
+		
 	},
 	
 	setWindowTitle:function(){
@@ -289,7 +319,8 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		}
 		
 		this.center();
-	}
+	},
+	
 });
 
 
