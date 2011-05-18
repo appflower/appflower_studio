@@ -5,7 +5,7 @@ template:
     desktop: 
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.CssEditor]
       - [afExtjsDesktopStartMenu, 'Start Menu Editor', template_editor_default.png, afStudio.BaseEditor]
-      - [afExtjsDesktopLinks, 'Desktop Links Editor', template_editor_default.png]
+      - [afExtjsDesktopLinks, 'Desktop Links Editor', template_editor_default.png, afStudio.BaseEditor]
     viewport: 
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.CssEditor]
       - [afExtjsToolbar, 'Menu Toolbar Editor', template_editor_default.png, afStudio.BaseEditor]
