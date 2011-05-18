@@ -121,7 +121,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		];
 		
 		this.form1 = new Ext.FormPanel({
-		    url: window.afStudioWSUrls.getProjectCreateUrl()+'?cmd=save',
+		    url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -186,7 +186,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		];
 		
 		this.form2 = new Ext.FormPanel({
-			url: window.afStudioWSUrls.getConfigureProjectUrl()+'?type=save',
+			url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -305,7 +305,6 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			params: { 
 				name: this.form1.getForm().findField('name').getValue(),
 				path: this.form1.getForm().findField('path').getValue(),
-				description: this.form1.getForm().findField('description').getValue(),
 				template: this.dataview.getSelectedRecords()[0].get('name'),
 				
 				username: this.form2.getForm().findField('username').getValue(),
@@ -320,7 +319,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			success: function(result,request){			   
 				var obj = Ext.decode(result.responseText);
 				if (obj.success) {
-					Ext.Msg.alert('System Message', obj.message);
+					Ext.Msg.alert('Success', obj.message);
 				} else {
 					Ext.Msg.alert('Failure', obj.message);
 				}
