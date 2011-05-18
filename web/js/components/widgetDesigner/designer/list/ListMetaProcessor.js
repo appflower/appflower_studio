@@ -1,8 +1,9 @@
 Ext.ns('afStudio.wd.list');
 
 /**
- * Mixin class dedicated for {@link afStudio.wd.list.SimpleListView}
- * 
+ * Mixin class dedicated for {@link afStudio.wd.list.SimpleListView}.
+ * Responsible for visual reflection of view's metadata changes.  
+ *  
  * @singleton
  * @author Nikolai Babinski
  */
@@ -15,14 +16,13 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 * @param {Object} a The action object being added
 		 * @param {Ext.Toolbar} aBar The action toolbar 
 		 */
-		addIAction : function(a, aBar) {			
+		addIAction : function(a, aBar) {
 			var action = {
 				name: a.name,
 				text: a.text ? a.text : a.name,
 				tooltip: a.tooltip ? a.tooltip : null,
 				style: a.style ? a.style : null
-			};
-			
+			};			
 			var icon = a.iconCls ? 'iconCls' : (a.icon ? 'icon' : null);
 			if (icon) {
 				action[icon] = a[icon];
@@ -30,6 +30,111 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			
 			aBar.insertButton(0, action);			
 		}//eo addIAction
+		
+		/**
+		 * Creates row action object.
+		 * @param {Object} a The row action config object.
+		 * @return {Object} rowaction
+		 */
+		,createRowAction : function(a) {
+			var rowAction = {
+				name: a.name,
+				altText: a.text ? a.text : a.name,
+				tooltip: a.tooltip ? a.tooltip : null
+			};			
+			if (a.iconCls && Ext.util.Format.trim(a.iconCls)) {
+				rowAction.iconCls = a.iconCls;
+			}
+			if (a.icon && Ext.util.Format.trim(a.icon)) {
+				rowAction.icon = a.icon;
+			}
+			
+			return rowAction;
+		}//eo createRowAction	
+		
+		/**
+		 * Creates <i>Actions</i> column.
+		 * @param {Mixed} act The action object or array of actions
+		 * @return {Ext.grid.ActionColumn} action column object
+		 */
+		,createRowActionColumn : function(act) {			
+			var	_this       = this,
+				aWidth      = 18, 
+				actClmWidth = 50;
+			
+			var actClm = {
+				id: 'action-column',
+	            xtype: 'actioncolumn',
+	            header: 'Actions',
+	            menuDisabled: true,
+	            width: actClmWidth,
+	            fixed: true,
+	            items: []
+			};			
+			
+			if (Ext.isArray(act)) {
+				Ext.iterate(act, function(ra, idx, all) {
+					var a = _this.createRowAction(ra);
+					actClm.items.push(a);
+				});
+				actClm.width = (act.length * aWidth) > actClmWidth ? (act.length * aWidth) : actClmWidth;
+			} else {
+				var a = _this.createRowAction(act);
+				actClm.items.push(a);
+			}
+			
+			return actClm;			
+		}//eo createRowActionColumn
+		
+		/**
+		 * Adds rowaction.
+		 * @param {Object} a The row action configuration object.
+		 */
+		,addIRowaction : function(a) {
+			var cm = this.getColumnModel(),
+				 s = this.getStore(),
+			  aClm = cm.getColumnById('action-column');
+			
+			if (!aClm) {
+				aClm = this.createRowActionColumn(a);
+				cm.config.push(aClm);
+			} else {
+				cm.config.pop();
+				var actions = aClm.items;
+				a = this.createRowAction(a);
+				actions.push(a);
+				aClm = this.createRowActionColumn(actions);
+				cm.config.push(aClm);
+			}
+			cm = new Ext.grid.ColumnModel(cm.config);
+			
+			this.reconfigure(s, cm);			
+		}//eo addIRowaction
+		
+		/**
+		 * Deletes rowaction.
+		 * @param {String} actionName The rowaction name.
+		 */
+		,deleteIRowaction : function(actionName) {
+			var cm = this.getColumnModel(),
+				 s = this.getStore(),
+			  aClm = cm.getColumnById('action-column');
+
+			var actions = [];
+			Ext.iterate(aClm.items, function(a, idx) {
+				if (a.name != actionName) {
+					actions.push(a);
+				}
+			});
+			
+			cm.config.pop();
+			if (actions.length > 0) {
+				aClm = this.createRowActionColumn(actions);
+				cm.config.push(aClm);
+			}
+			cm = new Ext.grid.ColumnModel(cm.config);			
+			this.reconfigure(s, cm);				
+		}//eo deleteIRowaction
 		
 		/**
 		 * Meta-data processing Controller.
@@ -188,7 +293,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			var aBar     = this.getTopToolbar().getComponent('actions'),
 				aNum     = aBar.items.getCount() - 3,
 				nodeName = t.node.getProperty('name').data.value,
-				action;
+				action;		
 				
 			if (t.name == 'name') {
 				nodeName = t.oldValue;
@@ -230,7 +335,59 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 					break;				
 			}
 		}//eo processIActionTag
+
+		/**
+		 * Handles <u>i:rowaction</u> tag changes.
+		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
+		 */		
+		,processIRowactionTag : function(t) {			
+			var cm = this.getColumnModel(),
+				 s = this.getStore(),
+			  aClm = cm.getColumnById('action-column'),
+			  nodeName = t.node.getProperty('name').data.value;			  
+			
+			if (t.name == 'name') {
+				nodeName = t.oldValue;
+			}
+			
+			var action;
+			Ext.iterate(aClm.items, function(a) {
+				if (a.name == nodeName) {
+					action = a;	
+				}
+			});
+			
+			if (action) {
+				switch (t.name) {
+					case 'name':
+						action.name = t.value;
+						if (Ext.isEmpty(action.tooltip)) {
+							action.tooltip = t.value;
+						}
+					break;
+					
+					case 'text':
+						action.altText = t.value;
+					break;
+					
+					case 'iconCls':
+						action.iconCls = t.value;
+					break;
+					
+					case 'icon':
+						action.icon = t.value;
+					break;
+					
+					case 'tooltip':
+						action.tooltip = t.value;
+					break;				
+				}
+				cm.config.pop();
+				aClm = this.createRowActionColumn(aClm.items);
+				cm.config.push(aClm);
+				cm = new Ext.grid.ColumnModel(cm.config);			
+				this.reconfigure(s, cm);				
+			}
+		}//eo processIRowactionTag
 	};	
 })();
-
-

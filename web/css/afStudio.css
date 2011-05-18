@@ -14,9 +14,9 @@
 .icon-theme{background:url('/appFlowerStudioPlugin/images/application_view_icons.png') no-repeat center left !important;}
 
 /* "Tools" menu icons */
-.icon-tools{background:url('/appFlowerStudioPlugin/images/wrench-screwdriver.png') no-repeat center left !important;}
+.icon-tools{background:url('/appFlowerStudioPlugin/images/wrench-screwdriver.png') no-repeat center left !important; width: 16px;}
 .icon-tools-console{background:url('/appFlowerStudioPlugin/images/application_xp_terminal.png') no-repeat center left !important;}
-.icon-tools-git{background:url('/appFlowerStudioPlugin/images/git.png') no-repeat center left !important;}
+.icon-tools-git{background:url('/appFlowerStudioPlugin/images/git.png') no-repeat center left !important; width: 16px;}
 .icon-tools-snapshot{background:url('/appFlowerStudioPlugin/images/snapshot.png') no-repeat center left !important;}
 
 /* "Debug" menu icons */
