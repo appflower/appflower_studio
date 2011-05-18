@@ -11,7 +11,7 @@
     </div>
     <div id="studio_popup_secondary">
      <div id="studio_video_tours">
-      <h3>Video Tours</h3>
+      <h3>VIDEO TOURS</h3>
       <ul>
       
           <?php foreach ($data as $video): ?>
@@ -27,7 +27,7 @@
      </ul>
     </div>
     <div id="quick_links">
-      <h3>Quick links</h3>
+      <h3>QUICK LINKS</h3>
       <ul>
         <li><a href="#" onclick="return false;" id="create-project">Create new project</a></li>
         <li><a href="#" onclick="return false;" id="open-project">Open existing project</a></li>
