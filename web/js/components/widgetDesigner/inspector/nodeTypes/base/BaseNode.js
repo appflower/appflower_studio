@@ -122,6 +122,24 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
     }//eo getProperty
     
     /**
+     * Returns property's value.
+     * @param {String} id The property ID.
+     * @return {Mixed} value
+     */
+    ,getPropertyValue : function(id) {
+    	return this.properties[id].get('value');
+    }//eo getPropertyValue
+    
+    /**
+     * Sets property's value.
+     * @param {String} id The property ID which value being set.
+     * @param {Mixed} value The value to set.
+     */
+    ,setProperty : function(id, value) {
+    	this.getProperty(id).set('value', value);
+    }//eo setProperty
+    
+    /**
      * Adds property to {@link #properties} properties array.
      * @param {PropertyBaseType} property
      */

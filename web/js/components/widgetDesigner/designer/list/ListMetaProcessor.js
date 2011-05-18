@@ -78,7 +78,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				iconCls: a.iconCls ? a.iconCls : null,
 				icon: a.icon ? a.icon : null,				
 				altText: a.text ? a.text : a.name,
-				tooltip: a.tooltip ? a.tooltip : null
+				tooltip: a.tooltip ? a.tooltip : a.name
 			};		
 			
 			return rowAction;
@@ -362,13 +362,16 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			switch (t.name) {
 				case 'name':
 					action.name = t.value;
-					if (Ext.isEmpty(action.text)) {
-						action.setText(action.name);
+					var textV = Ext.util.Format.trim(t.node.getPropertyValue('text'));
+					if (Ext.isEmpty(textV)) {
+						action.setText(t.value);
 					}
 				break;
 				
 				case 'text':
-					action.setText(t.value);
+					var textV = Ext.util.Format.trim(t.value);
+					textV = textV ? textV : action.name;
+					action.setText(textV);
 				break;
 				
 				case 'iconCls':
@@ -426,7 +429,8 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				switch (t.name) {
 					case 'name':
 						action.name = t.value;
-						if (Ext.isEmpty(action.tooltip)) {
+						var tooltipV = Ext.util.Format.trim(t.node.getPropertyValue('tooltip'));
+						if (Ext.isEmpty(tooltipV)) {
 							action.tooltip = t.value;
 						}
 					break;
@@ -444,7 +448,9 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 					break;
 					
 					case 'tooltip':
-						action.tooltip = t.value;
+						var tooltipV = Ext.util.Format.trim(t.value);
+						tooltipV = tooltipV ? tooltipV : action.name;					
+						action.tooltip = tooltipV;
 					break;				
 				}
 				cm.config.pop();
