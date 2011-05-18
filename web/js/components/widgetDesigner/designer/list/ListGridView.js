@@ -31,7 +31,10 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
         colMenu.removeAll();
 
         for (i = 0; i < colCount; i++) {
-            if (colModel.config[i].hideable !== false && !colModel.config[i].uninit) {
+        	var clm = colModel.config[i];
+            if (clm.hideable !== false && !clm.uninit 
+            && clm.xtype != 'actioncolumn') 
+            {
                 colMenu.add(new Ext.menu.CheckItem({
                     text       : colModel.getColumnHeader(i),
                     itemId     : 'col-' + colModel.getColumnId(i),

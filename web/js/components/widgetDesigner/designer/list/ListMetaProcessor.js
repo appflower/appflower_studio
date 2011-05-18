@@ -203,7 +203,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			var bbar  = this.getBottomToolbar(),
 				aBar  = this.getTopToolbar().getComponent('actions'),
 				aMore = aBar.getComponent('more');
-			
+				
 			switch (t.name) {
 				case 'select':
 					var cmCfg = this.getColumnModel().config;
@@ -267,26 +267,32 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
 		 */
 		,processIColumnTag : function(t) {
-			var cm = this.getColumnModel();
+			var cm = this.getColumnModel(),
+				nodeName = t.node.getProperty('name').data.value;			
+			
+			if (t.name == 'name') {
+				nodeName = t.oldValue;
+			}
+			
+			var column = cm.getColumnsBy(function(c){return c.name == nodeName;})[0],			
+				clmIndex = cm.getIndexById(column.id);
 			
 			switch (t.name) {
 				case 'label':
-					var nodeName = t.node.getProperty('name').data.value,
-						clms     = cm.getColumnsBy(function(c) {						
-										return c.name == nodeName;
-								   });
-					if (clms[0]) {
-						cm.setColumnHeader(cm.getIndexById(clms[0].id), t.value);
-					}
+					cm.setColumnHeader(clmIndex, t.value);					
 				break;
 				
 				case 'name':
-					var clms = cm.getColumnsBy(function(c) {						
-						return c.name == t.oldValue;
-					});
-					if (clms[0]) {
-						clms[0].name = t.value;
-					}
+					column.name = t.value;
+				break;
+				
+				case 'hidden':
+					cm.setHidden(clmIndex, t.value);
+				break;
+				
+				case 'hideable':
+					column.hideable = t.value;
+					cm.setConfig(cm.config, true);
 				break;
 			}		
 		}//eo processIColumnTag
