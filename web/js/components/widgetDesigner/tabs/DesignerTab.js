@@ -345,6 +345,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			break;			
 		}//eo switch	
 	}//eo onViewInspectorRemoveProperty
+	
 	/*------------------------------ List view ----------------------------- */
 	
 	/**
@@ -372,7 +373,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	}//eo onListViewChangeColumnPosition	
 	
 	/**
-	 * Handles columns header modifications in List view.
+	 * Handles header columns modifications in List view.
 	 * <u>changeColumnLabel</u> event listener.
 	 * For detailed information look at {@link afStudio.wd.list.SimpleListView#changeColumnLabel}.
 	 * @param {Ext.grid.Column} clm
@@ -391,6 +392,11 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		}
 	}//eo onListViewChangeColumnLabel
 	
+	/**
+	 * Handles header columns deletion in List view.
+	 * <u>deleteColumn</u> event listener
+	 * @param {String} clmName The name of column being deleted.
+	 */
 	,onListViewDeleteColumn : function(clmName) {
 		var vi = this.viewInspector,
 			fn = vi.getRootNode().getFieldsNode(),
