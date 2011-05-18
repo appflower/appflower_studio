@@ -231,7 +231,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	
 	initForm4: function(){
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Content... text guide.. - here we will provide later on some text', style: 'margin-bottom: 15px;',},
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', style: 'margin-bottom: 15px;',},
 		];
 		
 		this.form4 = new Ext.FormPanel({
@@ -250,12 +250,46 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	next:function(){
 		if (this.items.get(this.currentItem).getForm().isValid()) 
 		{
-			this.items.get(this.currentItem).hide();
-			this.currentItem++;
-			this.items.get(this.currentItem).show();
-		
-			this.setWindowTitle();
+			if (this.currentItem==1) // checking if user exist
+			{
+				var _this = this;
+				Ext.Ajax.request({
+					url: window.afStudioWSUrls.getCheckUserExistUrl(),
+					params: { 
+						username: this.form2.getForm().findField('username').getValue(),
+						user: Ext.encode(this.form2.getForm().getValues()),
+					},
+					success: function(result,request){			   
+						var obj = Ext.decode(result.responseText);
+						if (!obj.success) {
+							_this.form2.getForm().findField(obj.field).markInvalid(obj.message);
+							return '';
+						}
+						_this.nextForm();
+				   }
+				});
+				
+				return '';
+			}
+			
+			this.nextForm();
 		}
+	},
+	
+	nextForm: function(){
+		if (this.currentItem==2)
+		{
+			var name = this.form1.getForm().findField('name').getValue();
+			var path = this.form1.getForm().findField('path').getValue();
+			var html = '<div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Now please create a Virtual Host inside your Apache configuration file (httpd.conf, apache.conf ), that will read the path to the newly create project. This way, you\'ll have direct access to your new project, by accessing "'+name+'.local" in your browser.</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Here is an example:</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;VirtualHost *:80&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">ServerName '+name+'.local</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">DocumentRoot '+path+'/web</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">DirectoryIndex index.php</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;Directory "'+path+'/web"&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&nbsp;AllowOverride All</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&nbsp;Allow from All</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;/Directory&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;/VirtualHost&gt;</span></font></div>';
+			this.form4.getForm().findField('infor').update(html);
+		}
+		
+		this.items.get(this.currentItem).hide();
+		this.currentItem++;
+		this.items.get(this.currentItem).show();
+	
+		this.setWindowTitle();
 	},
 	
 	previous:function(){
@@ -267,6 +301,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	},
 	
 	save:function(){ // save
+		var _this = this;
 		Ext.Ajax.request({
 			url: window.afStudioWSUrls.getProjectCreateWizardUrl(),
 			params: { 
@@ -286,12 +321,15 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			},
 			success: function(result,request){			   
 				var obj = Ext.decode(result.responseText);
-				afStudio.Msg.info(obj.message);
+				if (obj.success) {
+					Ext.Msg.alert('System Message', obj.message);
+				} else {
+					Ext.Msg.alert('Failure', obj.message);
+				}
+				
+				_this.close();
 		   },
-		   failure:function(result,request){
-			   var obj = Ext.decode(result.responseText);
-			   afStudio.Msg.info(obj.message);
-		   },
+		   
 		});
 		
 	},

@@ -87,7 +87,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	 * Refresh grid store
 	 */
 	refreshGrid: function(){
-		;
+		Ext.getCmp('manage-users-grid').getStore().load();
 	},
 	
 	/**

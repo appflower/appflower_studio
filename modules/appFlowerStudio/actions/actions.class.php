@@ -494,10 +494,12 @@ class appFlowerStudioActions extends sfActions
         	return $this->renderJson(json_encode($info));
         }
         
-		sfContext::getInstance()->getController()->getPresentationFor('afsUserManager', 'Create');
+		$result = afStudioUserHelper::createNewUser($request);
+		if (!$result['success']) {
+        	return $this->renderJson($result);
+        }
         
-        $info=array('success'=>true, 'message'=>'Project created. Please set up virtual host to connect to it!');
-        return $this->renderJson(json_encode($info));     
+        return array('success' => true, 'message' => 'Project created.');
 	}
 	
 }
