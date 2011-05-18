@@ -31,7 +31,10 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
         colMenu.removeAll();
 
         for (i = 0; i < colCount; i++) {
-            if (colModel.config[i].hideable !== false && !colModel.config[i].uninit) {
+        	var clm = colModel.config[i];
+            if (clm.hideable !== false && !clm.uninit 
+            && clm.xtype != 'actioncolumn') 
+            {
                 colMenu.add(new Ext.menu.CheckItem({
                     text       : colModel.getColumnHeader(i),
                     itemId     : 'col-' + colModel.getColumnId(i),
@@ -283,7 +286,7 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
        var colModel  = this.cm,
            hd        = this.findHeaderCell(t),
            index     = this.getCellIndex(hd),
-           sortable  = colModel.isSortable(index),
+           //sortable  = colModel.isSortable(index),
            menu      = this.hmenu,
            menuItems = menu.items,
            menuCls   = this.headerMenuOpenCls;
@@ -303,17 +306,18 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	        menu.show(t, 'tl-bl?');
 	        
 		} else {
-			var clmId  = this.cm.getColumnId(index);		
-			if (Ext.isDefined(clmId)) {			
-				var clm = this.cm.getColumnById(clmId);
-				//checkbox selection model column and rowactions column are not editable 
-				if (clmId == 'checker' || clm.xtype == 'actioncolumn') {
-					return false;
+			if (index) {
+				var clmId  = this.cm.getColumnId(index);		
+				if (Ext.isDefined(clmId)) {			
+					var clm = this.cm.getColumnById(clmId);
+					//checkbox selection model column and rowactions column are not editable 
+					if (clmId == 'checker' || clm.xtype == 'actioncolumn') {
+						return false;
+					}
 				}
+				//Start header editing
+				this.editHeadColumn(hd.firstChild, index);
 			}
-			
-			//Start header editing
-			this.editHeadColumn(hd.firstChild, index);
 		}
 	}//eo handleHdDown
 	

@@ -229,7 +229,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var gf   = afStudio.wd.GuiFactory,
 			vd   = this.designerView,
 			vpg	 = this.viewProperty,
-			vit  = this.viewInspector;		
+			vit  = this.viewInspector;
 			
 		switch (this.widgetType) {			
 			case gf.LIST :			
@@ -247,7 +247,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 						}
 						vd.addIAction({
 							name: node.getProperty('name').get('value') 
-						}, aBar);
+						});
 						aBar.doLayout();
 					break;
 					
@@ -260,6 +260,18 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 						vd.addIRowaction({
 							name: node.getProperty('name').get('value')
 						});
+					break;
+					
+					case 'i:moreactions':
+						vpg.setSource(node.getProperties());
+						(function() {
+							vit.getSelectionModel().select(node);
+						}).defer(100, this);
+						
+						vd.addMoreAction({
+							name: node.getProperty('name').get('value')
+						});
+						vd.updateActionBarVisibilityState();
 					break;
 					
 					case 'i:fields':					
@@ -309,35 +321,31 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			
 			case gf.LIST :
 				switch (parent.id) {					
-					case 'i:actions':						
+					case 'i:actions':
+						var actionName = node.getProperty('name').get('value'),
+							aBar       = vd.getTopToolbar().getComponent('actions');							
 						vpg.setSource({});
-						
-						var actionName = node.getProperty('name').get('value'),						
-							aBar       = vd.getTopToolbar().getComponent('actions'),
-							aNum       = aBar.items.getCount() - 2;
-						
-						aBar.items.each(function(a, idx, len) {
-							if (idx < aNum) {
-								if (a.name == actionName) {
-									a.destroy();
-									return false;
-								}
-							} else {
-								return false;
-							}
-						});
-						vd.updateActionBarVisibilityState();
+						vd.deleteIAction(actionName, aBar);						
 					break;
 					
 					case 'i:rowactions':						
 						var actionName = node.getProperty('name').get('value');
 						vpg.setSource({});						
 						vd.deleteIRowaction(actionName);
+					break;
+					
+					case 'i:moreactions':
+						var actionName = node.getProperty('name').get('value'),
+							aBar  = vd.getTopToolbar().getComponent('actions'),
+							aMore = aBar.getComponent('more');
+						vpg.setSource({});
+						vd.deleteIAction(actionName, aMore.menu);						
 					break;					
 				}
 			break;			
 		}//eo switch	
 	}//eo onViewInspectorRemoveProperty
+	
 	/*------------------------------ List view ----------------------------- */
 	
 	/**
@@ -365,7 +373,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	}//eo onListViewChangeColumnPosition	
 	
 	/**
-	 * Handles columns header modifications in List view.
+	 * Handles header columns modifications in List view.
 	 * <u>changeColumnLabel</u> event listener.
 	 * For detailed information look at {@link afStudio.wd.list.SimpleListView#changeColumnLabel}.
 	 * @param {Ext.grid.Column} clm
@@ -384,6 +392,11 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		}
 	}//eo onListViewChangeColumnLabel
 	
+	/**
+	 * Handles header columns deletion in List view.
+	 * <u>deleteColumn</u> event listener
+	 * @param {String} clmName The name of column being deleted.
+	 */
 	,onListViewDeleteColumn : function(clmName) {
 		var vi = this.viewInspector,
 			fn = vi.getRootNode().getFieldsNode(),

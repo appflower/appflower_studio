@@ -116,8 +116,6 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small>'},
 			this.tree,
 			{xtype:'hidden', name: 'path'},
-			{xtype:'label', html: 'Project Description:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},
-			{xtype:'textarea', hideLabel: true, anchor: '100%', name: 'description', height: 57, style: 'margin-top: 5px;', height: 25, grow: true },
 			{xtype:'label', html: ' Select application template:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},
 			this.dataview,
 		];

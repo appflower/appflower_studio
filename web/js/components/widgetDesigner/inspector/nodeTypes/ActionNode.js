@@ -70,7 +70,7 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
        var properties = [
            new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name', defaultValue: 'newaction', required: true}).create(),
            new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url', required: true}).create(),
-           new afStudio.wi.PropertyTypeString({id: 'text', label: 'Text', defaultValue: 'newaction'}).create(),
+           new afStudio.wi.PropertyTypeString({id: 'text', label: 'Text'}).create(),
            new afStudio.wi.PropertyTypeString({id: 'iconCls', label: 'Icon CSS class'}).create(),
            new afStudio.wi.PropertyTypeString({id: 'icon', label: 'Icon URL'}).create(),
            new afStudio.wi.PropertyTypeBoolean({id: 'forceSelection', label: 'Force selection'}).create(),

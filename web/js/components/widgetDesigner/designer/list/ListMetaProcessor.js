@@ -12,24 +12,60 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 	return {
 	
 		/**
-		 * Adds new action to the view's action bar.
-		 * @param {Object} a The action object being added
-		 * @param {Ext.Toolbar} aBar The action toolbar 
+		 * Creates <i:action> object.
+		 * @param {Object} a The action config object.
+		 * @return {Object} action 
 		 */
-		addIAction : function(a, aBar) {
+		createIAction : function(a) {
 			var action = {
 				name: a.name,
 				text: a.text ? a.text : a.name,
+				iconCls: a.iconCls ? a.iconCls : null,
+				icon: a.icon ? a.icon : null,
 				tooltip: a.tooltip ? a.tooltip : null,
 				style: a.style ? a.style : null
 			};			
-			var icon = a.iconCls ? 'iconCls' : (a.icon ? 'icon' : null);
-			if (icon) {
-				action[icon] = a[icon];
-			}
+						
+			return action;		
+		}//eo createIAction
+		
+		/**
+		 * Adds new action to the view's action bar.
+		 * @param {Object} a The action object being added
+		 */
+		,addIAction : function(a) {
+		    var aBar   = this.getTopToolbar().getComponent('actions'),
+				action = this.createIAction(a);
 			
 			aBar.insertButton(0, action);			
 		}//eo addIAction
+		
+		/**
+		 * Deletes action.
+		 * @param {String} actionName The action name
+		 * @param {Object} aBar The action container bar/menu.
+		 */
+		,deleteIAction : function(actionName, aBar) {			
+			aBar.items.each(function(a) {
+				if (a.name == actionName) {
+					a.destroy();
+					return false;
+				}
+			});
+			this.updateActionBarVisibilityState();
+		}//eo deleteIAction
+		
+		/**
+		 * Adds action to i:moreactions.
+		 * @param {Object} a The action object.
+		 */
+		,addMoreAction : function(a) {
+		    var aBar   = this.getTopToolbar().getComponent('actions'),
+		    	aMore  = aBar.getComponent('more'),		    	
+				action = this.createIAction(a);
+				
+			aMore.menu.add(action);
+		}//eo addMoreAction
 		
 		/**
 		 * Creates row action object.
@@ -39,15 +75,11 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		,createRowAction : function(a) {
 			var rowAction = {
 				name: a.name,
+				iconCls: a.iconCls ? a.iconCls : null,
+				icon: a.icon ? a.icon : null,				
 				altText: a.text ? a.text : a.name,
-				tooltip: a.tooltip ? a.tooltip : null
-			};			
-			if (a.iconCls && Ext.util.Format.trim(a.iconCls)) {
-				rowAction.iconCls = a.iconCls;
-			}
-			if (a.icon && Ext.util.Format.trim(a.icon)) {
-				rowAction.icon = a.icon;
-			}
+				tooltip: a.tooltip ? a.tooltip : a.name
+			};		
 			
 			return rowAction;
 		}//eo createRowAction	
@@ -171,7 +203,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			var bbar  = this.getBottomToolbar(),
 				aBar  = this.getTopToolbar().getComponent('actions'),
 				aMore = aBar.getComponent('more');
-			
+				
 			switch (t.name) {
 				case 'select':
 					var cmCfg = this.getColumnModel().config;
@@ -203,7 +235,6 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				case 'exportable':
 					var bExport = aMore.menu.getComponent('exports');
 					t.value ? bExport.show() : bExport.hide();
-					this.updateMoreActionVisibilityState();
 					this.updateActionBarVisibilityState();
 				break;
 				
@@ -211,15 +242,13 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 					var	bSel   = aMore.menu.getComponent('sel-all'),
 						bDesel = aMore.menu.getComponent('desel-all');					
 					t.value ? (bSel.enable(), bDesel.enable()) : (bSel.disable(), bDesel.disable());
-					this.updateMoreActionVisibilityState();
-					this.updateActionBarVisibilityState();				
+					this.updateActionBarVisibilityState();
 				break;
 				
 				case 'expandButton':
 					var	bExpView = aBar.getComponent('expanded-view');
 					t.value ? bExpView.show() : bExpView.hide();
-					this.updateMoreActionVisibilityState();
-					this.updateActionBarVisibilityState();					
+					this.updateActionBarVisibilityState();
 				break;
 				
 				case 'pager':
@@ -238,26 +267,32 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
 		 */
 		,processIColumnTag : function(t) {
-			var cm = this.getColumnModel();
+			var cm = this.getColumnModel(),
+				nodeName = t.node.getProperty('name').data.value;			
+			
+			if (t.name == 'name') {
+				nodeName = t.oldValue;
+			}
+			
+			var column = cm.getColumnsBy(function(c){return c.name == nodeName;})[0],			
+				clmIndex = cm.getIndexById(column.id);
 			
 			switch (t.name) {
 				case 'label':
-					var nodeName = t.node.getProperty('name').data.value,
-						clms     = cm.getColumnsBy(function(c) {						
-										return c.name == nodeName;
-								   });
-					if (clms[0]) {
-						cm.setColumnHeader(cm.getIndexById(clms[0].id), t.value);
-					}
+					cm.setColumnHeader(clmIndex, t.value);					
 				break;
 				
 				case 'name':
-					var clms = cm.getColumnsBy(function(c) {						
-						return c.name == t.oldValue;
-					});
-					if (clms[0]) {
-						clms[0].name = t.value;
-					}
+					column.name = t.value;
+				break;
+				
+				case 'hidden':
+					cm.setHidden(clmIndex, t.value);
+				break;
+				
+				case 'hideable':
+					column.hideable = t.value;
+					cm.setConfig(cm.config, true);
 				break;
 			}		
 		}//eo processIColumnTag
@@ -290,22 +325,36 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
 		 */
 		,processIActionTag : function(t) {
-			var aBar     = this.getTopToolbar().getComponent('actions'),
-				aNum     = aBar.items.getCount() - 3,
-				nodeName = t.node.getProperty('name').data.value,
+			var aBar = this.getTopToolbar().getComponent('actions');
+			this.processActions(t, aBar);
+		}//eo processIActionTag
+
+		/**
+		 * Handles <u>i:moreaction</u> tag changes.
+		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
+		 */
+		,processIMoreactionTag : function(t) {
+			var aBar  = this.getTopToolbar().getComponent('actions'),
+				aMore = aBar.getComponent('more');
+			this.processActions(t, aMore.menu);
+		}//eo processIMoreactionTag
+		
+		/**
+		 * Processes actions and more-actions.
+		 * @param {Object} t The meta-change event object.
+		 * @param {Object} aBar The action container.
+		 */
+		,processActions : function(t, aBar) {
+			var	nodeName = t.node.getProperty('name').data.value,
 				action;		
 				
 			if (t.name == 'name') {
 				nodeName = t.oldValue;
 			}
 			
-			aBar.items.each(function(a, idx, len) {
-				if (idx < aNum) {
-					if (a.name == nodeName) {
-						action = a;
-						return false;
-					}
-				} else {
+			aBar.items.each(function(a) {
+				if (a.name == nodeName) {
+					action = a;
 					return false;
 				}
 			});
@@ -313,29 +362,48 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			switch (t.name) {
 				case 'name':
 					action.name = t.value;
-					if (Ext.isEmpty(action.text)) {
-						action.setText(action.name);
+					var textV = Ext.util.Format.trim(t.node.getPropertyValue('text'));
+					if (Ext.isEmpty(textV)) {
+						action.setText(t.value);
 					}
-					break;				
+				break;
+				
 				case 'text':
-					action.setText(t.value);
-					break;				
+					var textV = Ext.util.Format.trim(t.value);
+					textV = textV ? textV : action.name;
+					action.setText(textV);
+				break;
+				
 				case 'iconCls':
 					action.setIconClass(t.value);
-					break;				
+				break;
+				
 				case 'icon':
-					action.setIcon(t.value);
-					break;				
+					if (aBar.getXType() == 'menu') {
+						action.icon = t.value;
+						try {
+							action.el.child('img').set({src: t.value});
+						}catch(e){}
+					} else {
+						action.setIcon(t.value);						
+					}					
+				break;
+				
 				case 'tooltip':
-					action.setTooltip(t.value);
-					break;				
+					if (aBar.getXType() == 'menu') {
+						//menu items has no tooltips
+					} else {
+						action.setTooltip(t.value);						
+					}	
+				break;
+				
 				case 'style':						
 					action.el.dom.removeAttribute('style', '');
 					action.el.applyStyles(t.value);
-					break;				
+				break;
 			}
-		}//eo processIActionTag
-
+		}//eo processActions		
+		
 		/**
 		 * Handles <u>i:rowaction</u> tag changes.
 		 * @param {Object} t The meta-change event object. For more infomation look at {@link #processMeta}
@@ -361,7 +429,8 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				switch (t.name) {
 					case 'name':
 						action.name = t.value;
-						if (Ext.isEmpty(action.tooltip)) {
+						var tooltipV = Ext.util.Format.trim(t.node.getPropertyValue('tooltip'));
+						if (Ext.isEmpty(tooltipV)) {
 							action.tooltip = t.value;
 						}
 					break;
@@ -379,7 +448,9 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 					break;
 					
 					case 'tooltip':
-						action.tooltip = t.value;
+						var tooltipV = Ext.util.Format.trim(t.value);
+						tooltipV = tooltipV ? tooltipV : action.name;					
+						action.tooltip = tooltipV;
 					break;				
 				}
 				cm.config.pop();

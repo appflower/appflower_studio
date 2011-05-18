@@ -52,7 +52,7 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
      * @param {Ext.tree.TreeNode} node
      */
     ,deleteChild : function(node) {
-    	if (this.childIdsOrdered.indexOf(node.id)) {
+    	if (this.childIdsOrdered.indexOf(node.id) != -1) {
 	    	this.childIdsOrdered.remove(node.id);
 	    	node.destroy();    	
     	}

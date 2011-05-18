@@ -246,11 +246,11 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		if (vm['i:actions'] && vm['i:actions']['i:action']) {
 			var act = vm['i:actions']['i:action'];
 			if (Ext.isArray(act)) {
-				Ext.iterate(act, function(a, idx, array) {
-					_this.addIAction(a, aBar);
+				Ext.iterate(act, function(a) {
+					_this.addIAction(a);
 				});
 			} else {
-				_this.addIAction(act, aBar);
+				_this.addIAction(act);
 			}
 		}		
 		//More Actions
@@ -258,13 +258,8 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			var selectable = vm['i:fields'].selectable ? vm['i:fields'].selectable.bool() : true,
 				exportable = vm['i:fields'].exportable ? vm['i:fields'].exportable.bool() : true,
 				expandedView = vm['i:fields'].expandButton ? vm['i:fields'].expandButton.bool() : false;
-			
-			if (selectable || exportable) {
-				aMore.show();
-			} else {
-				aMore.hide();
-			}
-			
+				
+			//selectable
 			if (selectable) {
 				aMore.menu.getComponent('sel-all').enable();
 				aMore.menu.getComponent('desel-all').enable();				
@@ -272,22 +267,31 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 				aMore.menu.getComponent('sel-all').disable();			
 				aMore.menu.getComponent('desel-all').disable();				
 			}
-			
+			//exportable
 			if (exportable) {
 				aMore.menu.getComponent('exports').show();
 			} else {
 				aMore.menu.getComponent('exports').hide();
-			}
-			
+			}			
+			//expandButton
 			if (expandedView) {
 				aBar.getComponent('expanded-view').show();
 			} else {
 				aBar.getComponent('expanded-view').hide();
+			}			
+		}		
+		if (vm['i:moreactions'] && vm['i:moreactions']['i:action']) {
+			var act = vm['i:moreactions']['i:action'];
+			if (Ext.isArray(act)) {
+				Ext.iterate(act, function(a) {
+					_this.addMoreAction(a);
+				});
+			} else {
+				_this.addMoreAction(act);
 			}
 		}
+
 		this.updateActionBarVisibilityState();
-		//eo Actions
-		
 	}//eo configureView
 	
 	/**
@@ -308,18 +312,19 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 	,updateActionBarVisibilityState : function() {
 		var aBar = this.getTopToolbar().getComponent('actions'),		
 			aHidden = 0;
+
+		this.updateMoreActionVisibilityState();
 			
 		aBar.items.each(function(i) {
 			if (i.hidden) {
 				aHidden++;
 			}
-		});
-		
+		});		
 		if (aHidden > 0 && ((aHidden + 1)  == aBar.items.getCount())) {
 			aBar.hide();
 		} else {
 			aBar.show();
-		}
+		}		
 		this.doLayout();
 	}//eo updateActionBarVisibilityState
 	
@@ -346,7 +351,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			}
 		} else {
 			aMore.show();
-		}
+		}		
 	}//eo updateMoreActionVisibilityState
 });
 
