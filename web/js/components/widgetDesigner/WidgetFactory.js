@@ -62,7 +62,7 @@ afStudio.wd.WidgetFactory = function() {
 		 * @param {String} security The security path
 		 */
 		,showWidgetDesigner : function(widgetUri, action, security) {
-			afStudio.vp.addToPortal({
+			afStudio.vp.addToWorkspace({
 				xtype: 'afStudio.wd.widgetPanel',
 				actionPath: action,
 				securityPath: security,

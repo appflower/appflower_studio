@@ -511,7 +511,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			           securityPath = response.meta.securityPath,		
 				       widgetUri = String.format('{0}/{1}', module, name);
 				       
-					   afStudio.vp.addToPortal({
+					   afStudio.vp.addToWorkspace({
 							xtype: 'afStudio.wd.widgetPanel',
 							actionPath: actionPath,
 							securityPath: securityPath,

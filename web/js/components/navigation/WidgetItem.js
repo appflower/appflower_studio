@@ -485,7 +485,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				    logMessage: String.format('Widgets: {0} "{1}" was deleted', deleteObj.msg, deleteObj.item),
 				    run: function(response) {
 				    	this.loadRootNode(function() {
-				    		afStudio.vp.clearPortal();	
+				    		afStudio.vp.clearWorkspace();	
 				    	});
 				    }
 				});     		

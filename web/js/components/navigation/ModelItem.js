@@ -144,7 +144,7 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 			   		modelName: model,
 			   		schemaName: schema
 			   });
-               afStudio.vp.addToPortal(modelTab, true);
+               afStudio.vp.addToWorkspace(modelTab, true);
 		    }
 		});
 	}//eo runNode 
@@ -247,7 +247,7 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 				    logMessage: String.format('Models: model "{0}" was deleted', model),
 				    run: function(response) {
 				    	this.loadRootNode(function() {				    		
-				    		afStudio.vp.clearPortal();
+				    		afStudio.vp.clearWorkspace();
 				    	});
 				    }
 				});     		

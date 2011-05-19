@@ -425,7 +425,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				    run: function(response) {
 				    	this.loadRootNode(function() {
 				    		//this.selectChildNodeByText(rootNode, appName).expand();
-				    		afStudio.vp.clearPortal();	
+				    		afStudio.vp.clearWorkspace();	
 				    	});
 				    }
 				});     		
