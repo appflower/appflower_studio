@@ -52,7 +52,6 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
  		childNodes.push(this.buildActionsNode(afStudio.wi.ActionNode));
  		childNodes.push(this.buildRowactionsNode(afStudio.wi.ActionNode));
  		childNodes.push(this.buildMoreactionsNode(afStudio.wi.ActionNode));
- 		childNodes.push(this.buildProxyNode()); 		
 		this.appendChild(childNodes);
 	}//eo addRequiredChilds	
 	
