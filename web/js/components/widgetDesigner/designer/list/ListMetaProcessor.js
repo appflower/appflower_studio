@@ -96,7 +96,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			
 			var actClm = {
 				id: 'action-column',
-	            xtype: 'actioncolumn',
+	            xtype: 'listactioncolumn',
 	            header: 'Actions',
 	            menuDisabled: true,
 	            width: actClmWidth,

@@ -161,6 +161,7 @@
 					<file>js/components/widgetDesigner/inspector</file>
 					<!-- wd gui -->
 					<file>js/components/widgetDesigner/designer/list/ListMetaProcessor.js</file>
+					<file>js/components/widgetDesigner/designer/list/Column.js</file>
 					<file>js/components/widgetDesigner/designer/list/ListGridView.js</file>
 					<file>js/components/widgetDesigner/designer/list/SimpleListView.js</file>
 					<file>js/components/widgetDesigner/designer/GuiFactory.js</file>
