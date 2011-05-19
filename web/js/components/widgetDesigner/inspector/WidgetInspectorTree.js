@@ -45,8 +45,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
             containerScroll: true,
             autoScroll: true
 		};
-	}//eo _beforeInitComponent
-	
+	}//eo _beforeInitComponent	
 	
 	/**
 	 * Ext Template method

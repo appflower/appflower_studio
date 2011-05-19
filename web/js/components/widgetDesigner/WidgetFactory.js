@@ -16,9 +16,14 @@ afStudio.wd.WidgetFactory = function() {
 	           case 'list':
 	               root = new afStudio.wi.ListNode();
 	           break;
+	           
 	           case 'edit':
 	               root = new afStudio.wi.EditNode();
 	           break;
+	           
+	           case 'html':
+	               root = new afStudio.wi.HtmlNode();
+	           break;	           
 	       	}
 	       	
 	       	return root;

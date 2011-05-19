@@ -156,6 +156,7 @@
 					<file>js/components/widgetDesigner/inspector/rootNodeTypes/ObjectRootNode.js</file>
 					<file>js/components/widgetDesigner/inspector/rootNodeTypes/EditNode.js</file>
 					<file>js/components/widgetDesigner/inspector/rootNodeTypes/ListNode.js</file>
+					<file>js/components/widgetDesigner/inspector/rootNodeTypes/HtmlNode.js</file>
 					<!-- wi components -->
 					<file>js/components/widgetDesigner/inspector</file>
 					<!-- wd gui -->
