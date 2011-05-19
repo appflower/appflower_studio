@@ -30,7 +30,8 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 						}
 					}
             	}
-			}
+			},
+			height: 295
 		});
 
 		var config = {
@@ -41,8 +42,9 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 	        draggable: true,
 	        modal: true, resizable: false,
 	        bodyBorder: false, border: false,
-	        layout: 'fit',
+	        layout: 'form',
             items:[
+              {xtype: 'displayfield', html: 'Please choose the project folder which contains your existing AppFlower Application.', style: 'padding:5px;', hideLabel: true, anchor:'100%'},
             	this.tree
             ],
 	        
