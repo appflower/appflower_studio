@@ -25,27 +25,14 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 			border: false,
 			bodyStyle: "background-color:#dfe8f6;",
 			items: afStudio.tb
-		});
-						
-		var centerPanel = new Ext.ux.Portal ({
+		});						
+		
+		var centerPanel = new Ext.Panel({
 			id: 'center_panel',
 			region: "center",			
-			layout: 'fit',			
-			title: "Dashboard",
-			items: [
-			{				
-				columnWidth: 1,
-				layout: 'fit',
-				style: "padding: 10px;",
-				items: [
-				]
-			}],
-			bodyStyle: 'background-image: url(/appFlowerStudioPlugin/images/bg/backgrond_3.6.2.jpg);background-position: 50% 50%;background-repeat: no-repeat;',
-			style: "padding-right:5px;",
-			//Disable Drag&Drop functionality
-		    initEvents: function() {
-		        Ext.ux.Portal.superclass.initEvents.call(this);		        
-		    }			
+			layout: 'fit',
+			margins: {right: 5},
+			bodyStyle: 'padding: 8px; background-image: url(/appFlowerStudioPlugin/images/bg/backgrond_3.6.2.jpg); background-position: 50% 50%; background-repeat: no-repeat;'
 		});
 		
 		var westPanel = new afStudio.viewport.WestPanel();
@@ -95,9 +82,9 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 		}		  
 		
 		if (['center', 'west', 'north', 'south'].indexOf(region) != -1) {			
-			this.viewRegions[region].body.mask(maskMessage, 'x-mask-loading');
+			this.viewRegions[region].body.mask(maskMessage);
 		} else {
-			this.el.mask(maskMessage, 'x-mask-loading');
+			this.el.mask(maskMessage);
 		}
 	}//eo mask
 	
@@ -113,34 +100,26 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 	}//eo unmask
 	
 	/**
-	 * Adds component to {@link Ext.ux.Portal} container.
-	 * Look at {@link Ext.ux.Portal}
-	 *  
-	 * @param {Ext.Component/Array} component The component/array of component to add
-	 * @param {Boolean} removeOthers This specifies if should be deleted all container's elements before add (defaults is false)
-	 * @param {Number} column The portal column number (defaults is 0)
+	 * Adds component(s) to viewport center region.
+	 * @param {Ext.Component/Array} component The component/array of component being added.
+	 * @param {Boolean} (Optional) removeOthers This specifies if should be deleted all region's components before add (defaults is false).
 	 * @author Nikolai
 	 */
-	,addToPortal : function(component, removeOthers, column) {
-		var cp = Ext.getCmp('center_panel');
-		    clnNum = column ? column : 0,
-		    portalColumn = cp.items.itemAt(clnNum);
+	,addToWorkspace : function(component, removeOthers) {
+		var cp = this.viewRegions.center;
 		    
 		if (removeOthers === true) {
-			portalColumn.removeAll(true);
+			cp.removeAll(true);
 		}		
-		portalColumn.add(component);
-		portalColumn.doLayout();    
-	}
+		cp.add(component);
+		cp.doLayout();    
+	}//eo addToWorkspace
 	
 	/**
 	 * Clears center region of afStudio 
 	 */
-	,clearPortal : function() {
-		var cp = Ext.getCmp('center_panel');		    
-		    
-		cp.items.each(function(column, index, colNumber){
-			column.removeAll(true);
-		});			
-	}
+	,clearWorkspace : function() {
+		var cp = this.viewRegions.center;
+		cp.removeAll(true);
+	}//eo clearWorkspace
 });

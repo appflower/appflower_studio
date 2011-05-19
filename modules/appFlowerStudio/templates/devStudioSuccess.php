@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise">
+
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base-debug.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all-debug.js"></script>
 

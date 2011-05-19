@@ -204,7 +204,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			   afStudio.vp.unmask();
 			   var response = Ext.decode(xhr.responseText);
 			   if (response.success) {
-				   afStudio.vp.addToPortal(
+				   afStudio.vp.addToWorkspace(
 				      new afStudio.layoutDesigner.DesignerPanel({
 				       		layoutMeta: response.content,
 				       		layoutApp: app,
@@ -348,7 +348,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				    run: function(response) {
 				    	this.loadRootNode(function() {
 				    		this.selectChildNodeByText(rootNode, appName).expand();
-				    		afStudio.vp.clearPortal();	
+				    		afStudio.vp.clearWorkspace();	
 				    	});
 				    }
 				});     		

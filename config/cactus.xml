@@ -193,6 +193,7 @@
 			<needle>
 				<output>afStudio.css</output>
 				<files>					
+					<file>http://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise</file>
 					<file>../../appFlowerPlugin/web/css/my-extjs.css</file>					
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/rowactionsImm/css/Ext.ux.GridRowActions.css</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/rowactionsImm/css/icons.css</file>
