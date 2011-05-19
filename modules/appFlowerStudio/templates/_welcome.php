@@ -11,7 +11,7 @@
     </div>
     <div id="studio_popup_secondary">
      <div id="studio_video_tours">
-      <h3>VIDEO TOURS</h3>
+      <h3>VIDEO TUTORIALS</h3>
       <ul>
       
           <?php foreach ($data as $video): ?>

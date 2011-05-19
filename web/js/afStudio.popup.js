@@ -76,7 +76,7 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 	initComponent: function(){
 		
 		var config = {
-			title: 'Welcome to AppFlower Studio', width:810,height:520,
+			title: 'Welcome to AppFlower Studio Beta', width:810,height:520,
 			closable: true,
 	        draggable: true, plain:true,
 	        modal: true, resizable: false,
