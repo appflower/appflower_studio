@@ -151,7 +151,13 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @private 
 	 */
 	,initListDesignerView : function() {
-		this.relayEvents(this.designerView, ['changeColumnPosition', 'changeColumnLabel', 'deleteColumn']);		
+		this.relayEvents(this.designerView, 
+		[
+			'changeColumnPosition', 
+			'changeColumnLabel', 
+			'deleteColumn', 
+			'columnresize'
+		]);		
 		this.relayEvents(this.viewProperty, ['metaPropertyChange']);		
 
 		//Add column button
@@ -165,6 +171,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			changeColumnPosition: this.onListViewChangeColumnPosition,
 			changeColumnLabel: this.onListViewChangeColumnLabel,
 			deleteColumn: this.onListViewDeleteColumn,
+			columnresize: this.onListViewColumnResize,
 			metaPropertyChange: this.onListViewMetaPropertyChange
 		});
 	}//eo initListDesignerView
@@ -406,6 +413,26 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			fn.deleteChild(viClmNode);
 		}		
 	}//eo onListViewDeleteColumn
+	
+	/**
+	 * Handles header columns resize in List view.
+	 * <u>columnresize</u> event listener.
+	 * @param {Number} columnIndex
+	 * @param {Number} newSize
+	 */
+	,onListViewColumnResize : function(columnIndex, newSize) {
+		var vd   = this.designerView,
+			vi = this.viewInspector,
+			cm  = vd.getColumnModel(),
+			clm = cm.config[columnIndex],
+			fn  = vi.getRootNode().getFieldsNode();
+		
+		if (fn) {
+			var clmNode = fn.findChild('text', clm.name);
+			clmNode.setProperty('width', newSize);
+		}
+	}//eo onListViewColumnResize
+	
 	
 	/**
 	 * ListView <u>metaPropertyChange</u> event listener. 

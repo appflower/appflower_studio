@@ -276,7 +276,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 			
 			var column = cm.getColumnsBy(function(c){return c.name == nodeName;})[0],			
 				clmIndex = cm.getIndexById(column.id);
-			
+				
 			switch (t.name) {
 				case 'label':
 					cm.setColumnHeader(clmIndex, t.value);					
@@ -293,6 +293,19 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				case 'hideable':
 					column.hideable = t.value;
 					cm.setConfig(cm.config, true);
+				break;
+				
+				case 'resizable':
+					column.fixed = !t.value;
+					cm.setConfig(cm.config, true);				
+				break;
+				
+				case 'width':
+					var w = parseInt(t.value);
+					if (Ext.isNumber(w)) {
+						column.width = w;
+						cm.setConfig(cm.config);
+					}
 				break;
 			}		
 		}//eo processIColumnTag

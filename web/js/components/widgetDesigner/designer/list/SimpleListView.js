@@ -42,7 +42,6 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 		  columns = [];
 		
 		//<i:column>
-		//TODO resolve issue with column's fixed conf. property
 		if (!Ext.isEmpty(vm['i:fields']) && vm['i:fields']['i:column']) {
 			var clm = vm['i:fields']['i:column'];			
 			
@@ -52,10 +51,9 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 					columns.push({
 						header:   c.label,
 						name:     c.name,
-						width:    c.width ? c.width : this.columnWidth,
+						width:    c.width ? parseInt(c.width) : this.columnWidth,
 						hidden:   c.hidden ? c.hidden.bool() : false,
 						hideable: c.hideable ? c.hideable.bool() : true
-//						fixed:    c.resizable ? !c.resizable.bool() : true
 					});
 				}
 				for (var i = columns.length - 1; i < this.maxColumns; i++) {
@@ -63,26 +61,22 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
-//						fixed: true,
 						uninit: true
 					});
-				}
-				
+				}				
 			} else {
 				columns.push({
 					header:    clm.label,
 					name:      clm.name,
-					width:     clm.width ? clm.width : this.columnWidth,
+					width:     clm.width ? parseInt(clm.width) : this.columnWidth,
 					hidden:    clm.hidden ? clm.hidden.bool() : false,
 					hideable:  clm.hideable ? clm.hideable.bool() : true
-//					fixed:     clm.resizable ? !clm.resizable.bool() : true					
 				});				
 				for (var i = 1; i < this.maxColumns; i++) {
 					columns.push({
 						header: this.columnName,
 						width: this.columnWidth,
 						hidden: true,
-//						fixed: true,
 						uninit: true
 					});
 				}
@@ -134,7 +128,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 						itemId: 'desel-all',
 						text: 'Deselect All'
 					}]
-				}        			
+				}
         	}]
 		};		
 		
@@ -152,7 +146,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			iDescription.hidden = false;			
 			iDescription.items.text = vm['i:description'];			
 		}
-		
+				
 		return {
 			title: vm['i:title'],
 	        store: store,
@@ -160,6 +154,7 @@ afStudio.wd.list.SimpleListView = Ext.extend(Ext.grid.GridPanel, {
 			columns: columns,
 	        view: new afStudio.wd.list.ListGridView(),
 	        columnLines: true,
+	        autoScroll: true,
 	        tbar: {
 	        	xtype: 'container',
 	        	defaults: {
