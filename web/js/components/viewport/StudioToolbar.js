@@ -12,11 +12,8 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 		var config = {
 			items: [
 			{
-				xtype: 'tbtext',
-				text: 'BETA',
-				style: "font-family: 'Waiting for the Sunrise', serif; font-weight:bold;"
-			},{
-				text: "Studio",
+				id: 'mstudio',
+				text: "Studio BETA",
 				iconCls: 'icon-studio',
 				menu: {
 					ignoreParentClicks: true,

@@ -1,6 +1,10 @@
 /*----------------------------------------------*/
 /*                   Top Menu                   */
 /*----------------------------------------------*/
+#mstudio button {
+	font-family: 'Waiting for the Sunrise', serif !important; 
+	font-weight: bold;
+}
 /* "Studio" menu icons */
 .icon-studio{background:url('/appFlowerStudioPlugin/images/studio.png') no-repeat center left !important;}
 .icon-studio-project{background:url('/appFlowerStudioPlugin/images/application.png') no-repeat center left !important;}

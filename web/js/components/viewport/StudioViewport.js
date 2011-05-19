@@ -82,9 +82,9 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 		}		  
 		
 		if (['center', 'west', 'north', 'south'].indexOf(region) != -1) {			
-			this.viewRegions[region].body.mask(maskMessage);
+			this.viewRegions[region].body.mask(maskMessage, 'x-mask-loading');
 		} else {
-			this.el.mask(maskMessage);
+			this.el.mask(maskMessage, 'x-mask-loading');
 		}
 	}//eo mask
 	
