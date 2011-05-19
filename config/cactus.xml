@@ -171,6 +171,10 @@
 					<file>js/components/widgetDesigner</file>
 					<!-- end Widget Designer -->
 					
+					<!-- Users -->
+					<file>js/components/users/afStudio.UserWindow.js</file>
+					<file>js/components/users/afStudio.UsersList.js</file>
+					
 					<!-- Welcome popup -->
 					<file>js/jquery/jquery-1.4.4.min.js</file>
 					<file>js/jquery/jquery.jscrollpane.min.js</file>
