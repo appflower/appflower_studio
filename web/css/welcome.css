@@ -47,7 +47,7 @@ ul {
 
 
 #studio_popup #studio_popup_secondary {float:right; height:460px; width:190px; border-left:3px solid #cdd9e8;}
-#studio_popup #studio_popup_secondary h3 {padding-bottom:15px; font-size:14px;}
+#studio_popup #studio_popup_secondary h3 {padding-bottom:15px; font-size:14px; color:#666;}
 
 #studio_popup #studio_video_tours {height:295px; margin:8px;}
 #studio_popup #studio_video_tours ul {height:245px; overflow:scroll; border-bottom:1px solid #ddd;}
