@@ -28,7 +28,9 @@ afStudio.wi.DatasourceNode = Ext.extend(afStudio.wi.ContainerNode, {
      */    
     ,createProperties : function() {
         var properties = [
-            new afStudio.wi.PropertyTypeString({id: 'modelName', label: 'Model Name'}).create()
+            new afStudio.wi.PropertyTypeString({id: 'modelName', label: 'Model Name'}).create(),
+            new afStudio.wi.PropertyTypeString({id: 'dataLoadedHandler', label: 'JS Data loaded handler'}).create(),
+            new afStudio.wi.PropertyTypeString({id: 'className', label: 'Class Name'}).create()
         ];
         this.addProperties(properties);
     }//eo createProperties
