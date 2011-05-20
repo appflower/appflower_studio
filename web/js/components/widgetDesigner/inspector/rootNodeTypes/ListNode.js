@@ -92,24 +92,6 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         return new fieldsNode;
     }//eo buildFieldsNode
 	
-	/**
-	 * Creates and Instantiates proxy node.
-	 * @return {afStudio.wi.ContainerNode} instanciated proxy object, descendant of ContainerNode
-	 */
-    ,buildProxyNode : function() {
-        var proxyNode = afStudio.wi.NodeBuilder.createContainerNode({
-           text: 'Proxy',
-           id: 'i:proxy',
-           createProperties: function() {
-               return [
-                   new afStudio.wi.PropertyTypeString({id: 'url', label: 'Url', required: true}).create()
-               ];
-           }
-        });
-
-        return new proxyNode;
-    }//eo buildProxyNode    
-    
     /**
      * Creates and Instantiates <b>i:action</b> node.
      * @param {Function} actionNodeConstructor The {@link afStudio.wi.ActionNode} constructor 
