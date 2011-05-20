@@ -83,8 +83,8 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 			{name: 'email', fieldLabel: 'Email', vtype: 'email'},
 			{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == this.mode)?true:false},
 			{xtype: 'combo', mode: 'local', triggerAction: 'all', 
-				hidden: (this.isRoleFieldAvailable && is_visible_users)?false:true,
-				disabled: (this.isRoleFieldAvailable && is_visible_users) ? false : true,
+				hidden: (this.isRoleFieldAvailable && afStudioUser.is_admin)?false:true,
+				disabled: (this.isRoleFieldAvailable && afStudioUser.is_admin) ? false : true,
 				fieldLabel: 'User Role',
 				emptyText: 'Please select user role...',
 				store: [

@@ -12,7 +12,7 @@ class appFlowerStudioActions extends sfActions
 	{
 		$this->realRoot = sfConfig::get('sf_root_dir');
 		$this->afExtjs = afExtjs::getInstance();        
-		$this->userinfo = afStudioUser::getInstance()->getInfo();
+		$this->afStudioUser = json_encode(afStudioUser::getInstance()->getInfo());
 	}	
 	
 	protected function renderJson($result)

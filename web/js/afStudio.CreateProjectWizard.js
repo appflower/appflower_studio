@@ -7,16 +7,18 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.initForm2();
 		this.initForm3();
 		this.initForm4();
+		this.initForm5();
+		this.initForm6();
 		
 		var config = {
 			title: 'Your new Project', width: 493,
 			closable: true, draggable: true, 
-	        plain:true, modal: true, resizable: false,
-	        bodyBorder: false, border: false, 
-	        items: [this.form1, this.form2, this.form3, this.form4],
+	    plain:true, modal: true, resizable: false,
+	    bodyBorder: false, border: false, 
+	    items: [this.form1, this.form2, this.form3, this.form4, this.form5, this.form6],
 			buttons: [
 			    {text: 'Previous', handler: this.previous, scope: this, hidden: true},
-				{text: 'Next', handler: this.next, scope: this},
+				  {text: 'Next', handler: this.next, scope: this},
 			    {text: 'Save Project', handler: this.save, scope: this, hidden: true},
 				
 			],
@@ -40,7 +42,44 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 
 	},
 	
+	//Project form
 	initForm1: function(){
+		
+		_self = this;
+				
+		var formItems = [
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<b>This wizard will help guide you through a few steps to setup your new AppFlower Project.</b><br><br>Please choose your project name.', style: 'margin-bottom: 15px;',},
+			{xtype:'textfield', enableKeyEvents:true, fieldLabel: 'Project name', anchor: '96%', name: 'name', allowBlank: false, vtype: 'uniqueNode', 
+				listeners: {
+					keyup: function(field,e) {	
+						var slug = afStudio.createSlug(field.getValue());
+						var pathDisplayField = _self.form2.items.items[1];
+						var pathField = _self.form2.items.items[3];
+						var nextPath = currentPath =  _self.getSelectedNodePath().slice(4);
+												
+						if(slug!='')
+						nextPath = currentPath+'/'+slug;
+						
+						pathDisplayField.setValue('<small>'+nextPath+'</small>');
+						pathField.setValue(nextPath);			
+					}					
+				}
+			}
+		];
+		
+		this.form1 = new Ext.FormPanel({
+		  url: '',
+			defaultType: 'textfield',
+			width: 480, labelWidth: 70,
+			frame: true, title: false,
+			defaults: {allowBlank: false, anchor: '95%'},
+			items: formItems
+		});
+		
+	},
+	
+	//Path form
+	initForm2: function(){
 		
 		_self = this;
 		this.tree = new Ext.ux.FileTreePanel({
@@ -59,8 +98,8 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				click: function(node) {
 					var nextPath = currentPath = this.getPath(node).slice(4);
 					var projectNameField =  _self.form1.items.items[1];
-					var pathDisplayField = _self.form1.items.items[3];
-					var pathField = _self.form1.items.items[5];					
+					var pathDisplayField = _self.form2.items.items[1];
+					var pathField = _self.form2.items.items[3];					
 					var slug = afStudio.createSlug(projectNameField.getValue());
 
 					if(slug!='')
@@ -68,8 +107,8 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 						
 					pathDisplayField.setValue('<small>'+nextPath+'</small>');
 					pathField.setValue(nextPath);
-            	},
-            	//this expands the nodes starting with root, until open dir node is the one the project sits in, also ensure scroll and selection for dir node
+      	},
+      	//this expands the nodes starting with root, until open dir node is the one the project sits in, also ensure scroll and selection for dir node
 				expandnode: function(node) {
 					
 					if(node.childNodes)
@@ -89,42 +128,47 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 					}
             	}
 			},
-			height: 200
+			height: 200,
+			style: 'background-color:white;'
 		});
-		
-		this.initDataview();
-		
+				
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'This wizard will help guide your through a few steps to setup your new AppFlower Project.', style: 'margin-bottom: 15px;',},
-			{xtype:'textfield', enableKeyEvents:true, fieldLabel: 'Project name', anchor: '96%', name: 'name', allowBlank: false, vtype: 'uniqueNode', 
-				listeners: {
-					keyup: function(field,e) {	
-						var slug = afStudio.createSlug(field.getValue());
-						var pathDisplayField = _self.form1.items.items[3];
-						var pathField = _self.form1.items.items[5];
-						var nextPath = currentPath =  _self.getSelectedNodePath().slice(4);
-												
-						if(slug!='')
-						nextPath = currentPath+'/'+slug;
-						
-						pathDisplayField.setValue('<small>'+nextPath+'</small>');
-						pathField.setValue(nextPath);			
-					}					
-				}
-			},
-			{xtype:'label', html: 'Path to Project:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},							
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please select the Web server root folder. The project will be created as a sub-folder to this path, with your project name.', style: 'margin-bottom: 15px;',},
 			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small>'},
 			this.tree,
-			{xtype:'hidden', name: 'path'},
-			{xtype:'label', html: ' Select application template:', style: 'font: 12px tahoma,arial,helvetica,sans-serif;'},
-			this.dataview,
+			{xtype:'hidden', name: 'path'}
 		];
 		
-		this.form1 = new Ext.FormPanel({
-		    url: '',
+		this.form2 = new Ext.FormPanel({
+		  url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
+			hidden: true,
+			defaults: {allowBlank: false, anchor: '100%'},
+			items: formItems
+		});
+		
+	},
+	
+	//Template form
+	initForm3: function(){
+		
+		_self = this;
+
+		this.initDataview();
+							
+		var formItems = [
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please select how your want your application theme to look like by selecting one of the templates below.', style: 'margin-bottom: 15px;',},			
+			this.dataview
+		];
+		
+		this.form3 = new Ext.FormPanel({
+		  url: '',
+			defaultType: 'textfield',
+			width: 480, labelWidth: 70,
+			frame: true, title: false,
+			hidden: true,
 			defaults: {allowBlank: false, anchor: '95%'},
 			items: formItems
 		});
@@ -148,7 +192,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	    });
 	    
 	    store.loadData(myData);		
-		this.dataview = new Ext.DataView({
+		  this.dataview = new Ext.DataView({
 	        itemSelector: 'div.thumb-wrap',
 	        style:'overflow:auto',
 	        multiSelect: true,
@@ -175,17 +219,19 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		return path;
 	},
 	
-	initForm2: function(){
+	//User form
+	initForm4: function(){
 		var formItems = [
-			{name: 'first_name', fieldLabel: 'First Name'},
-			{name: 'last_name', fieldLabel: 'Last Name'},
-			{name: 'username', fieldLabel: 'Username'},
+		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please add your first user for this new project.', style: 'margin-bottom: 15px;',},
+			{name: 'first_name', fieldLabel: 'First Name', value: afStudioUser.first_name},
+			{name: 'last_name', fieldLabel: 'Last Name', value: afStudioUser.last_name},
+			{name: 'username', fieldLabel: 'Username', value: afStudioUser.username},
 			{name: 'password', inputType: 'password', fieldLabel: 'Password'},
-			{name: 'email', fieldLabel: 'Email', vtype: 'email'},
+			{name: 'email', fieldLabel: 'Email', vtype: 'email', value: afStudioUser.email},
 			{name: 'role', inputType: 'hidden', value: 'admin'},
 		];
 		
-		this.form2 = new Ext.FormPanel({
+		this.form4 = new Ext.FormPanel({
 			url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
@@ -196,8 +242,10 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		});
 	},
 	
-	initForm3: function(){
+	//Database form
+	initForm5: function(){
 		var formItems = [
+		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please fill out the database configuration fields below for AppFlower being able to connect to your database service.', style: 'margin-bottom: 15px;',},			
 			{xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false},
 			{xtype: 'panel', layout: 'column', 
 				border: false, bodyBorder: false,
@@ -216,7 +264,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password'},
 		];
 		
-		this.form3 = new Ext.FormPanel({
+		this.form5 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
@@ -227,12 +275,13 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		});	
 	},
 	
-	initForm4: function(){
+	//Virtual host form
+	initForm6: function(){
 		var formItems = [
 			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', style: 'margin-bottom: 15px;',},
 		];
 		
-		this.form4 = new Ext.FormPanel({
+		this.form6 = new Ext.FormPanel({
 		    url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
@@ -248,19 +297,19 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	next:function(){
 		if (this.items.get(this.currentItem).getForm().isValid()) 
 		{
-			if (this.currentItem==1) // checking if user exist
+			if (this.currentItem==4) // checking if user exist
 			{
 				var _this = this;
 				Ext.Ajax.request({
 					url: window.afStudioWSUrls.getCheckUserExistUrl(),
 					params: { 
-						username: this.form2.getForm().findField('username').getValue(),
-						user: Ext.encode(this.form2.getForm().getValues()),
+						username: this.form4.getForm().findField('username').getValue(),
+						user: Ext.encode(this.form4.getForm().getValues()),
 					},
 					success: function(result,request){			   
 						var obj = Ext.decode(result.responseText);
 						if (!obj.success) {
-							_this.form2.getForm().findField(obj.field).markInvalid(obj.message);
+							_this.form4.getForm().findField(obj.field).markInvalid(obj.message);
 							return '';
 						}
 						_this.nextForm();
@@ -275,12 +324,12 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	},
 	
 	nextForm: function(){
-		if (this.currentItem==2)
+		if (this.currentItem==3)
 		{
 			var name = this.form1.getForm().findField('name').getValue();
 			var path = this.form1.getForm().findField('path').getValue();
 			var html = '<div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Now please create a Virtual Host inside your Apache configuration file (httpd.conf, apache.conf ), that will read the path to the newly create project. This way, you\'ll have direct access to your new project, by accessing "'+name+'.local" in your browser.</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Here is an example:</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;VirtualHost *:80&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">ServerName '+name+'.local</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">DocumentRoot '+path+'/web</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">DirectoryIndex index.php</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;Directory "'+path+'/web"&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&nbsp;AllowOverride All</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&nbsp;Allow from All</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;/Directory&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;/VirtualHost&gt;</span></font></div>';
-			this.form4.getForm().findField('infor').update(html);
+			this.form6.getForm().findField('infor').update(html);
 		}
 		
 		this.items.get(this.currentItem).hide();
@@ -334,20 +383,25 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	setWindowTitle:function(){
 		switch (this.currentItem) {
 			case 0:
-				this.setTitle('Your new Project');
+				this.setTitle('Create New Project');
 				this.buttons[0].hide();
 				break;
 			case 1:
-				this.setTitle('Create new Admin user');
+				this.setTitle('Select Project\'s Web Server Root Folder');
 				this.buttons[0].show();
-				break;
-			case 2:
-				this.setTitle('Setup your Database Configuration');
-				this.buttons[2].hide();
 				this.buttons[1].show();
 				break;
+			case 2:
+				this.setTitle('Select Project\'s Template');
+				break;
 			case 3:
-				this.setTitle('Setup a Virtual Host');
+				this.setTitle('Create Your New Studio User');
+				break;
+			case 4:
+			  this.setTitle('Setup Your Database Configuration');
+				break;
+			case 5:
+				this.setTitle('Setup A Virtual Host');
 				this.buttons[1].hide();
 				this.buttons[2].show();
 				break;

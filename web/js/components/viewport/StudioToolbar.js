@@ -32,7 +32,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 					},{
 						text: 'Users', 
 						iconCls: 'icon-users',				
-						hidden: (is_visible_users) ? false : true,				
+						hidden: (afStudioUser.is_admin) ? false : true,				
 						handler: function() {
 							(new afStudio.UsersList).show();
 						}

@@ -10,8 +10,8 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 	 */
 	initComponent: function(){
 		//Handle global variables
-		var name = userinfo.name || 'user';
-		var username = userinfo.username || 'user';
+		var name = afStudioUser.name || 'user';
+		var username = afStudioUser.username || 'user';
 		
 		//Create config option
 		var config = {
@@ -80,7 +80,7 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 	 * Shows user edit form
 	 */
 	onEditProfileLinkClick: function(){
-		(new afStudio.UserWindow({mode: 'edit', username: userinfo.username})).show();
+		(new afStudio.UserWindow({mode: 'edit', username: afStudioUser.username})).show();
 	},
 	
 	/**

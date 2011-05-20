@@ -347,6 +347,9 @@ class afStudioUser
             
             $aInfo = array(
                 'name' => $this->getName(),
+                'last_name' => $this->getLastName(),
+                'first_name' => $this->getFirstName(),
+                'email' => $this->getEmail(),
                 'username' => $this->getUsername(),
                 'is_admin' => $this->isAdmin(),
             );

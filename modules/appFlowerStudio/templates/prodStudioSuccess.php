@@ -4,11 +4,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/cache/af.js"></script>
 <script type="text/javascript">
 var afStudioConsoleCommands = '<?php echo afStudioConsole::getCommands(false); ?>';
-var is_visible_users = <?php echo (int)$userinfo['is_admin']; ?>;
-var userinfo = {
-    'username': "<?php echo $userinfo['username'] ?>",
-    'name': "<?php echo $userinfo['name'] ?>"
-};
+var afStudioUser = <?php echo html_entity_decode($afStudioUser); ?>;
 var afStudioHost = { 
 	name: '<?php echo afStudioConsole::getInstance()->uname_short;?>',
 	user: '<?php echo afStudioConsole::getInstance()->whoami;?>' 
