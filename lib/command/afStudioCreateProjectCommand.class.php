@@ -8,7 +8,7 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
 {
 	public function processSave()
 	{
-		$params = $this->params['request']->getPostParameters();
+		  $params = $this->params['request']->getPostParameters();
     	
     	$params['autodeploy'] = !isset($params['autodeploy'])?false:true;
     	$latest = !isset($params['latest'])?false:true;
@@ -24,16 +24,26 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
     	$console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml');
     	    	
     	$this->result['success'] = true;
-        $this->result['message'] = 'Project created in path '.$path.'. Please set up virtual host to connect to it!';
-        $this->result['console'] = $console;
+      $this->result['message'] = 'Project created in path '.$path.'. Please set up virtual host to connect to it!';
+      $this->result['console'] = $console;
 	}
 	
 	private function dumpYaml($data)
-    {
-        $sfYaml = new sfYaml();
-        $yamlData = $sfYaml->dump($data, 4);
+  {
+      $sfYaml = new sfYaml();
+      $yamlData = $sfYaml->dump($data, 4);
 
-        return $yamlData;
-    }
+      return $yamlData;
+  }
+  
+  public function processCheckDatabase()
+  {
+      $params = $this->params['request']->getPostParameters();
+      
+      $this->result['success'] = true;
+      
+      $this->result['success'] = false;
+      $this->result['fields'][] = array('fieldName'=>'database','error'=>'Database already exists!');
+  }
 }
 ?>

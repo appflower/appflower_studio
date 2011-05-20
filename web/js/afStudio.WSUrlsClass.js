@@ -101,6 +101,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getCheckUserExistUrl: function() {
     	return this.buildUrlFor('/afsUserManager/checkUserExist');
     },
+    getCreateProjectWizardCheckDatabaseUrl: function() {
+      return this.buildUrlFor('/appFlowerStudio/createProjectWizardCheckDatabase');
+    },
     buildUrlFor: function(url) {
         return url;
     },

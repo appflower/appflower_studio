@@ -282,7 +282,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	//Database form
 	initForm5: function(){
 		var formItems = [
-		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please fill out the database configuration fields below for AppFlower being able to connect to your database service.', style: 'margin-bottom: 15px;'},			
+		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please fill out the database configuration fields below for AppFlower being able to connect to your database service.', style: 'margin-bottom: 15px;', anchor: '96%'},			
 			{xtype:'textfield', fieldLabel: 'Database<font color=red>*</font>', anchor: '96%', name: 'database', allowBlank: false, vtype: 'database'},
 			{xtype: 'panel', layout: 'column', 
 				border: false, bodyBorder: false,
@@ -292,8 +292,8 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 						
 						items: [{xtype: 'textfield', fieldLabel: 'Host<font color=red>*</font>', name: 'host', anchor: '92%', allowBlank: false, vtype: 'host', value: 'localhost'}]
 					},
-					{xtype: 'panel', width: 100, layout: 'form', labelWidth: 35, columnWidth: 0.2,
-						items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '100%', allowBlank: true,vtype:'port', value:'3306'}]
+					{xtype: 'panel', layout: 'form', labelWidth: 35, columnWidth: 0.2,
+						items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '100%', allowBlank: true, vtype:'port', value:'3306'}]
 					}
 				]
 			},
@@ -335,6 +335,34 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	next:function(){
 		if (this.items.get(this.currentItem).getForm().isValid()) 
 		{						
+		  
+		  if (this.currentItem==4) // checking database
+			{
+				var _this = this;
+				Ext.Ajax.request({
+					url: window.afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl(),
+					params: { 
+						form: Ext.encode(this.form5.getForm().getValues()),
+					},
+					success: function(result,request){			   
+						var obj = Ext.decode(result.responseText);
+						if (!obj.success) {
+						  for(var i in obj.fields)
+						  {
+						    if(obj.fields[i].fieldName)
+						    {
+							    _this.form5.getForm().findField(obj.fields[i].fieldName).markInvalid(obj.fields[i].error);
+						    }
+						  }
+							return '';
+						}
+						_this.nextForm();
+				   }
+				});
+				
+				return '';
+			}
+		  
 			this.nextForm();
 		}
 	},

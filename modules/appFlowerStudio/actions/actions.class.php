@@ -473,6 +473,12 @@ class appFlowerStudioActions extends sfActions
         return $this->renderJson($aResult);
 	}
 	
+	public function executeCreateProjectWizardCheckDatabase($request)
+	{
+	   $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));        
+     return $this->renderJson($aResult);
+	}
+	
 	public function executeCreateProjectWizard($request)
 	{        
 		$result = afStudioCommand::process('createProject', 'save', array('request'=>$request));
