@@ -486,7 +486,7 @@ class appFlowerStudioActions extends sfActions
         	return $this->renderJson($result);
         }
         
-        $result = afStudioCommand::process('templateSelector', 'update',array('request'=>$request));
+        /*$result = afStudioCommand::process('templateSelector', 'update',array('request'=>$request));
 		if (!$result['success']) {
         	return $this->renderJson($result);
         }
@@ -505,7 +505,7 @@ class appFlowerStudioActions extends sfActions
         	return $this->renderJson($result);
         }
         
-        return array('success' => true, 'message' => 'Project created.');
+        return array('success' => true, 'message' => 'Project created.');*/
 	}
 	
 }
