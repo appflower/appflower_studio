@@ -288,7 +288,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				border: false, bodyBorder: false,
 				defaults: {border: false, bodyBorder: false},
 				items: [
-					{xtype: 'panel', columnWidth: 0.8, layout: 'form', style: 'margin-right: 5px;',
+					{xtype: 'panel', columnWidth: 0.8, layout: 'form',
 						
 						items: [{xtype: 'textfield', fieldLabel: 'Host<font color=red>*</font>', name: 'host', anchor: '92%', allowBlank: false, vtype: 'host', value: 'localhost'}]
 					},

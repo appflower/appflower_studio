@@ -57,7 +57,7 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
             $this->result['fields'][] = array('fieldName'=>'username','error'=>'Username and/or password does not math');
             $this->result['fields'][] = array('fieldName'=>'password','error'=>'Username and/or password does not math');
           }
-          elseif(substr_count($error,'Unknown MySQL server host')>0)
+          elseif(substr_count($error,'Unknown MySQL server host')>0||substr_count($error,'Can\'t connect to MySQL server')>0||substr_count($error,'is not allowed to connect to this MySQL')>0)
           {
             $this->result['success'] = false;
             $this->result['fields'][] = array('fieldName'=>'infor','error'=>'Cannot connect to database server using the provided host and/or port');
