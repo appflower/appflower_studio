@@ -106,9 +106,6 @@ class afStudioModelsCommand
 		$dump = sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3);
 		
 		if (file_put_contents($this->schemaFile, $dump) > 0) {
-		    
-            $this->saveSchemaChanges();
-            
 			return true;
 		} else {
 			return false;
@@ -667,35 +664,9 @@ class afStudioModelsCommand
     /**
      * Deploy schema changes to DB
      */
-	private function deployOfSchemaChanges() {
-	    $aConfiguration = Propel::getConfiguration();
-        
-        // Extract default connection
-        $sDefault = '';
-        if (isset($aConfiguration['datasources']['default'])) {
-            $sDefault = $aConfiguration['datasources']['default'];
-            unset($aConfiguration['datasources']['default']);
-        }
-        
-        // Generating response 
-        foreach ($aConfiguration['datasources'] as $db_connection => $db_connecttion_info) {
-            $filename = sfConfig::get('sf_data_dir')."/sql/{$db_connection}.diff.sql";
-            $i = new dbInfo();
-            $i->executeSql("SET FOREIGN_KEY_CHECKS=0;\n".file_get_contents($filename)."\nSET FOREIGN_KEY_CHECKS=1;", Propel::getConnection($db_connection));
-        }
-        
-        // $afConsole = afStudioConsole::getInstance();
-        // $consoleResult = $afConsole->execute('sf propel:build-model');
-        
-        /*
-        chdir(sfConfig::get('sf_root_dir'));
-        $oBuildModel = new sfPropelBuildModelTask(  sfContext::getInstance()->getEventDispatcher(), 
-                                                    new sfFormatter());
-        $oBuildModel->run();
-        */
-        
-		// $afConsole = afStudioConsole::getInstance();
-		// $consoleResult = $afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
+	private function deployOfSchemaChanges() 
+	{
+        afStudioConsole::getInstance()->execute(array('sf propel:insert-sql-diff', 'sf propel:build-model'));
 	}
 	
 	/**
@@ -717,66 +688,5 @@ class afStudioModelsCommand
 		}		
 		$array = $initial;
 	}
-    
-    /**
-     * Saving schema changes to file
-     */
-    private function saveSchemaChanges()
-    {
-        // if (!set_time_limit(0)) ini_set("max_execution_time", 0);
-        
-        // Need for execute task
-        chdir(sfConfig::get('sf_root_dir'));
-        
-        // Create changes in create sql table file via propel build sql task
-        $buildSql = new sfPropelBuildSqlTask(   sfContext::getInstance()->getEventDispatcher(), 
-                                                new sfFormatter());
-        $buildSql->run();
-        
-        
-        $aConfiguration = Propel::getConfiguration();
-        
-        // Extract default connection
-        $sDefault = '';
-        if (isset($aConfiguration['datasources']['default'])) {
-            $sDefault = $aConfiguration['datasources']['default'];
-            unset($aConfiguration['datasources']['default']);
-        }
-        
-        // Generating response 
-        foreach ($aConfiguration['datasources'] as $db_connection => $db_connecttion_info) {
-            $i = new dbInfo();
-            $i->loadFromDb(Propel::getConnection($db_connection));
-        
-            $i2 = new dbInfo();
-            
-            $sqlDir = sfConfig::get('sf_data_dir').'/sql';
-            $dbmap = file("$sqlDir/sqldb.map");
-            foreach($dbmap as $mapline) {
-                if($mapline[0]=='#') continue; //it is a comment
-                list($sqlfile, $dbname) = explode('=', trim($mapline));
-                if($dbname == 'propel') {
-                    if (file_exists("$sqlDir/$sqlfile")) { 
-                        $i2->loadFromFile("$sqlDir/$sqlfile");
-                    }
-                }
-            }
-            
-            // Need to ignore notices from sfPropelSqlDiff task - problem in plugin when process checkForeignKeys function
-            error_reporting(E_ALL ^ E_NOTICE);
-            
-            $i->checkForeignKeys($i2);
-                
-            $diff = $i->getDiffWith($i2);
-            $filenameOld = sfConfig::get('sf_data_dir').'/sql/diff.sql';
-            $filename = sfConfig::get('sf_data_dir')."/sql/{$db_connection}.diff.sql";
-            if($diff=='') {
-              // Nothing has been changed
-            }
-            file_put_contents($filename, $diff);
-            file_put_contents($filenameOld, $diff);
-        }
-        
-    }
 
 }
