@@ -96,6 +96,7 @@ afStudio.notification.MessageBox = function() {
 	    var win = new afStudio.notification.NotificationWindow(Ext.apply({
 	    	width: 300,
 	    	animateTarget: Ext.getBody(),
+	    	autoScroll: true,
 			autoDestroy: false,
 			notificationType: 'INFO'
 	    }, config));
