@@ -76,20 +76,20 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * Inserts row after the selection
 	 */
 	,insertAfterField : function() {
-		var _this = this,		
+		var _this = this,
     		cell = _this.getSelectionModel().getSelectedCell(),
-    		index = cell ? cell[0] + 1 : 0; 
+    		index = cell ? cell[0] + 1 : 0;
     	
     	var u = new _this.store.recordType({
-            name : '',
-            type: 'INT',
+            name: '',
+            type: 'integer',
             size : '11',
             required: false
         });
         _this.stopEditing();
         _this.store.insert(index, u);
 		_this.startEditing(index , cell ? cell[1] : 0);		
-	}
+	}//eo insertAfterField
 	
 	/**
 	 * Inserts row before the selection
@@ -101,14 +101,14 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     	
     	var u = new _this.store.recordType({
             name : '',
-            type: 'INT',
+            type: 'integer',
             size : '11',
             required: false
         });
         _this.stopEditing();
         _this.store.insert(index, u);
 		_this.startEditing(index, cell ? cell[1] : 0);		
-	}
+	}//eo insertBeforeField
 	
 	/**
 	 * Deletes field (row) from the grid
@@ -120,7 +120,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	    	var r = _this.store.getAt(cell[0]);
 	    	_this.store.remove(r);	        
 	    }	    		
-	}
+	}//eo deleteField
 	
 	/**
 	 * Creates Boolean Editor
@@ -144,7 +144,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
 			}
 		}
-	}
+	}//eo booleanEditorBuilder
 	
 	/**
 	 * Creates TypeComboBox Editor

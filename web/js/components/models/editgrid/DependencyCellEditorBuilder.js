@@ -74,7 +74,7 @@ afStudio.models.DependencyCellEditorBuilder = Ext.extend(Ext.util.Observable, {
 	 * Plugin's entry point
 	 * @param {Ext.grid.EditorGridPanel} grid
 	 */
-	,init : function(grid) {		
+	,init : function(grid) {
 		this.grid = grid;
 		this.grid.on({
 			beforeedit: Ext.util.Functions.createDelegate(this.onGridBeforeEdit, this)
