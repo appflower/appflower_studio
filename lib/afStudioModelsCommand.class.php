@@ -666,7 +666,7 @@ class afStudioModelsCommand
      */
 	private function deployOfSchemaChanges() 
 	{
-        afStudioConsole::getInstance()->execute(array('sf propel:insert-sql-diff', 'sf propel:build-model'));
+        afStudioConsole::getInstance()->execute(array('sf propel:insert-sql-diff', 'sf propel:build-model', 'sf cc'));
 	}
 	
 	/**
