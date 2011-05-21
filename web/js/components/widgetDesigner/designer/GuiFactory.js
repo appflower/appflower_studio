@@ -53,7 +53,7 @@ afStudio.wd.GuiFactory = function() {
 				gui = {};
 			
 			switch (viewType) {
-				case this.LIST:					
+				case this.LIST:
 					gui.view = new afStudio.wd.list.SimpleListView({
 						viewMeta: meta.definition
 					});

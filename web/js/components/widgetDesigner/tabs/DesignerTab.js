@@ -221,7 +221,11 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var widgetUri = this.widgetMeta.widgetUri,			
 			viRootNode = this.viewInspector.getRootNode();		
 		
-		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);
+		if (this.widgetType == afStudio.wd.GuiFactory.LIST) {
+			afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);			
+		} else {			
+			this.designerPanel.appEngineRenderView(widgetUri);
+		}
 	}//eo onPreviewWidgetView
 	
 	/**
