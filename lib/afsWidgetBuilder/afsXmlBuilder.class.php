@@ -15,7 +15,17 @@ class afsXmlBuilder {
      * @var SimpleXml
      */
     private $rootNode;
-
+    
+    /**
+     * Cdata fields that will be processed
+     * @var array
+     */
+    private $cdata_fields = array(
+        'title'         =>  '/i___view/i___title',
+        'description'   =>  '/i___view/i___description',
+        'param_html'    =>  '/i___view/i___params/i___param[@name="html"]'
+    );
+    
     function  __construct($definition, $widgetType)
     {
         $this->definition = $definition;
@@ -88,6 +98,7 @@ class afsXmlBuilder {
 
         if (isset($def['i:description'])) {
             $newDefinition['i:description'] = $def['i:description'];
+            // $newDefinition['i:description'] = "<![CDATA[" . $def['i:description'] . "]]";
             unset($def['i:description']);
         }
 
@@ -115,8 +126,31 @@ class afsXmlBuilder {
     private function build()
     {
         $this->parseRow($this->definition, $this->rootNode);
+        
+        $this->processCdataFields();
     }
-
+    
+    /**
+     * Process CData fields
+     *
+     * @author Sergey Startsev
+     */
+    private function processCdataFields()
+    {
+        foreach ($this->cdata_fields as $field_name => $path) {
+            $elements = $this->rootNode->xpath($path);
+            
+            if ($elements) {
+                foreach ($elements as $element) {
+                    $node= dom_import_simplexml($element);   
+                    $value = (string)$element;
+                    $node->nodeValue = '';
+                    $node->appendChild($node->ownerDocument->createCDATASection($value));
+                }
+            }
+        }
+    }
+    
     /**
      * Recurring function that creates xml file element
      */
