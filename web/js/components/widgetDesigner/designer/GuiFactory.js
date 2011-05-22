@@ -61,26 +61,17 @@ afStudio.wd.GuiFactory = function() {
 				break;
 				
 				case this.EDIT:
-					gui.view = {
-						xtype: 'container',
-						html: 'EDIT view <br /> is under construction.'
-					};
+					gui.view = {};
 					gui.controls = this.createEditViewToolbar();
 				break;
 				
 				case this.SHOW:
-					gui.view = {
-						xtype: 'container',
-						html: 'SHOW view <br /> is under construction.'
-					};
+					gui.view = {};
 					gui.controls = this.createShowViewToolbar();
 				break;
 				
 				case this.HTML:
-					gui.view = {
-						xtype: 'container',
-						html: 'HTML view <br /> is under construction.'
-					};
+					gui.view = {};
 					gui.controls = this.createHtmlViewToolbar();
 				break;
 			}

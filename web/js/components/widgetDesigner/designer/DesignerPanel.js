@@ -78,23 +78,12 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
-	,_afterInitComponent : function() {
-		/*
+	,_afterInitComponent : function() {		
 		this.on({
-			scope: this,
-			
-			afterrender: function() {
-				console.log('afterrender');
-				var gf = afStudio.wd.GuiFactory,
-					widgetType = gf.getWidgetType(this.widgetMeta);
-				if (widgetType != gf.LIST) {
-					this.appEngineRenderView(this.widgetMeta.widgetUri);
-				}		
-				
-			}
+			scope: this,			
+			afterrender: this.onAfterRender 
 		});
-		*/
-	}
+	}//eo _afterInitComponent
 	
 	/**
 	 * Returns designer GUI view component.
@@ -113,10 +102,21 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		return this.getTopToolbar().getComponent(item);
 	}//eo getMenuItem
 	
+	/**
+	 * This DesignerPanel <u>afterrender</u> event listener.
+	 * @param {Ext.Component} cmp
+	 */
+	,onAfterRender : function(cmp) {
+		var gf = afStudio.wd.GuiFactory,
+			widgetType = gf.getWidgetType(this.widgetMeta);
+			
+		if (widgetType != gf.LIST) {
+			this.appEngineRenderView(this.widgetMeta.widgetUri);
+		}		
+	}//eo onAfterRender	
 	
 	,appEngineRenderView : function(view) {	
-		var _this = this,
-			   vd = this.getDesignerView();
+		var _this = this;
 		
 		view = view.replace(location.protocol + '//' + location.host + afApp.urlPrefix, '');
 		
@@ -126,9 +126,9 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 			futureHash = uri[0] + futureTab,
 			maskEl = _this.el;			
 		
-		afApp.initLoadingProgress(vd.el);
+		afApp.initLoadingProgress(maskEl);
 		
-		Ext.Ajax.request( {
+		Ext.Ajax.request({
 			url: afApp.urlPrefix + uri[0],
 			method: "GET",		
 			params : {
@@ -139,11 +139,13 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 								
 				if (json.success === false) {
 					afStudio.Msg.error(json.message);
+					afApp.loadingProgress(maskEl, 1);
 					return;
 				}	
 		
 				if (json.redirect && json.message && json.load) {
 					afStudio.Msg.error(json.message);
+					afApp.loadingProgress(maskEl, 1);
 				} else {
 					
 					var total_addons = new Array();					
@@ -212,8 +214,6 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 			}
 		});		
 	}//eo appEngineRenderView
-	
-	
 });
 
 
