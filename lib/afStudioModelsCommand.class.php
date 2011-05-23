@@ -151,7 +151,7 @@ class afStudioModelsCommand
 						
 						$this->result = array('success' => true, 'message'=>'Added model <b>'.$this->modelName.'</b>!', 'console'=>$consoleResult);						
 					} else {						
-						$this->result = array('success' => false, 'message'=>'Can\'t add model <b>' . $this->modelName . '</b>!');
+						$this->result = array('success' => false, 'message'=>'Can\'t add model <b>' . $this->modelName . '</b>! Please check schema file permissions.');
 					}
 				break;				
 				
