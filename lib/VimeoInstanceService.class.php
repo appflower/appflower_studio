@@ -5,12 +5,16 @@ class VimeoInstanceService
 {
 	private $url;
     
-    public function VimeoInstanceService()
+    public function __construct()
     {
         $user = sfConfig::get('app_vimeo_user', 'appflower');
 
         if ($user == '') {
             throw new Exception('You must set app_vimeo_user in app.yml');
+        }
+        
+        if (!extension_loaded('curl')) {
+            throw new Exception("Curl PHP extension is required to use VimeoInstanceService class.");
         }
         
         $this->url = 'http://vimeo.com/api/v2/'.$user.'/videos.json';
