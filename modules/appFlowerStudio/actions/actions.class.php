@@ -445,12 +445,15 @@ class appFlowerStudioActions extends sfActions
 
 	public function executeWelcome($request)
 	{		
-		$data = array();
-		$vimeoService = new VimeoInstanceService();
       	try {
+		$vimeoService = new VimeoInstanceService();
         	$data = $vimeoService->getDataFromRemoteServer();        	
       	} catch (Exception $e) { 
+            if (sfConfig::get('sf_environment') == 'dev') {
+                throw $e;
+            } else {
       		$data = array();
+            }
       	}        
 		$message = $this->getPartial('welcome', array('data'=>$data));		
         $info = array(
