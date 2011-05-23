@@ -1,8 +1,7 @@
 <?php
 class afStudioUserHelper
-{
-	
-	public static function createNewUser(sfWebRequest $request)
+{	
+	  public static function createNewUser(sfWebRequest $request)
     {
     	afStudioUser::getInstance()->authorize();
 
@@ -95,4 +94,26 @@ class afStudioUserHelper
         return $aResult;
     }
     
+    /**
+     * User in Create Project Wizard
+     * 
+     * @param user - Object
+     * @author radu
+     */
+    public static function createNewUserForCPW($user, $path)
+    {
+        // Prepare data
+        $aCreate = array(
+            afStudioUser::FIRST_NAME => $user->first_name,
+            afStudioUser::LAST_NAME => $user->last_name,
+            afStudioUser::EMAIL => $user->email,
+            afStudioUser::PASSWORD => $user->password,
+            afStudioUser::ROLE => $user->role
+        );
+        
+        unset($aCreate[afStudioUser::USERNAME]);
+            
+        // Create new user
+        afStudioUser::create($user->username, $aCreate, $path);
+    }    
 }

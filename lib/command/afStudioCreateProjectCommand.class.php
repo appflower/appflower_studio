@@ -23,9 +23,17 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
     	   	
     	$console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml');
     	    	
-    	$this->result['success'] = true;
-      $this->result['message'] = 'Project created in path '.$path.'. Please set up virtual host to connect to it!';
-      $this->result['console'] = $console;
+    	if(is_readable($path.'/config/project.yml'))
+    	{    	    	
+      	$this->result['success'] = true;
+        $this->result['message'] = 'Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!';
+        $this->result['console'] = $console;
+    	}
+    	else {
+    	  $this->result['success'] = false;
+        $this->result['message'] = 'Project was not created in path <b>'.$path.'</b> due to some errors!';
+        $this->result['console'] = $console;
+    	}
 	}
 	
 	private function dumpYaml($data)
@@ -75,5 +83,48 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
           }
       }
   }
+  
+  public function processSaveWizard()
+	{
+		  $params = $this->params['request']->getPostParameters();
+		  
+		  $userForm = json_decode($params['userForm']);
+		  $databaseForm = json_decode($params['databaseForm']);
+    	
+    	$project['name'] = $params['name'];    	
+    	$project['template'] = $params['template'];
+    	
+    	$latest = true;
+    	$path = $params['path'];
+    	
+    	$project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'],$project);
+    	$unique = afStudioUtil::unique();
+    	
+    	file_put_contents('/tmp/project-'.$unique.'.yml', $this->dumpYaml(array('project'=>$project)));
+    	
+    	//create db configuration
+    	$dcm = new DatabaseConfigurationManager('/tmp/databases-'.$unique.'.yml');
+      $dcm->setDatabaseConnectionParams(array('database'=>$databaseForm->database, 'host'=>$databaseForm->host, 'port'=>$databaseForm->port, 'username'=>$databaseForm->username, 'password'=>$databaseForm->password));
+      $dcm->save();
+            
+      //create user configuration
+      afStudioUserHelper::createNewUserForCPW($userForm, '/tmp/users-'.$unique.'.yml');
+    	   	
+    	$console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml');   	     
+    	
+    	//todo: database handling if exists or not
+    	
+    	if(is_readable($path.'/config/project.yml'))
+    	{    	    	
+      	$this->result['success'] = true;
+        $this->result['message'] = 'Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!';
+        $this->result['console'] = $console;
+    	}
+    	else {
+    	  $this->result['success'] = false;
+        $this->result['message'] = 'Project was not created in path <b>'.$path.'</b> due to some errors!';
+        $this->result['console'] = $console;
+    	}
+	}
 }
 ?>

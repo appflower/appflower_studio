@@ -12,13 +12,14 @@ class ProjectConfigurationManager {
             'name' => 'Studio playground',
             'url' => '',
             'description' => "This is the Studio's playground, will be used for new projects",
-            'autodeploy' => true
+            'autodeploy' => true,
+            'template' => 'desktop'
         )
     );
 
     private $projectConfFilePath;
     private $projectConfTemplate;
-	private $request;
+	  private $request;
 
     public function __construct($request) {
         $this->projectConfFilePath = afStudioUtil::getConfigDir() . '/' . 'project.yml';
@@ -85,9 +86,9 @@ class ProjectConfigurationManager {
         	@file_put_contents($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));
         	
         	$result['success'] = true;
-            $result['message'] = 'Project Settings saved successfully';
+          $result['message'] = 'Project Settings saved successfully';
             
-            afsNotificationPeer::log('Project Settings have been modified','settings');
+          afsNotificationPeer::log('Project Settings have been modified','settings');
         }
         else {
         	$result['success'] = true;
