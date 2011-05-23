@@ -253,8 +253,6 @@ class afStudioUtil
     	   	
     	$console = afStudioConsole::getInstance()->execute('afsbatch copy_file.sh /tmp/copy-file-'.$unique.'.txt '.$filePath);
     	
-    	echo $console;
-    	
     	return $console;
     }
 }
