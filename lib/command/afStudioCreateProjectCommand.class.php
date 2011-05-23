@@ -43,36 +43,36 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
       $form = json_decode($params['form']);
       
       //check database connection
-      error_reporting(0);
       $form->port = empty($form->port)?'3306':$form->port;
-      $conn = new mysqli($form->host, $form->username, $form->password,$form->database,$form->port);
-      
-      if (mysqli_connect_errno()) {
-          $error = mysqli_connect_error();
-          //print_r($error);
+      $dsn = 'mysql:dbname='.$form->database.';host='.$form->host.';port='.$form->port;      
+      error_reporting(0);
+      try {
+          $conn = new PDO($dsn,$form->username,$form->password);
+          
+          $this->result['success'] = true;
+          $this->result['databaseExist']= true;
+      } catch (PDOException $e) {
+          $error=$e->getMessage();
+          
           if(substr_count($error,'Access denied for user')>0)
           {
             $this->result['success'] = false;
             $this->result['fields'][] = array('fieldName'=>'infor','error'=>'Cannot connect to database server using the provided username and/or password');
-            $this->result['fields'][] = array('fieldName'=>'username','error'=>'Username and/or password does not math');
-            $this->result['fields'][] = array('fieldName'=>'password','error'=>'Username and/or password does not math');
+            $this->result['fields'][] = array('fieldName'=>'username','error'=>'Username and/or password does not match');
+            $this->result['fields'][] = array('fieldName'=>'password','error'=>'Username and/or password does not match');
           }
           elseif(substr_count($error,'Unknown MySQL server host')>0||substr_count($error,'Can\'t connect to MySQL server')>0||substr_count($error,'is not allowed to connect to this MySQL')>0)
           {
             $this->result['success'] = false;
             $this->result['fields'][] = array('fieldName'=>'infor','error'=>'Cannot connect to database server using the provided host and/or port');
-            $this->result['fields'][] = array('fieldName'=>'host','error'=>'Host and/or port does not math');
-            $this->result['fields'][] = array('fieldName'=>'port','error'=>'Host and/or port does not math');
+            $this->result['fields'][] = array('fieldName'=>'host','error'=>'Host and/or port does not match');
+            $this->result['fields'][] = array('fieldName'=>'port','error'=>'Host and/or port does not match');
           }
           elseif(substr_count($error,'Unknown database')>0)
           {
             $this->result['success'] = true;
             $this->result['databaseExist']= false;
           }
-      }
-      else {
-        $this->result['success'] = true;
-        $this->result['databaseExist']= true;
       }
   }
 }
