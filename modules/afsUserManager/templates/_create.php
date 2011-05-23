@@ -425,7 +425,7 @@
                                                 <table border="0" cellpadding="20" cellspacing="0" width="100%">
                                                     <tr>
                                                         <td valign="top">
-                                                          <h1>Newsletter subscription</h1>        
+                                                          <h1>Welcome to AppFlower Studio</h1>        
                                                           <div>
                                                           		Dear <?php echo (!empty($user['first_name']) && !empty($user['last_name'])) ? $user['first_name'] . ' ' .$user['last_name'] : $user['username'] ?>, <br />
                                                           		Your Studio Account has been successfully created. <br />

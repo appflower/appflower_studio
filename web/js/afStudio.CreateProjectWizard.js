@@ -64,8 +64,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 						pathField.setValue(nextPath);			
 					}					
 				}
-			},
-			{xtype:'displayfield', name: 'mandatory', hideLabel: true, anchor:'100%', value: 'Fields marked with <font color=red>*</font> are mandatory.', style: 'margin-top: 15px;'}
+			}
 		];
 		
 		this.form1 = new Ext.FormPanel({
@@ -135,7 +134,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				
 		var formItems = [
 			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please select the Web server root folder. The project will be created as a sub-folder to this path, with your project name.', style: 'margin-bottom: 15px;',},
-			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small>'},
+			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small><br>'},
 			this.tree,
 			{xtype:'hidden', name: 'path'}
 		];
@@ -264,8 +263,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 					}
 				]
 			},
-			{name: 'role', inputType: 'hidden', value: 'admin'},
-			{xtype:'displayfield', name: 'mandatory', hideLabel: true, anchor:'100%', value: 'Fields marked with <font color=red>*</font> are mandatory.', style: 'margin-top: 15px;'}
+			{name: 'role', inputType: 'hidden', value: 'admin'}
 		];
 		
 		this.form4 = new Ext.FormPanel({
@@ -298,12 +296,11 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				]
 			},
 			{xtype:'textfield', fieldLabel: 'Username<font color=red>*</font>', anchor: '96%', name: 'username', allowBlank: false,vtype:'alphanum'},
-			{xtype:'textfield', fieldLabel: 'Password<font color=red>*</font>', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password',vtype:'alphanum'},
-			{xtype:'displayfield', name: 'mandatory', hideLabel: true, anchor:'100%', value: 'Fields marked with <font color=red>*</font> are mandatory.', style: 'margin-top: 15px;'}
+			{xtype:'textfield', fieldLabel: 'Password<font color=red>*</font>', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password',vtype:'alphanum'}
 		];
 		
 		this.form5 = new Ext.FormPanel({
-		    url: '',
+		  url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -320,7 +317,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		];
 		
 		this.form6 = new Ext.FormPanel({
-		    url: '',
+		  url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -334,15 +331,35 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	
 	next:function(){
 		if (this.items.get(this.currentItem).getForm().isValid()) 
-		{						
-		  
+		{					
+		  if (this.currentItem==3) // setting db values and virtual host value
+  		{
+  			var name = this.form1.getForm().findField('name').getValue();
+  			var slug = afStudio.createSlug(name);
+  			var path = this.form2.getForm().findField('path').getValue();
+  			var html = '<b>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</b><br><br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'.mydomain.com</b> in your browser.<br><br>Here is an example:<br>';
+  					
+  			html+='<pre><code>&lt;VirtualHost *:80&gt;<br>&nbsp;&nbsp;ServerName '+slug+'.mydomain.com<br>&nbsp;&nbsp;DocumentRoot '+path+'/web<br>&nbsp;&nbsp;DirectoryIndex index.php<br>&nbsp;&nbsp;Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"<br><br>&nbsp;&nbsp;&lt;Directory "'+path+'/web"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;AllowOverride All<br>&nbsp;&nbsp;&nbsp;&nbsp;Allow from All<br>&nbsp;&nbsp;&lt;/Directory&gt;<br>&lt;/VirtualHost&gt;</code></pre>';
+  			
+  			this.form6.getForm().findField('infor').update(html);
+  			
+  			this.form5.getForm().findField('database').setValue(slug);
+  			
+  			if(this.form5.getForm().findField('username').getValue()=='')
+  			this.form5.getForm().findField('username').setValue(this.form4.getForm().findField('username').getValue());
+  			if(this.form5.getForm().findField('password').getValue()=='')
+  			this.form5.getForm().findField('password').setValue(this.form4.getForm().findField('password').getValue());
+  		}
+		  	
 		  if (this.currentItem==4) // checking database
 			{
+			  var form5Values = this.form5.getForm().getValues();
+			  
 				var _this = this;
 				Ext.Ajax.request({
 					url: window.afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl(),
 					params: { 
-						form: Ext.encode(this.form5.getForm().getValues()),
+						form: Ext.encode(form5Values),
 					},
 					success: function(result,request){			   
 						var obj = Ext.decode(result.responseText);
@@ -354,41 +371,59 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 							    _this.form5.getForm().findField(obj.fields[i].fieldName).markInvalid(obj.fields[i].error);
 						    }
 						  }
-							return '';
+							return;
 						}
 						else
 						{
 						  //contains boolean value
 						  this.databaseExist = obj.databaseExist;
+						  
+						  switch(this.databaseExist)
+						  {
+						    case true:
+						      Ext.Msg.show({
+                     title:'Database',
+                     msg: 'Database <b>'+form5Values['database']+'</b> already exist. Do you want to overwrite it?',
+                     buttons: Ext.Msg.YESNO,
+                     fn: function(btn)
+                     {
+                       if(btn == 'yes')
+                       {
+                         _this.nextForm();
+                       }
+                       else
+                       {
+                         _this.form5.getForm().findField('database').markInvalid('You have chosen to not overwrite this existing database. Please choose another database name');
+                       }
+                     },
+                     animEl: 'elId',
+                     icon: Ext.MessageBox.QUESTION
+                  });
+						      break;
+						    case false:
+						      Ext.Msg.show({
+                     title:'Database',
+                     msg: 'Database <b>'+form5Values['database']+'</b> does not exist and it will be generated automatically.',
+						         buttons: Ext.Msg.OK,
+                     fn: function(btn)
+                     {
+                       _this.nextForm();
+                     }
+						      });
+						      break;
+						  }
 						}
-						_this.nextForm();
 				   }
 				});
 				
-				return '';
+				return;
 			}
 		  
 			this.nextForm();
 		}
 	},
 	
-	nextForm: function(){
-		if (this.currentItem==3)
-		{
-			var name = this.form1.getForm().findField('name').getValue();
-			var slug = afStudio.createSlug(name);
-			var path = this.form2.getForm().findField('path').getValue();
-			var html = '<b>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</b><br><br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'.mydomain.com</b> in your browser.<br><br>Here is an example:<br>';
-					
-			html+='<pre><code>&lt;VirtualHost *:80&gt;<br>&nbsp;&nbsp;ServerName '+slug+'.mydomain.com<br>&nbsp;&nbsp;DocumentRoot '+path+'/web<br>&nbsp;&nbsp;DirectoryIndex index.php<br>&nbsp;&nbsp;Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"<br><br>&nbsp;&nbsp;&lt;Directory "'+path+'/web"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;AllowOverride All<br>&nbsp;&nbsp;&nbsp;&nbsp;Allow from All<br>&nbsp;&nbsp;&lt;/Directory&gt;<br>&lt;/VirtualHost&gt;</code></pre>';
-			
-			this.form6.getForm().findField('infor').update(html);
-			
-			this.form5.getForm().findField('database').setValue(slug);
-			this.form5.getForm().findField('username').setValue(this.form4.getForm().findField('username').getValue());
-			this.form5.getForm().findField('password').setValue(this.form4.getForm().findField('password').getValue());
-		}
-		
+	nextForm: function(){				
 		this.items.get(this.currentItem).hide();
 		this.currentItem++;
 		this.items.get(this.currentItem).show();
@@ -411,23 +446,18 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			params: { 
 				name: this.form1.getForm().findField('name').getValue(),
 				path: this.form2.getForm().findField('path').getValue(),
-				template: this.dataview.getSelectedRecords()[0].get('name'),
+				template: this.dataview.getSelectedRecords()[0].get('name').toLowerCase(),
 				
-				username: this.form4.getForm().findField('username').getValue(),
-				user: Ext.encode(this.form4.getForm().getValues()),
-				
-				database: this.form5.getForm().findField('database').getValue(),
-				host: this.form5.getForm().findField('host').getValue(),
-				port: this.form5.getForm().findField('port').getValue(),
-				db_user: this.form5.getForm().findField('username').getValue(),
-				db_pass: this.form5.getForm().findField('password').getValue(),
+				userForm: Ext.encode(this.form4.getForm().getValues()),
+				databaseForm: Ext.encode(this.form5.getForm().getValues()),
+				databaseExist: this.databaseExist
 			},
 			success: function(result,request){			   
 				var obj = Ext.decode(result.responseText);
 				if (obj.success) {
-					Ext.Msg.alert('Success', obj.message);
+					afStudio.Msg.info(obj.message);
 				} else {
-					Ext.Msg.alert('Failure', obj.message);
+					afStudio.Msg.error(obj.message);
 				}
 				
 				_this.close();

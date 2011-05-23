@@ -4,6 +4,8 @@ CURRENT_DIR=$(pwd)
 TARGET_DIR=$1
 FETCH_LATEST_TGZ=$2
 PROJECT_YML_FILE=$3
+DATABASES_YML_FILE=$4
+USERS_YML_FILE=$5
 
 cd $CURRENT_DIR/../
 CURRENT_DIR=$(pwd)
@@ -42,4 +44,14 @@ cp $SKELETON_FILE $TARGET_DIR/plugins/appFlowerStudioPlugin/data/
 if [ -e $PROJECT_YML_FILE ]; then
 	cp $PROJECT_YML_FILE $TARGET_DIR/config/project.yml
 	rm -rf $PROJECT_YML_FILE
+fi
+
+if [ -e $DATABASES_YML_FILE ]; then
+	cp $DATABASES_YML_FILE $TARGET_DIR/config/databases.yml
+	rm -rf $DATABASES_YML_FILE
+fi
+
+if [ -e $USERS_YML_FILE ]; then
+	cp $USERS_YML_FILE $TARGET_DIR/plugins/appFlowerStudioPlugin/config/users.yml
+	
 fi

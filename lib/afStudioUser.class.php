@@ -184,16 +184,22 @@ class afStudioUser
      * @param array $info
      * @return boolean
      */
-    public static function create($username, $info)
+    public static function create($username, $info, $filePath = false)
     {
-        $aUsers = self::getCollection();
+        if(!$filePath)
+        {
+          $aUsers = self::getCollection($filePath);
+        }
+        else {
+          $aUsers = self::getCollection(sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/users.yml');
+        }
         
         $info[self::PASSWORD] = self::passwordRule($info[self::PASSWORD]);
         
-        if (!isset($aUsers[$username])) {
+        if ((!$filePath && !isset($aUsers[$username]))||$filePath) {
             $aUsers[$username] = $info;
             
-            self::setCollection($aUsers);
+            self::setCollection($aUsers, $filePath);
         } else {
             return false;
         }
@@ -392,9 +398,9 @@ class afStudioUser
      * 
      * @return string
      */
-    public static function getCollectionPath()
+    public static function getCollectionPath($filePath = false)
     {
-        return sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/users.yml';
+        return (!$filePath)?sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/users.yml':$filePath;
     }
     
     /**
@@ -402,9 +408,9 @@ class afStudioUser
      * 
      * @return array
      */
-    public static function getCollection()
+    public static function getCollection($filePath = false)
     {
-        return sfYaml::load(self::getCollectionPath());
+        return sfYaml::load(self::getCollectionPath($filePath));
     }
     
     /**
@@ -412,9 +418,9 @@ class afStudioUser
      * 
      * @param   array $definition 
      */
-    public static function setCollection($definition)
+    public static function setCollection($definition, $filePath = false)
     {
-        file_put_contents(self::getCollectionPath(), sfYaml::dump($definition));
+        file_put_contents(self::getCollectionPath($filePath), sfYaml::dump($definition));
     }
     
 }

@@ -481,31 +481,8 @@ class appFlowerStudioActions extends sfActions
 	
 	public function executeCreateProjectWizard($request)
 	{        
-		$result = afStudioCommand::process('createProject', 'save', array('request'=>$request));
-        if (!$result['success']) {
-        	return $this->renderJson($result);
-        }
-        
-        /*$result = afStudioCommand::process('templateSelector', 'update',array('request'=>$request));
-		if (!$result['success']) {
-        	return $this->renderJson($result);
-        }
-		
-        // save db settings
-        $dcm = new DatabaseConfigurationManager();
-        $dcm->setDatabaseConnectionParams(array('database'=>$request->getParameter('database'), 'host'=>$request->getParameter('host'), 'port'=>$request->getParameter('port'), 'username'=>$request->getParameter('db_user'), 'password'=>$request->getParameter('db_pass')));
-        $result = $dcm->save();
-        if (!$result) {
-            $info=array('success'=>false, "message"=>'Error while saving file to disk!');
-        	return $this->renderJson(json_encode($info));
-        }
-        
-		$result = afStudioUserHelper::createNewUser($request);
-		if (!$result['success']) {
-        	return $this->renderJson($result);
-        }
-        
-        return array('success' => true, 'message' => 'Project created.');*/
+		$result = afStudioCommand::process('createProject', 'saveWizard', array('request'=>$request));
+    return $this->renderJson($result);
 	}
 	
 }

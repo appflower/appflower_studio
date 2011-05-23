@@ -5,7 +5,7 @@
     <div id="studio_popup_primary">
       <div id="popup_content">
         <h2>Welcome to AppFlower Studio Beta</h2>
-        <p>AppFlower Studio Beta makes application development easy and fun. If you are new to AppFlower Studio Beta, you can watch this introduction video now.</p>
+        <p>AppFlower Studio makes application development easy and fun. If you are new to AppFlower Studio, you can watch the quick introduction video above.</p>
         <a href="http://vimeo.com/21965153" rel="prettyPhoto" title="AppFlower-003: Installing appflower vmdk on virtual box">Start</a>
       </div>
     </div>

@@ -183,7 +183,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			text: 'Create new project',
 			iconCls: 'icon-studio-create-project',
 			handler: function (b, e) {
-				(new afStudio.CreateProject()).show();
+				(new afStudio.CreateProjectWizard()).show();
 			}
 		});
 							
