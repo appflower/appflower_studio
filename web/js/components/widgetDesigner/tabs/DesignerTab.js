@@ -68,7 +68,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 				ref: 'designerPanel',
 				widgetMeta: this.widgetMeta,
 				flex: 3
-			},{ 
+			},{
 				xtype: 'container',
 				flex: 1,
 				items: [
@@ -238,7 +238,18 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			vpg	 = this.viewProperty,
 			vit  = this.viewInspector;
 			
-		switch (this.widgetType) {			
+		switch (this.widgetType) {
+			case gf.EDIT:
+				switch (parent.id) {
+					case 'i:fields':
+						vpg.setSource(node.getProperties());
+						(function() {
+							vit.getSelectionModel().select(node);
+						}).defer(100, this);
+					break;
+				}
+			break;
+			
 			case gf.LIST :			
 				switch (parent.id) {
 					case 'i:actions':						
@@ -305,7 +316,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 							afStudio.Msg.info('Widget Designer: List View', String.format('Max columns size <u>{0}</u>', vd.maxColumns));
 						}
 					break;
-				}			
+				}
 			break;			
 		}		
 	}//eo onViewInspectorAppendProperty
@@ -423,8 +434,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @param {Number} newSize
 	 */
 	,onListViewColumnResize : function(columnIndex, newSize) {
-		var vd   = this.designerView,
-			vi = this.viewInspector,
+		var vd  = this.designerView,
+			vi  = this.viewInspector,
 			cm  = vd.getColumnModel(),
 			clm = cm.config[columnIndex],
 			fn  = vi.getRootNode().getFieldsNode();

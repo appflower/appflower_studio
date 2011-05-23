@@ -115,7 +115,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		}		
 	}//eo onAfterRender	
 	
-	,appEngineRenderView : function(view) {	
+	,appEngineRenderView : function(view) {
 		var _this = this;
 		
 		view = view.replace(location.protocol + '//' + location.host + afApp.urlPrefix, '');
@@ -188,7 +188,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 						
 						Ext.applyIf(backendWinConfig, {
 							autoScroll: true,
-							frame: false,
+							frame: true,
 							border: false,
 							items: center_panel
 						});						
