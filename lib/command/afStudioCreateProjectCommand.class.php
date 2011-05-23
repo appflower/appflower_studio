@@ -91,6 +91,8 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
 		  $userForm = json_decode($params['userForm']);
 		  $databaseForm = json_decode($params['databaseForm']);
     	
+		  $databaseExist = $params['databaseExist']?1:0;
+		  
     	$project['name'] = $params['name'];    	
     	$project['template'] = $params['template'];
     	
@@ -110,10 +112,8 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
       //create user configuration
       afStudioUserHelper::createNewUserForCPW($userForm, '/tmp/users-'.$unique.'.yml');
     	   	
-    	$console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml');   	     
-    	
-    	//todo: database handling if exists or not
-    	
+    	$console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
+    	    	
     	if(is_readable($path.'/config/project.yml'))
     	{    	    	
       	$this->result['success'] = true;
