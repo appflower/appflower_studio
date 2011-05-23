@@ -241,4 +241,20 @@ class afStudioUtil
     	
     	return $pluginTemplateYml;
     }
+    
+    /**
+     * @author radu
+     */
+    public static function writeFile($filePath, $content)
+    {
+      $unique = self::unique();
+    	
+    	file_put_contents('/tmp/copy-file-'.$unique.'.txt', $content);
+    	   	
+    	$console = afStudioConsole::getInstance()->execute('afsbatch copy_file.sh /tmp/copy-file-'.$unique.'.txt '.$filePath);
+    	
+    	echo $console;
+    	
+    	return $console;
+    }
 }
