@@ -53,5 +53,5 @@ fi
 
 if [ -e $USERS_YML_FILE ]; then
 	cp $USERS_YML_FILE $TARGET_DIR/plugins/appFlowerStudioPlugin/config/users.yml
-	
+	rm -rf $USERS_YML_FILE
 fi

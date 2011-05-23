@@ -441,6 +441,10 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	
 	save:function(){ // save
 		var _this = this;
+		
+		var mask = new Ext.LoadMask(this.getEl(), {msg: "<b>Creating new project</b> <br>Please wait..",removeMask:true});
+    mask.show();
+		
 		Ext.Ajax.request({
 			url: window.afStudioWSUrls.getProjectCreateWizardUrl(),
 			params: { 
@@ -460,7 +464,11 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 					afStudio.Msg.error(obj.message);
 				}
 				
+				afStudio.updateConsole(obj.console);
+								
 				_this.close();
+				
+				mask.hide();
 		   },
 		   
 		});
