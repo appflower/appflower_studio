@@ -48,18 +48,18 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
 	,addRequiredChilds : function() {
         afStudio.wi.ListNode.superclass.addRequiredChilds.apply(this);
         
-        var childNodes = [];
- 		childNodes.push(this.buildActionsNode(afStudio.wi.ActionNode));
- 		childNodes.push(this.buildRowactionsNode(afStudio.wi.ActionNode));
- 		childNodes.push(this.buildMoreactionsNode(afStudio.wi.ActionNode));
-		this.appendChild(childNodes);
+		this.appendChild([
+			this.buildActionsNode(afStudio.wi.ActionNode),
+			this.buildRowactionsNode(afStudio.wi.ActionNode),
+			this.buildMoreactionsNode(afStudio.wi.ActionNode)
+		]);
 	}//eo addRequiredChilds	
 	
     /**
      * Creates fields node.
      * template method
      * @override
-     * @return {afStudio.wi.CollectionNode} instanciated fields node object, descendant of CollectionNode
+     * @return {afStudio.wi.FieldsNode} instanciated fields node object.
      */
     ,buildFieldsNode : function() {
         var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({

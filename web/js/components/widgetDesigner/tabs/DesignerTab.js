@@ -336,9 +336,20 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			vit  = this.viewInspector;
 			
 		switch (this.widgetType) {
+			case gf.EDIT :
+				switch (parent.id) {
+					case 'i:fields':
+						var fn = vit.getRootNode().getFieldsNode();
+				    	if (fn.childIdsOrdered.indexOf(node.id) != -1) {
+					    	fn.childIdsOrdered.remove(node.id);
+				    	}
+						vpg.setSource({});
+					break;
+				}
+			break;
 			
 			case gf.LIST :
-				switch (parent.id) {					
+				switch (parent.id) {
 					case 'i:actions':
 						var actionName = node.getProperty('name').get('value'),
 							aBar       = vd.getTopToolbar().getComponent('actions');							
