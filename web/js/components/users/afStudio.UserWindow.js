@@ -226,7 +226,9 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 		}
 		
 		//Create handler for refreshCaptcha function
-		Ext.get('verificationimage').on('click', this.refreshCaptcha, this);
+		if (Ext.get('verificationimage')) {			
+			Ext.get('verificationimage').on('click', this.refreshCaptcha, this);
+		}
 	},
 	
 	/**
