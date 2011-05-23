@@ -632,7 +632,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			   afStudio.vp.unmask('center');
 			   var response = Ext.decode(xhr.responseText);
 
-			   var message = response.content || response.message || 'Operation was successfully processed!',
+			   var message = response.content || response.message || (response.success ? 'Operation was successfully processed!' : 'Some error occured.'),
 			   	   msgTitle = this.title || '';
 			   
 			   if (response.success) {
