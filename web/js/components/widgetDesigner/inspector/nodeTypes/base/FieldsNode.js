@@ -68,7 +68,7 @@ afStudio.wi.FieldsNode = Ext.extend(afStudio.wi.CollectionNode, {
         for (var i = 0; i < this.childIdsOrdered.length; i++) {
         	var n = this.findChild('id', this.childIdsOrdered[i]);
         	childNodes.push(n);
-        }
+        }        
         for (var i = 0; i < childNodes.length; i++) {
             data.push(childNodes[i].dumpDataForWidgetDefinition());
         }

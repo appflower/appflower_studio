@@ -284,8 +284,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 					case 'i:fields':					
 						var	vCm      = vd.getColumnModel(),		
 							startIdx = vd.getView().getUninitColumn(),
-							endIdx   = vCm.getColumnCount(true);
-						
+							endIdx   = vCm.getColumnCount(true) - 1;
+							
 						if (startIdx != -1) {
 							vpg.setSource(node.getProperties());
 							(function() {
@@ -294,7 +294,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 				
 							vCm.config[startIdx].uninit = false;
 							vCm.config[startIdx].header = node.getProperty('label').get('value');
-							vCm.config[startIdx].name   = node.getProperty('name').get('value');		
+							vCm.config[startIdx].name   = node.getProperty('name').get('value');
 							vCm.moveColumn(startIdx, endIdx);
 							vCm.setHidden(endIdx, false);
 						} else {
@@ -363,8 +363,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var vi 		= this.viewInspector,
 			vdCm    = this.designerView.getColumnModel(),
 			viRoot  = vi.getRootNode(),
-			fn      = viRoot.getFieldsNode();
-			
+			fn      = viRoot.getFieldsNode();	
+		
 		if (fn && fn.findChild('text', clm.name)) {
 			//correct indexes having in mind that in column model can be checker (check box sm)
 			if (vdCm.config[0] && vdCm.config[0].id == 'checker') {
@@ -406,11 +406,13 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 */
 	,onListViewDeleteColumn : function(clmName) {
 		var vi = this.viewInspector,
+			vpg	 = this.viewProperty,
 			fn = vi.getRootNode().getFieldsNode(),
 			viClmNode;
 		
 		if (fn && (viClmNode = fn.findChild('text', clmName))) {
 			fn.deleteChild(viClmNode);
+			vpg.setSource({});
 		}		
 	}//eo onListViewDeleteColumn
 	
