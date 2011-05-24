@@ -118,10 +118,10 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 			schema: _this.schemaName,			
             storeProxy: new Ext.data.HttpProxy({
                 api: {
-                	read:    window.afStudioWSUrls.getModelGridDataReadUrl(mdl),
-                    create:  window.afStudioWSUrls.getModelGridDataCreateUrl(mdl),
-                    update:  window.afStudioWSUrls.getModelGridDataUpdateUrl(mdl),
-                    destroy: window.afStudioWSUrls.getModelGridDataDeleteUrl(mdl)
+                	read:    afStudioWSUrls.getModelGridDataReadUrl(mdl),
+                    create:  afStudioWSUrls.getModelGridDataCreateUrl(mdl),
+                    update:  afStudioWSUrls.getModelGridDataUpdateUrl(mdl),
+                    destroy: afStudioWSUrls.getModelGridDataDeleteUrl(mdl)
                 }
             })
 		});

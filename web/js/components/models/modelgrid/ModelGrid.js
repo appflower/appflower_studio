@@ -480,7 +480,7 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 					}
 				})
 			});
-			fields.push({name:'c'+i});
+			fields.push({name: 'c' + i});
 		}
 		
 		if (this.columns) {
@@ -610,7 +610,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 						exists: false
 					}
 				});
-				fields.push({name:'c'+i});
+				fields.push({name: 'c' + i});
 			}
 		}
 
@@ -620,8 +620,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			    idProperty: 'id'
 			}, fields),
             proxy: _this.storeProxy,
-            writer: new Ext.data.JsonWriter({encode: false, listful: true}),            
-            autoSave: false,            
+            writer: new Ext.data.JsonWriter({encode: false, listful: true}),          
+            autoSave: false,
 			listeners: {
 				load : function(store, records) {
 					//adds one line if the result set is empty

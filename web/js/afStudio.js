@@ -28,6 +28,29 @@ var afStudio = function () {
 				}
 			});
 		}//eo initAjaxRedirect
+		
+		/**
+		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
+		 */
+		,initDataProxyErrorsHandling : function() {
+			Ext.data.DataProxy.on('exception', function(proxy, type, action, options, response, arg) {
+				var message,
+					title = String.format('Request Failed {0}', options.url);
+					
+				if (type == 'response') {
+					if (response.status == 200) {
+						var r = Ext.decode(response.responseText);
+						message = r.message || r.content || r.msg;
+					} else {
+						message = String.format('Server side error <br/> status code: {0}, message: {1}', r.status, r.statusText || '---');
+					}		
+				} else {
+					message = response.message || response.content || response.msg;
+				}
+				
+				afStudio.Msg.error(title, message);
+			});						
+		}//eo initDataProxyErrorsHandling
 	
 		/**
 		 * Sets CLI console text.
@@ -125,6 +148,7 @@ var afStudio = function () {
 			Ext.form.Field.prototype.msgTarget = 'side';
 			
 			this.initAjaxRedirect();
+			this.initDataProxyErrorsHandling();
 			
 			//timeout 5 minutes
 			Ext.Ajax.timeout = 300000;
@@ -144,8 +168,7 @@ var afStudio = function () {
 			
 			if (Ext.util.Cookies.get('appFlowerStudioDontShowWelcomePopup') != 'true') {
 				new afStudio.Welcome().show();
-			}
-			
+			}			
 		}//eo init
 		                
         //user to create a slug from some content
