@@ -558,7 +558,6 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	}//eo initComponent	
 });
 
-
 /**
  * ModelGrid
  * @class afStudio.models.ModelGrid

@@ -137,6 +137,13 @@ afStudio.models.TypeBuilder = (function() {
 					}
 				break;
 				
+				case 'date':
+					renderer = function(value) {
+						var dStr = Date.parse(value);						 
+						return !isNaN(dStr) ? new Date(dStr).format('m/d/Y') : value;
+					}					
+				break;
+				
 				default:
 					renderer = function(value) {
 						return value;
