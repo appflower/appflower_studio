@@ -48,7 +48,7 @@ class appFlowerStudioActions extends sfActions
   			{
   				if(is_writable($file))
   				{
-  					if(@file_put_contents($file,$code))
+  					if(afStudioUtil::writeFile($file,$code))
 					{
 						return $this->renderText(json_encode(array('success'=>true)));
 					}
@@ -133,18 +133,14 @@ class appFlowerStudioActions extends sfActions
 
 	public function executeCssfilesSave(){
 		$result=true;
-		$JDATA=file_get_contents("php://input");
+		
+		$content=file_get_contents("php://input");
+		
 		$cssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
-		//echo $JDATA;
+		
 		$node=$this->hasRequestParameter('node')?$this->getRequestParameter('node'):"";
-		try{
-			$fp = fopen($cssPath.$node,"w");
-			if(!$fp)throw new Exception("file open error");
-			if(!fWrite($fp,$JDATA))throw new Exception("file write error");
-			if(!fclose($fp))throw new Exception("file close error");
-		}catch(Exception $e){
-			$result=false;	
-		}
+		
+		afStudioUtil::writeFile($cssPath.$node,$content);
 
 	 	if($result) {
 		    $success = true;

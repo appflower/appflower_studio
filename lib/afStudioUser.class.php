@@ -420,7 +420,7 @@ class afStudioUser
      */
     public static function setCollection($definition, $filePath = false)
     {
-        file_put_contents(self::getCollectionPath($filePath), sfYaml::dump($definition));
+        afStudioUtil::writeFile(self::getCollectionPath($filePath), sfYaml::dump($definition));
     }
     
 }

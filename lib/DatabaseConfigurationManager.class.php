@@ -110,7 +110,7 @@ class DatabaseConfigurationManager {
         $param['persistent'] = (isset($this->params['persistent']) ? true : false);
         $param['pooling']    = (isset($this->params['pooling']) ? true : false);
 
-        @file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
+        afStudioUtil::writeFile($this->databaseConfFilePath, $this->dumpYaml($confData));
         
         afsNotificationPeer::log('Database Settings have been modified','settings');
         

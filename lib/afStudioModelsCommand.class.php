@@ -105,7 +105,7 @@ class afStudioModelsCommand
 	{
 		$dump = sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3);
 		
-		if (file_put_contents($this->schemaFile, $dump) > 0) {
+		if (afStudioUtil::writeFile($this->schemaFile, $dump) > 0) {
 			return true;
 		} else {
 			return false;
