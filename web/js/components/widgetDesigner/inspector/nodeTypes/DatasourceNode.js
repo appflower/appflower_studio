@@ -44,7 +44,7 @@ afStudio.wi.DatasourceNode = Ext.extend(afStudio.wi.ContainerNode, {
     ,setClassFromModel : function(model, widgetType) {
         if (widgetType == 'list') {
             this.properties['modelName'].set('value', model);
-            this.behaviors[0].configureFor(this, {
+            this.behaviors[0].configureFor({
                'type': 'orm',
                'i:class': 'ModelCriteriaFetcher',
                'i:method': {
@@ -54,7 +54,7 @@ afStudio.wi.DatasourceNode = Ext.extend(afStudio.wi.ContainerNode, {
             });
         } else {
             var peerClass = model+'Peer';
-            this.behaviors[0].configureFor(this, {
+            this.behaviors[0].configureFor({
                'type': 'orm',
                'i:class': peerClass,
                'i:method': {
