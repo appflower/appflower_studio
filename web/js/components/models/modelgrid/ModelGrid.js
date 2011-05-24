@@ -703,7 +703,6 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            			clms.push(c.fieldDefinition);
 	            		}	            		
 	            	});
-	            	console.log(clms);
 	            	afStudio.vp.mask({region:'center', msg: 'Saving ' + _this.model + ' model...'});
 					Ext.Ajax.request({
 						url: afStudioWSUrls.getModelsUrl(),
