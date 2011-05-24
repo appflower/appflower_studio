@@ -115,13 +115,13 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 					grid.fireEvent('alterfield');
 				} else {
 					grid.fireEvent('alterfieldexception', xhr);
-					Ext.Msg.alert('Warning', response.message);
+					afStudio.Msg.warning(response.message);
 				}
 			},
 			failure: function(xhr, opt) {
 				_this.unmaskWindow();
 				grid.fireEvent('alterfieldfailure', xhr);				
-				Ext.Msg.alert('Failure', 'Status: ' + xhr.status);
+				afStudio.Msg.error('Status: ' + xhr.status);
 			}
 		});
 		
@@ -232,8 +232,8 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		} else if (fd.primaryKey || fd.index || fd.index) {
 			key =  fd.primaryKey ? 'primary' : (fd.index == 'unique' ? 'unique' : (fd.index ? 'index' : ''));
 		}
-		fm.findField('key').setValue(key);		
-	}
+		fm.findField('key').setValue(key);
+	}//eo loadFieldData
 
 	/**
 	 * This <u>show</u> event listener

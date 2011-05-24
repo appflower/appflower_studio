@@ -33,6 +33,11 @@ var afStudio = function () {
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
 		 */
 		,initDataProxyErrorsHandling : function() {
+			var getMessage = function(obj) {
+				var m = obj.message || obj.content || obj.msg || obj.errors;				
+				return Ext.isArray(m) ? m.join('') : m;
+			}
+			
 			Ext.data.DataProxy.on('exception', function(proxy, type, action, options, response, arg) {
 				var message,
 					title = String.format('Request Failed {0}', options.url);
@@ -40,12 +45,12 @@ var afStudio = function () {
 				if (type == 'response') {
 					if (response.status == 200) {
 						var r = Ext.decode(response.responseText);
-						message = r.message || r.content || r.msg;
+						message = getMessage(r);
 					} else {
 						message = String.format('Server side error <br/> status code: {0}, message: {1}', r.status, r.statusText || '---');
 					}		
 				} else {
-					message = response.message || response.content || response.msg;
+					message = getMessage(response.raw);
 				}
 				
 				afStudio.Msg.error(title, message);

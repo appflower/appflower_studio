@@ -160,7 +160,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 		);				
 		afStudio.models.ModelTab.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	/**
 	 * Initializes events & does post configuration
@@ -175,13 +175,11 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 		this.relayEvents(md, ['alterfield']);
 		
 		_this.on({
-			'altermodel' : Ext.util.Functions.createDelegate(_this.onAlterModel, _this),
-			'alterfield' : Ext.util.Functions.createDelegate(_this.onAlterField, _this)
-		});		
-		
-	
-	}//eo _afterInitComponent
-	
+			scope: _this,
+			altermodel: _this.onAlterModel,
+			alterfield: _this.onAlterField
+		});	
+	}//eo _afterInitComponent	
 });
 
 /**
