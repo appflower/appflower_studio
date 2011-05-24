@@ -74,7 +74,7 @@ EOF;
       return;
     }
     $this->logSection('sql-diff', "writing file $filename");
-    file_put_contents($filename, $diff);
+    afStudioUtil::writeFile($filename, $diff);
     
 //  insert diff sql changes to db
     $i->executeSql("SET FOREIGN_KEY_CHECKS=0;\n".$diff."\nSET FOREIGN_KEY_CHECKS=1;", Propel::getConnection($options['connection']));  

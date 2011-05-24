@@ -348,7 +348,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     {
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_la_lb').'.xml';
         
-        file_put_contents($tempPath, $this->definition);
+        afStudioUtil::writeFile($tempPath, $this->definition);
         
         // Needs to validator clear cache
         afStudioConsole::getInstance()->execute('sf appflower:validator-cache frontend cache yes');

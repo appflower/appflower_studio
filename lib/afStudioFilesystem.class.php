@@ -332,7 +332,7 @@ class afStudioFilesystem
         $content = str_replace($beginToken.$key.$endToken, $value, $content, $count);
       }
 
-      file_put_contents($file, $content);
+      afStudioUtil::writeFile($file, $content);
     }
   }
 

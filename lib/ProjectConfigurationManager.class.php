@@ -37,7 +37,7 @@ class ProjectConfigurationManager {
         }
         
         $this->projectConfTemplate['project']['url'] = afStudioUtil::getHost();
-        @file_put_contents($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));
+        afStudioUtil::writeFile($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));
     }
 
 
@@ -83,7 +83,7 @@ class ProjectConfigurationManager {
         	
         	$this->setProjectParams($params);
         	
-        	@file_put_contents($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));
+        	afStudioUtil::writeFile($this->projectConfFilePath, $this->dumpYaml($this->projectConfTemplate));
         	
         	$result['success'] = true;
           $result['message'] = 'Project Settings saved successfully';
