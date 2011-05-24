@@ -155,7 +155,7 @@ class afStudioConsole
 				if(isset($exec))
 				{
 					ob_start();
-					passthru($exec.' 2>&1', $return);
+					passthru('sudo ' . $exec . ' 2>&1', $return);
 					$raw = ob_get_clean();
                                         
                                         $this->lastExecReturnCode = $return;

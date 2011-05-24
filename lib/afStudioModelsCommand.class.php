@@ -141,17 +141,18 @@ class afStudioModelsCommand
 					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;				
 					
 					if ($this->saveSchema()) {
-						$afConsole = afStudioConsole::getInstance();
-						$consoleResult = $afConsole->execute('sf propel:build-model');
-                                                if ($afConsole->wasLastCommandSuccessfull()) {
+					    $afConsole = afStudioConsole::getInstance();
+						$consoleResult = $this->deployOfSchemaChanges();
+						
+                        if ($afConsole->wasLastCommandSuccessfull()) {
 						     $consoleResult .= $afConsole->execute('sf propel:build-form');
-                                                }
-                                                
-                                                if ($afConsole->wasLastCommandSuccessfull()) {
-                                                    $message = 'Added model <b>'.$this->modelName.'</b>!';
-                                                } else {
-                                                    $message = 'Model was propery defined but build-model and/or build-form tasks returned some errors.';
-                                                }
+                        }
+                        
+                        if ($afConsole->wasLastCommandSuccessfull()) {
+                            $message = 'Added model <b>'.$this->modelName.'</b>!';
+                        } else {
+                            $message = 'Model was propery defined but build-model and/or build-form tasks returned some errors.';
+                        }
 						
 						$this->result = array(
                                                     'success' => $afConsole->wasLastCommandSuccessfull(),
@@ -168,9 +169,7 @@ class afStudioModelsCommand
 					
 					if($this->saveSchema())
 					{	
-						$afConsole=afStudioConsole::getInstance();
-						$consoleResult=$afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));		
-						
+						$consoleResult = $this->deployOfSchemaChanges();	
 						$this->result = array('success' => true,'message'=>'Deleted model <b>'.$this->modelName.'</b>!','console'=>$consoleResult);
 					}
 					else
@@ -188,8 +187,7 @@ class afStudioModelsCommand
 					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $renamedModelName;
 					
 					if ($this->saveSchema()) {			
-						$afConsole = afStudioConsole::getInstance();
-						$consoleResult = $afConsole->execute('sf propel:build-model');						
+						$consoleResult = $this->deployOfSchemaChanges();
 						$this->result = array('success' => true,'message'=>'Renamed model\'s phpName from <b>'.$this->modelName.'</b> to <b>'.$renamedModelName.'</b>!','console'=>$consoleResult);
 					} else {
 						$this->result = array('success' => false,'message'=>'Can\'t rename model\'s phpName from <b>' + $this->modelName + '</b> to <b>' + $renamedModelName + '</b>!');
@@ -225,8 +223,7 @@ class afStudioModelsCommand
 						
 						if($this->saveSchema())
 						{			
-							$afConsole=afStudioConsole::getInstance();
-							$consoleResult=$afConsole->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));
+							$consoleResult = $this->deployOfSchemaChanges();
 							
 							$this->result = array('success' => true,'message'=>'Updated model <b>'.$this->modelName.'</b> !','console'=>$consoleResult);
 						}
@@ -671,10 +668,21 @@ class afStudioModelsCommand
 	
     /**
      * Deploy schema changes to DB
+     * 
+     * @return string - Console results
+     * @author Sergey Startsev <startsev.sergey@gmail.com>
      */
 	private function deployOfSchemaChanges() 
 	{
-        afStudioConsole::getInstance()->execute(array('sf propel:insert-sql-diff', 'sf propel:build-model', 'sf cc'));
+	    // $consoleResult = afStudioConsole::getInstance()->execute(array('chmod u+x ../batch/diff_db.php','batch diff_db.php'));     
+        $console = afStudioConsole::getInstance()->execute(array(
+            'sf cc',
+            'sf appflower:validator-cache frontend cache yes',
+            'sf propel:insert-sql-diff', 
+            'sf propel:build-model'
+        ));
+        
+        return $console;
 	}
 	
 	/**
