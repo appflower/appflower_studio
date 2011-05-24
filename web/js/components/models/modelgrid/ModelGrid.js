@@ -716,7 +716,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 						success: function(xhr, opt) {
 							afStudio.vp.unmask('center');							
 							var response = Ext.decode(xhr.responseText);
-							if (response.success) {					
+							if (response.success) {
+								this.fireEvent('alterfield');
 				            	this.getStore().save();	            	
 	        			    	this.fireEvent("logmessage", this, String.format('Model "{0}" was successfully saved.', _this.model));
 							} else {
