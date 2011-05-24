@@ -11,6 +11,8 @@ class afStudioConsole
     public
     $pwd, $uname, $uname_short, $filesystem, $prompt, $whoami;
     
+    private $lastExecReturnCode;
+    
     /**
      * Class instance
      */
@@ -151,9 +153,10 @@ class afStudioConsole
 				if(isset($exec))
 				{
 					ob_start();
-					passthru('sudo '.$exec.' 2>&1', $return);
+					passthru($exec.' 2>&1', $return);
 					$raw = ob_get_clean();
-				
+                                        
+                                        $this->lastExecReturnCode = $return;
 				
 					if ($return > 0)
 					{
@@ -181,7 +184,7 @@ class afStudioConsole
     		$result[]='<li>'."Commands Available :".'</li>';
     		$result[]='<li>'."<strong>".self::getCommands(false)."</strong>".'</li>';
     		$result[]='<li>'."Symfony commands can be run by prefixing with sf<br />Example: sf cc ( clear cache )".'</li>';
-    		$result[]='<li>'."AppFlower Studio tasks commands can be run by prefixing with afs<br />Example 1: afs generate-module appname modulename ( generate a skeleton modulename inside appname )<br />Example 2: afs fix-perms ( fixes the permissions needed by the Studio )".'</li>';
+    		$result[]='<li>'."AppFlower Studio tasks commands can be run by prefixing with afs<br />Example: afs fix-perms ( fixes the permissions needed by the Studio )".'</li>';
     		$result[]='<li>'.str_repeat("-", 20).'</li>';
 		}
 		
@@ -192,5 +195,10 @@ class afStudioConsole
 	{
 		return '<li class="afStudio_command_user">'.$this->prompt.$command.'</li>';
 	}
+        
+        public function wasLastCommandSuccessfull()
+        {
+            return $this->lastExecReturnCode === 0;
+        }
 }
 ?>
