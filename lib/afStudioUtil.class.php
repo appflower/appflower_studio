@@ -252,6 +252,7 @@ class afStudioUtil
     
     /**
      * @author radu
+     * @return boolean status of command runned by afStudioConsole
      */
     public static function writeFile($filePath, $content)
     {
@@ -259,8 +260,9 @@ class afStudioUtil
     	
     	file_put_contents('/tmp/copy-file-'.$unique.'.txt', $content);
     	   	
-    	$console = afStudioConsole::getInstance()->execute('afsbatch copy_file.sh /tmp/copy-file-'.$unique.'.txt '.$filePath);
+        $console = afStudioConsole::getInstance();
+    	$console->execute('afsbatch copy_file.sh /tmp/copy-file-'.$unique.'.txt '.$filePath);
     	
-    	return $console;
+    	return $console->wasLastCommandSuccessfull();
     }
 }

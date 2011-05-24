@@ -45,6 +45,8 @@ class afStudioConsole
     
     /**
      * Retrieve the instance of this class.
+     * 
+     * @return afStudioConsole
      */
     public static function getInstance()
     {

@@ -115,12 +115,15 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             //todo: [radu] validate() is not working as expected !
             //if ($this->validate()) {
                 // Save changes
-                $console = afStudioUtil::writeFile($sPath, $this->definition);
+            
+                // @todo for radu - from lukas :) - you used console output here that was returned by writeFile()
+                // but I changed the code - now writeFile() returns boolean so you have to find another way of getting that console output ;)
+                afStudioUtil::writeFile($sPath, $this->definition);
                 @chmod($sPath, 0755);
                 
                 $message = (!$bNew) ? 'Page has been changed' : 'Page has been created';
                                 
-                $console .= '<br>'.afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
+                $console = afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
                 $return = $this->fetchSuccess($message, $console);
             //} else {
                 // Getting error message from validation results, from $this->message

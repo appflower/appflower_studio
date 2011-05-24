@@ -103,13 +103,8 @@ class afStudioModelsCommand
 	
 	public function saveSchema()
 	{
-		$dump = sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3);
-		
-		if (afStudioUtil::writeFile($this->schemaFile, $dump) > 0) {
-			return true;
-		} else {
-			return false;
-		}
+            $dump = sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3);
+            return afStudioUtil::writeFile($this->schemaFile, $dump);
 	}
 	
 	public function start()
@@ -145,11 +140,24 @@ class afStudioModelsCommand
 					
 					$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;				
 					
-					if ($this->saveSchema()) {			
+					if ($this->saveSchema()) {
 						$afConsole = afStudioConsole::getInstance();
 						$consoleResult = $afConsole->execute('sf propel:build-model');
+                                                if ($afConsole->wasLastCommandSuccessfull()) {
+						     $consoleResult .= $afConsole->execute('sf propel:build-form');
+                                                }
+                                                
+                                                if ($afConsole->wasLastCommandSuccessfull()) {
+                                                    $message = 'Added model <b>'.$this->modelName.'</b>!';
+                                                } else {
+                                                    $message = 'Model was propery defined but build-model and/or build-form tasks returned some errors.';
+                                                }
 						
-						$this->result = array('success' => true, 'message'=>'Added model <b>'.$this->modelName.'</b>!', 'console'=>$consoleResult);						
+						$this->result = array(
+                                                    'success' => $afConsole->wasLastCommandSuccessfull(),
+                                                    'message'=>$message,
+                                                    'console'=>$consoleResult
+                                                );
 					} else {						
 						$this->result = array('success' => false, 'message'=>'Can\'t add model <b>' . $this->modelName . '</b>! Please check schema file permissions.');
 					}
