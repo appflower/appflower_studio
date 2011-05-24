@@ -618,6 +618,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					editor: afStudio.models.TypeBuilder.createEditor(),
 					fieldDefinition: {
 						name: _this.defautHeaderTitle,
+						type: 'varchar',
 						exists: false
 					}
 				});
@@ -635,6 +636,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 					editor: afStudio.models.TypeBuilder.createEditor(),
 					fieldDefinition: {
 						name: _this.defautHeaderTitle,
+						type: 'varchar',
 						exists: false
 					}
 				});
@@ -701,7 +703,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            			clms.push(c.fieldDefinition);
 	            		}	            		
 	            	});
-	            	
+	            	console.log(clms);
 	            	afStudio.vp.mask({region:'center', msg: 'Saving ' + _this.model + ' model...'});
 					Ext.Ajax.request({
 						url: afStudioWSUrls.getModelsUrl(),
@@ -857,7 +859,7 @@ afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
             var newRecord = [];
             var newData = [];
 
-            for (i = 0; i < record.length; i++) {
+            for (var i = 0; i < record.length; i++) {
                 if (data[i]['id'] != null) {
                     newRecord.push(record[i]);
                     newData.push(data[i]);
