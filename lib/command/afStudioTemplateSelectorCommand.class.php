@@ -26,7 +26,7 @@ class afStudioTemplateSelectorCommand extends afBaseStudioCommand
 		{
 			$projectYml['project']['template'] = in_array($templateName,$pluginTemplateYml['template']['types'])?$templateName:$pluginTemplateYml['template']['default'];
         		
-      file_put_contents($projectYmlPath,sfYaml::dump($projectYml,4));
+      afStudioUtil::writeFile($projectYmlPath,sfYaml::dump($projectYml,4));
         	
       $this->result = array('success'=>true,'message'=>'Template was set to '.ucfirst($templateName));
 		}

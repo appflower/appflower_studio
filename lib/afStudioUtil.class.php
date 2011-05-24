@@ -231,12 +231,20 @@ class afStudioUtil
      */
     public static function getTemplateConfig()
     {
-    	$pluginTemplateYml=sfYaml::load(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/config/template.yml');
-    	$projectYml=sfYaml::load(sfConfig::get('sf_root_dir').'/config/project.yml');
+      $pluginTemplateYml=sfYaml::load(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/config/template.yml');
+      $projectYmlPath = sfConfig::get('sf_root_dir').'/config/project.yml';
+    	$projectYml=sfYaml::load($projectYmlPath);
     	
     	if(isset($projectYml['project']['template']))
     	{
     		$pluginTemplateYml['template']['current'] = $projectYml['project']['template']; 
+    	}
+    	else {
+    	  $pluginTemplateYml['template']['current'] = $pluginTemplateYml['template']['default']; 
+    	  
+    	  $projectYml['project']['template'] = $pluginTemplateYml['template']['default'];
+    	  
+    	  afStudioUtil::writeFile($projectYmlPath,sfYaml::dump($projectYml,4));
     	}
     	
     	return $pluginTemplateYml;
