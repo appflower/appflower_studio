@@ -106,7 +106,6 @@ class afsWidgetBuilderWidget {
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
         FirePHP::getInstance(true)->fb($tempPath);
         afStudioUtil::writeFile($tempPath, $xmlBuilder->getXml());
-        chmod($tempPath, 0777);
 
 //        $validator = new XmlValidator(null, false, true);
 //        $validator->readXmlDocument($tempPath, true);
