@@ -79,8 +79,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 			   
 		_this.alterModelAction(function(fData) {
 			mc.loadModelData(fData);
-		});
-		
+		});		
 	}//eo onAlterField
 	
 	/**
