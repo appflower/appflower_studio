@@ -80,7 +80,6 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     	var u = new _this.store.recordType({
             name: '',
             type: 'integer',
-            size : '11',
             required: false
         });
         _this.stopEditing();
@@ -99,7 +98,6 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     	var u = new _this.store.recordType({
             name : '',
             type: 'integer',
-            size : '11',
             required: false
         });
         _this.stopEditing();
