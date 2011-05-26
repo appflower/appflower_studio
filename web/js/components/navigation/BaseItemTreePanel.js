@@ -15,7 +15,7 @@ afStudio.navigation.BaseTreeEditor = Ext.extend(Ext.tree.TreeEditor, {
 afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
-	 * @cfg {String} baseUrl required
+	 * @cfg {String} (Required) baseUrl
 	 */	
 	
 	/**
@@ -197,7 +197,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @protected
 	 */
 	,maskItemTree : function() {
-		this.body.mask('Loading, please Wait...');
+		this.body.mask('Loading, please Wait...', 'x-mask-loading');
 	}//eo maskItemTree
 	
 	/**
