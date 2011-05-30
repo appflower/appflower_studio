@@ -124,7 +124,8 @@ afStudio.cli.Debug = Ext.extend(afStudio.cli.CommandLine, {
     
 	,onFileClick : function(e, t) {
          var _this = this,
-         	     s = this.debugDataView.getStore();
+         	     s = this.debugDataView.getStore(),
+         	     bbar = this.getBottomToolbar();
          	     
         this.maskCli();
         
@@ -138,6 +139,7 @@ afStudio.cli.Debug = Ext.extend(afStudio.cli.CommandLine, {
             }
         });
         this.unmaskCli();        
+        bbar.moveLast();
     }//eo onFileClick
     
 });
