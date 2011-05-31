@@ -18,7 +18,7 @@ afStudio.cli.CommandLineMgr = function() {
 	
 	var auditLogWin = new afStudio.cli.WindowWrapper({
 		title: 'Notifications',
-		iconCls: 'icon-notifications',
+		iconCls: 'icon-debug-auditlog',
 		items: new afStudio.cli.AuditLog()
 	});
 	
