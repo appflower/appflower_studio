@@ -213,7 +213,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				   	  true
 				   );			   	
 			   } else {
-			   	   Ext.Msg.alert('Error', response.content);
+			   	   afStudio.Msg.error(response.content);
 			   }
 		   },
 		   failure: function(xhr, opt) {

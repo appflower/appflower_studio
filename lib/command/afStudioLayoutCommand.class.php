@@ -121,7 +121,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 afStudioUtil::writeFile($sPath, $this->definition);
                 @chmod($sPath, 0755);
                 
-                $message = (!$bNew) ? 'Page has been changed' : 'Page has been created';
+                $message = (!$bNew) ? sprintf('Page "%s" has been changed', $sPage)  : sprintf('Page "%s" has been created', $sPage);
                                 
                 $console = afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
                 $return = $this->fetchSuccess($message, $console);

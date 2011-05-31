@@ -3,23 +3,23 @@ Ext.namespace('afStudio.layoutDesigner');
 /**
  * @class afStudio.layoutDesigner.DesignerPanel
  * @extends Ext.Panel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
-	 * @cfg {Object} layoutMeta required
+	 * @cfg {Object} (Required) layoutMeta
 	 * Layout meta data.
 	 * Actual only for the first page loading,
 	 * any changes inside the page doesn't reflect on layoutMeta data 
 	 */
 
 	/**
-	 * @cfg {String} layoutApp required
+	 * @cfg {String} (Required) layoutApp
 	 * Opened in LD application
 	 */
 
 	/**
-	 * @cfg {String} layoutPage required
+	 * @cfg {String} (Required) layoutPage
 	 * Opened in LD page belongs to {@link #layoutApp} application 
 	 */
 	
@@ -34,16 +34,20 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	,saveLayoutUrl : 'afsLayoutBuilder/save'	
 	
 	/**
-	 * @property {afStudio.layoutDesigner.WidgetSelectorWindow} widgetSelectorWindow  
+	 * @property widgetSelectorWindow
+	 * @type {afStudio.layoutDesigner.WidgetSelectorWindow}  
 	 */
 	
 	/**
-	 * @property {Ext.Window} tabNamePickerWindow
+	 * @property tabNamePickerWindow
+	 * @type {Ext.Window}
 	 */
 	
 	/**
-	 * @property {afStudio.layoutDesigner.view.Page} layoutView
-	 * Layout page view
+	 * Layout page view.
+	 * 
+	 * @property layoutView
+	 * @type {afStudio.layoutDesigner.view.Page}
 	 */	
 	
 	/**
@@ -229,19 +233,7 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 								]
 							}]
 						}
-					}
-					/*FUTURE release
-					,{ 
-						text: 'Re-size',
-						handler: _this.resizeItems, 
-						scope: _this
 					},{
-						text: 'Auto-Adjust', 
-						handler: _this.autoAdjust, 
-						scope: _this
-					}
-					*/
-					,{
 						itemId: 'addNewTab',
 						text: 'Add new Tab' 
 					}]
@@ -251,10 +243,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	        	itemId: 'previewPageBtn',
 	        	iconCls: 'icon-preview'
 	        }]			
-		});		
+		});
 		
 		return {
-			title: 'Layout Designer',
+			title: this.layoutPage || 'Layout Designer',
 			layout: 'fit',
 			tbar: tb,
 			items: {
