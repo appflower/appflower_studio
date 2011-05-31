@@ -46,7 +46,7 @@ class afStudioUserHelper
             // Create new user
             afStudioUser::create($sUsername, $aCreate);
             
-            afsNotificationPeer::log('User has been successfully created', 'user_manager');
+            afsNotificationPeer::log('User has been successfully created', 'afStudioUser');
 
             // Sending email part
             
