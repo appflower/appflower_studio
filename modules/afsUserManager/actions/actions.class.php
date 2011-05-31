@@ -132,7 +132,7 @@ class afsUserManagerActions extends sfActions
                 
                 $aResult = $this->fetchSuccess('User has been successfully updated');
                 
-                afsNotificationPeer::log('User has been successfully updated', 'user_manager');
+                afsNotificationPeer::log('User has been successfully updated', 'afStudioUser');
             } else {
                 if (is_array($validate)) {
                     $aErrors = afUserManagerHelper::mergeErrors($aErrors, $validate);
@@ -178,7 +178,7 @@ class afsUserManagerActions extends sfActions
                 if (afStudioUser::delete($sUsername)) {
                     $aResult = $this->fetchSuccess("User has been deleted");
                     
-                    afsNotificationPeer::log('User has been deleted', 'user_manager');
+                    afsNotificationPeer::log('User has been deleted', 'afStudioUser');
                     
                 } else {
                     $aResult = $this->fetchError("Can't delete user");

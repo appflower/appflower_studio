@@ -79,7 +79,7 @@ class afsAuthorizeActions extends sfActions
                             'load' => 'page'
                         );
                         
-                        afsNotificationPeer::log('Successful login', 'authentication');
+                        afsNotificationPeer::log('Successful login', 'afStudioAuth');
                         
 					} else {
 						$result = array(
@@ -87,7 +87,7 @@ class afsAuthorizeActions extends sfActions
                             'message' => 'The username and/or password is invalid. Please try again.'
                         );
                         
-                        afsNotificationPeer::log('Failed to get authenticated in the system!', 'authentication');
+                        afsNotificationPeer::log('Failed to get authenticated in the system!', 'afStudioAuth');
                         
 					}
 				} else {
@@ -98,7 +98,7 @@ class afsAuthorizeActions extends sfActions
                         'load' => 'page'
                     );
                     
-                    afsNotificationPeer::log('Failed to get authenticated in the system!', 'authentication');
+                    afsNotificationPeer::log('Failed to get authenticated in the system!', 'afStudioAuth');
                 }
                 
             } else {
@@ -110,7 +110,7 @@ class afsAuthorizeActions extends sfActions
                     'load' => 'page'
                 );
                 
-                afsNotificationPeer::log('Successful logout', 'authentication');
+                afsNotificationPeer::log('Successful logout', 'afStudioAuth');
                 
 			}
             
@@ -129,7 +129,7 @@ class afsAuthorizeActions extends sfActions
 				    'load' => 'page'
 				);
 				
-				afsNotificationPeer::log('Successful logout', 'authentication');
+				afsNotificationPeer::log('Successful logout', 'afStudioAuth');
 				
 			}
 		}

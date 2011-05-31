@@ -88,7 +88,7 @@ class ProjectConfigurationManager {
         	$result['success'] = true;
           $result['message'] = 'Project Settings saved successfully';
             
-          afsNotificationPeer::log('Project Settings have been modified','settings');
+          afsNotificationPeer::log('Project Settings have been modified','afStudioConf');
         }
         else {
         	$result['success'] = true;

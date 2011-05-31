@@ -60,7 +60,7 @@ class afsDatabaseQueryActions extends sfActions
         
         $aResult = $this->oDBQueryHelper->processQuery($sQuery, $sConnection, $sType, $nOffset, $nLimit);
         
-        afsNotificationPeer::log('Database query was executed', 'db_query');
+        afsNotificationPeer::log('Database query was executed', 'afStudioDBQuery');
         
         return $this->renderJson($aResult);
     }

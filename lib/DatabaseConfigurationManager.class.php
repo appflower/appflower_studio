@@ -112,7 +112,7 @@ class DatabaseConfigurationManager {
 
         afStudioUtil::writeFile($this->databaseConfFilePath, $this->dumpYaml($confData));
         
-        afsNotificationPeer::log('Database Settings have been modified','settings');
+        afsNotificationPeer::log('Database Settings have been modified','afStudioConf');
         
         if(is_readable($this->databaseConfFilePath))
         {
