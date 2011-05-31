@@ -197,7 +197,7 @@ Ext.override(Ext.BoxComponent, {
 	
 	onLogMessage : function(cmp, message) {
 		
-		afStudio.log(message, "text");
+		afStudio.log(message, "afStudioChange");
 	}//eo onLogMessage 
 });
 
