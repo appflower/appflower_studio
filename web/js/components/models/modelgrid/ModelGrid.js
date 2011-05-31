@@ -583,11 +583,12 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
 	//private
 	,beforeInit : function() {
-		var _this  = this,
-			 data  = _this._data.rows,
-		   fields  = ['id'];
-		
-			var columns = [new Ext.grid.RowNumberer()];
+		var _this   = this,
+			 data   = _this._data.rows,
+		   	fields  = ['id'],
+			modelStructureExists = !Ext.isEmpty(data),
+			columns = [new Ext.grid.RowNumberer()];
+			
 		if (data.length > 0) {
 			
 			for (var i = 0; i < data.length; i++) {
@@ -642,7 +643,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 				fields.push({name: 'c' + i});
 			}
 		}//eo columns building
-
+		
 		_this.store = new Ext.data.Store({
 			reader: new afStudio.models.modelGridPanelReader({
 				root: 'rows',
@@ -696,12 +697,20 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            iconCls: 'icon-save',
 	            handler: function(btn, ev) {	            	
 	            	var cm    = this.getColumnModel(),
-	            	    clms  = [];	            	
+	            	    clms  = [];
+	            	    
 	            	Ext.iterate(cm.config, function(c) {
 	            		if (c.id != 'numberer' && c.fieldDefinition.exists) {
 	            			clms.push(c.fieldDefinition);
-	            		}	            		
+	            		}
 	            	});
+	            	
+	            	if (clms.length) {
+	            		var tbar = this.getTopToolbar();
+	            		tbar.getComponent('insert').enable();
+	            		tbar.getComponent('delete').enable();
+	            	}
+	            	
 	            	afStudio.vp.mask({region:'center', msg: 'Saving ' + _this.model + ' model...'});
 					Ext.Ajax.request({
 						url: afStudioWSUrls.getModelsUrl(),
@@ -732,6 +741,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            scope: this
 	        },'-',{	        	
             	text: 'Insert',
+            	itemId: 'insert',
+            	disabled: !modelStructureExists,
             	iconCls: 'icon-add',
 	            menu: {
 	            	items: [
@@ -743,8 +754,10 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			            handler: Ext.util.Functions.createDelegate(_this.insertBeforeField, _this)
 	            	}]
 	            }	            
-        	},'-',{ 
+        	},'-',{
 	            text: 'Delete',
+	            itemId: 'delete',
+	            disabled: !modelStructureExists,
 	            iconCls: 'afs-icon-delete',
 	            handler: function(btn, ev) {
 	            	var cell = this.getSelectionModel().getSelectedCell();			
