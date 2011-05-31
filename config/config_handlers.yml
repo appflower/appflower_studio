@@ -1,2 +1,3 @@
 config/filters.yml:
-  class:    afFilterConfigHandler
+  class: afFilterConfigHandler
+  file: %SF_ROOT_DIR%/plugins/appFlowerStudioPlugin/lib/config/afFilterConfigHandler.class.php

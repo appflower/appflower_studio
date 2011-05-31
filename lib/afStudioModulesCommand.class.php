@@ -6,6 +6,11 @@
 class afStudioModulesCommand
 {
 	public $request=null,$result=null,$realRoot=null,$app,$moduleName;
+        
+        /**
+         * @var afStudioConsole
+         */
+        private $afConsole;
 							
 	public function __construct()
 	{		
@@ -100,9 +105,20 @@ class afStudioModulesCommand
 				case "addModule":					
 					if($this->app && $this->moduleName)
 					{
-						$consoleResult=$this->afConsole->execute(array('afs generate-module '.$this->app.' '.$this->moduleName,'sf cc'));		
+						$consoleResult=$this->afConsole->execute('sf generate:module '.$this->app.' '.$this->moduleName);		
+                                                $commandOk = $this->afConsole->wasLastCommandSuccessfull();
+                                                if ($commandOk) {
+                                                    $consoleResult .= $this->afConsole->execute('sf cc');		
+                                                    $message = 'Created module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!';
+                                                } else {
+                                                    $message = 'Could not create module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!';
+                                                }
 						
-						$this->result = array('success' => true,'message'=>'Created module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!','console'=>$consoleResult);
+						$this->result = array(
+                                                    'success' => $commandOk,
+                                                    'message'=> $message,
+                                                    'console'=>$consoleResult
+                                                );
 					}
 					else {
 						$this->result = array('success' => false,'message'=>'Can\'t create new module <b>'.$this->moduleName.'</b> inside <b>'.$this->app.'</b> application!');

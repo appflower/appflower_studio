@@ -231,14 +231,38 @@ class afStudioUtil
      */
     public static function getTemplateConfig()
     {
-    	$pluginTemplateConfig=sfYaml::load(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/config/template.yml');
-    	$appTemplateConfig=sfYaml::load(sfConfig::get('sf_root_dir').'/config/template.yml');
+      $pluginTemplateYml=sfYaml::load(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/config/template.yml');
+      $projectYmlPath = sfConfig::get('sf_root_dir').'/config/project.yml';
+    	$projectYml=sfYaml::load($projectYmlPath);
     	
-    	if(isset($appTemplateConfig['template']['current']))
+    	if(isset($projectYml['project']['template']))
     	{
-    		$pluginTemplateConfig['template']['current'] = $appTemplateConfig['template']['current']; 
+    		$pluginTemplateYml['template']['current'] = $projectYml['project']['template']; 
+    	}
+    	else {
+    	  $pluginTemplateYml['template']['current'] = $pluginTemplateYml['template']['default']; 
+    	  
+    	  $projectYml['project']['template'] = $pluginTemplateYml['template']['default'];
+    	  
+    	  afStudioUtil::writeFile($projectYmlPath,sfYaml::dump($projectYml,4));
     	}
     	
-    	return $pluginTemplateConfig;
+    	return $pluginTemplateYml;
+    }
+    
+    /**
+     * @author radu
+     * @return boolean status of command runned by afStudioConsole
+     */
+    public static function writeFile($filePath, $content)
+    {
+      $unique = self::unique();
+    	
+    	file_put_contents('/tmp/copy-file-'.$unique.'.txt', $content);
+    	   	
+        $console = afStudioConsole::getInstance();
+    	$console->execute('afsbatch copy_file.sh /tmp/copy-file-'.$unique.'.txt '.$filePath);
+    	
+    	return $console->wasLastCommandSuccessfull();
     }
 }

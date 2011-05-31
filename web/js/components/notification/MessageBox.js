@@ -12,7 +12,6 @@ afStudio.notification.NotificationWindow = Ext.extend(Ext.Window, {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, {
 				closeAction: 'close',
-				autoHeight: true,
 				plain: false,
 				shadow: false,
 				draggable: false,
@@ -92,10 +91,11 @@ afStudio.notification.NotificationWindow = Ext.extend(Ext.Window, {
 
 afStudio.notification.MessageBox = function() {
 	
-	var showNotification = function(config) {		
+	var showNotification = function(config) {
 	    var win = new afStudio.notification.NotificationWindow(Ext.apply({
 	    	width: 300,
 	    	animateTarget: Ext.getBody(),
+	    	autoScroll: true,
 			autoDestroy: false,
 			notificationType: 'INFO'
 	    }, config));

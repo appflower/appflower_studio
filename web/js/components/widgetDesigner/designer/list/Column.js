@@ -1,7 +1,7 @@
 Ext.ns('afStudio.wd.list');
 
 /**
- * List view action column.
+ * List View action column.
  * 
  * @class afStudio.wd.list.ActionColumn
  * @extends Ext.grid.ActionColumn
@@ -9,6 +9,11 @@ Ext.ns('afStudio.wd.list');
  */
 afStudio.wd.list.ActionColumn = Ext.extend(Ext.grid.ActionColumn, {
 	
+	/**
+	 * Action Column. 
+	 * @constructor
+	 * @param {Object} cfg
+	 */
     constructor : function(cfg) {    	
     	afStudio.wd.list.ActionColumn.superclass.constructor.call(this, cfg);
     	
@@ -31,7 +36,7 @@ afStudio.wd.list.ActionColumn = Ext.extend(Ext.grid.ActionColumn, {
             }
             return v;
         };
-    }	
+    }//eo constructor
 });
 
 

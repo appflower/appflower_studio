@@ -1,14 +1,21 @@
 Ext.ns('afStudio.dbQuery');
 
+/**
+ * afStudio.dbQuery.QueryResultsGrid
+ * 
+ * @class afStudio.dbQuery.QueryResultsGrid
+ * @extends Ext.grid.GridPanel
+ * @author Nikolai
+ */
 afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	/**
-	 * @cfg {Object} queryParam required
+	 * @cfg {Object} (Required) queryParam
 	 * The Query metaData object contains query's parameters
 	 */
 	
 	/**
-	 * @cfg {Object} queryResult required
-	 * Contains query's result set data(first result set limited by "recordsPerPage") and meta data 
+	 * @cfg {Object} (Required) queryResult
+	 * Contains query's result data-set (first result set limited by "recordsPerPage") and meta data 
 	 */
 	
 	/**
@@ -20,8 +27,7 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
 	 * Query URL
 	 */
-	,queryUrl : window.afStudioWSUrls.getDBQueryQueryUrl()
-	
+	,queryUrl : afStudioWSUrls.getDBQueryQueryUrl()	
 	
 	/**
 	 * Loads query result set data
@@ -29,7 +35,7 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	,loadResultsData : function(data) {
 		this.getStore().loadData(data);
-	}
+	}//eo loadResultsData
 	
 	//private
 	,_beforeInitComponent : function() {
@@ -43,7 +49,7 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 		if (metaData.length > 0) {
 			columns = [new Ext.ux.grid.PagingRowNumberer({header: 'Rec #', width: 50})];
 			
-			for (var i = 0; i < metaData.length; i++) {
+			for (var i = 0, len = metaData.length; i < len; i++) {
 				columns.push({
 					header: metaData[i],
 					dataIndex: metaData[i],
@@ -77,7 +83,7 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	        columnLines: true,
 	        viewConfig: {
 	            forceFit: true,
-	            emptyText: "Empty!"
+	            emptyText: "Empty data-set"
 	        },
 	        bbar: pagingBar
 		};
@@ -93,16 +99,16 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 		);				
 		afStudio.dbQuery.DataGrid.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	,_afterInitComponent : function() {
 		var _this = this;
 		
 		_this.on({
+			scope: _this,
 			afterrender: function() { 
 				_this.loadResultsData(_this.queryResult ? _this.queryResult : []);
-			},
-			scope: _this
+			}
 		});
 	}//eo _afterInitComponent
 	

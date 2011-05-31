@@ -68,7 +68,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 				ref: 'designerPanel',
 				widgetMeta: this.widgetMeta,
 				flex: 3
-			},{ 
+			},{
 				xtype: 'container',
 				flex: 1,
 				items: [
@@ -221,7 +221,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var widgetUri = this.widgetMeta.widgetUri,			
 			viRootNode = this.viewInspector.getRootNode();		
 		
-		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);
+		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);			
 	}//eo onPreviewWidgetView
 	
 	/**
@@ -238,7 +238,18 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			vpg	 = this.viewProperty,
 			vit  = this.viewInspector;
 			
-		switch (this.widgetType) {			
+		switch (this.widgetType) {
+			case gf.EDIT:
+				switch (parent.id) {
+					case 'i:fields':
+						vpg.setSource(node.getProperties());
+						(function() {
+							vit.getSelectionModel().select(node);
+						}).defer(100, this);
+					break;
+				}
+			break;
+			
 			case gf.LIST :			
 				switch (parent.id) {
 					case 'i:actions':						
@@ -284,8 +295,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 					case 'i:fields':					
 						var	vCm      = vd.getColumnModel(),		
 							startIdx = vd.getView().getUninitColumn(),
-							endIdx   = vCm.getColumnCount(true);
-						
+							endIdx   = vCm.getColumnCount(true) - 1;
+							
 						if (startIdx != -1) {
 							vpg.setSource(node.getProperties());
 							(function() {
@@ -294,7 +305,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 				
 							vCm.config[startIdx].uninit = false;
 							vCm.config[startIdx].header = node.getProperty('label').get('value');
-							vCm.config[startIdx].name   = node.getProperty('name').get('value');		
+							vCm.config[startIdx].name   = node.getProperty('name').get('value');
 							vCm.moveColumn(startIdx, endIdx);
 							vCm.setHidden(endIdx, false);
 						} else {
@@ -305,7 +316,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 							afStudio.Msg.info('Widget Designer: List View', String.format('Max columns size <u>{0}</u>', vd.maxColumns));
 						}
 					break;
-				}			
+				}
 			break;			
 		}		
 	}//eo onViewInspectorAppendProperty
@@ -325,9 +336,20 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 			vit  = this.viewInspector;
 			
 		switch (this.widgetType) {
+			case gf.EDIT :
+				switch (parent.id) {
+					case 'i:fields':
+						var fn = vit.getRootNode().getFieldsNode();
+				    	if (fn.childIdsOrdered.indexOf(node.id) != -1) {
+					    	fn.childIdsOrdered.remove(node.id);
+				    	}
+						vpg.setSource({});
+					break;
+				}
+			break;
 			
 			case gf.LIST :
-				switch (parent.id) {					
+				switch (parent.id) {
 					case 'i:actions':
 						var actionName = node.getProperty('name').get('value'),
 							aBar       = vd.getTopToolbar().getComponent('actions');							
@@ -363,8 +385,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var vi 		= this.viewInspector,
 			vdCm    = this.designerView.getColumnModel(),
 			viRoot  = vi.getRootNode(),
-			fn      = viRoot.getFieldsNode();
-			
+			fn      = viRoot.getFieldsNode();	
+		
 		if (fn && fn.findChild('text', clm.name)) {
 			//correct indexes having in mind that in column model can be checker (check box sm)
 			if (vdCm.config[0] && vdCm.config[0].id == 'checker') {
@@ -406,11 +428,13 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 */
 	,onListViewDeleteColumn : function(clmName) {
 		var vi = this.viewInspector,
+			vpg	 = this.viewProperty,
 			fn = vi.getRootNode().getFieldsNode(),
 			viClmNode;
 		
 		if (fn && (viClmNode = fn.findChild('text', clmName))) {
 			fn.deleteChild(viClmNode);
+			vpg.setSource({});
 		}		
 	}//eo onListViewDeleteColumn
 	
@@ -421,8 +445,8 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * @param {Number} newSize
 	 */
 	,onListViewColumnResize : function(columnIndex, newSize) {
-		var vd   = this.designerView,
-			vi = this.viewInspector,
+		var vd  = this.designerView,
+			vi  = this.viewInspector,
 			cm  = vd.getColumnModel(),
 			clm = cm.config[columnIndex],
 			fn  = vi.getRootNode().getFieldsNode();

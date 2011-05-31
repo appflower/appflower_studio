@@ -16,6 +16,8 @@
 
 /* "Theme" menu icons */
 .icon-theme{background:url('/appFlowerStudioPlugin/images/application_view_icons.png') no-repeat center left !important;}
+.icon-theme-selector{background:url('/appFlowerStudioPlugin/images/application_side_boxes.png') no-repeat center left !important;}
+.icon-theme-designer{background:url('/appFlowerStudioPlugin/images/application_view_gallery.png') no-repeat center left !important;}
 
 /* "Tools" menu icons */
 .icon-tools{background:url('/appFlowerStudioPlugin/images/wrench-screwdriver.png') no-repeat center left !important; width: 16px;}

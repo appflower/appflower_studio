@@ -13,17 +13,17 @@ afStudio.wd.WidgetFactory = function() {
 			var root;
 	   	    
 	       	switch (type) {
-	           case 'list':
+	           case 'list': case 'grid':
 	               root = new afStudio.wi.ListNode();
 	           break;
 	           
-	           case 'edit':
+	           case 'edit': case 'show':
 	               root = new afStudio.wi.EditNode();
 	           break;
 	           
 	           case 'html':
 	               root = new afStudio.wi.HtmlNode();
-	           break;	           
+	           break;
 	       	}
 	       	
 	       	return root;

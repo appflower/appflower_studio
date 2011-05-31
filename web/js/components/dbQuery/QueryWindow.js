@@ -5,7 +5,7 @@ Ext.ns('afStudio.dbQuery');
  * 
  * @class afStudio.dbQuery.QueryWindow
  * @extends Ext.Window
- * @author Nick
+ * @author Nikolai
  */
 afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	
@@ -13,9 +13,9 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	 * Relayed {@link afStudio.dbQuery.QueryForm#executequery} event listener
 	 * @param {Object} queryResult The query result
 	 */
-	onExecuteQuery : function(queryResult) { 
+	onExecuteQuery : function(queryResult) {
 		this.centerPanel.showQueryResult(queryResult);
-	}
+	}//eo onExecuteQuery
 	
 	/**
 	 * Relayed {@link afStudio.dbQuery.DBStructureTree#dbnodeclick} event listener
@@ -42,7 +42,7 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	 * @param {String} msg The message (defaults to 'Querying...')
 	 */
 	,maskDbQuery : function(msg) {
-		this.body.mask('Querying...');
+		this.body.mask('Querying...', 'x-mask-loading');
 	}
 	
 	/**
@@ -58,8 +58,8 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	
 	/**
 	 * Initializes component
-	 * @return {Object} The configuration object
 	 * @private
+	 * @return {Object} The configuration object 
 	 */
 	,_beforeInitComponent : function() {
 		var _this = this;
@@ -84,7 +84,6 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	        draggable: true, 
 	        plain: true,
 	        modal: true, 
-	        resizable: false,
 	        maximizable: true,
 	        bodyBorder: false, 
 	        border: false,
@@ -96,15 +95,18 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	        ],
 	        
 	        layout:'border'
-		};		
+		};
 	}//eo _beforeInitComponent
 	
-	//private 
+	/**
+	 * Ext Template method
+	 * @private
+	 */
 	,initComponent : function() {
 		Ext.apply(this, Ext.applyIf(this.initialConfig, this._beforeInitComponent()));				
 		afStudio.dbQuery.QueryWindow.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	,_afterInitComponent : function() {
 		var _this = this;
@@ -113,10 +115,9 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 		_this.relayEvents(_this.northPanel, ['executequery']);
 		
 		_this.on({
-			'dbnodeclick': _this.onDBNodeClick,
-			'executequery': _this.onExecuteQuery,
-			scope: _this			
+			scope: _this,
+			dbnodeclick: _this.onDBNodeClick,
+			executequery: _this.onExecuteQuery
 		})
-	}//eo _afterInitComponent
-	
+	}//eo _afterInitComponent	
 });

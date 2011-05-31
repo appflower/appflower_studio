@@ -49,7 +49,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				
 		var formItems = [
 			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<b>This wizard will help guide you through a few steps to setup your new AppFlower Project.</b><br><br>Please choose your project name.', style: 'margin-bottom: 15px;',},
-			{xtype:'textfield', enableKeyEvents:true, fieldLabel: 'Project name', anchor: '96%', name: 'name', allowBlank: false, vtype: 'uniqueNode', 
+			{xtype:'textfield', enableKeyEvents:true, fieldLabel: 'Project name<font color=red>*</font>', anchor: '96%', name: 'name', allowBlank: false, vtype: 'uniqueNode', 
 				listeners: {
 					keyup: function(field,e) {	
 						var slug = afStudio.createSlug(field.getValue());
@@ -126,7 +126,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 							}
 						}
 					}
-            	}
+        }
 			},
 			height: 200,
 			style: 'background-color:white;'
@@ -134,7 +134,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				
 		var formItems = [
 			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please select the Web server root folder. The project will be created as a sub-folder to this path, with your project name.', style: 'margin-bottom: 15px;',},
-			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small>'},
+			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small><br>'},
 			this.tree,
 			{xtype:'hidden', name: 'path'}
 		];
@@ -192,6 +192,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	    });
 	    
 	    store.loadData(myData);		
+	    
 		  this.dataview = new Ext.DataView({
 	        itemSelector: 'div.thumb-wrap',
 	        style:'overflow:auto',
@@ -223,12 +224,46 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	initForm4: function(){
 		var formItems = [
 		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please add your first user for this new project.', style: 'margin-bottom: 15px;',},
-			{name: 'first_name', fieldLabel: 'First Name', value: afStudioUser.first_name},
-			{name: 'last_name', fieldLabel: 'Last Name', value: afStudioUser.last_name},
-			{name: 'username', fieldLabel: 'Username', value: afStudioUser.username},
-			{name: 'password', inputType: 'password', fieldLabel: 'Password'},
-			{name: 'email', fieldLabel: 'Email', vtype: 'email', value: afStudioUser.email},
-			{name: 'role', inputType: 'hidden', value: 'admin'},
+		  {xtype: 'panel', layout: 'column', 
+				border: false, bodyBorder: false,
+				defaults: {border: false, bodyBorder: false},
+				items: [
+					{xtype: 'panel', columnWidth: 0.5, layout: 'form', style: 'margin-right: 5px;',
+						
+						items: [
+						{xtype: 'textfield', name: 'first_name', fieldLabel: 'First Name<font color=red>*</font>', value: afStudioUser.first_name, allowBlank: false, anchor: '92%'}
+						]
+					},
+					{xtype: 'panel', layout: 'form', columnWidth: 0.5,
+						items: [
+						{xtype: 'textfield', name: 'last_name', fieldLabel: 'Last Name<font color=red>*</font>', value: afStudioUser.last_name, allowBlank: false, anchor: '92%'}
+						]
+					},
+					{xtype: 'panel', columnWidth: 0.5, layout: 'form', style: 'margin-right: 5px;',
+						
+						items: [
+						{xtype: 'textfield', name: 'username', fieldLabel: 'Username<font color=red>*</font>', value: afStudioUser.username, allowBlank: false, anchor: '92%'},
+						]
+					},
+					{xtype: 'panel', layout: 'form', columnWidth: 0.5,
+						items: [
+						{xtype: 'textfield', name: 'email', fieldLabel: 'Email<font color=red>*</font>', vtype: 'email', value: afStudioUser.email, allowBlank: false, anchor: '92%'},
+						]
+					},
+					{xtype: 'panel', columnWidth: 0.5, layout: 'form', style: 'margin-right: 5px;',
+						
+						items: [
+						{xtype: 'textfield', name: 'password', inputType: 'password', fieldLabel: 'Password<font color=red>*</font>', allowBlank: false, anchor: '92%'}
+						]
+					},
+					{xtype: 'panel', layout: 'form', columnWidth: 0.5,
+						items: [
+						{xtype: 'textfield', name: 'repassword', inputType: 'password', fieldLabel: 'Retype Password<font color=red>*</font>', allowBlank: false, vtype: 'checkPassword', anchor: '92%'}
+						]
+					}
+				]
+			},
+			{name: 'role', inputType: 'hidden', value: 'admin'}
 		];
 		
 		this.form4 = new Ext.FormPanel({
@@ -237,7 +272,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
 			hidden: true,
-			defaults: {allowBlank: false, anchor: '95%'},
+			defaults: {allowBlank: false, anchor: '100%'},
 			items: formItems
 		});
 	},
@@ -245,27 +280,27 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	//Database form
 	initForm5: function(){
 		var formItems = [
-		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please fill out the database configuration fields below for AppFlower being able to connect to your database service.', style: 'margin-bottom: 15px;',},			
-			{xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false},
+		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please fill out the database configuration fields below for AppFlower being able to connect to your database service.', style: 'margin-bottom: 15px;', anchor: '94%'},			
+			{xtype:'textfield', fieldLabel: 'Database<font color=red>*</font>', anchor: '96%', name: 'database', allowBlank: false, vtype: 'database'},
 			{xtype: 'panel', layout: 'column', 
 				border: false, bodyBorder: false,
 				defaults: {border: false, bodyBorder: false},
 				items: [
-					{xtype: 'panel', columnWidth: 0.8, layout: 'form', style: 'margin-right: 5px;',
+					{xtype: 'panel', columnWidth: 0.8, layout: 'form',
 						
-						items: [{xtype: 'textfield', fieldLabel: 'Host', name: 'host', anchor: '92%', allowBlank: false}]
+						items: [{xtype: 'textfield', fieldLabel: 'Host<font color=red>*</font>', name: 'host', anchor: '92%', allowBlank: false, vtype: 'host', value: 'localhost'}]
 					},
 					{xtype: 'panel', width: 100, layout: 'form', labelWidth: 35, columnWidth: 0.2,
-						items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '100%', allowBlank: true}]
+						items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '92%', allowBlank: true, vtype:'port', value:'3306'}]
 					}
 				]
 			},
-			{xtype:'textfield', fieldLabel: 'Username', anchor: '96%', name: 'username', allowBlank: false},
-			{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password'},
+			{xtype:'textfield', fieldLabel: 'Username<font color=red>*</font>', anchor: '96%', name: 'username', allowBlank: false,vtype:'alphanum'},
+			{xtype:'textfield', fieldLabel: 'Password<font color=red>*</font>', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password',vtype:'alphanum'}
 		];
 		
 		this.form5 = new Ext.FormPanel({
-		    url: '',
+		  url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -282,7 +317,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		];
 		
 		this.form6 = new Ext.FormPanel({
-		    url: '',
+		  url: '',
 			defaultType: 'textfield',
 			width: 480, labelWidth: 70,
 			frame: true, title: false,
@@ -296,42 +331,99 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	
 	next:function(){
 		if (this.items.get(this.currentItem).getForm().isValid()) 
-		{
-			if (this.currentItem==4) // checking if user exist
+		{					
+		  if (this.currentItem==3) // setting db values and virtual host value
+  		{
+  			var name = this.form1.getForm().findField('name').getValue();
+  			var slug = afStudio.createSlug(name);
+  			var path = this.form2.getForm().findField('path').getValue();
+  			var html = '<b>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</b><br><br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'.mydomain.com</b> in your browser.<br><br>Here is an example:<br>';
+  					
+  			html+='<pre><code>&lt;VirtualHost *:80&gt;<br>&nbsp;&nbsp;ServerName '+slug+'.mydomain.com<br>&nbsp;&nbsp;DocumentRoot '+path+'/web<br>&nbsp;&nbsp;DirectoryIndex index.php<br>&nbsp;&nbsp;Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"<br><br>&nbsp;&nbsp;&lt;Directory "'+path+'/web"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;AllowOverride All<br>&nbsp;&nbsp;&nbsp;&nbsp;Allow from All<br>&nbsp;&nbsp;&lt;/Directory&gt;<br>&lt;/VirtualHost&gt;</code></pre>';
+  			
+  			this.form6.getForm().findField('infor').update(html);
+  			
+  			this.form5.getForm().findField('database').setValue(slug);
+  			
+  			if(this.form5.getForm().findField('username').getValue()=='')
+  			this.form5.getForm().findField('username').setValue(this.form4.getForm().findField('username').getValue());
+  			if(this.form5.getForm().findField('password').getValue()=='')
+  			this.form5.getForm().findField('password').setValue(this.form4.getForm().findField('password').getValue());
+  		}
+		  	
+		  if (this.currentItem==4) // checking database
 			{
+			  var form5Values = this.form5.getForm().getValues();
+			  
 				var _this = this;
 				Ext.Ajax.request({
-					url: window.afStudioWSUrls.getCheckUserExistUrl(),
+					url: window.afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl(),
 					params: { 
-						username: this.form4.getForm().findField('username').getValue(),
-						user: Ext.encode(this.form4.getForm().getValues()),
+						form: Ext.encode(form5Values),
 					},
 					success: function(result,request){			   
 						var obj = Ext.decode(result.responseText);
 						if (!obj.success) {
-							_this.form4.getForm().findField(obj.field).markInvalid(obj.message);
-							return '';
+						  for(var i in obj.fields)
+						  {
+						    if(obj.fields[i].fieldName)
+						    {
+							    _this.form5.getForm().findField(obj.fields[i].fieldName).markInvalid(obj.fields[i].error);
+						    }
+						  }
+							return;
 						}
-						_this.nextForm();
+						else
+						{
+						  //contains boolean value
+						  _this.databaseExist = obj.databaseExist;
+						  
+						  switch(_this.databaseExist)
+						  {
+						    case true:
+						      Ext.Msg.show({
+                     title:'Database',
+                     msg: 'Database <b>'+form5Values['database']+'</b> already exist. Do you want to overwrite it?',
+                     buttons: Ext.Msg.YESNO,
+                     fn: function(btn)
+                     {
+                       if(btn == 'yes')
+                       {
+                         _this.nextForm();
+                       }
+                       else
+                       {
+                         _this.form5.getForm().findField('database').markInvalid('You have chosen to not overwrite this existing database. Please choose another database name');
+                       }
+                     },
+                     animEl: 'elId',
+                     icon: Ext.MessageBox.QUESTION
+                  });
+						      break;
+						    case false:
+						      Ext.Msg.show({
+                     title:'Database',
+                     msg: 'Database <b>'+form5Values['database']+'</b> does not exist and it will be generated automatically.',
+						         buttons: Ext.Msg.OK,
+                     fn: function(btn)
+                     {
+                       _this.nextForm();
+                     }
+						      });
+						      break;
+						  }
+						}
 				   }
 				});
 				
-				return '';
+				return;
 			}
-			
+		  
 			this.nextForm();
 		}
 	},
 	
-	nextForm: function(){
-		if (this.currentItem==3)
-		{
-			var name = this.form1.getForm().findField('name').getValue();
-			var path = this.form1.getForm().findField('path').getValue();
-			var html = '<div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Now please create a Virtual Host inside your Apache configuration file (httpd.conf, apache.conf ), that will read the path to the newly create project. This way, you\'ll have direct access to your new project, by accessing "'+name+'.local" in your browser.</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Here is an example:</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;VirtualHost *:80&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">ServerName '+name+'.local</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">DocumentRoot '+path+'/web</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">DirectoryIndex index.php</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;"><br></span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;Directory "'+path+'/web"&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&nbsp;AllowOverride All</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&nbsp;Allow from All</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;/Directory&gt;</span></font></div><div><font face="tahoma, arial, helvetica, sans-serif"><span style="font-size: 12px;">&lt;/VirtualHost&gt;</span></font></div>';
-			this.form6.getForm().findField('infor').update(html);
-		}
-		
+	nextForm: function(){				
 		this.items.get(this.currentItem).hide();
 		this.currentItem++;
 		this.items.get(this.currentItem).show();
@@ -349,29 +441,32 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	
 	save:function(){ // save
 		var _this = this;
+		
+		var mask = new Ext.LoadMask(this.getEl(), {msg: "<b>Creating new project</b> <br>Please wait..",removeMask:true});
+    mask.show();
+		
 		Ext.Ajax.request({
 			url: window.afStudioWSUrls.getProjectCreateWizardUrl(),
 			params: { 
 				name: this.form1.getForm().findField('name').getValue(),
-				path: this.form1.getForm().findField('path').getValue(),
-				template: this.dataview.getSelectedRecords()[0].get('name'),
+				path: this.form2.getForm().findField('path').getValue(),
+				template: this.dataview.getSelectedRecords()[0].get('name').toLowerCase(),
 				
-				username: this.form2.getForm().findField('username').getValue(),
-				user: Ext.encode(this.form2.getForm().getValues()),
-				
-				database: this.form3.getForm().findField('database').getValue(),
-				host: this.form3.getForm().findField('host').getValue(),
-				port: this.form3.getForm().findField('port').getValue(),
-				db_user: this.form3.getForm().findField('username').getValue(),
-				db_pass: this.form3.getForm().findField('password').getValue(),
+				userForm: Ext.encode(this.form4.getForm().getValues()),
+				databaseForm: Ext.encode(this.form5.getForm().getValues()),
+				databaseExist: this.databaseExist
 			},
 			success: function(result,request){			   
 				var obj = Ext.decode(result.responseText);
 				if (obj.success) {
-					Ext.Msg.alert('Success', obj.message);
+					afStudio.Msg.info(obj.message);
 				} else {
-					Ext.Msg.alert('Failure', obj.message);
+					afStudio.Msg.error(obj.message);
 				}
+				
+				afStudio.updateConsole(obj.console);
+								
+				mask.hide();
 				
 				_this.close();
 		   },
@@ -390,16 +485,23 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				this.setTitle('Select Project\'s Web Server Root Folder');
 				this.buttons[0].show();
 				this.buttons[1].show();
+				this.buttons[2].hide();
 				break;
 			case 2:
 				this.setTitle('Select Project\'s Template');
+				this.buttons[1].show();
+				this.buttons[2].hide();
 				break;
 			case 3:
 				this.setTitle('Create Your New Studio User');
+				this.buttons[1].show();
+				this.buttons[2].hide();
 				break;
 			case 4:
 			  this.setTitle('Setup Your Database Configuration');
-				break;
+			  this.buttons[1].show();
+				this.buttons[2].hide();
+			  break;
 			case 5:
 				this.setTitle('Setup A Virtual Host');
 				this.buttons[1].hide();
@@ -414,22 +516,59 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 
 
 Ext.apply(Ext.form.VTypes, {
-    uniqueNode : function(value, field) {
+    uniqueNode: function(value, field) {
     	var tree = field.ownerCt.ownerCt.tree;
     	var currentNode = tree.getSelectionModel().getSelectedNode();
     	var slug = afStudio.createSlug(value);
-        if(currentNode.childNodes)
-		{
-			for(var i=0;i<currentNode.childNodes.length;i++)
-			{
-				if(!currentNode.childNodes[i].isLeaf()&&currentNode.childNodes[i].text == slug)
-				{
-					return false;
-				}
-			}
-		}
-		return true;
+      if(currentNode.childNodes)
+  		{
+  			for(var i=0;i<currentNode.childNodes.length;i++)
+  			{
+  				if(!currentNode.childNodes[i].isLeaf()&&currentNode.childNodes[i].text == slug)
+  				{
+  					return false;
+  				}
+  			}
+  		}
+    	return true;
     },
  
-    uniqueNodeText : 'Path to Project already exist! Please choose another Project Name!'
+    uniqueNodeText : 'Path to Project already exist! Please choose another Project Name!',
+    
+    checkPassword: function(value, field) {
+        if(field.ownerCt.ownerCt.ownerCt.getForm().findField('password').getValue()!=value)
+				{				 
+				  return false;
+				}
+				return true;
+    },
+    
+    checkPasswordText : 'Retype Password value does not match Password value',
+
+    database: function(value, field)
+    {
+        return /^[a-zA-Z0-9_\-]+$/.test(value);
+    },
+    
+    databaseText : 'Database should only contain letters, numbers, _, -',
+    
+    databaseMask : /[a-z0-9_\-]/i,
+    
+    host: function(value, field)
+    {
+        return /^[a-zA-Z0-9_\-\.]+$/.test(value);
+    },
+    
+    hostText : 'Host should only contain letters, numbers, dots, _, -, ',
+    
+    hostMask : /[a-z0-9_\-\.]/i,
+    
+    port: function(value, field)
+    {
+        return /^[0-9]+$/.test(value);
+    },
+    
+    portText : 'Port should only contain numbers',
+    
+    portMask : /[0-9]/i
 });

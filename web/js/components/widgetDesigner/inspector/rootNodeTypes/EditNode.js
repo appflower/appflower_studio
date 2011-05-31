@@ -18,6 +18,44 @@ afStudio.wi.EditNode = Ext.extend(afStudio.wi.ObjectRootNode, {
         return node;
 	}//eo getNodeConfig
 	
+    /**
+     * Creates all required this node children.
+     * template method
+     * @override
+     */
+	,addRequiredChilds : function() {
+        afStudio.wi.ListNode.superclass.addRequiredChilds.apply(this);
+        
+		this.appendChild([
+			this.buildActionsNode(afStudio.wi.ActionNode)
+		]);
+	}//eo addRequiredChilds	
+	
+    /**
+     * Creates and Instantiates <b>i:action</b> node.
+     * @param {Function} actionNodeConstructor The {@link afStudio.wi.ActionNode} constructor 
+     * @return {afStudio.wi.CollectionNode} instanciated action node object, descendant of CollectionNode
+     */
+    ,buildActionsNode : function(actionNodeConstructor) {
+        var actionsNode = afStudio.wi.NodeBuilder.createCollectionNode({
+           id: 'i:actions',
+           text: 'Actions',
+           metaField: 'i:actions',
+           createChildConstructor: actionNodeConstructor,
+           childNodeId: 'i:action',
+           addChildActionLabel: 'Add action',
+           dumpEvenWhenEmpty: false
+        });
+        
+        return new actionsNode;
+    }//eo buildActionsNode	
+	
+	/**
+     * Creates fields node.
+     * template method
+     * @override
+     * @return {afStudio.wi.FieldsNode} instanciated fields node object.
+     */
     ,buildFieldsNode : function() {    			
         var fieldsNode = afStudio.wi.NodeBuilder.createCollectionNode({
         	text: 'Fields',

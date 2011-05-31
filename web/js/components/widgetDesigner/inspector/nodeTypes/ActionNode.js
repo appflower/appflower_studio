@@ -48,7 +48,7 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
                 scope: this
             }]
         });
-    }//eo createContextMenu    
+    }//eo createContextMenu   
     
     /**
      * @protected

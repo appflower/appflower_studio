@@ -278,7 +278,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
                 propertyValue = 'true';
             }
             
-            if (!Ext.isEmpty(property.id)) {
+            if (!Ext.isEmpty(property.id) && propertyValue != '' && propertyValue != 'false') {
             	data[property.id] = propertyValue;	
             }
         }

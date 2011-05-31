@@ -15,7 +15,7 @@ afStudio.navigation.BaseTreeEditor = Ext.extend(Ext.tree.TreeEditor, {
 afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
-	 * @cfg {String} baseUrl required
+	 * @cfg {String} (Required) baseUrl
 	 */	
 	
 	/**
@@ -197,7 +197,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @protected
 	 */
 	,maskItemTree : function() {
-		this.body.mask('Loading, please Wait...');
+		this.body.mask('Loading, please Wait...', 'x-mask-loading');
 	}//eo maskItemTree
 	
 	/**
@@ -632,7 +632,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			   afStudio.vp.unmask('center');
 			   var response = Ext.decode(xhr.responseText);
 
-			   var message = response.content || response.message || 'Operation was successfully processed!',
+			   var message = response.content || response.message || (response.success ? 'Operation was successfully processed!' : 'Some error occured.'),
 			   	   msgTitle = this.title || '';
 			   
 			   if (response.success) {

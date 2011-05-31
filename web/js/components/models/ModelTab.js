@@ -79,8 +79,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 			   
 		_this.alterModelAction(function(fData) {
 			mc.loadModelData(fData);
-		});
-		
+		});		
 	}//eo onAlterField
 	
 	/**
@@ -118,10 +117,10 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 			schema: _this.schemaName,			
             storeProxy: new Ext.data.HttpProxy({
                 api: {
-                	read:    window.afStudioWSUrls.getModelGridDataReadUrl(mdl),
-                    create:  window.afStudioWSUrls.getModelGridDataCreateUrl(mdl),
-                    update:  window.afStudioWSUrls.getModelGridDataUpdateUrl(mdl),
-                    destroy: window.afStudioWSUrls.getModelGridDataDeleteUrl(mdl)
+                	read:    afStudioWSUrls.getModelGridDataReadUrl(mdl),
+                    create:  afStudioWSUrls.getModelGridDataCreateUrl(mdl),
+                    update:  afStudioWSUrls.getModelGridDataUpdateUrl(mdl),
+                    destroy: afStudioWSUrls.getModelGridDataDeleteUrl(mdl)
                 }
             })
 		});
@@ -160,7 +159,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 		);				
 		afStudio.models.ModelTab.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	/**
 	 * Initializes events & does post configuration
@@ -175,13 +174,11 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 		this.relayEvents(md, ['alterfield']);
 		
 		_this.on({
-			'altermodel' : Ext.util.Functions.createDelegate(_this.onAlterModel, _this),
-			'alterfield' : Ext.util.Functions.createDelegate(_this.onAlterField, _this)
-		});		
-		
-	
-	}//eo _afterInitComponent
-	
+			scope: _this,
+			altermodel: _this.onAlterModel,
+			alterfield: _this.onAlterField
+		});	
+	}//eo _afterInitComponent	
 });
 
 /**

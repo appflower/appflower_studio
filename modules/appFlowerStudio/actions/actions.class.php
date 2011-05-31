@@ -48,7 +48,7 @@ class appFlowerStudioActions extends sfActions
   			{
   				if(is_writable($file))
   				{
-  					if(@file_put_contents($file,$code))
+  					if(afStudioUtil::writeFile($file,$code))
 					{
 						return $this->renderText(json_encode(array('success'=>true)));
 					}
@@ -133,18 +133,14 @@ class appFlowerStudioActions extends sfActions
 
 	public function executeCssfilesSave(){
 		$result=true;
-		$JDATA=file_get_contents("php://input");
+		
+		$content=file_get_contents("php://input");
+		
 		$cssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
-		//echo $JDATA;
+		
 		$node=$this->hasRequestParameter('node')?$this->getRequestParameter('node'):"";
-		try{
-			$fp = fopen($cssPath.$node,"w");
-			if(!$fp)throw new Exception("file open error");
-			if(!fWrite($fp,$JDATA))throw new Exception("file write error");
-			if(!fclose($fp))throw new Exception("file close error");
-		}catch(Exception $e){
-			$result=false;	
-		}
+		
+		afStudioUtil::writeFile($cssPath.$node,$content);
 
 	 	if($result) {
 		    $success = true;
@@ -445,12 +441,15 @@ class appFlowerStudioActions extends sfActions
 
 	public function executeWelcome($request)
 	{		
-		$data = array();
-		$vimeoService = new VimeoInstanceService();
       	try {
+		$vimeoService = new VimeoInstanceService();
         	$data = $vimeoService->getDataFromRemoteServer();        	
       	} catch (Exception $e) { 
+            if (sfConfig::get('sf_environment') == 'dev') {
+                throw $e;
+            } else {
       		$data = array();
+            }
       	}        
 		$message = $this->getPartial('welcome', array('data'=>$data));		
         $info = array(
@@ -473,33 +472,16 @@ class appFlowerStudioActions extends sfActions
         return $this->renderJson($aResult);
 	}
 	
+	public function executeCreateProjectWizardCheckDatabase($request)
+	{
+	   $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));        
+     return $this->renderJson($aResult);
+	}
+	
 	public function executeCreateProjectWizard($request)
 	{        
-		$result = afStudioCommand::process('createProject', 'save', array('request'=>$request));
-        if (!$result['success']) {
-        	return $this->renderJson($result);
-        }
-        
-        $result = afStudioCommand::process('templateSelector', 'update',array('request'=>$request));
-		if (!$result['success']) {
-        	return $this->renderJson($result);
-        }
-		
-        // save db settings
-        $dcm = new DatabaseConfigurationManager();
-        $dcm->setDatabaseConnectionParams(array('database'=>$request->getParameter('database'), 'host'=>$request->getParameter('host'), 'port'=>$request->getParameter('port'), 'username'=>$request->getParameter('db_user'), 'password'=>$request->getParameter('db_pass')));
-        $result = $dcm->save();
-        if (!$result) {
-            $info=array('success'=>false, "message"=>'Error while saving file to disk!');
-        	return $this->renderJson(json_encode($info));
-        }
-        
-		$result = afStudioUserHelper::createNewUser($request);
-		if (!$result['success']) {
-        	return $this->renderJson($result);
-        }
-        
-        return array('success' => true, 'message' => 'Project created.');
+		$result = afStudioCommand::process('createProject', 'saveWizard', array('request'=>$request));
+    return $this->renderJson($result);
 	}
 	
 }

@@ -58,11 +58,13 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 					items: [
 						{
 							text: 'Template Selector',
+							iconCls: 'icon-theme-selector',
 							handler: function(){
 								(new afStudio.TemplateSelector()).show();
 							}
 						},{
 							text: 'Template Designer',
+							iconCls: 'icon-theme-designer',
 							handler: function (b, e) {
 								(new afStudio.TemplateDesigner()).show();
 							}
@@ -87,13 +89,16 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						handler: function (b, e) {
 							(new afStudio.dbQuery.QueryWindow()).show();
 						}
-					},{
+					}
+					/*
+					For the future release.  
+					{
 						text: 'Git',
 						iconCls: 'icon-tools-git'
 					},{
 						text: 'Snapshots',
 						iconCls: 'icon-tools-snapshot'
-					}]
+					}*/]
 				}
 			},
 				/*{xtype: 'tbseparator'},
@@ -134,13 +139,14 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						iconCls: 'icon-run-run',
 						scope: _self,
 						handler: _self.runProject
-					},{
+					}
+					/*{
 						text: 'Re-build', 
 						iconCls: 'icon-run-rebuild', 
 						handler: function() { 
 							afStudio.Msg.info('Re-build button pressed'); 
 						}
-					}]
+					}*/]
 				}
 			},{
 				xtype: "tbfill"
@@ -183,7 +189,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			text: 'Create new project',
 			iconCls: 'icon-studio-create-project',
 			handler: function (b, e) {
-				(new afStudio.CreateProject()).show();
+				(new afStudio.CreateProjectWizard()).show();
 			}
 		});
 							

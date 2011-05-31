@@ -11,12 +11,12 @@ Ext.ns('afStudio.models');
 afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	
 	/**
-	 * @cfg {String} model required
+	 * @cfg {String} (Required) model
 	 * This model name
 	 */
 	
 	/**
-	 * @cfg {String} schema required
+	 * @cfg {String} (Required) schema
 	 * This model's schema name
 	 */
 	
@@ -30,11 +30,11 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			   rs = s.getRange(),
 		 aRecords = [];
 				 
-		Ext.each(rs, function(i, idx){
+		Ext.each(rs, function(i, idx) {
 			aRecords.push(i.data);
 		});
 		
-		afStudio.vp.mask({region:'center', msg:'Altering ' + _this.model + ' model...'});
+		afStudio.vp.mask({region:'center', msg: 'Altering ' + _this.model + ' model...'});
 		
 		Ext.Ajax.request({
 			url: url,
@@ -45,29 +45,26 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				fields: Ext.encode(aRecords)
 			},
 			success: function(xhr, opt) {
-				if(_this.ownerCt && _this.ownerCt._node)
-            		var message = "model "+_this.ownerCt._node.text+" Config Saved";
-            	else 
-            		var message = "model Config Saved";
-				_this.fireEvent("logmessage",_this,message);
+				afStudio.vp.unmask('center');
 				
 				var response = Ext.decode(xhr.responseText);
-				afStudio.vp.unmask('center');
+				
+				var message = String.format('"{0}" model structure was saved', _this.model);
+				_this.fireEvent("logmessage", _this, message);
+				
 				if (response.success) {					
-					s.commitChanges();					
+					afStudio.Msg.info(response.message);
+					s.commitChanges();
 					_this.fireEvent('altermodel');
-					
-	            	
 				} else {
 					_this.fireEvent('altermodelexception', xhr);
-					Ext.Msg.alert('Warning', response.message);
+					afStudio.Msg.warning(response.message);
 				}
 			},
-			failure: function(xhr, opt) {
-				
+			failure: function(xhr, opt) {				
 				afStudio.vp.unmask('center');
 				_this.fireEvent('altermodelfailure', xhr);				
-				Ext.Msg.alert('Failure', 'Status: ' + xhr.status);
+				afStudio.Msg.error('Status: ' + xhr.status);
 			}
 		});
 	}//eo saveModel
@@ -76,20 +73,19 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * Inserts row after the selection
 	 */
 	,insertAfterField : function() {
-		var _this = this,		
+		var _this = this,
     		cell = _this.getSelectionModel().getSelectedCell(),
-    		index = cell ? cell[0] + 1 : 0; 
+    		index = cell ? cell[0] + 1 : 0;
     	
     	var u = new _this.store.recordType({
-            name : '',
-            type: 'INT',
-            size : '11',
+            name: '',
+            type: 'integer',
             required: false
         });
         _this.stopEditing();
         _this.store.insert(index, u);
 		_this.startEditing(index , cell ? cell[1] : 0);		
-	}
+	}//eo insertAfterField
 	
 	/**
 	 * Inserts row before the selection
@@ -101,14 +97,13 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     	
     	var u = new _this.store.recordType({
             name : '',
-            type: 'INT',
-            size : '11',
+            type: 'integer',
             required: false
         });
         _this.stopEditing();
         _this.store.insert(index, u);
 		_this.startEditing(index, cell ? cell[1] : 0);		
-	}
+	}//eo insertBeforeField
 	
 	/**
 	 * Deletes field (row) from the grid
@@ -120,7 +115,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	    	var r = _this.store.getAt(cell[0]);
 	    	_this.store.remove(r);	        
 	    }	    		
-	}
+	}//eo deleteField
 	
 	/**
 	 * Creates Boolean Editor
@@ -144,7 +139,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
 			}
 		}
-	}
+	}//eo booleanEditorBuilder
 	
 	/**
 	 * Creates TypeComboBox Editor
@@ -201,7 +196,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		}
 		
 		var fieldsStore = new Ext.data.JsonStore({			
-			url: window.afStudioWSUrls.getModelsUrl(),
+			url: afStudioWSUrls.getModelsUrl(),
 			autoLoad: false,
 		    baseParams: {
 		    	xaction: 'read',

@@ -20,9 +20,10 @@ afStudio.dbQuery.TableModelTab = Ext.extend(Ext.TabPanel, {
 	 * @cfg {String} modelUrl required (defaults to '/appFlowerStudio/models')
 	 * Base URL for models 
 	 */
-	modelUrl : window.afStudioWSUrls.getModelsUrl()
+	modelUrl : afStudioWSUrls.getModelsUrl()
 	
 	,createStructureGrid : function(metaData) {
+		
 	   	return new afStudio.dbQuery.StructureGrid({	   		
 			itemId: 'structure-grid',
 			storeDataUrl: this.modelUrl,
@@ -39,9 +40,10 @@ afStudio.dbQuery.TableModelTab = Ext.extend(Ext.TabPanel, {
 	 * @return {afStudio.dbQuery.DataGrid} modelData grid
 	 */
 	,createDataGrid : function(metaData) {
+		
 	   	return new afStudio.dbQuery.DataGrid({	   		
 			itemId: 'data-grid',
-			storeDataUrl: window.afStudioWSUrls.getModelGridDataReadUrl(this.modelName),
+			storeDataUrl: afStudioWSUrls.getModelGridDataReadUrl(this.modelName),
 			metaData: metaData,
 			model: this.modelName,
 			schema: this.schemaName
@@ -78,7 +80,7 @@ afStudio.dbQuery.TableModelTab = Ext.extend(Ext.TabPanel, {
 		);				
 		afStudio.dbQuery.TableModelTab.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	/**
 	 * Initializes events & does post configuration

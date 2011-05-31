@@ -105,17 +105,18 @@ class afsWidgetBuilderWidget {
 
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
         FirePHP::getInstance(true)->fb($tempPath);
-        file_put_contents($tempPath, $xmlBuilder->getXml());
-        chmod($tempPath, 0777);
+        afStudioUtil::writeFile($tempPath, $xmlBuilder->getXml());
 
-        $validator = new XmlValidator(null, false, true);
-        $validator->readXmlDocument($tempPath, true);
-        $validationStatus = $validator->validateXmlDocument(true);
+//        $validator = new XmlValidator(null, false, true);
+//        $validator->readXmlDocument($tempPath, true);
+//        $validationStatus = $validator->validateXmlDocument(true);
+        $validator = new XmlValidator($tempPath);
+        $validationStatus = $validator->validateXmlDocument();
         if ($validationStatus) {
-            if (file_exists($path) && !is_writable($path) || !is_writable(dirname($path))) {
+            /*if (file_exists($path) && !is_writable($path) || !is_writable(dirname($path))) {
                 return 'File was validated properly but I was not able to save it in: '.$path.'. Please check file/dir permissions.';
-            }
-            rename($tempPath, $path);
+            }*/
+            afStudioUtil::writeFile($path, $xmlBuilder->getXml());
             return true;
         }
 
@@ -144,15 +145,15 @@ class afsWidgetBuilderWidget {
 
         $actionFilePath = $afCU->generateActionFilePath($this->action);
 
-        $fileExists = file_exists($actionFilePath);
+        /*$fileExists = file_exists($actionFilePath);
         $fileWritable = is_writable($actionFilePath);
         $dirWritable = is_writable(dirname($actionFilePath));
         if (!$dirWritable ||
             $dirWritable && $fileExists && !$fileWritable) {
             return 'I need write permissions to '.$actionFilePath.'. Please check file/dir permissions.';
-        }
+        }*/
 
-        file_put_contents($actionFilePath, $this->renderActionFileContent());
+        afStudioUtil::writeFile($actionFilePath, $this->renderActionFileContent());
         return true;
     }
 

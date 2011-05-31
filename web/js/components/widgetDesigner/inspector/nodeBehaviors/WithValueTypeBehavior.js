@@ -179,38 +179,36 @@ afStudio.wi.WithValueTypeBehavior = Ext.extend(afStudio.wi.BaseBehavior, {
             valueNode['type'] = 'orm';
         }
 
-        if (valueNode['type'] == 'orm') {
-            switch (valueSource) {
-                case 'source':
-                    valueNode['i:source'] = {name: nodeWidgetData['sourceName']};
-                    delete nodeWidgetData['sourceName'];
-                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                break;
-                
-                case 'classAndMethod':
-                    valueNode['i:class'] = nodeWidgetData['i:class'];
-                    if (nodeWidgetData['i:method'] && nodeWidgetData['i:method'] != '') {
-                        valueNode['i:method'] = {
-                            name: nodeWidgetData['i:method'],
-                            'i:param': nodeWidgetData['i:param']
-                        }
-                        delete nodeWidgetData['i:param'];
-                        delete nodeWidgetData['i:class'];
-                        delete nodeWidgetData['i:method'];
+        switch (valueSource) {
+            case 'source':
+                valueNode['i:source'] = {name: nodeWidgetData['sourceName']};
+                delete nodeWidgetData['sourceName'];
+                nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+            break;
+
+            case 'classAndMethod':
+                valueNode['i:class'] = nodeWidgetData['i:class'];
+                if (nodeWidgetData['i:method'] && nodeWidgetData['i:method'] != '') {
+                    valueNode['i:method'] = {
+                        name: nodeWidgetData['i:method'],
+                        'i:param': nodeWidgetData['i:param']
                     }
-                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                break;
-                
-                case 'item':
-                    valueNode['i:source'] = {name: nodeWidgetData['name']};
-                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                break;
-                
-                case 'static':
-                    valueNode['i:source'] = {name: nodeWidgetData['name']};
-                    nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
-                break;
-            }
+                    delete nodeWidgetData['i:param'];
+                    delete nodeWidgetData['i:class'];
+                    delete nodeWidgetData['i:method'];
+                }
+                nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+            break;
+
+            case 'item':
+                valueNode['i:source'] = {name: nodeWidgetData['name']};
+                nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+            break;
+
+            case 'static':
+                valueNode['i:source'] = {name: nodeWidgetData['name']};
+                nodeWidgetData = this.mergeInValueTypeData(nodeWidgetData, valueNode);
+            break;
         }
 
         return nodeWidgetData;

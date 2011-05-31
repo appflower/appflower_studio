@@ -79,7 +79,7 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 	 * Function onEditProfileLinkClick
 	 * Shows user edit form
 	 */
-	onEditProfileLinkClick: function(){
+	onEditProfileLinkClick : function() {
 		(new afStudio.UserWindow({mode: 'edit', username: afStudioUser.username})).show();
 	},
 	
@@ -88,7 +88,7 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 	 * Creates handler for the "Edit profile" link
 	 * @param {Object} cmp - MyProfile panel
 	 */
-	onProfilePanelShow: function(cmp){
+	onProfilePanelShow : function(cmp) {
 		cmp.body.child('A').on('click', this.onEditProfileLinkClick, this);
 	},
 	
@@ -96,7 +96,7 @@ afStudio.viewport.WestPanel = Ext.extend(Ext.Panel, {
 	 * Function _initEvents
 	 * Attaches additional events to the component
 	 */
-	_initEvents: function(){
+	_initEvents : function() {
 		Ext.getCmp('profile').on('afterrender', this.onProfilePanelShow, this);
 	}
 });

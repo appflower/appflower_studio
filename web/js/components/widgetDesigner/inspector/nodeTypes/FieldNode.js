@@ -6,10 +6,16 @@
 afStudio.wi.FieldNode = Ext.extend(afStudio.wi.ContainerNode, {
 	
 	/**
+	 * @cfg {String} deleteNodeText
+	 * Delete node context menu's item text. 
+	 */	
+	deleteNodeText : 'Delete Field'
+	
+	/**
 	 * FieldNode constructor. 
 	 * @constructor
 	 */
-    constructor : function() {
+    ,constructor : function() {
         afStudio.wi.FieldNode.superclass.constructor.apply(this, arguments);
         
         var behavior = new afStudio.wi.WithValueTypeBehavior;
@@ -26,15 +32,31 @@ afStudio.wi.FieldNode = Ext.extend(afStudio.wi.ContainerNode, {
     ,getNodeConfig : function() {
         return {
             'text': 'new field',
-            'iconCls': 'icon-field'
+            'iconCls': 'icon-field',
         };
     }//eo getNodeConfig
     
     /**
      * template method
      * @override
+     */
+    ,createContextMenu : function() {
+        this.contextMenu = new Ext.menu.Menu({
+            items: [
+            {
+                text: this.deleteNodeText,                
+                iconCls: 'afs-icon-delete',
+                handler: this.onContextDeleteChildItemClick,
+                scope: this
+            }]
+        });
+    }//eo createContextMenu    
+    
+    /**
+     * template method
+     * @override
      */    
-    ,createProperties: function(){
+    ,createProperties: function() {
        var properties = [
             new afStudio.wi.PropertyTypeString({id: 'name', label: 'Name'}).setRequired().create(),
             new afStudio.wi.PropertyTypeString({id: 'label', label: 'Label'}).create(),
@@ -96,4 +118,23 @@ afStudio.wi.FieldNode = Ext.extend(afStudio.wi.ContainerNode, {
 
         this.properties['type'].set('value', type);
     }//eo setTypeFromModelType
+    
+    /**
+     * @protected
+     * @override
+     * @param {Ext.tree.TreeNode} node
+     * @param {Ext.EventObject} e
+     */
+    ,onContextMenuClick : function(node, e) {
+        node.select();
+        this.contextMenu._node = node;
+        this.contextMenu.showAt(e.getXY());
+    }//eo onContextMenuClick
+    
+   /**
+     * Context menu deleteChild <u>click</u> event listener.
+     */
+    ,onContextDeleteChildItemClick : function(item, e) {
+    	item.parentMenu._node.remove();
+    }//eo onContextDeleteChildItemClick
 });

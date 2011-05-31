@@ -44,8 +44,8 @@ class DatabaseConfigurationManager {
     private $params;
 
 
-    public function __construct() {
-        $this->databaseConfFilePath = afStudioUtil::getConfigDir() . '/' . 'databases.yml';
+    public function __construct($filePath = false) {
+        $this->databaseConfFilePath = (!$filePath)?afStudioUtil::getConfigDir() . '/databases.yml':$filePath;
 
         $this->setDatabaseConfTemplate();
     }
@@ -110,11 +110,17 @@ class DatabaseConfigurationManager {
         $param['persistent'] = (isset($this->params['persistent']) ? true : false);
         $param['pooling']    = (isset($this->params['pooling']) ? true : false);
 
-        @file_put_contents($this->databaseConfFilePath, $this->dumpYaml($confData));
+        afStudioUtil::writeFile($this->databaseConfFilePath, $this->dumpYaml($confData));
         
         afsNotificationPeer::log('Database Settings have been modified','settings');
         
-        $result = true;
+        if(is_readable($this->databaseConfFilePath))
+        {
+          $result = true;
+        }
+        else {
+          $result = false;
+        }
 		
         return $result;
     }
