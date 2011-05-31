@@ -13,7 +13,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
 	 * Query URL
 	 */
-	queryUrl : window.afStudioWSUrls.getDBQueryQueryUrl()
+	queryUrl : afStudioWSUrls.getDBQueryQueryUrl()
 	
 	/**
 	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryWindow
@@ -24,14 +24,14 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	 * Executes Query
 	 */
 	,executeQuery : function() {
-		var _this = this,
-				f = _this.getForm(),
-			   qt = _this.queryTypeCmp.getValue(),
-	    connection = this.dbQueryWindow.westPanel.getCurrentConnection(),
-		queryParam = Ext.apply(f.getFieldValues(), connection);	    
+		var _this   = this,
+				f   = _this.getForm(),
+			   qt   = _this.queryTypeCmp.getValue(),
+	    connection  = this.dbQueryWindow.westPanel.getCurrentConnection(),
+		queryParam  = Ext.apply(f.getFieldValues(), connection);	    
 		
 	    if (qt == 'sql' && !connection) {
-	   		Ext.Msg.alert('Failure', 'Connection is not specified. <br /> Please select DataBase or DB\'s table.' );
+	    	afStudio.Msg.warning('Connection is not specified. <br /> Please select DataBase or DB\'s table.');
 	   		return;
 	    }
 	    
@@ -54,7 +54,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		    			queryParam: queryParam
 		    		});
 		    	} else {
-		    		Ext.Msg.alert('Query Response', action.result.content);
+		    		afStudio.Msg.warning('Query Response', action.result.content);
 		    	}		    	
 		    },
 		    
@@ -63,13 +63,16 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		    	
 		        switch (action.failureType) {
 		            case Ext.form.Action.CLIENT_INVALID:
-		                Ext.Msg.alert('Failure', 'Query text is empty');
-		                break;
+		                afStudio.Msg.info('Query text is empty.');
+					break;
+					
 		            case Ext.form.Action.CONNECT_FAILURE:
-		                Ext.Msg.alert('Failure', 'Ajax communication failed');
-		                break;
+		                afStudio.Msg.error('Ajax communication failed');
+		            break;
+		            
 		            case Ext.form.Action.SERVER_INVALID:
-		               Ext.Msg.alert('Failure', action.result.content);
+		               afStudio.Msg.warning(action.result.content);
+		            break;   
 		       }
 		    }			
 		});
@@ -77,16 +80,16 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	
 	/**
 	 * Initializes component
-	 * @return {Object} The configuration object
 	 * @private
+	 * @return {Object} The configuration object 
 	 */
 	,_beforeInitComponent : function() {
 		var _this = this;
 		
 		return {
 			region: 'north',
-			height: 140,
 			layout: 'form',
+			height: 140,
 			frame: true,
 			iconCls: 'icon-sql', 
 			margins: '0 5 5 5', 
@@ -134,12 +137,17 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		};		
 	}//eo _beforeInitComponent
 	
-	//private 
+	/**
+	 * Ext Template method
+	 * @private
+	 */ 
 	,initComponent : function() {
-		Ext.apply(this, Ext.applyIf(this.initialConfig, this._beforeInitComponent()));				
+		Ext.apply(this, 
+			Ext.applyIf(this.initialConfig, this._beforeInitComponent())
+		);				
 		afStudio.dbQuery.QueryForm.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	}//eo initComponent
 	
 	/**
 	 * @private
@@ -150,8 +158,13 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		_this.addEvents(
 			/**
 			 * @event executequery Fires after query was successufully executed
-			 * @param {Object} result The query result object, 
-			 * containing "meta" - meta-data and "data" - result set, "total" - total number of records, "type" and "success"
+			 * @param {Object} result The query result object:
+			 * <ul>
+			 * <li><b>meta</b>: The query meta-data.</li>
+			 * <li><b>total</b>: The total number of records</li>
+			 * <li><b>type</b></li>
+			 * <li><b>success</b></li>
+			 * </ul>
 			 * @param {Object} queryParam The query parameters
 			 */
 			'executequery'
