@@ -49,7 +49,38 @@ class afsDatabaseQueryActions extends sfActions
      * Propel:  http://studio/afsDatabaseQuery/query?query=TimeZonesQuery::create()->findPK(1);&type=propel
      *          TimeZonesQuery::create()->findPK(1)
      */
+    public function executeComplexQuery(sfWebRequest $request)
+    {
+        $response = $this->processQuery($request);
+        
+        return $this->renderJson($response);
+    }
+    
+    /**
+     * Execute one query action
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev <startsev.sergey@gmail.com>
+     */
     public function executeQuery(sfWebRequest $request)
+    {
+        $response = $this->processQuery($request);
+        
+        if (isset($response['dataset']) && !empty($response['dataset'])) {
+            $response = current($response['dataset']);
+        }
+        
+        return $this->renderJson($response);
+    }
+    
+    /**
+     * Process query functionality
+     *
+     * @param sfWebRequest $request 
+     * @return Array
+     * @author Sergey Startsev <startsev.sergey@gmail.com>
+     */
+    private function processQuery(sfWebRequest $request)
     {
         $sQuery = $request->getParameter('query', '');
         $sConnection = $request->getParameter('connection', 'propel');
@@ -58,11 +89,11 @@ class afsDatabaseQueryActions extends sfActions
         $nOffset = $request->getParameter('start', 0);
         $nLimit = $request->getParameter('limit', 50);
         
-        $aResult = $this->oDBQueryHelper->processQuery($sQuery, $sConnection, $sType, $nOffset, $nLimit);
+        $response = $this->oDBQueryHelper->processQuery($sQuery, $sConnection, $sType, $nOffset, $nLimit);
         
         afsNotificationPeer::log('Database query was executed', 'afStudioDBQuery');
         
-        return $this->renderJson($aResult);
+        return $response;
     }
     
 }
