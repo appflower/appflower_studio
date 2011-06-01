@@ -80,22 +80,22 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 	        	}, scope: this
 	        },
 			items: [
-	        	{xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false},
+	        	{xtype:'textfield', fieldLabel: 'Database', anchor: '96%', name: 'database', allowBlank: false, vtype: 'database'},
 				{xtype: 'panel', layout: 'column', 
 					border: false, bodyBorder: false,
 					defaults: {border: false, bodyBorder: false},
 					items: [
 						{xtype: 'panel', columnWidth: 1, layout: 'form', style: 'margin-right: 5px;',
 							
-							items: [{xtype: 'textfield', fieldLabel: 'Host', name: 'host', anchor: '92%', allowBlank: false}]
+							items: [{xtype: 'textfield', fieldLabel: 'Host', name: 'host', anchor: '92%', allowBlank: false, vtype: 'host'}]
 						},
 						{xtype: 'panel', width: 100, layout: 'form', labelWidth: 35,
-							items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '82%', allowBlank: true}]
+							items: [{xtype: 'textfield', fieldLabel: 'Port', name: 'port', anchor: '82%', allowBlank: true, vtype:'port'}]
 						}
 					]
 				},
-				{xtype:'textfield', fieldLabel: 'Username', anchor: '96%', name: 'username', allowBlank: false},
-				{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false},
+				{xtype:'textfield', fieldLabel: 'Username', anchor: '96%', name: 'username', allowBlank: false, vtype:'alphanum'},
+				{xtype:'textfield', fieldLabel: 'Password', anchor: '96%', name: 'password', allowBlank: false, vtype:'alphanum'},
 				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Persistent', name: 'persistent'},
 				{xtype: 'checkbox', hideLabel: true, boxLabel: 'Pooling', name: 'pooling'}
 			]
