@@ -2,16 +2,17 @@
 /**
  * Database Query class 
  * 
- * @author startsev.sergey@gmail.com
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afsDatabaseQuery 
 {
     /**
      * Getting Adaptee class
      * 
-     * @param $connection_name db connection name
-     * @param $type Type of created adaptee
+     * @param string $connection_name - db connection name
+     * @param string $type - Type of created adaptee
      * @return object
+     * @author Sergey Startsev
      */
     public static function getAdapter($connection_name, $type)
     {
@@ -24,25 +25,25 @@ class afsDatabaseQuery
     /**
      * Processing query via connection and query type
      * 
-     * @param $query This query will be executed
-     * @param $connection Connection name 
-     * @param $type Query type: sql or propel
-     * @param $offset 
-     * @param $limit
-     * @return mixed
+     * @param string $query - This query will be executed
+     * @param string $connection - Connection name 
+     * @param string $type - Query type: sql or propel
+     * @param int $offset 
+     * @param int $limit
+     * @return afResponse
+     * @author Sergey Startsev
      */
     public static function processQuery($query, $connection = 'propel', $type = 'sql', $offset = 0, $limit = 50)
     {
-        $oAdapter = self::getAdapter($connection, $type);
-        $aResult = $oAdapter->process($query, $offset, $limit);
-        return $aResult;
+        return self::getAdapter($connection, $type)->process($query, $offset, $limit);
     }
     
     /**
      * Parse dsn field
      * 
-     * @param $dsn DSN string example:  mysql:dbname=studio;host=localhost
+     * @param string $dsn - DSN string example:  mysql:dbname=studio;host=localhost
      * @return string
+     * @author Sergey Startsev
      */
     public static function parseDSN($dsn)
     {
@@ -65,8 +66,9 @@ class afsDatabaseQuery
     /**
      * Getting tables from parsed yaml schema
      * 
-     * @param $connection_name db connection name
+     * @param string $connection_name - db connection name
      * @return array
+     * @author Sergey Startsev
      */
     public static function getTables($connection_name)
     {
@@ -91,7 +93,8 @@ class afsDatabaseQuery
     /**
      * Getting schemas array from configs
      * 
-     * @return array Connections and tables
+     * @return array - Connections and tables
+     * @author Sergey Startsev
      */
     private static function getSchemas()
     {

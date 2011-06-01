@@ -1,12 +1,35 @@
 <?php
-
+/**
+ * Base query adapter class
+ *
+ * @package appflower studio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
+ */
 abstract class BaseQueryAdapter
 {
-    const TYPE_ERROR = 'error';
-    const TYPE_SUCCESS = 'success';
-    const TYPE_INFO = 'info';
+    /**
+     * Query executed message
+     */
+    const QUERY_EXECUTED = 'Query has been successfully executed';
     
+    /**
+     * Query not executed message
+     */
+    const QUERY_NOT_EXECUTED = 'No one query not executed';
+    
+    /**
+     * Query for processing
+     */
     protected $query;
+    
+    /**
+     * Query separator value
+     */
+    protected $separator = ';';
+    
+    /**
+     * Connection name
+     */
     protected $connection_name;
     
     public function __construct($connection = 'propel') 
@@ -15,12 +38,10 @@ abstract class BaseQueryAdapter
     }
     
     /**
-     * Processing query
-     */
-    abstract public function process($query, $offset, $limit);
-    
-    /**
      * Setting query for processing
+     *
+     * @param string $query 
+     * @author Sergey Startsev
      */
     public function setQuery($query)
     {
@@ -28,35 +49,95 @@ abstract class BaseQueryAdapter
     }
     
     /**
-     * Fetching error, prepare for output
+     * Getting query
+     *
+     * @return string
+     * @author Sergey Startsev
      */
-    protected function fetchError($content)
+    public function getQuery()
     {
-        return $this->fetch($content, false, self::TYPE_ERROR);
+        return $this->query;
     }
     
     /**
-     * Fetching success, prepare for output
+     * Processing query
+     * 
+     * @param string $query Propel Query for executing
+     * @param int $offset 
+     * @param int $limit
+     * @return afResponse
+     * @author Sergey Startsev
      */
-    protected function fetchSuccess($content)
+    public function process($query, $offset = 0, $limit = 50)
     {
-        return $this->fetch($content, true, self::TYPE_SUCCESS);
+        $this->setQuery(trim($query));
+        
+        $dataset = array();
+        $success = false;
+        
+        $queries = $this->separate();
+        foreach ($queries as $query) {
+            if (!empty($query)) {
+                $response = $this->processQuery($query, $offset, $limit);
+                $dataset[] = $response->asArray();
+                $success |= $response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR);
+            }
+        }
+        
+        $message = ($success) ? self::QUERY_EXECUTED : self::QUERY_NOT_EXECUTED;
+        
+        return afResponseHelper::create()->dataset($dataset)->success($success)->message($message);
     }
     
     /**
-     * Fetching info, prepare for output
+     * Processing one query
+     *
+     * @param string $query 
+     * @param int $offset 
+     * @param int $limit 
+     * @return afResponse
+     * @author Sergey Startsev
      */
-    protected function fetchInfo($content)
+    abstract protected function processQuery($query, $offset, $limit);
+    
+    /**
+     * Separate query to few using separator, which can be reloaded in child classes
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    protected function separate()
     {
-        return $this->fetch($content, true, self::TYPE_INFO);
+        return explode($this->getSeparator(), $this->getQuery());
     }
     
     /**
-     * Fetching output
+     * Getting query separator
+     *
+     * @return string
+     * @author Sergey Startsev
      */
-    protected function fetch($content, $success, $type)
+    protected function getSeparator()
     {
-        return array('success' => $success, 'type' => $type, 'content' => $content);
+        return $this->separator;
+    }
+    
+    /**
+     * Getting fields
+     *
+     * @param Array $data 
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function getFields(Array $data)
+    {
+        $fields = array();
+        
+        if (isset($data[0])) {
+            $fields = array_keys($data[0]);
+        }
+        
+        return $fields;
     }
     
 }

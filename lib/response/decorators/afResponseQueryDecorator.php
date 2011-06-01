@@ -1,25 +1,25 @@
 <?php 
 /**
- * Success response decorator
+ * Query response decorator
  *
  * @package appflower
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afResponseSuccessDecorator extends afResponseDecoratorBase
+class afResponseQueryDecorator extends afResponseDecoratorBase
 {
     /**
      * Identificator of parameter
      */
-    const IDENTIFICATOR = 'success';
+    const IDENTIFICATOR = 'query';
     
     /**
-     * Success type
+     * Success query
      */
-    private $_type;
+    private $_query;
     
-    public function __construct(afResponse $response, $type = true)
+    public function __construct(afResponse $response, $query)
     {
-        $this->_type = (bool)$type;
+        $this->_query = $query;
         
         return parent::__construct($response);
     }
@@ -32,7 +32,8 @@ class afResponseSuccessDecorator extends afResponseDecoratorBase
      */
     public function getParameters()
     {
-        $this->addParameter(self::IDENTIFICATOR, $this->_type);
+        $this->addParameter(self::IDENTIFICATOR, $this->_query);
+        
         return parent::getParameters();
     }
     
