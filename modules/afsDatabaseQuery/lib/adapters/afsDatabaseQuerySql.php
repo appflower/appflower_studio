@@ -12,11 +12,6 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
      */
     private $dbh;
     
-    /**
-     * Total found rows
-     */
-    private $total = 0;
-    
     public function __construct($connection = 'propel')
     {
         parent::__construct($connection);
@@ -85,10 +80,10 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                         
                         $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
                     } else {
-                        $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found')->query($query);
+                        $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
                     }
                 } else {
-                    $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found')->query($query);
+                    $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
                 }
             } else {
                 $error_info = $stm->errorInfo();

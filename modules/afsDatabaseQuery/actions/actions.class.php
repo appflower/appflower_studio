@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * @package    appFlowerStudio
@@ -8,21 +7,35 @@
  */
 class afsDatabaseQueryActions extends sfActions
 {
+    /**
+     * DB Query helper instance
+     */
     private $oDBQueryHelper;
     
-    private $modelName;
-    private $modelQueryClass;
-    
+    /**
+     * Pre Execute action
+     *
+     * @author Sergey Startsev <startsev.sergey@gmail.com>
+     */
 	public function preExecute()
 	{
+        // check is this ajax request
+	    if (!$this->getRequest()->isXmlHttpRequest()) {
+            $this->forward404("This action should be used only for ajax requests");
+        }
+        
 		$this->realRoot = sfConfig::get('sf_root_dir');
         
         // initialize query helper
-        $this->oDBQueryHelper = new afsDatabaseQueryHelper();
+        $this->oDBQueryHelper = new afsDatabaseQueryHelper;
     }
     
     /**
      * Rendering json
+     *
+     * @param mixed $result 
+     * @return string
+     * @author Sergey Startsev <startsev.sergey@gmail.com>
      */
     protected function renderJson($result)
     {
