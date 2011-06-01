@@ -78,6 +78,7 @@ abstract class BaseQueryAdapter
         $queries = $this->separate();
         foreach ($queries as $query) {
             if (!empty($query)) {
+                $query = trim($query);
                 $response = $this->processQuery($query, $offset, $limit);
                 $dataset[] = $response->asArray();
                 $success |= $response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR);
