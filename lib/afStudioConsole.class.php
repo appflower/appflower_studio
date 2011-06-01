@@ -6,7 +6,7 @@
 class afStudioConsole
 {
 	public static
-    $defaultCommands = 'sf appflower afs batch man ll ls pwd cat mkdir rm cp mv touch chmod free df find clear php';
+    $defaultCommands = 'sf appflower afs git batch man ll ls pwd cat mkdir rm cp mv touch chmod free df find clear php';
     
     public
     $pwd, $uname, $uname_short, $filesystem, $prompt, $whoami;
