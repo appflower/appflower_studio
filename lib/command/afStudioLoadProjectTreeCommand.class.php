@@ -45,13 +45,13 @@ class afStudioLoadProjectTreeCommand extends afBaseStudioCommand
         	
         	if(file_exists($projectYmlPath)&&!empty($projectYmlData['project']['url']))
         	{
-        		$this->result = array_merge(array('title'=>'Success', 'message'=>'The selected path contains a valid project. <br>You will now be redirected to <b>'.$projectYmlData['project']['url'].'/studio</b>'),$projectYmlData);
+        		$this->result = array_merge(array('success'=>true, 'title'=>'Success', 'message'=>'The selected path contains a valid project. <br>You will now be redirected to <b>'.$projectYmlData['project']['url'].'/studio</b>'),$projectYmlData);
         	}
         	else 
-        	$this->result = array('title'=>'Failure', 'message'=> 'The selected path contains an AppFlower project, but the URL for the project is not set!');
+        	$this->result = array('success'=>false, 'message'=> 'The selected path contains an AppFlower project, but the URL for the project is not set!');
 		}
 		else		
-		$this->result = array('title'=>'Failure', 'message'=> 'The selected path doesn\'t contain any valid AppFlower project!');
+		$this->result = array('success'=>false, 'message'=> 'The selected path doesn\'t contain any valid AppFlower project!');
 	}
 }
 ?>

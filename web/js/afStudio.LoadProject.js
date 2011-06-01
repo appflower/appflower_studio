@@ -95,7 +95,7 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 				callback: function(options, success, response) {				
 					response = Ext.decode(response.responseText);
 					
-					if(response.title&&response.message)
+					if(response.success)
 	                {
 	                    Ext.Msg.show({
 	                    	title: response.title, 
@@ -112,6 +112,10 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 	                            }
 	                    	}
 	                    });
+	                }
+	                else
+	                {
+	                    afStudio.Msg.info(response.message);
 	                }
 				}
 				
