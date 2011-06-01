@@ -79,7 +79,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 		var formItems = [
 			{name: 'first_name', fieldLabel: 'First Name'},
 			{name: 'last_name', fieldLabel: 'Last Name'},
-			{name: 'username', fieldLabel: 'Username', readOnly: ('edit' == this.mode)?true:false},
+			{name: 'username', fieldLabel: 'Username', readOnly: ('edit' == this.mode)?true:false, vtype: 'username'},
 			{name: 'email', fieldLabel: 'Email', vtype: 'email'},
 			{name: 'password', inputType: 'password', fieldLabel: 'Password', allowBlank: ('edit' == this.mode)?true:false},
 			{xtype: 'combo', mode: 'local', triggerAction: 'all', 

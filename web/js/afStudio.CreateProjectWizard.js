@@ -242,7 +242,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 					{xtype: 'panel', columnWidth: 0.5, layout: 'form', style: 'margin-right: 5px;',
 						
 						items: [
-						{xtype: 'textfield', name: 'username', fieldLabel: 'Username<font color=red>*</font>', value: afStudioUser.username, allowBlank: false, anchor: '92%'},
+						{xtype: 'textfield', name: 'username', fieldLabel: 'Username<font color=red>*</font>', value: afStudioUser.username, allowBlank: false, vtype: 'username', anchor: '92%'},
 						]
 					},
 					{xtype: 'panel', layout: 'form', columnWidth: 0.5,
@@ -295,8 +295,8 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 					}
 				]
 			},
-			{xtype:'textfield', fieldLabel: 'Username<font color=red>*</font>', anchor: '96%', name: 'username', allowBlank: false,vtype:'alphanum'},
-			{xtype:'textfield', fieldLabel: 'Password<font color=red>*</font>', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password',vtype:'alphanum'}
+			{xtype:'textfield', fieldLabel: 'Username<font color=red>*</font>', anchor: '96%', name: 'username', allowBlank: false, vtype:'alphanum'},
+			{xtype:'textfield', fieldLabel: 'Password<font color=red>*</font>', anchor: '96%', name: 'password', allowBlank: false, inputType: 'password', vtype:'alphanum'}
 		];
 		
 		this.form5 = new Ext.FormPanel({
@@ -512,63 +512,4 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.center();
 	},
 	
-});
-
-
-Ext.apply(Ext.form.VTypes, {
-    uniqueNode: function(value, field) {
-    	var tree = field.ownerCt.ownerCt.tree;
-    	var currentNode = tree.getSelectionModel().getSelectedNode();
-    	var slug = afStudio.createSlug(value);
-      if(currentNode.childNodes)
-  		{
-  			for(var i=0;i<currentNode.childNodes.length;i++)
-  			{
-  				if(!currentNode.childNodes[i].isLeaf()&&currentNode.childNodes[i].text == slug)
-  				{
-  					return false;
-  				}
-  			}
-  		}
-    	return true;
-    },
- 
-    uniqueNodeText : 'Path to Project already exist! Please choose another Project Name!',
-    
-    checkPassword: function(value, field) {
-        if(field.ownerCt.ownerCt.ownerCt.getForm().findField('password').getValue()!=value)
-				{				 
-				  return false;
-				}
-				return true;
-    },
-    
-    checkPasswordText : 'Retype Password value does not match Password value',
-
-    database: function(value, field)
-    {
-        return /^[a-zA-Z0-9_\-]+$/.test(value);
-    },
-    
-    databaseText : 'Database should only contain letters, numbers, _, -',
-    
-    databaseMask : /[a-z0-9_\-]/i,
-    
-    host: function(value, field)
-    {
-        return /^[a-zA-Z0-9_\-\.]+$/.test(value);
-    },
-    
-    hostText : 'Host should only contain letters, numbers, dots, _, -, ',
-    
-    hostMask : /[a-z0-9_\-\.]/i,
-    
-    port: function(value, field)
-    {
-        return /^[0-9]+$/.test(value);
-    },
-    
-    portText : 'Port should only contain numbers',
-    
-    portMask : /[0-9]/i
 });
