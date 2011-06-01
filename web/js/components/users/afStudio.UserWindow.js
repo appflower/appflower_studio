@@ -165,7 +165,7 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 							this.refreshCaptcha();
 						}
 					}else{
-						Ext.Msg.alert('System Message', response.message);
+						afStudio.Msg.info('System Message', response.message);
 						this.closeForm();
 						
 						//TODO: please provide this function in constructor
