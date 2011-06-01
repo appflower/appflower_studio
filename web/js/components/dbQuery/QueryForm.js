@@ -13,7 +13,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
 	 * Query URL
 	 */
-	queryUrl : afStudioWSUrls.getDBQueryQueryUrl()
+	queryUrl : afStudioWSUrls.getDBQueryComplexQueryUrl()
 	
 	/**
 	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryWindow
@@ -45,17 +45,12 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		    	start: 0,
 		    	limit: afStudio.dbQuery.QueryResultsGrid.prototype.recordsPerPage
 		    },
-		    success: function(form, action) {		    	
-		    	_this.dbQueryWindow.unmaskDbQuery();
-		    	
-		    	if (action.result.type == 'success') {
-		    		_this.fireEvent('executequery', {
-		    			result: action.result,
-		    			queryParam: queryParam
-		    		});
-		    	} else {
-		    		afStudio.Msg.warning('Query Response', action.result.content);
-		    	}		    	
+		    success: function(form, action) {
+		    	_this.dbQueryWindow.unmaskDbQuery();		    	
+		    	_this.fireEvent('executequery', {
+		    		result: action.result,
+		    		queryParam: queryParam
+	    		});
 		    },
 		    
 		    failure: function(form, action) {
@@ -63,15 +58,18 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		    	
 		        switch (action.failureType) {
 		            case Ext.form.Action.CLIENT_INVALID:
-		                afStudio.Msg.info('Query text is empty.');
+		                afStudio.Msg.info('DBQuery', 'Query text is empty.');
 					break;
 					
 		            case Ext.form.Action.CONNECT_FAILURE:
-		                afStudio.Msg.error('Ajax communication failed');
+		                afStudio.Msg.error('DBQuery', 'Ajax communication failed');
 		            break;
 		            
 		            case Ext.form.Action.SERVER_INVALID:
-		               afStudio.Msg.warning(action.result.content);
+				    	_this.fireEvent('executequery', {
+				    		result: action.result,
+				    		queryParam: queryParam
+			    		});		            
 		            break;   
 		       }
 		    }			
@@ -128,7 +126,10 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 			},{
 				xtype: 'textarea',
 				ref: 'queryText',
+				enableKeyEvents: true,
+				msgTarget: 'qtip',
 				allowBlank: false,
+				blankText: 'Query field is required',
 				hideLabel: true,
 				height: 80,
 				name: 'query',
@@ -169,7 +170,23 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 			 */
 			'executequery'
 		);
-	}	
+		
+		this.queryText.on({
+			scope: this,			
+			keydown: this.onQueryFieldKeyDown
+		});
+	}//eo _afterInitComponent
+	
+	/**
+	 * Query text field <u>keydown</u> event listener.
+	 * @param {Ext.form.TextField} f The query text field.
+	 * @param {Ext.EventObject} e The event object.
+	 */
+	,onQueryFieldKeyDown : function(f, e) {
+		if (e.ctrlKey && e.getKey() == Ext.EventObject.ENTER) {
+			this.executeQuery();
+		}
+	}//eo onQueryFieldKeyDown
 });
 
 /**

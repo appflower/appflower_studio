@@ -346,14 +346,15 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * Add Widget button handler.
 	 */
 	,onAddWidget : function() {
-		var _this = this;
+		var _this = this,
+			  url = afStudioWSUrls.getModelsUrl();
 		
 		var wb = new afStudio.wd.WidgetsBuilder({
-			modelsUrl: afStudioWSUrls.getModelsUrl(),
-			fieldsUrl: afStudioWSUrls.getModelsUrl(),
+			modelsUrl: url,
+			fieldsUrl: url,
 			listeners: {
 				widgetcreated: function(widgetUri, response) {
-					_this.onItemActivate();					
+					_this.onItemActivate();				
 					//TODO action and security path needed
 					afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri);
 				}

@@ -1,5 +1,12 @@
 Ext.ns('afStudio.dbQuery');
 
+/**
+ * TableModelTab
+ * 
+ * @class afStudio.dbQuery.TableModelTab
+ * @extends Ext.TabPanel
+ * @author Nikolai Babinski
+ */
 afStudio.dbQuery.TableModelTab = Ext.extend(Ext.TabPanel, {
 	/**
 	 * @cfg {Object} metaData required

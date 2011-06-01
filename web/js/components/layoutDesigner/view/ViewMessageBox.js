@@ -86,10 +86,10 @@ afStudio.layoutDesigner.view.ViewMessageBox = Ext.extend(Ext.Panel, {
 	/**
 	 * This panel <u>afterrender</u> event listener
 	 */
-	,onAfterRender : function() {				
+	,onAfterRender : function() {
 		var box = this.viewContainer.getBox(),
-			x = Ext.util.Format.round(box.width/2, 0) - this.getWidth()/2,
-			y = Ext.util.Format.round(box.height/2, 0) - this.getHeight();
+			x = Ext.util.Format.round(box.width / 2, 0) - this.getWidth() / 2,
+			y = Ext.util.Format.round(box.height / 2, 0) - this.getHeight();
 
 		this.setPosition(x, y);
 	}//eo onAfterRender 
