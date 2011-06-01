@@ -48,7 +48,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		_self = this;
 				
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<b>This wizard will help guide you through a few steps to setup your new AppFlower Project.</b><br><br>Please choose your project name.', style: 'margin-bottom: 15px;',},
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>01</div> </div> <h2>This wizard will help guide you through a few steps to setup your new AppFlower Project.</h2> </div> <br> Please choose your project name.', style: 'margin-bottom: 15px;',},
 			{xtype:'textfield', enableKeyEvents:true, fieldLabel: 'Project name<font color=red>*</font>', anchor: '96%', name: 'name', allowBlank: false, vtype: 'uniqueNode', 
 				listeners: {
 					keyup: function(field,e) {	
@@ -133,7 +133,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		});
 				
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please select the Web server root folder. The project will be created as a sub-folder to this path, with your project name.', style: 'margin-bottom: 15px;',},
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>02</div> </div> <h2>Please select the Web server root folder. The project will be created as a sub-folder to this path, with your project name.</h2> </div>', style: 'margin-bottom: 15px;',},
 			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small><br>'},
 			this.tree,
 			{xtype:'hidden', name: 'path'}
@@ -159,7 +159,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.initDataview();
 							
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please select how your want your application theme to look like by selecting one of the templates below.', style: 'margin-bottom: 15px;',},			
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>03</div> </div> <h2>Please select how your want your application theme to look like by selecting one of the templates below.</h2> </div>', style: 'margin-bottom: 15px;',},			
 			this.dataview
 		];
 		
@@ -223,7 +223,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	//User form
 	initForm4: function(){
 		var formItems = [
-		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please add your first user for this new project.', style: 'margin-bottom: 15px;',},
+		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>04</div> </div> <h2>Please add your first user for this new project.</h2> </div>', style: 'margin-bottom: 15px;',},
 		  {xtype: 'panel', layout: 'column', 
 				border: false, bodyBorder: false,
 				defaults: {border: false, bodyBorder: false},
@@ -280,7 +280,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	//Database form
 	initForm5: function(){
 		var formItems = [
-		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: 'Please fill out the database configuration fields below for AppFlower being able to connect to your database service.', style: 'margin-bottom: 15px;', anchor: '94%'},			
+		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>05</div> </div> <h2>Please fill out the database configuration fields below for AppFlower being able to connect to your database service.</h2> </div>', style: 'margin-bottom: 15px;', anchor: '94%'},			
 			{xtype:'textfield', fieldLabel: 'Database<font color=red>*</font>', anchor: '96%', name: 'database', allowBlank: false, vtype: 'database'},
 			{xtype: 'panel', layout: 'column', 
 				border: false, bodyBorder: false,
@@ -337,7 +337,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
   			var name = this.form1.getForm().findField('name').getValue();
   			var slug = afStudio.createSlug(name);
   			var path = this.form2.getForm().findField('path').getValue();
-  			var html = '<b>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</b><br><br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'.mydomain.com</b> in your browser.<br><br>Here is an example:<br>';
+  			var html = '<div  class="guide_header"> <div class="date_cover"> <div>06</div> </div> <h2>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</h2> </div> <br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'.mydomain.com</b> in your browser.<br><br>Here is an example:<br>';
   					
   			html+='<pre><code>&lt;VirtualHost *:80&gt;<br>&nbsp;&nbsp;ServerName '+slug+'.mydomain.com<br>&nbsp;&nbsp;DocumentRoot '+path+'/web<br>&nbsp;&nbsp;DirectoryIndex index.php<br>&nbsp;&nbsp;Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"<br><br>&nbsp;&nbsp;&lt;Directory "'+path+'/web"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;AllowOverride All<br>&nbsp;&nbsp;&nbsp;&nbsp;Allow from All<br>&nbsp;&nbsp;&lt;/Directory&gt;<br>&lt;/VirtualHost&gt;</code></pre>';
   			
