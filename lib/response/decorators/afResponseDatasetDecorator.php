@@ -1,25 +1,25 @@
 <?php 
 /**
- * Success response decorator
+ * Dataset response decorator
  *
  * @package appflower
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afResponseSuccessDecorator extends afResponseDecoratorBase
+class afResponseDatasetDecorator extends afResponseDecoratorBase
 {
     /**
      * Identificator of parameter
      */
-    const IDENTIFICATOR = 'success';
+    const IDENTIFICATOR = 'dataset';
     
     /**
-     * Success type
+     * Success dataset
      */
-    private $_type;
+    private $_dataset;
     
-    public function __construct(afResponse $response, $type = true)
+    public function __construct(afResponse $response, array $dataset = array())
     {
-        $this->_type = (bool)$type;
+        $this->_dataset = $dataset;
         
         return parent::__construct($response);
     }
@@ -32,7 +32,8 @@ class afResponseSuccessDecorator extends afResponseDecoratorBase
      */
     public function getParameters()
     {
-        $this->addParameter(self::IDENTIFICATOR, $this->_type);
+        $this->addParameter(self::IDENTIFICATOR, $this->_dataset);
+        
         return parent::getParameters();
     }
     

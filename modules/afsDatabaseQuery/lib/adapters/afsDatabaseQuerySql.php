@@ -2,7 +2,8 @@
 /**
  * Database SQL Query class 
  * 
- * @author startsev.sergey@gmail.com
+ * @package appflower studio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afsDatabaseQuerySql extends BaseQueryAdapter
 {
@@ -27,6 +28,9 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
 
     /**
      * Setting db connection
+     *
+     * @param string $connection
+     * @author Sergey Startsev
      */
     public function setConnection($connection)
     {
@@ -37,7 +41,10 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
     }
 
     /**
-     * Getting db connection
+     * Getting db connection handler
+     * 
+     * @return Propel
+     * @author Sergey Startsev
      */
     public function getConnection()
     {
@@ -45,88 +52,85 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
     }
     
     /**
-     * Processing query
-     * 
-     * @param $query SQL query for executing
-     * @param $offset 
-     * @param $limit
-     * @return mixed
+     * Process one query
+     *
+     * @param string $query 
+     * @param int $offset 
+     * @param int $limit 
+     * @return afResponse
+     * @author Sergey Startsev
      */
-    public function process($query, $offset = 0, $limit = 50)
+    protected function processQuery($query, $offset, $limit)
     {
-        $this->setQuery($query);
+        $afResponseValidate = $this->validate($query);
         
-        $aValidate = $this->validate();
-        
-        if ($aValidate['success']) {
-            $stm = $this->dbh->prepare($this->query);
+        if ($afResponseValidate->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            // prepare query
+            $stm = $this->dbh->prepare($query);
             $bExecuted = $stm->execute();
             
             if ($bExecuted) {
                 if ($stm->rowCount() > 0) {
+                    $total = $stm->rowCount();
                     
-                    $this->total = $stm->rowCount();
+                    // Limiting query
+                    $query_limited = $this->limiting($query, $offset, $limit);
                     
-                    // Re-setting query
-                    $this->limiting($offset, $limit);
-                    
-                    $stm = $this->dbh->prepare($this->query);
+                    $stm = $this->dbh->prepare($query_limited);
                     $stm->execute();
                     
                     if ($stm->rowCount() > 0) {
-                        $aResult = array(
-                                        'result' => $stm->fetchAll(PDO::FETCH_ASSOC),
-                                        'count' => $this->total
-                        );
-                        $result = $this->fetchSuccess($aResult);
+                        $data = $stm->fetchAll(PDO::FETCH_ASSOC);
+                        $meta = $this->getFields($data);
+                        
+                        $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
                     } else {
-                        $result = $this->fetchInfo('Nothing has been found');
+                        $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found')->query($query);
                     }
-                    
                 } else {
-                    $result = $this->fetchInfo('Nothing has been found');
+                    $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found')->query($query);
                 }
             } else {
-                $aErrorInfo = $stm->errorInfo();
-                $result = $this->fetchError($aErrorInfo[2]);
+                $error_info = $stm->errorInfo();
+                $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
             }
         } else {
-            $result = $aValidate;
+            $afResponse = $afResponseValidate;
         }
         
-        return $result;
+        return $afResponse;
     }
     
     /**
      * Validation functionality
      * 
-     * @return array
+     * @param string $query
+     * @return afResponse
+     * @author Sergey Startsev
      */
-    private function validate()
-    {
-        if (preg_match('/alter|drop|create|;|insert|update|delete/si', $this->query)) {
-            $return = $this->fetchError('This operation or functionality has been disabled');
+    private function validate($query)
+    {   
+        if (preg_match('/alter|drop|create|insert|update|delete/si', $query)) {
+            $afResponse = afResponseHelper::create()->success(false)->message('This operation or functionality has been disabled');
         } else {
-            $return = $this->fetchSuccess('Validated successfully');
+            $afResponse = afResponseHelper::create()->success(true)->message('Validated successfully');
         }
         
-        return $return;
+        return $afResponse;
     }
     
     /**
      * Limiting query by default
      * 
-     * @param $offset
-     * @param $limit
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return string
+     * @author Sergey Startsev
      */
-    private function limiting($offset = 0, $limit = 50)
+    private function limiting($query, $offset = 0, $limit = 50)
     {
-        /**
-         * TODO: limit nivelirign 
-         * exmaplt: http://studio/afsDatabaseQuery/query?query=SELECT%20*%20FROM%20timezones%20limit%2060&offset=50&limit=50
-         */
-        
-        if (preg_match('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', $this->query, $matched)) {
+        if (preg_match('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', $query, $matched)) {
             
             if (isset($matched[1]) && isset($matched[2])) {
                 // native offset and limit exists
@@ -138,7 +142,7 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                     $nLimit = ($matched[1] + $matched[2]) - $nOffset;
                 }
                 
-                $this->query = preg_replace('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', "LIMIT {$nOffset}, {$nLimit}", $this->query);
+                $query = preg_replace('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', "LIMIT {$nOffset}, {$nLimit}", $query);
                 
             } elseif (isset($matched[1]) && !isset($matched[2])) {
                 // matched only limit
@@ -149,14 +153,15 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                     $nLimit = $matched[1] - $offset;
                 }
                 
-                $this->query = preg_replace('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', "LIMIT {$offset}, {$nLimit}", $this->query);
+                $query = preg_replace('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', "LIMIT {$offset}, {$nLimit}", $query);
             }
             
         } else {
             // query doesn't have native limit
-            
-            $this->query = $this->query . " LIMIT {$offset}, {$limit}";
+            $query = $query . " LIMIT {$offset}, {$limit}";
         }
+        
+        return $query;
     }
     
 }

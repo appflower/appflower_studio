@@ -37,6 +37,9 @@ abstract class afResponseDecoratorBase extends afResponse
      */
     public function getParameter($name)
     {
+        // init
+        $this->getParameters();
+        
         return $this->_response->getParameter($name);
     }
     
@@ -49,6 +52,9 @@ abstract class afResponseDecoratorBase extends afResponse
      */
     public function hasParameter($name)
     {
+        // init
+        $this->getParameters();
+        
         return $this->_response->hasParameter($name);
     }
     

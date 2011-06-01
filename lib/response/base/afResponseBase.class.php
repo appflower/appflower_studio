@@ -10,7 +10,7 @@ abstract class afResponseBase
     /**
      * Parameters
      */
-    protected $_parameters;
+    protected $_parameters = array();
     
     /**
      * Getting parameters

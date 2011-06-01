@@ -99,31 +99,7 @@ class afsDatabaseQueryHelper
      */
     public function processQuery($query, $connection, $type = 'sql', $offset = 0, $limit = 50)
     {
-        $result = afsDatabaseQuery::processQuery($query, $connection, $type, $offset, $limit);
-        
-        if ($result['success'] && $result['type'] == 'success') {
-            
-            $nTotal = $result['content']['count'];
-            
-            if (isset($result['content']['result'][0])) {
-                $aFields = array_keys($result['content']['result'][0]);
-                
-                $return = array(
-                                'success' => true,
-                                'type'  => 'success',
-                                'meta'  => $aFields,
-                                'data'  => $result['content']['result'],
-                				'total' => $nTotal
-                );
-            }
-        } else {
-            $return = $result;
-        }
-        
-        return $return;
+        return afsDatabaseQuery::processQuery($query, $connection, $type, $offset, $limit)->asArray();
     }
     
-    
-    
 }
-

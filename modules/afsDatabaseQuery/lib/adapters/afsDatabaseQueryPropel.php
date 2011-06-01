@@ -2,7 +2,7 @@
 /**
  * Database Propel Query class 
  * 
- * @author startsev.sergey@gmail.com
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afsDatabaseQueryPropel extends BaseQueryAdapter
 {
@@ -12,54 +12,50 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     private $is_valid = true;
     
     /**
-     * Total found rows
+     * Process one query
+     *
+     * @param string $query 
+     * @param int $offset 
+     * @param int $limit 
+     * @return afResponse
+     * @author Sergey Startsev
      */
-    private $total = 0;
-    /**
-     * Processing query
-     * 
-     * @param $query Propel Query for executing
-     * @param $offset 
-     * @param $limit
-     * @return mixed
-     */
-    public function process($query, $offset = 0, $limit = 50)
+    protected function processQuery($query, $offset, $limit)
     {
-        $this->setQuery(trim($query));
-
-        $aValidate = $this->validate();
+        $afResponseValidate = $this->validate($query);
         
-        if ($aValidate['success']) {
-            eval('$execute_query = ' . $this->query . ';');
+        if ($afResponseValidate->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            eval('$execute_query = ' . $query . ';');
             
-            $this->total = count($execute_query);
+            $total = count($execute_query);
             
-            if ($this->total > $limit) {
-                $this->limiting($offset, $limit);
-                eval('$execute_query = ' . $this->query . ';');
+            if ($total > $limit) {
+                $query_limited = $this->limiting($query, $offset, $limit);
+                eval('$execute_query = ' . $query_limited . ';');
             }
             
             if (is_object($execute_query)) {
-                $result = $this->processClass($execute_query);
+                $afResponse = $this->processClass($query, $execute_query, $total);
             } elseif (is_int($execute_query)) {
+                $data = array(array($execute_query));
+                $meta = $this->getFields($data);
                 
-                $aResult = array(
-                                'result' => array(array($execute_query)),
-                                'count' => $this->total
-                );
-                $result = $this->fetchSuccess($aResult);
+                $afResponse = afResponseHelper::create()->data($meta, $data, $total);
+                
             } else {
-                $result = $this->fetchInfo('Nothing has been found');
+                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
             }
         } else {
-            $result = $aValidate;
+            $afResponse = $afResponseValidate;
         }
         
-        return $result;
+        return $afResponse;
     }
     
     /**
      * Eval error handler
+     *
+     * @author Sergey Startsev
      */
     public function eval_error_handler($number, $error, $file, $line)
     {
@@ -69,25 +65,27 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     /**
      * Validate functionality
      * 
+     * @param string $query
      * @return array
+     * @author Sergey Startsev
      */
-    private function validate()
+    private function validate($query)
     {
-        if (strpos($this->query, ';')) {
-            $return = $this->fetchError("Query shouldn't have ';' symbol");
+        if (strpos($query, ';')) {
+            $afResponse = afResponseHelper::create()->success(false)->message("Query shouldn't have ';' symbol");
         } else {
             
-            if ($this->checkSyntax()) {
+            if ($this->checkSyntax($query)) {
             
                 $bError = false;
                 
-                if (preg_match('/(.*?)\:\:create\(\)->/si', $this->query, $aMatchedClassName)) {
+                if (preg_match('/(.*?)\:\:create\(\)->/si', $query, $aMatchedClassName)) {
                     $sClassName = $aMatchedClassName[1];
                     
                     if (class_exists($sClassName)) {
                         
                         $aError = array();
-                        if (preg_match_all('/->(.*?)\(.*?\)/si', $this->query, $aMatchedFunctions)){
+                        if (preg_match_all('/->(.*?)\(.*?\)/si', $query, $aMatchedFunctions)){
                             
                             foreach ($aMatchedFunctions[1] as $function) {
                                 if (!method_exists($sClassName, $function)) {
@@ -96,7 +94,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                                 }
                             }
                             
-                            $return = $this->fetchSuccess($aMatchedFunctions[1]);
+                            $afResponse = afResponseHelper::create()->success(true)->message($aMatchedFunctions[1]);
                         }
                         
                         if (!$bError) {
@@ -110,7 +108,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                             
                             // using try-catch to catching errors that symfony catch
                             try {
-                                @eval('$execute_query = ' . $this->query . ';');
+                                @eval('$execute_query = ' . $query . ';');
                             } catch (Exception $e) {
                                 $this->is_valid = false;
                                 $sMessage = $e->getMessage();
@@ -118,32 +116,32 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                             restore_error_handler();
                             
                             if ($this->is_valid) {
-                                $return = $this->fetchSuccess('Validated successfully');
+                                $afResponse = afResponseHelper::create()->success(true)->message('Validated successfully');
                             } else {
                                 if (isset($sMessage) && !empty($sMessage)) {
-                                    $return = $this->fetchError($sMessage);
+                                    $afResponse = afResponseHelper::create()->success(false)->message($sMessage);
                                 } else {
-                                    $return = $this->fetchError("Please, check syntax");
+                                    $afResponse = afResponseHelper::create()->success(false)->message("Please, check syntax");
                                 }
                             }
                             
                         } else {
                             $sError = implode(', ', $aError);
-                            $return = $this->fetchError("Class {$sClassName} doesn't have functions: {$sError}"); 
+                            $afResponse = afResponseHelper::create()->success(false)->message("Class {$sClassName} doesn't have functions: {$sError}");
                         }
                     } else {
-                        $return = $this->fetchError("Class {$sClassName} doesn't exists");
+                        $afResponse = afResponseHelper::create()->success(false)->message("Class {$sClassName} doesn't exists");
                     }
                     
                 } else {
-                    $return = $this->fetchError("Query doesn't look a valid");
+                    $afResponse = afResponseHelper::create()->success(false)->message("Query doesn't look a valid");
                 }
             } else {
-                $return = $this->fetchError("Syntax error");
+                $afResponse = afResponseHelper::create()->success(false)->message("Syntax error");
             }
         }
         
-        return $return;
+        return $afResponse;
     }
     
     /**
@@ -151,9 +149,9 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      * 
      * @return boolean
      */
-    private function checkSyntax()
+    private function checkSyntax($query)
     {
-        return @eval('return true; ' . $this->query . ';');
+        return @eval('return true; ' . $query . ';');
     }
     
     /**
@@ -189,7 +187,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     public function handleShutdown() {
         $error = error_get_last();
         if($error !== NULL){
-            echo json_encode($this->fetchError('Please, check syntax. Fatal Error: ' . $error['message']));
+            echo afResponseHelper::create()->success(false)->message('Please, check syntax. Fatal Error: ' . $error['message'])->asJson();
         } 
     }
     
@@ -199,7 +197,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      * @param $execute_query Executed result 
      * @return mixed
      */
-    private function processClass($execute_query)
+    private function processClass($query, $execute_query, $total)
     {
         if ($execute_query instanceof PropelObjectCollection) {
             $oFormatter = $execute_query->getFormatter();
@@ -207,27 +205,26 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
             $aResult = (array)$execute_query;
             
             if (count($aResult) > 0) {
-                $aResult = array(
-                                'result' => $this->prepareList($aResult),
-                                'count' => $this->total
-                );
-                $result = $this->fetchSuccess($aResult);
+                $data = $this->prepareList($aResult);
+                $meta = $this->getFields($data);
+                
+                $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
             } else {
-                $result = $this->fetchInfo('Nothing has been found');
+                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found')->query($query);
             }
             
         } elseif ($execute_query instanceof ModelCriteria) {
-            $result = $this->fetchError("Please, check syntax");
+            // $result = $this->fetchError("Please, check syntax");
+            $afResponse = afResponseHelper::create()->success(false)->message('Please, check syntax')->query($query);
             
         } elseif ($execute_query instanceof BaseObject) {
             if (is_null($execute_query)) {
-                $result = $this->fetchInfo('Nothing has been found');
+                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
             } else {
-                $aResult = array(
-                                'result' => (array($this->prepareOutput($execute_query))),
-                                'count' => $this->total
-                );
-                $result = $this->fetchSuccess($aResult);
+                $data = array($this->prepareOutput($execute_query));
+                $meta = $this->getFields($data);
+                
+                $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
             }
         } elseif ($execute_query instanceof PropelArrayCollection) {
             
@@ -244,32 +241,34 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                     }
                 }
                 
-                $aResult = array(
-                                'result' => $aResults,
-                                'count' => $this->total
-                );
-                $result = $this->fetchSuccess($aResult);
+                $data = $aResults;
+                $meta = $this->getFields($data);
+                
+                $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
             } else {
-                $result = $this->fetchInfo('Nothing has been found');
+                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
             }
         } else {
-            $result = $this->fetchInfo('Nothing has been found');
+            $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
         }
         
-        return $result;
+        return $afResponse;
         
     }
     
     /**
-     * Limiting query by default
+     * Limiting query
      * 
-     * @param $offset
-     * @param $limit
+     * @param string $query
+     * @param int $offset
+     * @param int $limit
+     * @return string
+     * @author Sergey Startsev
      */
-    private function limiting($offset = 0, $limit = 50)
+    private function limiting($query, $offset = 0, $limit = 50)
     {
-        $bMatchedOffset = preg_match('/::create\(\).*?->offset\(\s*?(\d+)\s*\)/sim', $this->query, $matched_offset);
-        $bMatchedLimit = preg_match('/::create\(\).*?->limit\(\s*?(\d+)\s*\)/sim', $this->query, $matched_limit);
+        $bMatchedOffset = preg_match('/::create\(\).*?->offset\(\s*?(\d+)\s*\)/sim', $query, $matched_offset);
+        $bMatchedLimit = preg_match('/::create\(\).*?->limit\(\s*?(\d+)\s*\)/sim', $query, $matched_limit);
         
         if ($bMatchedOffset && $bMatchedLimit) {
             // Limit and offset has been matched
@@ -281,8 +280,8 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 $nLimit = ($matched_offset[1] + $matched_limit[1]) - $nOffset;
             }
             
-            $this->query = preg_replace('/->offset\(\s*?(\d+)\s*\)/sim', "->offset({$nOffset})", $this->query);
-            $this->query = preg_replace('/->limit\(\s*?(\d+)\s*\)/sim', "->limit({$nLimit})", $this->query);
+            $query = preg_replace('/->offset\(\s*?(\d+)\s*\)/sim', "->offset({$nOffset})", $query);
+            $query = preg_replace('/->limit\(\s*?(\d+)\s*\)/sim', "->limit({$nLimit})", $query);
         } elseif (!$bMatchedOffset && $bMatchedLimit) {
             // Matched only limit
             
@@ -292,23 +291,24 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 $nLimit = $matched_limit[1] - $offset;
             }
             
-            $nPosition = strripos($this->query, '->');
+            $nPosition = strripos($query, '->');
             if ($nPosition !== false) {
-                $sSelect = substr($this->query, $nPosition, strlen($this->query));
-                $this->query = str_replace($sSelect, "->offset({$offset}){$sSelect}", $this->query);
+                $sSelect = substr($query, $nPosition, strlen($query));
+                $query = str_replace($sSelect, "->offset({$offset}){$sSelect}", $query);
             }
             
-            $this->query = preg_replace('/->limit\(\s*?(\d+)\s*\)/sim', "->limit({$nLimit})", $this->query);
+            $query = preg_replace('/->limit\(\s*?(\d+)\s*\)/sim', "->limit({$nLimit})", $query);
         } else {
             // Nothing has been matched
             
-            $nPosition = strripos($this->query, '->');
+            $nPosition = strripos($query, '->');
             if ($nPosition !== false) {
-                $sSelect = substr($this->query, $nPosition, strlen($this->query));
-                $this->query = str_replace($sSelect, "->offset({$offset})->limit({$limit}){$sSelect}", $this->query);
+                $sSelect = substr($query, $nPosition, strlen($query));
+                $query = str_replace($sSelect, "->offset({$offset})->limit({$limit}){$sSelect}", $query);
             }
         }
         
+        return $query;
     }
     
 }
