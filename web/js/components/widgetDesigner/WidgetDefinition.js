@@ -90,9 +90,16 @@ afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
         });
 	}//eo fetchDefinition
     
+	/**
+	 * Saves widget definition.
+	 * 
+	 * @param {Object} definition The widget definition object.
+	 * @param {Function} (Optional) callback The success callback function.
+	 * @param {Boolean} (Optional) createNewWidget Logical flag create new widget or update existing one, defaults is false.
+	 */
 	,saveDefinition : function(definition, callback, createNewWidget) {
-        var _this = this,
-		definition = Ext.util.JSON.encode(definition);
+        var _this       = this,
+			definition  = Ext.util.JSON.encode(definition);
 		
         Ext.Ajax.request({
             url: afStudioWSUrls.getSaveWidgetUrl(this.widgetUri),

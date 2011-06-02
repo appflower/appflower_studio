@@ -59,7 +59,10 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 					break;
 					
 					case 'add-module':
-						
+						tree.addBranchNode(node, {
+					 		text: 'NewModule',
+    						type: 'module'
+					 	});
 					break;
                 }
             }
@@ -191,6 +194,15 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo initComponent
 	
 	/**
+	 * Adds new plugin to the this tree item.
+	 */
+	,onAddPluginClick : function() {
+		var rootNode = this.getRootNode();
+			
+		this.addBranchNode(rootNode);
+	}//eo onAddPluginClick
+	
+	/**
 	 * Add Widget button handler.
 	 */
 	,onAddWidget : function() {
@@ -202,7 +214,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			fieldsUrl: url,
 			listeners: {
 				widgetcreated: function(widgetUri, response) {
-					_this.onItemActivate();				
+					_this.onItemActivate();
 					//TODO action and security path needed
 					afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri);
 				}
@@ -211,15 +223,6 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		
 		wb.show();
 	}//eo onAddWidget
-	
-	/**
-	 * Adds new plugin to the this tree item.
-	 */
-	,onAddPluginClick : function() {
-		var rootNode = this.getRootNode();
-			
-		this.addBranchNode(rootNode);
-	}//eo onAddPluginClick
 	
 	/**
 	 * Checks if node's type is valid
@@ -333,12 +336,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo addNodePlugin
 
 	,addNodeModule : function(node) {
-		
-	}//eo addNodeModule 
-
-	,addNodeXml : function(node) {
-		
-	}//eo addNodeXml
+	}//eo addNodeModule
 	
 	,renameNodePlugin : function(node, value, startValue) {		
 		var renameParams = {

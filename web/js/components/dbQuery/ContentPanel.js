@@ -1,11 +1,11 @@
 Ext.ns('afStudio.dbQuery');
 
 /**
- * ContentPanel
+ * ContentPanel, the query result/table data output panel placed in central region of DBQuery window. 
  * 
  * @class afStudio.dbQuery.ContentPanel
  * @extends Ext.Panel
- * @author Nick
+ * @author Nikolai Babinski
  */
 afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	
@@ -15,6 +15,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 */
 	maskContent : function(msg) {
 		this.body.mask(msg ? msg : 'loading', 'x-mask-loading');
+		
 		return this;
 	}//eo maskContent
 	
@@ -44,24 +45,21 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 * @return {Ext.grid.GridPanel} db tables list grid
 	 */
 	,createTableListGrid : function(tables) {
-		var grid = new Ext.grid.GridPanel({
+		
+		return new Ext.grid.GridPanel({
 			title: 'Tables',
 			autoScroll: true,
-			columns:[
-				{header:'Name'}
-			],
+			columns:[{
+				header: 'Name'
+			}],
 			store: new Ext.data.JsonStore({
-	        	fields: [
-	        		{name: 'text'}
-	         	],
+	        	fields: [{name: 'text'}],
 	         	data: tables
 			}),
 			viewConfig: {
 				forceFit: true
 			}
-		});
-		
-		return grid;		
+		});		
 	}//eo createTableListGrid
 
 	/**
@@ -70,8 +68,18 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 * <ul>
 	 *   <li><b>result</b>: The query's result Array object, array item corresponds to each query result set:
 	 *     <ul>
-	 *       <li><b>meta</b>: The query metada describing fields;</li>
-	 *       <li><b>data</b>: The data-set.</li>
+	 *       <li><b>message</b>: {String} The result message.</li>
+	 *       <li><b>success</b>: {Boolean} The complete run queries status.</li>
+	 *       <li><b>dataset</b>: {Array} The complex query's result data-set:
+	 *       	<ul>
+	 *       		<li><b>success</b>: {Boolean} Run query success status.</li>
+	 *       		<li><b>query</b>: {String} The run over query.</li>
+	 *              <li><b>meta</b>: {Array} The query metada describing fields.</li>
+	 *              <li><b>data</b>: {Array} The data-set.</li>
+	 *       		<li><b>total</b>: {Number} Total records number</li>
+	 *       		<li><b>message</b>: {String} If error occured this property contains error message for a query.</li>
+	 *       	</ul> 
+	 *       </li>
 	 *     </ul> 
 	 *   </li>
 	 *   <li><b>queryParam</b>: The query's parameters.</li>
@@ -164,9 +172,9 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		
 		var grid = this.createTableListGrid(tables);
 			
-		this.unmaskContent();
-		this.clearPanel();
-		this.add(grid);
+		this.unmaskContent()
+		    .clearPanel()
+		 	.add(grid);
 		this.doLayout();		
 	}//eo showDatabaseTables
 	
@@ -194,7 +202,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	,initComponent : function() {
 		Ext.apply(this, 
 			Ext.applyIf(this.initialConfig,	this._beforeInitComponent())
-		);				
+		);
 		afStudio.dbQuery.ContentPanel.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
 	}//eo initComponent

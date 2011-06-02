@@ -136,10 +136,11 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 *  
 	 * @param {Object} GridView
 	 */
-	,onRelGridRefresh: function(view){
-		var grid = view.grid;
-   		var ds = grid.getStore();
-    	for (var i=0, rcnt=ds.getCount(); i<rcnt; i++) {
+	,onRelGridRefresh : function(view) {
+		var grid = view.grid,
+   		      ds = grid.getStore();
+   		
+    	for (var i = 0, rcnt = ds.getCount(); i < rcnt; i++) {
     		
     		var rec = ds.getAt(i);
     		
@@ -164,7 +165,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
         		});
     		}
 		}
-	}
+	}//eo 
 	
 	/**
 	 * Initializes component
@@ -400,9 +401,9 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 * Changes wizard step and prepares page UI
 	 * @param {Number}  stepNo - New step number
 	 */
-	,chStep: function(stepNo){
+	,chStep : function(stepNo) {
 		var panel = Ext.getCmp(this.id);
-		if(1 == stepNo) {
+		if (1 == stepNo) {
 			var size = {width: 840, height: 450};
 			Ext.getCmp(this.id + '-save-btn').show();
 			Ext.getCmp(this.id + '-next-btn').hide();
@@ -419,13 +420,13 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		this.setSize(size);
 		this.setPagePosition( (Ext.getBody().getWidth()-size.width)/2, 150);		
 		panel.getLayout().setActiveItem(stepNo);
-	}
+	}//eo chStep
 	
 	/**
 	 * Function create
 	 * Handler for "Create Widget" operation
 	 */
-	,create: function(){
+	,create : function() {
 		var items = [];
 		
 		//each item contains data.field, data.id, data.model, data.name, data.size, data.type
@@ -435,10 +436,10 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
             }
 		});
 		
-		var module = this.modulesCombo.getValue(),
-			action = this.actionInput.getValue(),
+		var module    = this.modulesCombo.getValue(),
+			action    = this.actionInput.getValue(),
 			widgetUri = module + '/' + action,
-			type = this.typeCombo.getValue();
+			type      = this.typeCombo.getValue();
 		
 		var widgetMetaData = afStudio.wd.WidgetFactory.buildWidgetDefinition(items, type);
 		
@@ -453,7 +454,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		}, this);
 		
 		afsWD.saveDefinition(widgetMetaData, callback, true);
-	}	
+	}//eo create
 	
 	/**
 	 * Function cancel
@@ -461,7 +462,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 */
 	,cancel : function() {
 		this.close();
-	}
-	
+	}//eo cancel	
 
 });

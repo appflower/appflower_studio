@@ -113,7 +113,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 						value: 'sql',
 						hiddenName: 'type',
 						name: 'type',
-						store: [['sql', 'sql'], ['propel', 'propel']]						
+						store: [['sql', 'sql'], ['propel', 'propel']]				
 					}
 				},{
 					items: {
@@ -134,7 +134,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 				height: 80,
 				name: 'query',
 				anchor: '100% '
-			}]			
+			}]		
 		};		
 	}//eo _beforeInitComponent
 	

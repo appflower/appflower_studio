@@ -44,7 +44,7 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	       	  title = this.title || 'Query Result',
 	          store,
 		storeFields = [],
-			columns = [],  
+			columns = [],
 		  pagingBar;	
 		  
 		if (metaData.length > 0) {

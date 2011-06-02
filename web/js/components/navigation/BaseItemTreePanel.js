@@ -538,7 +538,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * 
 	 */
 	,addLeafNode : function(parentNode) {
-		var nodeCfg = this.leafNodeCfg;
+		var nodeCfg = Ext.apply({}, this.leafNodeCfg);
 		
 		nodeCfg.NEW_NODE = true;
 		this.addNode(parentNode, nodeCfg);
@@ -553,7 +553,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Object} (Optional) extraAttrs The additional attributes to branch node.
 	 */
 	,addBranchNode : function(parentNode, extraAttrs) {
-		var nodeCfg = this.branchNodeCfg;
+		var nodeCfg = Ext.apply({}, this.branchNodeCfg);
 		
 		nodeCfg.NEW_NODE = true;
 		if (extraAttrs && Ext.isObject(extraAttrs)) {
