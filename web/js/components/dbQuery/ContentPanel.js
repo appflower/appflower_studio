@@ -101,13 +101,14 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 					}
 		    	});			    	
 			} else {
-				if (ds[0].success === false) {
-					resultCtn.html = ds[0].message; 
-				} else {
+				if (ds[0].data.length && ds[0].meta.length) {
 			    	resultCtn = new afStudio.dbQuery.QueryResultsGrid({
 						queryResult: ds[0],
 						queryParam: data.queryParam
-			    	});
+			    	});					
+				} else {
+					var msg = Ext.isArray(ds[0].message) ? ds[0].message.join(', ') : ds[0].message;
+					resultCtn.html = String.format('<div>Query: <i><b>{0}</b></i><br /><br />{1}</div>', ds[0].query, msg);					
 				}
 			}
 		} else {

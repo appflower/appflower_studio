@@ -27,16 +27,22 @@ afStudio.dbQuery.QueryResultsTab = Ext.extend(Ext.TabPanel, {
 		};
 		ctn.title = r.query;
 		
+		//query processing failed
 		if (r.success === false) {
 			var msg = Ext.isArray(r.message) ? r.message.join(', ') : r.message;
-			ctn.html = String.format('<div>Query: <i><b>{0}</b></i><br /><br />Error: {1}</div>', r.query, msg);			
-		} else {
+			ctn.html = String.format('<div>Query: <i><b>{0}</b></i><br /><br />Error: {1}</div>', r.query, msg);
+		//query successfully processed and we have data to show
+		} else if (r.data.length && r.meta.length) {
 			param.query = r.query;			
 			Ext.apply(ctn, {
 				xtype: 'afStudio.dbQuery.queryResultsGrid',
 				queryParam: param,
 				queryResult: r
-			});			
+			});
+		//query successfully processed but without output data	
+		} else {
+			var msg = Ext.isArray(r.message) ? r.message.join(', ') : r.message;
+			ctn.html = String.format('<div>Query: <i><b>{0}</b></i><br /><br />{1}</div>', r.query, msg);
 		}
 		
 	   	return ctn;
