@@ -186,7 +186,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	,_beforeInitComponent : function() {
 	
 		return {
-			region: 'center', 
+			region: 'center',
 			margins: '0 5 0 0',
 			layout: 'fit',			
 			border: true,

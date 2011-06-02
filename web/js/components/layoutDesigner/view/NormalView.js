@@ -298,9 +298,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			vc.push(cmpMeta);			
 		} else {			
 			if (Ext.isDefined(vc)) { 
-				this.viewMeta['i:component'] = [vc, cmpMeta];	
+				this.viewMeta['i:component'] = [vc, cmpMeta];
 			} else {
-			//if undefined - the view is empty
+			    //if undefined - the view is empty
 				this.viewMeta['i:component'] = cmpMeta;
 			}
 		}
@@ -316,26 +316,15 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		var vc = this.viewMeta['i:component'];
 		
 		if (Ext.isArray(vc)) {
-			//delete
 			var cmpIndex = this.getComponentMetaIndex(cmpMeta);
+			//delete component metadata
 			if (Ext.isDefined(cmpIndex)) {
-				delete vc[cmpIndex];
+				vc.splice(cmpIndex, 1);
 			}
-			//correct
-			var compArr = [];
-			for (var i = 0, len = vc.length; i < len; i++) {
-				if (Ext.isDefined(vc[i])) {
-					compArr.push(vc[i]);
-				}
-			}
-			
-			if (compArr.length > 0) {
-				this.viewMeta['i:component'] = compArr;
-			} else {
+			if (vc.length == 0) {
 				delete this.viewMeta['i:component'];
 			}
-			
-		} else {			
+		} else {
 			delete this.viewMeta['i:component'];
 		}
 		

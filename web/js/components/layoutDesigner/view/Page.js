@@ -5,7 +5,7 @@ Ext.namespace('afStudio.layoutDesigner.view');
  * 
  * @class afStudio.layoutDesigner.view.Page
  * @extends Ext.Container
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 	
@@ -113,7 +113,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 			   mp = afStudio.layoutDesigner.view.MetaDataProcessor;
 
 		if (Ext.isEmpty(cv)) {
-			throw new afStudio.error.ApsError('Content view is not defined!');
+			throw new afStudio.error.ApsError('Content view is not defined! <br />[Class: afStudio.layoutDesigner.view.Page, method: getActiveContentView]');
 		}
 		
 		if (mp.isViewTabbed(cv.viewMeta)) {
