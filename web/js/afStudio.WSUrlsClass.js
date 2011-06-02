@@ -65,6 +65,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     getDBQueryQueryUrl: function() {
         return this.buildUrlFor('/afsDatabaseQuery/query');
     },
+    getDBQueryComplexQueryUrl: function() {
+        return this.buildUrlFor('/afsDatabaseQuery/complexQuery');
+    },    
     getModelGridDataReadUrl: function(modelName) {
         return this.buildUrlFor('/afsModelGridData/read?model=' + modelName);
     },

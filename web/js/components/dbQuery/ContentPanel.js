@@ -20,17 +20,22 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * Unmasks this panel
+	 * @return this for chaining
 	 */
 	,unmaskContent : function() {
 		this.body.unmask();
+		
 		return this;
 	}//eo unmaskContent
 	
 	/**
-	 * Removes all panel's components
+	 * Removes all panel's components.
+	 * @return this for chaining
 	 */
 	,clearPanel : function() {			
 		this.removeAll(true);
+		
+		return this;
 	}//eo clearPanel
 	
 	/**
@@ -60,23 +65,57 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	}//eo createTableListGrid
 
 	/**
-	 * Shows query's result 
-	 * @param {Object} result The query's result object
+	 * Shows query's result data-set.
+	 * @param {Object} data The result meta-object:
 	 * <ul>
-	 * <li><b>meta</b>: The query metada describing fields</li>
-	 * <li><b>data</b>: The data set</li>
+	 *   <li><b>result</b>: The query's result Array object, array item corresponds to each query result set:
+	 *     <ul>
+	 *       <li><b>meta</b>: The query metada describing fields;</li>
+	 *       <li><b>data</b>: The data-set.</li>
+	 *     </ul> 
+	 *   </li>
+	 *   <li><b>queryParam</b>: The query's parameters.</li>
 	 * </ul>
 	 */
 	,showQueryResult : function(data) {
+		var ds = data.result.dataset,
+			success = data.result.success,
+			resultCtn = {};
+		
 		this.maskContent();
 		
-    	var resultGrid = new afStudio.dbQuery.QueryResultsGrid({    	
-			queryResult: data.result,
-			queryParam: data.queryParam
-    	});
-    	
-		this.unmaskContent().clearPanel();
-		this.add(resultGrid);
+		if (success) {
+			if (Ext.isArray(ds) && ds.length > 1) {
+		    	resultCtn = new afStudio.dbQuery.QueryResultsTab({  	
+					metaData: {
+						dataset: ds,
+						queryParam: data.queryParam
+					}
+		    	});			    	
+			} else {
+				if (ds[0].success === false) {
+					resultCtn.html = ds[0].message; 
+				} else {
+			    	resultCtn = new afStudio.dbQuery.QueryResultsGrid({
+						queryResult: ds[0],
+						queryParam: data.queryParam
+			    	});
+				}
+			}
+		} else {
+			var msg = '';			
+			Ext.iterate(ds, function(q) {
+				msg += String.format('<div>Query: <i>{0}</i><br />Error: {1}</div> <hr />', q.query, q.message);
+			});
+		
+			Ext.apply(resultCtn, {
+				html: data.result.message + '<br /><br />' + msg
+			});	
+		}			
+		
+		this.unmaskContent()
+			.clearPanel()
+			.add(resultCtn);
 		this.doLayout();
 	}//eo showQueryResult
 	

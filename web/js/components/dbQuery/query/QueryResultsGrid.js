@@ -5,7 +5,7 @@ Ext.ns('afStudio.dbQuery');
  * 
  * @class afStudio.dbQuery.QueryResultsGrid
  * @extends Ext.grid.GridPanel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	/**
@@ -40,12 +40,13 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	//private
 	,_beforeInitComponent : function() {
 		var   _this = this,
-	       metaData = _this.queryResult.meta || [],
+	       metaData = this.queryResult.meta || [],
+	       	  title = this.title || 'Query Result',
 	          store,
 		storeFields = [],
 			columns = [],  
-		  pagingBar;
-		
+		  pagingBar;	
+		  
 		if (metaData.length > 0) {
 			columns = [new Ext.ux.grid.PagingRowNumberer({header: 'Rec #', width: 50})];
 			
@@ -75,7 +76,7 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
     	});
 		
 		return {
-			title: 'Query Result',
+			title: title,
 			iconCls: 'icon-database-table',
 		    loadMask: true,
 		    store: store,
@@ -101,6 +102,10 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 		this._afterInitComponent();
 	}//eo initComponent
 	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
 	,_afterInitComponent : function() {
 		var _this = this;
 		
@@ -110,6 +115,10 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 				_this.loadResultsData(_this.queryResult ? _this.queryResult : []);
 			}
 		});
-	}//eo _afterInitComponent
-	
+	}//eo _afterInitComponent	
 });
+
+/**
+ * @type 'afStudio.dbQuery.queryResultsGrid'
+ */
+Ext.reg('afStudio.dbQuery.queryResultsGrid', afStudio.dbQuery.QueryResultsGrid);

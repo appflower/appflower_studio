@@ -43,7 +43,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 $afResponse = afResponseHelper::create()->data($meta, $data, $total);
                 
             } else {
-                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
+                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
             }
         } else {
             $afResponse = $afResponseValidate;
@@ -66,13 +66,13 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      * Validate functionality
      * 
      * @param string $query
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     private function validate($query)
     {
         if (strpos($query, ';')) {
-            $afResponse = afResponseHelper::create()->success(false)->message("Query shouldn't have ';' symbol");
+            $afResponse = afResponseHelper::create()->success(false)->message("Query shouldn't have ';' symbol")->query($query);
         } else {
             
             if ($this->checkSyntax($query)) {
@@ -94,7 +94,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                                 }
                             }
                             
-                            $afResponse = afResponseHelper::create()->success(true)->message($aMatchedFunctions[1]);
+                            $afResponse = afResponseHelper::create()->success(true)->message($aMatchedFunctions[1])->query($query);
                         }
                         
                         if (!$bError) {
@@ -116,28 +116,28 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                             restore_error_handler();
                             
                             if ($this->is_valid) {
-                                $afResponse = afResponseHelper::create()->success(true)->message('Validated successfully');
+                                $afResponse = afResponseHelper::create()->success(true)->message('Validated successfully')->query($query);
                             } else {
                                 if (isset($sMessage) && !empty($sMessage)) {
-                                    $afResponse = afResponseHelper::create()->success(false)->message($sMessage);
+                                    $afResponse = afResponseHelper::create()->success(false)->message($sMessage)->query($query);
                                 } else {
-                                    $afResponse = afResponseHelper::create()->success(false)->message("Please, check syntax");
+                                    $afResponse = afResponseHelper::create()->success(false)->message("Please, check syntax")->query($query);
                                 }
                             }
                             
                         } else {
                             $sError = implode(', ', $aError);
-                            $afResponse = afResponseHelper::create()->success(false)->message("Class {$sClassName} doesn't have functions: {$sError}");
+                            $afResponse = afResponseHelper::create()->success(false)->message("Class {$sClassName} doesn't have functions: {$sError}")->query($query);
                         }
                     } else {
-                        $afResponse = afResponseHelper::create()->success(false)->message("Class {$sClassName} doesn't exists");
+                        $afResponse = afResponseHelper::create()->success(false)->message("Class {$sClassName} doesn't exists")->query($query);
                     }
                     
                 } else {
-                    $afResponse = afResponseHelper::create()->success(false)->message("Query doesn't look a valid");
+                    $afResponse = afResponseHelper::create()->success(false)->message("Query doesn't look a valid")->query($query);
                 }
             } else {
-                $afResponse = afResponseHelper::create()->success(false)->message("Syntax error");
+                $afResponse = afResponseHelper::create()->success(false)->message("Syntax error")->query($query);
             }
         }
         
@@ -148,6 +148,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      * Checking syntax when evaluating query
      * 
      * @return boolean
+     * @author Sergey Startsev
      */
     private function checkSyntax($query)
     {
@@ -157,8 +158,9 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     /**
      * Prepare object for output
      * 
-     * @param $object Object of result
+     * @param object $object Object of result
      * @return array
+     * @author Sergey Startsev
      */
     private function prepareOutput($object)
     {
@@ -168,8 +170,9 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     /**
      * Prepare result list of objects for output
      * 
-     * @param $aList List of objects for processing
+     * @param array $aList List of objects for processing
      * @return array
+     * @author Sergey Startsev
      */
     private function prepareList($aList)
     {
@@ -183,6 +186,9 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     
     /**
      * Hadle fatal error via shutdown function
+     * 
+     * @return string
+     * @author Sergey Startsev
      */
     public function handleShutdown() {
         $error = error_get_last();
@@ -194,8 +200,11 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     /**
      * Process class resutls
      * 
-     * @param $execute_query Executed result 
-     * @return mixed
+     * @param string $execute_query - Executed result 
+     * @param mixed execute_query
+     * @param int $total
+     * @return afResponse
+     * @author Sergey Startsev
      */
     private function processClass($query, $execute_query, $total)
     {
@@ -210,7 +219,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 
                 $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
             } else {
-                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found')->query($query);
+                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
             }
             
         } elseif ($execute_query instanceof ModelCriteria) {
@@ -219,7 +228,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
             
         } elseif ($execute_query instanceof BaseObject) {
             if (is_null($execute_query)) {
-                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
+                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
             } else {
                 $data = array($this->prepareOutput($execute_query));
                 $meta = $this->getFields($data);
@@ -246,10 +255,10 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 
                 $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
             } else {
-                $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
+                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
             }
         } else {
-            $afResponse = afResponseHelper::create()->success(true)->message('Nothing has been found');
+            $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
         }
         
         return $afResponse;

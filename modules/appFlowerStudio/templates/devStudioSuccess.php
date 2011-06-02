@@ -118,6 +118,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 
 <!-- dbQuery -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/query/QueryResultsGrid.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/query/QueryResultsTab.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/table/DataGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/table/StructureGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/table/TableModelTab.js"></script>

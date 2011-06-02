@@ -31,7 +31,11 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
      */
 	,pluginContextMenu : new Ext.menu.Menu({
 		items: [
-        {
+		{
+            itemId: 'add-module',
+            text: 'Add Module',
+            iconCls: 'icon-models-add'			
+		},{
        		itemId: 'rename-plugin',
             text: 'Rename Plugin',
             iconCls: 'icon-edit'
@@ -52,6 +56,10 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
                 
 					case 'rename-plugin':
 						tree.treeEditor.triggerEdit(node);						
+					break;
+					
+					case 'add-module':
+						
 					break;
                 }
             }
@@ -157,6 +165,11 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				items: [
 				'->',
 				{
+					text: 'Add Widget',
+					iconCls: 'icon-widgets-add',
+					handler: _this.onAddWidget,
+					scope: _this
+				},{
 					text: 'Add plugin',
 					iconCls: 'icon-models-add',
 					handler: _this.onAddPluginClick,
@@ -178,11 +191,32 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo initComponent
 	
 	/**
+	 * Add Widget button handler.
+	 */
+	,onAddWidget : function() {
+		var _this = this,
+			  url = afStudioWSUrls.getModelsUrl();
+		
+		var wb = new afStudio.wd.WidgetsBuilder({
+			modelsUrl: url,
+			fieldsUrl: url,
+			listeners: {
+				widgetcreated: function(widgetUri, response) {
+					_this.onItemActivate();				
+					//TODO action and security path needed
+					afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri);
+				}
+			}
+		});
+		
+		wb.show();
+	}//eo onAddWidget
+	
+	/**
 	 * Adds new plugin to the this tree item.
 	 */
 	,onAddPluginClick : function() {
-		var _this = this, 
-			rootNode = this.getRootNode();
+		var rootNode = this.getRootNode();
 			
 		this.addBranchNode(rootNode);
 	}//eo onAddPluginClick
@@ -206,7 +240,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			return this.constructor.superclass.isValidNodeName.call(this, node, name);
 		} else {
 			return /^[^\d]\w*\.xml$/im.test(name) ? true : false;
-		}		
+		}
 	}//eo isValidNodeName
 	
 	/**
@@ -238,7 +272,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 */
 	,onNodeContextMenu : function(node, e) {
 		var _this = this,
-			nt = this.getNodeAttribute(node, 'type');
+			   nt = this.getNodeAttribute(node, 'type');
 			
         node.select();
         
@@ -434,7 +468,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo deleteNode
 	
 	/**
-	 * Opens widget designer for specified node.
+	 * Opens Widget Designer for specified node.
 	 * @private
 	 * @param {Ext.tree.TreeNode} node
 	 */
@@ -445,7 +479,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	
         afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri, actionPath, securityPath);
     }//eo showWidgetDesignerForNode	
-}); 
+});
 
 /**
  * @type afStudio.navigation.pluginItem
