@@ -47,7 +47,88 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
     }
     
     /**
-     * Process one query
+     * Validation functionality
+     * 
+     * @param string $query
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function validate($query)
+    {   
+        if (preg_match('/alter|drop|create/si', $query)) {
+            $afResponse = afResponseHelper::create()->success(false)->message('This operation or functionality has been disabled');
+        } else {
+            $afResponse = afResponseHelper::create()->success(true)->message('Validated successfully');
+        }
+        
+        return $afResponse;
+    }
+    
+    /**
+     * Getting query type
+     *
+     * @param string $query 
+     * @return string
+     * @author Sergey Startsev
+     */
+    protected function getType($query)
+    {   
+        if (preg_match('/(?:(select|show))/sim', $query)) {
+            $type = self::TYPE_SELECT;
+        } elseif (preg_match('/(?:(update|delete|truncate|insert))/sim', $query)) {
+            $type = self::TYPE_UPDATE;
+        } elseif (preg_match('/(?:(drop|alter|create))/sim', $query)) {
+            $type = self::TYPE_STRUCT;
+        }
+        
+        return $type;
+    }
+    
+    /**
+     * Process query with select type
+     *
+     * @param string $query 
+     * @param int $offset
+     * @param int $limit
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processQuerySelect($query, $offset, $limit)
+    {
+        $stm = $this->dbh->prepare($query);
+        $bExecuted = $stm->execute();
+        
+        if ($bExecuted) {
+            if ($stm->rowCount() > 0) {
+                $total = $stm->rowCount();
+
+                // Limiting query
+                $query_limited = $this->limiting($query, $offset, $limit);
+
+                $stm = $this->dbh->prepare($query_limited);
+                $stm->execute();
+
+                if ($stm->rowCount() > 0) {
+                    $data = $stm->fetchAll(PDO::FETCH_ASSOC);
+                    $meta = $this->getFields($data);
+
+                    $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
+                } else {
+                    $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+                }
+            } else {
+                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+            }
+        } else {
+            $error_info = $stm->errorInfo();
+            $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
+        }
+        
+        return $afResponse;
+    }
+    
+    /**
+     * Process query update type
      *
      * @param string $query 
      * @param int $offset 
@@ -55,60 +136,47 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
      * @return afResponse
      * @author Sergey Startsev
      */
-    protected function processQuery($query, $offset, $limit)
+    protected function processQueryUpdate($query, $offset, $limit)
     {
-        $afResponseValidate = $this->validate($query);
+        $stm = $this->dbh->prepare($query);
+        $bExecuted = $stm->execute();
         
-        if ($afResponseValidate->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-            // prepare query
-            $stm = $this->dbh->prepare($query);
-            $bExecuted = $stm->execute();
-            
-            if ($bExecuted) {
-                if ($stm->rowCount() > 0) {
-                    $total = $stm->rowCount();
-                    
-                    // Limiting query
-                    $query_limited = $this->limiting($query, $offset, $limit);
-                    
-                    $stm = $this->dbh->prepare($query_limited);
-                    $stm->execute();
-                    
-                    if ($stm->rowCount() > 0) {
-                        $data = $stm->fetchAll(PDO::FETCH_ASSOC);
-                        $meta = $this->getFields($data);
-                        
-                        $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
-                    } else {
-                        $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
-                    }
-                } else {
-                    $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
-                }
-            } else {
-                $error_info = $stm->errorInfo();
-                $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
-            }
+        if ($bExecuted) {
+            $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Query successfully executed')->query($query);
         } else {
-            $afResponse = $afResponseValidate;
+            $error_info = $stm->errorInfo();
+            $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
         }
         
         return $afResponse;
     }
     
     /**
-     * Validation functionality
-     * 
-     * @param string $query
+     * Process query struct type
+     *
+     * @param string $query 
+     * @param int $offset 
+     * @param int $limit 
      * @return afResponse
      * @author Sergey Startsev
      */
-    private function validate($query)
-    {   
-        if (preg_match('/alter|drop|create|insert|update|delete/si', $query)) {
-            $afResponse = afResponseHelper::create()->success(false)->message('This operation or functionality has been disabled');
+    protected function processQueryStruct($query, $offset, $limit)
+    {
+        $stm = $this->dbh->prepare($query);
+        $bExecuted = $stm->execute();
+        
+        if ($bExecuted) {
+            
+            // Run from refactored models functionality of changing schema, regenerate models
+            
+            $afResponse = afResponseHelper::create()
+                            ->success(true)
+                            ->data(array(), array(), 0)
+                            ->message('Query successfully executed. Models regenerated')
+                            ->query($query);
         } else {
-            $afResponse = afResponseHelper::create()->success(true)->message('Validated successfully');
+            $error_info = $stm->errorInfo();
+            $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
         }
         
         return $afResponse;

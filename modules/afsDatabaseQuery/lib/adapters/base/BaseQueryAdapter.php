@@ -18,6 +18,21 @@ abstract class BaseQueryAdapter
     const QUERY_NOT_EXECUTED = 'No one query not executed';
     
     /**
+     * Structure query type
+     */
+    const TYPE_STRUCT = 'struct';
+    
+    /**
+     * Select query type
+     */
+    const TYPE_SELECT = 'select';
+    
+    /**
+     * Update query type
+     */
+    const TYPE_UPDATE = 'update';
+    
+    /**
      * Query for processing
      */
     protected $query;
@@ -99,7 +114,38 @@ abstract class BaseQueryAdapter
      * @return afResponse
      * @author Sergey Startsev
      */
-    abstract protected function processQuery($query, $offset, $limit);
+    protected function processQuery($query, $offset, $limit)
+    {
+        $afResponse = $this->validate($query);
+        
+        if ($afResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            $afResponse = $this->processQueryType($query, $offset, $limit);
+        }
+        
+        return $afResponse;
+    }
+    
+    /**
+     * Process query by it's type
+     *
+     * @param string $query 
+     * @param int $offset 
+     * @param int $limit 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processQueryType($query, $offset, $limit)
+    {
+        $type = $this->getType($query);
+        
+        $method = 'processQuery' . ucfirst($type);
+        
+        if (!method_exists($this, $method)) {
+            throw new afsDatabaseQueryException("You should define method '{$method}'");
+        }
+        
+        return call_user_func_array(array($this, $method), array($query, $offset, $limit));
+    }
     
     /**
      * Separate query to few using separator, which can be reloaded in child classes
@@ -140,5 +186,23 @@ abstract class BaseQueryAdapter
         
         return $fields;
     }
+    
+    /**
+     * Validation functionality
+     * 
+     * @param string $query
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    abstract protected function validate($query);
+    
+    /**
+     * Getting query type
+     *
+     * @param string $query 
+     * @return string
+     * @author Sergey Startsev
+     */
+    abstract protected function getType($query);
     
 }

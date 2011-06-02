@@ -12,7 +12,41 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     private $is_valid = true;
     
     /**
-     * Process one query
+     * Process query with select type
+     *
+     * @param string $query 
+     * @param int $offset
+     * @param int $limit
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processQuerySelect($query, $offset, $limit)
+    {
+        eval('$execute_query = ' . $query . ';');
+        
+        $total = count($execute_query);
+        
+        if ($total > $limit) {
+            $query_limited = $this->limiting($query, $offset, $limit);
+            eval('$execute_query = ' . $query_limited . ';');
+        }
+        
+        if (is_object($execute_query)) {
+            $afResponse = $this->processClass($query, $execute_query, $total);
+        } elseif (is_int($execute_query)) {
+            $data = array(array($execute_query));
+            $meta = $this->getFields($data);
+
+            $afResponse = afResponseHelper::create()->data($meta, $data, $total)->query($query);
+        } else {
+            $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+        }
+        
+        return $afResponse;
+    }
+    
+    /**
+     * Process query update type
      *
      * @param string $query 
      * @param int $offset 
@@ -20,46 +54,35 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      * @return afResponse
      * @author Sergey Startsev
      */
-    protected function processQuery($query, $offset, $limit)
+    protected function processQueryUpdate($query, $offset, $limit)
     {
-        $afResponseValidate = $this->validate($query);
+        eval('$execute_query = ' . $query . ';');
         
-        if ($afResponseValidate->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-            eval('$execute_query = ' . $query . ';');
-            
-            $total = count($execute_query);
-            
-            if ($total > $limit) {
-                $query_limited = $this->limiting($query, $offset, $limit);
-                eval('$execute_query = ' . $query_limited . ';');
-            }
-            
-            if (is_object($execute_query)) {
-                $afResponse = $this->processClass($query, $execute_query, $total);
-            } elseif (is_int($execute_query)) {
-                $data = array(array($execute_query));
-                $meta = $this->getFields($data);
-                
-                $afResponse = afResponseHelper::create()->data($meta, $data, $total);
-                
-            } else {
-                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
-            }
-        } else {
-            $afResponse = $afResponseValidate;
-        }
+        $afResponse = afResponseHelper::create()
+                        ->success(true)
+                        ->data(array(), array(), 0)
+                        ->message('Query successfully executed')
+                        ->query($query);
         
         return $afResponse;
     }
     
     /**
-     * Eval error handler
+     * Getting query type
      *
+     * @param string $query 
+     * @return string
      * @author Sergey Startsev
      */
-    public function eval_error_handler($number, $error, $file, $line)
-    {
-        $this->is_valid = false;
+    protected function getType($query)
+    {   
+        if (preg_match('/->(?:(find|findOne|count|findPk|findOneOrCreate))\(.*?\)/sim', $query)) {
+            $this->type = self::TYPE_SELECT;
+        } elseif (preg_match('/->(?:(update|delete))\(.*?\)/sim', $query)) {
+            $this->type = self::TYPE_UPDATE;
+        }
+        
+        return $this->type;
     }
     
     /**
@@ -69,7 +92,7 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      * @return afResponse
      * @author Sergey Startsev
      */
-    private function validate($query)
+    protected function validate($query)
     {
         if (strpos($query, ';')) {
             $afResponse = afResponseHelper::create()->success(false)->message("Query shouldn't have ';' symbol")->query($query);
@@ -182,19 +205,6 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         }
         
         return $aResult;
-    }
-    
-    /**
-     * Hadle fatal error via shutdown function
-     * 
-     * @return string
-     * @author Sergey Startsev
-     */
-    public function handleShutdown() {
-        $error = error_get_last();
-        if($error !== NULL){
-            echo afResponseHelper::create()->success(false)->message('Please, check syntax. Fatal Error: ' . $error['message'])->asJson();
-        } 
     }
     
     /**
@@ -318,6 +328,30 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
         }
         
         return $query;
+    }
+    
+    /**
+     * Eval error handler
+     *
+     * @author Sergey Startsev
+     */
+    public function eval_error_handler($number, $error, $file, $line)
+    {
+        $this->is_valid = false;
+    }
+    
+    /**
+     * Hadle fatal error via shutdown function
+     * 
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function handleShutdown() 
+    {
+        $error = error_get_last();
+        if($error !== NULL){
+            echo afResponseHelper::create()->success(false)->message('Please, check syntax. Fatal Error: ' . $error['message'])->asJson();
+        } 
     }
     
 }
