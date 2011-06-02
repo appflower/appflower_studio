@@ -53,24 +53,9 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			},{
 				text: 'Theme',
 				iconCls: 'icon-theme',
-				ignoreParentClicks: true,
-				menu: {
-					items: [
-						{
-							text: 'Template Selector',
-							iconCls: 'icon-theme-selector',
-							handler: function(){
-								(new afStudio.TemplateSelector()).show();
-							}
-						},{
-							text: 'Template Designer',
-							iconCls: 'icon-theme-designer',
-							handler: function (b, e) {
-								(new afStudio.TemplateDesigner()).show();
-							}
-						}
-					]
-				}
+				handler: function(){
+					(new afStudio.Theme()).show();
+			    }
 			},{
 				
 				text: 'Tools',

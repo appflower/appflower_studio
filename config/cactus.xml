@@ -182,8 +182,7 @@
 					<file>js/jquery/jquery.prettyPhoto.js</file>	
 					
 					<!-- Theme - template designer, template selector, editors -->
-					<file>js/components/theme/afStudio.TemplateSelector.js</file>
-					<file>js/components/theme/afStudio.TemplateDesigner.js</file>
+					<file>js/components/theme/afStudio.Theme.js</file>
 					<file>js/components/theme/editors/afStudio.BaseEditor.js</file>
 					<file>js/components/theme/editors/afStudio.CssEditor.js</file>
 				</files>
