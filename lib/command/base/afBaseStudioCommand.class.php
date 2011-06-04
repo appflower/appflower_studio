@@ -1,10 +1,11 @@
 <?php
 /**
- * @author startsev.sergey@gmail.com
+ * Base Studio Command class
+ * 
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 abstract class afBaseStudioCommand
 {
-    
     /**
      * Result of executing command
      */
@@ -37,7 +38,7 @@ abstract class afBaseStudioCommand
             if (method_exists($this, $controller_name)) {
                 call_user_func(array($this, $controller_name));
             } else {
-                throw new Exception("Controller: '{$controller_name}' not defined");
+                throw new afStudioCommandException("Controller: '{$controller_name}' not defined");
             }
             
             return $this->result;
@@ -109,4 +110,3 @@ abstract class afBaseStudioCommand
         return $return;
     }
 }
-?>

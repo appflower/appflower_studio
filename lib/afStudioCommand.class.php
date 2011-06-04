@@ -1,17 +1,16 @@
 <?php
 /**
- * afStudioCommand 
+ * Core studio Command class
  *
- * @author startsev.sergey@gmail.com
+ * @author Startsev Sergey <startsev.sergey@gmail.com>
  */
 class afStudioCommand
 {
-	
     /**
      * Getting Adaptee class
      * 
-     * @param $type Type of Command class
-     * @param $command Command name
+     * @param string $type - Type of Command class
+     * @param string $command - Command name
      * 
      * @return object
      */
@@ -26,8 +25,8 @@ class afStudioCommand
     /**
      * Processing command via command type
      * 
-     * @param $type command type name (Layout, ...)
-     * @param $command command name, that will be executed (get)
+     * @param string $type - command type name (Layout, ...)
+     * @param string $command - command name, that will be executed (get)
      * 
      * @return mixed
      */
@@ -39,7 +38,4 @@ class afStudioCommand
         return $aResult;
     }
     
-    
-    
 }
-
