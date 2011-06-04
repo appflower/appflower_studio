@@ -14,7 +14,7 @@ class afsPluginManagerActions extends sfActions
     public function preExecute()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            // $this->forward404("This action should be used only for ajax requests");
+            $this->forward404("This action should be used only for ajax requests");
         }
     }
 
