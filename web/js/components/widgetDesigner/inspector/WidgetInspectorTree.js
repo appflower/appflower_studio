@@ -14,11 +14,6 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	layout : 'fit'
 	
-	/**
-	 * Widget metadata.
-	 * @cfg {Object} widgetMeta
-	 */	
-	
     /**
      * Tree sorter.
      * @property treeSorter
@@ -33,20 +28,52 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	,_beforeInitComponent : function() {
 		var _this = this;
 		
-        var root = this.createRootNode();
-        
         this.treeSorter = new Ext.tree.TreeSorter(this, {
         	folderSort: true
         });
 	    
+        var rootNode = this.buildTreeRootNode(this.widgetRootNode) ;
+
 		return {
-			root: root,			
+			root: rootNode,
             animate: true,
             containerScroll: true,
             autoScroll: true
 		};
 	}//eo _beforeInitComponent	
-	
+	,buildTreeRootNode : function(widgetRootNode) {
+        var root = {
+            text: widgetRootNode.getLabel(),
+            children: [],
+            WDNode: widgetRootNode
+        }
+        
+        // @todo - how we can fix this ?
+        window.tmpFuncHolder = this.buildTreeNode;
+        
+        this.buildTreeNode(widgetRootNode, root);
+        return root;
+    },
+    buildTreeNode: function(nodeWithPossibleChildrens, rootNode){
+
+        nodeWithPossibleChildrens.eachChild(function(childNode){
+
+            var node = {
+                text: childNode.getLabel(),
+                leaf: childNode.isLeaf(),
+                children: [],
+                WDNode: childNode
+            };
+            this.children.push(node);
+            if (!childNode.isLeaf()) {
+                // @todo - how we can fix this ?
+                // @todo - I need to call buildTreeNode recursively here but I don't know how I can reference it
+                window.tmpFuncHolder(childNode, node);
+            }
+        },
+        rootNode
+        );
+    }
 	/**
 	 * Ext Template method
 	 * @private
@@ -80,22 +107,6 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	,initWidgetInspectorTree : function() {
 		this.expandAll();
 	}//eo initWidgetInspectorTree 
-	
-	/**
-	 * Creates root node for this tree.
-	 * @return {afStudio.wi.ObjectRootNode} concrete class root node
-	 */
-   ,createRootNode : function() {
-   	    var wUri = this.widgetMeta.widgetUri,
-   	    	df = this.widgetMeta.definition,
-   	    	root = afStudio.wd.WidgetFactory.createWIRootNode(df.type);   	    
-   	    
-       	root.setText(wUri + ' [' + df.type + ']');
-       	root.configureFor(df);
-       
-       	return root;
-   }//eo createRootNode
-   
 });
 
 /**

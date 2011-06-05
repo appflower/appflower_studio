@@ -6,59 +6,12 @@
  * @extends afStudio.wi.BaseNode
  */ 
 afStudio.wi.CollectionNode = Ext.extend(afStudio.wi.BaseNode, {
-	/**
-	 * Contains text for context menu addChild item.
-	 * @property addChildActionLabel
-	 * @type String
-	 */
-    addChildActionLabel : 'Add child'
-    
-    /**
-     * @property childNodeId
-     * @type {String}
-     */
-    ,childNodeId : 'i:child'
-    
     /**
      * Dump empty node or not.
      * @property dumpEvenWhenEmpty 
      * @type Boolean
      */
-    ,dumpEvenWhenEmpty : true
-    
-    /**
-     * template method
-     * @override
-     */
-    ,createContextMenu : function() {
-        this.contextMenu = new Ext.menu.Menu({
-            items: [
-            {
-                text: this.addChildActionLabel,                
-                iconCls: 'icon-add',
-                handler: this.onContextAddChildItemClick,
-                scope: this
-            }]
-        });
-    }//eo createContextMenu
-    
-    /**
-     * @protected
-     * @override
-     * @param {Ext.tree.TreeNode} node
-     * @param {Ext.EventObject} e
-     */
-    ,onContextMenuClick : function(node, e) {
-        node.select();
-        this.contextMenu.showAt(e.getXY());
-    }//eo onContextMenuClick    
-    
-    /**
-     * Context menu addChild <u>click</u> event listener.
-     */
-    ,onContextAddChildItemClick : function(item, e) {
-    	var newNode = this.addChild();
-    }//eo onContextAddChildItemClick
+    dumpEvenWhenEmpty : true
     
     /**
      * @override
@@ -89,10 +42,6 @@ afStudio.wi.CollectionNode = Ext.extend(afStudio.wi.BaseNode, {
     ,addChild : function() {
         var newNode = this.createChild();
         this.appendChild(newNode);
-        if (this.rendered) {
-            this.expand();
-        }
-
         return newNode;
     }//eo addChild    
     

@@ -140,9 +140,9 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		}
 		
 		_this.on({
-			scope: this,
-			append: this.onViewInspectorAppendProperty,
-			remove: this.onViewInspectorRemoveProperty
+			scope: this
+			,append: this.onViewInspectorAppendProperty
+			,remove: this.onViewInspectorRemoveProperty
 		});
 	}//eo _afterInitComponent
 	

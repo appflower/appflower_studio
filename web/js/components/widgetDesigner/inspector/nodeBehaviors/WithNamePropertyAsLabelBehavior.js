@@ -22,6 +22,6 @@ afStudio.wi.WithNamePropertyAsLabelBehavior = Ext.extend(afStudio.wi.BaseBehavio
     }//eo propertyChanged
     
     ,namePropertyChanged : function(property) {
-        this.node.setText(property.get('value'));
+//        this.node.setText(property.get('value'));
     }//eo namePropertyChanged
 });

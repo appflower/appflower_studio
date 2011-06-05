@@ -39,6 +39,8 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 */
 	,_beforeInitComponent : function() {
    		var _this = this;
+   	    var root = afStudio.wd.WidgetFactory.createWIRootNode(this.widgetMeta.definition.type);
+       	root.configureFor(this.widgetMeta.definition);
 
 		return {
             title: 'Widget Inspector',
@@ -47,7 +49,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 				xtype: 'afStudio.wi.widgetInspectorTree',
 				ref: 'inspectorTree',
 				region: 'center',
-				widgetMeta: this.widgetMeta
+				widgetRootNode: root
 			},{
 				xtype: 'afStudio.wi.propertyGrid',
 				ref: 'propertyGrid',
@@ -102,7 +104,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 * @param {Ext.EventObject} e
 	 */
 	,onInspectorTreeNodeClick : function(node, e) {
-		var fields = node.getProperties();
+		var fields = node.attributes.WDNode.getProperties();
 		this.propertyGrid.setSource(fields);
 	}//eo onInspectorTreeNodeClick
 	

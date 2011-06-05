@@ -2,51 +2,30 @@ Ext.namespace('afStudio.wi');
 
 /**
  * Abstract class.
- * BaseNode is common class for all other WI node types.
+ * BaseNode is common class for all other widget node types.
  * It can contain nested elements which are some specific NodeTypes but even childs are based on BaseNode.
- * It can also contain parameters which are accessed through Properties Grid displayed under WI tree.
+ * It can also contain properties that reflects XML attributes
  *
  * This class is <b>abstract</b> class - you should not use it. Instead use CollectionNode or ContainerNode class.
  * 
  * @class afStudio.wi.BaseNode
  * @extends Ext.tree.TreeNode
  */
-afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
-	/**
-	 * Read-only. Contains reference to this node context-menu.
-	 * To set up this property use {@link #createContextMenu} method.
-	 * @property contextMenu
-	 * @type {Ext.menu.Menu}
-	 */
-	
-	/**
-	 * This node behaviors array.
-	 * @property behaviors
-	 * @type {Array}
-	 */
-	
-	/**
-	 * Node properties.
-	 * @property properties
-	 * @type {Object}
-	 */
-	
-	/**
-	 * BaseNode constructor.
-	 * @param {Object} config The base node configuration object
-	 */
+afStudio.wi.BaseNode = Ext.extend(Ext.data.Node, {
 	constructor : function(config) {
 		config = Ext.apply(config || this.getNodeConfig(), {
 			editable: false
 		});
-	    this.createContextMenu();
-	    
 	    afStudio.wi.BaseNode.superclass.constructor.call(this, config);
 	    
-	    this._initEvents();
 	    this.createProperties();
 	    this.addRequiredChilds();
 	    this.behaviors = [];
+        
+        // new code
+        this.attributes['label'] = config.text;
+        
+        
 	}//eo constructor
 	
     /**
@@ -56,32 +35,6 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
      */
     ,getNodeConfig : Ext.emptyFn
 	
-    /**
-     * Abstract template method.
-     *  
-     * This method should create an instance of Ext.menu.Menu class and place it in {@link #contextMenu} property.
-     * If defined - context menu will be displayed when given node is clicked with right mouse button.
-     * @protected
-     */
-    ,createContextMenu : Ext.emptyFn
-    
-    /**
-     * Template method.
-     * @protected
-     */
-    ,_initEvents : function() {
-        if (Ext.isFunction(this.onContextMenuClick)) {
-            this.on('contextmenu', this.onContextMenuClick);
-        }
-    }
-    
-    /**
-     * Abstract event listener.
-     * Handles this node <u>contextmenu</u> event.
-     * @protected
-     */
-    ,onContextMenuClick : Ext.emptyFn
-    
     /**
      * Abstract template method. 
      * This method should initialize this.properties with records for GridProperty
@@ -302,5 +255,11 @@ afStudio.wi.BaseNode = Ext.extend(Ext.tree.TreeNode, {
         WITreeNodeBehavior.setNode(this);
         this.behaviors.push(WITreeNodeBehavior);
         this.addProperties(WITreeNodeBehavior.createBehaviorProperties());
+    }//eo addBehavior
+    /**
+     * Returns human readable label for given node
+     */
+    ,getLabel : function() {
+        return this.attributes.label;
     }//eo addBehavior
 });

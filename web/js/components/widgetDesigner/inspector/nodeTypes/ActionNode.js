@@ -7,16 +7,10 @@
 afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
 	
 	/**
-	 * @cfg {String} deleteNodeActionLabel
-	 * Delete node context menu's item. 
-	 */
-	deleteNodeActionLabel : 'Delete Action'
-	
-	/**
 	 * ActionNode constructor.
 	 * @constructor
 	 */
-    ,constructor : function() {
+    constructor : function() {
         afStudio.wi.ActionNode.superclass.constructor.apply(this, arguments);
         
         this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
@@ -33,34 +27,6 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
             metaField: 'i:action'
         };
     }//eo getNodeConfig
-    
-    /**
-     * template method
-     * @override
-     */
-    ,createContextMenu : function() {
-        this.contextMenu = new Ext.menu.Menu({
-            items: [
-            {
-                text: this.deleteNodeActionLabel,                
-                iconCls: 'afs-icon-delete',
-                handler: this.onContextDeleteChildItemClick,
-                scope: this
-            }]
-        });
-    }//eo createContextMenu   
-    
-    /**
-     * @protected
-     * @override
-     * @param {Ext.tree.TreeNode} node
-     * @param {Ext.EventObject} e
-     */
-    ,onContextMenuClick : function(node, e) {
-        node.select();
-        this.contextMenu._node = node;
-        this.contextMenu.showAt(e.getXY());
-    }//eo onContextMenuClick 
     
     /**
      * template method
@@ -84,10 +50,4 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
        this.addProperties(properties);
     }//eo createProperties
     
-    /**
-     * Context menu deleteChild <u>click</u> event listener.
-     */
-    ,onContextDeleteChildItemClick : function(item, e) {
-    	item.parentMenu._node.remove();
-    }
 });
