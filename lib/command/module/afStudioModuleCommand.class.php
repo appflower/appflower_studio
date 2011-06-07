@@ -182,6 +182,14 @@ class afStudioModuleCommand extends afBaseStudioCommand
     		$afConsole->execute(
     		    "mv {$oldDir} {$newDir}"
     		);
+    		
+            // Rename in actions class 
+            $actionsPath = "{$newDir}actions/actions.class.php";
+    		if (file_exists($actionsPath)) {
+    		    $actions = file_get_contents($actionsPath);
+    		    $actions = str_ireplace("class {$name}Actions extends", "class {$renamed}Actions extends", $actions);
+    		    afStudioUtil::writeFile($actionsPath, $actions);
+    		}
             
     		if (!file_exists($oldDir) && file_exists($newDir)) {			
     			$console .= $afConsole->execute('sf cc');

@@ -89,12 +89,13 @@ class afsPluginManagerActions extends sfActions
     public function executeRenameModule(sfWebRequest $request)
     {
 		$parameters = array(
-            'oldValue' => $request->getParameter('oldValue'),
-            'newValue' => $request->getParameter('newValue'),
-            'pluginName' => $request->getParameter('pluginName')
+            'name'      => $request->getParameter('oldValue'),
+            'renamed'   => $request->getParameter('newValue'),
+            'place'     => $request->getParameter('pluginName'),
+            'type'      => 'plugin'
         );
         
-        $response = afStudioCommand::process('plugin', 'renameModule', $parameters);
+        $response = afStudioCommand::process('module', 'rename', $parameters);
         
         return $this->renderJson($response);
     }
@@ -108,11 +109,12 @@ class afsPluginManagerActions extends sfActions
     public function executeDeleteModule(sfWebRequest $request)
     {
         $parameters = array(
-            'moduleName' => $request->getParameter('moduleName'),
-            'pluginName' => $request->getParameter('pluginName')
+            'name'  => $request->getParameter('moduleName'),
+            'place' => $request->getParameter('pluginName'),
+            'type'  => 'plugin'
         );
         
-        $response = afStudioCommand::process('plugin', 'deleteModule', $parameters);
+        $response = afStudioCommand::process('module', 'delete', $parameters);
         
         return $this->renderJson($response);
     }
