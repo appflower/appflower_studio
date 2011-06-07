@@ -28,23 +28,25 @@ abstract class afBaseStudioCommand
 	}
 	
     /**
-     * Separate to different controllers part
+     * Separate to different controllers part - delegate process methods
+     * Result from processing can be getted via returned by method data or via property $result via $this->result = some data,
+     * return has higher priority than $result property
      * 
      * @return mixed
      * @author Sergey Startsev
      */
 	public function process()
 	{
-		if($this->cmd != null) {
-			$controller_name = 'process' . ucfirst($this->cmd);
+		if($this->getCommand() != null) {
+			$controller_name = 'process' . ucfirst($this->getCommand());
             
             if (method_exists($this, $controller_name)) {
-                call_user_func(array($this, $controller_name));
+                $return = ($response = call_user_func(array($this, $controller_name))) ? $response : $this->result;
             } else {
                 throw new afStudioCommandException("Controller: '{$controller_name}' not defined");
             }
             
-            return $this->result;
+            return $return;
 		} else {
 		    return false;
 		}
@@ -73,7 +75,7 @@ abstract class afBaseStudioCommand
     }
     
     /**
-     * Getting parameters 
+     * Getting parameters, can be processed with default parameter, if needed parameter doesn't exists
      * 
      * @param string $name
      * @param mixed $default
