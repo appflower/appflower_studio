@@ -120,6 +120,8 @@ class afStudioModuleCommand extends afBaseStudioCommand
 	
 	/**
 	 * Delete module functionality
+	 * 
+	 * @author Sergey Startsev
 	 */
 	protected function processDelete()
 	{
@@ -156,6 +158,8 @@ class afStudioModuleCommand extends afBaseStudioCommand
 	
 	/**
 	 * Rename module functionality
+	 * 
+	 * @author Sergey Startsev
 	 */
 	protected function processRename()
 	{
@@ -201,31 +205,36 @@ class afStudioModuleCommand extends afBaseStudioCommand
 	}
     
     /**
-     * Get grouped list 
+     * Get grouped list for applications and plugins 
+     * 
+     * @example by request parameter 'type' separated to get list grouped modules:  type = app, or type = plugin
+     * @return array
+     * @author Sergey Startsev
      */
     protected function processGetGrouped()
     {
+        $type = $this->getParameter('type', self::TYPE_APPLICATION);
+        
         $root = afStudioUtil::getRootDir();
-		$apps = afStudioUtil::getDirectories("{$root}/apps/", true);
+		$places = afStudioUtil::getDirectories("{$root}/{$type}s/", true);
 		
 		$data = array();
-		foreach($apps as $app) {
-			$modules = afStudioUtil::getDirectories("{$root}/apps/{$app}/modules/", true);
+		foreach($places as $place) {
+			$modules = afStudioUtil::getDirectories("{$root}/{$type}s/{$place}/modules/", true);
 			
 			foreach($modules as $module) {
 				$data[] = array(
 				    'value' => $module,
 				    'text'  => $module,
-				    'group' =>$app
+				    'group' => $place
 				);
 			}
 		}
 		
-		if (count($data) > 0) {
-			$this->result = $data;
-		} else {
-		    $this->result = array('success' => true);
-		}
+		$meta = (isset($data[0])) ? array_keys($data[0]) : array();
+		$total = count($data);
+		
+        return afResponseHelper::create()->success(true)->data($meta, $data, $total)->asArray();		
     }
     
     /**
@@ -247,7 +256,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
                     $isCreated = $afConsole->wasLastCommandSuccessfull();
 
                     if ($isCreated) {
-                        $console .= $afConsole->execute('sf cc');		
+                        $console .= $afConsole->execute('sf cc');
                         $message = "Created module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
                     } else {
                         $message = "Could not create module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
@@ -262,7 +271,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
 		} else {
 		    $afResponse = afResponseHelper::create()
 		                    ->success(false)
-		                    ->message("For creating modules in plugin you should install '" . afStudioPluginModuleHelper::PLUGIN_GENERATE_MODULE . "' plugin");
+		                    ->message("For creating modules in plugin you should install '" . afStudioPluginCommandHelper::PLUGIN_GENERATE_MODULES . "' plugin");
 		}
 		
 		return $afResponse;

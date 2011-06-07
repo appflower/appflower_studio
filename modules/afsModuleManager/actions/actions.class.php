@@ -112,7 +112,11 @@ class afsModuleManagerActions extends sfActions
      */
     public function executeGetGrouped(sfWebRequest $request)
     {
-        $response = afStudioCommand::process('module', 'getGrouped');
+        $parameters = array(
+            'type' => $request->getParameter('type')
+        );
+        
+        $response = afStudioCommand::process('module', 'getGrouped', $parameters);
         
         return $this->renderJson($response);
     }
