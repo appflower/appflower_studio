@@ -54,7 +54,8 @@ class afsModuleManagerActions extends sfActions
     public function executeAdd(sfWebRequest $request)
     {
         $parameters = array(
-            'app'   => $request->getParameter('app'),
+            'type'  => $request->getParameter('type', 'app'),
+            'place' => $request->getParameter('place'),
             'name'  => $request->getParameter('name')
         );
         
@@ -72,7 +73,8 @@ class afsModuleManagerActions extends sfActions
     public function executeDelete(sfWebRequest $request)
     {
         $parameters = array(
-            'app'   => $request->getParameter('app'),
+            'type'  => $request->getParameter('type', 'app'),
+            'place' => $request->getParameter('place'),
             'name'  => $request->getParameter('name')
         );
         
@@ -91,9 +93,10 @@ class afsModuleManagerActions extends sfActions
     public function executeRename(sfWebRequest $request)
     {
         $parameters = array(
-            'app'   => $request->getParameter('app'),
+            'type'  => $request->getParameter('type', 'app'),
+            'place' => $request->getParameter('place'),
             'name'  => $request->getParameter('name'),
-            'renamed'  => $request->getParameter('renamed'),
+            'renamed'  => $request->getParameter('renamed')
         );
         
         $response = afStudioCommand::process('module', 'rename', $parameters);

@@ -108,8 +108,8 @@ class afsPluginManagerActions extends sfActions
     public function executeDeleteModule(sfWebRequest $request)
     {
         $parameters = array(
-            'oldValue' => $request->getParameter('oldValue'),
-            'newValue' => $request->getParameter('newValue')
+            'moduleName' => $request->getParameter('moduleName'),
+            'pluginName' => $request->getParameter('pluginName')
         );
         
         $response = afStudioCommand::process('plugin', 'deleteModule', $parameters);

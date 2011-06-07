@@ -14,13 +14,10 @@ class afStudioPluginCommand extends afBaseStudioCommand
 	    $root_dir = afStudioUtil::getRootDir();
 	    
 	    $datas = array();
-	    
-		$pluginFolders = $this->getSubFolders($root_dir . '/plugins', 'plugin');
-        
-		foreach ($pluginFolders as $pluginFolder) {
+		$pluginFolders = $this->getSubFolders("{$root_dir}/plugins", 'plugin');
 		        
+		foreach ($pluginFolders as $pluginFolder) {
 			$plugin = $pluginFolder["text"];
-			
 			$moduleFolders = $this->getSubFolders("{$root_dir}/plugins/{$plugin}/modules/");
 
 			$mod_datas = array();
