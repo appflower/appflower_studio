@@ -38,6 +38,8 @@ afStudio.wi.ListNode = Ext.extend(afStudio.wi.ObjectRootNode, {
             new afStudio.wi.PropertyTypeString({id: 'maxperpage', label: 'Max records per page', value: 10}).create()
         ]);
         this.addBehavior(behavior);
+        
+        this.addEvents("childNodeCreated");
     }//eo constructor 
     
     /**

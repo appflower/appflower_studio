@@ -35,6 +35,9 @@ afStudio.wi.NodeBuilder = {
             if (config.metaField) {
             	nodeConfig.metaField = config.metaField            	
             }
+            if (config.addChildActionLabel) {
+            	nodeConfig.addChildActionLabel = config.addChildActionLabel
+            }
             return nodeConfig;
         }
 
@@ -69,10 +72,6 @@ afStudio.wi.NodeBuilder = {
         var f = this.createContainerNode(config, (baseClass ? baseClass : afStudio.wi.CollectionNode));
         var p = f.prototype;
 
-        if (config.addChildActionLabel) {
-            p.addChildActionLabel = config.addChildActionLabel;
-        }
-        
         if (config.childNodeId) {
             p.childNodeId = config.childNodeId;
         }

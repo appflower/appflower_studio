@@ -73,4 +73,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
         */
         this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
     }//eo initBehavior
+    ,getLabel : function() {
+        return this.properties['label'].get('value');
+    }//eo addBehavior
 });

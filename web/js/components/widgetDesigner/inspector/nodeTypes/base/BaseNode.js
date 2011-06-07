@@ -262,4 +262,7 @@ afStudio.wi.BaseNode = Ext.extend(Ext.data.Node, {
     ,getLabel : function() {
         return this.attributes.label;
     }//eo addBehavior
+    ,isCollectionType: function() {
+        return false;
+    }
 });

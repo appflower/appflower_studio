@@ -92,4 +92,10 @@ afStudio.wi.ObjectRootNode = Ext.extend(afStudio.wi.BaseNode, {
 	 * @protected
 	 */
 	,buildFieldsNode : Ext.emptyFn
+    ,createNewNodeFor: function(node, anyArgument) {
+        var newNode = node.addChild();
+        this.fireEvent('childNodeCreated', node, newNode, anyArgument);
+    }
 });
+
+Ext.apply(afStudio.wi.ObjectRootNode, Ext.util.Observable);

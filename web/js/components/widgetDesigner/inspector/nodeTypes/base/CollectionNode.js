@@ -71,5 +71,16 @@ afStudio.wi.CollectionNode = Ext.extend(afStudio.wi.BaseNode, {
      * 
      * @return {Ext.tree.TreeNode}
      */
-    ,createChild : Ext.emptyFn    
+    ,createChild : Ext.emptyFn
+    ,isCollectionType: function() {
+        return true;
+    }
+    ,getAddChildActionLabel: function() {
+        var label = this.attributes.addChildActionLabel;
+        if (!label) {
+            return 'create new node';
+        } else {
+            return label;
+        }
+    }
 });

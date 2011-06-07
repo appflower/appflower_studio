@@ -32,6 +32,8 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
         	folderSort: true
         });
 	    
+        this.widgetRootNode.addListener('childNodeCreated', this.newNodeCreated, this);
+        
         var rootNode = this.buildTreeRootNode(this.widgetRootNode) ;
 
 		return {
@@ -41,6 +43,17 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
             autoScroll: true
 		};
 	}//eo _beforeInitComponent	
+    ,newNodeCreated: function(parentNode, newChildNode, WIParentNode) {
+        var newNodeDefinition = {
+            text: newChildNode.getLabel()
+            ,children: []
+            ,WDNode: newChildNode
+            ,leaf: newChildNode.isLeaf()
+        }
+        this.buildTreeNode(newChildNode, newNodeDefinition);
+        var newWINode = WIParentNode.appendChild(newNodeDefinition);
+        newWINode.expand();
+    }
 	,buildTreeRootNode : function(widgetRootNode) {
         var root = {
             text: widgetRootNode.getLabel(),
@@ -48,15 +61,18 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
             WDNode: widgetRootNode
         }
         
-        // @todo - how we can fix this ?
-        window.tmpFuncHolder = this.buildTreeNode;
-        
         this.buildTreeNode(widgetRootNode, root);
         return root;
     },
     buildTreeNode: function(nodeWithPossibleChildrens, rootNode){
+        var childrens = [];
 
         nodeWithPossibleChildrens.eachChild(function(childNode){
+
+            var contextMenu = null;
+            if (childNode.isCollectionType()) {
+                contextMenu = this.createContextMenuForCollectionNode(childNode);
+            }
 
             var node = {
                 text: childNode.getLabel(),
@@ -64,15 +80,57 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
                 children: [],
                 WDNode: childNode
             };
-            this.children.push(node);
+            
+            if (contextMenu != null) {
+                node.contextMenu = contextMenu;
+                node.listeners = {
+                    contextmenu: function(node, event) {
+                        var menu = node.attributes.contextMenu;
+                        menu.contextNode = node;
+                        menu.showAt(event.getXY());
+                    }
+                }
+            }
+            
+            childrens.push(node);
             if (!childNode.isLeaf()) {
-                // @todo - how we can fix this ?
-                // @todo - I need to call buildTreeNode recursively here but I don't know how I can reference it
-                window.tmpFuncHolder(childNode, node);
+                this.buildTreeNode(childNode, node);
             }
         },
-        rootNode
-        );
+        this);
+        rootNode.children = childrens;
+    }
+    ,createContextMenuForCollectionNode: function(collectionNode) {
+        var menu = new Ext.menu.Menu({
+            items: [{
+                id: 'create-node',
+                text: collectionNode.getAddChildActionLabel()
+            }]
+            ,listeners: {
+                itemclick: function(item) {
+                    switch (item.id) {
+                        case 'create-node':
+                            var node = item.parentMenu.contextNode;
+                            if (node) {
+                                var treePanel = node.getOwnerTree();
+                                treePanel.widgetRootNode.createNewNodeFor(node.attributes.WDNode, node);
+                            }
+                            break;
+                    }
+                }
+            }
+        });
+        return menu;
+//    listeners: {
+//        contextmenu: function(node, e) {
+////          Register the context node with the menu so that a Menu Item's handler function can access
+////          it via its parentMenu property.
+//            node.select();
+//            var c = node.getOwnerTree().contextMenu;
+//            c.contextNode = node;
+//            c.showAt(e.getXY());
+//        }
+//    }        
     }
 	/**
 	 * Ext Template method
