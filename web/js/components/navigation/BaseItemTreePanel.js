@@ -301,13 +301,13 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		if (rootNode.firstChild && !rootNode.firstChild.isLeaf()) {
 			rootNode.firstChild.expand(false, true, function(n) {
 				tsm.select(n);
-				n.ui.getEl().focus();				
+				n.ui.getEl().focus();
 			});
 			
 	        var cn = rootNode.childNodes,
 	            i,
 	            len = cn.length;
-	        for (i = 1; i < len; i++) {        	
+	        for (i = 1; i < len; i++) {
 	            cn[i].expand();
 	        }
 		}
@@ -389,8 +389,6 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {XMLHttpRequest} xhr
 	 */
 	,onLoaderLoadException : function(loader, node, xhr) {
-		//xhr.status
-		//xhr.statusText
 		this.unmaskItemTree();
 	}//eo onLoaderLoadException
 	
