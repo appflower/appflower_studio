@@ -29,6 +29,9 @@ abstract class afBaseStudioCommand
 	
     /**
      * Separate to different controllers part
+     * 
+     * @return mixed
+     * @author Sergey Startsev
      */
 	public function process()
 	{
@@ -50,7 +53,8 @@ abstract class afBaseStudioCommand
     /**
      * Setting command
      * 
-     * @param $cmd String - command name
+     * @param string $cmd - command name
+     * @author Sergey Startsev
      */
     public function setCommand($cmd)
     {
@@ -61,6 +65,7 @@ abstract class afBaseStudioCommand
      * Getting current command
      * 
      * @return string
+     * @author Sergey Startsev
      */
     public function getCommand()
     {
@@ -69,15 +74,17 @@ abstract class afBaseStudioCommand
     
     /**
      * Getting parameters 
+     * 
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     * @author Sergey Startsev
      */
-    protected function getParameter($name)
+    protected function getParameter($name, $default = false)
     {
-        if (isset($this->params[$name])) {
-            return $this->params[$name];
-        } else {
-            return false;
-        }
+        return isset($this->params[$name]) ? $this->params[$name] : $default;
     }
+    
     
     /**
      * Fetching error, prepare for output
