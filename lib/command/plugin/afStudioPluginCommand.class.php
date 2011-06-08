@@ -48,7 +48,7 @@ class afStudioPluginCommand extends afBaseStudioCommand
 	/**
 	 * Rename plugin functionality
 	 */
-	protected function processRenamePlugin()
+	protected function processRename()
 	{
 	    $filesystem = new sfFileSystem();
 	    $afConsole = afStudioConsole::getInstance();
@@ -60,29 +60,33 @@ class afStudioPluginCommand extends afBaseStudioCommand
 		
 		$console = $afConsole->execute('afs fix-perms');
 		
-		$oldModuleDir = $root_dir . '/plugins/' . $oldValue . '/';
-		$newModuleDir = $root_dir . '/plugins/' . $newValue . '/';
+		$oldDir = "{$root_dir}/plugins/{$oldValue}/";
+		$newDir = "{$root_dir}/plugins/{$newValue}/";
 		
-		$filesystem->rename($oldModuleDir, $newModuleDir);
-		
-		if (!file_exists($oldModuleDir) && file_exists($newModuleDir)) {			
-			$console .= $afConsole->execute('sf cc');
-			$this->result = afResponseHelper::create()
-			                    ->success(true)
-			                    ->message("Renamed plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!")
-			                    ->console($console);
+		if (!file_exists($newDir)) {
+		    // $filesystem->rename($oldDir, $newDir);
+    		$console .= $afConsole->execute("mv {$oldDir} {$newDir}");
+
+    		if (!file_exists($oldDir) && file_exists($newDir)) {			
+    			$console .= $afConsole->execute('sf cc');
+    			$this->result = afResponseHelper::create()
+    			                    ->success(true)
+    			                    ->message("Renamed plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!")
+    			                    ->console($console);
+    		} else {
+    		    $this->result = afResponseHelper::create()->success(false)->message("Can't rename plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!");
+    	    }
 		} else {
-		    $this->result = afResponseHelper::create()->success(false)->message("Can't rename plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!");
-		                        
-	    }
-	    
+		    $this->result = afResponseHelper::create()->success(false)->message("Plugin '{$newValue}' already exists");
+		}
+        
 	    $this->result = $this->result->asArray();
 	}
 	
 	/**
 	 * Delete plugin
 	 */
-	protected function processDeletePlugin()
+	protected function processDelete()
 	{
 	    $name = $this->getParameter('name');
 	    
@@ -105,70 +109,6 @@ class afStudioPluginCommand extends afBaseStudioCommand
 	    }
 	    
 	    $this->result = $this->result->asArray();
-	}
-	
-	/**
-	 * Rename module
-	 */
-	protected function processRenameModule()
-	{
-	    $oldValue = $this->getParameter('oldValue');
-		$newValue = $this->getParameter('newValue');
-		$pluginName = $this->getParameter('pluginName');
-		
-		$filesystem = new sfFileSystem();
-		$afConsole = afStudioConsole::getInstance();
-		
-		$console = $afConsole->execute('afs fix-perms');
-		
-		$oldModuleDir = afStudioUtil::getRootDir() . '/plugins/' . $pluginName . '/modules/' . $oldValue . '/';
-		$newModuleDir = afStudioUtil::getRootDir() . '/plugins/' . $pluginName . '/modules/' . $newValue . '/';
-		
-		$filesystem->rename($oldModuleDir, $newModuleDir);
-		
-		if (!file_exists($oldModuleDir) && file_exists($newModuleDir)) {			
-			$console .= $afConsole->execute('sf cc');
-			
-			$this->result = afResponseHelper::create()
-			                    ->success(true)
-			                    ->message("Renamed module from <b>{$oldValue}</b> to <b>{$newValue}</b>!")
-			                    ->console($console);
-		} else {
-		    $this->result = afResponseHelper::create()->success(false)->message("Can't rename module from <b>{$oldValue}</b> to <b>{$newValue}</b>!");
-	    }
-	    
-	    $this->result = $this->result->asArray();
-	}
-	
-	/**
-	 * Delete module 
-	 */
-	protected function processDeleteModule()
-	{
-	    $moduleName = $this->getParameter('moduleName');
-		$pluginName = $this->getParameter('pluginName');
-		
-		$moduleDir = afStudioUtil::getRootDir() . '/plugins/' . $pluginName . '/modules/' . $moduleName . '/';
-		
-		$afConsole = afStudioConsole::getInstance();
-		
-		$console = $afConsole->execute(array(
-		    'afs fix-perms',
-		    "rm -rf {$moduleDir}"
-		));
-		
-		if (!file_exists($moduleDir)) {	
-			$console .= $afConsole->execute('sf cc');		
-			
-			$this->result = afResponseHelper::create()
-			                    ->success(true)
-			                    ->message("Deleted module <b>{$moduleName}</b>")
-			                    ->console($console);
-		} else {
-		    $this->result = afResponseHelper::create()->success(false)->message("Can't delete module <b>{$moduleName}</b>!");
-		}
-		
-		$this->result = $this->result->asArray();
 	}
 	
 	/**
@@ -243,7 +183,7 @@ class afStudioPluginCommand extends afBaseStudioCommand
 	 * 
 	 * @author Sergey Startsev
 	 */
-	protected function processAddPlugin()
+	protected function processAdd()
 	{
 	    $name = $this->getParameter('name');
 	    
