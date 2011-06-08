@@ -310,7 +310,7 @@ class afsWidgetBuilderWidget {
      */
     public function getPlaceConfigPath()
     {
-        return $this->getPlacePath() . "/modules/{$this->module}/configs";
+        return $this->getPlacePath() . "/modules/{$this->module}/config";
     }
     
     /**
