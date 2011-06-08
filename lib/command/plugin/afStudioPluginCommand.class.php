@@ -29,10 +29,18 @@ class afStudioPluginCommand extends afBaseStudioCommand
 				$configfiles = $this->getFiles($plugin, $modulename, ".xml");
                 
 				$moduleFolder["children"] = $configfiles;
+				if (count($configfiles) == 0) {
+				    $moduleFolder["leaf"] = true;
+				    $moduleFolder["iconCls"] = "icon-folder";			    
+				}				
 				array_push($mod_datas, $moduleFolder);
 			}
             
 			$pluginFolder["children"] = $mod_datas;
+			if (count($mod_datas) == 0) {
+			    $pluginFolder["leaf"] = true;
+			    $pluginFolder["iconCls"] = "icon-folder";			    
+			}
 			array_push($data, $pluginFolder);    
 		}
 		
