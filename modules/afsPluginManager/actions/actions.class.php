@@ -81,45 +81,6 @@ class afsPluginManagerActions extends sfActions
     }
     
     /**
-     * Rename module
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeRenameModule(sfWebRequest $request)
-    {
-		$parameters = array(
-            'name'      => $request->getParameter('oldValue'),
-            'renamed'   => $request->getParameter('newValue'),
-            'place'     => $request->getParameter('pluginName'),
-            'type'      => 'plugin'
-        );
-        
-        $response = afStudioCommand::process('module', 'rename', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Delete module
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeDeleteModule(sfWebRequest $request)
-    {
-        $parameters = array(
-            'name'  => $request->getParameter('moduleName'),
-            'place' => $request->getParameter('pluginName'),
-            'type'  => 'plugin'
-        );
-        
-        $response = afStudioCommand::process('module', 'delete', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
      * Rename xml
      *
      * @param sfWebRequest $request 

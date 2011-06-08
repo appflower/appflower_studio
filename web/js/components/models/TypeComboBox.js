@@ -5,6 +5,7 @@ Ext.ns('afStudio.models');
  * 
  * @class afStudio.models.TypeComboBox
  * @extends Ext.ux.form.GroupingComboBox
+ * @author Nikolai Babinski
  */
 afStudio.models.TypeComboBox = Ext.extend(Ext.ux.form.GroupingComboBox, {
 	

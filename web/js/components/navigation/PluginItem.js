@@ -3,28 +3,17 @@
  *  
  * @class afStudio.navigation.PluginItem
  * @extends afStudio.navigation.BaseItemTreePanel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePanel, {
 	
 	/**
 	 * @cfg {String} baseUrl
 	 */
-	baseUrl : afStudioWSUrls.getPluginsUrl()	
+	baseUrl : afStudioWSUrls.pluginListUrl  
 	
-	,addPluginUrl : 'afsPluginManager/addPlugin'
-	
-	,renamePluginUrl : 'afsPluginManager/renamePlugin'	
-	
-	,deletePLuginUrl : 'afsPluginManager/deletePLugin'
-	
-	,renameModuleUrl : 'afsPluginManager/renameModule'
 	
 	,deleteModuleUrl : 'afsPluginManager/deleteModule'
-	
-	,renameXmlUrl : 'afsPluginManager/renameXml'
-	
-	,deleteXmlUrl : 'afsPluginManager/deleteXml'
 	
     /**
      * @cfg {Object} branchNodeCfg (defaults to empty object)
@@ -168,10 +157,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		var _this = this;
 		
 		var treeLoader = new Ext.tree.TreeLoader({
-			url: this.baseUrl,
-			baseParams: {
-				cmd: 'get'
-			}
+			url: this.baseUrl
 		});
 		
 		return {			
@@ -226,6 +212,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		var wb = new afStudio.wd.WidgetsBuilder({
 			modelsUrl: url,
 			fieldsUrl: url,
+			createIn: 'plugin',
 			listeners: {
 				widgetcreated: function(widgetUri, response) {
 					_this.onItemActivate();
@@ -334,7 +321,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
  			plugin   = this.getNodeAttribute(node, 'text', '');
 		
 		this.executeAction({
-			url: _this.addPluginUrl,
+			url: afStudioWSUrls.pluginAddUrl,
 			params: {
 				name: plugin
 		    },
@@ -350,6 +337,26 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo addNodePlugin
 
 	,addNodeModule : function(node) {
+		var _this    = this,
+			module   = this.getNodeAttribute(node, 'text');
+ 			plugin   = this.getParentNodeAttribute(node, 'text');
+		
+		this.executeAction({
+			url: afStudioWSUrls.moduleAddUrl,
+			params: {
+        		type: 'plugin',
+            	place: plugin,
+            	name: module 				
+		    },
+		    loadingMessage: String.format('"{0}" module creation...', module),
+		    logMessage: String.format('Plugins: module "{0}" was created', module),
+		    run: function(response) {
+		    	this.refreshNode(plugin, module);
+		    },
+			error: function(response) {
+		    	node.remove();
+		    }		    
+		});		
 	}//eo addNodeModule
 	
 	/**
@@ -364,7 +371,8 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				newValue: value,
 				oldValue: startValue
 			},
-			url: this.renamePluginUrl,
+			url: afStudioWSUrls.pluginRenameUrl,
+			node: node,
 			msg: 'plugin'
 		};
 
@@ -374,11 +382,13 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	,renameNodeModule : function(node, value, startValue) {
 		var renameParams = {
 		 	params: {
-			 	newValue: value,
-				oldValue: startValue,			
-				pluginName: this.getParentNodeAttribute(node, 'text')
-		 	},
-			url: this.renameModuleUrl,
+		 		type: 'plugin',
+				place: this.getParentNodeAttribute(node, 'text'),
+				name: startValue,
+			 	renamed: value
+		 	},		 	
+			url: afStudioWSUrls.moduleRenameUrl,
+			node: node,
 		 	refreshNode: this.getParentNodeAttribute(node, 'text'),
 		 	msg: 'module'
 		};
@@ -394,7 +404,8 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				pluginName: this.getParentNodeAttribute(node.parentNode, 'text'),
 				moduleName: this.getParentNodeAttribute(node, 'text')
 		 	},
-		 	url: this.renameXmlUrl,
+		 	url: afStudioWSUrls.widgetRenameUrl,
+		 	node: node,
 		 	refreshNode: this.getParentNodeAttribute(node, 'text'),
 		 	msg: 'widget'
 		};
@@ -418,7 +429,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		    	});
 		    },		    
 		    error: function(response) {
-		    	node.setText(oldNodeValue);
+		    	renameObj.node.setText(oldNodeValue);
 		    }
 		});
 	}//eo renameNode 
@@ -428,7 +439,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			params: {
 				name: node.text
 			},
-			url: this.deletePLuginUrl,
+			url: afStudioWSUrls.pluginDeleteUrl,
 			item: node.text,
 			msg: 'plugin'
 		};
@@ -439,10 +450,11 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	,deleteNodeModule : function(node) {
 		var	deleteParams = {
 			params : {
-				pluginName: node.parentNode.text,
-				moduleName: node.text
+            	type: 'plugin',
+            	place: node.parentNode.text,
+            	name: node.text
 			},
-			url: this.deleteModuleUrl,
+			url: afStudioWSUrls.moduleDeleteUrl,
 			item: node.text,
 			msg: 'module'
 		};
@@ -457,7 +469,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				moduleName: node.parentNode.text,
 				xmlName: node.text
 			},
-			url: this.deleteXmlUrl,
+			url: afStudioWSUrls.widgetDeleteUrl,
 			item: node.text,
 			msg: 'widget'
 		};
@@ -466,9 +478,8 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo deleteNodeXml
 	
 	,deleteNode : function(deleteObj) {
-		var _this = this;
-		
-		var confirmText = String.format('Are you sure you want to delete {0} "{1}"?', deleteObj.msg, deleteObj.item),
+		var _this       = this,		
+		 	confirmText = String.format('Are you sure you want to delete {0} "{1}"?', deleteObj.msg, deleteObj.item),
 			actionUrl   = deleteObj.url ? deleteObj.url : _this.baseUrl;
 		
 		Ext.Msg.confirm('Plugins', confirmText, function(buttonId) {

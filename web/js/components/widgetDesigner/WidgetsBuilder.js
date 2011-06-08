@@ -18,6 +18,22 @@ Ext.ns('afStudio.wd');
  * @author PavelK
  */
 afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
+	
+	/**
+	 * @cfg {String} (Required) createIn
+	 * Where will be placed created widget. ('app'/'plugin')
+	 */
+	
+	/**
+	 * @cfg {String} (Required) modelsUrl
+	 */
+	
+	/**
+	 * @cfg {String} (Required) fieldsUrl
+	 */
+	
+	
+	
 	/**
 	 * Function onWndShow
 	 * Creates Drag/DropZones for FieldsGrid and relataions grid
@@ -248,23 +264,25 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		});
 		
 		this.modulesCombo = new Ext.ux.form.GroupingComboBox({
+			mode: 'local',
+			groupField: 'group',
+			valueField: 'value',
+			displayField: 'text',
             fieldLabel: 'Module Location',
 			loadingText: 'Please wait...',
 			emptyText: 'Please select the module location...',
             store: new Ext.data.JsonStore({
-	            url: afStudioWSUrls.getModulesUrl(),
+	            url: afStudioWSUrls.moduleGroupedUrl,
+            	autoLoad: true,
 	            baseParams: {
-	            	cmd: 'getGrouped'
+	            	type: _this.createIn
 	            },
-	            totalProperty: 'total', 
+	            totalProperty: 'total',
+	            root: 'data',
 	            idProperty: 'value',
-	            fields: ['value', 'text', 'group'],	        	
-                remoteSort: true
+	            fields: ['value', 'text', 'group']       	
             }),
-            displayField: 'text',
-			groupField: 'group',
-            anchor: '100%',
-			minChars: 0,
+			anchor: '100%',
             hiddenName: 'model'
 		});		
 		
