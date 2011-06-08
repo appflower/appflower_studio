@@ -222,80 +222,28 @@ class appFlowerStudioActions extends sfActions
     
     /**
      * Debug controller
+     * 
+     * @param sfWebRequest $request
+     * @author Sergey Startsev
      */
     public function executeDebug(sfWebRequest $request)
     {
-        $command = $this->getRequestParameter('command');
-        $file_name = $this->getRequestParameter('file_name');
+        $parameters = array(
+            'file_name' => $request->getParameter('file_name'),
+            'start'     => $request->getParameter('start', 0),
+            'limit'     => $request->getParameter('limit', 1)
+        );
         
-        $start = $this->getRequestParameter('start', 0);
+        $command = ($command = $request->getParameter('command', 'main')) ? $command : 'main';
         
-        $limit = $this->getRequestParameter('limit', 1);
-        $limit *= 4094;
+        $response = afStudioCommand::process('debug', $command, $parameters);
         
-        $aResponse = array();
-        
-        switch ($command) {
-            case 'file':
-                if (!empty($file_name)) {
-                    $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($file_name), 
-                                                            $start, 
-                                                            $limit);
-                    $aResponse['total'] = $oDebugPager->getLastPage();
-                    $aResponse['data'][] = array('text' => afStudioDebug::get_content(  $file_name, 
-                                                                                        $oDebugPager->getPage() * 4094, 
-                                                                                        $oDebugPager->getNext()* 4094
-                                                                                     )
-                                                           );
-                    
-                } else {
-                    $aResponse['data'][] = array('text' => 'file not checked');
-                    $aResponse['total'] = 1;
-                }
-                
-                break;
-            
-            case 'last':
-                if (empty($file_name)) {
-                    $aFiles = afStudioDebug::get_files();
-                    $file_name = $aFiles[0];
-                }
-                $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($file_name), 
-                                                        0, 
-                                                        4094);
-                $aResponse['last_page'] = $oDebugPager->getLastPage() - 1;
-                
-                break;
-            
-            default:
-                $aResponse['files'] = afStudioDebug::get_files();
-                
-                if (!empty($aResponse['files'])) {
-                    
-                    $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($aResponse['files'][0]), 
-                                                            $start, 
-                                                            $limit);
-                    
-                    $aResponse['total'] = $oDebugPager->getLastPage();
-                    
-                    $aResponse['data'][] = array('text' => afStudioDebug::get_content(  $aResponse['files'][0], 
-                                                                                        $oDebugPager->getPage() * 4094, 
-                                                                                        $oDebugPager->getNext()* 4094
-                                                                                     )
-                                                );
-                } else {
-                    $aResponse['data'][] = array('text' => 'no logs');
-                    $aResponse['total'] = 1;
-                }
-                
-                break;
-        }
-
-        $aResponse['success'] = true;
-        
-        return $this->renderJson($aResponse);
+        return $this->renderJson($response);
     }
-
+    
+    /**
+     * Notifications action
+     */
     public function executeNotifications()
 	{
 		$notifications_command = new afStudioNotificationsCommand($this->realRoot);		
