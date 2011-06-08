@@ -42,7 +42,7 @@ class afsPluginManagerActions extends sfActions
     {
         $response = afStudioCommand::process('plugin', 'getList');
 
-        return $this->renderJson($response);
+        return $this->renderJson($response['data']);
     }
     
     /**
@@ -76,45 +76,6 @@ class afsPluginManagerActions extends sfActions
         );
         
         $response = afStudioCommand::process('plugin', 'delete', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Rename xml
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeRenameXml(sfWebRequest $request)
-    {
-		$parameters = array(
-            'oldValue' => $request->getParameter('oldValue'),
-            'newValue' => $request->getParameter('newValue'),
-            'pluginName' => $request->getParameter('pluginName'),
-            'moduleName' => $request->getParameter('moduleName')
-        );
-        
-        $response = afStudioCommand::process('plugin', 'renameXml', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Delete xml
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeDeleteXml(sfWebRequest $request)
-    {
-		$parameters = array(
-            'pluginName' => $request->getParameter('pluginName'),
-            'moduleName' => $request->getParameter('moduleName'),
-            'xmlName' => $request->getParameter('xmlName')
-        );
-        
-        $response = afStudioCommand::process('plugin', 'deleteXml', $parameters);
         
         return $this->renderJson($response);
     }

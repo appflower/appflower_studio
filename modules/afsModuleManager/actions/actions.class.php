@@ -87,7 +87,6 @@ class afsModuleManagerActions extends sfActions
      * Rename module action
      *
      * @param sfWebRequest $request 
-     * @return void
      * @author Sergey Startsev
      */
     public function executeRename(sfWebRequest $request)
@@ -117,6 +116,47 @@ class afsModuleManagerActions extends sfActions
         );
         
         $response = afStudioCommand::process('module', 'getGrouped', $parameters);
+        
+        return $this->renderJson($response);
+    }
+    
+    /**
+     * Rename module view action
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
+     */
+    public function executeRenameView(sfWebRequest $request)
+    {
+        $parameters = array(
+            'type'      => $request->getParameter('type', 'app'),
+            'place'     => $request->getParameter('place'),
+            'module'    => $request->getParameter('moduleName'),
+            'oldValue'  => $request->getParameter('oldValue'),
+            'newValue'  => $request->getParameter('newValue'),
+        );
+        
+        $response = afStudioCommand::process('widget', 'rename', $parameters);
+        
+        return $this->renderJson($response);
+    }
+    
+    /**
+     * Delete module view action
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
+     */
+    public function executeDeleteView(sfWebRequest $request)
+    {
+        $parameters = array(
+            'type'      => $request->getParameter('type', 'app'),
+            'place'     => $request->getParameter('place'),
+            'module'    => $request->getParameter('moduleName'),
+            'name'      => $request->getParameter('name'),
+        );
+        
+        $response = afStudioCommand::process('widget', 'delete', $parameters);
         
         return $this->renderJson($response);
     }
