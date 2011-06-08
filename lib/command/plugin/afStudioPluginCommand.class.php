@@ -7,42 +7,39 @@
 class afStudioPluginCommand extends afBaseStudioCommand
 {
 	/**
-	 * Get list action
+	 * Get list modules, actions 
+	 * 
+	 * @author Sergey Startsev
 	 */
 	protected function processGetList()
 	{
 	    $root_dir = afStudioUtil::getRootDir();
 	    
-	    $datas = array();
+	    $data = array();
 		$pluginFolders = $this->getSubFolders("{$root_dir}/plugins", 'plugin');
 		        
 		foreach ($pluginFolders as $pluginFolder) {
 			$plugin = $pluginFolder["text"];
 			$moduleFolders = $this->getSubFolders("{$root_dir}/plugins/{$plugin}/modules/");
-
+            
 			$mod_datas = array();
 			
 			foreach ($moduleFolders as $moduleFolder) {
 				$modulename = $moduleFolder["text"];
 				$configfiles = $this->getFiles($plugin, $modulename, ".xml");
-				if (count($configfiles) > 0) {
-					$moduleFolder["children"] = $configfiles;
-					array_push($mod_datas, $moduleFolder);
-				}
+                
+				$moduleFolder["children"] = $configfiles;
+				array_push($mod_datas, $moduleFolder);
 			}
-
-            // if (count($mod_datas) > 0) {
-				$pluginFolder["children"] = $mod_datas;
-				array_push($datas, $pluginFolder);
-            // }
             
+			$pluginFolder["children"] = $mod_datas;
+			array_push($data, $pluginFolder);    
 		}
 		
-		if (count($datas) > 0) {
-			$this->result = $datas;
-		} else {
-            $this->result = array('success' => true);
-	    }
+	    $meta = (isset($data[0])) ? array_keys($data[0]) : array();
+		$total = count($data);
+		
+        return afResponseHelper::create()->success(true)->data($meta, $data, $total)->asArray();
 	}
 	
 	/**
