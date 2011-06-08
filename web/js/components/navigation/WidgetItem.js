@@ -415,8 +415,25 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	/**
 	 * Renames <b>xml</b> nodes.
 	 */
-	,renameNodeXml : function(node, value, startValue) {
-		afStudio.Msg.info('Renaming widgets inside Application', 'Back-end is not implemented');
+	,renameNodeXml : function(node, value, startValue) {		
+		var appName    = this.getNodeApp(node),
+			moduleName = this.getNodeModule(node);
+		
+		var renameParams = {
+		 	params: {
+		 		type: 'app',
+		 		place: appName,
+		 		moduleName: moduleName,
+				oldValue: startValue,			
+			 	newValue: value
+		 	},
+		 	url: afStudioWSUrls.widgetRenameUrl,
+		 	node: node,
+		 	refreshNode: appName,
+		 	msg: 'widget'
+		};
+
+		this.renameNode(renameParams, value, startValue);
 	}//eo renameNodeXml
 	
 	/**
@@ -470,7 +487,22 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Ext.tree.TreeNode} node
 	 */
 	,deleteNodeXml : function(node) {
-		afStudio.Msg.info('Delete widgets inside Application', 'Back-end is not implemented');
+		var appName    = this.getNodeApp(node),
+			moduleName = this.getNodeModule(node);
+		
+		var	deleteParams = {
+			params: {
+		 		type: 'app',
+		 		place: appName,
+		 		moduleName: moduleName,
+				name: node.text
+			},
+			url: afStudioWSUrls.widgetDeleteUrl,
+			item: node.text,
+			msg: 'widget'
+		};
+		
+		this.deleteNode(deleteParams);
 	}//eo deleteNodeXml
 	
 	/**

@@ -35,6 +35,10 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	
 	moduleDeleteUrl : '/afsModuleManager/delete',    
     
+	widgetRenameUrl : '/afsModuleManager/renameView',
+	
+	widgetDeleteUrl : '/afsModuleManager/deleteView',   
+	
     getModuleWidgetsUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/moduleWidgets');
     },    
@@ -47,9 +51,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	
 	pluginDeleteUrl : '/afsPluginManager/delete',
 	
-	widgetRenameUrl : '/afsPluginManager/renameXml',
-	
-	widgetDeleteUrl : '/afsPluginManager/deleteXml',   
     
     getCodepressUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/codepress');

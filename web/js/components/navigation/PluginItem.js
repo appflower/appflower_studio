@@ -10,10 +10,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	/**
 	 * @cfg {String} baseUrl
 	 */
-	baseUrl : afStudioWSUrls.pluginListUrl  
-	
-	
-	,deleteModuleUrl : 'afsPluginManager/deleteModule'
+	baseUrl : afStudioWSUrls.pluginListUrl
 	
     /**
      * @cfg {Object} branchNodeCfg (defaults to empty object)
@@ -115,15 +112,15 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         items: [
         {
             itemId: 'edit-plugin-xml',
-            text: 'Edit Page',
+            text: 'Edit Widget',
             iconCls: 'icon-models-edit'
 		},{
             itemId: 'rename-plugin-xml',
-            text: 'Rename Page',
+            text: 'Rename Widget',
             iconCls: 'icon-edit'
 		},{
        		itemId: 'delete-plugin-xml',
-            text: 'Delete Page',
+            text: 'Delete Widget',
             iconCls: 'icon-models-delete'
         }],
         listeners: {
@@ -338,7 +335,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 
 	,addNodeModule : function(node) {
 		var _this    = this,
-			module   = this.getNodeAttribute(node, 'text');
+			module   = this.getNodeAttribute(node, 'text'),
  			plugin   = this.getParentNodeAttribute(node, 'text');
 		
 		this.executeAction({
@@ -397,16 +394,20 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo renameNodeModule
 
 	,renameNodeXml : function(node, value, startValue) {
+		var pluginName = this.getParentNodeAttribute(node.parentNode, 'text'),
+			moduleName = this.getParentNodeAttribute(node, 'text');
+		
 		var renameParams = {
 		 	params: {
-			 	newValue: value,
+		 		type: 'plugin',
+		 		place: pluginName,
+		 		moduleName: moduleName,
 				oldValue: startValue,			
-				pluginName: this.getParentNodeAttribute(node.parentNode, 'text'),
-				moduleName: this.getParentNodeAttribute(node, 'text')
+			 	newValue: value
 		 	},
 		 	url: afStudioWSUrls.widgetRenameUrl,
 		 	node: node,
-		 	refreshNode: this.getParentNodeAttribute(node, 'text'),
+		 	refreshNode: pluginName,
 		 	msg: 'widget'
 		};
 
@@ -463,11 +464,15 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	}//eo deleteNodeModule
 
 	,deleteNodeXml : function(node) {
+		var pluginName = this.getParentNodeAttribute(node.parentNode, 'text'),
+			moduleName = this.getParentNodeAttribute(node, 'text');		
+		
 		var	deleteParams = {
 			params: {
-				pluginName: node.parentNode.parentNode.text,
-				moduleName: node.parentNode.text,
-				xmlName: node.text
+		 		type: 'plugin',
+		 		place: pluginName,
+		 		moduleName: moduleName,
+				name: node.text
 			},
 			url: afStudioWSUrls.widgetDeleteUrl,
 			item: node.text,
