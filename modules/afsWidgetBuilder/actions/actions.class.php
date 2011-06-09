@@ -60,7 +60,8 @@ class afsWidgetBuilderActions extends sfActions
             if ($validationStatusOrError === true) {
                 $response = array(
                     'success' => true,
-                    'message' => $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved'
+                    'message' => $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved',
+                    'data'    => $afsWBW->getInfo()
                 );
             } else {
                 $response = array(
