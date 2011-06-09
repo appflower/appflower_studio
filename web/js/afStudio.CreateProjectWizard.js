@@ -19,7 +19,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			buttons: [
 			    {text: 'Previous', handler: this.previous, scope: this, hidden: true},
 				  {text: 'Next', handler: this.next, scope: this},
-			    {text: 'Save Project', handler: this.save, scope: this, hidden: true},
+			    {text: 'Save Project', handler: this.save, scope: this, hidden: true}
 				
 			],
 			buttonAlign: 'right',
@@ -48,7 +48,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		_self = this;
 				
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>01</div> </div> <h2>This wizard will help guide you through a few steps to setup your new AppFlower Project.</h2> </div> <br> Please choose your project name.', style: 'margin-bottom: 15px;',},
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>01</div> </div> <h2>This wizard will help guide you through a few steps to setup your new AppFlower Project.</h2> </div> <br> Please choose your project name.', style: 'margin-bottom: 15px;'},
 			{xtype:'textfield', enableKeyEvents:true, fieldLabel: 'Project name<font color=red>*</font>', anchor: '96%', name: 'name', allowBlank: false, vtype: 'uniqueNode', 
 				listeners: {
 					keyup: function(field,e) {	
@@ -133,7 +133,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		});
 				
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>02</div> </div> <h2>Please select the Web server root folder. The project will be created as a sub-folder to this path, with your project name.</h2> </div>', style: 'margin-bottom: 15px;',},
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>02</div> </div> <h2>Please select the Web server root folder. The project will be created as a sub-folder to this path, with your project name.</h2> </div>', style: 'margin-bottom: 15px;'},
 			{xtype:'displayfield', name: 'display_path', hideLabel: true, anchor:'100%', style: 'font-weight:bold;', value: '<small>select path below...</small><br>'},
 			this.tree,
 			{xtype:'hidden', name: 'path'}
@@ -159,7 +159,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		this.initDataview();
 							
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>03</div> </div> <h2>Please select how your want your application theme to look like by selecting one of the templates below.</h2> </div>', style: 'margin-bottom: 15px;',},			
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>03</div> </div> <h2>Please select how your want your application theme to look like by selecting one of the templates below.</h2> </div>', style: 'margin-bottom: 15px;'},			
 			this.dataview
 		];
 		
@@ -223,7 +223,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	//User form
 	initForm4: function(){
 		var formItems = [
-		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>04</div> </div> <h2>Please add your first user for this new project.</h2> </div>', style: 'margin-bottom: 15px;',},
+		  {xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', value: '<div  class="guide_header"> <div class="date_cover"> <div>04</div> </div> <h2>Please add your first user for this new project.</h2> </div>', style: 'margin-bottom: 15px;'},
 		  {xtype: 'panel', layout: 'column', 
 				border: false, bodyBorder: false,
 				defaults: {border: false, bodyBorder: false},
@@ -242,12 +242,12 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 					{xtype: 'panel', columnWidth: 0.5, layout: 'form', style: 'margin-right: 5px;',
 						
 						items: [
-						{xtype: 'textfield', name: 'username', fieldLabel: 'Username<font color=red>*</font>', value: afStudioUser.username, allowBlank: false, vtype: 'username', anchor: '92%'},
+						{xtype: 'textfield', name: 'username', fieldLabel: 'Username<font color=red>*</font>', value: afStudioUser.username, allowBlank: false, vtype: 'username', anchor: '92%'}
 						]
 					},
 					{xtype: 'panel', layout: 'form', columnWidth: 0.5,
 						items: [
-						{xtype: 'textfield', name: 'email', fieldLabel: 'Email<font color=red>*</font>', vtype: 'email', value: afStudioUser.email, allowBlank: false, anchor: '92%'},
+						{xtype: 'textfield', name: 'email', fieldLabel: 'Email<font color=red>*</font>', vtype: 'email', value: afStudioUser.email, allowBlank: false, anchor: '92%'}
 						]
 					},
 					{xtype: 'panel', columnWidth: 0.5, layout: 'form', style: 'margin-right: 5px;',
@@ -313,7 +313,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 	//Virtual host form
 	initForm6: function(){
 		var formItems = [
-			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', style: 'margin-bottom: 15px;',},
+			{xtype:'displayfield', name: 'infor', hideLabel: true, anchor:'100%', style: 'margin-bottom: 15px;'}
 		];
 		
 		this.form6 = new Ext.FormPanel({
@@ -359,7 +359,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				Ext.Ajax.request({
 					url: window.afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl(),
 					params: { 
-						form: Ext.encode(form5Values),
+						form: Ext.encode(form5Values)
 					},
 					success: function(result,request){			   
 						var obj = Ext.decode(result.responseText);
@@ -469,7 +469,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 				mask.hide();
 				
 				_this.close();
-		   },
+		   }
 		   
 		});
 		
@@ -510,6 +510,6 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		}
 		
 		this.center();
-	},
+	}
 	
 });

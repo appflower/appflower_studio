@@ -28,6 +28,7 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 	 * Widget meta data object:
 	 * <u>
 	 *   <li><b>actionPath</b>: Path to widget's action controller.</li>
+	 *   <li><b>actionName</b>: The action class name</li>
 	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
 	 *   <li><b>widgetUri</b>: Widget URI</li>
 	 *   <li><b>definition</b>: Widget's metadata definition.</li>

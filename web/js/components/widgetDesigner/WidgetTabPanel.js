@@ -45,7 +45,7 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 				file: this.widgetMeta.securityPath
 			},{
 				xtype: 'afStudio.wd.codeEditorTab',
-				fileName: this.widgetMeta.actionName, //'actions.class.php',
+				fileName: this.widgetMeta.actionName,
 				filePath: this.widgetMeta.actionPath,
 				tabTip: this.widgetMeta.actionPath,
 				file: this.widgetMeta.actionPath				
