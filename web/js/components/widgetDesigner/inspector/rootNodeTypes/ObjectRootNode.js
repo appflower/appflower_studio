@@ -92,9 +92,14 @@ afStudio.wi.ObjectRootNode = Ext.extend(afStudio.wi.BaseNode, {
 	 * @protected
 	 */
 	,buildFieldsNode : Ext.emptyFn
-    ,createNewNodeFor: function(node, anyArgument) {
-        var newNode = node.addChild();
-        this.fireEvent('childNodeCreated', node, newNode, anyArgument);
+    ,createNewNodeFor: function(WDNode) {
+        var newWDNode = WDNode.addChild();
+        this.fireEvent('nodeCreated', newWDNode);
+    }
+    ,deleteNode: function(WDNode) {
+        var parentWDNode = WDNode.parentNode;
+        parentWDNode.deleteChild(WDNode);
+        this.fireEvent('nodeDeleted', WDNode);
     }
 });
 

@@ -4,6 +4,11 @@ Ext.namespace('afStudio.wi');
  * Widget Inspector tree component.
  * Responsible for representing and monupulating of widget's elements (fields, columns, datasource and etc.)
  * 
+ * each WDNode is translated to WINode that is rendered
+ * 
+ * WDNode means WidgetDefinitionNode - those are afStudio.wi.BaseNode instances
+ * WINode is simple JS object that is used to create Ext Tree
+ * 
  * @class afStudio.wi.WidgetInspectorTree
  * @extends Ext.tree.TreePanel
  * @author Nikolai
@@ -32,74 +37,107 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
         	folderSort: true
         });
 	    
-        this.widgetRootNode.addListener('childNodeCreated', this.newNodeCreated, this);
+        this.widgetRootNode.addListener('nodeCreated', this.newNodeCreated, this);
+        this.widgetRootNode.addListener('nodeDeleted', this.nodeDeleted, this);
         
-        var rootNode = this.buildTreeRootNode(this.widgetRootNode) ;
+        var WIRootNode = this.buildWINodeFromWDNode(this.widgetRootNode);
 
 		return {
-			root: rootNode,
+			root: WIRootNode,
             animate: true,
             containerScroll: true,
             autoScroll: true
 		};
 	}//eo _beforeInitComponent	
-    ,newNodeCreated: function(parentNode, newChildNode, WIParentNode) {
-        var newNodeDefinition = {
-            text: newChildNode.getLabel()
-            ,children: []
-            ,WDNode: newChildNode
-            ,leaf: newChildNode.isLeaf()
-        }
-        this.buildTreeNode(newChildNode, newNodeDefinition);
-        var newWINode = WIParentNode.appendChild(newNodeDefinition);
+    /**
+     * Handler that reacts on WidgetDefinition changes - new node created
+     * It rebuilds all childrens of changed parent node
+     */
+    ,newNodeCreated: function(newWDNode) {
+        var newWINodeDefinition = this.buildWINodeFromWDNode(newWDNode);
+        
+        // we need to operate on parent because newWDNode does not have WI corecponding node yet
+        var WDParentNode = newWDNode.parentNode;
+        var WIParentNode = this.findWINodeByWDNode(WDParentNode);
+        var newWINode = WIParentNode.appendChild(newWINodeDefinition);
         newWINode.expand();
     }
-	,buildTreeRootNode : function(widgetRootNode) {
-        var root = {
-            text: widgetRootNode.getLabel(),
-            children: [],
-            WDNode: widgetRootNode
+    /**
+     * Handler that reacts on WidgetDefinition node deletion event
+     */
+    ,nodeDeleted: function(removedWDNode) {
+        // we need to operate on parent because newWDNode does not have WI corecponding node yet
+        var WINode = this.findWINodeByWDNode(removedWDNode);
+        WINode.destroy();
+    }
+    /**
+     * Creates simple object definition of WI node from WD node
+     */
+    ,buildWINodeFromWDNode: function(WDNode) {
+        var WINode = {
+            text: WDNode.getLabel()
+            ,children: []
+            ,WDNode: WDNode
+            ,leaf: WDNode.isLeaf()
+        }
+        if (!WDNode.isLeaf()) {
+            this.buildWINodeChildrensFromWDNode(WDNode, WINode);
         }
         
-        this.buildTreeNode(widgetRootNode, root);
-        return root;
-    },
-    buildTreeNode: function(nodeWithPossibleChildrens, rootNode){
+        this.createContextMenu(WDNode, WINode);
+        
+        return WINode;
+    }
+    /**
+     * Finds WINode coresponding to given WDNode
+     */
+    ,findWINodeByWDNode: function(WDNode) {
+        var findChildByWDNode = function(WINode) {
+            if (WINode.attributes.WDNode.id == WDNode.id) {
+                return true;
+            }
+        }
+        var WIRootNode = this.getRootNode();
+        return WIRootNode.findChildBy(findChildByWDNode, null, true);
+    }
+    /**
+     * Recursively builds WINodes for each child of given WDNode
+     */
+    ,buildWINodeChildrensFromWDNode: function(WDNode, WINode){
         var childrens = [];
 
-        nodeWithPossibleChildrens.eachChild(function(childNode){
-
-            var contextMenu = null;
-            if (childNode.isCollectionType()) {
-                contextMenu = this.createContextMenuForCollectionNode(childNode);
-            }
-
-            var node = {
-                text: childNode.getLabel(),
-                leaf: childNode.isLeaf(),
-                children: [],
-                WDNode: childNode
-            };
-            
-            if (contextMenu != null) {
-                node.contextMenu = contextMenu;
-                node.listeners = {
-                    contextmenu: function(node, event) {
-                        var menu = node.attributes.contextMenu;
-                        menu.contextNode = node;
-                        menu.showAt(event.getXY());
-                    }
-                }
-            }
-            
-            childrens.push(node);
-            if (!childNode.isLeaf()) {
-                this.buildTreeNode(childNode, node);
-            }
+        WDNode.eachChild(function(WDChildNode){
+            var WIChildNode = this.buildWINodeFromWDNode(WDChildNode);
+            childrens.push(WIChildNode);
         },
         this);
-        rootNode.children = childrens;
+        WINode.children = childrens;
     }
+    /**
+     * checks if given WDNode should have context menu and builds it
+     */
+    ,createContextMenu: function(WDNode, WINode) {
+        var contextMenu = null;
+        if (WDNode.isCollectionType()) {
+            contextMenu = this.createContextMenuForCollectionNode(WDNode);
+        } else if (WDNode.parentNode && WDNode.parentNode.isCollectionType()) {
+            contextMenu = this.createContextMenuForCollectionNodeChild(WDNode, WINode);
+        }
+
+        if (contextMenu != null) {
+            WINode.contextMenu = contextMenu;
+            WINode.listeners = {
+                contextmenu: function(node, event) {
+                    var menu = node.attributes.contextMenu;
+                    menu.contextNode = node;
+                    menu.showAt(event.getXY());
+                }
+            }
+        }
+    }
+    /**
+     * builds context menu for collection type WDNodes
+     */
     ,createContextMenuForCollectionNode: function(collectionNode) {
         var menu = new Ext.menu.Menu({
             items: [{
@@ -110,10 +148,10 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
                 itemclick: function(item) {
                     switch (item.id) {
                         case 'create-node':
-                            var node = item.parentMenu.contextNode;
-                            if (node) {
-                                var treePanel = node.getOwnerTree();
-                                treePanel.widgetRootNode.createNewNodeFor(node.attributes.WDNode, node);
+                            var WINode = item.parentMenu.contextNode;
+                            if (WINode) {
+                                var treePanel = WINode.getOwnerTree();
+                                treePanel.widgetRootNode.createNewNodeFor(WINode.attributes.WDNode);
                             }
                             break;
                     }
@@ -121,16 +159,31 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
             }
         });
         return menu;
-//    listeners: {
-//        contextmenu: function(node, e) {
-////          Register the context node with the menu so that a Menu Item's handler function can access
-////          it via its parentMenu property.
-//            node.select();
-//            var c = node.getOwnerTree().contextMenu;
-//            c.contextNode = node;
-//            c.showAt(e.getXY());
-//        }
-//    }        
+    }
+    /**
+     * builds context menu for children node of collection type WDNode
+     */
+    ,createContextMenuForCollectionNodeChild: function(collectionChildNode) {
+        var menu = new Ext.menu.Menu({
+            items: [{
+                id: 'delete-node',
+                text: 'delete'
+            }]
+            ,listeners: {
+                itemclick: function(item) {
+                    switch (item.id) {
+                        case 'delete-node':
+                            var WINode = item.parentMenu.contextNode;
+                            if (WINode) {
+                                var treePanel = WINode.getOwnerTree();
+                                treePanel.widgetRootNode.deleteNode(WINode.attributes.WDNode);
+                            }
+                            break;
+                    }
+                }
+            }
+        });
+        return menu;
     }
 	/**
 	 * Ext Template method
