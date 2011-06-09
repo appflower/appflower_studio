@@ -14,7 +14,7 @@ Ext.ns('afStudio.wd');
 afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
 	
 	/**
-	 * @cfg {String} (required) widgetUri
+	 * @cfg {String} (Required) widgetUri
 	 * Unique widget URI
 	 */
     
@@ -97,23 +97,25 @@ afStudio.wd.WidgetDefinition = Ext.extend(Ext.util.Observable, {
 	 * @param {Function} (Optional) callback The success callback function.
 	 * @param {Boolean} (Optional) createNewWidget Logical flag create new widget or update existing one, defaults is false.
 	 */
-	,saveDefinition : function(definition, callback, createNewWidget) {
+	,saveDefinition : function(w) {
         var _this       = this,
-			definition  = Ext.util.JSON.encode(definition);
+			definition  = Ext.util.JSON.encode(w.metaData);
 		
         Ext.Ajax.request({
             url: afStudioWSUrls.getSaveWidgetUrl(this.widgetUri),
             params: {
                 data: definition,
                 widgetType: this.widgetType,
-                createNewWidget: createNewWidget ? true : false
+                createNewWidget: w.newWidget ? true : false,
+                placeType: w.placeType,
+                place: w.place
             },
             success: function(xhr) {
 				var response = Ext.decode(xhr.responseText);
 				if (response.success) {
 					afStudio.Msg.info(response.message);
-					if (Ext.isFunction(callback)) {
-						callback(response);
+					if (Ext.isFunction(w.success)) {
+						w.success(response);
 					}
 				} else {
 					afStudio.Msg.error(response.message);				

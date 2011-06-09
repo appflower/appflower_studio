@@ -209,12 +209,12 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		var wb = new afStudio.wd.WidgetsBuilder({
 			modelsUrl: url,
 			fieldsUrl: url,
-			createIn: 'plugin',
+			placeType: 'plugin',
 			listeners: {
-				widgetcreated: function(widgetUri, response) {
+				widgetcreated: function(wMeta, response) {
 					_this.onItemActivate();
 					//TODO action and security path needed
-					afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri);
+					afStudio.wd.WidgetFactory.showWidgetDesigner(wMeta);
 				}
 			}
 		});
@@ -509,11 +509,15 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Ext.tree.TreeNode} node
 	 */
     ,showWidgetDesignerForNode : function(node) {
-        var actionPath = this.getNodeAttribute(node, 'actionPath'),
-        	securityPath = this.getNodeAttribute(node, 'securityPath'),
-        	widgetUri = this.getNodeAttribute(node, 'widgetUri');
-	
-        afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri, actionPath, securityPath);
+		var pluginName = this.getParentNodeAttribute(node.parentNode, 'text');
+		
+        afStudio.wd.WidgetFactory.showWidgetDesigner({
+			widgetUri: this.getNodeAttribute(node, 'widgetUri'),
+			actionPath: this.getNodeAttribute(node, 'actionPath'),
+			securityPath: this.getNodeAttribute(node, 'securityPath'),
+			placeType: 'plugin',
+			place: pluginName
+        });
     }//eo showWidgetDesignerForNode	
 });
 

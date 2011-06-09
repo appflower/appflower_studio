@@ -3,6 +3,7 @@
  *  
  * @class afStudio.navigation.WidgetItem
  * @extends afStudio.navigation.BaseItemTreePanel
+ * @author Nikolai Babinski
  */
 afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePanel, {
 	
@@ -217,8 +218,9 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @return {String} actionPath
 	 */
 	,getNodeActionPath : function(node) {
+		
 		return this.getNodeAttribute(node, 'actionPath');
-	}
+	}//eo getNodeActionPath
 	
 	/**
 	 * Returns node's <u>securityPath</u> attribute
@@ -226,8 +228,9 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @return {String} actionPath
 	 */
 	,getNodeSecurityPath : function(node) {
+		
 		return this.getNodeAttribute(node, 'securityPath');
-	}
+	}//eo getNodeSecurityPath
 	
 	/**
 	 * Handles {@link #appContextMenu} menu's <b>itemclick</b> event listener and 
@@ -349,12 +352,12 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		var wb = new afStudio.wd.WidgetsBuilder({
 			modelsUrl: url,
 			fieldsUrl: url,
-			createIn: 'app',
+			placeType: 'app',
 			listeners: {
-				widgetcreated: function(widgetUri, response) {
-					_this.onItemActivate();				
+				widgetcreated: function(wMeta, response) {
+					_this.onItemActivate();					
 					//TODO action and security path needed
-					afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri);
+					afStudio.wd.WidgetFactory.showWidgetDesigner(wMeta);
 				}
 			}
 		});
@@ -536,11 +539,14 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Ext.tree.TreeNode} node
 	 */
     ,showWidgetDesignerForNode : function(node) {
-        var actionPath   = this.getNodeActionPath(node),
-        	securityPath = this.getNodeSecurityPath(node),
-        	widgetUri    = node.attributes.widgetUri;
-	
-        afStudio.wd.WidgetFactory.showWidgetDesigner(widgetUri, actionPath, securityPath);
+        
+        afStudio.wd.WidgetFactory.showWidgetDesigner({
+			widgetUri: this.getNodeAttribute(node, 'widgetUri'),
+			actionPath: this.getNodeActionPath(node),
+			securityPath: this.getNodeSecurityPath(node),
+			placeType: 'app',
+			place: this.getNodeApp(node)        	
+        });        
     }//eo showWidgetDesignerForNode
 }); 
 

@@ -20,7 +20,7 @@ Ext.ns('afStudio.wd');
 afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	
 	/**
-	 * @cfg {String} (Required) createIn
+	 * @cfg {String} (Required) placeType
 	 * Where will be placed created widget. ('app'/'plugin')
 	 */
 	
@@ -31,8 +31,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	/**
 	 * @cfg {String} (Required) fieldsUrl
 	 */
-	
-	
 	
 	/**
 	 * Function onWndShow
@@ -275,7 +273,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	            url: afStudioWSUrls.moduleGroupedUrl,
             	autoLoad: true,
 	            baseParams: {
-	            	type: _this.createIn
+	            	type: _this.placeType
 	            },
 	            totalProperty: 'total',
 	            root: 'data',
@@ -397,8 +395,14 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		
 		this.addEvents(
 			/**
-			 * @event 'widgetcreated' Fires when widget is created.
-			 * @param {String} widgetUri The created widget's URI
+			 * @event 'widgetcreated' 
+			 * Fires when widget is created.
+			 * @param {Object} widgetMeta:
+			 * <ul>
+			 *   <li><b>widgetUri</b>: The widget's URI.</li>
+			 *   <li><b>placeType</b>: The location type.</li>
+			 *   <li><b>place</b>: The location name.</li>
+			 * </ul>
 			 * @param {Object} response The create request response object.
 			 */
 			'widgetcreated'
@@ -455,10 +459,12 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		});
 		
 		var module    = this.modulesCombo.getValue(),
+			moduleRec = this.modulesCombo.getStore().getById(module),
 			action    = this.actionInput.getValue(),
-			widgetUri = module + '/' + action,
-			type      = this.typeCombo.getValue();
-		
+			widgetUri = module + '/' + action,			
+			type      = this.typeCombo.getValue(),
+			place     = moduleRec.get('group');		
+			
 		var widgetMetaData = afStudio.wd.WidgetFactory.buildWidgetDefinition(items, type);
 		
 		var afsWD = new afStudio.wd.WidgetDefinition({
@@ -467,11 +473,21 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		});
 		
 		var callback = Ext.util.Functions.createDelegate(function(response) {			
-			this.fireEvent('widgetcreated', widgetUri, response);
+			this.fireEvent('widgetcreated', {
+				widgetUri: widgetUri,
+				placeType: this.placeType,
+				place: place				
+			}, response);
 			this.close();
 		}, this);
 		
-		afsWD.saveDefinition(widgetMetaData, callback, true);
+		afsWD.saveDefinition({
+			metaData: widgetMetaData, 
+			success: callback, 
+			newWidget: true,
+			placeType: this.placeType,
+			place: place
+		});
 	}//eo create
 	
 	/**
