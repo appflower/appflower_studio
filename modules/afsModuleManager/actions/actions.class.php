@@ -14,7 +14,7 @@ class afsModuleManagerActions extends sfActions
     public function preExecute()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            // $this->forward404("This action should be used only for ajax requests");
+            $this->forward404("This action should be used only for ajax requests");
         }
     }
 
@@ -54,7 +54,8 @@ class afsModuleManagerActions extends sfActions
     public function executeAdd(sfWebRequest $request)
     {
         $parameters = array(
-            'app'   => $request->getParameter('app'),
+            'type'  => $request->getParameter('type', 'app'),
+            'place' => $request->getParameter('place'),
             'name'  => $request->getParameter('name')
         );
         
@@ -72,7 +73,8 @@ class afsModuleManagerActions extends sfActions
     public function executeDelete(sfWebRequest $request)
     {
         $parameters = array(
-            'app'   => $request->getParameter('app'),
+            'type'  => $request->getParameter('type', 'app'),
+            'place' => $request->getParameter('place'),
             'name'  => $request->getParameter('name')
         );
         
@@ -85,15 +87,15 @@ class afsModuleManagerActions extends sfActions
      * Rename module action
      *
      * @param sfWebRequest $request 
-     * @return void
      * @author Sergey Startsev
      */
     public function executeRename(sfWebRequest $request)
     {
         $parameters = array(
-            'app'   => $request->getParameter('app'),
+            'type'  => $request->getParameter('type', 'app'),
+            'place' => $request->getParameter('place'),
             'name'  => $request->getParameter('name'),
-            'renamed'  => $request->getParameter('renamed'),
+            'renamed'  => $request->getParameter('renamed')
         );
         
         $response = afStudioCommand::process('module', 'rename', $parameters);
@@ -109,7 +111,52 @@ class afsModuleManagerActions extends sfActions
      */
     public function executeGetGrouped(sfWebRequest $request)
     {
-        $response = afStudioCommand::process('module', 'getGrouped');
+        $parameters = array(
+            'type' => $request->getParameter('type')
+        );
+        
+        $response = afStudioCommand::process('module', 'getGrouped', $parameters);
+        
+        return $this->renderJson($response);
+    }
+    
+    /**
+     * Rename module view action
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
+     */
+    public function executeRenameView(sfWebRequest $request)
+    {
+        $parameters = array(
+            'type'      => $request->getParameter('type', 'app'),
+            'place'     => $request->getParameter('place'),
+            'module'    => $request->getParameter('moduleName'),
+            'oldValue'  => $request->getParameter('oldValue'),
+            'newValue'  => $request->getParameter('newValue'),
+        );
+        
+        $response = afStudioCommand::process('widget', 'rename', $parameters);
+        
+        return $this->renderJson($response);
+    }
+    
+    /**
+     * Delete module view action
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
+     */
+    public function executeDeleteView(sfWebRequest $request)
+    {
+        $parameters = array(
+            'type'      => $request->getParameter('type', 'app'),
+            'place'     => $request->getParameter('place'),
+            'module'    => $request->getParameter('moduleName'),
+            'name'      => $request->getParameter('name'),
+        );
+        
+        $response = afStudioCommand::process('widget', 'delete', $parameters);
         
         return $this->renderJson($response);
     }

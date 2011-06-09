@@ -66,13 +66,8 @@ afStudio.wd.WidgetFactory = function() {
 		 * @param {String} action The action path
 		 * @param {String} security The security path
 		 */
-		,showWidgetDesigner : function(widgetUri, action, security) {
-			afStudio.vp.addToWorkspace({
-				xtype: 'afStudio.wd.widgetPanel',
-				actionPath: action,
-				securityPath: security,
-		        widgetUri: widgetUri
-			}, true);
+		,showWidgetDesigner : function(cfg) {			
+			afStudio.vp.addToWorkspace(Ext.apply({xtype: 'afStudio.wd.widgetPanel'}, cfg), true);
 		}//eo showWidgetDesigner
 	};
 }();

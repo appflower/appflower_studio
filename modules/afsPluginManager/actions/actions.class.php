@@ -42,7 +42,7 @@ class afsPluginManagerActions extends sfActions
     {
         $response = afStudioCommand::process('plugin', 'getList');
 
-        return $this->renderJson($response);
+        return $this->renderJson($response['data']);
     }
     
     /**
@@ -51,14 +51,14 @@ class afsPluginManagerActions extends sfActions
      * @param sfWebRequest $request 
      * @author Sergey Startsev
      */
-    public function executeRenamePlugin(sfWebRequest $request)
+    public function executeRename(sfWebRequest $request)
     {
         $parameters = array(
             'oldValue' => $request->getParameter('oldValue'),
             'newValue' => $request->getParameter('newValue')
         );
         
-        $response = afStudioCommand::process('plugin', 'renamePlugin', $parameters);
+        $response = afStudioCommand::process('plugin', 'rename', $parameters);
         
         return $this->renderJson($response);
     }
@@ -69,89 +69,13 @@ class afsPluginManagerActions extends sfActions
      * @param sfWebRequest $request 
      * @author Sergey Startsev
      */
-    public function executeDeletePLugin(sfWebRequest $request)
+    public function executeDelete(sfWebRequest $request)
     {
         $parameters = array(
             'name' => $request->getParameter('name'),
         );
         
-        $response = afStudioCommand::process('plugin', 'deletePlugin', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Rename module
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeRenameModule(sfWebRequest $request)
-    {
-		$parameters = array(
-            'oldValue' => $request->getParameter('oldValue'),
-            'newValue' => $request->getParameter('newValue'),
-            'pluginName' => $request->getParameter('pluginName')
-        );
-        
-        $response = afStudioCommand::process('plugin', 'renameModule', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Delete module
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeDeleteModule(sfWebRequest $request)
-    {
-        $parameters = array(
-            'oldValue' => $request->getParameter('oldValue'),
-            'newValue' => $request->getParameter('newValue')
-        );
-        
-        $response = afStudioCommand::process('plugin', 'deleteModule', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Rename xml
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeRenameXml(sfWebRequest $request)
-    {
-		$parameters = array(
-            'oldValue' => $request->getParameter('oldValue'),
-            'newValue' => $request->getParameter('newValue'),
-            'pluginName' => $request->getParameter('pluginName'),
-            'moduleName' => $request->getParameter('moduleName')
-        );
-        
-        $response = afStudioCommand::process('plugin', 'renameXml', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Delete xml
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeDeleteXml(sfWebRequest $request)
-    {
-		$parameters = array(
-            'pluginName' => $request->getParameter('pluginName'),
-            'moduleName' => $request->getParameter('moduleName'),
-            'xmlName' => $request->getParameter('xmlName')
-        );
-        
-        $response = afStudioCommand::process('plugin', 'deleteXml', $parameters);
+        $response = afStudioCommand::process('plugin', 'delete', $parameters);
         
         return $this->renderJson($response);
     }
@@ -162,13 +86,13 @@ class afsPluginManagerActions extends sfActions
      * @param sfWebRequest $request 
      * @author Sergey Startsev
      */
-    public function executeAddPlugin(sfWebRequest $request)
+    public function executeAdd(sfWebRequest $request)
     {
         $parameters = array(
             'name' => $request->getParameter('name')
         );
         
-        $response = afStudioCommand::process('plugin', 'addPlugin', $parameters);
+        $response = afStudioCommand::process('plugin', 'add', $parameters);
         
         return $this->renderJson($response);
     }

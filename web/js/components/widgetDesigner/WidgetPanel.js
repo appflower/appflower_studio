@@ -8,17 +8,30 @@ Ext.namespace('afStudio.wd');
  * @author Nikolai
  */
 afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {	
+	
 	/**
-	 * @cfg {String} (required) actionPath
-	 * Widget action path 
-	 */	
+	 * @cfg {String} (Required) widgetUri
+	 * Widget URI
+	 */
+	
 	/**
-	 * @cfg {String} (required) securityPath
-	 * Widget security path  
-	 */	
+	 * @cfg {String} (Required) actionPath
+	 * Widget action path, the path to actions class file 
+	 */
+	
 	/**
-	 * @cfg {String} (required) widgetUri
-	 * Widget URI  
+	 * @cfg {String} (Required) securityPath
+	 * Widget security path, the path to security configuration file
+	 */
+	
+	/**
+	 * @cfg {String} (Required) placeType
+	 * Where widget is placed, it could be inside <u>app</u> or <u>plugin</u>
+	 */
+	
+	/**
+	 * @cfg {String} (Required) place
+	 * The name of application/plugin inside which the widget is located.
 	 */
 
 	/**
@@ -41,6 +54,8 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
 	 *   <li><b>widgetUri</b>: Widget URI</li>
 	 *   <li><b>definition</b>: Widget's metadata definition.</li>
+	 *   <li><b>placeType</b>: Widget's place type app/plugin.</li>
+	 *   <li><b>place</b>: Widget's place location the name of aplication/plugin</li>
 	 * </ul>
 	 * 
 	 * @property widgetMetaData
@@ -54,6 +69,7 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 */
 	,constructor : function(config) {
 		config = config || {};
+		
 		config.widgetMetaData = {};
 		
 		if (config.actionPath) {
@@ -67,6 +83,14 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 		if (config.widgetUri) {
 			config.widgetMetaData.widgetUri = config.widgetUri;
 			delete config.widgetUri;
+		}
+		if (config.placeType) {
+			config.widgetMetaData.placeType = config.placeType;
+			delete config.placeType;
+		}
+		if (config.place) {
+			config.widgetMetaData.place = config.place;
+			delete config.place;
 		}
 		
 		Ext.apply(config, {

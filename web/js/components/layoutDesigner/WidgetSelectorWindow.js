@@ -5,7 +5,7 @@ afStudio.layoutDesigner.WidgetSelectorWindow = Ext.extend(Ext.Window, {
 	/**
 	 * @cfg {String} modulesUrl 
 	 */
-	moduleUrl : afStudioWSUrls.getModulesUrl()
+	moduleUrl : afStudioWSUrls.moduleListUrl
 
 	/**
 	 * @cfg {String} widgetUrl 

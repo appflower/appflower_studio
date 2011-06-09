@@ -202,15 +202,20 @@ afStudio.wd.DesignerTab = Ext.extend(Ext.Panel, {
 		var widgetUri = this.widgetMeta.widgetUri,
 			widgetType = afStudio.wd.GuiFactory.getWidgetType(this.widgetMeta),		
 			vi = this.viewInspector,
-			viRoot = vi.getRootNode();		
-		
+			viRoot = vi.getRootNode();	
+			
 		var viewDefinition = viRoot.dumpDataForWidgetDefinition();
 		
 		var wdef = new afStudio.wd.WidgetDefinition({
 			widgetUri: widgetUri,
 			widgetType: widgetType
 		});
-		wdef.saveDefinition(viewDefinition);		
+		
+		wdef.saveDefinition({
+			metaData: viewDefinition, 
+			placeType: this.widgetMeta.placeType,
+			place: this.widgetMeta.place			
+		});		
 	}//eo onSaveWidgetView
 
 	/**

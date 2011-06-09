@@ -18,6 +18,7 @@ class appFlowerStudioActions extends sfActions
 	protected function renderJson($result)
 	{
 	    $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+	    
 		return $this->renderText(json_encode($result));
 	}
 	
@@ -28,8 +29,7 @@ class appFlowerStudioActions extends sfActions
 			
 	public function executeCodepress($request)
 	{
-		$this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';
-						
+		$this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';						
 		$this->language=(($this->hasRequestParameter('language')&&$this->getRequestParameter('language')!='undefined')?$this->getRequestParameter('language'):'generic');
 		
 		return $this->renderPartial('codepress');		
@@ -93,21 +93,10 @@ class appFlowerStudioActions extends sfActions
 	public function executeModels()
 	{
 		$models_command = new afStudioModelsCommand();
+		
 		return $this->renderText($models_command->end());
 	}
-	
-	public function executeModules()
-	{
-		$modules_command = new afStudioModulesCommand();		
-		return $this->renderText($modules_command->end());
-	}
-
-	public function executePlugins()
-	{
-		$modules_command = new afStudioPluginsCommand();
-		return $this->renderText($modules_command->end());
-	}
-
+		
 	public function executeCssfilestree(){
 		$cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
 		$cssExtensions = sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
@@ -178,9 +167,8 @@ class appFlowerStudioActions extends sfActions
     {
         $dcm = new DatabaseConfigurationManager();
         $data = $dcm->getDatabaseConnectionParams();
-
-        $info=array('success'=>true, 'data' => $data );
-        $info=json_encode($info);
+        $info = array('success'=>true, 'data' => $data );
+        $info = json_encode($info);
 
         return $this->renderText($info);
     }
@@ -222,83 +210,32 @@ class appFlowerStudioActions extends sfActions
     
     /**
      * Debug controller
+     * 
+     * @param sfWebRequest $request
+     * @author Sergey Startsev
      */
     public function executeDebug(sfWebRequest $request)
     {
-        $command = $this->getRequestParameter('command');
-        $file_name = $this->getRequestParameter('file_name');
+        $parameters = array(
+            'file_name' => $request->getParameter('file_name'),
+            'start'     => $request->getParameter('start', 0),
+            'limit'     => $request->getParameter('limit', 1)
+        );
         
-        $start = $this->getRequestParameter('start', 0);
+        $command = ($command = $request->getParameter('command', 'main')) ? $command : 'main';
         
-        $limit = $this->getRequestParameter('limit', 1);
-        $limit *= 4094;
+        $response = afStudioCommand::process('debug', $command, $parameters);
         
-        $aResponse = array();
-        
-        switch ($command) {
-            case 'file':
-                if (!empty($file_name)) {
-                    $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($file_name), 
-                                                            $start, 
-                                                            $limit);
-                    $aResponse['total'] = $oDebugPager->getLastPage();
-                    $aResponse['data'][] = array('text' => afStudioDebug::get_content(  $file_name, 
-                                                                                        $oDebugPager->getPage() * 4094, 
-                                                                                        $oDebugPager->getNext()* 4094
-                                                                                     )
-                                                           );
-                    
-                } else {
-                    $aResponse['data'][] = array('text' => 'file not checked');
-                    $aResponse['total'] = 1;
-                }
-                
-                break;
-            
-            case 'last':
-                if (empty($file_name)) {
-                    $aFiles = afStudioDebug::get_files();
-                    $file_name = $aFiles[0];
-                }
-                $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($file_name), 
-                                                        0, 
-                                                        4094);
-                $aResponse['last_page'] = $oDebugPager->getLastPage() - 1;
-                
-                break;
-            
-            default:
-                $aResponse['files'] = afStudioDebug::get_files();
-                
-                if (!empty($aResponse['files'])) {
-                    
-                    $oDebugPager = new afStudioDebugPager(  afStudioDebug::get_file_len($aResponse['files'][0]), 
-                                                            $start, 
-                                                            $limit);
-                    
-                    $aResponse['total'] = $oDebugPager->getLastPage();
-                    
-                    $aResponse['data'][] = array('text' => afStudioDebug::get_content(  $aResponse['files'][0], 
-                                                                                        $oDebugPager->getPage() * 4094, 
-                                                                                        $oDebugPager->getNext()* 4094
-                                                                                     )
-                                                );
-                } else {
-                    $aResponse['data'][] = array('text' => 'no logs');
-                    $aResponse['total'] = 1;
-                }
-                
-                break;
-        }
-
-        $aResponse['success'] = true;
-        
-        return $this->renderJson($aResponse);
+        return $this->renderJson($response);
     }
-
+    
+    /**
+     * Notifications action
+     */
     public function executeNotifications()
 	{
-		$notifications_command = new afStudioNotificationsCommand($this->realRoot);		
+		$notifications_command = new afStudioNotificationsCommand($this->realRoot);
+				
 		return $this->renderText($notifications_command->end());
 	}    
     
@@ -339,7 +276,8 @@ class appFlowerStudioActions extends sfActions
         return $this->renderText($result);
     }
     
-	public function executeHelperFileSave($request){
+	public function executeHelperFileSave($request)
+	{
 		$result=true;
 		$JDATA=file_get_contents("php://input");
 		
@@ -368,13 +306,15 @@ class appFlowerStudioActions extends sfActions
 		}
 		
 		$info=array('success'=>$success, "message"=>$message);
+		
 		return $this->renderJson($info);
 	}
 	
 	/**
 	 * Check if file exists and if not there create a new one based on the template
 	 */
-	public function executeCheckHelperFileExist($request){
+	public function executeCheckHelperFileExist($request)
+	{
 		$result = true;
 		$message = "";
 		
@@ -397,6 +337,7 @@ class appFlowerStudioActions extends sfActions
 		}
 		
 		$info=array('success'=>$result, "message"=>$message);
+		
 		return $this->renderJson($info);
 	}
 	
@@ -407,7 +348,8 @@ class appFlowerStudioActions extends sfActions
 	 */
 	public function executeLoadProjectTree($request)
 	{        
-        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'),array('request'=>$request));        
+        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'),array('request'=>$request));
+               
         return $this->renderJson($aResult);
 	}
 	
@@ -435,7 +377,8 @@ class appFlowerStudioActions extends sfActions
 	 */
 	public function executeCreateProject($request)
 	{        
-        $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));        
+        $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));
+              
         return $this->renderJson($aResult);
 	}
 
@@ -468,20 +411,23 @@ class appFlowerStudioActions extends sfActions
 	 */
 	public function executeTemplateSelector($request)
 	{        
-        $aResult = afStudioCommand::process('templateSelector', $request->getParameter('cmd'),array('request'=>$request));        
+        $aResult = afStudioCommand::process('templateSelector', $request->getParameter('cmd'),array('request'=>$request));
+              
         return $this->renderJson($aResult);
 	}
 	
 	public function executeCreateProjectWizardCheckDatabase($request)
 	{
-	   $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));        
-     return $this->renderJson($aResult);
+	    $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));
+	            
+        return $this->renderJson($aResult);
 	}
 	
 	public function executeCreateProjectWizard($request)
 	{        
 		$result = afStudioCommand::process('createProject', 'saveWizard', array('request'=>$request));
-    return $this->renderJson($result);
+		
+        return $this->renderJson($result);
 	}
 	
 }

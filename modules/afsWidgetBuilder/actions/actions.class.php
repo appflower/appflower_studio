@@ -49,6 +49,9 @@ class afsWidgetBuilderActions extends sfActions
             $data = $request->getParameter('data');
             $widgetType = $request->getParameter('widgetType');
             $createNewWidget = ($request->getParameter('createNewWidget') == 'true' ? true : false);
+            
+            $afsWBW->setPlaceType($request->getParameter('placeType', 'app'));
+            $afsWBW->setPlace($request->getParameter('place', 'frontend'));
 
             $afsWBW->setWidgetType($widgetType);
             $afsWBW->setDefinitionFromJSON($data, $createNewWidget);

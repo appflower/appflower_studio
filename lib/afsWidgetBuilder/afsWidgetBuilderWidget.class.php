@@ -10,7 +10,17 @@
  * @author lukas
  */
 class afsWidgetBuilderWidget {
-
+    
+    /**
+     * Place type application
+     */
+    const PLACE_APPLICATION = 'app';
+    
+    /**
+     * Plugin place type
+     */
+    const PLACE_PLUGIN = 'plugin';
+    
     private $module;
     private $action;
     private $widgetType;
@@ -19,6 +29,20 @@ class afsWidgetBuilderWidget {
      * @var array
      */
     private $definition;
+    
+    /**
+     * Place name
+     *
+     * @example frontend, appFlowerStudioPlugin
+     */
+    private $place;
+    
+    /**
+     * Place type
+     *
+     * @example app, plugin
+     */
+    private $place_type;
     
     public function setWidgetType($widgetType) {
        $this->widgetType = $widgetType;
@@ -95,12 +119,22 @@ class afsWidgetBuilderWidget {
     private function validateAndSaveXml()
     {
         $xmlBuilder = new afsXmlBuilder($this->definition, $this->widgetType);
-
-        $afCU = new afConfigUtils($this->module);
-        $path = $afCU->getConfigFilePath($this->action.'.xml');
-        if (!$path) {
-            $path = $afCU->generateConfigFilePath($this->action.'.xml');
+        
+        if ($this->isPlugin()) {
+            $config_path = $this->getPlaceConfigPath();
+            if (!file_exists($config_path)) {
+                // for now via console creating config for path
+                afStudioConsole::getInstance()->execute("mkdir {$config_path}");
+            }
+            $path = "{$config_path}/{$this->action}.xml";
+        } else {
+            $afCU = new afConfigUtils($this->module);
+            $path = $afCU->getConfigFilePath($this->action.'.xml');
+            if (!$path) {
+                $path = $afCU->generateConfigFilePath($this->action.'.xml');
+            }
         }
+        
         FirePHP::getInstance(true)->fb($path);
 
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
@@ -212,5 +246,83 @@ class afsWidgetBuilderWidget {
 
         return null;
     }
+    
+    /**
+     * Setting place name
+     *
+     * @param string $type 
+     * @author Sergey Startsev
+     */
+    public function setPlace($place)
+    {
+        $this->place = $place;
+    }
+    
+    /**
+     * Setting place type
+     *
+     * @param string $type 
+     * @author Sergey Startsev
+     */
+    public function setPlaceType($type)
+    {
+        $this->place_type = $type;
+    }
+    
+    /**
+     * Getting place type
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getPlaceType()
+    {
+        return $this->place_type;
+    }
+    
+    /**
+     * Getting place name
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getPlace()
+    {
+        return $this->place;
+    }
+    
+    /**
+     * Generate place path 
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getPlacePath()
+    {
+        return afStudioUtil::getRootDir() . "/{$this->place_type}s/{$this->place}";
+    }
+    
+    /**
+     * Generate place path to config path of current module
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getPlaceConfigPath()
+    {
+        return $this->getPlacePath() . "/modules/{$this->module}/config";
+    }
+    
+    /**
+     * Checking is plugin place type or not
+     *
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    public function isPlugin()
+    {
+        return ($this->getPlaceType() == self::PLACE_PLUGIN);
+    }
+    
 }
 ?>
