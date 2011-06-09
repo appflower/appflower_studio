@@ -27,7 +27,7 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 	_beforeInitComponent : function() {
 		var _this = this;
 		
-		this.widgetPanel = this.ownerCt;
+		this.widgetPanel = this.ownerCt;		
 		
 		return {
 			itemId: 'widget-designer',
@@ -45,7 +45,7 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 				file: this.widgetMeta.securityPath
 			},{
 				xtype: 'afStudio.wd.codeEditorTab',
-				fileName: 'actions.class.php',
+				fileName: this.widgetMeta.actionName, //'actions.class.php',
 				filePath: this.widgetMeta.actionPath,
 				tabTip: this.widgetMeta.actionPath,
 				file: this.widgetMeta.actionPath				

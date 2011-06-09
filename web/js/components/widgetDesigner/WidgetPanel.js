@@ -76,6 +76,10 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 			config.widgetMetaData.actionPath = config.actionPath;
 			delete config.actionPath;
 		}
+		if (config.actionName) {
+			config.widgetMetaData.actionName = config.actionName;
+			delete config.actionName;
+		}
 		if (config.securityPath) {
 			config.widgetMetaData.securityPath = config.securityPath;
 			delete config.securityPath;

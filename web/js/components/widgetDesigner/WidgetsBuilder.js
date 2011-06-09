@@ -397,12 +397,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			/**
 			 * @event 'widgetcreated' 
 			 * Fires when widget is created.
-			 * @param {Object} widgetMeta:
-			 * <ul>
-			 *   <li><b>widgetUri</b>: The widget's URI.</li>
-			 *   <li><b>placeType</b>: The location type.</li>
-			 *   <li><b>place</b>: The location name.</li>
-			 * </ul>
 			 * @param {Object} response The create request response object.
 			 */
 			'widgetcreated'
@@ -473,11 +467,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		});
 		
 		var callback = Ext.util.Functions.createDelegate(function(response) {			
-			this.fireEvent('widgetcreated', {
-				widgetUri: widgetUri,
-				placeType: this.placeType,
-				place: place				
-			}, response);
+			this.fireEvent('widgetcreated', response);
 			this.close();
 		}, this);
 		

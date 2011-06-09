@@ -62,9 +62,7 @@ afStudio.wd.WidgetFactory = function() {
 		
 		/**
 		 * Creates and Opens {@link afStudio.wd.WidgetPanel} widget designer panel.
-		 * @param {String} widgetUri The widget URI
-		 * @param {String} action The action path
-		 * @param {String} security The security path
+		 * @param {Object} cfg The {@link afStudio.wd.WidgetPanel} configuration object.
 		 */
 		,showWidgetDesigner : function(cfg) {			
 			afStudio.vp.addToWorkspace(Ext.apply({xtype: 'afStudio.wd.widgetPanel'}, cfg), true);

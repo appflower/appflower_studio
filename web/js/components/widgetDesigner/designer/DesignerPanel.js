@@ -22,6 +22,8 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	 *   <li><b>securityPath</b>: Path to widget's security config.</li>
 	 *   <li><b>widgetUri</b>: Widget URI</li>
 	 *   <li><b>definition</b>: Widget's metadata definition.</li>
+	 *   <li><b>placeType</b>: Widget's place type app/plugin.</li>
+	 *   <li><b>place</b>: Widget's place location the name of aplication/plugin</li>   
 	 * </ul>
 	 * @cfg {Object} widgetMeta
 	 */	
