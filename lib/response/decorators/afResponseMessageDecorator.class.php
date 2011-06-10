@@ -21,7 +21,7 @@ class afResponseMessageDecorator extends afResponseDecoratorBase
     {
         $this->_message = $message;
         
-        return parent::__construct($response);
+        parent::__construct($response);
     }
     
     /**
@@ -33,6 +33,7 @@ class afResponseMessageDecorator extends afResponseDecoratorBase
     public function getParameters()
     {
         $this->addParameter(self::IDENTIFICATOR, $this->_message);
+        
         return parent::getParameters();
     }
     

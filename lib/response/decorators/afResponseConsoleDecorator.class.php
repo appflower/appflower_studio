@@ -21,7 +21,7 @@ class afResponseConsoleDecorator extends afResponseDecoratorBase
     {
         $this->_content = $content;
         
-        return parent::__construct($response);
+        parent::__construct($response);
     }
     
     /**

@@ -21,7 +21,7 @@ class afResponseDatasetDecorator extends afResponseDecoratorBase
     {
         $this->_dataset = $dataset;
         
-        return parent::__construct($response);
+        parent::__construct($response);
     }
     
     /**

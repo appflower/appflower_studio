@@ -21,7 +21,7 @@ class afResponseQueryDecorator extends afResponseDecoratorBase
     {
         $this->_query = $query;
         
-        return parent::__construct($response);
+        parent::__construct($response);
     }
     
     /**

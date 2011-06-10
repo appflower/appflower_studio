@@ -21,7 +21,7 @@ class afResponseSuccessDecorator extends afResponseDecoratorBase
     {
         $this->_type = (bool)$type;
         
-        return parent::__construct($response);
+        parent::__construct($response);
     }
     
     /**
@@ -33,6 +33,7 @@ class afResponseSuccessDecorator extends afResponseDecoratorBase
     public function getParameters()
     {
         $this->addParameter(self::IDENTIFICATOR, $this->_type);
+        
         return parent::getParameters();
     }
     

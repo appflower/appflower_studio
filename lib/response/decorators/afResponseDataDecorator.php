@@ -43,7 +43,7 @@ class afResponseDataDecorator extends afResponseDecoratorBase
         $this->_data = $data;
         $this->_total = $total;
         
-        return parent::__construct($response);
+        parent::__construct($response);
     }
     
     /**

@@ -60,7 +60,13 @@ abstract class afResponse extends afResponseBase
             // Send this as first parameter
             array_unshift($arguments, $this);
             
-            return $reflection->newInstanceArgs($arguments);
+            // retrieve instance
+            $instance = $reflection->newInstanceArgs($arguments);
+            
+            // update current parameters
+            $this->_parameters = $instance->getParameters();
+            
+            return $this;
         } else {
             throw new afResponseException("This decorator doesn't exists");
         }

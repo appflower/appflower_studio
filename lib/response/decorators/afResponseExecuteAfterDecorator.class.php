@@ -21,7 +21,7 @@ class afResponseExecuteAfterDecorator extends afResponseDecoratorBase
     {
         $this->_code = $code;
         
-        return parent::__construct($response);
+        parent::__construct($response);
     }
     
     /**
@@ -33,6 +33,7 @@ class afResponseExecuteAfterDecorator extends afResponseDecoratorBase
     public function getParameters()
     {
         $this->addParameter(self::IDENTIFICATOR, $this->_code);
+        
         return parent::getParameters();
     }
     
