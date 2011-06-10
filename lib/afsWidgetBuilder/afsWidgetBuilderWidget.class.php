@@ -176,8 +176,12 @@ class afsWidgetBuilderWidget {
         if ($afCU->isActionDefined($this->action)) {
             return true;
         }
-
-        $actionFilePath = $afCU->generateActionFilePath($this->action);
+        
+        if ($this->isPlugin()) {
+            $actionFilePath = $this->getPlaceModulePath() . "/actions/{$this->action}Action.class.php";
+        } else {
+            $actionFilePath = $afCU->generateActionFilePath($this->action);
+        }
 
         /*$fileExists = file_exists($actionFilePath);
         $fileWritable = is_writable($actionFilePath);
