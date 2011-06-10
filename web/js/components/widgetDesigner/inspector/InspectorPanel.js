@@ -41,6 +41,9 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
    		var _this = this;
    	    var root = afStudio.wd.WidgetFactory.createWIRootNode(this.widgetMeta.definition.type);
        	root.configureFor(this.widgetMeta.definition);
+        this.widgetRootNode = root;
+
+        this.widgetRootNode.addListener('propertyChanged', this.WDNodePropertyChanged, this);
 
 		return {
             title: 'Widget Inspector',
@@ -103,32 +106,29 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
 	 * @param {Ext.tree.TreeNode} node
 	 * @param {Ext.EventObject} e
 	 */
-	,onInspectorTreeNodeClick : function(node, e) {
-		var fields = node.attributes.WDNode.getProperties();
-		this.propertyGrid.setSource(fields);
+	,onInspectorTreeNodeClick : function(node) {
+        this.loadNodeProperties(node);
 	}//eo onInspectorTreeNodeClick
-	
+    ,loadNodeProperties: function(WInode) {
+		var fields = WInode.attributes.WDNode.getProperties();
+		this.propertyGrid.setSource(fields);
+        this.currentWDNode = WInode.attributes.WDNode;
+    }
 	/**
-	 * {@link #propertyGrid} property grid <u>afteredit</u> event listener.
-	 * @param {Object} e The edit event object
-	 * For detailed information look at {@link Ext.grid.EditorGridPanel#afteredit}
+     * delegates edit action to WDNode object
 	 */
 	,onPropertyGridAfterEdit : function(e) {
-		//Create tooltip for edited row.
-		this.onGridRefresh(e.grid.getView());
-		
-        if (e.record && e.record.WITreeNode) {
-        	var n = e.record.WITreeNode;
-        	this.propertyGrid.fireEvent('metaPropertyChange', n, e.record.id, e.value, e.originalValue);        	
-            n.propertyChanged(e.record);
-        }
+        this.widgetRootNode.setProperty(this.currentWDNode, e.record.id, e.value);
 	}//eo onPropertyGridAfterEdit
 	
-	/**
-	 * Function onGridRefresh
-	 * Creates QTips for each row in grid
-	 * @param {Objectt} view - grid view
-	 */
+    /**
+     * Handler that reacts on any property changes
+     * it reloads all properties
+     */
+    ,WDNodePropertyChanged: function(WDNode) {
+        var WINode = this.inspectorTree.findWINodeByWDNode(WDNode);
+        this.loadNodeProperties(WINode);
+    }
 	,onGridRefresh : function(view) {
 		var grid = view.grid,
    			  ds = grid.getStore();

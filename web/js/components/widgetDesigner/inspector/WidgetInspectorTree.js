@@ -37,8 +37,8 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
         	folderSort: true
         });
 	    
-        this.widgetRootNode.addListener('nodeCreated', this.newNodeCreated, this);
-        this.widgetRootNode.addListener('nodeDeleted', this.nodeDeleted, this);
+        this.widgetRootNode.addListener('nodeCreated', this.WDNodeCreated, this);
+        this.widgetRootNode.addListener('nodeDeleted', this.WDNodeDeleted, this);
         
         var WIRootNode = this.buildWINodeFromWDNode(this.widgetRootNode);
 
@@ -53,7 +53,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
      * Handler that reacts on WidgetDefinition changes - new node created
      * It rebuilds all childrens of changed parent node
      */
-    ,newNodeCreated: function(newWDNode) {
+    ,WDNodeCreated: function(newWDNode) {
         var newWINodeDefinition = this.buildWINodeFromWDNode(newWDNode);
         
         // we need to operate on parent because newWDNode does not have WI corecponding node yet
@@ -65,7 +65,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
     /**
      * Handler that reacts on WidgetDefinition node deletion event
      */
-    ,nodeDeleted: function(removedWDNode) {
+    ,WDNodeDeleted: function(removedWDNode) {
         // we need to operate on parent because newWDNode does not have WI corecponding node yet
         var WINode = this.findWINodeByWDNode(removedWDNode);
         WINode.destroy();

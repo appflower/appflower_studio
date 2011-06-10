@@ -101,6 +101,11 @@ afStudio.wi.ObjectRootNode = Ext.extend(afStudio.wi.BaseNode, {
         parentWDNode.deleteChild(WDNode);
         this.fireEvent('nodeDeleted', WDNode);
     }
+    ,setProperty: function(WDNode, propertyName, value) {
+        // @todo - this could be good place to run validation for provided value
+        WDNode.setProperty(propertyName, value);
+        this.fireEvent('propertyChanged', WDNode, propertyName);
+    }
 });
 
 Ext.apply(afStudio.wi.ObjectRootNode, Ext.util.Observable);
