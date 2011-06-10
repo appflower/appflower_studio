@@ -6,22 +6,12 @@
  */
 afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
 	
-	/**
-	 * ActionNode constructor.
-	 * @constructor
-	 */
-    constructor : function() {
-        afStudio.wi.ActionNode.superclass.constructor.apply(this, arguments);
-        
-        this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
-    }//eo constructor
-    
     /**
      * template method
      * @override
      * @return {Object} this node configuration object
      */
-    ,getNodeConfig : function() {
+    getNodeConfig : function() {
         return {
             text: 'newaction',
             metaField: 'i:action'
@@ -49,5 +39,8 @@ afStudio.wi.ActionNode = Ext.extend(afStudio.wi.ContainerNode, {
 
        this.addProperties(properties);
     }//eo createProperties
+    ,getLabel : function() {
+        return this.getPropertyValue('name');
+    }//eo addBehavior
     
 });

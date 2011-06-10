@@ -7,23 +7,12 @@
  * @extends afStudio.wi.ContainerNode
  */
 afStudio.wi.ParamNode = Ext.extend(afStudio.wi.ContainerNode, {
-    
-	/**
-	 * ParamNode
-	 * @constructor
-	 */
-    constructor : function() {
-        afStudio.wi.ParamNode.superclass.constructor.apply(this, arguments);
-        
-        this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
-    }//eo constructor
-    
     /**
      * template method
      * @override
      * @return {Object} this node configuration object
      */    
-    ,getNodeConfig : function() {
+    getNodeConfig : function() {
         return {
             'text': 'parameter'
         };
@@ -40,4 +29,7 @@ afStudio.wi.ParamNode = Ext.extend(afStudio.wi.ContainerNode, {
         ];
         this.addProperties(properties);
     }//eo createProperties 
+    ,getLabel : function() {
+        return this.getPropertyValue('name');
+    }//eo addBehavior
 });

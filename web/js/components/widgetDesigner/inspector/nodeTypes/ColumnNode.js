@@ -5,21 +5,12 @@
  */
 afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
 	
-	/**
-	 * ColumnNode constructor.
-	 * @constructor
-	 */
-    constructor : function() {
-        afStudio.wi.ColumnNode.superclass.constructor.apply(this, arguments);
-        this.initBehavior();
-    }//eo constructor
-
     /**
      * template method
      * @override
      * @return {Object} this node configuration object
      */
-    ,getNodeConfig : function() {
+    getNodeConfig : function() {
         return {
             text: 'newcolumn',
             iconCls: 'icon-field',
@@ -61,19 +52,7 @@ afStudio.wi.ColumnNode = Ext.extend(afStudio.wi.ContainerNode, {
         this.properties['name'].set('value', name);
         this.properties['label'].set('value', label);
     }//eo setNameAndLabel
-    
-    /**
-     * @private
-     */
-    ,initBehavior : function() {
-    	/* i:column doesn't have nested elements only attributes
-        var behavior = new afStudio.wi.WithValueTypeBehavior;
-        behavior.setValueTypeDataKey('i:value');
-        this.addBehavior(behavior);
-        */
-        this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
-    }//eo initBehavior
     ,getLabel : function() {
-        return this.properties['label'].get('value');
+        return this.getPropertyValue('label');
     }//eo addBehavior
 });

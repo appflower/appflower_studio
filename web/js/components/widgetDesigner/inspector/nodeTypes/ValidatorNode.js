@@ -7,11 +7,6 @@ afStudio.wi.ValidatorNode = Ext.extend(afStudio.wi.CollectionNode, {
     
     ,childNodeId : 'i:param'
 	
-    ,constructor : function() {
-        afStudio.wi.ValidatorNode.superclass.constructor.apply(this, arguments);
-        this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
-    }
-    
     ,getNodeConfig : function() {
         return {
             'text': 'Validator'
@@ -28,4 +23,7 @@ afStudio.wi.ValidatorNode = Ext.extend(afStudio.wi.CollectionNode, {
         ];
         this.addProperties(properties);
     }
+    ,getLabel : function() {
+        return this.getPropertyValue('name');
+    }//eo addBehavior
 });

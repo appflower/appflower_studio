@@ -128,6 +128,7 @@ afStudio.wi.InspectorPanel = Ext.extend(Ext.Panel, {
     ,WDNodePropertyChanged: function(WDNode) {
         var WINode = this.inspectorTree.findWINodeByWDNode(WDNode);
         this.loadNodeProperties(WINode);
+        WINode.setText(WDNode.getLabel());
     }
 	,onGridRefresh : function(view) {
 		var grid = view.grid,

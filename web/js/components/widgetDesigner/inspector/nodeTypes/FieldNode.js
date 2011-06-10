@@ -15,7 +15,6 @@ afStudio.wi.FieldNode = Ext.extend(afStudio.wi.ContainerNode, {
         var behavior = new afStudio.wi.WithValueTypeBehavior;
         behavior.setValueTypeDataKey('i:value');
         this.addBehavior(behavior);
-        this.addBehavior(new afStudio.wi.WithNamePropertyAsLabelBehavior);
     }//eo constructor
 
     /**
@@ -96,5 +95,8 @@ afStudio.wi.FieldNode = Ext.extend(afStudio.wi.ContainerNode, {
 
         this.properties['type'].set('value', type);
     }//eo setTypeFromModelType
+    ,getLabel : function() {
+        return this.getPropertyValue('label');
+    }//eo addBehavior
     
 });

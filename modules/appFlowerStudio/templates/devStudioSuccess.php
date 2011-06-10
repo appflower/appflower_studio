@@ -150,7 +150,6 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/base/BaseBehavior.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithIParamsBehavior.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithNamePropertyAsLabelBehavior.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithValueTypeBehavior.js"></script>
 	<!-- wi nodeTypes -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/BaseNode.js"></script>
