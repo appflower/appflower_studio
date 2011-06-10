@@ -25,8 +25,18 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		
 		$console = $afConsole->execute('afs fix-perms');
 		
-		$oldName = "{$root}/{$type}s/{$place}/modules/{$module}/config/{$oldValue}";
-		$newName = "{$root}/{$type}s/{$place}/modules/{$module}/config/{$newValue}";
+		$module_dir = "{$root}/{$type}s/{$place}/modules/{$module}";
+		
+		$oldName = "{$module_dir}/config/{$oldValue}";
+		$newName = "{$module_dir}/config/{$newValue}";
+		
+		$console .= afStudioModuleCommandHelper::renameAction(
+		    pathinfo($oldValue, PATHINFO_FILENAME), 
+		    pathinfo($newValue, PATHINFO_FILENAME), 
+		    $module,
+		    $place, 
+		    $type
+		);
 		
 		if (!file_exists($newName)) {
             // $filesystem->rename($oldName, $newName);
@@ -64,11 +74,16 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		$root = afStudioUtil::getRootDir();
 		$afConsole = afStudioConsole::getInstance();
 		
-		$xmlDir = "{$root}/{$type}s/{$place}/modules/{$module}/config/{$name}";
+		$module_dir = "{$root}/{$type}s/{$place}/modules/{$module}";
+		$xmlDir = "{$module_dir}/config/{$name}";
+		
+		$actionName = pathinfo($name, PATHINFO_FILENAME);
+		$actionDir = "{$module_dir}/actions/{$actionName}Action.class.php";
 		
 		$console = $afConsole->execute(array(
             'afs fix-perms',
-            "rm -rf {$xmlDir}"
+            "rm -rf {$xmlDir}",
+            "rm -rf {$actionDir}"
 		));
 		
 		if (!file_exists($xmlDir)) {	
