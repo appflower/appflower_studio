@@ -306,8 +306,8 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	        menu.show(t, 'tl-bl?');
 	        
 		} else {
-			if (index) {
-				var clmId  = this.cm.getColumnId(index);		
+			if (index !== false) {
+				var clmId  = this.cm.getColumnId(index);
 				if (Ext.isDefined(clmId)) {			
 					var clm = this.cm.getColumnById(clmId);
 					//checkbox selection model column and rowactions column are not editable 
