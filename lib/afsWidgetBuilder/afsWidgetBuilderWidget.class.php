@@ -310,7 +310,18 @@ class afsWidgetBuilderWidget {
      */
     public function getPlaceConfigPath()
     {
-        return $this->getPlacePath() . "/modules/{$this->module}/config";
+        return $this->getPlaceModulePath() . "/config";
+    }
+    
+    /**
+     * Getting place modules path
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getPlaceModulePath()
+    {
+        return $this->getPlacePath() . "/modules/{$this->module}";
     }
     
     /**
@@ -322,6 +333,42 @@ class afsWidgetBuilderWidget {
     public function isPlugin()
     {
         return ($this->getPlaceType() == self::PLACE_PLUGIN);
+    }
+    
+    /**
+     * Getting Widget information
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getInfo()
+    {
+        $module_dir = $this->getPlaceModulePath();
+        
+        $actionPath = "{$module_dir}/actions/actions.class.php";
+        
+	    $predictActions = "{$this->action}Action.class.php";
+	    $predictActionsPath = "{$module_dir}/actions/{$predictActions}";
+	    
+	    if (file_exists($predictActionsPath)) {
+	        $actionPath = $predictActionsPath;
+	    }
+	    
+	    $actionName = pathinfo($actionPath, PATHINFO_BASENAME);
+        
+        $info = array(
+            'place' => $this->getPlace(),
+            'placeType' => $this->getPlaceType(),
+            'module' => $this->module,
+            'widgetUri' => "{$this->module}/{$this->action}",
+            'securityPath' => $this->getPlaceConfigPath() . "/security.yml",
+            'xmlPath' => $this->getPlaceConfigPath() . "/{$this->action}.xml",
+            'actionPath' => $actionPath,
+            'actionName' => $actionName,
+            'name' => $this->action
+        );
+        
+        return $info;
     }
     
 }

@@ -62,5 +62,5 @@ Ext.apply(Ext.form.VTypes, {
     
     usernameText : 'Username should only contain letters, numbers, dots, _, -',
     
-    usernameMask : /[a-z0-9_\-\.]/i,
+    usernameMask : /[a-z0-9_\-\.]/i
 });

@@ -76,7 +76,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		var rootNode = new Ext.tree.TreeNode({
 			path: 'root',
-			text: _this.title || '', 
+			text: _this.title || 'root', 
 			draggable: false
 		});
 		

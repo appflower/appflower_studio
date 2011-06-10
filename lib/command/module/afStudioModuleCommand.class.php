@@ -38,12 +38,13 @@ class afStudioModuleCommand extends afBaseStudioCommand
 			
 			foreach ($modules as $module) {
 				$data[$i]['children'][$j]['text'] = $module;
+				$module_dir = "{$root}/apps/{$app}/modules/{$module}";
 				
-				$xmlNames = afStudioUtil::getFiles("{$root}/apps/{$app}/modules/{$module}/config/", true, "xml");
-                $xmlPaths = afStudioUtil::getFiles("{$root}/apps/{$app}/modules/{$module}/config/", false, "xml");
+				$xmlNames = afStudioUtil::getFiles("{$module_dir}/config/", true, "xml");
+                $xmlPaths = afStudioUtil::getFiles("{$module_dir}/config/", false, "xml");
                                             
-                $securityPath = "{$root}/apps/{$app}/modules/{$module}/config/security.yml";
-                $actionPath = "{$root}/apps/{$app}/modules/{$module}/actions/actions.class.php";
+                $securityPath = "{$module_dir}/config/security.yml";
+                $defaultActionPath = "{$module_dir}/actions/actions.class.php";
                 
                 $k = 0;
 				
@@ -54,6 +55,18 @@ class afStudioModuleCommand extends afBaseStudioCommand
 					$data[$i]['children'][$j]['leaf'] = false;
 					
 					foreach ($xmlNames as $xk => $xmlName) {
+					    $actionPath = $defaultActionPath;
+					    
+					    $widgetName = pathinfo($xmlName, PATHINFO_FILENAME);
+					    $predictActions = "{$widgetName}Action.class.php";
+					    $predictActionsPath = "{$module_dir}/actions/{$predictActions}";
+					    
+					    if (file_exists($predictActionsPath)) {
+					        $actionPath = $predictActionsPath;
+					    }
+					    
+					    $actionName = pathinfo($actionPath, PATHINFO_BASENAME);
+					    
 					    $data[$i]['children'][$j]['children'][$k] = array(
 					        'app'           => $app,
 					        'module'        => $module,
@@ -63,6 +76,8 @@ class afStudioModuleCommand extends afBaseStudioCommand
 					        'securityPath'  => $securityPath,
 					        'xmlPath'       => $xmlPaths[$xk],
 					        'actionPath'    => $actionPath,
+					        'actionName'    => $actionName,
+					        'name'          => $widgetName,
 					        'leaf'          => true
 					    );
 					    

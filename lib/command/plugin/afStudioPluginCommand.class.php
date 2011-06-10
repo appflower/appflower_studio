@@ -216,9 +216,9 @@ class afStudioPluginCommand extends afBaseStudioCommand
 		
 		$dir = "{$root_dir}/plugins/{$plugin}/modules/{$modulename}/config/";
 		
-		$base_mod_dir   = "{$root_dir}/apps/{$plugin}/modules/{$modulename}";
+		$base_mod_dir   = "{$root_dir}/plugins/{$plugin}/modules/{$modulename}";
 		$securityPath   = "{$base_mod_dir}/config/security.yml";
-		$actionPath     = "{$base_mod_dir}/actions/actions.class.php";
+		$defaultActionPath = "{$base_mod_dir}/actions/actions.class.php";
 		
 		$files = array();
 		
@@ -228,12 +228,26 @@ class afStudioPluginCommand extends afBaseStudioCommand
 			while (($f = readdir($handler)) !== false) {
 				if (!is_dir($dir . $f) && strpos($f, $pro_name) > 0) {
 				    
+				    $actionPath = $defaultActionPath;
+				    
+				    $widgetName = pathinfo($f, PATHINFO_FILENAME);
+				    $predictActions = "{$widgetName}Action.class.php";
+				    $predictActionsPath = "{$base_mod_dir}/actions/{$predictActions}";
+				    
+				    if (file_exists($predictActionsPath)) {
+				        $actionPath = $predictActionsPath;
+				    }
+				    
+				    $actionName = pathinfo($actionPath, PATHINFO_BASENAME);
+				    
 				    $files[] = array(
 				        'text'          => $f,
 				        'type'          => 'xml',
 				        'widgetUri'     => $modulename . '/' . str_replace('.xml', '', $f),
 				        'securityPath'  => $securityPath,
 				        'actionPath'    => $actionPath,
+				        'actionName'    => $actionName,
+				        'widgetName'    => $widgetName,
 				        'leaf'          => true
 				    );
 				}

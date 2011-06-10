@@ -354,10 +354,19 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			fieldsUrl: url,
 			placeType: 'app',
 			listeners: {
-				widgetcreated: function(wMeta, response) {
-					_this.onItemActivate();					
-					//TODO action and security path needed
-					afStudio.wd.WidgetFactory.showWidgetDesigner(wMeta);
+				widgetcreated: function(response) {					
+					 var path = String.format('/root/{0}/{1}.xml', response.data.place, response.data.widgetUri);
+					 
+					 _this.loadRootNode(function() {					 
+							this.selectPath(path, 'text', Ext.util.Functions.createDelegate(function(success, node){
+								if (success) {
+									this.showWidgetDesignerForNode(node);
+								} else {
+									this.initialItemState();
+									afStudio.wd.WidgetFactory.showWidgetDesigner(response.data);									
+								}
+							}, this));
+					 });					
 				}
 			}
 		});
@@ -543,6 +552,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         afStudio.wd.WidgetFactory.showWidgetDesigner({
 			widgetUri: this.getNodeAttribute(node, 'widgetUri'),
 			actionPath: this.getNodeActionPath(node),
+			actionName: this.getNodeAttribute(node, 'actionName'),
 			securityPath: this.getNodeSecurityPath(node),
 			placeType: 'app',
 			place: this.getNodeApp(node)        	
