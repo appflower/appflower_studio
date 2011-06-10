@@ -89,6 +89,8 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sApplication = $this->getParameter('app');
         $aDefinition = $this->getParameter('definition');
         
+        $module = $this->getParameter('module', 'pages');
+        
         //idXml is stored inside the portal_state table from appFlowerPlugin
         $idXml = 'pages/'.str_replace('.xml','',basename($sPage));
         
@@ -98,39 +100,47 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             $aDefinition = $this->getNewDefitinition($this->getParameter('title'));
         }
         
-        $root_dir = sfConfig::get('sf_root_dir');
+        $root_dir = afStudioUtil::getRootDir();
         $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
         
-        // Needs to define/initialize xml serialize constants
-        $oXmlUtil = new XML_Util;
+        // $sPagesModuleDir = "{$root_dir}/apps/{$sApplication}/modules/{$module}";
         
-        $serializer = new XML_Serializer($this->page_serialize_options);
-        $status = $serializer->serialize($aDefinition);
+        $afResponse = $this->createAction(pathinfo($sPage, PATHINFO_FILENAME), $sApplication, $module);
         
-        if ($status) {
-            $return = $serializer->getSerializedData();
+        if ($afResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            // Needs to define/initialize xml serialize constants
+            $oXmlUtil = new XML_Util;
             
-            $this->definition = $serializer->getSerializedData();
+            $serializer = new XML_Serializer($this->page_serialize_options);
+            $status = $serializer->serialize($aDefinition);
             
-            //todo: [radu] validate() is not working as expected !
-            //if ($this->validate()) {
-                // Save changes
-            
-                // @todo for radu - from lukas :) - you used console output here that was returned by writeFile()
-                // but I changed the code - now writeFile() returns boolean so you have to find another way of getting that console output ;)
-                afStudioUtil::writeFile($sPath, $this->definition);
-                @chmod($sPath, 0755);
+            if ($status) {
+                $return = $serializer->getSerializedData();
                 
-                $message = (!$bNew) ? sprintf('Page "%s" has been changed', $sPage)  : sprintf('Page "%s" has been created', $sPage);
-                                
-                $console = afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
-                $return = $this->fetchSuccess($message, $console);
-            //} else {
-                // Getting error message from validation results, from $this->message
-                //$return = $this->fetchError($this->message);
-            //}
+                $this->definition = $serializer->getSerializedData();
+                
+                //todo: [radu] validate() is not working as expected !
+                //if ($this->validate()) {
+                    // Save changes
+                    
+                    // @todo for radu - from lukas :) - you used console output here that was returned by writeFile()
+                    // but I changed the code - now writeFile() returns boolean so you have to find another way of getting that console output ;)
+                    afStudioUtil::writeFile($sPath, $this->definition);
+                    @chmod($sPath, 0755);
+                    
+                    $message = (!$bNew) ? sprintf('Page "%s" has been changed', $sPage)  : sprintf('Page "%s" has been created', $sPage);
+                    
+                    $console = afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
+                    $return = $this->fetchSuccess($message, $console);
+                //} else {
+                    // Getting error message from validation results, from $this->message
+                    //$return = $this->fetchError($this->message);
+                //}
+            } else {
+                $return = $this->fetchError('Some errors has beed found');
+            }
         } else {
-            $return = $this->fetchError('Some errors has beed found');
+            $return = $afResponse->asArray();
         }
         
         $this->result = $return;
@@ -371,6 +381,42 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         }
         
         return $result;
+    }
+    
+    /**
+     * Creating new action for page
+     *
+     * @param string $name 
+     * @param string $application 
+     * @param string $module 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    private function createAction($name, $application, $module = 'pages')
+    {
+        $root_dir = afStudioUtil::getRootDir();
+        $module_dir = "{$root_dir}/apps/{$application}/modules/{$module}";
+        $action_dir = "{$module_dir}/actions";
+        
+        if (file_exists($action_dir)) {
+            $path = "{$action_dir}/{$name}Action.class.php";
+            $definition = afStudioLayoutCommandTemplate::action($name);
+            
+            if (!file_exists($path)) {
+                if (afStudioUtil::writeFile($path, $definition)) {
+                    $response = afResponseHelper::create()->success(true)->message("Action has been successfully created");
+                } else {
+                    $response = afResponseHelper::create()->success(false)->message("Can't create action in '{$module}' module");
+                }
+            } else {
+                $response = afResponseHelper::create()->success(true)->message("Action for '{$name}' already exists");
+            }
+            
+        } else {
+            $response = afResponseHelper::create()->success(false)->message("Directory for action doesn't exists in '{$application}/{$module}'");
+        }
+        
+        return $response;
     }
     
 }
