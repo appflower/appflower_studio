@@ -6,6 +6,10 @@
  */
 class afStudioLayoutCommand extends afBaseStudioCommand
 {
+    /**
+     * Default pages module
+     */
+	const PAGES_MODULE = 'pages';
 	
     /**
      * XML page definition
@@ -89,7 +93,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sApplication = $this->getParameter('app');
         $aDefinition = $this->getParameter('definition');
         
-        $module = $this->getParameter('module', 'pages');
+        $module = $this->getParameter('module', self::PAGES_MODULE);
         
         //idXml is stored inside the portal_state table from appFlowerPlugin
         $idXml = 'pages/'.str_replace('.xml','',basename($sPage));
@@ -209,6 +213,8 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sPage = $this->getParameter('page');
         $sName = $this->getParameter('name');
         
+        $module = $this->getParameter('module', 'pages');
+        
         $root_dir = sfConfig::get('sf_root_dir');
         $sPagesPath = "{$root_dir}/apps/{$sApplication}/config/pages/";
         
@@ -217,8 +223,17 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         if (file_exists($sPath)) {
             if (!file_exists($sPagesPath . $sName)) {
                 
-                $bRenamed = rename($sPath, $sPagesPath . $sName);
+                $bRenamed = @rename($sPath, $sPagesPath . $sName);
                 if ($bRenamed) {
+                    // rename action 
+                    afStudioModuleCommandHelper::renameAction(
+                        pathinfo($sPage, PATHINFO_FILENAME), 
+            		    pathinfo($sName, PATHINFO_FILENAME), 
+            		    $module,
+            		    $sApplication, 
+            		    'app'
+                    );
+                    
                     $return = $this->fetchSuccess("Page has successfully renamed");
                 } else {
                     $return = $this->fetchError("Some probmlems appear when rename processing");
@@ -242,12 +257,22 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sApplication = $this->getParameter('app');
         $sPage = $this->getParameter('page');
         
-        $root_dir = sfConfig::get('sf_root_dir');
+        $module = $this->getParameter('module', self::PAGES_MODULE);
+        
+        $root_dir = afStudioUtil::getRootDir();
         $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
         
         if (file_exists($sPath)) {
             $bDeleted = unlink($sPath);
             if ($bDeleted) {
+                // Delete action for page , if exists
+                $actionName = pathinfo($sPage, PATHINFO_FILENAME);
+        		$actionPath = "{$root_dir}/apps/{$sApplication}/modules/{$module}/actions/{$actionName}Action.class.php";
+        		
+        		if (file_exists($actionPath)) {
+        		    @unlink($actionPath);
+        		}
+        		
                 $return = $this->fetchSuccess("Page has successfully deleted");
             } else {
                 $return = $this->fetchError("Some probmlems appear when delete processing");
