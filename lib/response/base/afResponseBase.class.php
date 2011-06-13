@@ -44,11 +44,7 @@ abstract class afResponseBase
      */
     public function getParameter($name)
     {
-        if ($this->hasParameter($name)) {
-            return $this->_parameters[$name];
-        } else {
-            return false;
-        }
+        return ($this->hasParameter($name)) ? $this->_parameters[$name] : null;
     }
     
     /**

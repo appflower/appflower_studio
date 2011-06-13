@@ -82,40 +82,21 @@ abstract class afBaseStudioCommand
      * @return mixed
      * @author Sergey Startsev
      */
-    protected function getParameter($name, $default = false)
+    protected function getParameter($name, $default = null)
     {
-        return isset($this->params[$name]) ? $this->params[$name] : $default;
-    }
-    
-    
-    /**
-     * Fetching error, prepare for output
-     */
-    protected function fetchError($content, $console = false)
-    {
-        return $this->fetch($content, false, $console);
+        return ($this->hasParameter($name)) ? $this->params[$name] : $default;
     }
     
     /**
-     * Fetching success, prepare for output
+     * Checking exists parameter or not
+     *
+     * @param string $name 
+     * @return boolean
+     * @author Sergey Startsev
      */
-    protected function fetchSuccess($content, $console = false)
+    protected function hasParameter($name)
     {
-        return $this->fetch($content, true, $console);
+        return array_key_exists($name, $this->params);
     }
     
-    /**
-     * Fetching output
-     */
-    protected function fetch($content, $success, $console)
-    {
-        $return = array('success' => $success, 'content' => $content);
-        
-        if($console)
-        {
-        	$return = array_merge($return, array('console'=>$console));
-        }
-        
-        return $return;
-    }
 }

@@ -19,10 +19,9 @@ class afStudioExecuteCommand extends afBaseStudioCommand
         );
         
         $aResult = $this->executeCommands($aCommands);
-        
         $sResult = afStudioExecuteCommandHelper::processRun($aResult);       
-
-        $this->result = $this->fetchSuccess($sResult);
+        
+        return afResponseHelper::create()->success(true)->content($sResult)->asArray();
     }
     
     /**

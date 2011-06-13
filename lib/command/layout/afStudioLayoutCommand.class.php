@@ -66,21 +66,23 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $root_dir = sfConfig::get('sf_root_dir');
         $sPath = "{$root_dir}/apps/{$this->getParameter('app')}/config/pages/{$this->getParameter('page')}";
         
+        $afResponse = afResponseHelper::create();
+        
         if (file_exists($sPath)) {
             $unserializer = new XML_Unserializer($this->page_unserialize_options);
             $status = $unserializer->unserialize($sPath, true);
     
             if ($status) {
                 $definition = $unserializer->getUnserializedData();
-                $return = $this->fetchSuccess($definition);
+                $afResponse->success(true)->content($definition);
             } else {
-                $return = $this->fetchError("Can't parse page");
+                $afResponse->success(false)->content("Can't parse page");
             }
         } else {
-            $return = $this->fetchError("Page doesn't exists");
+            $afResponse->success(false)->content("Page doesn't exists");
         }
         
-        $this->result = $return;
+        return $afResponse->asArray();
     }
     
     /**
@@ -107,11 +109,11 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $root_dir = afStudioUtil::getRootDir();
         $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
         
-        // $sPagesModuleDir = "{$root_dir}/apps/{$sApplication}/modules/{$module}";
-        
         $afResponse = $this->createAction(pathinfo($sPage, PATHINFO_FILENAME), $sApplication, $module);
         
         if ($afResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            $afResponse = afResponseHelper::create();
+            
             // Needs to define/initialize xml serialize constants
             $oXmlUtil = new XML_Util;
             
@@ -133,21 +135,19 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                     @chmod($sPath, 0755);
                     
                     $message = (!$bNew) ? sprintf('Page "%s" has been changed', $sPage)  : sprintf('Page "%s" has been created', $sPage);
-                    
                     $console = afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
-                    $return = $this->fetchSuccess($message, $console);
+                    
+                    $afResponse->success(true)->content($message)->console($console);
                 //} else {
                     // Getting error message from validation results, from $this->message
                     //$return = $this->fetchError($this->message);
                 //}
             } else {
-                $return = $this->fetchError('Some errors has beed found');
+                $afResponse->success(false)->content('Some errors has beed found');
             }
-        } else {
-            $return = $afResponse->asArray();
-        }
+        } 
         
-        $this->result = $return;
+        return $afResponse->asArray();
     }
     
     /**
@@ -162,21 +162,23 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $afCU = new afConfigUtils($sModule);
         $sPath = $afCU->getConfigFilePath("{$sAction}.xml");
         
+        $afResponse = afResponseHelper::create();
+        
         if (file_exists($sPath)) {
             $unserializer = new XML_Unserializer($this->page_unserialize_options);
             $status = $unserializer->unserialize($sPath, true);
     
             if ($status) {
                 $definition = $unserializer->getUnserializedData();
-                $return = $this->fetchSuccess($definition);
+                $afResponse->success(true)->content($definition);
             } else {
-                $return = $this->fetchError("Can't parse widget");
+                $afResponse->success(false)->content("Can't parse widget");
             }
         } else {
-            $return = $this->fetchError("Widget doesn't exists");
+            $afResponse->success(false)->content("Widget doesn't exists");
         }
         
-        $this->result = $return;
+        return $afResponse->asArray();
     }
     
     /**
@@ -220,6 +222,8 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         
         $sPath = $sPagesPath . $sPage;
         
+        $afResponse = afResponseHelper::create();
+        
         if (file_exists($sPath)) {
             if (!file_exists($sPagesPath . $sName)) {
                 
@@ -234,19 +238,18 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             		    'app'
                     );
                     
-                    $return = $this->fetchSuccess("Page has successfully renamed");
+                    $afResponse->success(true)->content("Page has been successfully renamed");
                 } else {
-                    $return = $this->fetchError("Some probmlems appear when rename processing");
+                    $afResponse->success(false)->content("Some probmlems appear when rename processing");
                 }
             } else {
-                $return = $this->fetchError("Page with new name already exists");
+                $afResponse->success(false)->content("Page with new name already exists");
             }
         } else {
-            $return = $this->fetchError("Page doesn't exists");
+            $afResponse->success(false)->content("Page doesn't exists");
         }
         
-        $this->result = $return;
-        
+        return $afResponse->asArray();
     }
     
     /**
@@ -258,6 +261,8 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $sPage = $this->getParameter('page');
         
         $module = $this->getParameter('module', self::PAGES_MODULE);
+        
+        $afResponse = afResponseHelper::create();
         
         $root_dir = afStudioUtil::getRootDir();
         $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
@@ -273,16 +278,15 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         		    @unlink($actionPath);
         		}
         		
-                $return = $this->fetchSuccess("Page has successfully deleted");
+                $afResponse->success(true)->content("Page has been successfully deleted");
             } else {
-                $return = $this->fetchError("Some probmlems appear when delete processing");
+                $afResponse->success(false)->content("Some probmlems appear when delete processing");
             }
         } else {
-            $return = $this->fetchError("Page doesn't exists");
+            $afResponse->success(false)->content("Page doesn't exists");
         }
         
-        $this->result = $return;
-        
+        return $afResponse->asArray();
     }
     
     /**
@@ -423,22 +427,23 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $module_dir = "{$root_dir}/apps/{$application}/modules/{$module}";
         $action_dir = "{$module_dir}/actions";
         
+        $response = afResponseHelper::create();
+        
         if (file_exists($action_dir)) {
             $path = "{$action_dir}/{$name}Action.class.php";
             $definition = afStudioLayoutCommandTemplate::action($name);
             
             if (!file_exists($path)) {
                 if (afStudioUtil::writeFile($path, $definition)) {
-                    $response = afResponseHelper::create()->success(true)->message("Action has been successfully created");
+                    $response->success(true)->message("Action has been successfully created");
                 } else {
-                    $response = afResponseHelper::create()->success(false)->message("Can't create action in '{$module}' module");
+                    $response->success(false)->message("Can't create action in '{$module}' module");
                 }
             } else {
-                $response = afResponseHelper::create()->success(true)->message("Action for '{$name}' already exists");
+                $response->success(true)->message("Action for '{$name}' already exists");
             }
-            
         } else {
-            $response = afResponseHelper::create()->success(false)->message("Directory for action doesn't exists in '{$application}/{$module}'");
+            $response->success(false)->message("Directory for action doesn't exists in '{$application}/{$module}'");
         }
         
         return $response;
