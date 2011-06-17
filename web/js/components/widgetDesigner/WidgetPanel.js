@@ -70,7 +70,7 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 */
 	,constructor : function(config) {
 		config = config || {};
-		
+
 		config.widgetMetaData = {};
 		
 		if (config.actionPath) {

@@ -1,24 +1,45 @@
 afStudio.Theme = Ext.extend(Ext.Window, { 
 
-	tabPanel: null,
+	tabPanel : null,
 	
-	initComponent: function(){
+	initComponent : function() {
 		this.initDataviewThemeSelector();
 		this.initDataviewEditors();
 		this.initTabPanel();
+		
 		var config = {
-			title: 'Theme', width: 463,
-			height: 250, closable: true,
-	        draggable: true, plain:true,
-	        modal: true, resizable: false,
-	        bodyBorder: false, border: false,
+			title: 'Theme Designer', 
+			width: 463,
+			height: 250, 
+			closable: true,
+	        draggable: true, 
+	        plain:true,
+	        modal: true, 
+	        resizable: false,
+	        bodyBorder: false, 
+	        border: false,
 	        layout: 'fit',
 	        items: this.tabPanel,
 	        buttons: [
-			   {text: 'Set Theme', handler: this.customizeThemeSelector, scope: this, id: this.id + '-customize-btn-ts', hidden: true, disabled: true},
-	           {text: 'Customize', handler: this.customizeEditors, scope: this, id: this.id + '-customize-btn-e', hidden: true, disabled: true},				
-			   {text: 'Cancel', handler: this.cancel, scope: this}
-			],
+			{
+				id: this.id + '-customize-btn-ts', 
+				text: 'Set Theme', 
+				hidden: true, 
+				disabled: true,
+				handler: this.customizeThemeSelector, 
+				scope: this
+			},{
+				id: this.id + '-customize-btn-e', 
+				text: 'Customize', 
+				hidden: true, 
+				disabled: true,
+				handler: this.customizeEditors,
+				scope: this 
+			},{
+				text: 'Cancel', 
+				handler: this.cancel, 
+				scope: this
+			}],
 			buttonAlign: 'center',
 			listeners: {
 				show: function()
@@ -35,10 +56,11 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 		};
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
+		
 		afStudio.Theme.superclass.initComponent.apply(this, arguments);	
 	},
 	
-	initDataviewThemeSelector: function(){
+	initDataviewThemeSelector : function() {
 		
 		var _self = this;
 		
@@ -54,18 +76,17 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 	        ],
 	        sortInfo: {
 	            field: 'name', direction: 'ASC'
-	        }
+	        },
+	        data: myData
 	    });
 	    
-	    store.loadData(myData);		
-	    
 		this.dataviewThemeSelector = new Ext.DataView({
-		    id:'themeselector',
+		    id: 'themeselector',
 	        itemSelector: 'div.thumb-wrap',
-	        style:'overflow:auto',
+	        style: 'overflow: auto;',
 	        multiSelect: true,
 			listeners: {
-				'selectionchange': function(dataview, selections){
+				selectionchange: function(dataview, selections) {
 					var btn = Ext.getCmp(this.id + '-customize-btn-ts');
 					if(selections.length){
 						btn.enable();
@@ -73,9 +94,8 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 						btn.disable();
 					}	
 				},
-				'dblclick': function(dataview,index,node,e){
-					_self.customize();
-					_self.close();
+				dblclick: function(dataview, index, node, e) {
+					_self.customizeThemeSelector(_self.close);
 				},
 				scope: this
 			},
@@ -102,28 +122,26 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 	           {name: 'name'},
 	           {name: 'img'},
 	           {name: 'editor'}
-	        ]
-	    });
-	    
-	    store.loadData(myData);	
+	        ],
+    		data: myData
+	    });	    
 	    	
 		this.dataviewEditors = new Ext.DataView({
-		    id:'editors',
+		    id: 'editors',
 	        itemSelector: 'div.thumb-wrap',
-	        style:'overflow:auto',
+	        style: 'overflow:auto',
 	        multiSelect: true,
 			listeners: {
-				'selectionchange': function(dataview, selections){
+				selectionchange: function(dataview, selections){
 					var btn = Ext.getCmp(this.id + '-customize-btn-e');
-					if(selections.length){
+					if (selections.length) {
 						btn.enable();
 					} else {
 						btn.disable();
-					}
-					
+					}					
 				},
-				'dblclick': function(dataview,index,node,e){
-					_self.customize();
+				dblclick: function(dataview,index,node,e){
+					_self.customizeEditors();
 					_self.close();
 				},
 				scope: this
@@ -139,35 +157,37 @@ afStudio.Theme = Ext.extend(Ext.Window, {
     	});
 	},
 	
-	updateDataviewEditors: function(){
-	    
-	    var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];
-	    
+	updateDataviewEditors: function() {
+	    var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];	    
 	    this.dataviewEditors.store.loadData(myData);
 	},
 	
-	initTabPanel: function(){
+	initTabPanel: function() {
 		
 	    var _self = this;
 	    
 	    this.tabPanel = new Ext.TabPanel({
 			activeTab: 0,
-			items:[
-				{xtype: 'panel', title: 'Theme Selector', items: this.dataviewThemeSelector},
-				{xtype: 'panel', title: 'Editors', layout: 'fit',  items: this.dataviewEditors}
-			],
+			items: [
+			{
+				title: 'Theme Selector', 
+				items: this.dataviewThemeSelector
+			},{
+				title: 'Editors',
+				autoScroll: true,
+				items: this.dataviewEditors
+			}],
 			listeners: {
-			    tabchange: function(tabpanel,tab)
-			    {
-			        switch(tab.items.keys[0])
-			        {
+			    tabchange: function(tabpanel, tab) {
+			        switch (tab.items.keys[0]) {
 			            case "themeselector":
-			            _self.buttons[0].show();
-			            _self.buttons[1].hide();
+			            	_self.buttons[0].show();
+			            	_self.buttons[1].hide();
 			            break;
+			            
 			            case "editors":
-			            _self.buttons[1].show();
-			            _self.buttons[0].hide();
+			            	_self.buttons[1].show();
+			            	_self.buttons[0].hide();
 			            break;
 			        }
 			    }
@@ -175,11 +195,10 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 		});
 	},
 	
-	customizeThemeSelector: function(){
-		
+	customizeThemeSelector : function(callback) {		
 		var _self = this;
 		
-		if(this.dataviewThemeSelector.getSelectedIndexes()){
+		if (this.dataviewThemeSelector.getSelectedIndexes()) {
 			var templateName = this.dataviewThemeSelector.getSelectedRecords()[0].get('name');
 			
 			Ext.Ajax.request({
@@ -194,34 +213,29 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 					
 					if (!response.success) {
 						afStudio.Msg.error(response.message);
-					}
-					else
-					{
-						afTemplateConfig.template.current = templateName.toLowerCase();
-						
-						afStudio.Msg.info(response.message);
-						
+					} else {
+						afTemplateConfig.template.current = templateName.toLowerCase();						
+						afStudio.Msg.info(response.message);						
 						_self.updateDataviewEditors();
+						if (Ext.isFunction(callback)) {
+							Ext.util.Functions.createDelegate(callback, _self)();
+						}
 					}
-				}
-				
+				}				
 			});
 		}
 	},
 	
-	customizeEditors: function(){
+	customizeEditors : function() {
 	    
-	    if(this.dataviewEditors.getSelectedIndexes()){
-			var id = this.dataviewEditors.getSelectedRecords()[0].get('id');
-			var name = this.dataviewEditors.getSelectedRecords()[0].get('name');
-			var editor = this.dataviewEditors.getSelectedRecords()[0].get('editor');
+	    if (this.dataviewEditors.getSelectedIndexes()) {
+			var id     = this.dataviewEditors.getSelectedRecords()[0].get('id'),
+				name   = this.dataviewEditors.getSelectedRecords()[0].get('name'),
+				editor = this.dataviewEditors.getSelectedRecords()[0].get('editor');
 			
-			if(editor!='')
-			{
-				eval('new '+editor+'({helper: \''+id+'\',title:\''+name+'\'}).show()');
-			}
-			else
-			{
+			if (editor != '') {
+				eval('new ' + editor + '({helper: \'' + id + '\',title:\'' + name + '\'}).show()');
+			} else {
 				afStudio.Msg.error('There is not javascript Editor set for this button.');
 			}
 			
@@ -229,7 +243,7 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 		}
 	},
 	
-	cancel:function(){
+	cancel: function() {
 		this.close();
 	}
 });
