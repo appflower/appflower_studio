@@ -7,6 +7,71 @@
 class afStudioWidgetCommand extends afBaseStudioCommand
 {
     /**
+     * Get widget functionality
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function processGet()
+    {
+        $response = afResponseHelper::create();
+        
+        try {
+            $afsWBW = new afsWidgetBuilderWidget($this->getParameter('uri'));
+            $afsWBW->loadXml();
+            
+            $data = $afsWBW->getDefinition();
+            $meta = (isset($data[0])) ? array_keys($data[0]) : array();
+    		$total = count($data);
+    		
+            $response->success(true)->data($meta, $data, $total);
+        } catch( Exception $e ) {
+            $response->success(false)->message($e->getMessage());
+        }
+        
+        return $response->asArray();
+    }
+    
+    /**
+     * Save widget functionality
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function processSave()
+    {
+        $response = afResponseHelper::create();
+        
+        try {
+            $afsWBW = new afsWidgetBuilderWidget($this->getParameter('uri'));
+            
+            $data = $this->getParameter('data');
+            $widgetType = $this->getParameter('widgetType');
+            $createNewWidget = ($this->getParameter('createNewWidget') == 'true' ? true : false);
+            
+            $afsWBW->setPlaceType($this->getParameter('placeType', 'app'));
+            $afsWBW->setPlace($this->getParameter('place', 'frontend'));
+
+            $afsWBW->setWidgetType($widgetType);
+            $afsWBW->setDefinitionFromJSON($data, $createNewWidget);
+            
+            $validationStatusOrError = $afsWBW->save();
+            
+            if ($validationStatusOrError === true) {
+                $message = $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved';
+                
+                $response->success(true)->message($message)->data(array(), $afsWBW->getInfo(), 0);
+            } else {
+                $response->success(false)->message($validationStatusOrError);
+            }
+        } catch( Exception $e ) {
+            $response->success(false)->message($e->getMessage());
+        }
+        
+        return $response->asArray();
+    }
+    
+    /**
 	 * Rename xml functionality
 	 * 
 	 * @author Sergey Startsev
@@ -26,7 +91,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		$console = $afConsole->execute('afs fix-perms');
 		
 		$module_dir = "{$root}/{$type}s/{$place}/modules/{$module}";
-		
+        
 		$oldName = "{$module_dir}/config/{$oldValue}";
 		$newName = "{$module_dir}/config/{$newValue}";
 		
