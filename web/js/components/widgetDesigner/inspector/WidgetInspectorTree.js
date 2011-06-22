@@ -92,7 +92,7 @@ afStudio.wi.WidgetInspectorTree = Ext.extend(Ext.tree.TreePanel, {
    	    
        	root.setText(wUri + ' [' + df.type + ']');
        	root.configureFor(df);
-       
+       	
        	return root;
    }//eo createRootNode
    

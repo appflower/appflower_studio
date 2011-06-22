@@ -164,7 +164,7 @@ afStudio.wd.WidgetPanel = Ext.extend(Ext.Panel, {
 	 * Opens widget designer based on passed in definition.
 	 * @param {Object} definition The widget metadata.
 	 */
-	,openWidgetDesigner : function(definition) {		
+	,openWidgetDesigner : function(definition) {	
 		this.add({
 			xtype: 'afStudio.wd.widgetTabPanel',
 			widgetMeta: this.widgetMetaData
