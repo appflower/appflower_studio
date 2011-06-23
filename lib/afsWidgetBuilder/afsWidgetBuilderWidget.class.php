@@ -129,13 +129,11 @@ class afsWidgetBuilderWidget {
             $path = "{$config_path}/{$this->action}.xml";
         } else {
             $afCU = new afConfigUtils($this->module);
-            $path = $afCU->getConfigFilePath($this->action.'.xml');
-            if (!$path) {
-                $path = $afCU->generateConfigFilePath($this->action.'.xml');
+            $path = $this->getPlaceConfigPath() . "/{$this->action}.xml";
+            if (!file_exists($path)) {
+                afStudioConsole::getInstance()->execute("mkdir {$this->getPlaceConfigPath()}");
             }
         }
-        
-        FirePHP::getInstance(true)->fb($path);
 
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
         FirePHP::getInstance(true)->fb($tempPath);
