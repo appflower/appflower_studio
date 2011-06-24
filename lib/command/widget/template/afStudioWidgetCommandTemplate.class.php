@@ -34,7 +34,7 @@ class afStudioWidgetCommandTemplate
                 "{" . "\n" .
                 "}";
         }
-
+        
         return $definition;
     }
     

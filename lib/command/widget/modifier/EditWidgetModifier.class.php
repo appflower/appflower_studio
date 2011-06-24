@@ -4,9 +4,11 @@
  *
  * @author lukas
  */
-class EditWidgetModifier extends ConcreteWidgetModifier {
+class EditWidgetModifier extends ConcreteWidgetModifier 
+{
 
-    public function modify(afsWidgetBuilderWidget $afsWBW, $newWidgetMode = false) {
+    public function modify(afsWidgetBuilderWidget $afsWBW, $newWidgetMode = false) 
+    {
         $this->afsWBW = $afsWBW;
         $definition = $afsWBW->getDefinition();
 
@@ -76,4 +78,3 @@ class EditWidgetModifier extends ConcreteWidgetModifier {
         return $fieldDefinition;
     }
 }
-?>

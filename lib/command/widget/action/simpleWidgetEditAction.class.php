@@ -38,6 +38,10 @@ abstract class simpleWidgetEditAction extends sfAction
         $this->afsWBW->loadXml();
 
         $peerClassName = $this->afsWBW->getDatasourceClassName();
+        
+        // var_dump($peerClassName);
+        
+        
         if (!empty($peerClassName) && class_exists($peerClassName)) {
             $modelClassName = constant("$peerClassName::OM_CLASS");
             $formClassName = "{$modelClassName}Form";

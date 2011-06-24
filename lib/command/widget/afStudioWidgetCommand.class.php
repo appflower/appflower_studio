@@ -6,6 +6,48 @@
  */
 class afStudioWidgetCommand extends afBaseStudioCommand
 {
+    
+    /**
+     * Place type application
+     */
+    const PLACE_APPLICATION = 'app';
+    
+    /**
+     * Plugin place type
+     */
+    const PLACE_PLUGIN = 'plugin';
+    
+    private $module;
+    private $action;
+    private $widgetType;
+    
+    /**
+     * Array representation of Widgets XML
+     * 
+     * @var array
+     */
+    private $definition;
+    
+    /**
+     * Place name
+     *
+     * @example frontend, appFlowerStudioPlugin
+     */
+    private $place;
+    
+    /**
+     * Place type
+     *
+     * @example app, plugin
+     */
+    private $place_type;
+    
+    
+    
+    
+    
+    
+    
     /**
      * Get widget functionality
      *
@@ -21,16 +63,16 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $afsWBW->loadXml();
             
             $data = $afsWBW->getDefinition();
-            $meta = (isset($data[0])) ? array_keys($data[0]) : array();
-    		$total = count($data);
-    		
-            $response->success(true)->data($meta, $data, $total);
+
+            $response->success(true)->data(array(), $data, 0);
         } catch( Exception $e ) {
             $response->success(false)->message($e->getMessage());
         }
         
         return $response->asArray();
     }
+    
+    
     
     /**
      * Save widget functionality
@@ -151,18 +193,76 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             "rm -rf {$actionDir}"
 		));
 		
-		if (!file_exists($xmlDir)) {	
-			$console .= $afConsole->execute('sf cc');		
+		$response = afResponseHelper::create();
+		
+		if (!file_exists($xmlDir)) {
+			$console .= $afConsole->execute('sf cc');
 			
-			$this->result = afResponseHelper::create()
-			                    ->success(true)
-			                    ->message("Deleted page <b>{$name}</b>")
-			                    ->console($console);
+			$this->result = $response->success(true)->message("Deleted page <b>{$name}</b>")->console($console);
 		} else {
-		    $this->result = afResponseHelper::create()->success(false)->message("Can't delete page <b>{$name}</b>!");
+		    $this->result = $response->success(false)->message("Can't delete page <b>{$name}</b>!");
 		}
 		
 		return $this->result->asArray();
 	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    private function loadXml()
+    {
+        $afCU = new afConfigUtils($this->module);
+        $path = $afCU->getConfigFilePath("{$this->action}.xml");
+
+        if (!is_readable($path)) {
+            throw new Exception("Could not find widget XML file");
+        }
+
+        $options = array(
+            'parseAttributes' => true
+        /*
+          	'attributesArray' => 'attributes',
+        	'mode' => 'simplexml',
+        	'complexType' => 'array'
+        */
+        );
+
+        $unserializer = new XML_Unserializer($options);
+        $status = $unserializer->unserialize($path, true);
+
+        if ($status !== true) {
+            throw new Exception($status->getMessage());
+        }
+
+        $this->definition = $unserializer->getUnserializedData();
+    }
+    
+    
+    
+    public function setWidgetType($widgetType) {
+       $this->widgetType = $widgetType;
+    }
+    
+    private function parseUri($uri)
+    {
+        $uriParts = explode('/', $uri);
+        
+        if (count($uriParts) != 2) {
+            throw new afStudioWidgetCommandException("Given widget URI: '{$uri}' looks wrong");
+        }
+
+        $this->module = $uriParts[0];
+        $this->action = $uriParts[1];
+    }
     
 }

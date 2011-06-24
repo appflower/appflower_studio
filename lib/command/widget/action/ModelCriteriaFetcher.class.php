@@ -11,23 +11,26 @@ class ModelCriteriaFetcher
      * Method builds array with ID's as keys and __toString() representation as value
      * Used in combo widgets as possible choices
      */
-    static function getDataForComboWidget($modelName)
+    static public function getDataForComboWidget($modelName)
     {
         $queryClass = "{$modelName}Query";
         $query = new $queryClass('propel', $modelName);
+        
         /* @var $query ModelCriteria */
         $collection = $query->find();
+        
         return $collection->toKeyValue('Id');
     }
 
     /**
      * Method just returns empty Criteria object so it cen be used in list widget to fetch data
      */
-    static function getDataForList($modelName)
+    static public function getDataForList($modelName)
     {
         $queryClass = "{$modelName}Query";
         $query = new $queryClass('propel', $modelName);
+        
         return $query;
     }
+    
 }
-?>
