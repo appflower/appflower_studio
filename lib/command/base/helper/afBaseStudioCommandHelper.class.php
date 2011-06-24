@@ -25,7 +25,7 @@ abstract class afBaseStudioCommandHelper
         $path = sfConfig::get('sf_plugins_dir') . "/appFlowerStudioPlugin/lib/command/{$name}/helper/{$class}";
         
         if (file_exists($path)) {
-            require($path);
+            require_once($path);
             
             return true;
         }
