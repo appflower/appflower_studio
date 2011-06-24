@@ -137,6 +137,8 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		$oldName = "{$module_dir}/config/{$oldValue}";
 		$newName = "{$module_dir}/config/{$newValue}";
 		
+		afStudioWidgetCommandHelper::load('module');
+		
 		$console .= afStudioModuleCommandHelper::renameAction(
 		    pathinfo($oldValue, PATHINFO_FILENAME), 
 		    pathinfo($newValue, PATHINFO_FILENAME), 

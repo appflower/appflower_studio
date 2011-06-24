@@ -4,7 +4,7 @@
  * 
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afStudioModuleCommandHelper
+class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
 {
     /**
      * Rename action name inside module

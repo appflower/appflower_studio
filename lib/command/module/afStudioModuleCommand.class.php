@@ -263,14 +263,16 @@ class afStudioModuleCommand extends afBaseStudioCommand
      */
     private function addToPlugin($plugin, $module)
     {
+        afStudioModuleCommandHelper::load('plugin');
+        
         if (afStudioPluginCommandHelper::isExists(afStudioPluginCommandHelper::PLUGIN_GENERATE_MODULES)) {
             $afConsole = afStudioConsole::getInstance();
-	    
+	        
     	    if ($plugin && $module) {
     	        if (afStudioPluginCommandHelper::isExists($plugin)) {
     	            $console = $afConsole->execute("sf generate:plugin-module {$plugin} {$module}");
                     $isCreated = $afConsole->wasLastCommandSuccessfull();
-
+                    
                     if ($isCreated) {
                         $console .= $afConsole->execute('sf cc');
                         $message = "Created module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
