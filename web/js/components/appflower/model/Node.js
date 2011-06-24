@@ -1,17 +1,34 @@
 Ext.ns('afStudio.model');
 
-
 /**
- * Base <b>Model Node</b> class. 
+ * Base abstract <b>Model Node</b> class. All model's node are descendants of this class. 
  * Responsible for storing/managing atomic model data. Node can be treated as a equvivalent to View xml tag.
- * Encapsulates tag's attributes inside <u>properties</u>, all inner tags (also nodes) are stored in the <u>childNodes</u>.
+ * Encapsulates tag's attributes inside <u>properties</u>, all inner tags(nodes) are stored in the <u>childNodes</u>.
  * 
  * @class afStudio.model.Node
  * @extends Ext.util.Observable
+ * @abstract
  * @author Nikolai Babinski
  */
 afStudio.model.Node = Ext.extend(Ext.util.Observable, {
-    
+
+	/**
+	 * Node's value property.
+	 * @constant
+	 * @type {String}
+	 */
+	NODE_DATA : 'data',
+	
+	/**
+	 * @cfg {Object} (Required) definition 
+	 * The node's definition object 
+	 */
+	
+	/**
+	 * @cfg {String} (Required) tag 
+	 * Node's tag name 
+	 */
+	
 	/**
 	 * @property tag The node tag name 
 	 * @type {String}
@@ -32,26 +49,28 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * @type {Array}
 	 */
 	
-    constructor : function(config) { 
+    constructor : function(config) {
         config = config || {};
-        
+
         this.leaf = config.leaf;
+        
         this.tag = this.tag || config.tag;
         /**
          * The node id. @type String
          */
         this.id = this.id || config.id;
         if (!this.id) {
-            this.id = Ext.id(null, "xnode-");
+            this.id = Ext.id(null, this.tag + '-');
         }
         
-    	var ps = this.properties || config.properties;    	
-        if (ps && ps.constructor != Ext.util.MixedCollection) {
-	    	this.properties = new Ext.util.MixedCollection(false, function(property){
-        		return property.name;
-    		});
-	    	this.properties.addAll(ps);
-        }        
+        this.initProperties(config.properties);
+		
+        /**
+         * The node's data. @type Mixed
+         * Node can only containes the data or childNodes.
+         * Read-only property. 
+         */
+        this[this.NODE_DATA] = null;
         
         /**
          * All child nodes of this node. @type Array
@@ -82,9 +101,17 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
          * The node immediately following this node in the tree, or null if there is no sibling node. @type Node
          */
         this.nextSibling = null;
-        
 
         this.addEvents({
+            /**
+             * @event beforeModelNodeAdded
+             * Fires before a new child is appended, return false to cancel the append.
+             * @param {Tree} tree The owner tree
+             * @param {Node} this This node
+             * @param {Node} node The child node to be appended
+             */
+            "beforeModelNodeAppend" : true,
+            
             /**
              * @event modelNodeAppend
              * Fires when a new child node is appended
@@ -96,54 +123,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
             "modelNodeAppend" : true,
             
             /**
-             * @event modelNodeRemove
-             * Fires when a child node is removed
-             * @param {Tree} tree The owner tree
-             * @param {Node} this This node
-             * @param {Node} node The removed node
-             */
-            "modelNodeRemove" : true,
-            
-            /**
-             * @event modelNodeMove
-             * Fires when this node is moved to a new location in the tree
-             * @param {Tree} tree The owner tree
-             * @param {Node} this This node
-             * @param {Node} oldParent The old parent of this node
-             * @param {Node} newParent The new parent of this node
-             * @param {Number} index The index it was moved to
-             */
-            "modelNodeMove" : true,
-            
-            /**
-             * @event modelNodeInsert
-             * Fires when a new child node is inserted.
-             * @param {Tree} tree The owner tree
-             * @param {Node} this This node
-             * @param {Node} node The child node inserted
-             * @param {Node} refNode The child node the node was inserted before
-             */
-            "modelNodeInsert" : true,
-            
-            /**
-             * @event modelPropertyChanged
-             * Fires when a node's property was changed.
-             * @param {Node} node This node
-             * @param {String} property The property's ID which value was changed
-             * @param {Mixed} value The new property's value
-             */
-            "modelPropertyChanged" : true,
-            
-            /**
-             * @event beforeModelNodeAdded
-             * Fires before a new child is appended, return false to cancel the append.
-             * @param {Tree} tree The owner tree
-             * @param {Node} this This node
-             * @param {Node} node The child node to be appended
-             */
-            "beforeModelNodeAppend" : true,
-            
-            /**
              * @event beforeModelNodeRemove
              * Fires before a child is removed, return false to cancel the remove.
              * @param {Tree} tree The owner tree
@@ -151,6 +130,15 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              * @param {Node} node The child node to be removed
              */
             "beforeModelNodeRemove" : true,
+            
+            /**
+             * @event modelNodeRemove
+             * Fires when a child node is removed
+             * @param {Tree} tree The owner tree
+             * @param {Node} this This node
+             * @param {Node} node The removed node
+             */
+            "modelNodeRemove" : true,
             
             /**
              * @event beforeModelNodeMove
@@ -163,7 +151,18 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              */
             "beforeModelNodeMove" : true,
             
-             /**
+            /**
+             * @event modelNodeMove
+             * Fires when this node is moved to a new location in the tree
+             * @param {Tree} tree The owner tree
+             * @param {Node} this This node
+             * @param {Node} oldParent The old parent of this node
+             * @param {Node} newParent The new parent of this node
+             * @param {Number} index The index it was moved to
+             */
+            "modelNodeMove" : true,
+
+            /**
               * @event beforeModelNodeInsert
               * Fires before a new child is inserted, return false to cancel the insert.
               * @param {Tree} tree The owner tree
@@ -174,6 +173,16 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
             "beforeModelNodeInsert" : true,
             
             /**
+             * @event modelNodeInsert
+             * Fires when a new child node is inserted.
+             * @param {Tree} tree The owner tree
+             * @param {Node} this This node
+             * @param {Node} node The child node inserted
+             * @param {Node} refNode The child node the node was inserted before
+             */
+            "modelNodeInsert" : true,
+            
+            /**
              * @event beforeModelPropertyChanged
              * Fires before a node's property is changed.
              * @param {Node} node This node
@@ -181,15 +190,94 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              * @param {Mixed} value The new property's value to be set
              * 
              */
-            "beforeModelPropertyChanged" : true
+            "beforeModelPropertyChanged" : true,
             
+            /**
+             * @event modelPropertyChanged
+             * Fires when a node's property was changed.
+             * @param {Node} node This node
+             * @param {String} property The property's ID which value was changed
+             * @param {Mixed} value The new property's value
+             */
+            "modelPropertyChanged" : true,
+            
+            /**
+             * @event beforeModelNodeCreated
+             * Fires before a child node is created
+             * @param {Tree} The owner tree(controller)
+             * @param {Node} This node
+             * @param {String} The childe node identifier 
+             */
+            "beforeModelNodeCreated" : true,
+            
+            /**
+             * @event modelNodeCreated
+             * Fires when a child node was created
+             * @param {Tree} The owner tree(controller)
+             * @param {Node} This node
+             * @param {Node} The created child node 
+             */
+            "modelNodeCreated" : true
         });
         
         this.listeners = config.listeners;
-        Ext.data.Node.superclass.constructor.call(this);    
+        Ext.data.Node.superclass.constructor.call(this);
+        
+        this.initNodeDefitintion(config.definition);
     },
     
-    // private
+    /**
+     * Instantiates <u>properties</u>
+     * @protected 
+     * @param {Object} (Optional) properties
+     */
+    initProperties : function(properties) {   	
+		var ps = this.properties || properties;
+    	this.properties = new Ext.util.MixedCollection(false, function(property) {
+    		return property.name;
+		});		
+    	this.properties.addAll(ps);
+    },
+    
+    /**
+     * Applies node properties and instantiates children nodes.
+     * @protected
+     * @param {Mixed} definition The node definition object
+     */
+    initNodeDefitintion : function(definition) {
+    	var _this = this;
+    	
+    	this.suspendEvents();    	
+    	
+    	if (!Ext.isDefined(definition)) {
+    		return;
+    	}
+     	
+    	if (Ext.isObject(definition)) {   		
+	    	//not ruin the definition object
+	    	var def = Ext.apply({}, definition);
+	    	
+    		this.applyProperties(def.attributes);
+	    	delete def.attributes;
+	    	
+    		if (def._content) {
+    			this.setNodeData(def._content);
+    		} else {
+    			Ext.iterate(def, function(n, d){
+    				_this.createNode(n, d);
+    			}, _this);
+    		}
+    	} else {
+    		this.setNodeData(definition);
+    	}
+    	
+    	this.resumeEvents();
+    },
+    
+    /**
+     * @override
+     * @return {Boolean}
+     */
     fireEvent : function(evtName){
         // first do standard event for this node
         if(Ext.data.Node.superclass.fireEvent.apply(this, arguments) === false){
@@ -667,8 +755,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Node} The found child or null if none was found
      */
     findChild : function(property, value, deep) {
-        return this.findChildBy(function(){
-            return this.properties.get(property) == value;            
+        return this.findChildBy(function() {        	
+        	var p = this.properties.get(property);        	
+            return p ? (p.value == value) : false;            
         }, null, deep);
     },
 
@@ -751,21 +840,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         
         return false;
     },
-
-    toString : function() {
-		var tpl = new Ext.XTemplate(
-			'[model.Node: "{tag}", ID: "{id}" properties: {[this.toJson(values.properties.map)]}]',
-			{
-        		compiled: true,
-        		disableFormats: true,
-        		toJson: function(o) {
-        			return Ext.encode(o);
-        		}
-    		}
-    	);
-    	
-        return tpl.apply(this);
-    },
     
     /**
      * Returns node's properties.
@@ -778,7 +852,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     /**
      * Returns property value
      * @param {String} p The property key.
-     * @return {Mixed} property value
+     * @return {Mixed} property
      */
     getProperty : function(p) {
     	return this.properties.get(p);
@@ -790,20 +864,131 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {String} v The value being set to property
      */
     setProperty : function(p, v) {
-    	//TODO should be corrected
+    	var property = this.properties.get(p);
+    	
+    	if (!Ext.isDefined(property)) {
+    		return false;
+    	}
+    	
     	//property validation can be processed here
-    	if (this.fireEvent("beforeModelPropertyChanged", this, p, v)) {    		
-	    	this.properties.replace(p, v);
+    	if (this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
+    		property['value'] = v;
 	    	this.fireEvent("modelPropertyChanged", this, p, v);
     	}
+    },
+    
+    /**
+     * Returns {#NODE_DATA} value.
+     * @return {Mixed} node data value.
+     */
+    getNodeData : function() {
+    	return this[this.NODE_DATA];
+    },
+
+    /**
+     * Sets node's {#NODE_DATA} property.
+     * @param {Mixed} value The node's data value being set.
+     */
+    setNodeData : function(value) {
+    	var nodeValueProperty = this.NODE_DATA;
+    	
+    	if (this.fireEvent("beforeModelPropertyChanged", this, nodeValueProperty, value)) {
+	    	this[nodeValueProperty] = value;
+	    	this.fireEvent("modelPropertyChanged", this, nodeValueProperty, value);
+    	}
+    },
+    
+    /**
+     * Applies node properties.
+     * @param {Object} properties
+     */
+    applyProperties : function(properties, silent) {
+    	if (!Ext.isObject(properties)) {
+    		//TODO throw error here
+    		return;
+    	}
+    	
+    	silent ? this.suspendEvents() : null; 
+    	
+    	Ext.iterate(properties, function(k, v) {
+    		if (this.setProperty(k, v) === false) {
+	    		this.properties.add({name: k, value: v});	    		
+    		}    		
+    	}, this);
+    	
+    	silent ? this.resumeEvents() : null;
     },
     
     //TODO implement NodeRecord creation
     getRecord : function() {
     	return ;
-    }
+    },
     
-   //TODO createNode - method
+    //TODO this functionality should be moved out of the Node class
+    /**
+     * Returns node constructor function by node type.
+     * @param {String} nodeName
+     * @return {Function} node class constructor or null if failed
+     */
+    getNodeConstructorByName : function(nodeName) {    	
+    	var n = String(nodeName).trim(),
+    		model = afStudio.model,
+    		cls;
+    	
+    	if (/^i:(\w+)/i.test(n)) {
+			cls = n.replace(/^i:(\w+)/i, function(s, m1) {
+			    return m1.ucfirst(); 
+			});    		
+    	}
+    	
+    	return Ext.isFunction(model[cls]) ? model[cls] : (Ext.isFunction(model[n]) ? model[n] : null);
+    },
+    
+    /**
+     * Creates a child node and append it.
+     * @protected 
+     * @param {String} node The node identifier. 
+     * @param {Object} nodeDefiniton The node definition object.
+     * @return {afStudio.model.Node} The created node or null if node creation failed.
+     */
+    createNode : function(node, nodeDefiniton) {
+    	var n = null;
+    	
+    	if (this.fireEvent("beforeModelNodeCreated", this.ownerTree, this, node)) {
+    		//TODO add exception handling here
+    		var nodeCls = this.getNodeConstructorByName(node);
+    		nodeCls = nodeCls ? nodeCls : afStudio.model.Node;
+	    	n = new nodeCls({
+	    		tag: node,
+	    		definition: nodeDefiniton 
+	    	});
+	    	this.fireEvent("modelNodeCreated", this.ownerTree, this, n);
+	    	this.appendChild(n);
+    	}
+    	
+    	return n; 
+    },
+    
    //TODO moveNode  - method
     
+    toString : function() {
+    	var _this = this;
+    	
+		var tpl = new Ext.XTemplate(
+			'{ model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}, ',
+			'properties: {[this.toJson(values.properties.map)]} }',
+			{
+        		compiled: true,
+        		disableFormats: true,
+        		toJson: function(o) {
+        			return Ext.encode(o);
+        		},
+        		getData: function() {
+        			return _this[_this.NODE_DATA];
+        		}
+    		}
+    	);
+    	
+        return tpl.apply(this);
+    }
 });

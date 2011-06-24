@@ -1,17 +1,23 @@
-Ext.ns('afStudio.model');
-
+/**
+ * 
+ * @class afStudio.model.Fields
+ * @extends afStudio.model.Node
+ * @author Nikolai Babinski
+ */
 afStudio.model.Fields = Ext.extend(afStudio.model.Node, {
 
+	id : 'i:fields',
+	
 	tag : 'i:fields',
 	
 	properties : [
-      	{name: "resetable",  	required: false, value: "true"},
+      	{name: "resetable",  	required: false, value: true},
       	{name: "resetlabel",  	required: false, value: "Reset"},
-      	{name: "submitlabel",  	required: false, value: "Submit"}, 	
-      	{name: "tree",  		required: false, value: "false"},
-      	{name: "selectable",  	required: false, value: "true"},
-      	{name: "exportable",  	required: false, value: "true"},
-      	{name: "select",  		required: false, value: "false"},
+      	{name: "submitlabel",  	required: false, value: "Submit"},
+      	{name: "tree",  		required: false, value: false},
+      	{name: "selectable",  	required: false, value: true},
+      	{name: "exportable",  	required: false, value: true},
+      	{name: "select",  		required: false, value: false},
       	{name: "pager",  required: false, value: "true"},
       	{name: "url", required: false, value: "n/a"},
       	{name: "action", required: false, value: "n/a"},
@@ -34,6 +40,14 @@ afStudio.model.Fields = Ext.extend(afStudio.model.Node, {
       	{name: "remoteFilter",  required: false},
       	{name: "plugin",  required: false},
 		{name: "pagerTemplate",  required: false}
-	]
+	],
 	
+	nodeTypes : [
+		'i:column required',
+		'i:field  required',
+		'i:button',
+		'i:link',
+		'i:radiogroup',
+		'i:if required'
+	]
 });
