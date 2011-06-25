@@ -59,7 +59,7 @@ class afsWidgetBuilderActions extends sfActions
     {
         $parameters = array(
             'uri'               => $request->getParameter('uri'),
-            'data'              => $request->getParameter('data'),
+            'data'              => json_decode($request->getParameter('data'), true),
             'widgetType'        => $request->getParameter('widgetType'),
             'createNewWidget'   => $request->getParameter('createNewWidget'),
             'placeType'         => $request->getParameter('placeType'),

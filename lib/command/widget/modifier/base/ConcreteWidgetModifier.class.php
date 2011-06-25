@@ -3,7 +3,7 @@
  * Base class for edit, list and other widget types modifier classes
  * When widget definition returns from JS side it is unserialized to xml data
  *
- * @author lukas
+ * @author Łukasz Wojciechowski <luwo@appflower.com>
  */
 abstract class ConcreteWidgetModifier
 {
@@ -16,6 +16,6 @@ abstract class ConcreteWidgetModifier
      * @param bool  $newWidgetMode
      * @return array modified definition
      */
-    abstract function modify(afsWidgetBuilderWidget $afsWBW, $newWidgetMode = false);
+    abstract function modify(Array $definition, $newWidgetMode = false);
+    
 }
-?>

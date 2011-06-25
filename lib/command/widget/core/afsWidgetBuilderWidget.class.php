@@ -113,7 +113,7 @@ class afsWidgetBuilderWidget {
                 break;
         }
 
-        $this->definition = $widgetModifier->modify($this, $newWidgetMode);
+        $this->definition = $widgetModifier->modify($this->definition, $newWidgetMode);
     }
 
     private function validateAndSaveXml()
@@ -214,7 +214,7 @@ class afsWidgetBuilderWidget {
 
         return $content;
     }
-
+/*
     function getDefinedFieldNames()
     {
         $fieldNames = array();
@@ -248,7 +248,7 @@ class afsWidgetBuilderWidget {
 
         return null;
     }
-    
+  */  
     /**
      * Setting place name
      *

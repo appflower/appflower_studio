@@ -2,28 +2,73 @@
 /**
  * Edit widget modifier
  *
- * @author lukas
+ * @author Łukasz Wojciechowski <luwo@appflower.com>
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class EditWidgetModifier extends ConcreteWidgetModifier 
 {
-
-    public function modify(afsWidgetBuilderWidget $afsWBW, $newWidgetMode = false) 
+    /**
+     * Model criteria fetcher method
+     */
+    const MODEL_CRITERIA_FETCHER = 'ModelCriteriaFetcher';
+    
+    /**
+     * Fetcher method from model criteria
+     */
+    const FETCHER_METHOD = 'getDataForComboWidget';
+    
+    /**
+     * Datasource class name
+     *
+     * @var string
+     */
+    private $datasource;
+    
+    /**
+     * Modify process
+     *
+     * @param Array $definition 
+     * @param string $newWidgetMode 
+     * @return array
+     * @author Łukasz Wojciechowski 
+     * @author Sergey Startsev
+     */
+    public function modify(Array $definition, $newWidgetMode = false) 
     {
-        $this->afsWBW = $afsWBW;
-        $definition = $afsWBW->getDefinition();
-
+        $this->datasource = $this->processGetDatasource($definition);
+        
         if ($newWidgetMode) {
             $definition = $this->searchForAndModifyForeignTableFields($definition);
         }
         return $definition;
     }
-
-    private function searchForAndModifyForeignTableFields($definition)
+    
+    /**
+     * Getting datasource class name
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getDatasource()
+    {
+        return $this->datasource;
+    }
+    
+    /**
+     * Search and modify foreign table fields
+     *
+     * @param string $definition 
+     * @return array
+     * @author Łukasz Wojciechowski 
+     */
+    private function searchForAndModifyForeignTableFields(Array $definition)
     {
         if (isset($definition['i:fields']) ) {
             $fields = $definition['i:fields'];
+            
             if (isset($fields['i:field'])) {
                 $fields = $fields['i:field'];
+                
                 if (is_array($fields) && count($fields) > 0) {
                     foreach ($fields as $fieldKey => $field) {
                         $modifiedField = $this->checkAndModifyForeignTableField($field);
@@ -34,25 +79,30 @@ class EditWidgetModifier extends ConcreteWidgetModifier
                 }
             }
         }
-
+        
         return $definition;
     }
-
-    private function checkAndModifyForeignTableField($fieldDefinition)
+    
+    /**
+     * Check and modify foreign table field
+     *
+     * @param Array $fieldDefinition 
+     * @return array
+     * @author Łukasz Wojciechowski
+     */
+    private function checkAndModifyForeignTableField(Array $fieldDefinition)
     {
-        FirePHP::getInstance(true)->fb($fieldDefinition);
-        $peerClassName = $this->afsWBW->getDatasourceClassName();
+        $peerClassName = $this->getDatasource();
 
         /* @var $tableMap TableMap */
         $tableMap = call_user_func("{$peerClassName}::getTableMap");
         $columnName = $fieldDefinition['name'];
+        
         if ($tableMap->hasColumn($columnName)) {
-            FirePHP::getInstance(true)->fb("Column found for $columnName");
             /* @var $column ColumnMap */
             $column = $tableMap->getColumn($columnName);
+            
             if ($column->isForeignKey()) {
-                FirePHP::getInstance(true)->fb("$columnName column is foreign key");
-
                 $relatedColumnTableMap = $column->getRelation()->getForeignTable();
                 $relatedModelName = $relatedColumnTableMap->getPhpName();
 
@@ -60,9 +110,9 @@ class EditWidgetModifier extends ConcreteWidgetModifier
                 $fieldDefinition['selected'] = '{'.$columnName.'}';
                 $fieldDefinition['i:value'] = array(
                     'type' => 'orm',
-                    'i:class' => 'ModelCriteriaFetcher',
+                    'i:class' => self::MODEL_CRITERIA_FETCHER,
                     'i:method' => array(
-                        'name' => 'getDataForComboWidget',
+                        'name' => self::FETCHER_METHOD,
                         'i:param' => array(
                             array(
                                 'name' => 'does_not_matter',
@@ -77,4 +127,23 @@ class EditWidgetModifier extends ConcreteWidgetModifier
 
         return $fieldDefinition;
     }
+    
+    /**
+     * Process getting datasource class
+     *
+     * @param Array $definition 
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function processGetDatasource(Array $definition)
+    {
+        if (isset($definition['i:datasource'])) {
+            if (isset($definition['i:datasource']['i:class'])) {
+                return $definition['i:datasource']['i:class'];
+            }
+        }
+
+        return null;
+    }
+    
 }
