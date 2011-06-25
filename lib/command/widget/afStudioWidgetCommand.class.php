@@ -16,11 +16,19 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      */
     const PLACE_PLUGIN = 'plugin';
     
+    /**
+     * Current module
+     */
     private $module;
+    
+    /**
+     * Current action
+     */
     private $action;
-    private $widgetType;
     
-    
+    /**
+     * Widget type
+     */
     private $type;
     
     /**
@@ -56,7 +64,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         
         try {
             $this->parseUri($this->getParameter('uri'));
-            $this->loadXml();
+            $this->load();
             
             $data = $this->getDefinition();
 
@@ -83,25 +91,23 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $this->parseUri($this->getParameter('uri'));
             
             $data = $this->getParameter('data');
-            // $type = $this->getParameter('widgetType');
+            
             $createNewWidget = ($this->getParameter('createNewWidget') == 'true' ? true : false);
             
             $this->setPlaceType($this->getParameter('placeType', 'app'));
             $this->setPlace($this->getParameter('place', 'frontend'));
             $this->setType($this->getParameter('widgetType'));
             
-            // $this->setWidgetType($type);
-            
             $this->setDefinition($data, $createNewWidget);
             
-            $validationStatusOrError = $this->save();
+            $saveResponse = $this->save();
             
-            if ($validationStatusOrError === true) {
+            if ($saveResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
                 $message = $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved';
                 
                 $response->success(true)->message($message)->data(array(), $this->getInfo(), 0);
             } else {
-                $response->success(false)->message($validationStatusOrError);
+                $response->success(false)->message($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
             }
         } catch( Exception $e ) {
             $response->success(false)->message($e->getMessage());
@@ -213,51 +219,23 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		return $response->asArray();
 	}
     
-    private function loadXml()
-    {
-        $afCU = new afConfigUtils($this->module);
-        $path = $afCU->getConfigFilePath("{$this->action}.xml");
-
-        if (!is_readable($path)) {
-            throw new Exception("Could not find widget XML file");
-        }
-
-        $options = array(
-            'parseAttributes' => true
-        /*
-          	'attributesArray' => 'attributes',
-        	'mode' => 'simplexml',
-        	'complexType' => 'array'
-        */
-        );
-        
-        $unserializer = new XML_Unserializer($options);
-        $status = $unserializer->unserialize($path, true);
-
-        if ($status !== true) {
-            throw new Exception($status->getMessage());
-        }
-
-        $this->definition = $unserializer->getUnserializedData();
-    }
-    
-    private function parseUri($uri)
-    {
-        $uriParts = explode('/', $uri);
-        
-        if (count($uriParts) != 2) {
-            throw new afStudioWidgetCommandException("Given widget URI: '{$uri}' looks wrong");
-        }
-
-        $this->module = $uriParts[0];
-        $this->action = $uriParts[1];
-    }
-    
+    /**
+     * Getting definition
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     protected function getDefinition()
     {
         return $this->definition;
     }
     
+    /**
+     * Getting definition as json
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
     protected function getDefinitionAsJSON()
     {
         return json_encode($this->definition);
@@ -288,89 +266,13 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         }
     }
     
-    
-    
-    private function validateAndSaveXml()
-    {
-        $xmlBuilder = new afsXmlBuilder($this->getDefinition(), $this->getType());
-        
-        if ($this->isPlugin()) {
-            $config_path = $this->getPlaceConfigPath();
-            if (!file_exists($config_path)) {
-                // for now via console creating config for path
-                afStudioConsole::getInstance()->execute("mkdir {$config_path}");
-            }
-            $path = "{$config_path}/{$this->action}.xml";
-        } else {
-            $afCU = new afConfigUtils($this->module);
-            $path = $this->getPlaceConfigPath() . "/{$this->action}.xml";
-            if (!file_exists($path)) {
-                afStudioConsole::getInstance()->execute("mkdir {$this->getPlaceConfigPath()}");
-            }
-        }
-
-        $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
-        
-        afStudioUtil::writeFile($tempPath, $xmlBuilder->getXml());
-        
-        $validator = new XmlValidator($tempPath);
-        $validationStatus = $validator->validateXmlDocument();
-        if ($validationStatus) {
-            afStudioUtil::writeFile($path, $xmlBuilder->getXml());
-            
-            return true;
-        }
-        
-        return 'Widget XML is not valid.';
-    }
-    
-    private function save()
-    {
-        $validationStatusOrError = $this->validateAndSaveXml();
-        if ($validationStatusOrError === true) {
-            return $this->ensureActionExists();
-        }
-        
-        return $validationStatusOrError;
-    }
-    
-    /**
-     * checks if action file exists
-     * if not - we are createing new action file
-     */
-    private function ensureActionExists()
-    {
-        $afCU = new afConfigUtils($this->module);
-        if ($afCU->isActionDefined($this->action)) {
-            return true;
-        }
-        
-        if ($this->isPlugin()) {
-            $actionFilePath = $this->getPlaceModulePath() . "/actions/{$this->action}Action.class.php";
-        } else {
-            $actionFilePath = $afCU->generateActionFilePath($this->action);
-        }
-        
-        afStudioUtil::writeFile(
-            $actionFilePath, 
-            afStudioWidgetCommandTemplate::action($this->action, $this->getType())
-        );
-        
-        return true;
-    }
-    
-    
-    
-    
-    
-    
     /**
      * Setting widget type
      *
      * @param string $type 
      * @author Sergey Startsev
      */
-    public function setType($type)
+    protected function setType($type)
     {
         $this->type = $type;
     }
@@ -381,7 +283,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return string
      * @author Sergey Startsev
      */
-    public function getType()
+    protected function getType()
     {
         return $this->type;
     }
@@ -392,7 +294,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @param string $type 
      * @author Sergey Startsev
      */
-    public function setPlace($place)
+    protected function setPlace($place)
     {
         $this->place = $place;
     }
@@ -403,7 +305,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @param string $type 
      * @author Sergey Startsev
      */
-    public function setPlaceType($type)
+    protected function setPlaceType($type)
     {
         $this->place_type = $type;
     }
@@ -414,7 +316,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return string
      * @author Sergey Startsev
      */
-    public function getPlaceType()
+    protected function getPlaceType()
     {
         return $this->place_type;
     }
@@ -425,7 +327,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return string
      * @author Sergey Startsev
      */
-    public function getPlace()
+    protected function getPlace()
     {
         return $this->place;
     }
@@ -436,7 +338,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return string
      * @author Sergey Startsev
      */
-    public function getPlacePath()
+    protected function getPlacePath()
     {
         return afStudioUtil::getRootDir() . "/{$this->place_type}s/{$this->place}";
     }
@@ -447,7 +349,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return string
      * @author Sergey Startsev
      */
-    public function getPlaceConfigPath()
+    protected function getPlaceConfigPath()
     {
         return $this->getPlaceModulePath() . "/config";
     }
@@ -458,7 +360,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return string
      * @author Sergey Startsev
      */
-    public function getPlaceModulePath()
+    protected function getPlaceModulePath()
     {
         return $this->getPlacePath() . "/modules/{$this->module}";
     }
@@ -469,7 +371,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return boolean
      * @author Sergey Startsev
      */
-    public function isPlugin()
+    protected function isPlugin()
     {
         return ($this->getPlaceType() == self::PLACE_PLUGIN);
     }
@@ -480,7 +382,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return array
      * @author Sergey Startsev
      */
-    private function getInfo()
+    protected function getInfo()
     {
         $module_dir = $this->getPlaceModulePath();
         
@@ -508,6 +410,148 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         );
         
         return $info;
+    }
+    
+    /**
+     * Load definition from url params
+     *
+     * @author Sergey Startsev
+     */
+    private function load()
+    {
+        $afCU = new afConfigUtils($this->module);
+        $path = $afCU->getConfigFilePath("{$this->action}.xml");
+
+        if (!is_readable($path)) {
+            throw new Exception("Could not find widget XML file");
+        }
+
+        $options = array(
+            'parseAttributes' => true
+        /*
+          	'attributesArray' => 'attributes',
+        	'mode' => 'simplexml',
+        	'complexType' => 'array'
+        */
+        );
+        
+        $unserializer = new XML_Unserializer($options);
+        $status = $unserializer->unserialize($path, true);
+
+        if ($status !== true) {
+            throw new Exception($status->getMessage());
+        }
+
+        $this->definition = $unserializer->getUnserializedData();
+    }
+    
+    /**
+     * Parse input uri
+     *
+     * @param string $uri 
+     * @author Sergey Startsev
+     */
+    private function parseUri($uri)
+    {
+        $uriParts = explode('/', $uri);
+        
+        if (count($uriParts) != 2) {
+            throw new afStudioWidgetCommandException("Given widget URI: '{$uri}' looks wrong");
+        }
+
+        $this->module = $uriParts[0];
+        $this->action = $uriParts[1];
+    }
+    
+    /**
+     * Validate xml
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    private function validateAndSaveXml()
+    {
+        $xmlBuilder = new afsXmlBuilder($this->getDefinition(), $this->getType());
+        
+        if ($this->isPlugin()) {
+            $config_path = $this->getPlaceConfigPath();
+            if (!file_exists($config_path)) {
+                // for now via console creating config for path
+                afStudioConsole::getInstance()->execute("mkdir {$config_path}");
+            }
+            $path = "{$config_path}/{$this->action}.xml";
+        } else {
+            $afCU = new afConfigUtils($this->module);
+            $path = $this->getPlaceConfigPath() . "/{$this->action}.xml";
+            if (!file_exists($path)) {
+                afStudioConsole::getInstance()->execute("mkdir {$this->getPlaceConfigPath()}");
+            }
+        }
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
+        
+        afStudioUtil::writeFile($tempPath, $xmlBuilder->getXml());
+        
+        $validator = new XmlValidator($tempPath);
+        $validationStatus = $validator->validateXmlDocument();
+        
+        $response = afResponseHelper::create();
+        if ($validationStatus) {
+            afStudioUtil::writeFile($path, $xmlBuilder->getXml());
+            
+            // return true;
+            $response->success(true);
+        } else {
+            $response->success(false)->message('Widget XML is not valid.');
+        }
+        
+        // return 'Widget XML is not valid.';
+        
+        return $response;
+    }
+    
+    /**
+     * Save widget definition
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    private function save()
+    {
+        $response = $this->validateAndSaveXml();
+        // if ($validationStatusOrError === true) {
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            return $response->success($this->ensureActionExists());
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * checks if action file exists
+     * if not - we are createing new action file
+     */
+    private function ensureActionExists()
+    {
+        $response = afResponseHelper::create();
+        
+        $afCU = new afConfigUtils($this->module);
+        if ($afCU->isActionDefined($this->action)) {
+            return true;
+        }
+        
+        if ($this->isPlugin()) {
+            $actionFilePath = $this->getPlaceModulePath() . "/actions/{$this->action}Action.class.php";
+        } else {
+            $actionFilePath = $afCU->generateActionFilePath($this->action);
+        }
+        
+        afStudioUtil::writeFile(
+            $actionFilePath, 
+            afStudioWidgetCommandTemplate::action($this->action, $this->getType())
+        );
+        
+        return true;
     }
     
 }
