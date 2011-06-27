@@ -8,32 +8,63 @@
 class afStudioWidgetCommandTemplate
 {
     /**
-     * Getting action definition
+     * Getting action definition via delegated call
      *
      * @param string $name 
      * @param string $type 
      * @return string
-     * @author Lukasz Wojciechowski
      * @author Sergey Startsev
      */
     static public function action($name, $type = 'list')
     {
-        if ($type == 'list') {
-            $definition =
-                '<'.'?'.'php'."\n".
-                "class {$name}Action extends sfAction" . "\n" .
-                "{" . "\n" .
-                '    function execute($request)' . "\n" .
-                "    {" . "\n" .
-                "    }" . "\n" .
-                "}";
+        $template_name = 'action' . ucfirst(strtolower($type));
+        
+        if (method_exists(__CLASS__, $template_name)) {
+            $definition = call_user_func(array(__CLASS__, $template_name), $name);
         } else {
-            $definition =
-                '<'.'?'.'php'."\n".
-                "class {$name}Action extends simpleWidgetEditAction" . "\n" .
-                "{" . "\n" .
-                "}";
+            throw new afStudioWidgetCommandException("Template: '{$template_name}' not defined");
         }
+        
+        return $definition;
+    }
+    
+    /**
+     * Getting list action definition
+     *
+     * @param string $name 
+     * @return string
+     * @author Lukasz Wojciechowski
+     * @author Sergey Startsev
+     */
+    static public function actionList($name)
+    {
+        $definition =
+            '<'.'?'.'php'."\n".
+            "class {$name}Action extends sfAction" . "\n" .
+            "{" . "\n" .
+            '    function execute($request)' . "\n" .
+            "    {" . "\n" .
+            "    }" . "\n" .
+            "}";
+        
+        return $definition;
+    }
+    
+    /**
+     * Getting edit action definition
+     *
+     * @param string $name 
+     * @return string
+     * @author Lukasz Wojciechowski
+     * @author Sergey Startsev
+     */
+    static public function actionEdit($name)
+    {
+        $definition =
+            '<'.'?'.'php'."\n".
+            "class {$name}Action extends simpleWidgetEditAction" . "\n" .
+            "{" . "\n" .
+            "}";
         
         return $definition;
     }

@@ -28,6 +28,8 @@ class afStudioWidgetCommand extends afBaseStudioCommand
     
     /**
      * Widget type
+     *
+     * @example list, edit
      */
     private $type;
     
@@ -250,7 +252,6 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      */
     protected function setDefinition(Array $definition, $newWidgetMode = false)
     {
-        // $this->definition = json_decode($data, true);
         $this->definition = $definition;
         
         $type = $this->getType();
@@ -264,6 +265,28 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         } else {
             throw new afStudioWidgetCommandException("I dont know which concrete builder class to use for widget type: {$type}");
         }
+    }
+    
+    /**
+     * Getting action
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    protected function getAction()
+    {
+        return $this->action;
+    }
+    
+    /**
+     * Getting module
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    protected function getModule()
+    {
+        return $this->module;
     }
     
     /**
@@ -362,7 +385,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      */
     protected function getPlaceModulePath()
     {
-        return $this->getPlacePath() . "/modules/{$this->module}";
+        return $this->getPlacePath() . "/modules/{$this->getModule()}";
     }
     
     /**
@@ -382,13 +405,13 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      * @return array
      * @author Sergey Startsev
      */
-    protected function getInfo()
+    private function getInfo()
     {
         $module_dir = $this->getPlaceModulePath();
         
         $actionPath = "{$module_dir}/actions/actions.class.php";
         
-	    $predictActions = "{$this->action}Action.class.php";
+	    $predictActions = "{$this->getAction()}Action.class.php";
 	    $predictActionsPath = "{$module_dir}/actions/{$predictActions}";
 	    
 	    if (file_exists($predictActionsPath)) {
@@ -400,13 +423,13 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $info = array(
             'place' => $this->getPlace(),
             'placeType' => $this->getPlaceType(),
-            'module' => $this->module,
-            'widgetUri' => "{$this->module}/{$this->action}",
-            'securityPath' => $this->getPlaceConfigPath() . "/security.yml",
-            'xmlPath' => $this->getPlaceConfigPath() . "/{$this->action}.xml",
+            'module' => $this->getModule(),
+            'widgetUri' => "{$this->getModule()}/{$this->getAction()}",
+            'securityPath' => "{$this->getPlaceConfigPath()}/security.yml",
+            'xmlPath' => "{$this->getPlaceConfigPath()}/{$this->getAction()}.xml",
             'actionPath' => $actionPath,
             'actionName' => $actionName,
-            'name' => $this->action
+            'name' => $this->getAction()
         );
         
         return $info;
@@ -419,8 +442,8 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      */
     private function load()
     {
-        $afCU = new afConfigUtils($this->module);
-        $path = $afCU->getConfigFilePath("{$this->action}.xml");
+        $afCU = new afConfigUtils($this->getModule());
+        $path = $afCU->getConfigFilePath("{$this->getAction()}.xml");
 
         if (!is_readable($path)) {
             throw new Exception("Could not find widget XML file");
@@ -464,6 +487,25 @@ class afStudioWidgetCommand extends afBaseStudioCommand
     }
     
     /**
+     * Save widget definition
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    private function save()
+    {
+        $response = $this->validateAndSaveXml();
+        
+        afStudioWidgetCommandHelper::deployLibs();
+        
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            return $response->success($this->ensureActionExists());
+        }
+        
+        return $response;
+    }
+    
+    /**
      * Validate xml
      *
      * @return afResponse
@@ -479,10 +521,9 @@ class afStudioWidgetCommand extends afBaseStudioCommand
                 // for now via console creating config for path
                 afStudioConsole::getInstance()->execute("mkdir {$config_path}");
             }
-            $path = "{$config_path}/{$this->action}.xml";
+            $path = "{$config_path}/{$this->getAction()}.xml";
         } else {
-            $afCU = new afConfigUtils($this->module);
-            $path = $this->getPlaceConfigPath() . "/{$this->action}.xml";
+            $path = $this->getPlaceConfigPath() . "/{$this->getAction()}.xml";
             if (!file_exists($path)) {
                 afStudioConsole::getInstance()->execute("mkdir {$this->getPlaceConfigPath()}");
             }
@@ -499,29 +540,9 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         if ($validationStatus) {
             afStudioUtil::writeFile($path, $xmlBuilder->getXml());
             
-            // return true;
             $response->success(true);
         } else {
             $response->success(false)->message('Widget XML is not valid.');
-        }
-        
-        // return 'Widget XML is not valid.';
-        
-        return $response;
-    }
-    
-    /**
-     * Save widget definition
-     *
-     * @return afResponse
-     * @author Sergey Startsev
-     */
-    private function save()
-    {
-        $response = $this->validateAndSaveXml();
-        // if ($validationStatusOrError === true) {
-        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-            return $response->success($this->ensureActionExists());
         }
         
         return $response;
@@ -530,25 +551,26 @@ class afStudioWidgetCommand extends afBaseStudioCommand
     /**
      * checks if action file exists
      * if not - we are createing new action file
+     * 
+     * @return boolean
+     * @author Lukasz Wojciechowski
      */
     private function ensureActionExists()
     {
-        $response = afResponseHelper::create();
-        
-        $afCU = new afConfigUtils($this->module);
-        if ($afCU->isActionDefined($this->action)) {
+        $afCU = new afConfigUtils($this->getModule());
+        if ($afCU->isActionDefined($this->getAction())) {
             return true;
         }
         
         if ($this->isPlugin()) {
-            $actionFilePath = $this->getPlaceModulePath() . "/actions/{$this->action}Action.class.php";
+            $actionFilePath = $this->getPlaceModulePath() . "/actions/{$this->getAction()}Action.class.php";
         } else {
-            $actionFilePath = $afCU->generateActionFilePath($this->action);
+            $actionFilePath = $afCU->generateActionFilePath($this->getAction());
         }
         
         afStudioUtil::writeFile(
             $actionFilePath, 
-            afStudioWidgetCommandTemplate::action($this->action, $this->getType())
+            afStudioWidgetCommandTemplate::action($this->getAction(), $this->getType())
         );
         
         return true;
