@@ -43,11 +43,11 @@ afStudio.model.Fields = Ext.extend(afStudio.model.Node, {
 	],
 	
 	nodeTypes : [
-		'i:column required',
-		'i:field  required',
-		'i:button',
-		'i:link',
-		'i:radiogroup',
-		'i:if required'
+		afStudio.ModelNode.COLUMN,
+		afStudio.ModelNode.FIELD,
+		afStudio.ModelNode.BUTTON,
+		afStudio.ModelNode.LINK,
+		afStudio.ModelNode.RADIO_GROUP,
+		afStudio.ModelNode.IF
 	]
 });

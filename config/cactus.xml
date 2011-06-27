@@ -135,7 +135,11 @@
 					<file>js/filetree/js/Ext.ux.form.BrowseButton.js</file>
 					<file>js/filetree/js/Ext.ux.FileUploader.js</file>
 					<file>js/filetree/js/Ext.ux.UploadPanel.js</file>
-									
+					
+					<!-- AppFlower Schema MVC -->
+					<file>js/components/appflower/model/template</file>
+					<file>js/components/appflower/model/</file>
+					
 					<!-- Widget Designer -->	
 					<file>js/components/widgetDesigner/inspector/nodeBehaviors/base</file>
 					<file>js/components/widgetDesigner/inspector/nodeBehaviors</file>

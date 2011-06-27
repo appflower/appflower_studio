@@ -63,6 +63,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         this.leaf = config.leaf;
         
         this.tag = this.tag || config.tag;
+        
         /**
          * The node id. @type String
          */
@@ -231,12 +232,14 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         this.listeners = config.listeners;
         Ext.data.Node.superclass.constructor.call(this);
         
-        this.initNodeDefitintion(config.definition);
+        this.initNodeDefinition(config.definition);
     },
+    //eo constructor
     
     /**
-     * Instantiates <u>properties</u>
-     * @protected 
+     * Instantiates <u>properties</u>.
+     * Template method.
+     * @protected
      * @param {Object} (Optional) properties
      */
     initProperties : function(properties) {
@@ -248,20 +251,33 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Applies node properties and instantiates children nodes.
+     * Init node's definition.
+     * Template method.
      * @protected
      * @param {Mixed} definition The node definition object
      */
-    initNodeDefitintion : function(definition) {
+    initNodeDefinition : function(definition) {
+		this.applyNodeDefinition(definition, true);    	
+    },
+	//eo initNodeDefinition
+    
+    /**
+	 * Applies node definition object.
+	 * Sets properties and instantiates children nodes.
+	 * @private
+     * @param {Mixed} definition The node definition object
+     * @param {Boolean} silent If silent is true all node's events are suspended
+     */
+    applyNodeDefinition : function(definition, silent) {
     	var _this = this;
     	
-    	this.suspendEvents();
-    	
-    	if (!Ext.isDefined(definition)) {
+     	if (!Ext.isDefined(definition)) {
     		return;
     	}
+    	
+    	silent ? this.suspendEvents() : null;
      	
-    	if (Ext.isObject(definition)) {   		
+    	if (Ext.isObject(definition)) {
 	    	//not ruin the definition object
 	    	var def = Ext.apply({}, definition);
 	    	
@@ -279,8 +295,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		this.setNodeData(definition);
     	}
     	
-    	this.resumeEvents();
+    	silent ? this.resumeEvents() : null;
     },
+    //eo applyNodeDefinition
     
     /**
      * @override
@@ -305,17 +322,17 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Returns true if this node is a leaf
      * @return {Boolean}
      */
-    isLeaf : function(){
+    isLeaf : function() {
         return this.leaf === true;
     },
 
     // private
-    setFirstChild : function(node){
+    setFirstChild : function(node) {
         this.firstChild = node;
     },
 
     //private
-    setLastChild : function(node){
+    setLastChild : function(node) {
         this.lastChild = node;
     },
 
@@ -323,7 +340,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Returns true if this node is the last child of its parent
      * @return {Boolean}
      */
-    isLast : function(){
+    isLast : function() {
        return (!this.parentNode ? true : this.parentNode.lastChild == this);
     },
 
@@ -331,7 +348,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Returns true if this node is the first child of its parent
      * @return {Boolean}
      */
-    isFirst : function(){
+    isFirst : function() {
        return (!this.parentNode ? true : this.parentNode.firstChild == this);
     },
 
@@ -339,7 +356,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Returns true if this node has one or more child nodes, else false.
      * @return {Boolean}
      */
-    hasChildNodes : function(){
+    hasChildNodes : function() {
         return !this.isLeaf() && this.childNodes.length > 0;
     },
 
@@ -348,7 +365,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * node attribute is explicitly specified as true (see {@link #config}), otherwise returns false.
      * @return {Boolean}
      */
-    isExpandable : function(){
+    isExpandable : function() {
         return this.attributes.expandable || this.hasChildNodes();
     },
 
@@ -940,6 +957,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	silent ? this.resumeEvents() : null;
     },
+    //eo applyProperties
     
     //TODO implement NodeRecord creation
     getRecord : function() {

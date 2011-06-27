@@ -12,10 +12,13 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	tag: 'root',
 	
 	properties : [
-      	{name: "type", required: true},
       	{name: "xmlns:i",  required: false},
 		{name: "xmlns:xsi",  required: false},
-		{name: "xsi:schemaLocation",  required: false}
+		{name: "xsi:schemaLocation",  required: false},
+      	{name: "type", required: true},
+      	{name: "tabbed", required: false, type: Boolean},
+      	{name: "module", required: false, type: String},
+      	{name: "dynamic", value: false, required: false, type: Boolean}
 	],
 	
 	/**
@@ -33,5 +36,10 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	 */
 	getModelNode : function(nodeId) {
 		return this.findChildById(nodeId, true);
+	},
+	
+	structure: {
+		
 	}
+	
 });
