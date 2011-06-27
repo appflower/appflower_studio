@@ -14,10 +14,18 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
 	/**
 	 * Node's value property.
-	 * @constant
+	 * @constant NODE_DATA
 	 * @type {String}
 	 */
 	NODE_DATA : 'data',
+	
+    /**
+     * The token used to separate paths in node ids (defaults to '/').
+     * This path separator is used if a Model (structure of model's nodes) is used without Tree controller.
+     * @constant pathSeparator
+     * @type {String}
+     */
+    pathSeparator: "/",	
 	
 	/**
 	 * @cfg {Object} (Required) definition 
@@ -231,7 +239,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @protected 
      * @param {Object} (Optional) properties
      */
-    initProperties : function(properties) {   	
+    initProperties : function(properties) {
 		var ps = this.properties || properties;
     	this.properties = new Ext.util.MixedCollection(false, function(property) {
     		return property.name;
@@ -247,7 +255,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     initNodeDefitintion : function(definition) {
     	var _this = this;
     	
-    	this.suspendEvents();    	
+    	this.suspendEvents();
     	
     	if (!Ext.isDefined(definition)) {
     		return;
@@ -278,15 +286,15 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @override
      * @return {Boolean}
      */
-    fireEvent : function(evtName){
+    fireEvent : function(evtName) {
         // first do standard event for this node
-        if(Ext.data.Node.superclass.fireEvent.apply(this, arguments) === false){
+        if (Ext.data.Node.superclass.fireEvent.apply(this, arguments) === false) {
             return false;
         }
         // then bubble it up to the tree if the event wasn't cancelled
         var ot = this.getOwnerTree();
-        if(ot){
-            if(ot.proxyNodeEvent.apply(ot, arguments) === false){
+        if (ot) {
+            if (ot.proxyNodeEvent.apply(ot, arguments) === false) {
                 return false;
             }
         }
@@ -310,7 +318,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     setLastChild : function(node){
         this.lastChild = node;
     },
-
 
     /**
      * Returns true if this node is the last child of its parent
@@ -622,8 +629,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Number}
      */
     getDepth : function() {
-        var depth = 0;
-        var p = this;
+        var depth = 0,
+        		p = this;
         while (p.parentNode) {
             ++depth;
             p = p.parentNode;
@@ -674,7 +681,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         }
     },
 
-    // private
+    /**
+     * ID change callback method.
+     * @protected
+     */
     onIdChange: Ext.emptyFn,
 
     /**
@@ -690,7 +700,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
             b.unshift(p[attr]);
             p = p.parentNode;
         }
-        var sep = this.getOwnerTree().pathSeparator;
+        var sep = this.getOwnerTree() ? this.getOwnerTree().pathSeparator : this.pathSeparator;
         
         return sep + b.join(sep);
     },
@@ -755,9 +765,21 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Node} The found child or null if none was found
      */
     findChild : function(property, value, deep) {
-        return this.findChildBy(function() {        	
+        return this.findChildBy(function() {
         	var p = this.properties.get(property);        	
             return p ? (p.value == value) : false;            
+        }, null, deep);
+    },
+    
+    /**
+     * Finds the first child by ID.
+     * @param {String} value The ID value
+     * @param {Boolean} deep (Optional) True to search through nodes deeper than the immediate children
+     * @return {Node} The found child or null if none was found
+     */
+    findChildById : function(value, deep) {
+        return this.findChildBy(function() {
+            return this.id == value;            
         }, null, deep);
     },
 
