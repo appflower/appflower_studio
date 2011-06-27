@@ -12,7 +12,7 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	tag: 'root',
 	
 	properties : [
-      	{name: "type", required: true},      	
+      	{name: "type", required: true},
       	{name: "xmlns:i",  required: false},
 		{name: "xmlns:xsi",  required: false},
 		{name: "xsi:schemaLocation",  required: false}
@@ -26,7 +26,12 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 		return this.getProperty('type');
 	},
 	
-	getModelNode : function() {
-	//implement	
-	}	
+	/**
+	 * Returns model node by its ID.
+	 * @param {String} nodeId The node ID value
+	 * @return {Node} The found child or null if none was found
+	 */
+	getModelNode : function(nodeId) {
+		return this.findChildById(nodeId, true);
+	}
 });
