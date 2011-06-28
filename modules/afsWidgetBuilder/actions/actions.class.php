@@ -27,7 +27,7 @@ class afsWidgetBuilderActions extends sfActions
      */
     protected function renderJson($data)
     {
-	    $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
+        // $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
 	    
 		return $this->renderText(json_encode($data));
     }
@@ -41,7 +41,9 @@ class afsWidgetBuilderActions extends sfActions
     public function executeGetWidget(sfWebRequest $request)
     {
         $parameters = array(
-            'uri' => $request->getParameter('uri'),
+            'uri'       => $request->getParameter('uri'),
+            'placeType' => $request->getParameter('placeType', 'app'),
+            'place'     => $request->getParameter('place', 'frontend'),
         );
 
         $response = afStudioCommand::process('widget', 'get', $parameters);
@@ -62,8 +64,8 @@ class afsWidgetBuilderActions extends sfActions
             'data'              => json_decode($request->getParameter('data'), true),
             'widgetType'        => $request->getParameter('widgetType'),
             'createNewWidget'   => $request->getParameter('createNewWidget'),
-            'placeType'         => $request->getParameter('placeType'),
-            'place'             => $request->getParameter('place'),
+            'placeType'         => $request->getParameter('placeType', 'app'),
+            'place'             => $request->getParameter('place', 'frontend'),
         );
 
         $response = afStudioCommand::process('widget', 'save', $parameters);
