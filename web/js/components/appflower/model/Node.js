@@ -889,12 +889,22 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Returns property value
-     * @param {String} p The property key.
+     * Returns property.
+     * @param {String} p The property name.
      * @return {Mixed} property
      */
     getProperty : function(p) {
     	return this.properties.get(p);
+    },
+    
+    /**
+     * Returns property's value.
+     * @param {String} p The property name.
+     * @return {Mixed} If property was found returns its value, otherwise undefined.
+     */
+    getPropertyValue : function(p) {
+    	var property = this.getProperty(p);
+    	return property ? property.value : undefined;
     },
     
     /**
@@ -940,6 +950,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     /**
      * Applies node properties.
      * @param {Object} properties
+     * @param {Boolean} silent If silent is true all node's events are suspended
      */
     applyProperties : function(properties, silent) {
     	if (!Ext.isObject(properties)) {
@@ -988,7 +999,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Creates a child node and append it.
      * @protected 
      * @param {String} node The node identifier. 
-     * @param {Object} nodeDefiniton The node definition object.
+     * @param {Object} (Optional) nodeDefiniton The node definition object.
      * @return {afStudio.model.Node} The created node or null if node creation failed.
      */
     createNode : function(node, nodeDefiniton) {

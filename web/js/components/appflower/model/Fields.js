@@ -6,9 +6,9 @@
  */
 afStudio.model.Fields = Ext.extend(afStudio.model.Node, {
 
-	id : 'i:fields',
+	id : afStudio.ModelNode.FIELDS,
 	
-	tag : 'i:fields',
+	tag : afStudio.ModelNode.FIELDS,
 	
 	properties : [
       	{name: "resetable",  	required: false, value: true},

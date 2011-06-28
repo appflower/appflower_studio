@@ -3,8 +3,9 @@ Ext.ns('afStudio.model.template');
 N = afStudio.model.template;
 
 /**
- * 
- * @type
+ * Contains all available model's nodes.
+ * @singleton
+ * @type Object
  * @author Nikolai Babinski
  */
 N.ModelNode = {
