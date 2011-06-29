@@ -1,25 +1,17 @@
 <?php
-
 /**
  *
  * @package    appFlowerStudio
  * @subpackage plugin
  * @author     radu@immune.dk
  */
-class appFlowerStudioActions extends sfActions
+class appFlowerStudioActions extends afsActions
 {
 	public function preExecute()
 	{
 		$this->realRoot = sfConfig::get('sf_root_dir');
 		$this->afExtjs = afExtjs::getInstance();        
 		$this->afStudioUser = json_encode(afStudioUser::getInstance()->getInfo());
-	}	
-	
-	protected function renderJson($result)
-	{
-	    $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-	    
-		return $this->renderText(json_encode($result));
 	}
 	
 	public function executeStudio()

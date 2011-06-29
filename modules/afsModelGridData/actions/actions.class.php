@@ -6,7 +6,7 @@
  * @subpackage plugin
  * @author     luwo@appflower.com
  */
-class afsModelGridDataActions extends sfActions
+class afsModelGridDataActions extends afsActions
 {	
     /**
      * afsModelGridData actions are all executed in context of concrete model so

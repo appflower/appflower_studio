@@ -5,7 +5,7 @@
  * @subpackage plugin
  * @author     startsev.sergey@gmail.com
  */
-class afsDatabaseQueryActions extends sfActions
+class afsDatabaseQueryActions extends afsActions
 {
     /**
      * DB Query helper instance
@@ -28,19 +28,6 @@ class afsDatabaseQueryActions extends sfActions
         
         // initialize query helper
         $this->oDBQueryHelper = new afsDatabaseQueryHelper;
-    }
-    
-    /**
-     * Rendering json
-     *
-     * @param mixed $result 
-     * @return string
-     * @author Sergey Startsev <startsev.sergey@gmail.com>
-     */
-    protected function renderJson($result)
-    {
-        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        return $this->renderText(json_encode($result));
     }
     
     /**

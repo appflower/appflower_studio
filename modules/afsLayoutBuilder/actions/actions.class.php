@@ -6,28 +6,8 @@
  * @subpackage plugin
  * @author     startsev.sergey@gmail.com
  */
-class afsLayoutBuilderActions extends sfActions
+class afsLayoutBuilderActions extends afsActions
 {
-
-    /**
-     * Catching executing ajax queries from direct call
-     */
-    public function preExecute()
-    {
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $this->forward404("This action should be used only for ajax requests");
-        }
-    }
-
-    /**
-     * Rendering json
-     */
-    protected function renderJson($result)
-    {
-        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        return $this->renderText(json_encode($result));
-    }
-
     /**
      * Getting page definition controller
      */
