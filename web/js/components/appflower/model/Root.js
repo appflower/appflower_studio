@@ -70,7 +70,7 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 			strc = afStudio.model.template[sTpl];
 		}
 		/**
-		 * Model Root node's structure @type {Function}
+		 * Model Root node's structure @type {Object}
 		 */
 		this.structure = Ext.isFunction(strc) ? new strc() : undefined;
 	},

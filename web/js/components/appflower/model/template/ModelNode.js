@@ -48,16 +48,12 @@ N.ModelNode = {
 
 	DATA_STORE : 'i:datastore',
 	
-	DISPLAY : 'i:display',
-	
 	ROW_ACTIONS : 'i:rowactions',
 	
 	ACTIONS : 'i:actions',
 	
 	MORE_ACTIONS : 'i:moreactions',
 	
-	CACHE : 'i:cache',
-
 	AREA : 'i:area',
 	
 	WIDGET_CATEGORIES : 'i:widgetCategories',
