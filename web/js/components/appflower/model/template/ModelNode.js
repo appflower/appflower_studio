@@ -34,8 +34,6 @@ N.ModelNode = {
 	
 	IF : 'i:if',
 	
-	ACTIONS : 'i:actions',
-	
 	ALTERNATE_DESCRIPTIONS : 'i:alternateDescriptions',
 	
 	GROUPING : 'i:grouping',
@@ -48,9 +46,11 @@ N.ModelNode = {
 
 	DATA_STORE : 'i:datastore',
 	
-	ROW_ACTIONS : 'i:rowactions',
-	
 	ACTIONS : 'i:actions',
+	
+	ACTION : 'i:action',
+	
+	ROW_ACTIONS : 'i:rowactions',
 	
 	MORE_ACTIONS : 'i:moreactions',
 	

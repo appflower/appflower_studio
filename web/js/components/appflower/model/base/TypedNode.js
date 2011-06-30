@@ -1,6 +1,12 @@
 Ext.ns('afStudio.model');
 
-
+/**
+ * Base class for all nodes depend from the model type.
+ * 
+ * @class afStudio.model.TypedNode
+ * @extends afStudio.model.Node
+ * @author Nikolai Babinski
+ */
 afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 
 	/**
@@ -13,13 +19,6 @@ afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 	 * @type {Array}
 	 */
 	properties : [],
-	
-	/**
-	 * The array of all allowed types for children nodes.
-	 * @property
-	 * @type {Array} 
-	 */
-	nodeTypes: [],
 	
 	/**
 	 * TypedNode constructor
@@ -69,5 +68,4 @@ afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 			this.nodeTypes = this.nodeTypes.concat(nt);
 		}
 	}
-	
 });

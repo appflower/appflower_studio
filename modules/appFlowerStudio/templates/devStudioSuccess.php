@@ -146,15 +146,18 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileUploader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
 
-<!-- widgetDesigner -->
+<!-- appflower view model -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/ModelNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/BaseTemplate.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/templates.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/Node.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/TypedNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Fields.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Actions.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Confirm.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Root.js"></script>
 
+<!-- widgetDesigner -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/base/BaseBehavior.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithIParamsBehavior.js"></script>

@@ -59,11 +59,12 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	/**
 	 * The array of node types which this node can contains.
 	 * Node type can be specified as a string like afStudio.ModelNode.BUTTON or
-	 * can be used an object like {name: afStudio.ModelNode.FIELD, required: true}, 
-	 * where "required" underlines that the node should contain this node type.
-	 * @property nodeTypes 
+	 * as an object like {name: afStudio.ModelNode.FIELD, required: true}.
+	 * Where "required" underlines that the node should contain this node type.
+	 * @property nodeTypes (Defaults is empty saying that a node should have no children.) 
 	 * @type {Array}
 	 */
+    nodeTypes : [],
 	
     constructor : function(config) {
         config = config || {};
