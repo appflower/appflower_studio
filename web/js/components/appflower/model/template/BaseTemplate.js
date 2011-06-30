@@ -3,6 +3,7 @@ Ext.ns('afStudio.model.template');
 N = afStudio.model.template;
 
 /**
+ * The parent structural template class.
  * 
  * @class afStudio.model.template.BaseTemplate
  * @extends Object
@@ -24,3 +25,5 @@ N.BaseTemplate = Ext.extend(Object, {
 });
 
 delete N;
+
+//add model types

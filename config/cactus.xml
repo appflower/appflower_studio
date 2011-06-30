@@ -137,7 +137,10 @@
 					<file>js/filetree/js/Ext.ux.UploadPanel.js</file>
 					
 					<!-- AppFlower Schema MVC -->
-					<file>js/components/appflower/model/template</file>
+					<file>js/components/appflower/model/template/ModelNode.js</file>
+					<file>js/components/appflower/model/template/BaseTemplate.js</file>
+					<file>js/components/appflower/model/template/templates.js</file>
+					<file>js/components/appflower/model/base</file>
 					<file>js/components/appflower/model/</file>
 					
 					<!-- Widget Designer -->	

@@ -1,13 +1,12 @@
 Ext.ns('afStudio.model');
 
 /**
- * Base abstract <b>Model Node</b> class. All model's node are descendants of this class. 
- * Responsible for storing/managing atomic model data. Node can be treated as a equvivalent to View xml tag.
+ * Base <b>Model Node</b> class. All model's node are descendants of this class. 
+ * Responsible for storing/managing atomic model data. Node can be treated as a equvivalent to a view's xml tag.
  * Encapsulates tag's attributes inside <u>properties</u>, all inner tags(nodes) are stored in the <u>childNodes</u>.
  * 
  * @class afStudio.model.Node
  * @extends Ext.util.Observable
- * @abstract
  * @author Nikolai Babinski
  */
 afStudio.model.Node = Ext.extend(Ext.util.Observable, {
@@ -36,6 +35,11 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * @cfg {String} (Required) tag 
 	 * Node's tag name 
 	 */
+    
+	/**
+	 * @cfg {Object} (Optional) parentNode 
+	 * Parent node reference.
+	 */
 	
 	/**
 	 * @property tag The node tag name 
@@ -53,7 +57,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 */
 	
 	/**
-	 * @property nodeTypes The array of node types which this node can contains. 
+	 * @property nodeTypes The array of node types which this node can contains.
 	 * @type {Array}
 	 */
 	
@@ -230,7 +234,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         });
         
         this.listeners = config.listeners;
-        Ext.data.Node.superclass.constructor.call(this);
+        
+        afStudio.model.Node.superclass.constructor.call(this);
         
         this.initNodeDefinition(config.definition);
     },
@@ -287,7 +292,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		if (def._content) {
     			this.setNodeData(def._content);
     		} else {
-    			Ext.iterate(def, function(n, d){
+    			Ext.iterate(def, function(n, d) {
     				_this.createNode(n, d);
     			}, _this);
     		}
@@ -859,7 +864,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Node} node
      * @return {Boolean}
      */
-    contains : function(node){
+    contains : function(node) {
         return node.isAncestor(this);
     },
 
@@ -1011,7 +1016,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		nodeCls = nodeCls ? nodeCls : afStudio.model.Node;
 	    	n = new nodeCls({
 	    		tag: node,
-	    		definition: nodeDefiniton 
+	    		definition: nodeDefiniton,
+	    		parentNode: this
 	    	});
 	    	this.fireEvent("modelNodeCreated", this.ownerTree, this, n);
 	    	this.appendChild(n);
@@ -1026,8 +1032,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	var _this = this;
     	
 		var tpl = new Ext.XTemplate(
-			'{ model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}, ',
-			'properties: {[this.toJson(values.properties.map)]} }',
+			'[model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}, ',
+			'properties: {[this.toJson(values.properties.map)]}]',
 			{
         		compiled: true,
         		disableFormats: true,
