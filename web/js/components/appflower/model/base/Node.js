@@ -47,17 +47,21 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 */
 
 	/**
+	 * @property leaf
+	 * @type {Boolean}   
+	 */
+    
+	/**
 	 * @property properties (Read-only) The model node properties.
 	 * @type {Ext.util.MixedCollection}
 	 */	
 	
 	/**
-	 * @property leaf
-	 * @type {Boolean}   
-	 */
-	
-	/**
-	 * @property nodeTypes The array of node types which this node can contains.
+	 * The array of node types which this node can contains.
+	 * Node type can be specified as a string like afStudio.ModelNode.BUTTON or
+	 * can be used an object like {name: afStudio.ModelNode.FIELD, required: true}, 
+	 * where "required" underlines that the node should contain this node type.
+	 * @property nodeTypes 
 	 * @type {Array}
 	 */
 	
@@ -904,24 +908,26 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     
     /**
      * Returns property's value.
+     * If property has no value tries to return default value.
      * @param {String} p The property name.
      * @return {Mixed} If property was found returns its value, otherwise undefined.
      */
     getPropertyValue : function(p) {
     	var property = this.getProperty(p);
-    	return property ? property.value : undefined;
+    	return property ? property.value || property['default'] : undefined;
     },
     
     /**
      * Sets property's value.
      * @param {String} p The property key
      * @param {String} v The value being set to property
+     * @return {Object} property which value was set or null if property is not exist.
      */
     setProperty : function(p, v) {
     	var property = this.properties.get(p);
     	
     	if (!Ext.isDefined(property)) {
-    		return false;
+    		return null;
     	}
     	
     	//property validation can be processed here
@@ -929,6 +935,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		property['value'] = v;
 	    	this.fireEvent("modelPropertyChanged", this, p, v);
     	}
+    	
+    	return property;
     },
     
     /**

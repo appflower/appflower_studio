@@ -30,13 +30,13 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	tag: 'root',
 	
 	properties : [
-      	{name: "xmlns:i",  required: false},
-		{name: "xmlns:xsi",  required: false},
-		{name: "xsi:schemaLocation",  required: false},
+      	{name: "xmlns:i", type: 'internalUriType'},
+		{name: "xmlns:xsi",  type: 'internalUriType'},
+		{name: "xsi:schemaLocation",  type: 'internalUriType'},
       	{name: "type", required: true},
-      	{name: "tabbed", required: false, type: Boolean},
-      	{name: "module", required: false, type: String},
-      	{name: "dynamic", value: false, required: false, type: Boolean}
+      	{name: "tabbed", type: 'boolean'},
+      	{name: "module", type: 'string'},
+      	{name: "dynamic", type: 'boolean', 'default': false}
 	],
 	
 	/**
@@ -55,8 +55,8 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	
 	/**
 	 * Initialized Model Root node {@link #structure}.
-	 * @protected
 	 * Template method. 
+	 * @protected
 	 * @param {Function/String} strc The model structure
 	 */
 	initStructure : function(strc) {
@@ -78,8 +78,8 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	
 	/**
 	 * Processes node structure based on {@link #structure}.
-	 * @protected
 	 * Template method.
+	 * @protected
 	 */
 	processStructure : function() {
 		if (!this.structure) {

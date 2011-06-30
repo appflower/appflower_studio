@@ -12,46 +12,46 @@ afStudio.model.Fields = Ext.extend(afStudio.model.TypedNode, {
 	tag : afStudio.ModelNode.FIELDS,
 	
 	properties : [
-      	{name: "url", 			required: false, value: "n/a"},
-      	{name: "action", 		required: false, value: "n/a"},
-      	{name: "classic",  		required: false, value: "false"},
-      	{name: "bodyStyle",  	required: false},
-      	{name: "redirect", 		required: false},
-      	{name: "expandButton",  required: false},
-      	{name: "remoteLoad",  	required: false},
-      	{name: "plugin",  		required: false}
+      	{name: "url", type: 'internalUriType', 'default': "n/a"},
+      	{name: "action", type: 'internalUriType', 'default': "n/a"},
+      	{name: "classic", type: 'boolean', 'default': "false"},
+      	{name: "bodyStyle", type: 'token'},
+      	{name: "redirect", type: 'internalUriType'},
+      	{name: "expandButton",  type: 'boolean'},
+      	{name: "remoteLoad", type: 'boolean'},
+      	{name: "plugin", type: 'token'}
 	],
 	
 	listProperties : [
-      	{name: "tree",  		required: false, value: false},
-      	{name: "selectable",  	required: false, value: true},
-      	{name: "exportable",  	required: false, value: true},
-      	{name: "select",  		required: false, value: false},
-      	{name: "pager",  		required: false, value: "true"},
-      	{name: "remoteSort",  	value: "false"},
-      	{name: "iconCls",  		required: false},
-      	{name: "icon",  		required: false, value: "/images/famfamfam/accept.png"},
-      	{name: "remoteFilter",  required: false},
-		{name: "pagerTemplate", required: false}
+      	{name: "tree", type: 'boolean', 'default': false},
+      	{name: "selectable", type: 'boolean', 'default': true},
+      	{name: "exportable", type: 'boolean', 'default': true},
+      	{name: "select", type: 'boolean', 'default': false},
+      	{name: "pager", type: 'boolean', 'default': true},
+      	{name: "remoteSort", type: 'boolean', 'default': false},
+      	{name: "iconCls", type: 'token'},
+      	{name: "icon", type: 'token', 'default': '/images/famfamfam/accept.png'},
+      	{name: "remoteFilter", type: 'boolean'},
+		{name: "pagerTemplate", type: 'token'}
 	],
 	
 	editProperties : [
-      	{name: "resetable",  	required: false, value: true},
-      	{name: "resetlabel",  	required: false, value: "Reset"},
-      	{name: "submitlabel",  	required: false, value: "Submit"},
-      	{name: "multipart",  	required: false, value: "false"},
-      	{name: "submit",  		required: false, value: "true"},
-      	{name: "border",  		required: false, value: "true"},
-      	{name: "label",  		required: false, value: "Save Selection"},
-      	{name: "labelWidth", 	required: false, value: "75"}
+      	{name: "resetable", type: 'boolean', 'default': true},
+      	{name: "resetlabel", type: 'token', 'default': "Reset"},
+      	{name: "submitlabel", type: 'token', 'default': "Submit"},
+      	{name: "multipart", type: 'boolean', 'default': false},
+      	{name: "submit", type: 'boolean', 'default': true},
+      	{name: "border", type: 'boolean', 'default': true},
+      	{name: "label", type: 'token', 'default': "Save Selection"},
+      	{name: "labelWidth", type: 'positiveInteger', 'default': 75}
 	],
 	
 	listNodeTypes : [
-		afStudio.ModelNode.COLUMN
+		{name: afStudio.ModelNode.COLUMN, required: true}
 	],
 	
 	editNodeTypes : [
-		afStudio.ModelNode.FIELD,
+		{name: afStudio.ModelNode.FIELD, required: true},
 		afStudio.ModelNode.BUTTON,
 		afStudio.ModelNode.LINK,
 		afStudio.ModelNode.RADIO_GROUP,
