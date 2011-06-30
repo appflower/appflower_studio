@@ -5,7 +5,7 @@
  * @author Łukasz Wojciechowski <luwo@appflower.com>
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class EditWidgetModifier extends ConcreteWidgetModifier 
+class afsWidgetEditModifier extends afsBaseModelModifier 
 {
     /**
      * Model criteria fetcher method
@@ -27,20 +27,24 @@ class EditWidgetModifier extends ConcreteWidgetModifier
     /**
      * Modify process
      *
-     * @param Array $definition 
-     * @param string $newWidgetMode 
-     * @return array
+     * @param afsBaseModel $model 
+     * @return afsBaseModel
      * @author Łukasz Wojciechowski 
      * @author Sergey Startsev
      */
-    public function modify(Array $definition, $newWidgetMode = false) 
+    public function modify(afsBaseModel $model)
     {
+        $definition = $model->getDefinition();
+        
         $this->datasource = $this->processGetDatasource($definition);
         
-        if ($newWidgetMode) {
+        if ($model->getIsNewMode()) {
             $definition = $this->searchForAndModifyForeignTableFields($definition);
         }
-        return $definition;
+        
+        $model->setDefinition($definition);
+        
+        return $model;
     }
     
     /**

@@ -5,18 +5,18 @@
  * @author Łukasz Wojciechowski <luwo@appflower.com>
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class ListWidgetModifier extends ConcreteWidgetModifier 
+class afsWidgetListModifier extends afsBaseModelModifier 
 {
     /**
      * no need for changes in list widget
      *
-     * @param Array $definition 
-     * @param boolean $newWidgetMode 
-     * @return array
+     * @param afsBaseModel $model
+     * @return afsBaseModel
      * @author Łukasz Wojciechowski
      */
-    public function modify(Array $definition, $newWidgetMode = false) {
-        return $definition;
+    public function modify(afsBaseModel $model) 
+    {
+        return $model;
     }
     
 }
