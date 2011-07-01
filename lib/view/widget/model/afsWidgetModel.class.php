@@ -224,31 +224,10 @@ class afsWidgetModel extends afsBaseModel
         $path = $this->getPlaceConfigPath() . "/{$this->getAction()}.xml";
         
         if (is_readable($path)) {
-            $options = array(
-                'parseAttributes' => true
-            );
-            
-            $unserializer = new XML_Unserializer($options);
-            $status = $unserializer->unserialize($path, true);
-            
-            if ($status !== true) {
-                throw new afsWidgetModelException($status->getMessage());
-            }
-            
-            $definition = $unserializer->getUnserializedData();
+            $definition = file_get_contents($path);
+            $definition = afsXmlDefinition::create()->init($definition)->unpack()->get();
             
             $this->setDefinition($definition);
-            
-            /*
-            $unserializer = new XML_Unserializer($this->unserialize_options);
-            $status = $unserializer->unserialize($path, true);
-            
-            if ($status) {
-                $this->setDefinition($unserializer->getUnserializedData());
-            } else {
-                throw new afsWidgetModelException($status->getMessage());
-            }
-            */
             
             $this->setNew(false);
         } 
@@ -278,27 +257,7 @@ class afsWidgetModel extends afsBaseModel
      */
     public function save()
     {
-        // build definition via widget type
-        $xmlBuilder = new afsXmlBuilder($this->getDefinition(), $this->getType());
-        $definition = $xmlBuilder->getXml();
-        
-        /*
-        // Needs to define/initialize xml serialize constants
-        $oXmlUtil = new XML_Util;
-        
-        $serializer = new XML_Serializer($this->serialize_options);
-        $status = $serializer->serialize($this->getDefinition());
-        
-        if (!$status) {
-            throw new afStudioWidgetCommandException("Definition can't be serialized");
-        }
-        // getting serialized definition
-        $definition = $serializer->getSerializedData();
-        
-        // update fields that should be wrapped with cdata
-        $definition = afStudioWidgetCommandHelper::updateCdataFields($definition);
-        */
-        
+        $definition = afsXmlDefinition::create()->init($this->getDefinition())->pack();
         
         // prepare folder for definition saving 
         $config_path = $this->getPlaceConfigPath();
@@ -309,12 +268,12 @@ class afsWidgetModel extends afsBaseModel
         $path = "{$config_path}/{$this->getAction()}.xml";
         
         // validate
-        $status = $this->validate($definition);
+        $status = $definition->validate();
         
         // save
         $response = afResponseHelper::create();
         if ($status) {
-            afStudioUtil::writeFile($path, $definition);
+            afStudioUtil::writeFile($path, $definition->get());
             afStudioWidgetCommandHelper::deployLibs();
             
             // check exists action or not
@@ -324,21 +283,6 @@ class afsWidgetModel extends afsBaseModel
         }
         
         return $response;
-    }
-    
-    /*
-        TODO : move validation to separate class
-    */
-    protected function validate($definition)
-    {
-        $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
-        
-        afStudioUtil::writeFile($tempPath, $definition);
-        
-        $validator = new XmlValidator($tempPath);
-        $status = $validator->validateXmlDocument();
-        
-        return $status;
     }
     
     /**
