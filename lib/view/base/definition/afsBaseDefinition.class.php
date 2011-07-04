@@ -43,7 +43,7 @@ abstract class afsBaseDefinition
     public function getDefinitionName()
     {
         if (is_null($this->definition_name)) {
-            throw new Exception("Definition name property should be declarated in definition class");
+            throw new afsBaseDefinitionException("Definition name property should be declarated in definition class");
         }
         
         return $this->definition_name;

@@ -98,6 +98,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
     /**
 	 * Rename xml functionality
 	 * 
+	 * @return array
 	 * @author Sergey Startsev
 	 */
 	protected function processRename()
@@ -117,37 +118,15 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         // fix permissions
 		$console = $afConsole->execute('afs fix-perms');
 		
-        // init paths
-		$module_dir = "{$root}/{$type}s/{$place}/modules/{$module}";
-        
-		$oldName = "{$module_dir}/config/{$oldValue}";
-		$newName = "{$module_dir}/config/{$newValue}";
+		$action = pathinfo($oldValue, PATHINFO_FILENAME);
+		$new_action = pathinfo($newValue, PATHINFO_FILENAME);
 		
-		afStudioWidgetCommandHelper::load('module');
+		$widget = afsWidgetModelHelper::retrieve($action, $module, $place, $type);
 		
-		$console .= afStudioModuleCommandHelper::renameAction(
-		    pathinfo($oldValue, PATHINFO_FILENAME), 
-		    pathinfo($newValue, PATHINFO_FILENAME), 
-		    $module,
-		    $place, 
-		    $type
-		);
-		
-		$response = afResponseHelper::create();
-		
-		if (!file_exists($newName)) {
-            // $filesystem->rename($oldName, $newName);
-            $console .= $afConsole->execute("mv {$oldName} {$newName}");
-            
-    		if (!file_exists($oldName) && file_exists($newName)) {			
-    			$console .= $afConsole->execute('sf cc');
-    			
-    			$resopnse->success(true)->message("Renamed page from <b>{$oldValue}</b> to <b>{$newValue}</b>!")->console($console);
-    		} else {
-    		    $response->success(false)->message("Can't rename page from <b>{$oldValue}</b> to <b>{$newValue}</b>!");
-    		}
+		if (!$widget->isNew()) {
+		    $response = $widget->rename($new_action);
 		} else {
-		    $response->success(false)->message("View {$newValue} already exists");
+		    $response = afResponseHelper::create()->success(false)->message("View {$new_action} already exists");
 		}
 		
 		return $response->asArray();
@@ -156,42 +135,24 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 	/**
 	 * Delete xml functionality
 	 * 
+	 * @return array
 	 * @author Sergey Startsev
 	 */
 	protected function processDelete()
 	{
         // init params 
+        $name   = pathinfo($this->getParameter('name'), PATHINFO_FILENAME);
+        $module = $this->getParameter('module');
 		$place  = $this->getParameter('place');
-		$module = $this->getParameter('module');
-		$type   = $this->getParameter('type', 'app');
-		$name   = $this->getParameter('name');
+		$place_type   = $this->getParameter('type', 'app');
 		
-        // init vars
-		$root = afStudioUtil::getRootDir();
-		$afConsole = afStudioConsole::getInstance();
+        // retrieve widget 
+		$widget = afsWidgetModelHelper::retrieve($name, $module, $place, $place_type);
 		
-        // init paths
-		$module_dir = "{$root}/{$type}s/{$place}/modules/{$module}";
-		$xmlDir = "{$module_dir}/config/{$name}";
-		
-		$actionName = pathinfo($name, PATHINFO_FILENAME);
-		$actionDir = "{$module_dir}/actions/{$actionName}Action.class.php";
-		
-		$console = $afConsole->execute(array(
-            'afs fix-perms',
-            "rm -rf {$xmlDir}",
-            "rm -rf {$actionDir}"
-		));
-		
-        // init response object
-		$response = afResponseHelper::create();
-		
-		if (!file_exists($xmlDir)) {
-			$console .= $afConsole->execute('sf cc');
-			
-			$response->success(true)->message("Deleted page <b>{$name}</b>")->console($console);
+		if (!$widget->isNew()) {
+		    $response = $widget->delete();
 		} else {
-		    $response->success(false)->message("Can't delete page <b>{$name}</b>!");
+		    $response = afResponseHelper::create()->success(false)->message("Widget <b>{$name}</b> doesn't exists");
 		}
 		
 		return $response->asArray();

@@ -49,30 +49,6 @@ class afsWidgetModel extends afsBaseModel
     private $is_new_mode = false;
     
     /**
-     * Serialization options 
-     */
-    private $serialize_options = array(
-        'rootName' => 'i:view',
-        'attributesArray' => 'attributes',
-        'indent' => '    ',
-        'mode' => 'simplexml',
-        'addDecl' => true,
-        'encoding' => 'UTF-8',
-        'contentName' => '_content'
-    );
-    
-    /**
-     * Unserialization options
-     */
-    private $unserialize_options = array(
-        'parseAttributes' => true,
-        'attributesArray' => 'attributes',
-        'mode' => 'simplexml',
-        'complexType' => 'array',
-        'contentName' => '_content'
-    );
-    
-    /**
      * Getting action
      *
      * @return string
@@ -230,10 +206,7 @@ class afsWidgetModel extends afsBaseModel
             $this->setDefinition($definition);
             
             $this->setNew(false);
-        } 
-        // else {
-            // throw new afsWidgetModelException("Could not find widget XML file");
-        // }
+        }
         
         return $this;
     }
@@ -283,6 +256,96 @@ class afsWidgetModel extends afsBaseModel
         }
         
         return $response;
+    }
+    
+    /**
+     * Rename current widget
+     *
+     * @param string $new_name 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function rename($new_name)
+    {
+        if (!$this->isNew()) {
+            // initialize syst vars
+    		$filesystem = new sfFileSystem();
+    		$afConsole = afStudioConsole::getInstance();
+            
+    		$old_name = $this->getAction();
+    		$module = $this->getModule();
+    		$place = $this->getPlace();
+    		$type = $this->getPlaceType();
+    		
+    		$oldPath = $this->getPlaceConfigPath() . "/{$old_name}.xml";
+    		$newPath = $this->getPlaceConfigPath() . "/{$new_name}.xml";
+
+    		$response = afResponseHelper::create();
+
+    		if (!file_exists($newPath)) {
+        		$renamed = afsWidgetModelHelper::renameAction($old_name, $new_name, $module, $place, $type);
+                
+                // $filesystem->rename($oldName, $newName);
+                $console = $afConsole->execute("mv {$oldPath} {$newPath}");
+                
+        		if (!file_exists($oldPath) && file_exists($newPath)) {
+        			$console .= $afConsole->execute('sf cc');
+                    
+        			$response->success(true)->message("Renamed page from <b>{$old_name}</b> to <b>{$new_name}</b>!")->console($console);
+        		} else {
+        		    $response->success(false)->message("Can't rename page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
+        		}
+    		} else {
+    		    $response->success(false)->message("View {$new_name} already exists");
+    		}
+        } else {
+            $response->success(false)->message("Widget doesn't exists, create widget first");
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * Delete widget functionality
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function delete()
+    {
+        if (!$this->isNew()) {
+            // getting current action name
+            $action_name = $this->getAction();
+            
+    		$afConsole = afStudioConsole::getInstance();
+            
+            // init paths
+    		$module_dir = $this->getPlaceModulePath();
+    		$xml_dir = "{$module_dir}/config/{$action_name}.xml";
+            
+    		$action_dir = "{$module_dir}/actions/{$action_name}Action.class.php";
+            
+    		$console = $afConsole->execute(array(
+                'afs fix-perms',
+                "rm -rf {$xml_dir}",
+                "rm -rf {$action_dir}"
+    		));
+            
+            // init response object
+    		$response = afResponseHelper::create();
+            
+    		if (!file_exists($xml_dir)) {
+    			$console .= $afConsole->execute('sf cc');
+                
+    			$response->success(true)->message("Deleted page <b>{$action_name}</b>")->console($console);
+    		} else {
+    		    $response->success(false)->message("Can't delete page <b>{$action_name}</b>!");
+    		}
+        } else {
+            $response = afResponseHelper::create()->success(false)->message("Page <b>{$action_name}</b> doesn't exists");
+        }
+		
+		return $response;
     }
     
     /**
