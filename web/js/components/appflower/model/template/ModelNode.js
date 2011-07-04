@@ -60,7 +60,11 @@ N.ModelNode = {
 	
 	EXTRA_HELP : 'i:extrahelp',
 	
-	OPTIONS : 'i:options'
+	OPTIONS : 'i:options',
+	
+	CLASS : 'i:class',
+	
+	METHOD : 'i:method'
 };
 
 //shortcut

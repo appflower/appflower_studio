@@ -26,9 +26,9 @@ afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 	 * @param {Object} config
 	 */
 	constructor : function(config) {
-		config = config || {};
-	
-		var mt = this.getModelType(config);
+		config = config || {};		
+		this.parentNode = config.parentNode || null;		
+		var mt = config.modelType ? config.modelType : this.getModelType();
 		
 		this.applyType(mt);
 		
@@ -36,29 +36,11 @@ afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 	},
 	//eo constructor
 	
-	getModelType : function(cfg) {
-		var mt;
-		
-		if (!cfg.modelType && !cfg.parentNode) {
-			throw new Error('TypedNode, type was not specified');
-		}
-		
-		if (cfg.modelType) {
-			mt = cfg.modelType;
-		} else if (cfg.parentNode) {			
-	        var p = cfg.parentNode;
-	        while (p.parentNode && (p = p.parentNode));
-			mt = p.getModelType();
-		}
-		
-		return mt;
-	},
-	
+	/**
+	 * Applies node type dependencies.
+	 * @param {String} type
+	 */
 	applyType : function(type) {
-		if (!type) {
-			return;
-		}
-		
 		var pt = this[type + 'Properties'];		
 		if (pt) {
 			this.properties = this.properties.concat(pt);
@@ -68,4 +50,5 @@ afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 			this.nodeTypes = this.nodeTypes.concat(nt);
 		}
 	}
+	//eo applyType
 });

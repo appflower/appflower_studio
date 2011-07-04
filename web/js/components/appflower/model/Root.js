@@ -33,10 +33,10 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
       	{name: "xmlns:i", type: 'internalUriType'},
 		{name: "xmlns:xsi",  type: 'internalUriType'},
 		{name: "xsi:schemaLocation",  type: 'internalUriType'},
-      	{name: "type", required: true},
+      	{name: "type", type: 'viewType', required: true},
       	{name: "tabbed", type: 'boolean'},
       	{name: "module", type: 'string'},
-      	{name: "dynamic", type: 'boolean', 'default': false}
+      	{name: "dynamic", type: 'boolean', defaultValue: false}
 	],
 	
 	/**
@@ -93,8 +93,18 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	//eo processStructure
 	
 	/**
+	 * Retruns this root node.
+	 * @override
+	 * @return {Node}
+	 */
+	getRootNode : function() {
+		return this;
+	},
+	
+	/**
 	 * Returns Model's type.
-	 * @return {String} type
+	 * @override
+	 * @return {String} type if specified otherwise returns undefined
 	 */
 	getModelType : function() {
 		return this.getPropertyValue('type');

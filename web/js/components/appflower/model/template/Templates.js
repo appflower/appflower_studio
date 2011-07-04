@@ -12,11 +12,11 @@ N.WidgetTemplate = Ext.extend(N.BaseTemplate, {
 	constructor : function() {
 		afStudio.model.template.WidgetTemplate.superclass.constructor.call(this);
 		
-		this.structure = this.structure.concat([		
+		this.structure = this.structure.concat([
 			afStudio.ModelNode.CONFIRM,
 			afStudio.ModelNode.ACTIONS
 		]);
-	}	
+	}
 });
 
 /**

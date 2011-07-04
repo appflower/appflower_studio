@@ -1,4 +1,8 @@
+//Base namespace
 Ext.ns('afStudio.model');
+
+//Widgets namespace
+Ext.ns('afStudio.model.widget');
 
 /**
  * Base <b>Model Node</b> class. All model's node are descendants of this class. 
@@ -24,7 +28,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @constant pathSeparator
      * @type {String}
      */
-    pathSeparator: "/",	
+    pathSeparator: "/",
 	
 	/**
 	 * @cfg {Object} (Required) definition 
@@ -41,6 +45,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * Parent node reference.
 	 */
 	
+    
+    
 	/**
 	 * @property tag The node tag name 
 	 * @type {String}
@@ -98,7 +104,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         /**
          * The parent node for this node. @type Node
          */
-        this.parentNode = null;
+        this.parentNode = config.parentNode || null;
         
         /**
          * The first direct child node of this node, or null if this node has no child nodes. @type Node
@@ -253,12 +259,20 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Object} (Optional) properties
      */
     initProperties : function(properties) {
-		var ps = this.properties || properties;
+    	var _self = this,
+			   ps = this.properties || properties;
+			   
     	this.properties = new Ext.util.MixedCollection(false, function(property) {
     		return property.name;
-		});		
-    	this.properties.addAll(ps);
+		});
+		
+		Ext.iterate(ps, function(p) {
+			_self.properties.add(
+				new afStudio.model.Property(p)
+			);
+		});
     },
+    //eo initProperties
     
     /**
      * Init node's definition.
@@ -327,6 +341,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         }
         return true;
     },
+    //eo fireEvent
 
     /**
      * Returns true if this node is a leaf
@@ -433,6 +448,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
             return node;
         }
     },
+    //eo appendChild
 
     /**
      * Removes a child node from this node.
@@ -915,7 +931,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      */
     getPropertyValue : function(p) {
     	var property = this.getProperty(p);
-    	return property ? property.value || property['default'] : undefined;
+    	
+    	return property ? property.getValue() : undefined;
     },
     
     /**
@@ -933,12 +950,13 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	//property validation can be processed here
     	if (this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
-    		property['value'] = v;
+    		property.setValue(v);
 	    	this.fireEvent("modelPropertyChanged", this, p, v);
     	}
     	
     	return property;
     },
+    //eo setProperty
     
     /**
      * Returns {#NODE_DATA} value.
@@ -960,24 +978,25 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	this.fireEvent("modelPropertyChanged", this, nodeValueProperty, value);
     	}
     },
+    //eo setNodeData
     
     /**
      * Applies node properties.
-     * @param {Object} properties
+     * @param {Object} properties The properties object
      * @param {Boolean} silent If silent is true all node's events are suspended
      */
     applyProperties : function(properties, silent) {
     	if (!Ext.isObject(properties)) {
-    		//TODO throw error here
-    		return;
+    		throw new afStudio.model.error.PropertyError('incorrect-properties');
     	}
     	
-    	silent ? this.suspendEvents() : null; 
+    	silent ? this.suspendEvents() : null;
     	
     	Ext.iterate(properties, function(k, v) {
-    		if (this.setProperty(k, v) === false) {
-	    		this.properties.add({name: k, value: v});	    		
-    		}    		
+    		if (this.setProperty(k, v) === null) {
+    			var p = new afStudio.model.Property({name: k, value: v});
+	    		this.properties.add(p);
+    		}
     	}, this);
     	
     	silent ? this.resumeEvents() : null;
@@ -988,26 +1007,53 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     getRecord : function() {
     	return ;
     },
+
+    /**
+     * Returns model's root node.
+     * @protected
+     * @return {Node} root node or undefined
+     */
+    getRootNode : function() {
+    	var root = this.parentNode;
+        while (root && root.parentNode) {
+        	root = root.parentNode;
+        }
+						
+    	return root;
+    },
+    //eo getRootNode
     
-    //TODO this functionality should be moved out of the Node class
+    /**
+	 * Returns Model's type.
+     * @protected
+     * @return {String} type if specified otherwise returns undefined
+     */
+	getModelType : function() {
+		var r = this.getRootNode();
+		
+		return r ? r.getModelType() : null;  
+	},    
+	//eo getModelType
+    
     /**
      * Returns node constructor function by node type.
      * @param {String} nodeName
      * @return {Function} node class constructor or null if failed
      */
-    getNodeConstructorByName : function(nodeName) {    	
-    	var n = String(nodeName).trim(),
-    		model = afStudio.model,
-    		cls;
+    getNodeConstructorByName : function(nodeName) {
+    	var mt = this.getModelType(),
+    		nCls = String(nodeName).trim(),
+    		model = mt ? (['layout', 'menu'].indexOf(mt) == -1 ? afStudio.model.widget : afStudio.model) : afStudio.model;
     	
-    	if (/^i:(\w+)/i.test(n)) {
-			cls = n.replace(/^i:(\w+)/i, function(s, m1) {
+    	if (/^i:(\w+)/i.test(nCls)) {
+			nCls = nCls.replace(/^i:(\w+)/i, function(s, m1) {
 			    return m1.ucfirst(); 
-			});    		
+			});
     	}
     	
-    	return Ext.isFunction(model[cls]) ? model[cls] : (Ext.isFunction(model[n]) ? model[n] : null);
+    	return Ext.isFunction(model[nCls]) ? model[nCls] : null;
     },
+    //eo getNodeConstructorByName
     
     /**
      * Creates a child node and append it.
@@ -1018,22 +1064,29 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      */
     createNode : function(node, nodeDefiniton) {
     	var n = null;
+
+    	if (Ext.isEmpty(node)) {
+    		throw new afStudio.model.error.NodeError('node-undefined');
+    	}
     	
     	if (this.fireEvent("beforeModelNodeCreated", this.ownerTree, this, node)) {
-    		//TODO add exception handling here
     		var nodeCls = this.getNodeConstructorByName(node);
+    		
     		nodeCls = nodeCls ? nodeCls : afStudio.model.Node;
+    		
 	    	n = new nodeCls({
 	    		tag: node,
-	    		definition: nodeDefiniton,
-	    		parentNode: this
+	    		parentNode: this,
+	    		definition: nodeDefiniton
 	    	});
+	    	
 	    	this.fireEvent("modelNodeCreated", this.ownerTree, this, n);
 	    	this.appendChild(n);
     	}
     	
     	return n; 
     },
+    //eo createNode
     
    //TODO moveNode  - method
     
@@ -1057,4 +1110,5 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
         return tpl.apply(this);
     }
+    //eo toString
 });

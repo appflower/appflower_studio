@@ -147,15 +147,21 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
 
 <!-- appflower view model -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/type/Types.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/ModelNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/BaseTemplate.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/templates.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/Templates.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/Node.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/TypedNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Fields.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Actions.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Confirm.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/Property.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Root.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Fields.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Actions.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Confirm.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Datasource.js"></script>
+
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/NodeError.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/PropertyError.js"></script>
 
 <!-- widgetDesigner -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
