@@ -9,6 +9,7 @@ afStudio.model.Types = new function() {
          * @type Object.
          */
         AUTO : {
+        	type: 'auto',
             validate: function(v) { return true; }
         },
 
@@ -18,6 +19,7 @@ afStudio.model.Types = new function() {
          * This data type means that the raw data is converted into a String before it is placed into a Record.
          */
         STRING: {
+        	type: 'string',
             validate: Ext.isString
         },
 
@@ -27,6 +29,7 @@ afStudio.model.Types = new function() {
          * This data type represents integer.
          */
         INTEGER: {
+        	type: 'integer',
             validate: Ext.isNumber
         },
         
@@ -35,6 +38,7 @@ afStudio.model.Types = new function() {
          * @type Object.
          */
         BOOLEAN: {
+        	type: 'boolean',
             validate: Ext.isBoolean
         },
         
@@ -43,23 +47,72 @@ afStudio.model.Types = new function() {
          * @type Object.
          */
         DATE: {
+        	type: 'date',
             validate: Ext.isDate
         }       
     });
 };
 
+afStudio.model.Types.PERMISSIONTYPE = {
+	type: 'permissionType',
+		
+	validate: function(v) {
+		if (!Ext.isString(v)) {
+			return false;
+		}
+		v = v.trim();
+		
+		return /^(\w+|\*)(\s*,\s*\w+)*$/.test(v);
+	}
+};
+
+afStudio.model.Types.INTERNALURITYPE = {
+	type: 'internalUriType',
+		
+	pattern: new RegExp("^(/[\\w\\-.]+)*/?(\\?[\\w\\-.~%!$&'()*+,;=:@/?]*)?(\\#[\\w\\-.~%!$&'()*+,;=:@/?]*)?$"),
+	
+	validate: function(v) {
+		if (!Ext.isString(v)) {
+			return false;
+		}
+		v = v.trim();
+		
+		// (/[\w\-.]+)*/? - path
+		// (\?[\w\-.~%!$&'()*+,;=:@/?]*)? - query
+		// (\#[\w\-.~%!$&'()*+,;=:@/?]*)? - fragment
+		// ^(/[\w\-.]+)*/?(\?[\w\-.~%!$&'()*+,;=:@/?]*)?(\#[\w\-.~%!$&'()*+,;=:@/?]*)?$
+		
+		return this.pattern.test(v);
+	}
+};
+
 afStudio.model.Types.VIEWTYPE = {
+	type: 'viewType',
+	
+	values: ['edit', 'list', 'show', 'layout', 'html', 'wizard', 'info', 'menu'],
+	
 	validate: function(v) {
 		return this.values.indexOf(v) != -1;
-	},
-	
-	values: ['edit', 'list', 'show', 'layout', 'html', 'wizard', 'info', 'menu']
+	}
 };
 
 afStudio.model.Types.VALUETYPE = {
+	type: 'valueType',
+	
+	values: ['orm', 'file', 'static'],
+	
 	validate: function(v) {
 		return this.values.indexOf(v) != -1;
-	},
-	
-	values: ['orm', 'file', 'static']
+	}
 };
+
+afStudio.model.Types.FETCHTYPE = {
+	type: 'fetchType',
+	
+	values: ['static', 'instance'],	
+	
+	validate: function(v) {
+		return this.values.indexOf(v) != -1;
+	}
+};
+

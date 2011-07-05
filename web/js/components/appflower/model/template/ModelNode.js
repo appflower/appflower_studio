@@ -40,6 +40,8 @@ N.ModelNode = {
 	
 	PARAMS : 'i:params',
 	
+	PARAM : 'i:param',
+	
 	PROXY : 'i:proxy',
 	
 	DATA_SOURCE : 'i:datasource',

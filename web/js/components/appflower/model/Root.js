@@ -30,9 +30,9 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	tag: 'root',
 	
 	properties : [
-      	{name: "xmlns:i", type: 'internalUriType'},
-		{name: "xmlns:xsi",  type: 'internalUriType'},
-		{name: "xsi:schemaLocation",  type: 'internalUriType'},
+//      	{name: "xmlns:i", type: 'internalUriType'},
+//		{name: "xmlns:xsi",  type: 'internalUriType'},
+//		{name: "xsi:schemaLocation",  type: 'internalUriType'},
       	{name: "type", type: 'viewType', required: true},
       	{name: "tabbed", type: 'boolean'},
       	{name: "module", type: 'string'},

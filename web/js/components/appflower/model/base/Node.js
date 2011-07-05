@@ -1043,7 +1043,13 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     getNodeConstructorByName : function(nodeName) {
     	var mt = this.getModelType(),
     		nCls = String(nodeName).trim(),
-    		model = mt ? (['layout', 'menu'].indexOf(mt) == -1 ? afStudio.model.widget : afStudio.model) : afStudio.model;
+    		modelNs = [afStudio.model];
+    		
+    	if (mt) {
+    		if (['layout', 'menu'].indexOf(mt) == -1) {
+    			modelNs.unshift(afStudio.model.widget);
+    		}
+    	}
     	
     	if (/^i:(\w+)/i.test(nCls)) {
 			nCls = nCls.replace(/^i:(\w+)/i, function(s, m1) {
@@ -1051,7 +1057,14 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 			});
     	}
     	
-    	return Ext.isFunction(model[nCls]) ? model[nCls] : null;
+    	Ext.iterate(modelNs, function(ns) {
+    		if (Ext.isFunction(ns[nCls])) {
+    			nCls = ns[nCls];
+    			return false;
+    		}
+    	});
+    	
+    	return Ext.isFunction(nCls) ? nCls : null;
     },
     //eo getNodeConstructorByName
     

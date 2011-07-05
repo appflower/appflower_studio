@@ -19,7 +19,12 @@ afStudio.model.Property = Ext.extend(Object, {
     /**
      * @cfg {Mixed} type
      * (Optional) The data type. Look at {@link afStudio.model.Types} class.</p>
-     */    
+     */
+	/**
+	 * @cfg {Boolean} required (defaults to false)
+	 */
+	required: false,
+	
     /**
      * @cfg {Mixed} defaultValue
      * (Optional) The default value (defaults to "").
@@ -54,7 +59,7 @@ afStudio.model.Property = Ext.extend(Object, {
      * @return {Boolean} true if valid otherwise false.
      */
     isValid : function() {
-    	return this.validate(this.value);
+    	return this.required && this.value ? this.validate(this.value) : true;
     },
     
     /**
@@ -69,7 +74,7 @@ afStudio.model.Property = Ext.extend(Object, {
      * Sets property value. If the passed in value is invalid returns false.
      * @param {Mixed} v The new value being set
      */
-    setValue : function(v) {  	
+    setValue : function(v) {
     	if (!this.validate(v)) {
     		return false;	
     	}

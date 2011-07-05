@@ -155,13 +155,19 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/TypedNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/Property.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Root.js"></script>
+
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Description.js"></script>
+
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Fields.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Actions.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Confirm.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Datasource.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Method.js"></script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/NodeError.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/PropertyError.js"></script>
+
+<!-- end of appflower view model -->
 
 <!-- widgetDesigner -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
