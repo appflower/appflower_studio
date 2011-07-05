@@ -2,6 +2,15 @@ Ext.ns('afStudio.model');
 
 afStudio.model.Types = new function() {
 	
+	/**
+	 * Returns type by its string name
+	 * @param {String} type The type string.
+	 * @return {Object} type
+	 */
+	this.getType = function(type) {
+		return this[type.toUpperCase()];
+	},
+	
     Ext.apply(this, {
         
         /**
@@ -53,16 +62,26 @@ afStudio.model.Types = new function() {
     });
 };
 
+afStudio.model.Types.POSITIVEINTEGER = {
+	type: 'positiveInteger',
+	
+	validate: function(v) {
+		return Ext.isNumber(v) && (v >= 0);
+	}
+};
+
 afStudio.model.Types.PERMISSIONTYPE = {
 	type: 'permissionType',
-		
+	
+	pattern: /^(\w+|\*)(\s*,\s*\w+)*$/,
+	
 	validate: function(v) {
 		if (!Ext.isString(v)) {
 			return false;
 		}
 		v = v.trim();
 		
-		return /^(\w+|\*)(\s*,\s*\w+)*$/.test(v);
+		return this.pattern.test(v);
 	}
 };
 
@@ -81,6 +100,21 @@ afStudio.model.Types.INTERNALURITYPE = {
 		// (\?[\w\-.~%!$&'()*+,;=:@/?]*)? - query
 		// (\#[\w\-.~%!$&'()*+,;=:@/?]*)? - fragment
 		// ^(/[\w\-.]+)*/?(\?[\w\-.~%!$&'()*+,;=:@/?]*)?(\#[\w\-.~%!$&'()*+,;=:@/?]*)?$
+		
+		return this.pattern.test(v);
+	}
+};
+
+afStudio.model.Types.ABSOLUTEURITYPE = {
+	type: 'absoluteUriType',
+		
+	pattern: /^\/?[\w/-]+\.[a-z]{1,4}$/,
+	
+	validate: function(v) {
+		if (!Ext.isString(v)) {
+			return false;
+		}
+		v = v.trim();
 		
 		return this.pattern.test(v);
 	}
