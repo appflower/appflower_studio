@@ -11,7 +11,7 @@
 abstract class BaseafsNotificationPeer {
 
 	/** the default database name for this class */
-	const DATABASE_NAME = 'propel';
+	const DATABASE_NAME = 'studio';
 
 	/** the table name for this class */
 	const TABLE_NAME = 'afs_notification';

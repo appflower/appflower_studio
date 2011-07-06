@@ -1,4 +1,4 @@
-propel:
+studio:
   _attributes:    { package: plugins.appFlowerStudioPlugin.lib.model }
 
   afs_notification: 
