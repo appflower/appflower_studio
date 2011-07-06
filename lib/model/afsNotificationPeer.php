@@ -37,7 +37,18 @@ class afsNotificationPeer extends BaseafsNotificationPeer {
 		$afsNotification->setMessageType($messageType);
 		$afsNotification->setUser($user);
 		$afsNotification->setIp(afsToolkit::getIP());
-		$afsNotification->save();
+        try {
+            $afsNotification->save();
+        } catch (Exception $e) {
+            if (sfConfig::get('sf_environment') == 'dev') {
+                throw $e;
+            } else {
+                /**
+                 * just do nothing - we don't want to bother studio user
+                 * about notifications storage errors
+                 */
+            }
+        }
 	}
 	
 	public static function getAll($offset=0)
@@ -45,7 +56,11 @@ class afsNotificationPeer extends BaseafsNotificationPeer {
 		$c=new Criteria();
 		$c->addAscendingOrderByColumn(self::CREATED_AT);
 		$c->setOffset($offset);
-		$objs = self::doSelect($c);
+        try {
+            $objs = self::doSelect($c);
+        } catch(Exception $e) {
+            throw new afStudioNotificationsException(null, null, $e);
+        }
 		if(count($objs)>0)
 		{
 			return $objs;
