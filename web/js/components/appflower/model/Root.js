@@ -30,13 +30,13 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	tag: 'root',
 	
 	properties : [
-//      	{name: "xmlns:i", type: 'internalUriType'},
+//      {name: "xmlns:i", type: 'internalUriType'},
 //		{name: "xmlns:xsi",  type: 'internalUriType'},
 //		{name: "xsi:schemaLocation",  type: 'internalUriType'},
-      	{name: "type", type: 'viewType', required: true},
-      	{name: "tabbed", type: 'boolean'},
-      	{name: "module", type: 'string'},
-      	{name: "dynamic", type: 'boolean', defaultValue: false}
+      	{name: "type", type: 'viewType', required: true}
+//TODO should be fixed after AF schema cleaning       	
+//      	{name: "tabbed", type: 'boolean'}
+//      	{name: "module", type: 'string'}
 	],
 	
 	/**

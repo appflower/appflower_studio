@@ -16,6 +16,6 @@ afStudio.model.widget.Actions = Ext.extend(afStudio.model.Node, {
 	
 	nodeTypes : [
 		{name: afStudio.ModelNode.ACTION, required: true},
-		{name: afStudio.ModelNode.IF, required: true}
+		{name: afStudio.ModelNode.IF}
 	]	
 });

@@ -40,6 +40,10 @@ N.WidgetViewTemplate = Ext.extend(N.WidgetTemplate, {
 	}	
 });
 
+N.EditTemplate = Ext.extend(N.WidgetViewTemplate, {});
+
+N.ShowTemplate = Ext.extend(N.WidgetViewTemplate, {});
+
 /**
  * List widget view structural template.
  * @class N.ListTemplate
@@ -50,6 +54,10 @@ N.ListTemplate = Ext.extend(N.WidgetViewTemplate, {
 	constructor : function() {		
 		afStudio.model.template.ListTemplate.superclass.constructor.call(this);
 		
+		//remove i:grouping node, List View has no it.
+		var gidx = this.structure.indexOf(afStudio.ModelNode.GROUPING);
+		this.structure.splice(gidx, 1);
+		
 		this.structure = this.structure.concat([
 			afStudio.ModelNode.PARAMS,
 			afStudio.ModelNode.PROXY,
@@ -57,26 +65,6 @@ N.ListTemplate = Ext.extend(N.WidgetViewTemplate, {
 			afStudio.ModelNode.MORE_ACTIONS
 		]);
 	}	
-});
-
-N.EditTemplate = Ext.extend(N.WidgetViewTemplate, {});
-
-N.ShowTemplate = Ext.extend(N.WidgetViewTemplate, {});
-
-/**
- * Info widget view structural template.
- * @class N.InfoTemplate
- * @extends N.WidgetTemplate
- */
-N.InfoTemplate = Ext.extend(N.WidgetTemplate, {
-	constructor : function() {		
-		afStudio.model.template.InfoTemplate.superclass.constructor.call(this);
-		
-		this.structure = this.structure.concat([
-			afStudio.ModelNode.DESCRIPTION,
-			afStudio.ModelNode.ALTERNATE_DESCRIPTIONS
-		]);
-	}
 });
 
 /**

@@ -40,8 +40,6 @@ N.ModelNode = {
 	
 	SET	: 'i:set',
 	
-	BY : 'i:by',
-	
 	REF	: 'i:ref',
 	
 	PARAMS : 'i:params',

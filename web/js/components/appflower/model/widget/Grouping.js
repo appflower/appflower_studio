@@ -1,7 +1,7 @@
 /**
  * <u>i:grouping</u> model node.
  */
-afStudio.model.widget.Grouping = Ext.extend(afStudio.model.TypedNode, {
+afStudio.model.widget.Grouping = Ext.extend(afStudio.model.Node, {
 
 	id : afStudio.ModelNode.GROUPING,
 	
@@ -13,11 +13,7 @@ afStudio.model.widget.Grouping = Ext.extend(afStudio.model.TypedNode, {
 		{name: 'collapsed', type: 'boolean', defaultValue: 'false'}      	
 	],
 	
-	editNodeTypes : [
+	nodeTypes : [
 		{name: afStudio.ModelNode.SET, required: true}
-	],
-	
-	listNodeTypes : [
-		{name: afStudio.ModelNode.BY, required: true}		
-	]
+	]	
 });
