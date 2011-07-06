@@ -950,6 +950,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	//property validation can be processed here
     	if (this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
+    		//TODO properly handle validation process
     		property.setValue(v);
 	    	this.fireEvent("modelPropertyChanged", this, p, v);
     	}

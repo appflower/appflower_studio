@@ -3,7 +3,7 @@
  * 
  * @class afStudio.model.Fields
  * @extends afStudio.model.Node
- * @author Nikolai Babinski
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
 

@@ -1,5 +1,6 @@
 /**
  * <u>i:method</u> model node.
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.widget.Method = Ext.extend(afStudio.model.Node, {
 

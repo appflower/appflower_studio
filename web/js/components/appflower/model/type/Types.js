@@ -123,7 +123,7 @@ afStudio.model.Types.ABSOLUTEURITYPE = {
 afStudio.model.Types.VIEWTYPE = {
 	type: 'viewType',
 	
-	values: ['edit', 'list', 'show', 'layout', 'html', 'wizard', 'info', 'menu'],
+	values: ['edit', 'list', 'show', 'layout', 'html', 'wizard', 'menu'],
 	
 	validate: function(v) {
 		return this.values.indexOf(v) != -1;
@@ -150,3 +150,52 @@ afStudio.model.Types.FETCHTYPE = {
 	}
 };
 
+afStudio.model.Types.ALIGNTYPE = {
+	type: 'alignType',
+	
+	values: ['left', 'center', 'right'],	
+	
+	validate: function(v) {
+		return this.values.indexOf(v) != -1;
+	}
+};
+
+afStudio.model.Types.SORTTYPE = {
+	type: 'sortType',
+	
+	values: ['ASC', 'DESC'],	
+	
+	validate: function(v) {
+		return this.values.indexOf(v) != -1;
+	}
+};
+
+afStudio.model.Types.DBNAMETYPE = {
+	type: 'dbNameType',
+	
+	pattern: /^\w+$/,
+	
+	validate: function(v) {
+		if (!Ext.isString(v)) {
+			return false;
+		}
+		v = v.trim();
+		
+		return this.pattern.test(v);
+	}
+};
+
+afStudio.model.Types.ARRAYTYPE = {
+	type: 'arrayType',
+	
+	pattern: /^\[\w+\s*:\s*["'\w]+?(\s*,\s*\w+\s*:\s*["'\w]+?)*\]$/,
+	
+	validate: function(v) {
+		if (!Ext.isString(v)) {
+			return false;
+		}
+		v = v.trim();
+		
+		return this.pattern.test(v);
+	}
+};

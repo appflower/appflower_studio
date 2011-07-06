@@ -1,5 +1,6 @@
 /**
  * <u>i:datasource</u> model node.
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.widget.Datasource = Ext.extend(afStudio.model.Node, {
 

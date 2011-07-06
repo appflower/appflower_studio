@@ -60,7 +60,6 @@ N.ListTemplate = Ext.extend(N.WidgetViewTemplate, {
 		
 		this.structure = this.structure.concat([
 			afStudio.ModelNode.PARAMS,
-			afStudio.ModelNode.PROXY,
 			afStudio.ModelNode.ROW_ACTIONS,
 			afStudio.ModelNode.MORE_ACTIONS
 		]);
