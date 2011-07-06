@@ -43,7 +43,7 @@ ul {
 #studio_popup #studio_popup_primary #popup_content h2 {font-size:27px; font-weight:bold; text-align:center; margin-bottom:20px;}
 #studio_popup #studio_popup_primary #popup_content p {font-size:14px; font-weight:bold; line-height:18px; text-align:center; margin-bottom:20px;color: #666;}
 
-#studio_popup #studio_popup_primary #popup_content a {display:block; width:229px; height:229px; background:url(../images/studio/btn_play.png) 0 0 no-repeat; position:absolute; margin: -345px 0 0 150px; text-indent:-9999px;}
+#studio_popup #studio_popup_primary #popup_content a.flowerbutton {display:block; width:229px; height:229px; background:url(../images/studio/btn_play.png) 0 0 no-repeat; position:absolute; margin: -345px 0 0 150px; text-indent:-9999px;}
 
 
 #studio_popup #studio_popup_secondary {float:right; height:460px; width:190px; border-left:3px solid #cdd9e8;}
