@@ -73,7 +73,7 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 	 * (defaults to mask all viewport)  
 	 */
 	,mask : function(opt) {		
-		var maskMessage = Ext.isString(opt) ? opt : 'Loading, please Wait...',
+		var maskMessage = Ext.isString(opt) ? opt : 'Loading, please wait...',
 			region;
 		
 		if (Ext.isObject(opt)) {
@@ -93,7 +93,7 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 	 * @param {String} region The region to unmask
 	 */
 	,unmask : function(region) {
-		if (['center', 'west', 'north', 'south'].indexOf(region) != -1) {			
+		if (region && ['center', 'west', 'north', 'south'].indexOf(region) != -1) {		
 			this.viewRegions[region].body.unmask();
 		}
 		this.el.unmask();

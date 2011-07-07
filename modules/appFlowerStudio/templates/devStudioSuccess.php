@@ -65,6 +65,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 </script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.xhr.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
@@ -147,6 +148,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
 
 <!-- appflower view model -->
+	<!-- model -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/type/Types.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/ModelNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/BaseTemplate.js"></script>
@@ -174,6 +176,10 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/NodeError.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/PropertyError.js"></script>
 
+	<!-- controller -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/BaseController.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/error/ControllerError.js"></script>
+	
 <!-- end of appflower view model -->
 
 <!-- widgetDesigner -->

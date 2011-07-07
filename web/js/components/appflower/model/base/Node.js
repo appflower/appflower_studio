@@ -31,7 +31,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     pathSeparator: "/",
 	
 	/**
-	 * @cfg {Object} (Required) definition 
+	 * @cfg {Object} (Optional) definition 
 	 * The node's definition object 
 	 */
 	
@@ -248,7 +248,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         
         afStudio.model.Node.superclass.constructor.call(this);
         
-        this.initNodeDefinition(config.definition);
+        if (config.definition) {
+        	this.initNodeDefinition(config.definition);
+        }
     },
     //eo constructor
     
@@ -683,7 +685,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * @private
+     * @protected
      * @param {Tree} tree
      * @param {Boolean} destroy
      */
