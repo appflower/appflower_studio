@@ -28,13 +28,6 @@ abstract class afsBaseModel
      */
     protected $definition;
     
-    /**
-     * Definition in xml format
-     *
-     * @var string
-     */
-    protected $definition_xml;
-    
     public function __construct() {}
     
     /**
@@ -117,7 +110,5 @@ abstract class afsBaseModel
         
         return $modifier;
     }
-    
-    // abstract protected function validate();
     
 }

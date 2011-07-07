@@ -55,13 +55,6 @@ class afsXmlDefinition extends afsBaseDefinition
      */
     protected function doPack(Array $definition)
     {
-        // $definition = $this->getDefinition();
-        
-        // build definition via widget type
-        $xmlBuilder = new afsXmlBuilder($definition, 'edit');
-        $definition = $xmlBuilder->getXml();
-        
-        /*
         // Needs to define/initialize xml serialize constants
         $oXmlUtil = new XML_Util;
         
@@ -69,18 +62,15 @@ class afsXmlDefinition extends afsBaseDefinition
         $status = $serializer->serialize($this->getDefinition());
         
         if (!$status) {
-            throw new afStudioWidgetCommandException("Definition can't be serialized");
+            throw new afsXmlDefinitionException("Definition can't be serialized");
         }
         // getting serialized definition
         $definition = $serializer->getSerializedData();
         
         // update fields that should be wrapped with cdata
-        $definition = afStudioWidgetCommandHelper::updateCdataFields($definition);
-        */
+        $definition = afsXmlDefinitionHelper::updateCdataFields($definition);
         
         return $definition;
-        
-        // $this->setDefinition($definition);
     }
     
     /**
@@ -91,37 +81,19 @@ class afsXmlDefinition extends afsBaseDefinition
      */
     protected function doUnpack($definition)
     {
-        // $definition = $this->getDefinition();
+        $unserializer = new XML_Unserializer($this->unserialize_options);
         
-        $options = array(
-            'parseAttributes' => true
-        );
-        
-        $unserializer = new XML_Unserializer($options);
+        // check unserialize status
         $status = $unserializer->unserialize($definition, false);
         
-        if ($status !== true) {
-            throw new Exception($status->getMessage());
+        if (!$status) {
+            throw new afsXmlDefinitionException($status->getMessage());
         }
         
+        // get unserialized data
         $definition = $unserializer->getUnserializedData();
         
         return $definition;
-        // $this->setDefinition($definition);
-        
-        // $this->setDefinition($definition);
-        
-        /*
-        $unserializer = new XML_Unserializer($this->unserialize_options);
-        // $status = $unserializer->unserialize($path, true);
-        $status = $unserializer->unserialize($definition, false);
-        
-        if ($status) {
-            $this->setDefinition($unserializer->getUnserializedData());
-        } else {
-            throw new afsWidgetModelException($status->getMessage());
-        }
-        */
     }
     
     /**
