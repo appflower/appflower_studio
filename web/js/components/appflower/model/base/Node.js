@@ -283,7 +283,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Mixed} definition The node definition object
      */
     initNodeDefinition : function(definition) {
-		this.applyNodeDefinition(definition, true);    	
+		this.applyNodeDefinition(definition, true);
     },
 	//eo initNodeDefinition
     
@@ -307,8 +307,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	//not ruin the definition object
 	    	var def = Ext.apply({}, definition);
 	    	
-    		this.applyProperties(def.attributes);
-	    	delete def.attributes;
+	    	if (def.attributes) {
+	    		this.applyProperties(def.attributes);
+		    	delete def.attributes;
+	    	}
 	    	
     		if (def._content) {
     			this.setNodeData(def._content);

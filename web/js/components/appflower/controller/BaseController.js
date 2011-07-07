@@ -11,11 +11,11 @@ Ext.ns('afStudio.controller');
 afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 
 	/**
-	 * TODO place real url! 
+	 * TODO place real url! correct afStudioWSUrls.getGetWidgetUrl 
+	 * 
 	 * @cfg {String} url (defaults to 'URL_HERE')
 	 */
 	url : '/afsWidgetBuilder/getWidget',
-//	afStudioWSUrls.getGetWidgetUrl
 	
 	/**
 	 * @cfg {Object} widget
@@ -29,14 +29,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 	 * (Required) The widget meta information.
 	 */
 	/**
-	 * @cfg {afStudio.model.Node} root
-	 * (Optional) The model. Root is the container(top) model node.
-	 * Only one configuration option should be passed: root or viewDefinitoon.
-	 */
-	/**
 	 * @cfg {Object} viewDefinition
 	 * (Optional) The view definiton object - meta-data for the Model.
-	 * Only one configuration option should be passed: root or viewDefinitoon.
 	 */
 	
 	/**
@@ -79,6 +73,10 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      */
     ready : false,
     
+    /**
+     * @constructor
+     * @param {Object} config Controller configuration object
+     */
     constructor : function(config) {
     	config = config || {};
     	
@@ -89,6 +87,10 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	
     	if (config.url) {
     		this.url = config.url;
+    	}
+    	
+    	if (config.viewDefinition) {
+    		this.viewDefinition = config.viewDefinition;
     	}
     	
     	if (!config.widget && !Ext.isObject(config.widget)) {
@@ -104,10 +106,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 	     * @type {Object}
 	     */    	
         this.nodeHash = {};
-
-        if (config.root) {
-            this.setRootNode(config.root);
-        }
         
         this.addEvents(
             "beforeModelNodeAppend",
@@ -147,9 +145,10 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         
         afStudio.controller.BaseController.superclass.constructor.call(this);
         
-        //the model is not defined yet
-        if (!this.root) {
-        	this.initModel(config.viewDefinition);
+        if (this.viewDefinition) {
+        	this.initModel(this.viewDefinition);
+        } else {
+        	this.loadViewDefinition();
         }
         
         //initViews
@@ -178,24 +177,27 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * Loads view definiton.
      */
     loadViewDefinition : function() {
+    	var viewUrl = Ext.urlAppend(this.url, Ext.urlEncode({uri: this.widget.uri}));
+    	
     	if (this.fireEvent('beforeLoadViewDefinition')) {
-    		//code
     		
     		afStudio.xhr.executeAction({
-    			url: this.url + '?uri=pages/StudioList',
+    			url: viewUrl,
     			scope: this,
     			run: function(response, ops) {
-    				console.log('run', this);
-    				console.log('run', response, ops);
+    				this.initModel(response.data);
     			},
-    			error: function() {
-    				console.log('error', this);
+    			error: function(response, ops) {    				
+    			},
+    			mask: {
+    				region: 'center'
     			}
     		});
     		
     		this.fireEvent('loadViewDefinition');
     	}
     },
+    //eo loadViewDefinition
     
     /**
      * Saves view definiton.
@@ -214,16 +216,17 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     /**
      * Template method.
      * @protected
-     * @param {Object} vd The view definition object
+     * @param {Object} viewDefinition The view definition object
      */
-    initModel : function(vd) {
-    	var _self = this;
+    initModel : function(viewDefinition) {
+    	var _self = this,
+    		   vd = Ext.apply({}, viewDefinition);
+
+		var root = new afStudio.model.Root({
+    		definition: vd
+    	});
     	
-    	if (vd) {
-    		this.root.applyNodeDefinition(vd, true);
-    	} else {
-    		this.loadViewDefinition();
-    	}
+    	this.setRootNode(root);
     },
     //eo initModel
     

@@ -11,6 +11,6 @@ afStudio.model.error.PropertyError = Ext.extend(Ext.Error, {
     name: 'afStudio.model.PropertyError',
     
     lang: {
-        'incorrect-properties' : 'The properties type is not correct.'
+        'incorrect-properties' : 'The "properties" type is not correct, should be an object.'
     }
 });

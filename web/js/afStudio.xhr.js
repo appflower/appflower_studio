@@ -56,9 +56,9 @@ afStudio.xhr = {
 	executeAction : function(action) {
 		var _this = this,
 			showNoteOnSuccess = action.showNoteOnSuccess === false ? false : true;
-			
+
 		if (action.mask) {			
-			afStudio.vp.mask(mask);
+			afStudio.vp.mask(action.mask);
 		}
 		
 		var unmask = function () {
@@ -74,7 +74,7 @@ afStudio.xhr = {
 		   
 			scope: action.scope ? action.scope : _this,
 		   
-			success: function(xhr, opt) {				
+			success: function(xhr, opt) {			
 		   		unmask();
 		   		
 				var response = Ext.decode(xhr.responseText),
@@ -86,7 +86,7 @@ afStudio.xhr = {
 					if (Ext.isFunction(action.run)) {
 						Ext.util.Functions.createDelegate(action.run, this, [response, opt], false)();
 					}
-					//update console if required
+					//updates console if "console" property exists in response 
 					if (response.console) {	
 						afStudio.updateConsole(response.console);
 					}
@@ -125,4 +125,7 @@ afStudio.xhr = {
 		});
 	}
 	//eo executeAction
+	
+	//TODO add supporting of all Ext.Ajax.request parameters
+	//TODO add success message instead using of server-side msg
 };
