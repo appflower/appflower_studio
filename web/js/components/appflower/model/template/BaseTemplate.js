@@ -22,7 +22,7 @@ N.BaseTemplate = Ext.extend(Object, {
 	 */
 	processStructure : function(model) {
 		Ext.iterate(this.structure, function(n, idx) {
-			if (model.getModelNode(n) == null) {
+			if (model.getImmediateModelNode(n) == null) {
 				model.createNode(n);
 			}
 		});

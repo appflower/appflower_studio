@@ -174,30 +174,50 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Loads view definiton.
+     * Loads view definition and instantiates model {@link #initModel} based on loaded definition.
+     * @protected
      */
     loadViewDefinition : function() {
-    	var viewUrl = Ext.urlAppend(this.url, Ext.urlEncode({uri: this.widget.uri}));
+    	var _me = this,
+    		viewUrl = Ext.urlAppend(this.url, Ext.urlEncode({uri: this.widget.uri}));
     	
     	if (this.fireEvent('beforeLoadViewDefinition')) {
     		
     		afStudio.xhr.executeAction({
     			url: viewUrl,
-    			scope: this,
-    			run: function(response, ops) {
-    				this.initModel(response.data);
-    			},
-    			error: function(response, ops) {    				
-    			},
     			mask: {
     				region: 'center'
+    			},
+    			scope: _me,
+    			run: function(response, ops) {
+    				this.fireEvent('loadViewDefinition');
+    				this.initModel(response.data);
     			}
     		});
-    		
-    		this.fireEvent('loadViewDefinition');
     	}
     },
     //eo loadViewDefinition
+    
+    /**
+     * Instantiates model.
+     * Template method.
+     * @protected
+     * @param {Object} viewDefinition The view definition object
+     */
+    initModel : function(viewDefinition) {
+    	var _self = this,
+    		   vd = Ext.apply({}, viewDefinition);
+
+		var root = new afStudio.model.Root({
+    		definition: vd
+    	});
+    	
+    	//set up viewDefinition object
+    	this.viewDefinition = viewDefinition;
+    	
+    	this.registerModel(root);
+    },
+    //eo initModel
     
     /**
      * Saves view definiton.
@@ -211,27 +231,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     		
     		this.fireEvent('saveViewDefinition');
     	}
-    },
-    
-    /**
-     * Template method.
-     * @protected
-     * @param {Object} viewDefinition The view definition object
-     */
-    initModel : function(viewDefinition) {
-    	var _self = this,
-    		   vd = Ext.apply({}, viewDefinition);
-
-		var root = new afStudio.model.Root({
-    		definition: vd
-    	});
-    	
-    	this.setRootNode(root);
-    },
-    //eo initModel
-    
-    registerView : function (view) {
-    	
     },
     
     /**
@@ -250,16 +249,21 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * Sets the root node for this model controller.
+     * Registers a Model. Sets up a model's root node.
+     * @protected
      * @param {Node} node
-     * @return {Node}
+     * @return {Node} model's root node.
      */
-    setRootNode : function(node) {
+    registerModel : function(node) {
         this.root = node;
         node.isRoot = true;
      	node.setOwnerTree(this);
         
         return node;
+    },
+    //eo registerModel
+    
+    registerView : function (view) {
     },
 
     /**

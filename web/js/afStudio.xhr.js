@@ -103,7 +103,7 @@ afStudio.xhr = {
 				} else {
 					if (Ext.isFunction(action.error)) {
 						Ext.util.Functions.createDelegate(action.error, this, [response, opt], false)();
-					}			   	   
+					}	   
 					afStudio.Msg.warning(message);
 				}
 			},

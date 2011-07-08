@@ -76,8 +76,10 @@ afStudio.model.Property = Ext.extend(Object, {
      */
     setValue : function(v) {
     	if (!this.validate(v)) {
-    		return false;	
+    		return false;
     	}
+    	//fix for boolean type
+    	v = (this.type == afStudio.model.Types.BOOLEAN && Ext.isString(v)) ? v.bool() : v;
     	
 		this.value = v;    	
     }

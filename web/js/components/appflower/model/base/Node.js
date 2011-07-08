@@ -307,6 +307,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	//not ruin the definition object
 	    	var def = Ext.apply({}, definition);
 	    	
+	    	//DEBUG
+	    	//console.log('node', String.format('[{0}] {1}', this.tag, this.id), def);
+	    	
 	    	if (def.attributes) {
 	    		this.applyProperties(def.attributes);
 		    	delete def.attributes;
@@ -316,10 +319,20 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     			this.setNodeData(def._content);
     		} else {
     			Ext.iterate(def, function(n, d) {
-    				_this.createNode(n, d);
+    				//collection of the same nodes
+					if (Ext.isArray(d)) {				
+						Ext.iterate(d, function(nd) {
+			    			_this.createNode(n, nd);				
+						});
+					} else {
+						_this.createNode(n, d);	
+					}
+					
     			}, _this);
     		}
     	} else {
+    		//DEBUG
+    		//console.log('set data value', String.format('[{0}] {1}', this.tag, this.id), definition);
     		this.setNodeData(definition);
     	}
     	
@@ -824,9 +837,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Boolean} deep (Optional) True to search through nodes deeper than the immediate children
      * @return {Node} The found child or null if none was found
      */
-    findChildById : function(value, deep) {
+    findChildById : function(value, deep, byPattern) {
         return this.findChildBy(function() {
-            return this.id == value;            
+        	return byPattern ? new RegExp("^" + value + "(?:-\\d+)?$", 'i').test(this.id) 
+        					 : this.id == value;
         }, null, deep);
     },
 
@@ -1109,22 +1123,16 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
    //TODO moveNode  - method
     
     toString : function() {
-    	var _this = this;
-    	
+    	var _me = this;
 		var tpl = new Ext.XTemplate(
-			'[model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}, ',
-			'properties: {[this.toJson(values.properties.map)]}]',
+			'[model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}]',
 			{
         		compiled: true,
         		disableFormats: true,
-        		toJson: function(o) {
-        			return Ext.encode(o);
-        		},
         		getData: function() {
-        			return _this[_this.NODE_DATA];
+        			return _me[_me.NODE_DATA];
         		}
-    		}
-    	);
+    		});
     	
         return tpl.apply(this);
     }

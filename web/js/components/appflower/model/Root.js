@@ -117,5 +117,9 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	 */
 	getModelNode : function(nodeId) {
 		return this.findChildById(nodeId, true);
+	},
+	
+	getImmediateModelNode : function(nodeId) {		
+		return this.findChildById(nodeId, false, true);
 	}
 });

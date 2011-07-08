@@ -44,5 +44,24 @@ afStudio.model.widget.Column = Ext.extend(afStudio.model.Node, {
 //      {name: 'edit', type: 'boolean', defaultValue: false},
 //		{name: 'action', type: 'token'},
 //		{name: 'summaryType', type: 'token'}	
-	]	
+	],
+	
+	/**
+	 * @override
+	 * @return {String} node's string presentation
+	 */
+    toString : function() {
+		var tpl = new Ext.XTemplate(
+			'[model.Node: "{tag}", ID: "{id}", properties: {[this.toJson(values.properties.map)]}]',
+			{
+        		compiled: true,
+        		disableFormats: true,
+        		toJson: function(o) {
+        			return Ext.encode({'name': o.name.value, 'label': o.label.value});
+        		}
+    		});
+    	
+        return tpl.apply(this);
+    }
+    //eo toString	
 });
