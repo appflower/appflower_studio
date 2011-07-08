@@ -151,9 +151,9 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         	this.loadViewDefinition();
         }
         
-        //initViews
+        this.initView();
         
-        //fireEvent("ready")
+        this.fireEvent("ready");
     },
     //eo constructor
 
@@ -199,7 +199,22 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     //eo loadViewDefinition
     
     /**
-     * Instantiates model.
+     * Saves view definiton.
+     */
+    saveViewDefinition : function() {
+    	var _self = this,
+    		   vd = this.viewDefinition;
+    		   
+    	if (this.fireEvent('beforeSaveViewDefinition', vd)) {
+    		//code
+    		
+    		this.fireEvent('saveViewDefinition');
+    	}
+    },
+    //eo saveViewDefinition
+    
+    /**
+     * Instantiates model layer.
      * Template method.
      * @protected
      * @param {Object} viewDefinition The view definition object
@@ -219,18 +234,15 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     //eo initModel
     
+    
+    //TODO implemnt view layer
     /**
-     * Saves view definiton.
+     * Instantiates view layer.
+     * Template method.
+     * @protected
      */
-    saveViewDefinition : function() {
-    	var _self = this,
-    		   vd = this.viewDefinition;
-    		   
-    	if (this.fireEvent('beforeSaveViewDefinition', vd)) {
-    		//code
-    		
-    		this.fireEvent('saveViewDefinition');
-    	}
+    initView : function() {
+    	
     },
     
     /**

@@ -21,7 +21,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * @type {String}
 	 */
 	NODE_DATA : 'data',
-	
     /**
      * The token used to separate paths in node ids (defaults to '/').
      * This path separator is used if a Model (structure of model's nodes) is used without Tree controller.
@@ -34,34 +33,27 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * @cfg {Object} (Optional) definition 
 	 * The node's definition object 
 	 */
-	
 	/**
 	 * @cfg {String} (Required) tag 
 	 * Node's tag name 
 	 */
-    
 	/**
-	 * @cfg {Object} (Optional) parentNode 
-	 * Parent node reference.
+	 * @cfg {String} (Optional) modelType
+	 * The model type.
 	 */
-	
-    
     
 	/**
 	 * @property tag The node tag name 
 	 * @type {String}
 	 */
-
 	/**
 	 * @property leaf
 	 * @type {Boolean}   
 	 */
-    
 	/**
 	 * @property properties (Read-only) The model node properties.
 	 * @type {Ext.util.MixedCollection}
 	 */	
-	
 	/**
 	 * The array of node types which this node can contains.
 	 * Node type can be specified as a string like afStudio.ModelNode.BUTTON or
@@ -104,7 +96,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         /**
          * The parent node for this node. @type Node
          */
-        this.parentNode = config.parentNode || null;
+        this.parentNode = null;
         
         /**
          * The first direct child node of this node, or null if this node has no child nodes. @type Node
@@ -1108,7 +1100,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		
 	    	n = new nodeCls({
 	    		tag: node,
-	    		parentNode: this,
+	    		modelType: this.getModelType(),
 	    		definition: nodeDefiniton
 	    	});
 	    	

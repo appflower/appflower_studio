@@ -10,7 +10,8 @@ Ext.ns('afStudio.model');
 afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 
 	/**
-	 * @cfg {String} modelType
+	 * @cfg {String} (Required) modelType
+	 * The model type.
 	 */
 	
 	/**
@@ -27,10 +28,8 @@ afStudio.model.TypedNode = Ext.extend(afStudio.model.Node, {
 	 */
 	constructor : function(config) {
 		config = config || {};		
-		this.parentNode = config.parentNode || null;		
-		var mt = config.modelType ? config.modelType : this.getModelType();
 		
-		this.applyType(mt);
+		this.applyType(config.modelType);
 		
 		afStudio.model.TypedNode.superclass.constructor.call(this, config);
 	},
