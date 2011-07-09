@@ -1,0 +1,45 @@
+# all folders paths should be from project root folder, with first slash - example paht: '/apps', path: '/lib/mode'
+# default 
+#     mode: g+rwX
+#     recursive: false
+# chmod modes more detailed in  `man chmod`
+# examples chmod modes(separated by comma):   g+rwx, 775, 664, go-rw, u=rw, g+rwX, a-x
+#                                             where u - file owner, g - group, o - other, a - all (alias for ugo)
+folders:
+  root:
+    path: '/'
+    mode: 'ug+X'
+    recursive: true
+  apps: 
+    path: '/apps'
+    mode: 'g+rw'
+    recursive: true
+  batch:
+    path: '/batch'
+    mode: 'g+rwx'
+    recursive: true
+  config:
+    path: '/config'
+    mode: 'g+rw'
+    recursive: true
+  lib:
+    path: '/lib'
+    mode: 'g+rw'
+    recursive: true
+  log:
+    path: '/log'
+    mode: 'g+rw'
+    recursive: true
+  plugins:
+    path: '/plugins'
+    mode: 'g+rw'
+    recursive: true
+  web:
+    path: '/web'
+    mode: 'g+rw'
+    recursive: true
+
+# If setted server option it will be used instead of prediction server options, this will be prioriteted than prediction
+# server:
+  # user:
+    # name:   '_www'
