@@ -187,7 +187,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
 	    $root = afStudioUtil::getRootDir();
 	    $afConsole = afStudioConsole::getInstance();
 	    
-		$console = $afConsole->execute('afs fix-perms');
+        // $console = $afConsole->execute('afs fix-perms');
 		
 		$oldDir = "{$root}/{$type}s/{$place}/modules/{$name}/";
 		$newDir = "{$root}/{$type}s/{$place}/modules/{$renamed}/";
@@ -274,6 +274,9 @@ class afStudioModuleCommand extends afBaseStudioCommand
                     $isCreated = $afConsole->wasLastCommandSuccessfull();
                     
                     if ($isCreated) {
+                        $path = sfConfig::get('sf_plugins_dir') . "/{$plugin}/modules/{$module}";
+                        afsFileSystem::create()->chmod($path, 0664, 0000, true);
+                        
                         $console .= $afConsole->execute('sf cc');
                         $message = "Created module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
                     } else {

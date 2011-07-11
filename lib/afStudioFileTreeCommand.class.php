@@ -13,7 +13,7 @@ class afStudioFileTreeCommand
 	{		
 		$this->afExtjs=afExtjs::getInstance();
 		$this->request=sfContext::getInstance()->getRequest();
-		$this->filesystem=new afStudioFilesystem();
+		$this->filesystem=new afsFileSystem();
 		
 		$this->realRoot=$realRoot;
 		$this->files=$_FILES;

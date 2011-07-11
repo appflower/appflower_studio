@@ -20,7 +20,7 @@ class afStudioConsole
     
     public function __construct() {
     	
-    	$this->filesystem=new afStudioFilesystem();
+    	$this->filesystem=new afsFileSystem();
 		
 		$this->uname = php_uname();
 		$this->uname_short = php_uname('n');
@@ -155,7 +155,7 @@ class afStudioConsole
 				if(isset($exec))
 				{
 					ob_start();
-					passthru('sudo ' . $exec . ' 2>&1', $return);
+					passthru($exec . ' 2>&1', $return);
 					$raw = ob_get_clean();
                                         
                                         $this->lastExecReturnCode = $return;
