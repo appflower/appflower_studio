@@ -53,7 +53,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
      */
     protected function processSave()
     {
-        // create reponse object
+        // create response object
         $response = afResponseHelper::create();
         
         try {
@@ -111,11 +111,6 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		$module     = $this->getParameter('module');
 		$type       = $this->getParameter('type', 'app');
 		
-		$afConsole = afStudioConsole::getInstance();
-		
-        // fix permissions
-        // $console = $afConsole->execute('afs fix-perms');
-		
 		$action = pathinfo($oldValue, PATHINFO_FILENAME);
 		$new_action = pathinfo($newValue, PATHINFO_FILENAME);
 		
@@ -123,6 +118,9 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		
 		if (!$widget->isNew()) {
 		    $response = $widget->rename($new_action);
+		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
+		    }
 		} else {
 		    $response = afResponseHelper::create()->success(false)->message("Can't retrieve widget");
 		}
@@ -149,6 +147,9 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		
 		if (!$widget->isNew()) {
 		    $response = $widget->delete();
+		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
+		    }
 		} else {
 		    $response = afResponseHelper::create()->success(false)->message("Widget <b>{$name}</b> doesn't exists");
 		}

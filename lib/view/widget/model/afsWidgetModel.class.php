@@ -235,8 +235,7 @@ class afsWidgetModel extends afsBaseModel
         // prepare folder for definition saving 
         $config_path = $this->getPlaceConfigPath();
         if (!file_exists($config_path)) {
-            // for now via console creating config for path
-            afStudioConsole::getInstance()->execute("mkdir {$config_path}");
+            afsFileSystem::create()->mkdirs($config_path, 0774);
         }
         $path = "{$config_path}/{$this->getAction()}.xml";
         
@@ -268,10 +267,6 @@ class afsWidgetModel extends afsBaseModel
     public function rename($new_name)
     {
         if (!$this->isNew()) {
-            // initialize syst vars
-    		$filesystem = new sfFileSystem();
-    		$afConsole = afStudioConsole::getInstance();
-            
     		$old_name = $this->getAction();
     		$module = $this->getModule();
     		$place = $this->getPlace();
@@ -279,19 +274,16 @@ class afsWidgetModel extends afsBaseModel
     		
     		$oldPath = $this->getPlaceConfigPath() . "/{$old_name}.xml";
     		$newPath = $this->getPlaceConfigPath() . "/{$new_name}.xml";
-
+            
     		$response = afResponseHelper::create();
-
+            
     		if (!file_exists($newPath)) {
         		$renamed = afsWidgetModelHelper::renameAction($old_name, $new_name, $module, $place, $type);
                 
-                // $filesystem->rename($oldName, $newName);
-                $console = $afConsole->execute("mv {$oldPath} {$newPath}");
+                afsFileSystem::create()->rename($oldPath, $newPath);
                 
         		if (!file_exists($oldPath) && file_exists($newPath)) {
-        			$console .= $afConsole->execute('sf cc');
-                    
-        			$response->success(true)->message("Renamed page from <b>{$old_name}</b> to <b>{$new_name}</b>!")->console($console);
+        			$response->success(true)->message("Renamed page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
         		} else {
         		    $response->success(false)->message("Can't rename page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
         		}
@@ -317,27 +309,22 @@ class afsWidgetModel extends afsBaseModel
             // getting current action name
             $action_name = $this->getAction();
             
-    		$afConsole = afStudioConsole::getInstance();
-            
             // init paths
     		$module_dir = $this->getPlaceModulePath();
     		$xml_dir = "{$module_dir}/config/{$action_name}.xml";
             
     		$action_dir = "{$module_dir}/actions/{$action_name}Action.class.php";
             
-    		$console = $afConsole->execute(array(
-                'afs fix-perms',
-                "rm -rf {$xml_dir}",
-                "rm -rf {$action_dir}"
-    		));
+            $filesystem = afsFileSystem::create();
+            
+            $filesystem->remove($xml_dir);
+            $filesystem->remove($action_dir);
             
             // init response object
     		$response = afResponseHelper::create();
             
     		if (!file_exists($xml_dir)) {
-    			$console .= $afConsole->execute('sf cc');
-                
-    			$response->success(true)->message("Deleted page <b>{$action_name}</b>")->console($console);
+    			$response->success(true)->message("Deleted page <b>{$action_name}</b>");
     		} else {
     		    $response->success(false)->message("Can't delete page <b>{$action_name}</b>!");
     		}
