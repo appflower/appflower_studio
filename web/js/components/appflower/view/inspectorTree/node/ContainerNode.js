@@ -4,8 +4,6 @@ afStudio.view.inspector.ContainerNode = function(config) {
     this.loaded = config && config.loaded === true;
     this.loading = false;
     
-    config.iconCls = 'icon-folder';
-    
     afStudio.view.inspector.ContainerNode.superclass.constructor.apply(this, arguments);
     /**
     * @event beforeload

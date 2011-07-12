@@ -15,10 +15,11 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	
 	/**
+	 * Ext Template method
 	 * @override
-	 */
+	 * @private
+	 */	
 	initComponent : function() {
-		
 		var root = this.controller.getRootNode(),
 			view = this.controller.widget;
 		
@@ -37,8 +38,36 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
         this.loader = l;
 		
 		afStudio.view.inspector.TreePanel.superclass.initComponent.apply(this, arguments);
-	}
+	},
 	//eo initComponent
+	
+	/**
+	 * Ext Template method
+	 * Initializes events.
+	 * @private
+	 */
+	initEvents : function() {
+		afStudio.view.inspector.TreePanel.superclass.initEvents.apply(this, arguments);
+		
+		var _me = this;
+		
+		_me.on({
+			scope: _me,
+			contextmenu:  _me.onNodeContextMenu
+		});
+	},
+	//eo initEvents
+	
+	/**
+	 * <u>contextmenu</u> event listener. More details {@link Ext.tree.TreePanel#contextmenu}. 
+	 * @protected
+	 */
+	onNodeContextMenu : function(node, e) {
+		var menu = node.initContextMenu() || node.contextMenu;
+		node.select();
+		menu.contextNode = node;
+	    menu.showAt(e.getXY());
+	}
 	
 });
 

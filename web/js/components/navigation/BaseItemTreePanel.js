@@ -415,7 +415,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * Abstract method called when tree's item contextmenu event was fired.
 	 * afStudio.navigation.BaseItemTreePanel <u>contextmenu</u> event listener
-	 * For moere detailed information look at {@link Ext.tree.TreePanel#contextmenu} 
+	 * For more detailed information look at {@link Ext.tree.TreePanel#contextmenu} 
 	 * @protected
 	 *  
 	 * @param {Ext.data.Node} node The node

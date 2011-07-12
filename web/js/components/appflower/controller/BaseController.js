@@ -239,15 +239,17 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	
     	Ext.iterate(this.views, function(k, v, views) {
     		views[k] = new v({
+    			autoScroll: true,
     			controller: _self,
     			loader: {
     				baseAttrs: {
-    					expanded: true
+//    					expanded: true
     				}
     			}
     		});
     	});
     },
+    //eo initView
     
     /**
      * @private
