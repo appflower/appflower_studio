@@ -11,7 +11,7 @@
  * </ul> 
  * @author Nikolai Babinski <niba@appflower.com>
  */
-afStudio.model.widget.Param = Ext.extend(afStudio.model.Node, {
+afStudio.model.Param = Ext.extend(afStudio.model.Node, {
 
 	tag : afStudio.ModelNode.PARAM,
 	

@@ -2,7 +2,7 @@
  * <u>i:params</u> model node.
  * @author Nikolai Babinski <niba@appflower.com>
  */
-afStudio.model.widget.Params = Ext.extend(afStudio.model.Node, {
+afStudio.model.Params = Ext.extend(afStudio.model.Node, {
 
 	id : afStudio.ModelNode.PARAMS,
 	

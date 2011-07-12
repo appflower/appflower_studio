@@ -54,7 +54,7 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	//eo constructor
 	
 	/**
-	 * Initialized Model Root node {@link #structure}.
+	 * Initialized Model Root node {@link #strTpl}.
 	 * Template method. 
 	 * @protected
 	 * @param {Function/String} strc The model structure
@@ -70,25 +70,28 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 			strc = afStudio.model.template[sTpl];
 		}
 		/**
-		 * Model Root node's structure @type {Object}
+		 * Model Root node's structure template @type {Object}
 		 */
-		this.structure = Ext.isFunction(strc) ? new strc() : undefined;
+		this.strTpl = Ext.isFunction(strc) ? new strc() : undefined;
 	},
 	//eo initStructure
 	
 	/**
-	 * Processes node structure based on {@link #structure}.
+	 * Processes node structure based on {@link #strTpl}.
 	 * Template method.
 	 * @protected
 	 */
 	processStructure : function() {
-		if (!this.structure) {
+		if (!this.strTpl) {
 			return;
 		}
 		
 		this.suspendEvents();
-		this.structure.processStructure(this);
+		this.strTpl.processStructure(this);
 		this.resumeEvents();
+		
+		//update nodeTypes
+		this.nodeTypes = this.nodeTypes.concat(this.strTpl.structure);
 	},
 	//eo processStructure
 	

@@ -1,7 +1,7 @@
 /**
  * <u>i:description</u> model node.
  */
-afStudio.model.widget.Description = Ext.extend(afStudio.model.Node, {
+afStudio.model.Description = Ext.extend(afStudio.model.Node, {
 
 	id : afStudio.ModelNode.DESCRIPTION,
 	

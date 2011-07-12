@@ -157,29 +157,33 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/TypedNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/Property.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Root.js"></script>
-
+		<!-- model errors -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/NodeError.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/PropertyError.js"></script>
+		<!-- general -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Param.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Params.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Description.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/AlternateDescriptions.js"></script>
-
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Fields.js"></script>
+		<!-- widget -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Actions.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Column.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Confirm.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Datasource.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Method.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Fields.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Grouping.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Set.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Method.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Ref.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Column.js"></script>
-
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/NodeError.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/PropertyError.js"></script>
-
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Set.js"></script>
 	<!-- controller -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/BaseController.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/error/ControllerError.js"></script>
-	
+	<!-- view -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorLoader.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/error/LoaderError.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/TreeNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/ContainerNode.js"></script>	
 <!-- end of appflower view model -->
 
 <!-- widgetDesigner -->

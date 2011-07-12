@@ -5,7 +5,7 @@ Ext.ns('afStudio.model.error');
  * 
  * @class afStudio.model.error.PropertyError
  * @extends Ext.Error
- * @author Nikolai Babinski
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.error.PropertyError = Ext.extend(Ext.Error, {
     name: 'afStudio.model.PropertyError',

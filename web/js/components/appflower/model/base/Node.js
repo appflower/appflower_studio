@@ -11,7 +11,7 @@ Ext.ns('afStudio.model.widget');
  * 
  * @class afStudio.model.Node
  * @extends Ext.util.Observable
- * @author Nikolai Babinski
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
@@ -70,6 +70,13 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         this.leaf = config.leaf;
         
         this.tag = this.tag || config.tag;
+        
+        /**
+         * model type required for resolving node namespace
+         * it can be changed in future by refactoring
+         * node's {@link #applyNodeDefinition} and {@link #createNode} methods
+         */
+        this.modelType = config.modelType || null;
         
         /**
          * The node id. @type String
@@ -287,7 +294,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Boolean} silent If silent is true all node's events are suspended
      */
     applyNodeDefinition : function(definition, silent) {
-    	var _this = this;
+    	var _me = this;
     	
      	if (!Ext.isDefined(definition)) {
     		return;
@@ -309,24 +316,27 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	
     		if (def._content) {
     			this.setNodeData(def._content);
+    			delete def._content;
     		} else {
     			Ext.iterate(def, function(n, d) {
     				//collection of the same nodes
 					if (Ext.isArray(d)) {				
 						Ext.iterate(d, function(nd) {
-			    			_this.createNode(n, nd);				
+			    			_me.createNode(n, nd);				
 						});
 					} else {
-						_this.createNode(n, d);	
+						_me.createNode(n, d);	
 					}
 					
-    			}, _this);
+    			});
     		}
     	} else {
     		//DEBUG
     		//console.log('set data value', String.format('[{0}] {1}', this.tag, this.id), definition);
     		this.setNodeData(definition);
     	}
+    	
+    	//createNode createChild
     	
     	silent ? this.resumeEvents() : null;
     },
@@ -925,6 +935,21 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
+     * Returns all node's properties as a hash object key/value pairs {k:v}.
+     * @return {Object} properties hash
+     */
+    getPropertiesHash : function() {
+    	var ps = this.getProperties(),
+    		hash = {};
+    	
+    	ps.eachKey(function(k, p) {
+    		hash[k] = p.value; 
+    	});
+    	
+    	return hash;
+    },
+    
+    /**
      * Returns property.
      * @param {String} p The property name.
      * @return {Mixed} property
@@ -1037,12 +1062,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     /**
 	 * Returns Model's type.
      * @protected
-     * @return {String} type if specified otherwise returns undefined
+     * @return {String} type if specified otherwise returns null
      */
 	getModelType : function() {
-		var r = this.getRootNode();
-		
-		return r ? r.getModelType() : null;  
+		return this.modelType;  
 	},    
 	//eo getModelType
     
@@ -1074,7 +1097,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     			return false;
     		}
     	});
-    	
+
     	return Ext.isFunction(nCls) ? nCls : null;
     },
     //eo getNodeConstructorByName
@@ -1105,7 +1128,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	});
 	    	
 	    	this.fireEvent("modelNodeCreated", this.ownerTree, this, n);
-	    	this.appendChild(n);
+	    	n = this.appendChild(n);
     	}
     	
     	return n; 
