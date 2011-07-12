@@ -35,9 +35,12 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             
             $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
             
-            $data = $widget->getDefinition();
-            
-            $response->success(true)->data(array(), $data, 0);
+            if (!$widget->isNew()) {
+                $data = $widget->getDefinition();
+                $response->success(true)->data(array(), $data, 0);
+            } else {
+                $response->success(false)->message("Widget '{$this->module}/{$this->action}' doesn't exists");
+            }
         } catch( Exception $e ) {
             $response->success(false)->message($e->getMessage());
         }
@@ -79,13 +82,12 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $saveResponse = $widget->save();
             
             if ($saveResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                // deploy libs to main project 
+                afStudioWidgetCommandHelper::deployLibs();
+                
                 $message = $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved';
                 
-                $response
-                    ->success(true)
-                    ->message($message)
-                    ->data(array(), afStudioWidgetCommandHelper::getInfo($this->action, $this->module, $place, $place_type), 0);
-                
+                $response->success(true)->message($message)->data(array(), afsWidgetModelHelper::getInfo($widget), 0);
             } else {
                 $response->success(false)->message($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
             }

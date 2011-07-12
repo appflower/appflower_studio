@@ -246,7 +246,6 @@ class afsWidgetModel extends afsBaseModel
         $response = afResponseHelper::create();
         if ($status) {
             afStudioUtil::writeFile($path, $definition->get());
-            afStudioWidgetCommandHelper::deployLibs();
             
             // check exists action or not
             $response->success($this->ensureActionExists());
@@ -336,23 +335,12 @@ class afsWidgetModel extends afsBaseModel
     }
     
     /**
-     * Generate place path 
-     *
-     * @return string
-     * @author Sergey Startsev
-     */
-    protected function getPlacePath()
-    {
-        return afStudioUtil::getRootDir() . "/{$this->place_type}s/{$this->place}";
-    }
-    
-    /**
      * Generate place path to config path of current module
      *
      * @return string
      * @author Sergey Startsev
      */
-    protected function getPlaceConfigPath()
+    public function getPlaceConfigPath()
     {
         return $this->getPlaceModulePath() . "/config";
     }
@@ -363,9 +351,20 @@ class afsWidgetModel extends afsBaseModel
      * @return string
      * @author Sergey Startsev
      */
-    protected function getPlaceModulePath()
+    public function getPlaceModulePath()
     {
         return $this->getPlacePath() . "/modules/{$this->getModule()}";
+    }
+    
+    /**
+     * Generate place path 
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    protected function getPlacePath()
+    {
+        return afStudioUtil::getRootDir() . "/{$this->place_type}s/{$this->place}";
     }
     
     /**
@@ -408,6 +407,7 @@ class afsWidgetModel extends afsBaseModel
      * 
      * @return boolean
      * @author Lukasz Wojciechowski
+     * @author Sergey Startsev
      */
     private function ensureActionExists()
     {
@@ -424,7 +424,7 @@ class afsWidgetModel extends afsBaseModel
         
         afStudioUtil::writeFile(
             $actionFilePath, 
-            afStudioWidgetCommandTemplate::action($this->getAction(), $this->getType())
+            afsWidgetModelTemplate::action($this->getAction(), $this->getType())
         );
         
         return true;

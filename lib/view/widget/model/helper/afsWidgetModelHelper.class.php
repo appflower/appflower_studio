@@ -111,4 +111,51 @@ class afsWidgetModelHelper extends afsBaseModelHelper
 		return $console;
     }
     
+    /**
+     * Getting widget info
+     *
+     * @param string $action 
+     * @param string $module 
+     * @param string $place 
+     * @param string $place_type 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getInfo(afsWidgetModel $widget)
+    {
+        $module_dir = $widget->getPlaceModulePath();
+        $place_config_path = $widget->getPlaceConfigPath();
+        
+        $action = $widget->getAction();
+        $module = $widget->getModule();
+        $place = $widget->getPlace();
+        $place_type = $widget->getPlaceType();
+        
+        $actionPath = "{$module_dir}/actions/actions.class.php";
+        
+	    $predictActions = "{$action}Action.class.php";
+	    $predictActionsPath = "{$module_dir}/actions/{$predictActions}";
+	    
+	    if (file_exists($predictActionsPath)) {
+	        $actionPath = $predictActionsPath;
+	    }
+	    
+	    $actionName = pathinfo($actionPath, PATHINFO_BASENAME);
+        
+        // Info response
+        $info = array(
+            'place' => $place,
+            'placeType' => $place_type,
+            'module' => $module,
+            'widgetUri' => "{$module}/{$action}",
+            'securityPath' => "{$place_config_path}/security.yml",
+            'xmlPath' => "{$place_config_path}/{$action}.xml",
+            'actionPath' => $actionPath,
+            'actionName' => $actionName,
+            'name' => $action
+        );
+        
+        return $info;
+    }
+    
 }
