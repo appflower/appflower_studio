@@ -59,15 +59,19 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo initEvents
 	
 	/**
-	 * <u>contextmenu</u> event listener. More details {@link Ext.tree.TreePanel#contextmenu}. 
+	 * <u>contextmenu</u> event listener. 
+	 * More details {@link Ext.tree.TreePanel#contextmenu}. 
 	 * @protected
 	 */
 	onNodeContextMenu : function(node, e) {
-		var menu = node.initContextMenu() || node.contextMenu;
+		var menu = node.contextMenu = node.contextMenu || node.initContextMenu();
 		node.select();
-		menu.contextNode = node;
-	    menu.showAt(e.getXY());
+		if (menu) {
+			menu.contextNode = node;
+		    menu.showAt(e.getXY());
+		}
 	}
+	//eo onNodeContextMenu 
 	
 });
 

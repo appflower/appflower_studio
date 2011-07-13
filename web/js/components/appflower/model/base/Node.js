@@ -5,9 +5,12 @@ Ext.ns('afStudio.model');
 Ext.ns('afStudio.model.widget');
 
 /**
- * Base <b>Model Node</b> class. All model's node are descendants of this class. 
+ * Base <b>Model Node</b> class. All model's node are descendants of this class.
+ * Borrows methods from {@link Ext.data.Node} class, these methods marked with @borrows marker. 
+ * <p>
  * Responsible for storing/managing atomic model data. Node can be treated as a equvivalent to a view's xml tag.
  * Encapsulates tag's attributes inside <u>properties</u>, all inner tags(nodes) are stored in the <u>childNodes</u>.
+ * </p>
  * 
  * @class afStudio.model.Node
  * @extends Ext.util.Observable
@@ -344,6 +347,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     
     /**
      * @override
+     * @borrows
      * @return {Boolean}
      */
     fireEvent : function(evtName) {
@@ -364,24 +368,32 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns true if this node is a leaf
+     * @borrows
      * @return {Boolean}
      */
     isLeaf : function() {
         return this.leaf === true;
     },
 
-    // private
+    /**
+     * @private
+     * @borrows
+     */
     setFirstChild : function(node) {
         this.firstChild = node;
     },
 
-    //private
+    /**
+     * @private
+     * @borrows
+     */
     setLastChild : function(node) {
         this.lastChild = node;
     },
 
     /**
      * Returns true if this node is the last child of its parent
+     * @borrows
      * @return {Boolean}
      */
     isLast : function() {
@@ -390,14 +402,26 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns true if this node is the first child of its parent
+     * @borrows
      * @return {Boolean}
      */
-    isFirst : function() {
+    isFirst : function() {		    	
        return (!this.parentNode ? true : this.parentNode.firstChild == this);
     },
 
     /**
+     * Returns true if this node is the direct child of root node
+     * @public
+     * @return {Boolean}
+     */
+    isDirectRootChild : function() {
+    	var root = this.getRootNode();
+    	return root == this.parentNode;
+    },
+    
+    /**
      * Returns true if this node has one or more child nodes, else false.
+     * @borrows
      * @return {Boolean}
      */
     hasChildNodes : function() {
@@ -407,6 +431,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     /**
      * Returns true if this node has one or more child nodes, or if the <tt>expandable</tt>
      * node attribute is explicitly specified as true (see {@link #config}), otherwise returns false.
+     * @borrows
      * @return {Boolean}
      */
     isExpandable : function() {
@@ -415,6 +440,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Insert node(s) as the last child node of this node.
+     * @public
      * @param {Node/Array} node The node or Array of nodes to append
      * @return {Node} The appended node if single append, or null if an array was passed
      */

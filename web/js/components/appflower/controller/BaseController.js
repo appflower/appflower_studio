@@ -151,7 +151,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     initController : function() {
     	this.initModel();
     	this.initView();
-        
+        this.initEvents();
+    	
         this.fireEvent("ready");
     },
     //eo initController
@@ -214,6 +215,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     
     /**
      * Instantiates model layer.
+     * Template method.
      * @protected
      */
     initModel : function() {
@@ -228,7 +230,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     //eo initModel
     
-    //TODO implemnt view layer
+    //TODO implement view layer
     /**
      * Instantiates view layer.
      * Template method.
@@ -250,6 +252,21 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	});
     },
     //eo initView
+    
+    /**
+     * Template method.
+     * @protected
+     */
+    initEvents : function() {
+    	var _me = this;
+    	
+    	_me.on({
+    		scope: _me,
+  			
+  			beforeModelNodeRemove: function() {},
+            modelNodeRemove: function() {}	
+    	});
+    },
     
     /**
      * @private

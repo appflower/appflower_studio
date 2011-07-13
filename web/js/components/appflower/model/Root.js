@@ -47,6 +47,9 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	constructor : function(config) {
 		afStudio.model.Root.superclass.constructor.call(this, config);
 		
+		//set modelType property to have compatibility with base Node class
+		this.modelType = this.getPropertyValue('type');
+		
 		this.initStructure(config.structureTpl);
 		
 		this.processStructure();

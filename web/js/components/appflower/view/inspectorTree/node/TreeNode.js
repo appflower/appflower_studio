@@ -1,5 +1,3 @@
-Ext.ns('afStudio.view.inspector');
-
 /**
  * Inspector tree base node class.
  * @class afStudio.view.inspector.TreeNode
@@ -18,16 +16,29 @@ afStudio.view.inspector.TreeNode = function(attr) {
 	attr.text = attr.name || attr.text || this.modelNode.tag; 
 	
 	afStudio.view.inspector.TreeNode.superclass.constructor.call(this, attr);
+
+	this.addEvents(
+	
+		/**
+		 * @event "deleteModelNode"
+		 * @param {} modelNode
+		 */
+		"deleteModelNode"
+	);
+	
+	if (this.modelNode.isDirectRootChild()) {
+		this.contextMenu = null;
+	}
 };
 
 /**
- * Context menu "delete" item text
+ * Context menu "delete" item's text
  * @static deleteNodeCxtText
  * @type {String} 
  */
 afStudio.view.inspector.TreeNode.deleteNodeCxtText = 'Delete',
 /**
- * Context menu "add" item text
+ * Context menu "add" item's text
  * @static addNodeCxtText
  * @type {String} 
  */
@@ -72,7 +83,12 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	//eo contextMenu
 	
 	/**
+	 * This method should be implemented in descendants classes to provide node context menu implementation 
+	 * and setting up {@link #contextMenu} property.
+	 * 
 	 * @abstract
+	 * 
+	 * @return {Ext.menu.Menu} menu
 	 */
 	initContextMenu : function() {
 		return null;
@@ -80,11 +96,26 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	
 	/**
 	 * Removes node.
+	 * @public
 	 */
 	removeNode : function() {
+		//this.fireEvent('');
+		
 		this.remove();
-	}
+	},
 	
+	/**
+	 * @protected
+	 * @override
+	 * @param {Boolean} silent
+	 */
+    destroy : function(silent) {
+        afStudio.view.inspector.TreeNode.superclass.destroy.call(this, silent);
+        Ext.destroy(this.contextMenu);
+    }
 });
 
+/**
+ * Adds "node" type to inspector tree nodes {@link afStudio.view.inspector.TreePanel.nodeTypes} object.
+ */
 afStudio.view.inspector.TreePanel.nodeTypes.node = afStudio.view.inspector.TreeNode;
