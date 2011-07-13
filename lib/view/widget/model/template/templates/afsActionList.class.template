@@ -1,0 +1,15 @@
+/**
+ * Generated action list class
+ */
+class <php echo $name ?>Action extends sfAction
+{
+    /**
+     * Execute actions
+     *
+     * @param sfWebRequest $request 
+     */
+    public function execute($request)
+    {
+    }
+    
+}

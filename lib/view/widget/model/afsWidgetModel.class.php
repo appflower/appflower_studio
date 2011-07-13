@@ -432,7 +432,7 @@ class afsWidgetModel extends afsBaseModel
             
             afStudioUtil::writeFile(
                 $actionFilePath, 
-                afsWidgetModelTemplate::action($action, $this->getType())
+                afsWidgetModelTemplate::create()->action($action, $this->getType())
             );
         }
         

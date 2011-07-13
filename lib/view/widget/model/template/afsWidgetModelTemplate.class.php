@@ -8,65 +8,61 @@
 class afsWidgetModelTemplate extends afsBaseModelTemplate
 {
     /**
-     * Getting action definition via delegated call
+     * Templates folder, near current folder
+     */
+    const TEMPLATE_FOLDER = 'templates';
+    
+    /**
+     * Template type
+     */
+    const TEMPLATE_TYPE = 'class';
+    
+    /**
+     * Template postfix
+     */
+    const TEMPLATE_POSTFIX = 'template';
+    
+    /**
+     * Create self instance
+     *
+     * @return afsWidgetModelTemplate
+     * @author Sergey Startsev
+     */
+    static public function create()
+    {
+        return new self;
+    }
+    
+    /**
+     * Process template rendering
      *
      * @param string $name 
      * @param string $type 
      * @return string
      * @author Sergey Startsev
      */
-    static public function action($name, $type = 'list')
+    public function action($name, $type = 'list')
     {
-        $template_name = 'action' . ucfirst(strtolower($type));
+        $template_name = 'afsAction' . ucfirst(strtolower($type));
+        $template_path = $this->getTemplatePath($template_name);
         
-        if (method_exists(__CLASS__, $template_name)) {
-            $definition = call_user_func(array(__CLASS__, $template_name), $name);
+        if (file_exists($template_path)) {
+            return $this->add('name', $name)->render($template_path)->wrap('php')->get();
         } else {
-            throw new afStudioWidgetCommandException("Template: '{$template_name}' not defined");
+            throw new afsWidgetModelTemplateException("Template '{$template_name}' doesn't exists. Path: '{$template_path}'");
         }
-        
-        return $definition;
     }
     
     /**
-     * Getting list action definition
+     * Getting template path
      *
      * @param string $name 
      * @return string
-     * @author Lukasz Wojciechowski
      * @author Sergey Startsev
      */
-    static public function actionList($name)
+    public function getTemplatePath($name)
     {
-        $definition =
-            '<'.'?'.'php'."\n".
-            "class {$name}Action extends sfAction" . "\n" .
-            "{" . "\n" .
-            '    function execute($request)' . "\n" .
-            "    {" . "\n" .
-            "    }" . "\n" .
-            "}";
-        
-        return $definition;
-    }
-    
-    /**
-     * Getting edit action definition
-     *
-     * @param string $name 
-     * @return string
-     * @author Lukasz Wojciechowski
-     * @author Sergey Startsev
-     */
-    static public function actionEdit($name)
-    {
-        $definition =
-            '<'.'?'.'php'."\n".
-            "class {$name}Action extends simpleWidgetEditAction" . "\n" .
-            "{" . "\n" .
-            "}";
-        
-        return $definition;
+        return dirname(__FILE__) . "/". self::TEMPLATE_FOLDER ."/{$name}.". self::TEMPLATE_TYPE . "." . self::TEMPLATE_POSTFIX;
     }
     
 }
