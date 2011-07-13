@@ -12,7 +12,7 @@ afStudio.view.inspector.ContainerNode = function(config) {
     this.loading = false;
     
     afStudio.view.inspector.ContainerNode.superclass.constructor.apply(this, arguments);
-    
+
     this.addEvents(
 	    /**
 	    * @event beforeload
@@ -52,8 +52,6 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	 * @override
 	 */
 	initContextMenu : function() {
-//		console.log('initContextMenu');
-		
 		var _me = this,
 			model = this.modelNode,
 			nodes = model.nodeTypes,
@@ -61,7 +59,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 			deleteText = afStudio.view.inspector.TreeNode.deleteNodeCxtText,
 			deleteAllText = afStudio.view.inspector.ContainerNode.deleteAllNodeCxtText,
 			mItems = [];
-
+		
 		//---	
 		Ext.iterate(nodes, function(n, idx) {
 			mItems[idx] = {
@@ -75,7 +73,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 				text: addText,
 				iconCls: 'icon-add',
 				menu: {
-					items: mItems 
+					items: mItems
 				}
 			}];
 		} else {
@@ -99,6 +97,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 		//---
 		
 		var menu = new Ext.menu.Menu({
+			ignoreParentClicks: true,
 			items: mItems,
 			listeners: {
 				itemclick: function(item) {
@@ -122,12 +121,11 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 			}
 		});
 		
-		return menu;
+		this.contextMenu = menu;
 	},
 	//eo initContextMenu
 	
 	//@borrows Ext.tree.AsyncTreeNode methods
-	
 	
 	/**
 	 * @borrows

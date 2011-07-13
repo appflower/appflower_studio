@@ -4,6 +4,10 @@ Ext.ns('afStudio.controller');
 /**
  * Base Model controller class.
  * 
+ * @dependency
+ * Error: {@link afStudio.controller.error}
+ * Model: {@link afStudio.model.Root}
+ * 
  * @class afStudio.controller.BaseController
  * @extends Ext.util.Observable
  * @author Nikolai Babinski <niba@appflower.com>
@@ -33,8 +37,17 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 	 * (Optional) The view definiton object - meta-data for the Model.
 	 */
 	/**
-	 * @cfg {Object} views
-	 * Views to be associated with this controller.
+	 * The Views to be associated with this controller.
+	 * @cfg {Object} views:
+	 * <ul>
+	 * 	<li><b>viewID</b>: {String} The view ID inside the views object
+	 * 		<ul>
+	 * 		{
+	 * 			<li><b>view</b>: {Function} The view constructor function</li>	
+	 * 			<li><b>cfg</b>: {Object} (Optional) The view configuration object</li>	
+	 * 		}</ul>
+	 * 	</li>
+	 * </ul>
 	 */
 	
 	/**
@@ -91,7 +104,10 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     		throw new afStudio.controller.error.ControllerError('widget-cfg-incorrect');
     	}
 		this.widget = config.widget;    	
-    	
+    	/**
+    	 * @property views After views instantiation contains key/values pairs of attached to this controller views. 
+    	 * @type {Object}
+    	 */
 		this.views = config.views || {};
 		
 	    /**
@@ -108,6 +124,13 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             
             "beforeModelNodeRemove",
             
+            /**
+             * @event modelNodeRemove
+             * Fires when a model node is removed
+             * @param {Tree} ctr The this model's controller
+             * @param {Node} parent This parent of a node being removed
+             * @param {Node} node The removed node
+             */            
             "modelNodeRemove",
             
             "beforeModelNodeMove",
@@ -202,7 +225,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * Saves view definiton.
      */
     saveViewDefinition : function() {
-    	var _self = this,
+    	var _me = this,
     		   vd = this.viewDefinition;
     		   
     	if (this.fireEvent('beforeSaveViewDefinition', vd)) {
@@ -219,8 +242,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * @protected
      */
     initModel : function() {
-    	var _self = this,
-    		   vd = Ext.apply({}, this.viewDefinition);
+    	var vd = Ext.apply({}, this.viewDefinition);
 
 		var root = new afStudio.model.Root({
     		definition: vd
@@ -230,26 +252,28 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     //eo initModel
     
-    //TODO implement view layer
     /**
      * Instantiates view layer.
      * Template method.
      * @protected
      */
     initView : function() {
-    	var _self = this;
-    	
-    	Ext.iterate(this.views, function(k, v, views) {
-    		views[k] = new v({
-    			autoScroll: true,
-    			controller: _self,
-    			loader: {
-    				baseAttrs: {
-//    					expanded: true
-    				}
-    			}
-    		});
-    	});
+    	var _me = this;
+    
+    	try {
+	    	Ext.iterate(this.views, function(k, v, views) {
+	    		if (!Ext.isFunction(v.view)) {
+	    			throw new afStudio.controller.error.ControllerError('view-constructor');
+	    		}
+	    		views[k] = new v.view( Ext.apply(v.cfg ? v.cfg : {}, {controller: _me}) );
+	    	});
+    	} catch(e) {
+			if (e instanceof afStudio.controller.error.ControllerError) {
+				throw e;
+			} else {
+    			throw new afStudio.controller.error.ControllerError('init-view');
+			}    		
+    	}
     },
     //eo initView
     
@@ -260,13 +284,21 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     initEvents : function() {
     	var _me = this;
     	
-    	_me.on({
-    		scope: _me,
-  			
-  			beforeModelNodeRemove: function() {},
-            modelNodeRemove: function() {}	
+    	Ext.iterate(this.views, function(k, v) {
+    		v.relayEvents(_me, ['beforeModelNodeRemove', 'modelNodeRemove']);
     	});
+    	
+//    	_me.on({
+//    		scope: _me,
+//  			
+//  			beforeModelNodeRemove: function() {},
+//  			
+//            modelNodeRemove: function(ctr, parent, node) {
+//            	console.log('modelNodeRemove', arguments);
+//            }
+//    	});
     },
+    //eo initEvents
     
     /**
      * @private

@@ -38,8 +38,19 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
         this.loader = l;
 		
 		afStudio.view.inspector.TreePanel.superclass.initComponent.apply(this, arguments);
+		
+		this._afterInitComponent();
 	},
 	//eo initComponent
+	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	_afterInitComponent : function() {
+		var _me = this;
+	},
+	//eo _afterInitComponent 
 	
 	/**
 	 * Ext Template method
@@ -53,7 +64,22 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		_me.on({
 			scope: _me,
-			contextmenu:  _me.onNodeContextMenu
+			
+			contextmenu:  _me.onNodeContextMenu,
+			
+			modelNodeRemove: function(ctr, parent, node) {
+//            	console.log('modelNodeRemove', parent, node);
+//            	console.log('modelNode ID', node.id);
+            	
+            	var viewNode = this.root.findChildBy(function(vNode) {
+            		return vNode.modelNode == node; 
+            	}, null, true);
+//            	console.log('view node', viewNode);
+            	
+            	if (viewNode) {
+            		viewNode.remove();
+            	}
+            }
 		});
 	},
 	//eo initEvents
@@ -64,7 +90,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @protected
 	 */
 	onNodeContextMenu : function(node, e) {
-		var menu = node.contextMenu = node.contextMenu || node.initContextMenu();
+		var menu = node.contextMenu;
 		node.select();
 		if (menu) {
 			menu.contextNode = node;

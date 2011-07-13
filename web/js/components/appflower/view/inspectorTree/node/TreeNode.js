@@ -26,9 +26,7 @@ afStudio.view.inspector.TreeNode = function(attr) {
 		"deleteModelNode"
 	);
 	
-	if (this.modelNode.isDirectRootChild()) {
-		this.contextMenu = null;
-	}
+	this.initContextMenu();
 };
 
 /**
@@ -78,20 +76,21 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
             		break;
             	}
             }
-        }		
+        }	
 	}),
 	//eo contextMenu
 	
 	/**
-	 * This method should be implemented in descendants classes to provide node context menu implementation 
+	 * This method should be overrided in descendants classes to provide node's context menu implementation 
 	 * and setting up {@link #contextMenu} property.
-	 * 
-	 * @abstract
-	 * 
+	 * The method should set up {@link #contextMenu} property to apply new context menu.
+	 * @protected
 	 * @return {Ext.menu.Menu} menu
 	 */
 	initContextMenu : function() {
-		return null;
+		if (this.modelNode.isDirectRootChild()) {
+			this.contextMenu = null;
+		}
 	},
 	
 	/**
@@ -99,12 +98,12 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 * @public
 	 */
 	removeNode : function() {
-		//this.fireEvent('');
-		
-		this.remove();
+		this.modelNode.remove(true);
+		//this.remove();
 	},
 	
 	/**
+	 * Cleaning all node's resources.
 	 * @protected
 	 * @override
 	 * @param {Boolean} silent

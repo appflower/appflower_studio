@@ -103,7 +103,6 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
             	
 				Ext.each(mn.childNodes, function(m) {
 					var leaf = m.nodeTypes.length > 0 ? false : true;
-//						expanded = m.childNodes.length < 1 ? true : false;
 					
 	        		var attr = Ext.apply(
 	        			{
@@ -111,12 +110,7 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
 	        				leaf: leaf
 	        			}, this.getModelProperties(m));
 	        			
-//	        		if (expanded) {
-//	        			attr.expanded = true;
-//	        		}
-	        		
 	        		var n = this.createNode(attr);
-	        		
 	                if (n) {
 	                    node.appendChild(n);
 	                }
