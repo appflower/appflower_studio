@@ -346,6 +346,17 @@ class afsWidgetModel extends afsBaseModel
     }
     
     /**
+     * Getting actions place path
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getPlaceActionsPath()
+    {
+        return $this->getPlaceModulePath() . "/actions";
+    }
+    
+    /**
      * Getting place modules path
      *
      * @return string
@@ -411,21 +422,19 @@ class afsWidgetModel extends afsBaseModel
      */
     private function ensureActionExists()
     {
-        $afCU = new afConfigUtils($this->getModule());
-        if ($afCU->isActionDefined($this->getAction())) {
-            return true;
-        }
+        $action = $this->getAction();
+        $actions_dir = $this->getPlaceActionsPath();
         
-        if ($this->isPlugin()) {
-            $actionFilePath = $this->getPlaceModulePath() . "/actions/{$this->getAction()}Action.class.php";
-        } else {
-            $actionFilePath = $afCU->generateActionFilePath($this->getAction());
-        }
+        $action_file_name = "{$action}Action.class.php";
         
-        afStudioUtil::writeFile(
-            $actionFilePath, 
-            afsWidgetModelTemplate::action($this->getAction(), $this->getType())
-        );
+        if (!file_exists("{$actions_dir}/{$action_file_name}")) {
+            $actionFilePath = "{$actions_dir}/{$action_file_name}";
+            
+            afStudioUtil::writeFile(
+                $actionFilePath, 
+                afsWidgetModelTemplate::action($action, $this->getType())
+            );
+        }
         
         return true;
     }
