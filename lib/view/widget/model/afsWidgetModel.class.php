@@ -230,7 +230,11 @@ class afsWidgetModel extends afsBaseModel
      */
     public function save()
     {
-        $definition = afsXmlDefinition::create()->init($this->getDefinition())->pack();
+        $definition = afsXmlDefinition::create()->init($this->getDefinition());
+        if ($this->isNew()) {
+            $definition->rootAttributes($this->getType());
+        }
+        $definition->pack();
         
         // prepare folder for definition saving 
         $config_path = $this->getPlaceConfigPath();

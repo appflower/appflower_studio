@@ -49,6 +49,29 @@ class afsXmlDefinition extends afsBaseDefinition
     }
     
     /**
+     * Assign root attributes
+     * 
+     * @param string $type
+     * @return afsXmlDefinition
+     * @author Sergey Startsev
+     */
+    public function rootAttributes($type)
+    {
+        $definition = array(
+            'attributes' => array(
+                'type' => $type,
+                'xmlns:i' => 'http://www.appflower.com/schema/',
+                'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation' => 'http://www.appflower.com/schema/appflower.xsd'
+            )
+        );
+        
+        $this->setDefinition(array_merge($definition, $this->getDefinition()));
+        
+        return $this;
+    }
+    
+    /**
      * Pack definition procedure
      *
      * @return mixed
