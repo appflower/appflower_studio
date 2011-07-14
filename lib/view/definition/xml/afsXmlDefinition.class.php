@@ -33,7 +33,8 @@ class afsXmlDefinition extends afsBaseDefinition
         'attributesArray' => 'attributes',
         'mode' => 'simplexml',
         'complexType' => 'array',
-        'contentName' => '_content'
+        'contentName' => '_content',
+        'guessTypes' => true
     );
     
     /**
