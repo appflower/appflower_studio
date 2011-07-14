@@ -67,15 +67,17 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			
 			contextmenu:  _me.onNodeContextMenu,
 			
+			/**
+			 * @event Relayed from controller 
+			 */
 			modelNodeRemove: function(ctr, parent, node) {
-//            	console.log('modelNodeRemove', parent, node);
-//            	console.log('modelNode ID', node.id);
+            	console.log('@view InspectorTree "modelNodeRemove"', parent, node);
             	
             	var viewNode = this.root.findChildBy(function(vNode) {
             		return vNode.modelNode == node; 
             	}, null, true);
 //            	console.log('view node', viewNode);
-            	
+				
             	if (viewNode) {
             		viewNode.remove();
             	}

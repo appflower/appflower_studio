@@ -49,7 +49,7 @@ afStudio.model.Types = new function() {
         BOOLEAN: {
         	type: 'boolean',
             validate: function(v) {
-            	return Ext.isString(v) ? v.bool() : Ext.isBoolean(v);
+            	return Ext.isBoolean(v);
             }
         },
         

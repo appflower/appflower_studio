@@ -4,10 +4,9 @@ Ext.ns('afStudio.model');
  * @class afStuio.model.Property
  * <p>This class encapsulates the property definition information specified in the {@link afStuio.model.Node#properties}.</p>
  * <p>Developers do not need to instantiate this class. Instances are created by {@link afStuio.model.Node#initProperties}</p>
- * @author Nikolai Babinski
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.Property = Ext.extend(Object, {
-
     /**
      * @cfg {String} name
      * The name by which the property is referenced within the Model Node.
@@ -31,6 +30,10 @@ afStudio.model.Property = Ext.extend(Object, {
      */
     defaultValue: "",
     
+    /**
+     * @constructor
+     * @param {Object} config The configuration object
+     */
     constructor : function(config) {
         Ext.apply(this, config);
 
@@ -78,8 +81,6 @@ afStudio.model.Property = Ext.extend(Object, {
     	if (!this.validate(v)) {
     		return false;
     	}
-    	//fix for boolean type
-    	v = (this.type == afStudio.model.Types.BOOLEAN && Ext.isString(v)) ? v.bool() : v;
     	
 		this.value = v;    	
     }

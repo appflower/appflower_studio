@@ -788,11 +788,19 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
             b.unshift(p[attr]);
             p = p.parentNode;
         }
-        var sep = this.getOwnerTree() ? this.getOwnerTree().pathSeparator : this.pathSeparator;
+        var sep = this.getPathSeparator();
         
         return sep + b.join(sep);
     },
 
+    /**
+     * Returns path separator.
+     * @return {String} separator
+     */
+    getPathSeparator : function() {
+    	return this.getOwnerTree() ? this.getOwnerTree().pathSeparator : this.pathSeparator;
+    },
+    
     /**
      * Bubbles up the tree from this node, calling the specified function with each node. The arguments to the function
      * will be the args provided or the current node. If the function returns false at any point,
@@ -969,7 +977,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		hash = {};
     	
     	ps.eachKey(function(k, p) {
-    		hash[k] = p.value; 
+    		if (!Ext.isEmpty(p.value)) {
+    			hash[k] = p.value;
+    		}
     	});
     	
     	return hash;

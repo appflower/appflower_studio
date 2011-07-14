@@ -64,11 +64,11 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
             	
             	switch (item.itemId) {
             		case 'delete' :
-            			node.removeNode();
+            			node.removeModelNode();
             		break;
             	}
             }
-        }	
+        }
 	}),
 	//eo contextMenu
 	
@@ -97,12 +97,11 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	},
 	
 	/**
-	 * Removes node.
+	 * Removes model node associated with this node.
 	 * @public
 	 */
-	removeNode : function() {
+	removeModelNode : function() {
 		this.modelNode.remove(true);
-		//this.remove();
 	},
 	
 	/**

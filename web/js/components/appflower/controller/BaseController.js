@@ -58,7 +58,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     /**
      * View definition object, holds the up-to-date definition of the view.
      * @property viewDefinition
-     * @type {Object}
+     * @type {afStudio.definition.ViewDefinition}
      */
     viewDefinition : null,
     /**
@@ -97,13 +97,15 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	}
     	
     	if (config.viewDefinition) {
-    		this.viewDefinition = config.viewDefinition;
+    		this.viewDefinition = new afStudio.definition.ViewDefinition(config.viewDefinition);
+    	} else {
+    		this.viewDefinition = new afStudio.definition.ViewDefinition();
     	}
     	
     	if (!config.widget && !Ext.isObject(config.widget)) {
     		throw new afStudio.controller.error.ControllerError('widget-cfg-incorrect');
     	}
-		this.widget = config.widget;    	
+		this.widget = config.widget;
     	/**
     	 * @property views After views instantiation contains key/values pairs of attached to this controller views. 
     	 * @type {Object}
@@ -162,7 +164,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         
         afStudio.controller.BaseController.superclass.constructor.call(this);
 
-        if (!this.viewDefinition) {
+        if (!this.viewDefinition.getData()) {
         	this.loadViewDefinition();
         }
     },
@@ -212,7 +214,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     			scope: _me,
     			run: function(response, ops) {
 				   	//set up viewDefinition object
-    				this.viewDefinition = response.data;
+    				this.viewDefinition.setData(response.data);
     				this.fireEvent('loadViewDefinition', this.viewDefinition);
     				this.initController();
     			}
@@ -242,7 +244,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * @protected
      */
     initModel : function() {
-    	var vd = Ext.apply({}, this.viewDefinition);
+    	var vd = Ext.apply({}, this.viewDefinition.getData());
 
 		var root = new afStudio.model.Root({
     		definition: vd
@@ -284,19 +286,21 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     initEvents : function() {
     	var _me = this;
     	
+    	//Relays controller's events to View layer
     	Ext.iterate(this.views, function(k, v) {
     		v.relayEvents(_me, ['beforeModelNodeRemove', 'modelNodeRemove']);
     	});
     	
-//    	_me.on({
-//    		scope: _me,
-//  			
-//  			beforeModelNodeRemove: function() {},
-//  			
-//            modelNodeRemove: function(ctr, parent, node) {
-//            	console.log('modelNodeRemove', arguments);
-//            }
-//    	});
+    	_me.on({
+    		scope: _me,
+  			
+            modelNodeRemove: function(ctr, parent, node) {
+            	console.log('@controller modelNodeRemove', arguments);            	
+//            	console.log('entity', this.viewDefinition.getEntity(node));
+            	this.viewDefinition.removeEntity(node);
+            	console.log('definition', this.viewDefinition.getData());
+            }
+    	});
     },
     //eo initEvents
     

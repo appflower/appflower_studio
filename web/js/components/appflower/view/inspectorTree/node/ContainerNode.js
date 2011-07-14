@@ -110,11 +110,11 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	            		break;
 	            		
 	            		case 'deleteAllChildren' :
-	            			node.removeNode();
+//	            			node.removeNode();
 	            		break;
 	            		
 	            		case 'delete' :
-	            			node.removeNode();
+	            			node.removeModelNode();
 	            		break;
 	            	}
 				}
