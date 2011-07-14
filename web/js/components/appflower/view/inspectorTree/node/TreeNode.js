@@ -1,5 +1,6 @@
 /**
- * Inspector tree base node class.
+ * Inspector tree base <i>inspector tree nodes</i> class.
+ * 
  * @class afStudio.view.inspector.TreeNode
  * @constructor
  * @param {Object} attr
@@ -13,18 +14,9 @@ afStudio.view.inspector.TreeNode = function(attr) {
 		delete attr.modelNode;
 	}
 	
-	attr.text = attr.name || attr.text || this.modelNode.tag; 
-	
 	afStudio.view.inspector.TreeNode.superclass.constructor.call(this, attr);
-
-	this.addEvents(
 	
-		/**
-		 * @event "deleteModelNode"
-		 * @param {} modelNode
-		 */
-		"deleteModelNode"
-	);
+	this.resolveNodeText();
 	
 	this.initContextMenu();
 };
@@ -81,9 +73,20 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	//eo contextMenu
 	
 	/**
+	 * Sets up node {@link #text} property.
+	 * Template method.
+	 * @protected
+	 */
+	resolveNodeText : function() {
+		var attr = this.attributes;
+		this.text = attr.name || attr.text || this.modelNode.tag;
+	},
+	
+	/**
 	 * This method should be overrided in descendants classes to provide node's context menu implementation 
 	 * and setting up {@link #contextMenu} property.
 	 * The method should set up {@link #contextMenu} property to apply new context menu.
+	 * Template method.
 	 * @protected
 	 * @return {Ext.menu.Menu} menu
 	 */
