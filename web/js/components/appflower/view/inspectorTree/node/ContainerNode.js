@@ -110,7 +110,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	            		break;
 	            		
 	            		case 'deleteAllChildren' :
-//	            			node.removeNode();
+	            			node.removeAllModelNodes();
 	            		break;
 	            		
 	            		case 'delete' :
@@ -124,6 +124,14 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 		this.contextMenu = menu;
 	},
 	//eo initContextMenu
+	
+	/**
+	 * Removes all children model nodes associated with this node's model.
+	 * @public
+	 */
+	removeAllModelNodes : function() {
+		this.modelNode.removeAll(true);
+	},
 	
 	//@borrows Ext.tree.AsyncTreeNode methods
 	

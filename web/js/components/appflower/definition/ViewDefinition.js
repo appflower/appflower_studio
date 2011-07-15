@@ -1,35 +1,60 @@
 Ext.ns('afStudio.definition');
 
+/**
+ * View Definition.
+ * Widgets <u>definition</u> data holder. Definition is an Object representing a view xml structure.
+ * 
+ * @class afStudio.definition.ViewDefinition
+ * @extends afStudio.definition.DataDefinition
+ * @author Nikolai Babinski <niba@appflower.com>
+ */
 afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefinition, {
 	/**
 	 * @override
 	 */
 	getEntity : function(node) {
-		var entObj = this.getEntityAncestor(node);
+		var entObj = this.getEntityAncestor(node),
+			ea = entObj.ancestor,
+			ek = entObj.entityKey,
+			entity;
 		
-		return	entObj.ancestor[entObj.entityKey]; 
+		if (Ext.isArray(ea[ek])) {
+			var eArray = ea[ek],
+				eIdx = entObj.entityIdx;
+			entity = eArray[eIdx];			
+		} else {
+			entity = ea[ek];
+		}
+		
+		
+		return entity; 
 	},
 	
 	/**
+	 * Removes entity corresponding to the model node passed in.
 	 * @override
+	 * @param {afStudio.model.Node} node The model node
 	 */
 	removeEntity : function(node) {
 		var entObj = this.getEntityAncestor(node),
-//			p = 
-			entity = entObj.ancestor[entObj.entityKey];
+			ea = entObj.ancestor,
+			ek = entObj.entityKey,
+			entity;
 		
-		if (Ext.isArray(entObj.ancestor)) {
-			entObj.ancestor.splice(entObj.entityKey, 1);
-			//TODO delete empty arrays 
-//			if (Ext.isEmpty(entObj.ancestor)) {
-//				delete entObj.ancestor[entObj.entityKey];
-//			}			
+		if (Ext.isArray(ea[ek])) {
+			var eArray = ea[ek],
+				eIdx = entObj.entityIdx;
+			entity = eArray[eIdx];
+			eArray.splice(eIdx, 1);
+			Ext.isEmpty(eArray) ? delete ea[ek] : null;
 		} else {
-			delete entObj.ancestor[entObj.entityKey];
+			entity = ea[ek];
+			delete ea[ek];
 		}
 		
 		this.fireEvent('entityRemove', entity);
 	},
+	//eo removeEntity
 	
 	/**
 	 * @override 
@@ -67,41 +92,39 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
     	
     	if (i < len) {
     		var entKey   = path[i].replace(/-\d+$/, '');
-    			ancestor = Ext.isArray(ent[entKey]) ? ent[entKey] : ent;
-    		
-    		result.ancestor = ancestor;
+    		result.ancestor  = ent;
     		result.entityKey = entKey;
-    		
-    		//node.getNodeData();
-    		if (Ext.isArray(ancestor)) {
-    			var entIdx = this.searchEntityIndex(ancestor, node);
+    		if (Ext.isArray(ent[entKey])) {
+    			var entIdx = this.searchEntityIndex(ent[entKey], node);
     			if (!Ext.isDefined(entIdx)) {
     				throw new Ext.Error('Entity was not found!');
     			}
-    			result.entityKey = entIdx;
+    			result.entityIdx = entIdx;
     		}
     	}
     	
     	return result;
 	},
+	//eo getEntityAncestor
 	
 	/**
+	 * Search is based on <i>attributes</i> and <i>_content</i> comparison.
 	 * @private
 	 */
 	searchEntityIndex : function(entArray, node) {
-		var np = node.getPropertiesHash();
-		
-		//TODO add _content check
+		var np = node.getPropertiesHash(),
+			nc = node.getNodeData();
 		
 		var entIdx;
 		for (var i = 0, len = entArray.length; i < len; i++) {
 			var found = true;
 			Ext.iterate(entArray[i].attributes, function(k, v) {
-				if (np[k] !== v) {
-					return (found = false);
-				}
+				return (np[k] !== v) ? (found = false) : true; 
 			});
 			if (found) {
+				if (Ext.isPrimitive(nc) && nc != entArray[i]._content) {
+					continue;
+				}
 				entIdx = i;
 				break;
 			}
@@ -109,4 +132,5 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		
 		return entIdx;
 	}
+	//eo searchEntityIndex
 });

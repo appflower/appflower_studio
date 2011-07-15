@@ -296,7 +296,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
   			
             modelNodeRemove: function(ctr, parent, node) {
             	console.log('@controller modelNodeRemove', arguments);            	
-//            	console.log('entity', this.viewDefinition.getEntity(node));
             	this.viewDefinition.removeEntity(node);
             	console.log('definition', this.viewDefinition.getData());
             }

@@ -1031,7 +1031,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     //eo setProperty
     
     /**
-     * Returns {#NODE_DATA} value.
+     * Returns {@link #NODE_DATA} value.
      * @return {Mixed} node data value.
      */
     getNodeData : function() {
@@ -1039,7 +1039,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * Sets node's {#NODE_DATA} property.
+     * Sets node's {@link #NODE_DATA} property.
      * @param {Mixed} value The node's data value being set.
      */
     setNodeData : function(value) {
