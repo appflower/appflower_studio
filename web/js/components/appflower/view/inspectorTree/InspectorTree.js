@@ -53,6 +53,25 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo _afterInitComponent 
 	
 	/**
+	 * Returns view component by associated with it model.
+	 * @public
+	 * @interface
+	 * @param {afStudio.model.Node} node The model node
+	 * @return {Object} node
+	 */
+	getCmpByModel : function(node) {
+		var root = this.getRootNode(),
+			cmp;
+		
+    	cmp = root.findChildBy(function(vNode) {
+    		return vNode.modelNode == node; 
+    	}, null, true);
+    	
+    	return cmp;
+	},
+	//eo getCmpByModel	
+	
+	/**
 	 * Ext Template method
 	 * Initializes events.
 	 * @private
@@ -66,21 +85,10 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			scope: _me,
 			
 			contextmenu:  _me.onNodeContextMenu,
-			
 			/**
-			 * @event Relayed from controller 
+			 * @relayed controller
 			 */
-			modelNodeRemove: function(ctr, parent, node) {
-            	console.log('@view [InspectorTree] "modelNodeRemove"', parent, node);
-            	
-            	var viewNode = this.root.findChildBy(function(vNode) {
-            		return vNode.modelNode == node; 
-            	}, null, true);
-				
-            	if (viewNode) {
-            		viewNode.remove();
-            	}
-            }
+			modelNodeRemove: _me.onModelNodeRemove
 		});
 	},
 	//eo initEvents
@@ -97,9 +105,23 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			menu.contextNode = node;
 		    menu.showAt(e.getXY());
 		}
-	}
-	//eo onNodeContextMenu 
+	},
+	//eo onNodeContextMenu
 	
+	/**
+	 * Relayed <u>modelNodeRemove</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeRemove}.
+	 * @protected
+	 * @interface
+	 */
+	onModelNodeRemove : function(ctr, parent, node) {
+    	console.log('@view [InspectorTree] "modelNodeRemove"', parent, node);
+    	var viewNode = this.getCmpByModel(node);
+    	if (viewNode) {
+    		viewNode.remove();
+    	}
+	}
+	//eo onModelNodeRemove
 });
 
 afStudio.view.inspector.TreePanel.nodeTypes = {};

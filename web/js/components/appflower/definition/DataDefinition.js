@@ -1,5 +1,14 @@
 Ext.ns('afStudio.definition');
 
+/**
+ * Base definition class.
+ * @abstract
+ * Should be used concrete class implementation.
+ * 
+ * @class afStudio.definition.DataDefinition
+ * @extends Ext.util.Observable
+ * @author Nikolai Babinski <niba@appflower.com>
+ */
 afStudio.definition.DataDefinition = Ext.extend(Ext.util.Observable, {
 	
 	/**
