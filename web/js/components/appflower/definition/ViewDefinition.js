@@ -10,7 +10,15 @@ Ext.ns('afStudio.definition');
  */
 afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefinition, {
 	/**
+	 * Definition Object. <i>Read-Only</i>
+	 * @property data
+	 * @type {Object}
+	 */
+	
+	/**
+	 * Returns definition's entity by model node.
 	 * @override
+	 * @param {afStudio.model.Node} node The model node
 	 */
 	getEntity : function(node) {
 		var entObj = this.getEntityAncestor(node),
@@ -26,9 +34,9 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			entity = ea[ek];
 		}
 		
-		
-		return entity; 
+		return this.out(entity);
 	},
+	//eo getEntity
 	
 	/**
 	 * Removes entity corresponding to the model node passed in.
@@ -52,6 +60,8 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			delete ea[ek];
 		}
 		
+		entity = this.out(entity);
+		
 		this.fireEvent('entityRemove', entity);
 	},
 	//eo removeEntity
@@ -59,8 +69,9 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	/**
 	 * @override 
 	 */
-	addEntity : function() {
+	addEntity : function(parent, node) {
 	},
+	//eo addEntity
 	
 	/**
 	 * @private

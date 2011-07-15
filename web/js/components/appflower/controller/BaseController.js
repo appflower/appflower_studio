@@ -122,7 +122,15 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         this.addEvents(
             "beforeModelNodeAppend",
 
-            "modelNodeAppend",
+            /**
+             * @event modelNodeAppend
+             * Fires when a new model node is appended
+             * @param {Tree} ctr The controller to which the model is mapped
+             * @param {Node} parent The parent node to which new node was append
+             * @param {Node} node The newly appended node
+             * @param {Number} index The index of the newly appended node in parent's childNodes array
+             */
+            "modelNodeAppend",            
             
             "beforeModelNodeRemove",
             
@@ -130,7 +138,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
              * @event modelNodeRemove
              * Fires when a model node is removed
              * @param {Tree} ctr The this model's controller
-             * @param {Node} parent This parent of a node being removed
+             * @param {Node} parent The parent of a node being removed
              * @param {Node} node The removed node
              */            
             "modelNodeRemove",
@@ -294,9 +302,20 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	_me.on({
     		scope: _me,
   			
+    		/**
+    		 * @bubbled
+    		 */
             modelNodeRemove: function(ctr, parent, node) {
             	console.log('@controller modelNodeRemove', arguments);            	
             	this.viewDefinition.removeEntity(node);
+            	console.log('definition', this.viewDefinition.getData());
+            },
+            /**
+             * @bubbled
+             */
+            modelNodeAppend: function(ctr, parent, node, index) {
+				console.log('@controller modelNodeAppend', arguments);
+            	this.viewDefinition.addEntity(parent, node);
             	console.log('definition', this.viewDefinition.getData());
             }
     	});

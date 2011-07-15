@@ -67,7 +67,7 @@ afStudio.definition.DataDefinition = Ext.extend(Ext.util.Observable, {
 	 * @return {Mixed} data
 	 */
 	getData : function() {
-		return this.data;
+		return this.out(this.data);
 	},
 	
 	/**
@@ -80,5 +80,56 @@ afStudio.definition.DataDefinition = Ext.extend(Ext.util.Observable, {
 		this.data = d;
 		
 		return this;
-	}
+	},
+
+	/**
+	 * Returns cloned passed in variable without keeping the old reference so having "safe" return.
+	 * Returning properties/object from DataDefinition class should be safe and cannot be modified outside the class.
+	 * @protected
+	 * @param {Mixed} obj The variable to be returned safely without keeping the old reference
+	 */
+	out : function(obj) {
+		return this.cloneObj(obj);
+	},
+	
+	//TODO in ExtJS 4.* remove this method, instead should be used Ext.clone/Object.merge
+  	/**
+  	 * @private
+     * Clone almost any type of variable including array, object and Date without keeping the old reference
+     * @param {Mixed} item The variable to clone
+     * @return {Mixed} clone
+     */
+    cloneObj : function(item) {
+        if (item === null || item === undefined) {
+            return item;
+        }
+
+        var type = Object.prototype.toString.call(item);
+
+        // Date
+        if (type === '[object Date]') {
+            return new Date(item.getTime());
+        }
+
+        var i, clone, key;
+
+        // Array
+        if (type === '[object Array]') {
+            i = item.length;
+            clone = [];
+            while (i--) {
+                clone[i] = this.cloneObj(item[i]);
+            }
+        }
+        // Object
+        else if (type === '[object Object]' && item.constructor === Object) {
+            clone = {};
+            for (key in item) {
+                clone[key] = this.cloneObj(item[key]);
+            }
+        }
+
+        return clone || item;
+    }
+    //eo clone
 });

@@ -97,7 +97,8 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	},
 	
 	/**
-	 * Removes model node associated with this node.
+	 * Removes {@link modelNode} model associated with this node.
+	 * In result of the operation this tree-node will be removed.
 	 * @public
 	 */
 	removeModelNode : function() {

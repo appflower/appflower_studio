@@ -48,6 +48,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
      * @type {afStudio.view.inspector.InspectorLoader}
      */
 	
+	//TODO refactor and make method more flexible @Nikolai
 	/**
 	 * @override
 	 */
@@ -63,7 +64,9 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 		//---	
 		Ext.iterate(nodes, function(n, idx) {
 			mItems[idx] = {
-				text: n.name
+				text: n.name,
+				node: n.name,
+				controll: 'add'
 			};
 		});
 		
@@ -73,10 +76,21 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 				text: addText,
 				iconCls: 'icon-add',
 				menu: {
-					items: mItems
+					items: mItems,
+					listeners: {
+						itemclick: function(item) {
+			            	switch (item.controll) {
+			            		case 'add':
+			            			_me.addModelNode(item.node);
+			            		break;
+			            	}
+						}
+					}
 				}
 			}];
 		} else {
+			mItems[0].itemId = mItems[0].controll;
+			delete mItems[0].controll;
 			mItems[0].text = String.format('{0} {1}', addText, mItems[0].text);
 			mItems[0].iconCls = 'icon-add';
 		}
@@ -101,18 +115,15 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 			items: mItems,
 			listeners: {
 				itemclick: function(item) {
-	            	var node = item.parentMenu.contextNode,
-	            		tree = node.getOwnerTree();
+	            	var node = _me;
             	
 	            	switch (item.itemId) {
-	            		case 'add' :
-	            		
-	            		break;
-	            		
+	            		case 'add':
+        					node.addModelNode(item.node);
+        				break;
 	            		case 'deleteAllChildren' :
 	            			node.removeAllModelNodes();
 	            		break;
-	            		
 	            		case 'delete' :
 	            			node.removeModelNode();
 	            		break;
@@ -126,7 +137,21 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	//eo initContextMenu
 	
 	/**
-	 * Removes all children model nodes associated with this node's model.
+	 * Creates and Appends child model node to this node's associated {@link modelNode} model.
+	 * As the result will be created and added corresponding child tree-node to this node.
+	 * @public
+	 * @param {String} node The node being created and added
+	 */
+	addModelNode : function(node) {
+		var mn = this.modelNode.createNode(node);
+		console.log(String.format('node {0}, new model {1}, modelNode {2}', node, mn, this.modelNode));
+		console.log(mn);
+		console.log('definition', this.getOwnerTree().controller.getViewDefinition().getData());
+	},
+	
+	/**
+	 * Removes all children model nodes associated with this node's {@link modelNode} model.
+	 * As the result will be removed all children tree-nodes of this node.
 	 * @public
 	 */
 	removeAllModelNodes : function() {
