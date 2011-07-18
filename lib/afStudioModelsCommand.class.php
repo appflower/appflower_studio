@@ -119,10 +119,13 @@ class afStudioModelsCommand
 						$models = array();
 						foreach ($this->propelSchemaArray as $schemaFile=>$array)
 						{
-							foreach ($array['classes'] as $phpName=>$attributes)
-							{
-								$models[] = array('text'=>$phpName,'leaf'=>true,'schema'=>$schemaFile, 'iconCls'=>'icon-model');
-							}
+						    if(count($array)>0)
+						    {						    
+    							foreach ($array['classes'] as $phpName=>$attributes)
+    							{
+    								$models[] = array('text'=>$phpName,'leaf'=>true,'schema'=>$schemaFile, 'iconCls'=>'icon-model');
+    							}
+						    }
 						}
 
 						$models = $this->sortModels($models);
