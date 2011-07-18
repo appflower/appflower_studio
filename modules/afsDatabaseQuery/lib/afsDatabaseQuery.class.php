@@ -75,16 +75,22 @@ class afsDatabaseQuery
         $aPropelSchemaArray = self::getSchemas();
         
         $tables = array();
-        foreach ($aPropelSchemaArray as $schemaFile => $array)
+        
+        if(count($aPropelSchemaArray)>0)
         {
-            if ($array['connection'] == $connection_name) {
-                foreach ($array['classes'] as $phpName => $attributes)
-                {
-                    $attributes['modelName'] = $phpName;
-                    $attributes['schemaFile'] = $schemaFile;
-                    $tables[] = $attributes;
+        
+            foreach ($aPropelSchemaArray as $schemaFile => $array)
+            {
+                if (count($array)>0 && isset($array['connection']) && $array['connection'] == $connection_name) {
+                    foreach ($array['classes'] as $phpName => $attributes)
+                    {
+                        $attributes['modelName'] = $phpName;
+                        $attributes['schemaFile'] = $schemaFile;
+                        $tables[] = $attributes;
+                    }
                 }
             }
+        
         }
         
         return $tables;
