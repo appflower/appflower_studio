@@ -969,7 +969,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Returns all node's properties as a hash object key/value pairs {k:v}.
+     * Returns defined node's properties as a hash object key/value pairs {k:v}.
      * @return {Object} properties hash
      */
     getPropertiesHash : function() {
@@ -1167,7 +1167,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	n = this.appendChild(n);
     	}
     	
-    	return n; 
+    	return n;
     },
     //eo createNode
     

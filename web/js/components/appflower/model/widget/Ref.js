@@ -19,10 +19,10 @@ afStudio.model.widget.Ref = Ext.extend(afStudio.model.TypedNode, {
 	properties : [
       	{name: 'to', type: "QName", required: true},
       	{name: 'break', type: 'boolean', defaultValue: false},
-      	{name: 'group',  type: 'boolean', defaultValue: false},
-      	{name: 'title',  type: 'token'},
+      	{name: 'group', type: 'boolean', defaultValue: false},
+      	{name: 'title', type: 'token'},
       	{name: 'tip', type: 'token'},
-      	{name: 'json',  type: 'token'}  
+      	{name: 'json', type: 'token'}  
 	],
 	
 	wizardProperties : [

@@ -7,7 +7,7 @@
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.view.inspector.TreeNode = function(attr) {
-	attr = attr || {}; 
+	attr = attr || {};
 	
 	if (attr.modelNode) {
 		this.modelNode = attr.modelNode;
@@ -74,6 +74,7 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	
 	/**
 	 * Sets up node {@link #text} property.
+	 * 
 	 * Template method.
 	 * @protected
 	 */
@@ -86,9 +87,9 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 * This method should be overrided in descendants classes to provide node's context menu implementation 
 	 * and setting up {@link #contextMenu} property.
 	 * The method should set up {@link #contextMenu} property to apply new context menu.
+	 * 
 	 * Template method.
 	 * @protected
-	 * @return {Ext.menu.Menu} menu
 	 */
 	initContextMenu : function() {
 		if (this.modelNode.isDirectRootChild()) {
@@ -103,21 +104,10 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 */
 	removeModelNode : function() {
 		this.modelNode.remove(true);
-	},
-	
-	/**
-	 * Cleaning all node's resources.
-	 * @protected
-	 * @override
-	 * @param {Boolean} silent
-	 */
-    destroy : function(silent) {
-        afStudio.view.inspector.TreeNode.superclass.destroy.call(this, silent);
-        Ext.destroy(this.contextMenu);
-    }
+	}	
 });
 
 /**
- * Adds "node" type to inspector tree nodes {@link afStudio.view.inspector.TreePanel.nodeTypes} object.
+ * Adds "node" type to inspector tree nodes {@link afStudio.view.inspector.nodeType} object.
  */
-afStudio.view.inspector.TreePanel.nodeTypes.node = afStudio.view.inspector.TreeNode;
+afStudio.view.inspector.nodeType.node = afStudio.view.inspector.TreeNode;

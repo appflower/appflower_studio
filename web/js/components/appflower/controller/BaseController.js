@@ -7,6 +7,7 @@ Ext.ns('afStudio.controller');
  * @dependency
  * Error: {@link afStudio.controller.error}
  * Model: {@link afStudio.model.Root}
+ * Definition: {@link afStudio.definition.ViewDefinition}
  * 
  * @class afStudio.controller.BaseController
  * @extends Ext.util.Observable
@@ -97,7 +98,9 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	}
     	
     	if (config.viewDefinition) {
-    		this.viewDefinition = new afStudio.definition.ViewDefinition(config.viewDefinition);
+    		this.viewDefinition = new afStudio.definition.ViewDefinition({
+    			data: config.viewDefinition
+    		});
     	} else {
     		this.viewDefinition = new afStudio.definition.ViewDefinition();
     	}
@@ -179,6 +182,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     //eo constructor
     
     /**
+     * Initialises controller and all its resources.
      * @protected
      */
     initController : function() {
@@ -186,6 +190,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	this.initView();
         this.initEvents();
     	
+        this.ready = true;
         this.fireEvent("ready");
     },
     //eo initController
@@ -207,7 +212,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Loads view definition and instantiates model {@link #initModel} based on loaded definition.
+     * Loads view definition and execute {@link #initController()}.
      * @protected
      */
     loadViewDefinition : function() {
@@ -252,7 +257,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * @protected
      */
     initModel : function() {
-    	var vd = Ext.apply({}, this.viewDefinition.getData());
+    	var vd = this.viewDefinition.getData();
 
 		var root = new afStudio.model.Root({
     		definition: vd
@@ -282,7 +287,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 				throw e;
 			} else {
     			throw new afStudio.controller.error.ControllerError('init-view');
-			}    		
+			}
     	}
     },
     //eo initView
@@ -294,9 +299,10 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     initEvents : function() {
     	var _me = this;
     	
+    	//TODO improve - move to the separate method
     	//Relays controller's events to View layer
     	Ext.iterate(this.views, function(k, v) {
-    		v.relayEvents(_me, ['beforeModelNodeRemove', 'modelNodeRemove']);
+    		v.relayEvents(_me, ['beforeModelNodeRemove', 'modelNodeRemove', 'modelNodeAppend']);
     	});
     	
     	_me.on({

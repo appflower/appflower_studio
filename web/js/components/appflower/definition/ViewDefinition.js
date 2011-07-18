@@ -18,6 +18,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	/**
 	 * Returns definition's entity by model node.
 	 * @override
+	 * @public
 	 * @param {afStudio.model.Node} node The model node
 	 */
 	getEntity : function(node) {
@@ -41,6 +42,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	/**
 	 * Removes entity corresponding to the model node passed in.
 	 * @override
+	 * @public
 	 * @param {afStudio.model.Node} node The model node
 	 */
 	removeEntity : function(node) {
@@ -48,7 +50,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			ea = entObj.ancestor,
 			ek = entObj.entityKey,
 			entity;
-		
+	
 		if (Ext.isArray(ea[ek])) {
 			var eArray = ea[ek],
 				eIdx = entObj.entityIdx;
@@ -67,14 +69,43 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	//eo removeEntity
 	
 	/**
-	 * @override 
+	 * @override
+	 * @public
 	 */
 	addEntity : function(parent, node) {
+		console.log('addEntity', parent, node);
+		
+		var entObj = this.getEntityAncestor(parent),
+			ea = entObj.ancestor,
+			ek = entObj.entityKey,
+			eParent = ea[ek] ? ea[ek] : (ea[ek] = {}); //create parent element definiton data
+			
+		console.log('entObj', entObj, node.tag, eParent);
+		
+		var eTag = node.tag,
+			eAttr = node.getPropertiesHash(),
+			eContent = node.getNodeData();
+		
+		if (Ext.isArray(eParent[eTag])) {
+			eParent[eTag].push({'new' : true});
+		} else {
+			eParent[eTag] = {'new' : true};
+		}
 	},
 	//eo addEntity
 	
 	/**
+	 * Returns entity's parent object and its reference inside the parent. 
 	 * @private
+	 * 
+	 * @return {Object} entityObj:
+	 * <ul>
+	 * {
+	 * 	<li><b>ancestor</b>: The entity's parent object(wrapper)</li>
+	 * 	<li><b>entityKey</b>: The entity's property name inside parent object</li>
+	 * 	<li><b>entityIdx</b>: (Optional) The entity's index inside an array, if <i>entityKey</i> is reference to an array</li>
+	 * }
+	 * </ul>
 	 */
 	getEntityAncestor : function(node) {
 		var d = this.data,
@@ -102,15 +133,21 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
     	};
     	
     	if (i < len) {
-    		var entKey   = path[i].replace(/-\d+$/, '');
+    		//remove id suffix
+    		var entKey = path[i].replace(/-\d+$/, '');
     		result.ancestor  = ent;
     		result.entityKey = entKey;
+    		
     		if (Ext.isArray(ent[entKey])) {
     			var entIdx = this.searchEntityIndex(ent[entKey], node);
-    			if (!Ext.isDefined(entIdx)) {
-    				throw new Ext.Error('Entity was not found!');
+    			if (entIdx == null) {
+    				throw new Ext.Error(String.format('Entity equal to node {0} was not found.', node));
     			}
     			result.entityIdx = entIdx;
+    		} else {
+    			if (this.equal(ent[entKey], node) === false) {
+    				throw new Ext.Error(String.format('Entity equal to node {0} was not found.', node));
+    			}
     		}
     	}
     	
@@ -119,29 +156,53 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	//eo getEntityAncestor
 	
 	/**
+	 * Searching an entity corresponding to model node.
 	 * Search is based on <i>attributes</i> and <i>_content</i> comparison.
 	 * @private
+	 * @param {Array} entArray The array of entities.
+	 * @param {afStudio.model.Node} node The model node.
+	 * @return {Number} entity's index inside entArray or null if entity was not found. 
 	 */
 	searchEntityIndex : function(entArray, node) {
 		var np = node.getPropertiesHash(),
-			nc = node.getNodeData();
-		
-		var entIdx;
+			nc = node.getNodeData(),
+			entIdx;
+			
 		for (var i = 0, len = entArray.length; i < len; i++) {
-			var found = true;
-			Ext.iterate(entArray[i].attributes, function(k, v) {
-				return (np[k] !== v) ? (found = false) : true; 
-			});
-			if (found) {
-				if (Ext.isPrimitive(nc) && nc != entArray[i]._content) {
-					continue;
-				}
+			if (this.equal(entArray[i], node)) {
 				entIdx = i;
 				break;
 			}
 		}
 		
-		return entIdx;
-	}
+		return Ext.isNumber(entIdx) ? entIdx : null;
+	},
 	//eo searchEntityIndex
+	
+	/**
+	 * Compares entity and model node, returns true if model node represents the entity. 
+	 * @protected
+	 * @param {Object} entity The entity
+	 * @param {afStudio.model.Node} node The model node.
+	 * @return {Boolean}
+	 */
+	equal : function(entity, node) {
+		var np = node.getPropertiesHash(),
+			nc = node.getNodeData();
+		
+		var equal = true;
+		//compare attributes
+		Ext.iterate(entity.attributes, function(k, v) {
+			return (np[k] !== v) ? (equal = false) : true; 
+		});
+		//compare _content
+		if (equal) {
+			if (Ext.isPrimitive(nc) && nc != entity._content) {
+				equal = false;
+			}
+		}
+		
+		return equal;
+	}
+	//eo equal
 });

@@ -162,14 +162,12 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
      * @return {Function} node constructor or null if it was not found
      */
     resolveNodeType : function(type) {
-    	var nCls = String(type).trim(),
-    		nodeNs = [afStudio.view.inspector.TreePanel.nodeTypes];
+    	var nCls   = String(type).trim(),
+    		nodeNs = [afStudio.view.inspector.nodeType];
     	
-    	if (/^i:(\w+)/i.test(nCls)) {
-			nCls = nCls.replace(/^i:(\w+)/i, function(s, m1) {
-			    return m1.ucfirst(); 
-			});
-    	}
+    	nCls = /^i:(\w+)/i.test(nCls) ? nCls.replace(/^i:(\w+)/i, function(s, m1){return m1.ucfirst();}) 
+    								  : nCls.ucfirst();
+ 		nCls += 'Node';
     	
     	Ext.iterate(nodeNs, function(ns) {
     		if (Ext.isFunction(ns[nCls])) {

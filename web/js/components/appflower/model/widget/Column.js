@@ -26,7 +26,7 @@ afStudio.model.widget.Column = Ext.extend(afStudio.model.Node, {
         {name: 'editable', type: 'boolean', defaultValue: false},
 		{name: 'sortable', type: 'boolean', defaultValue: true},
 		{name: 'resizable', type: 'boolean', defaultValue: true},
-        {name: 'style', type: 'token'},  
+        {name: 'style', type: 'token'},
 //      {name: 'isid', type: 'boolean'},
         {name: 'groupField', type: 'boolean'},
         {name: 'sort', type: 'sortType'},
@@ -63,5 +63,5 @@ afStudio.model.widget.Column = Ext.extend(afStudio.model.Node, {
     	
         return tpl.apply(this);
     }
-    //eo toString	
+    //eo toString
 });

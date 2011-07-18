@@ -1,7 +1,7 @@
 Ext.ns('afStudio.view.inspector');
 
 /**
- * The InspectorTree view, represents the whole model.
+ * The InspectorTree view, represents the whole model structure.
  * 
  * @class afStudio.view.inspector.TreePanel
  * @extends Ext.tree.TreePanel
@@ -10,7 +10,7 @@ Ext.ns('afStudio.view.inspector');
 afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 	/**
-	 * The associated with this tree controller 
+	 * The associated with this tree controller.
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
 	 */
 	
@@ -88,7 +88,11 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			/**
 			 * @relayed controller
 			 */
-			modelNodeRemove: _me.onModelNodeRemove
+			modelNodeRemove: _me.onModelNodeRemove,
+			/**
+			 * @relayed controller
+			 */
+			modelNodeAppend: _me.onModelNodeAppend
 		});
 	},
 	//eo initEvents
@@ -109,6 +113,21 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo onNodeContextMenu
 	
 	/**
+	 * Relayed <u>modelNodeAppend</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
+	 * @protected
+	 * @interface
+	 */
+	onModelNodeAppend : function(ctr, parent, node, index) {
+		console.log('@view [InspectorTree] "modelNodeAppend"', parent, node);
+		var viewNode = this.getCmpByModel(parent);
+		viewNode.reload(function() {
+			this.item(index).select();
+		});
+	},
+	//eo onModelNodeAppend
+	
+	/**
 	 * Relayed <u>modelNodeRemove</u> event listener.
 	 * More details {@link afStudio.controller.BaseController#modelNodeRemove}.
 	 * @protected
@@ -118,13 +137,14 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
     	console.log('@view [InspectorTree] "modelNodeRemove"', parent, node);
     	var viewNode = this.getCmpByModel(node);
     	if (viewNode) {
-    		viewNode.remove();
+    		viewNode.remove(true);
     	}
 	}
 	//eo onModelNodeRemove
+	
 });
 
-afStudio.view.inspector.TreePanel.nodeTypes = {};
+afStudio.view.inspector.nodeType = {}
 
 /**
  * @type 'inspector.treePanel'

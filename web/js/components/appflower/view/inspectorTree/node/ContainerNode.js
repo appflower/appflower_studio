@@ -61,7 +61,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 			deleteAllText = afStudio.view.inspector.ContainerNode.deleteAllNodeCxtText,
 			mItems = [];
 		
-		//---	
+		//---
 		Ext.iterate(nodes, function(n, idx) {
 			mItems[idx] = {
 				text: n.name,
@@ -101,7 +101,6 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 				text: deleteText,
 				iconCls: 'afs-icon-delete'
 			});
-			
 		}
 		mItems.push({
 			itemId: 'deleteAllChildren',
@@ -144,9 +143,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	 */
 	addModelNode : function(node) {
 		var mn = this.modelNode.createNode(node);
-		console.log(String.format('node {0}, new model {1}, modelNode {2}', node, mn, this.modelNode));
-		console.log(mn);
-		console.log('definition', this.getOwnerTree().controller.getViewDefinition().getData());
+		
 	},
 	
 	/**
@@ -157,6 +154,17 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	removeAllModelNodes : function() {
 		this.modelNode.removeAll(true);
 	},
+	
+	/**
+	 * Cleaning all node's resources.
+	 * @protected
+	 * @override
+	 * @param {Boolean} silent
+	 */
+    destroy : function(silent) {
+        afStudio.view.inspector.ContainerNode.superclass.destroy.call(this, silent);
+        Ext.destroy(this.contextMenu);
+    },
 	
 	//@borrows Ext.tree.AsyncTreeNode methods
 	
@@ -252,6 +260,6 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 });
 
 /**
- * Adds "container" type to inspector tree nodes {@link afStudio.view.inspector.TreePanel.nodeTypes} object.
+ * Adds "container" type to inspector tree nodes {@link afStudio.view.inspector.nodeType} object.
  */
-afStudio.view.inspector.TreePanel.nodeTypes.container = afStudio.view.inspector.ContainerNode;
+afStudio.view.inspector.nodeType.container = afStudio.view.inspector.ContainerNode;

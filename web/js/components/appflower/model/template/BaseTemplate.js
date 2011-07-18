@@ -16,9 +16,10 @@ N.BaseTemplate = Ext.extend(Object, {
 	],	
 	
 	/**
+	 * Goes over {@link #structure} property and examines model on existance of structural nodes.
+	 * If any structural node is not exists in the model then it is created.
 	 * 
-	 * 
-	 * @param {afStudio.model.Node} model The model node
+	 * @param {afStudio.model.Root} model The root model node.
 	 */
 	processStructure : function(model) {
 		Ext.iterate(this.structure, function(n, idx) {
