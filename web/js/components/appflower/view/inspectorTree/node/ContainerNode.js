@@ -143,7 +143,6 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	 */
 	addModelNode : function(node) {
 		var mn = this.modelNode.createNode(node);
-		
 	},
 	
 	/**

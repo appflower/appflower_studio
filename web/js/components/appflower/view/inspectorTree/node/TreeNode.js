@@ -14,6 +14,8 @@ afStudio.view.inspector.TreeNode = function(attr) {
 		delete attr.modelNode;
 	}
 	
+	this.initNode(attr);
+	
 	afStudio.view.inspector.TreeNode.superclass.constructor.call(this, attr);
 	
 	this.resolveNodeText();
@@ -71,6 +73,16 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
         }
 	}),
 	//eo contextMenu
+
+	/**
+	 * Sets required attributes.
+	 * 
+	 * Template method.
+	 * @protected
+	 * @param {Object} attr
+	 */
+	initNode : function(attr) {
+	},
 	
 	/**
 	 * Sets up node {@link #text} property.
