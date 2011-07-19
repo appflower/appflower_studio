@@ -17,45 +17,86 @@ class afsPageModel extends afsBaseModel
      */
     protected $model_name = 'page';
     
-    
+    /**
+     * Page name
+     */
     private $name;
     
+    /**
+     * Page application
+     */
     private $application;
     
+    /**
+     * Page title
+     */
     private $title;
     
-    
+    /**
+     * Setting page title
+     *
+     * @param string $title 
+     * @author Sergey Startsev
+     */
     public function setTitle($title)
     {
         $this->title = $title;
     }
     
+    /**
+     * Setting page name
+     *
+     * @param string $name 
+     * @author Sergey Startsev
+     */
     public function setName($name)
     {
         $this->name = $name;
     }
     
+    /**
+     * Setting page application
+     *
+     * @param string $application 
+     * @author Sergey Startsev
+     */
     public function setApplication($application)
     {
         $this->application = $application;
     }
     
-    
+    /**
+     * Getting title
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
     public function getTitle()
     {
         return $this->title;
     }
     
+    /**
+     * Getting page name
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
     public function getName()
     {
         return $this->name;
     }
     
+    /**
+     * Getting application
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
     public function getApplication()
     {
         return $this->application;
     }
-    
     
     /**
      * Load object
@@ -80,7 +121,12 @@ class afsPageModel extends afsBaseModel
         return $this;
     }
     
-    
+    /**
+     * Save page functionality
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
     public function save()
     {
         $definition = afsXmlDefinition::create();
@@ -94,14 +140,17 @@ class afsPageModel extends afsBaseModel
         }
         $definition->pack();
         
-        
-        $path = "{$this->getPagesPath()}/{$this->getName()}.xml";
+        $path = $this->getPagePath();
         $response = afResponseHelper::create();
         
         $status = $definition->validate();
         
         if (is_bool($status) && $status) {
             afStudioUtil::writeFile($path, $definition->get());
+            $this->setNew(false);
+            
+            $this->createAction();
+            
             $response->success(true);
         } else {
             $response->success(false)->message($status);
@@ -110,14 +159,95 @@ class afsPageModel extends afsBaseModel
         return $response;
     }
     
-    private function getPagesPath()
+    /**
+     * Delete page functionality
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function delete()
     {
-        return afStudioUtil::getRootDir() . "/apps/{$this->getApplication()}/config/pages";
+        $response = afResponseHelper::create();
+        if (!$this->isNew()) {
+    		$page_path = $this->getPagePath();
+    		$page_action_path = $this->getPageActionPath();
+    		
+            $filesystem = afsFileSystem::create();
+            
+            if (file_exists($page_path)) {
+                $filesystem->remove($page_path);
+            }
+            
+            if (file_exists($page_action_path)) {
+                $filesystem->remove($page_action_path);
+            }
+            
+    		if (!file_exists($page_path)) {
+    			$response->success(true)->message("Page <b>{$this->getName()}</b> has been successfully deleted");
+    		} else {
+    		    $response->success(false)->message("Can't delete page <b>{$this->getName()}</b>!");
+    		}
+        } else {
+            $response->success(false)->message("Page <b>{$this->getName()}</b> doesn't exists");
+        }
+		
+		return $response;
     }
     
+    /**
+     * Getting current page path
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getPagePath()
+    {
+        return "{$this->getPagesPath()}/{$this->getName()}.xml";
+    }
+    
+    /**
+     * Getting current page action path
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getPageActionPath()
+    {
+        return "{$this->getPagesModulePath()}/actions/{$this->getName()}Action.class.php";
+    }
+    
+    /**
+     * Getting pages path
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getPagesPath()
+    {
+        return "{$this->getPagesApplicationPath()}/config/pages";
+    }
+    
+    /**
+     * Getting pages module path
+     *
+     * @param string $module 
+     * @return string
+     * @author Sergey Startsev
+     */
     private function getPagesModulePath($module = self::MODULE)
     {
-        return afStudioUtil::getRootDir() . "/apps/{$this->getApplication()}/modules/{$module}";
+        return "{$this->getPagesApplicationPath()}/modules/{$module}";
+    }
+    
+    /**
+     * Getting pages application path
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function getPagesApplicationPath()
+    {
+        return afStudioUtil::getRootDir() . "/apps/{$this->getApplication()}";
     }
     
     /**
@@ -189,29 +319,25 @@ class afsPageModel extends afsBaseModel
      */
     private function createAction($module = self::MODULE)
     {
-        $name = $this->getName();
-        $application = $this->getApplication();
-        
-        $module_dir = $this->getPagesModulePath();
-        $action_dir = "{$module_dir}/actions";
-        
         $response = afResponseHelper::create();
         
-        if (file_exists($action_dir)) {
-            $path = "{$action_dir}/{$name}Action.class.php";
-            $definition = afStudioLayoutCommandTemplate::action($name);
+        if (!$this->isNew()) {
+            $name = $this->getName();
+            $path = $this->getPageActionPath();
+            
+            $definition = afsPageModelTemplate::create()->action($name);
             
             if (!file_exists($path)) {
                 if (afStudioUtil::writeFile($path, $definition)) {
                     $response->success(true)->message("Action has been successfully created");
                 } else {
-                    $response->success(false)->message("Can't create action in '{$module}' module");
+                    $response->success(false)->message("Can't create action file");
                 }
             } else {
                 $response->success(true)->message("Action for '{$name}' already exists");
             }
         } else {
-            $response->success(false)->message("Directory for action doesn't exists in '{$application}/{$module}'");
+            $response->success(false)->message("can't create action for new page. Please first create and save definition");
         }
         
         return $response;

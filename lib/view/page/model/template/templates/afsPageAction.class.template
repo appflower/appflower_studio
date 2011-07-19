@@ -1,7 +1,7 @@
 /**
- * Generated action list class
+ * Generated page action class
  */
-class <php echo $name ?>Action extends sfAction
+class <?php echo $name ?>Action extends sfAction
 {
     /**
      * Execute actions

@@ -1,8 +1,9 @@
 <?php
 /**
- * afStudioLayout Command
+ * Layout command class
  *
- * @author startsev.sergey@gmail.com
+ * @package appFlowerStudio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afStudioLayoutCommand extends afBaseStudioCommand
 {
@@ -63,26 +64,19 @@ class afStudioLayoutCommand extends afBaseStudioCommand
      */
     protected function processGet()
     {
-        $root_dir = sfConfig::get('sf_root_dir');
-        $sPath = "{$root_dir}/apps/{$this->getParameter('app')}/config/pages/{$this->getParameter('page')}";
+        $page_file = $this->getParameter('page');
+        $page_name = pathinfo($page_file, PATHINFO_FILENAME);
         
-        $afResponse = afResponseHelper::create();
+        $page = afsPageModelHelper::retrieve($page_name);
         
-        if (file_exists($sPath)) {
-            $unserializer = new XML_Unserializer($this->page_unserialize_options);
-            $status = $unserializer->unserialize($sPath, true);
-    
-            if ($status) {
-                $definition = $unserializer->getUnserializedData();
-                $afResponse->success(true)->content($definition);
-            } else {
-                $afResponse->success(false)->content("Can't parse page");
-            }
+        $response = afResponseHelper::create();
+        if (!$page->isNew()) {
+            $response->success(true)->content($page->getDefinition());
         } else {
-            $afResponse->success(false)->content("Page doesn't exists");
+            $response->success(false)->content("Page <b>{$page_name}</b> doesn't exists");
         }
         
-        return $afResponse->asArray();
+        return $response->asArray();
     }
     
     /**
@@ -91,63 +85,45 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     protected function processSave()
     {
         // Getting needed parameters - page, application name, and sure definition
-        $sPage = $this->getParameter('page');
-        $sApplication = $this->getParameter('app');
-        $aDefinition = $this->getParameter('definition');
+        $page_name = pathinfo($this->getParameter('page'), PATHINFO_FILENAME);
+        
+        $application = $this->getParameter('app');
+        $definition = $this->getParameter('definition', array());
         
         $module = $this->getParameter('module', self::PAGES_MODULE);
         
         //idXml is stored inside the portal_state table from appFlowerPlugin
-        $idXml = 'pages/'.str_replace('.xml','',basename($sPage));
+        $idXml = "pages/{$page_name}";
         
-        $bNew = $this->getParameter('is_new');
+        $page = afsPageModelHelper::retrieve($page_name, $application);
         
-        if ($bNew) {
-            $aDefinition = $this->getNewDefitinition($this->getParameter('title'));
+        $is_new = $page->isNew();
+        
+        $page->setTitle($this->getParameter('title'));
+        $page->setDefinition($definition);
+        
+        $saveResponse = $page->save();
+        
+        $response = afResponseHelper::create();
+        if ($saveResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            
+            $console = afStudioConsole::getInstance()->execute(array(
+                "sf appflower:portal-state-cc {$idXml}",
+                "sf appflower:validator-cache frontend cache yes"
+            ));
+            
+            $response
+                ->success(true)
+                ->content((!$is_new) ? sprintf('Page <b>%s</b> has been saved', $page_name) : sprintf('Page <b>%s</b> has been created', $page_name))
+                ->console($console);
+        } else {
+            $response->success(false);
+            if ($saveResponse->hasParameter(afResponseMessageDecorator::IDENTIFICATOR)) {
+                $response->content($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+            }
         }
         
-        $root_dir = afStudioUtil::getRootDir();
-        $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
-        
-        $afResponse = $this->createAction(pathinfo($sPage, PATHINFO_FILENAME), $sApplication, $module);
-        
-        if ($afResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-            $afResponse = afResponseHelper::create();
-            
-            // Needs to define/initialize xml serialize constants
-            $oXmlUtil = new XML_Util;
-            
-            $serializer = new XML_Serializer($this->page_serialize_options);
-            $status = $serializer->serialize($aDefinition);
-            
-            if ($status) {
-                $return = $serializer->getSerializedData();
-                
-                $this->definition = $serializer->getSerializedData();
-                
-                //todo: [radu] validate() is not working as expected !
-                //if ($this->validate()) {
-                    // Save changes
-                    
-                    // @todo for radu - from lukas :) - you used console output here that was returned by writeFile()
-                    // but I changed the code - now writeFile() returns boolean so you have to find another way of getting that console output ;)
-                    afStudioUtil::writeFile($sPath, $this->definition);
-                    @chmod($sPath, 0755);
-                    
-                    $message = (!$bNew) ? sprintf('Page "%s" has been changed', $sPage)  : sprintf('Page "%s" has been created', $sPage);
-                    $console = afStudioConsole::getInstance()->execute(array('sf appflower:portal-state-cc '.$idXml,'afs fix-perms','sf appflower:validator-cache frontend cache yes'));
-                    
-                    $afResponse->success(true)->content($message)->console($console);
-                //} else {
-                    // Getting error message from validation results, from $this->message
-                    //$return = $this->fetchError($this->message);
-                //}
-            } else {
-                $afResponse->success(false)->content('Some errors has beed found');
-            }
-        } 
-        
-        return $afResponse->asArray();
+        return $response->asArray();
     }
     
     /**
@@ -230,7 +206,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 $bRenamed = @rename($sPath, $sPagesPath . $sName);
                 if ($bRenamed) {
                     // rename action 
-                    afStudioModuleCommandHelper::renameAction(
+                    afStudioModuleCommandHelper::renameAction( 
                         pathinfo($sPage, PATHINFO_FILENAME), 
             		    pathinfo($sName, PATHINFO_FILENAME), 
             		    $module,
@@ -257,63 +233,21 @@ class afStudioLayoutCommand extends afBaseStudioCommand
      */
     protected function processDelete()
     {
-        $sApplication = $this->getParameter('app');
-        $sPage = $this->getParameter('page');
+        $application = $this->getParameter('app');
+        $page_name = pathinfo($this->getParameter('page'), PATHINFO_FILENAME);
         
-        $module = $this->getParameter('module', self::PAGES_MODULE);
+        $page = afsPageModelHelper::retrieve($page_name, $application);
         
-        $afResponse = afResponseHelper::create();
+		if (!$page->isNew()) {
+		    $response = $page->delete();
+		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
+		    }
+		} else {
+		    $response = afResponseHelper::create()->success(false)->message("Page <b>{$page_name}</b> doesn't exists");
+		}
         
-        $root_dir = afStudioUtil::getRootDir();
-        $sPath = "{$root_dir}/apps/{$sApplication}/config/pages/{$sPage}";
-        
-        if (file_exists($sPath)) {
-            $bDeleted = unlink($sPath);
-            if ($bDeleted) {
-                // Delete action for page , if exists
-                $actionName = pathinfo($sPage, PATHINFO_FILENAME);
-        		$actionPath = "{$root_dir}/apps/{$sApplication}/modules/{$module}/actions/{$actionName}Action.class.php";
-        		
-        		if (file_exists($actionPath)) {
-        		    @unlink($actionPath);
-        		}
-        		
-                $afResponse->success(true)->content("Page has been successfully deleted");
-            } else {
-                $afResponse->success(false)->content("Some probmlems appear when delete processing");
-            }
-        } else {
-            $afResponse->success(false)->content("Page doesn't exists");
-        }
-        
-        return $afResponse->asArray();
-    }
-    
-    /**
-     * Getting definition array for new page
-     * 
-     * @param string $title - Page title
-     * @return array - definition array
-     */
-    private function getNewDefitinition($title)
-    {
-        $aDefinition = array(
-            'attributes' => array(
-                'type' => 'layout',
-                'xmlns:i' => 'http://www.appflower.com/schema/',
-                'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-                'xsi:schemaLocation' => 'http://www.appflower.com/schema/appflower.xsd'
-            ),
-            'i:title' => $title,
-            'i:area'  => array(
-                'attributes' => array(
-                    'layout' => 1, 
-                    'type'   => 'content'
-                )
-            )
-        );
-        
-        return $aDefinition;
+        return $response->asArray();
     }
     
 	/**

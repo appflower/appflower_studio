@@ -131,13 +131,10 @@ class afsXmlDefinition extends afsBaseDefinition
     protected function doValidatePacked()
     {
         $definition = $this->getDefinition();
-        FirePHP::getInstance(true)->fb($definition);
-        $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
         
+        $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
         afStudioUtil::writeFile($tempPath, $definition);
         
-        // $validator = new XmlValidator(null, false, true);
-        // $validator->readXmlDocument($tempPath, true);
         $validator = new XmlValidator($tempPath);
         $status = $validator->validateXmlDocument();
         
