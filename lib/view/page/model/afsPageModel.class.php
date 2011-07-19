@@ -8,6 +8,11 @@
 class afsPageModel extends afsBaseModel
 {
     /**
+     * Default pages module
+     */
+	const MODULE = 'pages';
+	
+    /**
      * Model name 
      */
     protected $model_name = 'page';
@@ -75,11 +80,11 @@ class afsPageModel extends afsBaseModel
         return $this;
     }
     
+    
     public function save()
     {
         $definition = afsXmlDefinition::create();
         if ($this->isNew()) {
-            // $this->addTopElement('area')->addTopElement('title', array('title' => $this->getTitle()));
             $this->addAreaTopElement()->addTitleTopElement($this->getTitle());
             
             $definition->init($this->getDefinition());
@@ -89,11 +94,30 @@ class afsPageModel extends afsBaseModel
         }
         $definition->pack();
         
+        
+        $path = "{$this->getPagesPath()}/{$this->getName()}.xml";
+        $response = afResponseHelper::create();
+        
+        $status = $definition->validate();
+        
+        if (is_bool($status) && $status) {
+            afStudioUtil::writeFile($path, $definition->get());
+            $response->success(true);
+        } else {
+            $response->success(false)->message($status);
+        }
+        
+        return $response;
     }
     
     private function getPagesPath()
     {
         return afStudioUtil::getRootDir() . "/apps/{$this->getApplication()}/config/pages";
+    }
+    
+    private function getPagesModulePath($module = self::MODULE)
+    {
+        return afStudioUtil::getRootDir() . "/apps/{$this->getApplication()}/modules/{$module}";
     }
     
     /**
@@ -154,6 +178,43 @@ class afsPageModel extends afsBaseModel
         $this->setDefinition(array_merge($definition, $this->getDefinition()));
         
         return $this;
+    }
+    
+    /**
+     * Creating new action
+     *
+     * @param string $module 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    private function createAction($module = self::MODULE)
+    {
+        $name = $this->getName();
+        $application = $this->getApplication();
+        
+        $module_dir = $this->getPagesModulePath();
+        $action_dir = "{$module_dir}/actions";
+        
+        $response = afResponseHelper::create();
+        
+        if (file_exists($action_dir)) {
+            $path = "{$action_dir}/{$name}Action.class.php";
+            $definition = afStudioLayoutCommandTemplate::action($name);
+            
+            if (!file_exists($path)) {
+                if (afStudioUtil::writeFile($path, $definition)) {
+                    $response->success(true)->message("Action has been successfully created");
+                } else {
+                    $response->success(false)->message("Can't create action in '{$module}' module");
+                }
+            } else {
+                $response->success(true)->message("Action for '{$name}' already exists");
+            }
+        } else {
+            $response->success(false)->message("Directory for action doesn't exists in '{$application}/{$module}'");
+        }
+        
+        return $response;
     }
     
 }

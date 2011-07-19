@@ -7,6 +7,7 @@
  */
 class afsXmlDefinition extends afsBaseDefinition
 {
+    const IDENTIFICATOR_ERROR = 'ERROR';
     /**
      * Definition name
      */
@@ -124,21 +125,33 @@ class afsXmlDefinition extends afsBaseDefinition
      * Validate definition
      *
      * @param string $definition 
-     * @return boolean
+     * @return mixed - success: boolean, unsuccess: string - message error
      * @author Sergey Startsev
      */
     protected function doValidatePacked()
     {
         $definition = $this->getDefinition();
-        
+        FirePHP::getInstance(true)->fb($definition);
         $tempPath = tempnam(sys_get_temp_dir(), 'studio_wi_wb').'.xml';
         
         afStudioUtil::writeFile($tempPath, $definition);
         
+        // $validator = new XmlValidator(null, false, true);
+        // $validator->readXmlDocument($tempPath, true);
         $validator = new XmlValidator($tempPath);
         $status = $validator->validateXmlDocument();
         
-        return $status;
+        unlink($tempPath);
+        
+        $status = $validator->validateXmlDocument(true);
+        
+        if ($status[0] == self::IDENTIFICATOR_ERROR) {
+            $return = trim($status[1]->getMessage());
+        } else {
+            $return = true;
+        }
+        
+        return $return;
     }
     
 }
