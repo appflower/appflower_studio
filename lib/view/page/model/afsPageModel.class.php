@@ -107,7 +107,7 @@ class afsPageModel extends afsBaseModel
     public function load()
     {
         // getting page file path
-        $path = $this->getPagesPath() . "/{$this->getName()}.xml";
+        $path = $this->getPagePath();
         
         if (is_readable($path)) {
             $definition = file_get_contents($path);
@@ -160,6 +160,43 @@ class afsPageModel extends afsBaseModel
     }
     
     /**
+     * Rename current page
+     *
+     * @param string $new_name 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function rename($new_name)
+    {
+        $response = afResponseHelper::create();
+        
+        if (!$this->isNew()) {
+            $old_name = $this->getName();
+            
+    		$oldPath = $this->getPagePath();
+    		$newPath = $this->getPagePath($new_name);
+            
+    		if (!file_exists($newPath)) {
+        		$renamed = afsViewModelHelper::renameAction($old_name, $new_name, self::MODULE, $this->getApplication(), 'app');
+                
+                afsFileSystem::create()->rename($oldPath, $newPath);
+                
+        		if (!file_exists($oldPath) && file_exists($newPath)) {
+        			$response->success(true)->message("Renamed page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
+        		} else {
+        		    $response->success(false)->message("Can't rename page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
+        		}
+    		} else {
+    		    $response->success(false)->message("Page <b>{$new_name}</b> already exists");
+    		}
+        } else {
+            $response->success(false)->message("Page doesn't exists, create widget first");
+        }
+        
+        return $response;
+    }
+    
+    /**
      * Delete page functionality
      *
      * @return afResponse
@@ -200,9 +237,13 @@ class afsPageModel extends afsBaseModel
      * @return string
      * @author Sergey Startsev
      */
-    private function getPagePath()
+    private function getPagePath($name = null)
     {
-        return "{$this->getPagesPath()}/{$this->getName()}.xml";
+        if (is_null($name)) {
+            $name = $this->getName();
+        }
+        
+        return "{$this->getPagesPath()}/{$name}.xml";
     }
     
     /**
@@ -211,9 +252,13 @@ class afsPageModel extends afsBaseModel
      * @return string
      * @author Sergey Startsev
      */
-    private function getPageActionPath()
+    private function getPageActionPath($name = null)
     {
-        return "{$this->getPagesModulePath()}/actions/{$this->getName()}Action.class.php";
+        if (is_null($name)) {
+            $name = $this->getName();
+        }
+        
+        return "{$this->getPagesModulePath()}/actions/{$name}Action.class.php";
     }
     
     /**

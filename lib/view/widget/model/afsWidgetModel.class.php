@@ -269,6 +269,7 @@ class afsWidgetModel extends afsBaseModel
      */
     public function rename($new_name)
     {
+        $response = afResponseHelper::create();
         if (!$this->isNew()) {
     		$old_name = $this->getAction();
     		$module = $this->getModule();
@@ -278,10 +279,8 @@ class afsWidgetModel extends afsBaseModel
     		$oldPath = $this->getPlaceConfigPath() . "/{$old_name}.xml";
     		$newPath = $this->getPlaceConfigPath() . "/{$new_name}.xml";
             
-    		$response = afResponseHelper::create();
-            
     		if (!file_exists($newPath)) {
-        		$renamed = afsWidgetModelHelper::renameAction($old_name, $new_name, $module, $place, $type);
+        		$renamed = afsViewModelHelper::renameAction($old_name, $new_name, $module, $place, $type);
                 
                 afsFileSystem::create()->rename($oldPath, $newPath);
                 

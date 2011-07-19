@@ -30,5 +30,4 @@ class afsPageModelHelper extends afsBaseModelHelper
         return $page->load();
     }
     
-    
 }

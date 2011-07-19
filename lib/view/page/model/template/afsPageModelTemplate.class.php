@@ -8,27 +8,14 @@
 class afsPageModelTemplate extends afsBaseModelTemplate
 {
     /**
-     * Templates folder, near current folder
+     * Action template name
      */
-    const TEMPLATE_FOLDER = 'templates';
-    
-    /**
-     * Template type
-     */
-    const TEMPLATE_TYPE = 'class';
-    
-    /**
-     * Template postfix
-     */
-    const TEMPLATE_POSTFIX = 'template';
-    
-    
     const ACTION_TEMPLATE_NAME = 'afsPageAction';
     
     /**
      * Create self instance
      *
-     * @return afsWidgetModelTemplate
+     * @return afsPageModelTemplate
      * @author Sergey Startsev
      */
     static public function create()
@@ -52,18 +39,6 @@ class afsPageModelTemplate extends afsBaseModelTemplate
         } else {
             throw new afsPageModelTemplateException("Template '{$template_name}' doesn't exists. Path: '{$template_path}'");
         }
-    }
-    
-    /**
-     * Getting template path
-     *
-     * @param string $name 
-     * @return string
-     * @author Sergey Startsev
-     */
-    public function getTemplatePath($name)
-    {
-        return dirname(__FILE__) . "/". self::TEMPLATE_FOLDER ."/{$name}.". self::TEMPLATE_TYPE . "." . self::TEMPLATE_POSTFIX;
     }
     
 }

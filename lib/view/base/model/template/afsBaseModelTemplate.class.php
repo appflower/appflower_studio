@@ -8,6 +8,21 @@
 abstract class afsBaseModelTemplate 
 {
     /**
+     * Templates folder, near current folder
+     */
+    const TEMPLATE_FOLDER = 'templates';
+    
+    /**
+     * Template type class
+     */
+    const TEMPLATE_TYPE_CLASS = 'class';
+    
+    /**
+     * Template postfix
+     */
+    const TEMPLATE_POSTFIX = 'template';
+    
+    /**
      * Parameters container
      */
     protected $params = array();
@@ -56,7 +71,7 @@ abstract class afsBaseModelTemplate
      * @return mixed
      * @author Sergey Startsev
      */
-    protected function getParameter($name, $default = null)
+    public function getParameter($name, $default = null)
     {
         return ($this->hasParameter($name)) ? $this->params[$name] : $default;
     }
@@ -68,7 +83,7 @@ abstract class afsBaseModelTemplate
      * @return boolean
      * @author Sergey Startsev
      */
-    protected function hasParameter($name)
+    public function hasParameter($name)
     {
         return array_key_exists($name, $this->params);
     }
@@ -163,6 +178,22 @@ abstract class afsBaseModelTemplate
     protected function wrapPhp()
     {
         $this->setContent("<" . "?php\n" . $this->getContent());
+    }
+    
+    /**
+     * Getting template path
+     *
+     * @param string $name 
+     * @param string $type - template type
+     * @param string $postfix - extension (example: class)
+     * @return string
+     * @author Sergey Startsev
+     */
+    protected function getTemplatePath($name, $type = self::TEMPLATE_TYPE_CLASS, $postfix = self::TEMPLATE_POSTFIX)
+    {
+        $reflection = new ReflectionClass(get_class($this));
+        
+        return dirname($reflection->getFileName()) . DIRECTORY_SEPARATOR. self::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . "{$name}.{$type}.{$postfix}";
     }
     
 }
