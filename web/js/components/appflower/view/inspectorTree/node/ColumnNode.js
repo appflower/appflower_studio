@@ -16,6 +16,6 @@ afStudio.view.inspector.ColumnNode = Ext.extend(afStudio.view.inspector.TreeNode
 
 
 /**
- * Adds "RootNode" type to inspector tree nodes {@link afStudio.view.inspector.nodeType} object.
+ * Adds "ColumnNode" type to inspector tree nodes {@link afStudio.view.inspector.nodeType} object.
  */
 afStudio.view.inspector.nodeType.ColumnNode = afStudio.view.inspector.ColumnNode;

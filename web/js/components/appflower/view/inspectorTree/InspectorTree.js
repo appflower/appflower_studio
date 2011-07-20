@@ -39,6 +39,9 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		afStudio.view.inspector.TreePanel.superclass.initComponent.apply(this, arguments);
 		
+		//activate treeSorter
+		this.treeSorter = new afStudio.view.inspector.InspectorSorter(this);		
+		
 		this._afterInitComponent();
 	},
 	//eo initComponent

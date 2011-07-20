@@ -1206,7 +1206,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     validate : function() {
     	var ps = this.getProperties(),
     		nt = this.nodeTypes;
-    	
+    		
     	ps.eachKey(function(k, p) {
     		if (!p.isValid()) {
     			

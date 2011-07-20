@@ -46,8 +46,6 @@ N.ModelNode = {
 	
 	PARAM : 'i:param',
 	
-	PROXY : 'i:proxy',
-	
 	DATA_SOURCE : 'i:datasource',
 
 	DATA_STORE : 'i:datastore',

@@ -92,7 +92,8 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 */
 	resolveNodeText : function() {
 		var attr = this.attributes;
-		this.text = attr.name || attr.text || this.modelNode.tag;
+		//this.attributes.text is required for tree sorter class
+		this.text = this.attributes.text = attr.name || attr.text || this.modelNode.tag;
 	},
 	
 	/**

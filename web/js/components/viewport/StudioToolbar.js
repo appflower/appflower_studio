@@ -7,7 +7,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 * @private
 	 */
 	initComponent : function() {			
-		_self = this;
+		var _self = this;
 				
 		var config = {
 			items: [
@@ -159,7 +159,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 */
 	,setProjectMenu: function(menuItem) {
 		var recentProjects = afStudio.getRecentProjects();
-		_self = this;
+		var _self = this;
 		
 
 		if (menuItem.menu) {
