@@ -47,14 +47,14 @@ afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
 	],
 	
 	listNodeTypes : [
-		{name: afStudio.ModelNode.COLUMN, required: true}
+		{name: afStudio.ModelNode.COLUMN, required: true, hasMany: true, unique: 'name'}
 	],
 	
 	editNodeTypes : [
-		{name: afStudio.ModelNode.FIELD, required: true},
+		{name: afStudio.ModelNode.FIELD, required: true, hasMany: true, unique: 'name'},
 		afStudio.ModelNode.BUTTON,
 		afStudio.ModelNode.LINK,
 		afStudio.ModelNode.RADIO_GROUP,
 		afStudio.ModelNode.IF
-	]	
+	]
 });

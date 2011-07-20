@@ -1,4 +1,3 @@
-
 /**
  * Base action class.
  * @class afStudio.model.widget.BaseAction
@@ -15,7 +14,7 @@ afStudio.model.widget.BaseAction = Ext.extend(afStudio.model.Node, {
 	}],
 	
 	nodeTypes : [
-		{name: afStudio.ModelNode.ACTION, required: true},
+		{name: afStudio.ModelNode.ACTION, required: true, hasMany: true},
 		{name: afStudio.ModelNode.IF}
 	]
 });

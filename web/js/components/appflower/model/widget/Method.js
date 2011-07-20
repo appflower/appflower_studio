@@ -13,7 +13,13 @@ afStudio.model.widget.Method = Ext.extend(afStudio.model.Node, {
 		{name: "type", type: "fetchType", defaultValue: "static"}
 	],
 	
+	defaultDefinition : {
+		attributes: {
+			name: 'i:method'
+		}
+	},
+	
 	nodeTypes : [
-		{name: afStudio.ModelNode.PARAM}
+		{name: afStudio.ModelNode.PARAM, hasMany: true, unique: 'name'}
 	]
 });

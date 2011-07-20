@@ -299,12 +299,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     initEvents : function() {
     	var _me = this;
     	
-    	//TODO improve - move to the separate method
-    	//Relays controller's events to View layer
-    	Ext.iterate(this.views, function(k, v) {
-    		v.relayEvents(_me, ['beforeModelNodeRemove', 'modelNodeRemove', 'modelNodeAppend']);
-    	});
-    	
     	_me.on({
     		scope: _me,
   			
@@ -324,6 +318,12 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             	this.viewDefinition.addEntity(parent, node);
             	console.log('definition', this.viewDefinition.getData());
             }
+    	});
+    	
+    	//TODO improve - move to the separate method
+    	//Relays controller's events to View layer
+    	Ext.iterate(this.views, function(k, v) {
+    		v.relayEvents(_me, ['modelNodeRemove', 'modelNodeAppend']);
     	});
     },
     //eo initEvents

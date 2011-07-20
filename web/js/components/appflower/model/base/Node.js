@@ -17,7 +17,6 @@ Ext.ns('afStudio.model.widget');
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.Node = Ext.extend(Ext.util.Observable, {
-
 	/**
 	 * Node's value property.
 	 * @constant NODE_DATA
@@ -130,7 +129,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
         this.addEvents({
             /**
-             * @event beforeModelNodeAdded
+             * @event beforeModelNodeAppend
              * Fires before a new child is appended, return false to cancel the append.
              * @param {Tree} tree The owner tree
              * @param {Node} this This node
@@ -250,9 +249,12 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         
         afStudio.model.Node.superclass.constructor.call(this);
         
-        if (config.definition) {
-        	this.initNodeDefinition(config.definition);
+        var def = config.definition || this.defaultDefinition;
+        if (def) {
+	    	this.initNodeDefinition(def);
         }
+        
+        this.initEvents();
     },
     //eo constructor
     
@@ -287,7 +289,18 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     initNodeDefinition : function(definition) {
 		this.applyNodeDefinition(definition, true);
     },
-	//eo initNodeDefinition
+    
+	/**
+     * Template method.
+     * @protected
+	 */    
+    initEvents : function() {
+    	var _me = this;
+    	
+		_me.on({
+			beforeModelNodeAppend : _me.onBeforeModelNodeAppend
+		});
+    },
     
     /**
 	 * Applies node definition object.
@@ -323,14 +336,13 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		} else {
     			Ext.iterate(def, function(n, d) {
     				//collection of the same nodes
-					if (Ext.isArray(d)) {				
+					if (Ext.isArray(d)) {
 						Ext.iterate(d, function(nd) {
 			    			_me.createNode(n, nd);				
 						});
 					} else {
 						_me.createNode(n, d);	
 					}
-					
     			});
     		}
     	} else {
@@ -854,16 +866,16 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * Finds the first child that has the property with the specified value.
+     * Finds the first child by tag and property value.
      * @param {String} property The property name
      * @param {Mixed} value The value to search for
      * @param {Boolean} deep (Optional) True to search through nodes deeper than the immediate children
      * @return {Node} The found child or null if none was found
      */
-    findChild : function(property, value, deep) {
+    findChild : function(tag, property, value, deep) {
         return this.findChildBy(function() {
-        	var p = this.properties.get(property);        	
-            return p ? (p.value == value) : false;            
+        	var p = this.getPropertyValue(property);
+            return (this.tag == tag) && (p && p == value);           
         }, null, deep);
     },
     
@@ -871,6 +883,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Finds the first child by ID.
      * @param {String} value The ID value
      * @param {Boolean} deep (Optional) True to search through nodes deeper than the immediate children
+     * @param {Boolean} byPattern (Optional) True to use ID pattern during searching
      * @return {Node} The found child or null if none was found
      */
     findChildById : function(value, deep, byPattern) {
@@ -1186,6 +1199,70 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		});
     	
         return tpl.apply(this);
-    }
+    },
     //eo toString
+    
+    //TODO @Nikolai
+    validate : function() {
+    	var ps = this.getProperties(),
+    		nt = this.nodeTypes;
+    	
+    	ps.eachKey(function(k, p) {
+    		if (!p.isValid()) {
+    			
+    		}
+    	});
+    	
+    	return true;
+    },
+    //eo validate 
+    
+    /**
+     * <u>beforeModelNodeAppend</u> event listener.
+     * Checks if can be added child node.
+     * @return {Boolean}
+     */
+    onBeforeModelNodeAppend : function(ctr, parent, node) {
+		console.log('@model "beforeModelNodeAppend"', node);
+		
+		var nodeTag = node.tag,
+			nt = parent.nodeTypes,
+			canBeAdded = true;
+		
+		var n;
+		for (var i = 0, len = nt.length; i < len; i++) {
+			if (nodeTag == (Ext.isObject(nt[i]) ? nt[i].name : nt[i])) {
+				n = nt[i];
+				break;
+			}
+		}
+		
+		var message;
+		if (n) {
+			var similarNode = parent.findChildById(nodeTag, false, true);
+			
+			if (similarNode) {
+				var hasMany = Ext.isObject(n) && n.hasMany,
+					unique  = Ext.isObject(n) && n.unique ? n.unique : false;
+					
+				if (!hasMany) {
+					canBeAdded = false;
+					message = String.format("{0} can contain only one {1} child node.", parent.tag, nodeTag);
+				} else if (unique && parent.findChild(nodeTag, unique, node.getPropertyValue(unique))) {
+					canBeAdded = false;
+					message = String.format('{0} property "{1}" should be unique.', nodeTag, unique);
+				}
+			}
+		} else {
+			canBeAdded = false;
+			message = String.format("{0} cannot contain {1} child node.", parent.tag, nodeTag);
+		}
+		
+		if (!canBeAdded) {
+			afStudio.Msg.warning('Model', message);
+		}
+		
+		return canBeAdded;
+    }
+    //eo onBeforeModelNodeAppend
 });

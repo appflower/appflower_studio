@@ -3,7 +3,7 @@ Ext.ns('afStudio.model.template');
 N = afStudio.model.template;
 
 /**
- * The parent structural template class.
+ * The base structural template class.
  * 
  * @class afStudio.model.template.BaseTemplate
  * @extends Object
@@ -13,7 +13,7 @@ N.BaseTemplate = Ext.extend(Object, {
 
 	structure : [
 		afStudio.ModelNode.TITLE
-	],	
+	],
 	
 	/**
 	 * Goes over {@link #structure} property and examines model on existance of structural nodes.
@@ -23,13 +23,12 @@ N.BaseTemplate = Ext.extend(Object, {
 	 */
 	processStructure : function(model) {
 		Ext.iterate(this.structure, function(n, idx) {
-			if (model.getImmediateModelNode(n) == null) {
-				model.createNode(n);
+			var sName = Ext.isObject(n) ? n.name : n;
+			if (model.getImmediateModelNode(sName) == null) {
+				model.createNode(sName);
 			}
 		});
 	}
 });
 
 delete N;
-
-//add model types

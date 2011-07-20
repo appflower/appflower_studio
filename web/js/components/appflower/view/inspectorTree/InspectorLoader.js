@@ -86,7 +86,7 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
      * @return {Object} properties
      */
     getModelProperties : function(m) {
-    	return Ext.copyTo({}, m.getPropertiesHash(), 'name, text');	
+    	return Ext.copyTo({}, m.getPropertiesHash(), 'name, text');
     },
     
     /**

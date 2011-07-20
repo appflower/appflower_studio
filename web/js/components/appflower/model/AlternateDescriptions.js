@@ -15,6 +15,6 @@ afStudio.model.AlternateDescriptions = Ext.extend(afStudio.model.Node, {
 	}],
 	
 	nodeTypes : [
-		{name: afStudio.ModelNode.DESCRIPTION, required: true}
+		{name: afStudio.ModelNode.DESCRIPTION, required: true, hasMany: true}
 	]
 });

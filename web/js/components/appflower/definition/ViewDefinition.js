@@ -20,6 +20,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @override
 	 * @public
 	 * @param {afStudio.model.Node} node The model node
+	 * @return {Mixed} entity
 	 */
 	getEntity : function(node) {
 		var entObj = this.getEntityAncestor(node),
@@ -38,6 +39,40 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		return this.out(entity);
 	},
 	//eo getEntity
+	
+	/**
+	 * @override
+	 * @public
+	 * @param {afStudio.model.Node} parent
+	 * @param {afStudio.model.Node} node
+	 */
+	addEntity : function(parent, node) {
+		var entObj = this.getEntityAncestor(parent),
+			ea = entObj.ancestor,
+			ek = entObj.entityKey,
+			eParent = ea[ek];
+		
+		var entity = this.createEntity(node);
+		if (!Ext.isDefined(entity)) {
+//			throw new afStudio.definition.error.DefinitionError('create-entity');
+		}
+		
+		//parent element is not exists.
+		if (!eParent) {
+			eParent = ea[ek] = {};
+		}
+		var eTag = node.tag;
+		if (eParent[eTag]) {
+			if (!Ext.isArray(eParent[eTag])) {
+				var pr = eParent[eTag];
+				eParent[eTag] = [pr];
+			}
+			eParent[eTag].push(entity);
+		} else {
+			eParent[eTag] = entity;
+		}
+	},
+	//eo addEntity	
 	
 	/**
 	 * Removes entity corresponding to the model node passed in.
@@ -69,30 +104,34 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	//eo removeEntity
 	
 	/**
-	 * @override
-	 * @public
+	 * @protected
 	 */
-	addEntity : function(parent, node) {
-		console.log('addEntity', parent, node);
-		
-		var entObj = this.getEntityAncestor(parent),
-			ea = entObj.ancestor,
-			ek = entObj.entityKey,
-			eParent = ea[ek] ? ea[ek] : (ea[ek] = {}); //create parent element definiton data
+	createEntity : function(node) {
+		var eAttr = node.getPropertiesHash(),
+			eContent = node.getNodeData(),
+			entity;
+	
+		var attrEmpty = true;	
+		for (var p in eAttr) {
+			attrEmpty = false;
+		};			
 			
-		console.log('entObj', entObj, node.tag, eParent);
-		
-		var eTag = node.tag,
-			eAttr = node.getPropertiesHash(),
-			eContent = node.getNodeData();
-		
-		if (Ext.isArray(eParent[eTag])) {
-			eParent[eTag].push({'new' : true});
-		} else {
-			eParent[eTag] = {'new' : true};
+		if (eAttr && !attrEmpty) {
+			entity = {
+				attributes: {}
+			};
+			Ext.apply(entity.attributes, eAttr);
 		}
+		if (eContent != null) {
+			if (Ext.isObject(entity)) {
+				entity._content = eContent;
+			} else {
+				entity = eContent;
+			}
+		}
+		
+		return entity;
 	},
-	//eo addEntity
 	
 	/**
 	 * Returns entity's parent object and its reference inside the parent. 
@@ -144,16 +183,39 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
     				throw new Ext.Error(String.format('Entity equal to node {0} was not found.', node));
     			}
     			result.entityIdx = entIdx;
-    		} else {
-    			if (this.equal(ent[entKey], node) === false) {
-    				throw new Ext.Error(String.format('Entity equal to node {0} was not found.', node));
-    			}
     		}
     	}
     	
     	return result;
 	},
 	//eo getEntityAncestor
+
+	/**
+	 * Compares entity and model node, returns true if model node represents the entity - they are equal. 
+	 * @protected
+	 * @param {Object} entity The entity
+	 * @param {afStudio.model.Node} node The model node.
+	 * @return {Boolean}
+	 */
+	equal : function(entity, node) {
+		var np = node.getPropertiesHash(),
+			nc = node.getNodeData();
+		
+		var equal = true;
+		//compare attributes
+		Ext.iterate(entity.attributes, function(k, v) {
+			return (np[k] !== v) ? (equal = false) : true;
+		});
+		//compare _content
+		if (equal) {
+			if (Ext.isPrimitive(nc) && nc != entity._content) {
+				equal = false;
+			}
+		}
+		
+		return equal;
+	},
+	//eo equal	
 	
 	/**
 	 * Searching an entity corresponding to model node.
@@ -176,33 +238,6 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		}
 		
 		return Ext.isNumber(entIdx) ? entIdx : null;
-	},
-	//eo searchEntityIndex
-	
-	/**
-	 * Compares entity and model node, returns true if model node represents the entity. 
-	 * @protected
-	 * @param {Object} entity The entity
-	 * @param {afStudio.model.Node} node The model node.
-	 * @return {Boolean}
-	 */
-	equal : function(entity, node) {
-		var np = node.getPropertiesHash(),
-			nc = node.getNodeData();
-		
-		var equal = true;
-		//compare attributes
-		Ext.iterate(entity.attributes, function(k, v) {
-			return (np[k] !== v) ? (equal = false) : true; 
-		});
-		//compare _content
-		if (equal) {
-			if (Ext.isPrimitive(nc) && nc != entity._content) {
-				equal = false;
-			}
-		}
-		
-		return equal;
 	}
-	//eo equal
+	//eo searchEntityIndex
 });

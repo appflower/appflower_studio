@@ -14,6 +14,6 @@ afStudio.model.widget.Grouping = Ext.extend(afStudio.model.Node, {
 	],
 	
 	nodeTypes : [
-		{name: afStudio.ModelNode.SET, required: true}
+		{name: afStudio.ModelNode.SET, required: true, hasMany: true}
 	]	
 });

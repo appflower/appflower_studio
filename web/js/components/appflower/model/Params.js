@@ -11,6 +11,6 @@ afStudio.model.Params = Ext.extend(afStudio.model.Node, {
 	properties : [],
 	
 	nodeTypes : [
-		{name: afStudio.ModelNode.PARAM, required: true}
+		{name: afStudio.ModelNode.PARAM, required: true, hasMany: true, unique: 'name'}
 	]	
 });

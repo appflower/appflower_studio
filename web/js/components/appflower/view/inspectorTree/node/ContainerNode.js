@@ -63,9 +63,10 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 		
 		//---
 		Ext.iterate(nodes, function(n, idx) {
+			var nodeName = Ext.isObject(n) ? n.name : n;
 			mItems[idx] = {
-				text: n.name,
-				node: n.name,
+				text: nodeName,
+				node: nodeName,
 				controll: 'add'
 			};
 		});

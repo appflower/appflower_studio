@@ -40,11 +40,18 @@ afStudio.model.widget.Column = Ext.extend(afStudio.model.Node, {
 //      {name: 'sortType', type: 'token', defaultValue: 'none'},
 //      {name: 'sortIndex', type: 'token'},
 //      {name: 'contextMenu', type: 'token'},
-        {name: 'link', type: 'boolean',  defaultValue: false},
+        {name: 'link', type: 'boolean',  defaultValue: false}
 //      {name: 'edit', type: 'boolean', defaultValue: false},
 //		{name: 'action', type: 'token'},
 //		{name: 'summaryType', type: 'token'}	
 	],
+
+	defaultDefinition : {
+		attributes: {
+			name: 'Column',
+			label: 'Column'
+		}
+	},
 	
 	/**
 	 * @override

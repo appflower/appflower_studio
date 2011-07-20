@@ -32,7 +32,7 @@ N.WidgetViewTemplate = Ext.extend(N.WidgetTemplate, {
 		this.structure = this.structure.concat([
 			afStudio.ModelNode.SCRIPTS,
 			afStudio.ModelNode.DATA_SOURCE,
-			afStudio.ModelNode.FIELDS,
+			{name: afStudio.ModelNode.FIELDS, required: true},
 			afStudio.ModelNode.DESCRIPTION,
 			afStudio.ModelNode.ALTERNATE_DESCRIPTIONS,
 			afStudio.ModelNode.GROUPING
@@ -78,7 +78,7 @@ N.WizardTemplate = Ext.extend(N.WidgetTemplate, {
 		
 		this.structure = this.structure.concat([
 			afStudio.ModelNode.DATA_STORE,
-			afStudio.ModelNode.AREA,
+			{name: afStudio.ModelNode.AREA, required: true},
 			afStudio.ModelNode.WIDGET_CATEGORIES,
 			afStudio.ModelNode.EXTRA_HELP
 		]);
@@ -96,7 +96,7 @@ N.HtmlTemplate = Ext.extend(N.WidgetTemplate, {
 		afStudio.model.template.HtmlTemplate.superclass.constructor.call(this);
 		
 		this.structure = this.structure.concat([
-			afStudio.ModelNode.PARAMS,
+			{name: afStudio.ModelNode.PARAMS, required: true},
 			afStudio.ModelNode.OPTIONS,
 			afStudio.ModelNode.MORE_ACTIONS
 		]);

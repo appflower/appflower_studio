@@ -62,6 +62,17 @@ afStudio.definition.DataDefinition = Ext.extend(Ext.util.Observable, {
 	addEntity : Ext.emptyFn,
 	
 	/**
+	 * Compares entity and passed in data, returns true if entity and data are equal. 
+	 * @abstract
+	 * @protected
+	 * @param {Object} entity The entity
+	 * @param {Mixed} obj The data.
+	 * @return {Boolean}
+	 */
+	equal : function(entity, obj) {
+	},
+	
+	/**
 	 * Returns data.
 	 * @public
 	 * @return {Mixed} data

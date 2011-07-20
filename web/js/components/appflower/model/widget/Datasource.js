@@ -18,6 +18,6 @@ afStudio.model.widget.Datasource = Ext.extend(afStudio.model.Node, {
 	
 	nodeTypes : [
 		{name: afStudio.ModelNode.CLASS, required: true},
-		{name: afStudio.ModelNode.METHOD}
+		afStudio.ModelNode.METHOD
 	]
 });

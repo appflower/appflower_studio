@@ -1,7 +1,6 @@
 Ext.ns('afStudio.model');
 
 afStudio.model.Types = new function() {
-	
 	/**
 	 * Returns type by its string name
 	 * @param {String} type The type string.
@@ -62,7 +61,13 @@ afStudio.model.Types = new function() {
             validate: Ext.isDate
         }       
     });
+    
+    Ext.apply(this, {    
+        TOKEN: this.STRING,
+        QNAME: this.STRING
+    });
 };
+
 
 afStudio.model.Types.POSITIVEINTEGER = {
 	type: 'positiveInteger',

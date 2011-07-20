@@ -18,6 +18,6 @@ afStudio.model.widget.Set = Ext.extend(afStudio.model.Node, {
 	],
 	
 	nodeTypes : [
-		{name: afStudio.ModelNode.REF, required: true}
+		{name: afStudio.ModelNode.REF, required: true, hasMany: true, unique: 'to'}
 	]
 });
