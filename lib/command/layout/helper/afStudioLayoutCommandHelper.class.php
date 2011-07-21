@@ -64,7 +64,7 @@ class afStudioLayoutCommandHelper
                 'type' => 'module',
                 'app' => $name
 			);
-
+            
 			if (count($aParams[$module]['xml_names']) > 0) {	
                 $children['leaf'] = false;
                 
@@ -92,7 +92,5 @@ class afStudioLayoutCommandHelper
         
         return $aExtWidgets;
     }
-
     
 }
-

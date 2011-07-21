@@ -160,39 +160,6 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     }
     
     /**
-     * Getting widget information
-     *
-     * @author Sergey Startsev
-     */
-    protected function processGetWidget()
-    {
-        // Getting needed parameters - module and action
-        $sModule = $this->getParameter('module');
-        $sAction = $this->getParameter('action');
-        
-        $afCU = new afConfigUtils($sModule);
-        $sPath = $afCU->getConfigFilePath("{$sAction}.xml");
-        
-        $afResponse = afResponseHelper::create();
-        
-        if (file_exists($sPath)) {
-            $unserializer = new XML_Unserializer($this->page_unserialize_options);
-            $status = $unserializer->unserialize($sPath, true);
-    
-            if ($status) {
-                $definition = $unserializer->getUnserializedData();
-                $afResponse->success(true)->content($definition);
-            } else {
-                $afResponse->success(false)->content("Can't parse widget");
-            }
-        } else {
-            $afResponse->success(false)->content("Widget doesn't exists");
-        }
-        
-        return $afResponse->asArray();
-    }
-    
-    /**
      * Getting widget list action
      *
      * @author Sergey Startsev

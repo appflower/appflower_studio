@@ -17,6 +17,9 @@ class afsWidgetBuilderActions extends afsActions
      */
     public function executeGetWidget(sfWebRequest $request)
     {
+        /*
+            TODO separate 'uri' request to 2 params, module, and action.
+        */
         $parameters = array(
             'uri'       => $request->getParameter('uri'),
             'placeType' => $request->getParameter('placeType', 'app'),
@@ -36,6 +39,9 @@ class afsWidgetBuilderActions extends afsActions
      */
     public function executeSaveWidget(sfWebRequest $request)
     {
+        /*
+            TODO separate 'uri' request to 2 params, module, and action.
+        */
         $parameters = array(
             'uri'               => $request->getParameter('uri'),
             'data'              => json_decode($request->getParameter('data'), true),
