@@ -199,18 +199,19 @@ class afStudioLayoutCommand extends afBaseStudioCommand
 		$data = array();
         
 		$root_dir = sfConfig::get('sf_root_dir');
+		$modules_dir = "{$root_dir}/{$type}/{$name}/modules";
 		
-		$modules = afStudioUtil::getDirectories("{$root_dir}/{$type}/{$name}/modules/", true);
+		$modules = afStudioUtil::getDirectories($modules_dir, true);
 		
 		if (!empty($modules)) {
             $aParams = array();
             
     		foreach($modules as &$module) {
                 $aParams[$module] = array(
-                    'xml_paths' => afStudioUtil::getFiles("{$root_dir}/{$type}/{$name}/modules/{$module}/config/", false, "xml"),
-                    'xml_names' => afStudioUtil::getFiles("{$root_dir}/{$type}/{$name}/modules/{$module}/config/", true, "xml"),
-                    'security_path' => "{$root_dir}/{$type}/{$name}/modules/{$module}/config/security.yml",
-                    'action_path' => $actionPath = "{$root_dir}/{$type}/{$name}/modules/{$module}/actions/actions.class.php"
+                    'xml_paths' => afStudioUtil::getFiles("{$modules_dir}/{$module}/config/", false, "xml"),
+                    'xml_names' => afStudioUtil::getFiles("{$modules_dir}/{$module}/config/", true, "xml"),
+                    'security_path' => "{$modules_dir}/{$module}/config/security.yml",
+                    'action_path' => $actionPath = "{$modules_dir}/{$module}/actions/actions.class.php"
                 );
     		}
     		
