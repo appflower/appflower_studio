@@ -87,7 +87,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      */
     constructor : function(config) {
     	config = config || {};
-    	
+
         this.id = config.id || this.id;
         if (!this.id) {
             this.id = Ext.id(null, 'view-controller-');
@@ -148,10 +148,27 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             
             "beforeModelNodeMove",
             
+            /**
+             * @event modelNodeMove
+             * Fires when a model node is moved to a new location in the model
+             * @param {Tree} ctr The model's controller
+             * @param {Node} mode This moved node 
+             * @param {Node} oldParent The old parent of this node
+             * @param {Node} newParent The new parent of this node
+             * @param {Number} index The index it was moved to
+             */
             "modelNodeMove",
 
             "beforeModelNodeInsert",
             
+            /**
+             * @event modelNodeInsert
+             * Fires when a new child node is inserted in the model.
+             * @param {Tree} ctr The model's controller
+             * @param {Node} parent The parent node being injected
+             * @param {Node} node The child node inserted
+             * @param {Node} refNode The child node the node was inserted before 
+             */
             "modelNodeInsert",
             
             "beforeModelPropertyChanged",
@@ -306,7 +323,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     		 * @bubbled
     		 */
             modelNodeRemove: function(ctr, parent, node) {
-            	console.log('@controller modelNodeRemove', arguments);            	
+            	console.log('@controller modelNodeRemove', parent, node);            	
             	this.viewDefinition.removeEntity(node);
             	console.log('definition', this.viewDefinition.getData());
             },
@@ -314,8 +331,16 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
              * @bubbled
              */
             modelNodeAppend: function(ctr, parent, node, index) {
-				console.log('@controller modelNodeAppend', arguments);
+				console.log('@controller modelNodeAppend', parent, node, index);
             	this.viewDefinition.addEntity(parent, node);
+            	console.log('definition', this.viewDefinition.getData());
+            },
+            /**
+             * @bubbled
+             */
+            modelNodeInsert: function(ctr, parent, node, refNode) {
+				console.log('@controller modelNodeInsert', parent, node, refNode);
+            	this.viewDefinition.insertBeforeEntity(parent, node, refNode);
             	console.log('definition', this.viewDefinition.getData());
             }
     	});
@@ -323,7 +348,12 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	//TODO improve - move to the separate method
     	//Relays controller's events to View layer
     	Ext.iterate(this.views, function(k, v) {
-    		v.relayEvents(_me, ['modelNodeRemove', 'modelNodeAppend']);
+    		v.relayEvents(_me, [
+    			'modelNodeAppend', 
+    			'modelNodeInsert', 
+    			'modelNodeRemove', 
+    			'modelNodeMove'
+    		]);
     	});
     },
     //eo initEvents

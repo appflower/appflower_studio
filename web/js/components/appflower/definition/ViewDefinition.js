@@ -74,6 +74,24 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	},
 	//eo addEntity	
 	
+	insertBeforeEntity : function(parent, node, refNode) {
+		var entObj = this.getEntityAncestor(refNode),	
+			ea = entObj.ancestor,
+			ek = entObj.entityKey,
+			eIdx = entObj.entityIdx,
+			eParent = ea[ek];
+
+		//node should be added
+		if (node.tag != refNode.tag) {
+			this.addEntity(parent, node);
+		}
+		
+		var entity = this.createEntity(node);
+		if (Ext.isDefined(eIdx)) {
+			eParent.splice(eIdx, 0, entity);
+		}
+	},
+	
 	/**
 	 * Removes entity corresponding to the model node passed in.
 	 * @override
@@ -200,17 +218,22 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	equal : function(entity, node) {
 		var np = node.getPropertiesHash(),
 			nc = node.getNodeData();
-		
+
 		var equal = true;
-		//compare attributes
-		Ext.iterate(entity.attributes, function(k, v) {
-			return (np[k] !== v) ? (equal = false) : true;
-		});
-		//compare _content
-		if (equal) {
-			if (Ext.isPrimitive(nc) && nc != entity._content) {
-				equal = false;
+		
+		if (Ext.isObject(entity)) {
+			//compare attributes
+			Ext.iterate(entity.attributes, function(k, v) {
+				return (np[k] !== v) ? (equal = false) : true;
+			});
+			//compare _content
+			if (equal) {
+				if (Ext.isPrimitive(nc) && nc != entity._content) {
+					equal = false;
+				}
 			}
+		} else {
+			equal = entity == nc;	
 		}
 		
 		return equal;

@@ -298,7 +298,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	var _me = this;
     	
 		_me.on({
-			beforeModelNodeAppend : _me.onBeforeModelNodeAppend
+			modelNodeCreated : _me.onModelNodeCreated
 		});
     },
     
@@ -1176,8 +1176,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    		definition: nodeDefiniton
 	    	});
 	    	
-	    	this.fireEvent("modelNodeCreated", this.ownerTree, this, n);
-	    	n = this.appendChild(n);
+	    	if (this.fireEvent("modelNodeCreated", this.ownerTree, this, n)) {
+	    		n = this.appendChild(n);
+	    	}
     	}
     	
     	return n;
@@ -1218,12 +1219,12 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     //eo validate 
     
     /**
-     * <u>beforeModelNodeAppend</u> event listener.
+     * <u>modelNodeCreated</u> event listener.
      * Checks if can be added child node.
      * @return {Boolean}
      */
-    onBeforeModelNodeAppend : function(ctr, parent, node) {
-		console.log('@model "beforeModelNodeAppend"', node);
+    onModelNodeCreated : function(ctr, parent, node) {
+		console.log('@model "modelNodeCreated"', parent, node);
 		
 		var nodeTag = node.tag,
 			nt = parent.nodeTypes,
@@ -1264,5 +1265,5 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		
 		return canBeAdded;
     }
-    //eo onBeforeModelNodeAppend
+    //eo onModelNodeCreated
 });

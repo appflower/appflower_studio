@@ -8,20 +8,21 @@ Ext.ns('afStudio.view.inspector');
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
-
 	/**
 	 * The associated with this tree controller.
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
 	 */
 	
 	/**
-	 * Ext Template method
-	 * @override
+	 * Initializes component
 	 * @private
-	 */	
-	initComponent : function() {
+	 * @return {Object} The configuration object 
+	 */
+	_beforeInitComponent : function() {
 		var root = this.controller.getRootNode(),
 			view = this.controller.widget;
+		
+		this.enableDD = true;
 		
 		this.root = {
 			text: String.format("{0} ({1}-{2})", view.uri, view.place, view.placeType),
@@ -36,12 +37,17 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
             l = new afStudio.view.inspector.InspectorLoader(l);
         }
         this.loader = l;
-		
+	},
+	//eo _beforeInitComponent
+	
+	/**
+	 * Ext Template method
+	 * @override
+	 * @private
+	 */	
+	initComponent : function() {
+		this._beforeInitComponent();
 		afStudio.view.inspector.TreePanel.superclass.initComponent.apply(this, arguments);
-		
-		//activate treeSorter
-		this.treeSorter = new afStudio.view.inspector.InspectorSorter(this);		
-		
 		this._afterInitComponent();
 	},
 	//eo initComponent
@@ -52,6 +58,8 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */	
 	_afterInitComponent : function() {
 		var _me = this;
+		//activate treeSorter
+		this.treeSorter = new afStudio.view.inspector.InspectorSorter(this);		
 	},
 	//eo _afterInitComponent 
 	
@@ -88,14 +96,20 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			scope: _me,
 			
 			contextmenu:  _me.onNodeContextMenu,
+			nodedragover: _me.onNodeDragOver,
+			nodedrop: _me.onNodeDrop,
 			/**
 			 * @relayed controller
 			 */
-			modelNodeRemove: _me.onModelNodeRemove,
+			modelNodeInsert: _me.onModelNodeInsert, 
 			/**
 			 * @relayed controller
 			 */
-			modelNodeAppend: _me.onModelNodeAppend
+			modelNodeAppend: _me.onModelNodeAppend,
+			/**
+			 * @relayed controller
+			 */
+			modelNodeRemove: _me.onModelNodeRemove
 		});
 	},
 	//eo initEvents
@@ -116,6 +130,32 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo onNodeContextMenu
 	
 	/**
+	 * <u>nodedragover</u> event listener. 
+	 * More details {@link Ext.tree.TreePanel#nodedragover}. 
+	 */
+	onNodeDragOver : function(de) {
+		var n = de.dropNode, p = de.point, t = de.target;
+		if (p == 'append' || (n.modelNode.tag != t.modelNode.tag)) {
+			return false;
+		}
+	},
+	//eo onNodeDragOver
+	
+	/**
+	 * <u>nodedrop</u> event listener.
+	 * More details {@link Ext.tree.TreePanel#nodedrop}. 
+	 */
+	onNodeDrop : function(de) {
+		var n = de.dropNode.modelNode, p = de.point, t = de.target.modelNode;
+	    if (p == "above") {
+	        t.parentNode.insertBefore(n, t);
+	    } else if (p == "below") {
+	        t.parentNode.insertBefore(n, t.nextSibling);
+	    }
+	},
+	//eo onNodeDrop
+	
+	/**
 	 * Relayed <u>modelNodeAppend</u> event listener.
 	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
 	 * @protected
@@ -129,6 +169,22 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		});
 	},
 	//eo onModelNodeAppend
+	
+	/**
+	 * Relayed <u>modelNodeInsert</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeInsert}.
+	 * @protected
+	 * @interface
+	 */
+	onModelNodeInsert : function(ctr, parent, node, refNode) {
+		console.log('@view [InspectorTree] "modelNodeInsert"', parent, node, refNode);
+		var viewNode = this.getCmpByModel(parent);
+		viewNode.reload(function() {
+			var viewNode = this.getCmpByModel(node);
+			viewNode.select();
+		}, this);
+	},
+	//eo onModelNodeInsert
 	
 	/**
 	 * Relayed <u>modelNodeRemove</u> event listener.

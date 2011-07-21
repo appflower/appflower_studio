@@ -82,6 +82,7 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 * @param {Object} attr
 	 */
 	initNode : function(attr) {
+//		attr.draggable = false;
 	},
 	
 	/**
