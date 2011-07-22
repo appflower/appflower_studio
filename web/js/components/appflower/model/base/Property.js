@@ -4,31 +4,34 @@ Ext.ns('afStudio.model');
  * @class afStuio.model.Property
  * <p>This class encapsulates the property definition information specified in the {@link afStuio.model.Node#properties}.</p>
  * <p>Developers do not need to instantiate this class. Instances are created by {@link afStuio.model.Node#initProperties}</p>
+ * 
+ * @dependency
+ * Types: {@link afStudio.model.Types}
+ * 
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.Property = Ext.extend(Object, {
     /**
-     * @cfg {String} name
+     * @cfg {String} (Required) name
      * The name by which the property is referenced within the Model Node.
+     * For properties inside a model node <i>name</i> should be unique.
      */
     /**
-     * @cfg {Mixed} value
+     * @cfg {Mixed} (Optional) value
      * The property value.
      */
     /**
-     * @cfg {Mixed} type
-     * (Optional) The data type. Look at {@link afStudio.model.Types} class.</p>
+     * @cfg {Mixed} (Optional) type (defaults to {@link afStudio.model.Types.AUTO}, if is not specified)
+     * The data type. Look at {@link afStudio.model.Types} class.
      */
 	/**
-	 * @cfg {Boolean} required (defaults to false)
+	 * @cfg {Boolean} (Optional) required (defaults to false)
 	 */
 	required: false,
-	
     /**
-     * @cfg {Mixed} defaultValue
-     * (Optional) The default value (defaults to "").
+     * @cfg {Mixed} (Optional) defaultValue
+     * The default value.
      */
-    defaultValue: "",
     
     /**
      * @constructor
