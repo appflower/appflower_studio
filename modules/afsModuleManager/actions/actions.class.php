@@ -104,6 +104,21 @@ class afsModuleManagerActions extends sfActions
     }
     
     /**
+     * Set as homepage module action
+     *
+     * @param sfWebRequest $request 
+     * @author Lukasz Wojciechowski
+     */
+    public function executeSetAsHomepage(sfWebRequest $request)
+    {
+        $parameters = array(
+            'widgetUri'  => $request->getParameter('widgetUri'),
+        );
+        $response = afStudioCommand::process('module', 'setAsHomepage', $parameters);
+        return $this->renderJson($response);
+    }
+    
+    /**
      * Get grouped action
      *
      * @param sfWebRequest $request 

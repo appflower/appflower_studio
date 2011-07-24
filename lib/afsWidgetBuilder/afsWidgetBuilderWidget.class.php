@@ -375,5 +375,24 @@ class afsWidgetBuilderWidget {
         return $info;
     }
     
+    /**
+     * Returns module name
+     * 
+     * @return string
+     */
+    function getModule()
+    {
+        return $this->module;
+    }
+    
+    /**
+     * Returns action name
+     * 
+     * @return string
+     */
+    function getAction()
+    {
+        return $this->action;
+    }
 }
 ?>

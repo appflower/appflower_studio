@@ -102,6 +102,10 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
        		itemId: 'delete-xml',
             text: 'Delete Widget',
             iconCls: 'icon-models-delete'
+		},{
+       		itemId: 'set_as_homepage-xml',
+            text: 'Set Widget as Homepage',
+            iconCls: 'icon-models-set_as_homepage'
         }],
         listeners: {
             itemclick: function(item) {
@@ -117,6 +121,9 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
                     break;                    
 					case 'rename-xml':
 						tree.treeEditor.triggerEdit(node);
+					break;	                        
+					case 'set_as_homepage-xml':
+						tree.setWidgetAsHomepage(node);
 					break;	                        
                 }
             }
@@ -558,6 +565,22 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			place: this.getNodeApp(node)        	
         });        
     }//eo showWidgetDesignerForNode
+    
+	/**
+	 * Sets specified node as a homepage.
+	 * @private
+	 * @param {Ext.tree.TreeNode} node
+	 */
+    ,setWidgetAsHomepage : function(node) {
+		var actionUrl   = afStudioWSUrls.widgetSetAsHomepage;
+		
+        this.executeAction({
+            url: actionUrl,
+            params: { widgetUri: node.attributes.widgetUri },
+            loadingMessage: String.format('Set {0} as homepage...', node.attributes.widgetUri),
+            logMessage: String.format('Widgets: {0} "{1}" was deleted', 'AHOJ', 'tam')
+        });     		
+	}
 }); 
 
 /**

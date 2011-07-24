@@ -220,6 +220,28 @@ class afStudioModuleCommand extends afBaseStudioCommand
 		$this->result = $this->result->asArray();
 	}
     
+	/**
+	 * Set wdiget as homepage functionality
+	 * 
+	 * @author Lukasz Wojciechowski
+	 */
+	protected function processSetAsHomepage()
+	{
+        $rm = new RoutingConfigurationManager();
+        $widgetUri = $this->getParameter('widgetUri');
+        $status = $rm->setHomepageUrlFromWidgetUri($widgetUri);
+        if ($status) {
+    			$this->result = afResponseHelper::create()
+                    ->success(true)
+                    ->message("Homepage for your project is now set to <b>{$widgetUri}</b>");
+        } else {
+    		    $this->result = afResponseHelper::create()
+                    ->success(false)
+                    ->message("Can't set <b>{$widgetUri}</b> as homepage. An error occured.");
+        }
+		$this->result = $this->result->asArray();
+	}
+    
     /**
      * Get grouped list for applications and plugins 
      * 

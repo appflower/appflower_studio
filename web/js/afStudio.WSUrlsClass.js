@@ -38,6 +38,8 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	widgetRenameUrl : '/afsModuleManager/renameView',
 	
 	widgetDeleteUrl : '/afsModuleManager/deleteView',   
+    
+	widgetSetAsHomepage : '/afsModuleManager/setAsHomepage',
 	
     getModuleWidgetsUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/moduleWidgets');

@@ -634,7 +634,9 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			   	   msgTitle = this.title || '';
 			   
 			   if (response.success) {
-			   	   Ext.util.Functions.createDelegate(action.run, this, [response], false)();
+                   if (action.run) {
+                       Ext.util.Functions.createDelegate(action.run, this, [response], false)();
+                   }
 			   	   //update console if needed
 				   if (response.console) {	
 	      		       afStudio.updateConsole(response.console);
