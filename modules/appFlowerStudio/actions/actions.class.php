@@ -82,11 +82,19 @@ class appFlowerStudioActions extends afsActions
 		return $this->renderText($filetree_command->end());
 	}
 	
-	public function executeModels()
+	/**
+	 * Execute models command
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string -json
+	 * @author Sergey Startsev
+	 */
+	public function executeModels(sfWebRequest $request)
 	{
-		$models_command = new afStudioModelsCommand();
-		
-		return $this->renderText($models_command->end());
+		$command = $request->getParameter('cmd', $request->getParameter('xaction'));
+        $response = afStudioCommand::process('model', $command, $request->getParameterHolder()->getAll());
+        
+        return $this->renderJson($response);
 	}
 		
 	public function executeCssfilestree(){
