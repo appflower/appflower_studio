@@ -119,6 +119,13 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 		this.modelNode.remove(true);
 	},
 	
+	/**
+	 * Finds first node which associated model is equal to passed in model node. 
+	 * @public
+	 * @param {String/Node} mn The model node to search by. String for model node's ID.
+	 * @param {Boolean} deep The flag for deep searching.
+	 * @return {TreeNode}
+	 */
     findChildByAssociatedModel : function(mn, deep) {
         return this.findChildBy(function(){
             return this.modelNode.id == (Ext.isString(mn) ? mn : mn.id);

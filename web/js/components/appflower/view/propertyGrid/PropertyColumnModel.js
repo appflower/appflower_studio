@@ -21,9 +21,9 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
 	    
 	    Ext.grid.PropertyColumnModel.superclass.constructor.call(this, 
 	    [
-	        {header: this.nameText, width:50, sortable: true, dataIndex:'name', id: 'name', menuDisabled:true},
-	        {header: this.valueText, width:50, resizable:false, dataIndex: 'value', id: 'value', menuDisabled:true},
-	        {header: this.requiredText, resizable:false, dataIndex: 'required', id: 'required', menuDisabled:true}
+	        {header: this.nameText, width: 50, sortable: true, dataIndex:'name', id: 'name', menuDisabled: true},
+	        {header: this.valueText, width: 50, resizable: false, dataIndex: 'value', id: 'value', menuDisabled: true},
+	        {header: this.requiredText, resizable: false, dataIndex: 'required', id: 'required', menuDisabled: true, hidden: true}
 	    ]);
 	    
 	    this.store = store;
@@ -137,6 +137,30 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
 //        } else {
 //            return this.editors.string;
 //        }
-    }
+    },
     //eo getCellEditor
+    
+    /**
+     * @protected
+     * @override
+     */
+    renderCell : function(val, meta, rec) {
+        var renderer = this.grid.customRenderers[rec.get('type')];
+        if (renderer) {
+            return renderer.apply(this, arguments);
+        }
+        
+        if (rec.get('required') && Ext.isEmpty(rec.get('value'))) {
+        	meta.attr = 'style="background-color:red;"';
+        	return;
+        }
+        
+        var rv = val;
+        if (Ext.isDate(val)) {
+            rv = this.renderDate(val);
+        } else if (typeof val == 'boolean') {
+            rv = this.renderBool(val);
+        }
+        return Ext.util.Format.htmlEncode(rv);
+    }    
 });

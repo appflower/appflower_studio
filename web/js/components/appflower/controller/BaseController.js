@@ -173,6 +173,13 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             
             "beforeModelPropertyChanged",
             
+            /**
+             * @event modelPropertyChanged
+             * Fires when a model node's property was changed.
+             * @param {Node} node The model node whose property was changed
+             * @param {String} property The property's name
+             * @param {Mixed} value The new property's value
+             */
             "modelPropertyChanged",
             
             "beforeModelNodeCreated",
@@ -350,18 +357,21 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             	console.log('@controller modelNodeRemove', parent, node);            	
             	this.viewDefinition.removeEntity(node);
             	console.log('definition', this.viewDefinition.getData());
-            }            
+            },
+    		/**
+    		 * @bubbled
+    		 */
+            modelPropertyChanged: function(node, p, v) {
+            	console.log('@controller modelPropertyChanged', node, p, v);
+            }
     	});
     	
     	//TODO improve - move to the separate method
     	//Relays controller's events to View layer
     	Ext.iterate(this.views, function(k, v) {
     		v.relayEvents(_me, [
-    			'modelNodeAppend', 
-    			'modelNodeInsert', 
-    			'modelNodeRemove', 
-    			'modelNodeMove',
-    			'modelNodeSelect'
+    			'modelNodeAppend', 'modelNodeInsert', 'modelNodeRemove', 'modelNodeMove',
+    			'modelNodeSelect', 'modelPropertyChanged'
     		]);
     	});
     },

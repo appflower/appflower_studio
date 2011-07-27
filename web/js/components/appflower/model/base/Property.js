@@ -87,6 +87,10 @@ afStudio.model.Property = Ext.extend(Object, {
 		this.value = v;    	
     },
     
+    /**
+     * Returns property's data object.
+     * @return {Object} property
+     */
     getPropertyHash : function() {
     	return {
     		name: this.name,

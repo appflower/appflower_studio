@@ -199,7 +199,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelNodeAppend : function(ctr, parent, node, index) {
-		console.log('@view [InspectorTree] "modelNodeAppend"', parent, node);
+		console.log('@view [InspectorTree] "modelNodeAppend"');
 		var viewNode = this.getCmpByModel(parent);
 		viewNode.reload(function() {
 			this.item(index).select();
@@ -214,7 +214,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelNodeInsert : function(ctr, parent, node, refNode) {
-		console.log('@view [InspectorTree] "modelNodeInsert"', parent, node, refNode);
+		console.log('@view [InspectorTree] "modelNodeInsert"');
 		var viewNode = this.getCmpByModel(parent);
 		viewNode.reload(function() {
 			var viewNode = this.getCmpByModel(node);
@@ -230,7 +230,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelNodeRemove : function(ctr, parent, node) {
-    	console.log('@view [InspectorTree] "modelNodeRemove"', parent, node);
+    	console.log('@view [InspectorTree] "modelNodeRemove"');
     	var viewNode = this.getCmpByModel(node);
     	if (viewNode) {
     		viewNode.remove(true);
