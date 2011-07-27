@@ -9,8 +9,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 {
     
     protected 
-        // $request = null,
-        // $result = null,
         $realRoot = null,
         $dbSchema = null,
         $propelSchemaArray = null,
@@ -21,45 +19,31 @@ class afStudioModelCommand extends afBaseStudioCommand
         $schemaFile = null,
         $propelModel = null;
     
-    // protected $cmd;
-    // protected $xaction;
-    
     protected $defaultSchema;
     
-    /*
-        TODO make lighter preProcess
-    */
-    
+    /**
+     * Pre-process method
+     *
+     * @author Sergey Startsev
+     */
     protected function preProcess()
     {
-        // $this->request = sfContext::getInstance()->getRequest();
-		$this->realRoot = afStudioUtil::getRootDir();
 		$this->dbSchema = new sfPropelDatabaseSchema();
-		
-		$this->defaultSchema = $this->realRoot . '/config/schema.yml';
+		$this->defaultSchema = afStudioUtil::getRootDir() . '/config/schema.yml';
 		
 		$this->loadSchemas();
 		
-        // $this->cmd = $this->request->getParameterHolder()->has('cmd') ? $this->request->getParameterHolder()->get('cmd') : null;
-        // $this->cmd = $this->getParameter('cmd');
-		
-        // $this->xaction = $this->request->getParameterHolder()->has('xaction') ? $this->request->getParameterHolder()->get('xaction') : null;
-        // $this->xaction = $this->getParameter('xaction');
-		
-        // if ($this->request->getParameterHolder()->has('model')) {
 	    if ($this->hasParameter('model')) {
-            // $this->modelName = $this->request->getParameterHolder()->get('model');
 	    	$this->modelName = $this->getParameter('model');
-	    	
-            // $this->schemaFile = $this->request->getParameterHolder()->get('schema') ? $this->request->getParameterHolder()->get('schema') : $this->defaultSchema;
 	    	$this->schemaFile = $this->getParameter('schema', $this->defaultSchema);
 	    	
-	    	if ($this->cmd == 'add') {
+	    	if (empty($this->schemaFile)) $this->schemaFile = $this->defaultSchema;
+	    	
+	    	if ($this->getCommand() == 'add') {
 		    	$this->tableName = strtolower($this->modelName);
 		    	$this->propelModel = $this->modelName;
 	    	} else {
 				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {
-                    // $this->result = array('success'=>false, 'message'=>"Model doesn't exists");
 			    	return afResponseHelper::create()->success(false)->message("Model doesn't exists")->asArray();
 			    	return false;
 				}
@@ -81,7 +65,10 @@ class afStudioModelCommand extends afBaseStudioCommand
 					$models[] = array('text' => $phpName,'leaf' => true,'schema' => $schemaFile, 'iconCls' => 'icon-model');
 				}
 			}
-            
+			
+            /*
+                TODO wrap models result to data decorator, need frontend changes
+            */
             $models = afStudioModelCommandHelper::sortModels($models);
             $this->result = $models;
         } else {
@@ -96,6 +83,10 @@ class afStudioModelCommand extends afBaseStudioCommand
         if (!afStudioModelCommandHelper::isValidName($this->modelName)) {
 			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"')->asArray();
             // return false;
+		}
+		
+		if (!is_null($this->getSchemaByModel($this->modelName))) {
+		    return $response->success(false)->message("Model <b>{$this->modelName}</b> already exists")->asArray();
 		}
 		
 		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;
@@ -123,10 +114,16 @@ class afStudioModelCommand extends afBaseStudioCommand
 		return $response->asArray();
     }
     
-    
+    /**
+     * Delete model command
+     */
     protected function processDelete()
     {
         $response = afResponseHelper::create();
+        
+        if (!isset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName])) {
+            return $response->success(false)->message("Model '{$this->modelName}' already deleted")->asArray();
+        }
         
         unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]);
 		
@@ -139,6 +136,9 @@ class afStudioModelCommand extends afBaseStudioCommand
 		return $response->asArray();
     }
     
+    /**
+     * Rename model functionality
+     */
     protected function processRename()
     {
         $response = afResponseHelper::create();
@@ -168,15 +168,12 @@ class afStudioModelCommand extends afBaseStudioCommand
     
     
     
-    
-    
-    
     protected function processRead()
     {
         $rows = $this->readModelFields($this->propelModel);
         
         /*
-            TODO make compatible with afResponse 'data' decorator
+            TODO make compatible with afResponse 'data' decorator, rows -> data
         */
 		$this->result = array(
 			'success' => true,
@@ -212,7 +209,7 @@ class afStudioModelCommand extends afBaseStudioCommand
     
     protected function processReadrelation()
     {
-        FirePHP::getInstance(true)->fb('readRelation');
+        // FirePHP::getInstance(true)->fb('readRelation');
         $this->result = array('success' => true, 'data' => $this->buildRelationComboModels());
     }
     
@@ -220,7 +217,6 @@ class afStudioModelCommand extends afBaseStudioCommand
     {
         $response = afResponseHelper::create();
         try {
-            // $fields = json_decode($this->request->getParameter('fields'));
 			$fields = json_decode($this->getParameter('fields'));
             
 			if (($message = $this->alterModel($fields)) === true) {
@@ -243,8 +239,6 @@ class afStudioModelCommand extends afBaseStudioCommand
     {
         $response = afResponseHelper::create();
         try {
-            // $field = $this->request->getParameter('field');
-            // $fieldDef = json_decode($this->request->getParameter('fieldDef'));
 			$field = $this->getParameter('field');
 			$fieldDef = json_decode($this->getParameter('fieldDef'));
 			
@@ -267,7 +261,6 @@ class afStudioModelCommand extends afBaseStudioCommand
     {
         $response = afResponseHelper::create();
         try {
-            // $fieldDef = json_decode($this->request->getParameter('fieldDef'));
 			$fieldDef = json_decode($this->getParameter('fieldDef'));
 			
 			if (($message = $this->createModelField($fieldDef)) === true) {
@@ -337,14 +330,20 @@ class afStudioModelCommand extends afBaseStudioCommand
 	    }
 	}
 	
-	
-	public function saveSchema()
+	/**
+	 * Saving schema
+	 *
+	 * @return boolean
+	 */
+	private function saveSchema()
 	{
         return afStudioUtil::writeFile($this->schemaFile, sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3));
 	}
 	
-	
-	public function reconstructTableField($params)
+	/*
+	   TODO check this method, remove
+	*/
+	public function reconstructTableField(Array $params)
 	{
 		$retparams = array();
 		
@@ -428,11 +427,11 @@ class afStudioModelCommand extends afBaseStudioCommand
 	private function modelFieldVerification($fieldName) 
 	{
 		if (!afStudioModelCommandHelper::isValidName($fieldName)) {
-			return "Field name \"{$fieldName}\" is not valid. Field name must contains only characters, digits or \"_\" and starts from \"_\" or character";
+			return "Field name '{$fieldName}' is not valid. Field name must contains only characters, digits or '_' and starts from '_' or character";
 		}
 		
 		if (!$this->isFieldNameUnique($fieldName)) {
-			return "Field name \"{$fieldName}\" is duplicated";
+			return "Field name '{$fieldName}' is duplicated";
 		}
 		
 		return true;
@@ -446,17 +445,13 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 */
 	private function getModelByTableName($table) 
 	{
-		$found = false;
 		foreach ($this->propelSchemaArray as $schema) {
 			foreach ($schema['classes'] as $modelName => $model) {
-				if ($model['tableName'] == $table) {
-					$found = true;
-					break 2;
-				}
+			    if ($model['tableName'] == $table) return $modelName;
 			}
 		}
 		
-		return $found ? $modelName : null;
+        return null;
 	}
 	
 	/**
@@ -467,18 +462,13 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 */
 	private function getTableNameByModel($model) 
 	{
-	    FirePHP::getInstance(true)->fb($model);
-		$tableName = null;
 		foreach ($this->propelSchemaArray as $schema) {
 			foreach ($schema['classes'] as $modelName => $m) {
-				if ($modelName == $model) {
-					$tableName = $m['tableName'];
-					break 2;
-				}
+			    if ($modelName == $model) return $m['tableName'];
 			}
 		}
 		
-		return $tableName;
+		return null;
 	}
 	
 	/**
@@ -529,10 +519,10 @@ class afStudioModelCommand extends afBaseStudioCommand
 	{
 		$models = array();
         
+        // FirePHP::getInstance(true)->fb('buildRelationComboModels');
+        
 		if (count($this->propelSchemaArray) > 0) {
-            // $query = $this->request->getParameter('query');
 			$query = $this->getParameter('query');
-			
 			$relation = explode('.', trim($query));
 			
 			if (count($relation) > 1) {
@@ -576,6 +566,8 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 */
 	private function buildFieldDefinition($f) 
 	{
+        // FirePHP::getInstance(true)->fb('buildFieldDefinition');
+	    
 		$definition = array();
 		
 		if (!empty($f->type)) {
@@ -695,8 +687,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 		return true;
 	}
 	
-    
-	
 	/**
 	 * Utility function.
 	 * Sets specified array key's value and changes its name if $newKey was specified.
@@ -706,7 +696,10 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 * @param string $newKey the new key name 
 	 * @param mixed $value the key's value to be set
 	 */
-	private function arraySetKeyValue(Array &$array, $key, $newKey, $value) {
+	private function arraySetKeyValue(Array &$array, $key, $newKey, $value) 
+	{    
+        // FirePHP::getInstance(true)->fb('arraySetKeyValue');
+	    
 		$initial = array();
 		foreach ($array as $k => $v) {
 			if ($k != $key) {

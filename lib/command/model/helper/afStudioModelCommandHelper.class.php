@@ -39,11 +39,6 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
 	
 	
 	
-	
-	
-	
-	
-	
 	/**
 	 * Sort models array
 	 *
