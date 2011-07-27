@@ -17,6 +17,11 @@ class afStudioCommand
     public static function getAdapter($type, $command, $params = array())
     {
         $class_name = 'afStudio' . ucfirst($type) . 'Command';
+        
+        if (!class_exists($class_name)) {
+            throw new afStudioCommandException("Command '{$command}' doesn't exists. Please create '{$class_name}' class.");
+        }
+        
         $oAdapter = new $class_name($command, $params);
         
         return $oAdapter;
