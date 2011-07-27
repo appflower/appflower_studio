@@ -82,7 +82,6 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 * @param {Object} attr
 	 */
 	initNode : function(attr) {
-//		attr.draggable = false;
 	},
 	
 	/**
@@ -118,7 +117,13 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 */
 	removeModelNode : function() {
 		this.modelNode.remove(true);
-	}	
+	},
+	
+    findChildByAssociatedModel : function(mn, deep) {
+        return this.findChildBy(function(){
+            return this.modelNode.id == (Ext.isString(mn) ? mn : mn.id);
+        }, null, deep);
+    }
 });
 
 /**

@@ -84,7 +84,16 @@ afStudio.model.Property = Ext.extend(Object, {
     	if (!this.validate(v)) {
     		return false;
     	}
-    	
 		this.value = v;    	
+    },
+    
+    getPropertyHash : function() {
+    	return {
+    		name: this.name,
+    		value: this.value,
+    		type: this.type,
+    		required: this.required,
+    		defaultValue: this.defaultValue
+    	}
     }
 });

@@ -982,7 +982,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Returns defined node's properties as a hash object key/value pairs {k:v}.
+     * Returns defined node's properties as a hash object key/value pair {k:v}.
      * @return {Object} properties hash
      */
     getPropertiesHash : function() {
@@ -1021,7 +1021,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     
     /**
      * Sets property's value.
-     * @param {String} p The property key
+     * @param {String} p The property name
      * @param {String} v The value being set to property
      * @return {Object} property which value was set or null if property is not exist.
      */
@@ -1088,10 +1088,21 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     //eo applyProperties
     
-    //TODO implement NodeRecord creation
-    getRecord : function() {
-    	return ;
+    /**
+     * 
+     * @return {Object}
+     */
+    getPropertiesSource : function() {
+    	var ps = this.getProperties(),
+    		source = {};
+    	
+    	ps.eachKey(function(k, p) {
+			source[k] = p.getPropertyHash();
+    	});
+    	
+    	return source;
     },
+    //eo getPropertiesSource
 
     /**
      * Returns model's root node.
@@ -1185,8 +1196,11 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     //eo createNode
     
-   //TODO moveNode  - method
-    
+    /**
+     * Returns node's string representation.
+     * @override
+     * @return {String} node
+     */
     toString : function() {
     	var _me = this;
 		var tpl = new Ext.XTemplate(

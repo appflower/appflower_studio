@@ -128,19 +128,19 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             /**
              * @event modelNodeAppend
              * Fires when a new model node is appended
-             * @param {Tree} ctr The controller to which the model is mapped
+             * @param {afStudio.controller.BaseController} ctr The controller to which the model is mapped
              * @param {Node} parent The parent node to which new node was append
              * @param {Node} node The newly appended node
              * @param {Number} index The index of the newly appended node in parent's childNodes array
              */
-            "modelNodeAppend",            
+            "modelNodeAppend",
             
             "beforeModelNodeRemove",
             
             /**
              * @event modelNodeRemove
              * Fires when a model node is removed
-             * @param {Tree} ctr The this model's controller
+             * @param {afStudio.controller.BaseController} ctr The this model's controller
              * @param {Node} parent The parent of a node being removed
              * @param {Node} node The removed node
              */            
@@ -151,7 +151,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             /**
              * @event modelNodeMove
              * Fires when a model node is moved to a new location in the model
-             * @param {Tree} ctr The model's controller
+             * @param {afStudio.controller.BaseController} ctr The model's controller
              * @param {Node} mode This moved node 
              * @param {Node} oldParent The old parent of this node
              * @param {Node} newParent The new parent of this node
@@ -164,7 +164,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             /**
              * @event modelNodeInsert
              * Fires when a new child node is inserted in the model.
-             * @param {Tree} ctr The model's controller
+             * @param {afStudio.controller.BaseController} ctr The model's controller
              * @param {Node} parent The parent node being injected
              * @param {Node} node The child node inserted
              * @param {Node} refNode The child node the node was inserted before 
@@ -178,6 +178,14 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             "beforeModelNodeCreated",
             
             "modelNodeCreated",
+            
+            /**
+             * @event modelNodeSelect
+             * Fires when a model node is selected
+             * @param {Node} modelNode The selected model node
+             * @param {Ext.Component} trigger The trigger component which initiates model node selection
+             */
+            "modelNodeSelect",
             
             "ready",
             
@@ -319,14 +327,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	_me.on({
     		scope: _me,
   			
-    		/**
-    		 * @bubbled
-    		 */
-            modelNodeRemove: function(ctr, parent, node) {
-            	console.log('@controller modelNodeRemove', parent, node);            	
-            	this.viewDefinition.removeEntity(node);
-            	console.log('definition', this.viewDefinition.getData());
-            },
             /**
              * @bubbled
              */
@@ -342,7 +342,15 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 				console.log('@controller modelNodeInsert', parent, node, refNode);
             	this.viewDefinition.insertBeforeEntity(parent, node, refNode);
             	console.log('definition', this.viewDefinition.getData());
-            }
+            },
+    		/**
+    		 * @bubbled
+    		 */
+            modelNodeRemove: function(ctr, parent, node) {
+            	console.log('@controller modelNodeRemove', parent, node);            	
+            	this.viewDefinition.removeEntity(node);
+            	console.log('definition', this.viewDefinition.getData());
+            }            
     	});
     	
     	//TODO improve - move to the separate method
@@ -352,7 +360,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     			'modelNodeAppend', 
     			'modelNodeInsert', 
     			'modelNodeRemove', 
-    			'modelNodeMove'
+    			'modelNodeMove',
+    			'modelNodeSelect'
     		]);
     	});
     },
@@ -418,5 +427,24 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 
     toString : function() {
         return "[BaseController" + (this.id ? " " + this.id : "") + "]";
+    },
+    
+    /**
+     * Fires event {@link #modelNodeSelect} which is relaed to view layer.
+     * @public
+     * @param {Node} node The model node being selected
+     * @param {Ext.Component} (Optional) view The component which triggers selection
+     */
+    selectModelNode : function(node, view) {
+    	node = Ext.isString(node) ? this.getNodeById(node) : node;
+    	
+    	if (!node) {
+    		return;
+    	}
+    	
+    	console.log('@controller selectModelNode', node);
+    	
+    	this.fireEvent('modelNodeSelect', node, view ? view : undefined);
     }
+    //eo selectModelNode
 });

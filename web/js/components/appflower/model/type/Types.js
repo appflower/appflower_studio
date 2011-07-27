@@ -62,9 +62,17 @@ afStudio.model.Types = new function() {
         }       
     });
     
-    Ext.apply(this, {    
-        TOKEN: this.STRING,
-        QNAME: this.STRING
+    Ext.apply(this, {
+        
+        TOKEN: {
+        	type: 'token',
+            validate: Ext.isString
+        },
+        
+        QNAME: {
+        	type: 'QName',
+            validate: Ext.isString
+        }
     });
 };
 

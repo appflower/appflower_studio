@@ -64,11 +64,60 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo _afterInitComponent 
 	
 	/**
+	 * Expands a specified path in this InspectorTree based on associated with tree node's models.
+	 * @public 
+	 * @param {Node} mn The model node
+	 * @param {Function} callback The callback function, called with two parameters:
+	 * <ul>
+	 * 		<li><b>success</b>: {Boolean} success The result of expanding operation</li>
+	 * 		<li><b>node</b>: {TreeNode} node The last expanded node</li>
+	 * </ul>
+	 */
+    expandPathByModelNode : function(mn, callback) {
+    	var path = mn.getPath();
+    	
+        if (Ext.isEmpty(path)) {
+            if (callback) {
+                callback(false, undefined);
+            }
+            return;
+        }
+        var keys    = path.split(this.pathSeparator),
+        	curNode = this.root;
+        if (curNode.modelNode.id != keys[1]) { // invalid root
+            if (callback) {
+                callback(false, null);
+            }
+            return;
+        }
+        var index = 1;
+        var f = function() {
+            if (++index == keys.length) {
+                if (callback) {
+                    callback(true, curNode);
+                }
+                return;
+            }
+            var c = curNode.findChildByAssociatedModel(keys[index]);
+            if (!c) {
+                if (callback) {
+                    callback(false, curNode);
+                }
+                return;
+            }
+            curNode = c;
+            c.expand(false, false, f);
+        };
+        curNode.expand(false, false, f);
+    },
+    //eo expandPathByModelNode
+	
+	/**
 	 * Returns view component by associated with it model.
 	 * @public
 	 * @interface
 	 * @param {afStudio.model.Node} node The model node
-	 * @return {Object} node
+	 * @return {afStudio.view.inspector.TreeNode} node
 	 */
 	getCmpByModel : function(node) {
 		var root = this.getRootNode(),
@@ -77,6 +126,14 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
     	cmp = root.findChildBy(function(vNode) {
     		return vNode.modelNode == node; 
     	}, null, true);
+    	
+    	if (!cmp) {
+			this.expandPathByModelNode(node, function(s, n) {
+				if (s === true) {
+					cmp = n;
+				}
+			});
+    	}		
     	
     	return cmp;
 	},
@@ -95,9 +152,6 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		_me.on({
 			scope: _me,
 			
-			contextmenu:  _me.onNodeContextMenu,
-			nodedragover: _me.onNodeDragOver,
-			nodedrop: _me.onNodeDrop,
 			/**
 			 * @relayed controller
 			 */
@@ -109,52 +163,35 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			/**
 			 * @relayed controller
 			 */
-			modelNodeRemove: _me.onModelNodeRemove
+			modelNodeRemove: _me.onModelNodeRemove,
+			/**
+			 * @relayed controller
+			 */
+			modelNodeSelect: _me.onModelNodeSelect,
+			
+			contextmenu:  _me.onNodeContextMenu,
+			nodedragover: _me.onNodeDragOver,
+			nodedrop: _me.onNodeDrop,
+			click: _me.onNodeClick
 		});
 	},
 	//eo initEvents
 	
 	/**
-	 * <u>contextmenu</u> event listener. 
-	 * More details {@link Ext.tree.TreePanel#contextmenu}. 
+	 * Relayed <u>modelNodeSelect</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeSelect}.
 	 * @protected
+	 * @interface
 	 */
-	onNodeContextMenu : function(node, e) {
-		var menu = node.contextMenu;
-		node.select();
-		if (menu) {
-			menu.contextNode = node;
-		    menu.showAt(e.getXY());
+	onModelNodeSelect : function(mn, trigger) {
+		if (trigger != this) {
+			console.log('@view [InspectorTree] "onModelNodeSelect"');
+			var viewNode = this.getCmpByModel(mn);
+			this.selectPath(viewNode.getPath());
 		}
 	},
-	//eo onNodeContextMenu
-	
-	/**
-	 * <u>nodedragover</u> event listener. 
-	 * More details {@link Ext.tree.TreePanel#nodedragover}. 
-	 */
-	onNodeDragOver : function(de) {
-		var n = de.dropNode, p = de.point, t = de.target;
-		if (p == 'append' || (n.modelNode.tag != t.modelNode.tag)) {
-			return false;
-		}
-	},
-	//eo onNodeDragOver
-	
-	/**
-	 * <u>nodedrop</u> event listener.
-	 * More details {@link Ext.tree.TreePanel#nodedrop}. 
-	 */
-	onNodeDrop : function(de) {
-		var n = de.dropNode.modelNode, p = de.point, t = de.target.modelNode;
-	    if (p == "above") {
-	        t.parentNode.insertBefore(n, t);
-	    } else if (p == "below") {
-	        t.parentNode.insertBefore(n, t.nextSibling);
-	    }
-	},
-	//eo onNodeDrop
-	
+	//eo onModelNodeSelect
+		
 	/**
 	 * Relayed <u>modelNodeAppend</u> event listener.
 	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
@@ -198,9 +235,63 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
     	if (viewNode) {
     		viewNode.remove(true);
     	}
-	}
-	//eo onModelNodeRemove
+	},
+	//eo onModelNodeRemove	
 	
+	/**
+	 * <u>contextmenu</u> event listener. 
+	 * More details {@link Ext.tree.TreePanel#contextmenu}. 
+	 * @protected
+	 */
+	onNodeContextMenu : function(node, e) {
+		var menu = node.contextMenu;
+		node.select();
+		if (menu) {
+			menu.contextNode = node;
+		    menu.showAt(e.getXY());
+		}
+	},
+	//eo onNodeContextMenu
+	
+	/**
+	 * <u>nodedragover</u> event listener. 
+	 * More details {@link Ext.tree.TreePanel#nodedragover}.
+	 * @protected 
+	 */
+	onNodeDragOver : function(de) {
+		var n = de.dropNode, p = de.point, t = de.target;
+		if (p == 'append' || (n.modelNode.tag != t.modelNode.tag)) {
+			return false;
+		}
+	},
+	//eo onNodeDragOver
+	
+	/**
+	 * <u>nodedrop</u> event listener.
+	 * More details {@link Ext.tree.TreePanel#nodedrop}. 
+	 * @protected
+	 */
+	onNodeDrop : function(de) {
+		var n = de.dropNode.modelNode, p = de.point, t = de.target.modelNode;
+	    if (p == "above") {
+	        t.parentNode.insertBefore(n, t);
+	    } else if (p == "below") {
+	        t.parentNode.insertBefore(n, t.nextSibling);
+	    }
+	},
+	//eo onNodeDrop
+	
+	/**
+	 * <u>click</u> event listener.
+	 * @param {Node} node The clicked node
+	 * @param {Ext.EventObject} e The event object
+	 * @protected
+	 */
+	onNodeClick : function(node, e) {
+		console.log('@view [InspectorTree] "selectModelNode"', node.modelNode);
+		this.controller.selectModelNode(node.modelNode, this);
+	}
+	//eo onNodeClick
 });
 
 afStudio.view.inspector.nodeType = {}
