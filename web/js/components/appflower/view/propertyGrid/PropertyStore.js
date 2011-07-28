@@ -10,8 +10,9 @@ afStudio.view.property.PropertyRecord = Ext.data.Record.create([
     {name: 'name', type: 'string'},
     'value',
     'type',
-    'required',
-    'defaultValue'
+    {name: 'required', type: 'boolean'},
+    'defaultValue',
+    'readOnly'
 ]);
 
 /**
@@ -42,6 +43,7 @@ afStudio.view.property.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
     
     /**
      * @override
+     * @protected
      * @param {Object} o The source object
      */
     setSource : function(o) {
@@ -50,6 +52,8 @@ afStudio.view.property.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
         var data = [];
         for (var k in o) {
             if (this.isEditableProperty(o[k])) {
+            	//apply default value
+            	o[k].value = o[k].value || o[k].defaultValue;
                 data.push(new afStudio.view.property.PropertyRecord(o[k], k));
             }
         }

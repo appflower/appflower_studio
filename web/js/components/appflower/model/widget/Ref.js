@@ -16,6 +16,8 @@ afStudio.model.widget.Ref = Ext.extend(afStudio.model.TypedNode, {
 
 	tag : afStudio.ModelNode.REF,
 	
+	_content : null,
+	
 	properties : [
       	{name: 'to', type: "QName", required: true},
       	{name: 'break', type: 'boolean', defaultValue: false},

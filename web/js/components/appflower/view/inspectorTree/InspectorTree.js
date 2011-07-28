@@ -202,8 +202,9 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		console.log('@view [InspectorTree] "modelNodeAppend"');
 		var viewNode = this.getCmpByModel(parent);
 		viewNode.reload(function() {
-			this.item(index).select();
-		});
+			var viewNode = this.getCmpByModel(node);
+			viewNode.select();
+		}, this);
 	},
 	//eo onModelNodeAppend
 	

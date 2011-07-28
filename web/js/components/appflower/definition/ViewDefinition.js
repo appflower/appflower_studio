@@ -23,6 +23,16 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @return {Mixed} entity
 	 */
 	getEntity : function(node) {
+		var entity = this._getEntity(node);
+		
+		return this.out(entity);
+	},
+	//eo getEntity
+
+	/**
+	 * @private
+	 */
+	_getEntity : function(node) {
 		var entObj = this.getEntityAncestor(node),
 			ea = entObj.ancestor,
 			ek = entObj.entityKey,
@@ -35,10 +45,38 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		} else {
 			entity = ea[ek];
 		}
-		
-		return this.out(entity);
+	
+		return entity;
 	},
-	//eo getEntity
+	
+	setEntityAttribute : function(node, p, v) {
+		var ent = this._getEntity(node);
+		
+		if (!Ext.isDefined(ent)) {
+			var entObj = this.getEntityAncestor(node),
+				ea = entObj.ancestor,
+				ek = entObj.entityKey;
+			if (node.getProperties().length > 0 || node.nodeTypes.length > 0) {
+				ent = ea[ek] = {}
+			} else {
+				ent = ea[ek] = null;
+			}
+		}
+		
+		if (p == '_content') {
+			if (Ext.isObject(ent)) {
+				ent._content = v;
+			} else {
+				ent = v;
+			}
+		} else {
+			if (!ent.attributes) {
+				ent.attributes = {};
+			}
+			ent.attributes[p] = v;
+		}
+	},
+	//eo setEntity
 	
 	/**
 	 * @override
@@ -74,6 +112,9 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	},
 	//eo addEntity	
 	
+	/**
+	 * @public
+	 */
 	insertBeforeEntity : function(parent, node, refNode) {
 		var entObj = this.getEntityAncestor(refNode),	
 			ea = entObj.ancestor,
@@ -126,7 +167,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 */
 	createEntity : function(node) {
 		var eAttr = node.getPropertiesHash(),
-			eContent = node.getNodeData(),
+			eContent = node.getNodeData() ? node.getNodeData().getValue() : null,
 			entity;
 	
 		var attrEmpty = true;	
@@ -198,7 +239,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
     		if (Ext.isArray(ent[entKey])) {
     			var entIdx = this.searchEntityIndex(ent[entKey], node);
     			if (entIdx == null) {
-    				throw new Ext.Error(String.format('Entity equal to node {0} was not found.', node));
+    				throw new Ext.Error(String.format('ViewDefinition. Entity equal to node {0} was not found.', node));
     			}
     			result.entityIdx = entIdx;
     		}
@@ -217,7 +258,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 */
 	equal : function(entity, node) {
 		var np = node.getPropertiesHash(),
-			nc = node.getNodeData();
+			nc = node.getNodeData() ? node.getNodeData().getValue() : null;
 
 		var equal = true;
 		
@@ -250,7 +291,6 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 */
 	searchEntityIndex : function(entArray, node) {
 		var np = node.getPropertiesHash(),
-			nc = node.getNodeData(),
 			entIdx;
 			
 		for (var i = 0, len = entArray.length; i < len; i++) {

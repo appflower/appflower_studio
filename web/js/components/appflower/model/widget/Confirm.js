@@ -7,6 +7,8 @@ afStudio.model.widget.Confirm = Ext.extend(afStudio.model.Node, {
 	
 	tag : afStudio.ModelNode.CONFIRM,
 	
+	_content : null,
+	
 	properties : [
       	{name: "url", type: "internalUriType", required: true},
       	{name: "permissions", type: 'permissionType', defaultValue: "*"},

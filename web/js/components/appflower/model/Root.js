@@ -30,11 +30,11 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	tag: 'root',
 	
 	properties : [
-//      {name: "xmlns:i", type: 'internalUriType'},
-//		{name: "xmlns:xsi",  type: 'internalUriType'},
-//		{name: "xsi:schemaLocation",  type: 'internalUriType'},
-      	{name: "type", type: 'viewType', required: true}
-//TODO should be fixed after AF schema cleaning       	
+		{name: "xmlns:i", readOnly: true},
+		{name: "xmlns:xsi",  readOnly: true},
+		{name: "xsi:schemaLocation", readOnly: true},
+      	{name: "type", type: 'viewType', required: true, readOnly: true}
+//TODO should be discovered after AF schema cleaning, right now these attributes are not used.       	
 //      	{name: "tabbed", type: 'boolean'}
 //      	{name: "module", type: 'string'}
 	],

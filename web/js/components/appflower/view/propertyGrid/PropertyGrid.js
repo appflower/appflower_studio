@@ -43,31 +43,6 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         this.propStore = store;
         var cm = new afStudio.view.property.PropertyColumnModel(this, store);
         store.store.sort('name', 'ASC');
-
-        this.addEvents(
-			/**
-			 * @event beforepropertychange
-             * Fires before a property value changes.  Handlers can return false to cancel the property change
-             * (this will internally call {@link Ext.data.Record#reject} on the property's record).
-             * @param {Object} source The source data object for the grid (corresponds to the same object passed in
-             * as the {@link #source} config property).
-             * @param {String} recordId The record's id in the data store
-             * @param {Mixed} value The current edited property value
-             * @param {Mixed} oldValue The original property value prior to editing
-			 */
-        	'beforepropertychange',
-        	
-        	/**
-        	 * @event propertychange
-             * Fires after a property value has changed.
-             * @param {Object} source The source data object for the grid (corresponds to the same object passed in
-             * as the {@link #source} config property).
-             * @param {String} recordId The record's id in the data store
-             * @param {Mixed} value The current edited property value
-             * @param {Mixed} oldValue The original property value prior to editing 
-        	 */
-        	'propertychange'
-        );
         
         this.cm = cm;
         this.ds = store.store;
@@ -80,13 +55,6 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		});
         
         afStudio.view.property.PropertyGrid.superclass.initComponent.call(this, arguments);
-
-		this.mon(this.selModel, 'beforecellselect', function(sm, rowIndex, colIndex) {
-            if (colIndex === 0) {
-                this.startEditing.defer(200, this, [rowIndex, 1]);
-                return false;
-            }
-        }, this);        
     },
     //eo initComponent
 
@@ -98,8 +66,22 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
      */
 	initEvents : function() {
 		afStudio.view.property.PropertyGrid.superclass.initEvents.call(this);
-		
 		var _me = this;
+
+		_me.mon(_me.selModel, {
+			scope: _me,
+			beforecellselect : function(sm, rowIndex, colIndex) {
+	            if (colIndex === 0) {
+	                this.startEditing.defer(200, this, [rowIndex, 1]);
+	                return false;
+	            }
+			}
+        });
+        
+        _me.mon(_me.view, {
+        	scope: _me,
+        	refresh : _me.onViewRefresh
+        });
 		
 		_me.on({
 			scope: _me,
@@ -116,7 +98,7 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			 * @relayed from controller
 			 */
 			modelPropertyChanged: _me.onModelPropertyChanged
-		});		
+		});
 	},
 	//eo initEvents
     
@@ -155,19 +137,25 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             field = this.colModel.getDataIndex(ed.col);
         value = this.postEditValue(value, startValue, r, field);
         if (this.forceValidation === true || String(value) !== String(startValue)) {
-            var e = {
-                grid: this,
-                record: r,
-                field: field,
-                originalValue: startValue,
-                value: value,
-                row: ed.row,
-                column: ed.col,
-                cancel:false
-            };
+        	var mn = this.modelNode,
+            	e = {
+	                grid: this,
+	                record: r,
+	                field: field,
+	                originalValue: startValue,
+	                value: value,
+	                row: ed.row,
+	                column: ed.col,
+	                modelNode: mn,
+	                cancel:false
+            	};
             if (this.fireEvent("validateedit", e) !== false && !e.cancel && String(value) !== String(startValue)) {
-            	this.modelNode.setProperty(r.id, e.value);
-                e.modelNode = this.modelNode;
+            	
+            	if (r.id == '_content') {
+					mn.setNodeData(e.value);
+            	} else {
+	            	mn.setProperty(r.id, e.value);
+            	}
                 delete e.cancel;
                 this.fireEvent("afteredit", e);
             }
@@ -175,47 +163,6 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         this.view.focusCell(ed.row, ed.col);
     },
     //eo onEditComplete
-    
-    /**
-     * @protected
-     * @param {Object} source
-     */
-    setSource : function(source) {
-        this.propStore.setSource(source);
-        this.hideMandatoryChecker();
-    },
-    
-	/**
-	 * Function hideMandatoryCheckers
-	 * Hides checker group
-	 * @private
-	 */
-	hideMandatoryChecker: function() {
-        //Hide mandatory checkers
-        var hd = Ext.select('div[id$="gp-required-true-hd"]');
-		if (hd) {
-			hd.setStyle({display: 'none'});
-		}
-	},
-	
-    /**
-     * Gets the source data object containing the property data.
-     * @public  
-     * @return {Object} The data object
-     */
-    getSource : function() {
-        return this.propStore.getSource();
-    },
-    
-    /**
-     * Sets the value of a property.
-     * @public
-     * @param {String} prop The name of the property to set
-     * @param {Mixed} value The value being set
-     */
-    setProperty : function(prop, value) {
-        this.propStore.setValue(prop, value);    
-    },
     
 	/**
 	 * Relayed <u>modelNodeRemove</u> event listener.
@@ -253,7 +200,71 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	onModelPropertyChanged : function(node, p, v) {
 		console.log('@view [PropertyGrid] "modelPropertyChanged"');
 		this.setProperty(p, v);
-	}
+		this.onViewRefresh(this.view);
+	},
+    
+    /**
+     * This grid's {@link #view} <u>refresh</u> event listener.
+     * More details {@link Ext.grid.GridView#refresh}
+     */
+    onViewRefresh : function(view) {
+		var ds = this.getStore();
+		for (var i = 0, rn = ds.getCount(); i < rn; i++) {    		
+			var r = ds.getAt(i),
+				html = String.format('<b>{0}:</b> {1}', r.get('name'), r.get('value')),
+				row = view.getRow(i),
+				els = Ext.get(row).select('.x-grid3-cell-inner');
+				
+			for (var j = 0, eln = els.getCount(); j < eln; j++) {
+		  		Ext.QuickTips.register({
+		    		target: els.item(j),
+		    		text: html
+				});
+			}
+		}
+		this.hideMandatoryChecker();
+	},
+	//eo onViewRefresh
+    
+    /**
+     * @protected
+     * @param {Object} source
+     */
+    setSource : function(source) {
+        this.propStore.setSource(source);
+        this.hideMandatoryChecker();
+    },
+    
+	/**
+	 * Hides required group
+	 * @private
+	 */
+	hideMandatoryChecker: function() {
+        //Hide mandatory checkers
+        var hd = Ext.select('div[id$="gp-required-true-hd"]');
+		if (hd) {
+			hd.setStyle({display: 'none'});
+		}
+	},
+	
+    /**
+     * Gets the source data object containing the property data.
+     * @public  
+     * @return {Object} The data object
+     */
+    getSource : function() {
+        return this.propStore.getSource();
+    },
+    
+    /**
+     * Sets the value of a property.
+     * @public
+     * @param {String} prop The name of the property to set
+     * @param {Mixed} value The value being set
+     */
+    setProperty : function(prop, value) {
+        this.propStore.setValue(prop, value);    
+    }
 });
 
 /**

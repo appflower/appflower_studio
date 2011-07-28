@@ -14,8 +14,14 @@
 afStudio.model.Param = Ext.extend(afStudio.model.Node, {
 
 	tag : afStudio.ModelNode.PARAM,
+
+	_content : {name: '_content', required: true},
 	
-	//TODO add node-value type (_content in definition)
+	defaultDefinition : {
+		attributes: {
+			name: 'i:param'
+		}
+	},	
 	
 	properties : [
 		{name: 'name', type: 'token', required: true}

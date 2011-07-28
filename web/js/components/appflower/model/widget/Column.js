@@ -17,6 +17,8 @@ afStudio.model.widget.Column = Ext.extend(afStudio.model.Node, {
 
 	tag: afStudio.ModelNode.COLUMN,
 	
+	_content : null,
+	
 	properties : [
         {name: 'name', type: 'dbNameType', required: true},
         {name: 'label', type: 'token', required: true},

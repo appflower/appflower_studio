@@ -65,7 +65,13 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * @type {Array}
 	 */
     nodeTypes : [],
-	
+    /**
+     * Specifies default node content information
+     * @property _content (defaults to {name: '_content', type: 'string'})
+     * @type {Object}
+     */
+	_content : {name: '_content', type: 'string'},
+    
     constructor : function(config) {
         config = config || {};
 
@@ -93,9 +99,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         /**
          * The node's data. @type Mixed
          * Node can only containes the data or childNodes.
-         * Read-only property. 
          */
-        this[this.NODE_DATA] = null;
+        this[this.NODE_DATA] = this._content ? new afStudio.model.Property(this._content) : null;
         
         /**
          * All child nodes of this node. @type Array
@@ -1030,10 +1035,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	if (!Ext.isDefined(property)) {
     		return null;
     	}
-    	if (this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
-    		if (property.setValue(v) !== false)  {
-	    		this.fireEvent("modelPropertyChanged", this, p, v);
-    		}
+    	
+    	if (property.validate(v) && this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
+    		property.setValue(v);
+	    	this.fireEvent("modelPropertyChanged", this, p, v);
     	}
     	
     	return property;
@@ -1055,9 +1060,13 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     setNodeData : function(value) {
     	var nodeValueProperty = this.NODE_DATA;
     	
-    	if (this.fireEvent("beforeModelPropertyChanged", this, nodeValueProperty, value)) {
-	    	this[nodeValueProperty] = value;
-	    	this.fireEvent("modelPropertyChanged", this, nodeValueProperty, value);
+    	if (!this[nodeValueProperty]) {
+    		return;
+    	}
+    	
+    	if (this.fireEvent("beforeModelPropertyChanged", this, '_content', value)) {
+	    	this[nodeValueProperty].setValue(value);
+	    	this.fireEvent("modelPropertyChanged", this, '_content', value);
     	}
     },
     //eo setNodeData
@@ -1086,8 +1095,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     //eo applyProperties
     
     /**
-     * 
-     * @return {Object}
+     * Returns a source properties object of this node. 
+     * @return {Object} source
      */
     getPropertiesSource : function() {
     	var ps = this.getProperties(),
@@ -1096,6 +1105,11 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	ps.eachKey(function(k, p) {
 			source[k] = p.getPropertyHash();
     	});
+    	
+    	var _content = this.getNodeData();
+    	if (Ext.isEmpty(this.nodeTypes) && _content) {
+    		source['_content'] = _content.getPropertyHash();
+    	}
     	
     	return source;
     },
@@ -1122,7 +1136,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {String} type if specified otherwise returns null
      */
 	getModelType : function() {
-		return this.modelType;  
+		return this.modelType;
 	},    
 	//eo getModelType
     
@@ -1206,7 +1220,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         		compiled: true,
         		disableFormats: true,
         		getData: function() {
-        			return _me[_me.NODE_DATA];
+        			return _me[_me.NODE_DATA] ? _me[_me.NODE_DATA].getValue() : null;
         		}
     		});
     	

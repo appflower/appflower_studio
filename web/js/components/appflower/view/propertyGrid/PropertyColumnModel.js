@@ -119,11 +119,14 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
         var p = this.store.getProperty(rowIndex),
             pt = p.get('type'),
             typeName = pt.type;
-            
+        
+		//read-only properties can't be modified 
+        if (p.get('readOnly')) {
+        	return null;
+        }
         if (this.grid.customEditors[typeName]) {
             return this.grid.customEditors[typeName];
         }
-        
         if (this.editors[typeName]) {
             return this.editors[typeName];
         }
@@ -141,7 +144,6 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
         }
         if (rec.get('required') && Ext.isEmpty(rec.get('value'))) {
         	meta.attr = 'style="background-color:#E6052A;"';
-        	return;
         }
         var rv = val;
         if (Ext.isDate(val)) {

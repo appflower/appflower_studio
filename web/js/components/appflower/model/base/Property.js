@@ -27,7 +27,12 @@ afStudio.model.Property = Ext.extend(Object, {
 	/**
 	 * @cfg {Boolean} (Optional) required (defaults to false)
 	 */
-	required: false,
+	required : false,
+	/**
+	 * @cfg {Boolean} (Optional) readOnly (defaults to false)
+	 * The readOnly flag states that a property value should not be editable outside the model.
+	 */
+	readOnly : false,
     /**
      * @cfg {Mixed} (Optional) defaultValue
      * The default value.
@@ -92,12 +97,13 @@ afStudio.model.Property = Ext.extend(Object, {
      * @return {Object} property
      */
     getPropertyHash : function() {
-    	return {
-    		name: this.name,
-    		value: this.value,
-    		type: this.type,
-    		required: this.required,
-    		defaultValue: this.defaultValue
+    	var pr = {};
+    	for(var p in this) {
+    		if (!Ext.isFunction(this[p])) {
+    			pr[p] = this[p];
+    		}
     	}
+    	
+    	return pr;
     }
 });

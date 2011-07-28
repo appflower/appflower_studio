@@ -361,8 +361,10 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     		/**
     		 * @bubbled
     		 */
-            modelPropertyChanged: function(node, p, v) {
-            	console.log('@controller modelPropertyChanged', node, p, v);
+            beforeModelPropertyChanged: function(node, p, v) {
+            	console.log('@controller beforeModelPropertyChanged', node, p, v);
+            	this.viewDefinition.setEntityAttribute(node, p, v);
+            	console.log('definition', this.viewDefinition.getData());
             }
     	});
     	

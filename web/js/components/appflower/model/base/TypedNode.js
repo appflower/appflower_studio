@@ -1,7 +1,7 @@
 Ext.ns('afStudio.model');
 
 /**
- * Base class for all nodes depend from the model type.
+ * Base class for all nodes depending from the model type.
  * 
  * @class afStudio.model.TypedNode
  * @extends afStudio.model.Node
