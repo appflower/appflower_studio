@@ -96,9 +96,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 		    
 			$consoleResult = afStudioModelCommandHelper::deploy();
 			
-            if ($afConsole->wasLastCommandSuccessfull()) {
-			     $consoleResult .= $afConsole->execute('sf propel:build-form');
-            }
+            if ($afConsole->wasLastCommandSuccessfull()) $consoleResult .= $afConsole->execute('sf propel:build-form');
             
             if ($afConsole->wasLastCommandSuccessfull()) {
                 $message = 'Added model <b>'.$this->modelName.'</b>!';
@@ -127,11 +125,11 @@ class afStudioModelCommand extends afBaseStudioCommand
         
         unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]);
 		
-		if ($this->saveSchema()) {
-			$response->success(true)->message('Deleted model <b>'.$this->modelName.'</b>!')->console(afStudioModelCommandHelper::deploy());
-		} else {
-		    $response->success(false)->message("Can't delete model <b>{$this->modelName}</b>!");
-		}
+        if ($this->saveSchema()) {
+            $response->success(true)->message('Deleted model <b>'.$this->modelName.'</b>!')->console(afStudioModelCommandHelper::deploy());
+        } else {
+            $response->success(false)->message("Can't delete model <b>{$this->modelName}</b>!");
+        }
 		
 		return $response->asArray();
     }
@@ -182,10 +180,39 @@ class afStudioModelCommand extends afBaseStudioCommand
 		);
     }
     
+    
+    
+    
+    protected function processAlterModel()
+    {
+        $response = afResponseHelper::create();
+        try {
+			$fields = json_decode($this->getParameter('fields'));
+            
+			if (($message = $this->alterModel($fields)) === true) {
+				$success = true;
+				$message = "{$this->modelName} structure was successfully updated";
+			} else {
+				$success = false;
+			}
+			
+			$response->success($success)->message($message);
+        } catch ( Exception $e ) {
+        	$response->success(false)->message($e->getMessage());
+        }
+        
+        return $response->asArray();
+    }
+    
+    
+    
+    /*
+        TODO check used anywhere or not
+    */
     protected function processUpdate()
     {
         $response = afResponseHelper::create();
-        
+        // FirePHP::getInstance(true)->fb('update');
         // $rows = $this->request->getParameterHolder()->has('rows') ? $this->request->getParameterHolder()->get('rows') : null;
         $rows = $this->getParameter('rows');
         
@@ -200,43 +227,29 @@ class afStudioModelCommand extends afBaseStudioCommand
 			    $response->success(false)->message("Can't update model <b>{$this->modelName}</b>!");
 			}
 		}
-		
+        
 		$response->success(true);
         // $this->result['success']=true;
         
         return $response->asArray();
     }
     
+    /*
+        TODO check is used from frontend this command - RelationCombo.js
+    */
     protected function processReadrelation()
     {
         // FirePHP::getInstance(true)->fb('readRelation');
         $this->result = array('success' => true, 'data' => $this->buildRelationComboModels());
     }
     
-    protected function processAlterModel()
-    {
-        $response = afResponseHelper::create();
-        try {
-			$fields = json_decode($this->getParameter('fields'));
-            
-			if (($message = $this->alterModel($fields)) === true) {
-				$success = true;
-				$message = $this->modelName . ' ' . 'structure was successfully updated';
-			} else {
-				$success = false;
-			}
-			
-			$response->success($success)->message($message);
-        } catch ( Exception $e ) {
-        	$response->success(false)->message($e->getMessage());
-        }
-        
-        return $response->asArray();
-    }
-    
-    
+    /*
+        TODO check is used this command from frontend
+    */
     protected function processAlterModelUpdateField()
     {
+        // FirePHP::getInstance(true)->fb('processAlterModelUpdateField');
+        
         $response = afResponseHelper::create();
         try {
 			$field = $this->getParameter('field');
@@ -257,8 +270,13 @@ class afStudioModelCommand extends afBaseStudioCommand
         return $response->asArray();
     }
     
+    /*
+        TODO check is used this command from frontend
+    */
     protected function processAlterModelCreateField()
     {
+        // FirePHP::getInstance(true)->fb('processAlterModelCreateField');
+        
         $response = afResponseHelper::create();
         try {
 			$fieldDef = json_decode($this->getParameter('fieldDef'));
@@ -277,6 +295,7 @@ class afStudioModelCommand extends afBaseStudioCommand
         
         return $response->asArray();
     }
+    
     
     
     
@@ -347,21 +366,10 @@ class afStudioModelCommand extends afBaseStudioCommand
 	{
 		$retparams = array();
 		
-		if (isset($params['type']) && $params['type'] != '') {
-			$retparams['type'] = $params['type'];
-		}
-		
-		if (isset($params['size']) && $params['size'] != '') {
-			$retparams['size'] = $params['size'];
-		}
-		
-		if (isset($params['required'])) {
-    		$retparams['required'] = $params['required'];
-    	}
-    	
-    	if (isset($params['default_value'])) {
-    		$retparams['default'] = $params['default_value'];
-    	}
+		if (isset($params['type']) && $params['type'] != '') $retparams['type'] = $params['type'];
+		if (isset($params['size']) && $params['size'] != '') $retparams['size'] = $params['size'];
+		if (isset($params['required'])) $retparams['required'] = $params['required'];
+    	if (isset($params['default_value'])) $retparams['default'] = $params['default_value'];
     	
 		return $retparams;
 	}
@@ -655,7 +663,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 	private function alterModelField($field, $fieldData)
 	{
 		if (!afStudioModelCommandHelper::isValidName($fieldData->name)) {
-			return "Field name \"{$fieldData->name}\" is not valid. Field name must contains only characters, digits or \"_\" and starts from \"_\" or character";
+			return "Field name '{$fieldData->name}' is not valid. Field name must contains only characters, digits or '_' and starts from '_' or character";
 		}
 		$fieldDefinition = $this->buildFieldDefinition($fieldData);
 		
@@ -671,7 +679,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 	/**
 	 * Creates model's field
 	 * 
-	 * @param stdClass $fieldData json decoded field definition
+	 * @param stdClass $fieldData - json decoded field definition
 	 */
 	private function createModelField($fieldData)
 	{
@@ -711,5 +719,5 @@ class afStudioModelCommand extends afBaseStudioCommand
 		
 		$array = $initial;
 	}
-    
+	
 }
