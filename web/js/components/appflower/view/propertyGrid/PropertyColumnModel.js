@@ -36,6 +36,7 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
     //eo constructor
 	
     /**
+     * Creates and initializes {@link #editors} object.
      * @protected
      */
     buildEditors : function() {
@@ -70,7 +71,8 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
 						store: store,
 						triggerAction: 'all',
 						validator: validator
-				}));
+					})
+				);
 				
     		} else {
 			    var bfield = new f.Field({
@@ -93,14 +95,12 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
     				case types.DATE:
     					editors[typeName] = new g.GridEditor(new f.DateField({selectOnFocus:true, validator: validator}));
     				break;
-    				
     				default:
     					editors[typeName] = new g.GridEditor(new f.TextField({selectOnFocus:true, validator: validator}));
     				break;
     			}
     		}
-    	}
-    	
+    	}//eo for
 
 	    this.editors = editors;
     },
@@ -117,26 +117,16 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
      */
     getCellEditor : function(colIndex, rowIndex) {
         var p = this.store.getProperty(rowIndex),
-            pt = p.data.type.type,
-            val = p.data.value;
+            pt = p.get('type'),
+            typeName = pt.type;
             
-        if (this.grid.customEditors[pt]) {
-            return this.grid.customEditors[pt];
+        if (this.grid.customEditors[typeName]) {
+            return this.grid.customEditors[typeName];
         }
         
-        if (this.editors[pt]) {
-            return this.editors[pt];
+        if (this.editors[typeName]) {
+            return this.editors[typeName];
         }
-        
-//        if (Ext.isDate(val)) {
-//            return this.editors.date;
-//        } else if (typeof val == 'number') {
-//            return this.editors.number;
-//        } else if(typeof val == 'boolean') {
-//            return this.editors['boolean'];
-//        } else {
-//            return this.editors.string;
-//        }
     },
     //eo getCellEditor
     
@@ -149,18 +139,17 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
         if (renderer) {
             return renderer.apply(this, arguments);
         }
-        
         if (rec.get('required') && Ext.isEmpty(rec.get('value'))) {
-        	meta.attr = 'style="background-color:red;"';
+        	meta.attr = 'style="background-color:#E6052A;"';
         	return;
         }
-        
         var rv = val;
         if (Ext.isDate(val)) {
             rv = this.renderDate(val);
         } else if (typeof val == 'boolean') {
             rv = this.renderBool(val);
         }
+        
         return Ext.util.Format.htmlEncode(rv);
     }    
 });

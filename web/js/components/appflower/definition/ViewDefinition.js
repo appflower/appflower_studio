@@ -224,7 +224,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		if (Ext.isObject(entity)) {
 			//compare attributes
 			Ext.iterate(entity.attributes, function(k, v) {
-				return (np[k] !== v) ? (equal = false) : true;
+				return (!(Ext.isEmpty(np[k]) || Ext.isEmpty(v)) && np[k] !== v) ? (equal = false) : true;
 			});
 			//compare _content
 			if (equal) {
