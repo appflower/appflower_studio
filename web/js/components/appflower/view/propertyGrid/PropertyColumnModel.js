@@ -53,7 +53,7 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
     			continue;
     		}
     		
-    		var validator = Ext.util.Functions.createDelegate(type.validate, type);
+    		var validator = type.validate.createDelegate(type);
     		
     		if (type.values) {
     			var store = [];
@@ -85,15 +85,19 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
 			        }
 			    });
 			    
+			    //TODO a bit complex construction should be improved.
     			switch (type) {
     				case types.INTEGER:
-    					editors[typeName] = new g.GridEditor(new f.NumberField({selectOnFocus:true, style:'text-align:left;', validator: validator}));
+    					editors[typeName] = new g.GridEditor(new f.NumberField({selectOnFocus:true, allowDecimals: false, style:'text-align:left;', validator: validator}));
     				break;
     				case types.BOOLEAN:
     					editors[typeName] = new g.GridEditor(bfield, {autoSize: 'both'});
     				break;
     				case types.DATE:
     					editors[typeName] = new g.GridEditor(new f.DateField({selectOnFocus:true, validator: validator}));
+    				break;
+    				case types.POSITIVEINTEGER:
+    					editors[typeName] = new g.GridEditor(new f.NumberField({selectOnFocus: true, allowDecimals: false, allowNegative: false, style:'text-align:left;', validator: validator}));
     				break;
     				default:
     					editors[typeName] = new g.GridEditor(new f.TextField({selectOnFocus:true, validator: validator}));

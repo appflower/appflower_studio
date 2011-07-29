@@ -150,7 +150,6 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	                cancel:false
             	};
             if (this.fireEvent("validateedit", e) !== false && !e.cancel && String(value) !== String(startValue)) {
-            	
             	if (r.id == '_content') {
 					mn.setNodeData(e.value);
             	} else {

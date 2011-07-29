@@ -18,27 +18,33 @@ afStudio.model.Types = new function() {
          */
         AUTO : {
         	type: 'auto',
+        	convert: Ext.data.Types.AUTO.convert,
             validate: function(v) { return true; }
         },
 
         /**
-         * @type Object.
          * @property STRING
+         * @type Object.
          * This data type means that the raw data is converted into a String before it is placed into a Record.
          */
         STRING: {
         	type: 'string',
+        	convert: Ext.data.Types.STRING.convert,
             validate: Ext.isString
         },
 
         /**
-         * @property INT
+         * @property INTEGER
          * @type Object.
          * This data type represents integer.
          */
         INTEGER: {
         	type: 'integer',
-            validate: Ext.isNumber
+        	convert: Ext.data.Types.INT.convert,
+            validate: function(v) {
+            	v = this.convert(v);
+            	return Ext.isNumber(v);
+            }
         },
         
         /**
@@ -47,6 +53,7 @@ afStudio.model.Types = new function() {
          */
         BOOLEAN: {
         	type: 'boolean',
+        	convert: Ext.data.Types.BOOL.convert,
             validate: function(v) {
             	return Ext.isBoolean(v);
             }
@@ -58,12 +65,16 @@ afStudio.model.Types = new function() {
          */
         DATE: {
         	type: 'date',
-            validate: Ext.isDate
+        	convert: Ext.data.Types.DATE.convert,
+			validate: function(v) {
+            	v = this.convert(v);
+            	return Ext.isDate(v);
+            }
         }       
     });
     
     Ext.apply(this, {
-        
+    	
         TOKEN: {
         	type: 'token',
             validate: Ext.isString
@@ -80,7 +91,10 @@ afStudio.model.Types = new function() {
 afStudio.model.Types.POSITIVEINTEGER = {
 	type: 'positiveInteger',
 	
+	convert: afStudio.model.Types.INTEGER.convert,
+	
 	validate: function(v) {
+		v = this.convert(v);
 		return Ext.isNumber(v) && (v >= 0);
 	}
 };

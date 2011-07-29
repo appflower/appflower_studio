@@ -49,8 +49,22 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		return entity;
 	},
 	
+	/**
+	 * Sets entity's attribute.
+	 * @param {Node} node The model node 
+	 * @param {String} p The property name
+	 * @param {Mixed} v The property value
+	 */
 	setEntityAttribute : function(node, p, v) {
 		var ent = this._getEntity(node);
+		
+		var property = node.getProperty(p);
+		if (p != '_content' && Ext.isEmpty(property.defaultValue) && Ext.isEmpty(v)) {
+			if (ent) {
+				this.removeEntityAttribute(ent, p);
+				return;
+			}
+		}
 		
 		if (!Ext.isDefined(ent)) {
 			var entObj = this.getEntityAncestor(node),
@@ -67,7 +81,10 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			if (Ext.isObject(ent)) {
 				ent._content = v;
 			} else {
-				ent = v;
+				var entObj = this.getEntityAncestor(node),
+					ea = entObj.ancestor,
+					ek = entObj.entityKey;
+				ea[ek] = v;
 			}
 		} else {
 			if (!ent.attributes) {
@@ -77,6 +94,15 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		}
 	},
 	//eo setEntity
+	
+	/**
+	 * Removes entity's attribute
+	 * @param {Object} ent The entity object
+	 * @param {String} attr The attribute being deleted
+	 */
+	removeEntityAttribute : function(ent, attr) {
+		delete ent.attributes[attr];
+	},
 	
 	/**
 	 * @override
@@ -173,8 +199,14 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		var attrEmpty = true;	
 		for (var p in eAttr) {
 			attrEmpty = false;
+			break;
 		};			
-			
+		
+		//if node has properties or children
+		if (node.getProperties().length > 0 || node.nodeTypes.length > 0) {
+			entity = {};
+		}
+		
 		if (eAttr && !attrEmpty) {
 			entity = {
 				attributes: {}
