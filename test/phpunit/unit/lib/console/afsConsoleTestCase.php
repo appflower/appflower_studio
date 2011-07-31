@@ -33,4 +33,19 @@ class afsConsoleTest extends sfBasePhpunitTestCase implements sfPhpunitFixtureFi
         $this->assertTrue(is_array($commands), 'getCommands should return array');
     }
     
+    /**
+     * Test initialized params
+     * 
+     * @author Sergey Startsev
+     */
+    public function testParams() 
+    {
+        $console = afStudioConsole::getInstance();
+        
+        $this->assertFalse(empty($console->uname), "uname should't be empty");
+        $this->assertFalse(empty($console->uname_short), "uname_short should't be empty");
+        $this->assertFalse(empty($console->whoami), "whoami should't be empty");
+        $this->assertFalse(empty($console->prompt), "prompt should't be empty");
+    }
+    
 }

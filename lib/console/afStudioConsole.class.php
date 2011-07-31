@@ -8,11 +8,34 @@
  */
 class afStudioConsole
 {
-	static public $defaultCommands = 'sf appflower afs git batch man ll ls pwd cat mkdir rm cp mv touch chmod free df find clear php';
+    /**
+     * Current working directory 
+     */
+    public $pwd;
     
-    public 
-        $pwd, $uname, $uname_short, $filesystem, $prompt, $whoami;
+    /**
+     * Uname system
+     */
+    public $uname;
     
+    /**
+     * Short uname
+     */
+    public $uname_short;
+    
+    /**
+     * Current prompt
+     */
+    public $prompt;
+    
+    /**
+     * Whoami
+     */
+    public $whoami;
+    
+    /**
+     * Last executed command status
+     */
     private $lastExecReturnCode;
     
     /**
@@ -22,24 +45,10 @@ class afStudioConsole
     
     public function __construct() 
     {
-        $this->filesystem = new afsFileSystem;
+        $this->uname = $this->getUname(false);
+        $this->uname_short = $this->getUname(true);
         
-        $this->uname = php_uname();
-        $this->uname_short = php_uname('n');
-        
-        $result = $this->filesystem->execute('whoami');
-        
-        if (strlen($result[1]) == 0) {
-            $this->whoami = trim($result[0]);
-        } else {
-            $this->whoami = 'unknown_user';
-        }
-        
-        $result = $this->filesystem->execute('pwd');
-        
-        $this->pwd = (strlen($result[1]) == 0) ? $result[0] : '';
-        
-        $this->prompt = $this->whoami . '@' . php_uname('n') . ':' . '~/' . afStudioUtil::unRootify($this->pwd) . '$&nbsp;';	
+        $this->prompt = $this->getPrompt();
     }
     
     /**
@@ -47,7 +56,7 @@ class afStudioConsole
      * 
      * @return afStudioConsole
      */
-    public static function getInstance()
+    static public function getInstance()
     {
         if (!isset(self::$instance)) {
           self::$instance = new self;
@@ -55,133 +64,153 @@ class afStudioConsole
         
         return self::$instance;
     }
-		
-	public static function getCommands($explode = true)
-	{
-		if ($explode) {
-			return explode(' ', sfConfig::get('afStudio_console_commands', self::$defaultCommands));
-		} else {
-			return sfConfig::get('afStudio_console_commands', self::$defaultCommands);
-		}
-	}
-	
-    public static function getAliases()
-	{
-        return sfConfig::get('afStudio_console_aliases', array('ll' => 'ls -l'));
+    
+    /**
+     * Getting commands - delegate method
+     *
+     * @param boolean $explode 
+     * @return mixed
+     * @author Sergey Startsev
+     */
+    static public function getCommands($explode = true)
+    {
+        return afsConsoleCommandHelper::getCommands($explode);
     }
     
+    /**
+     * Getting command aliases - delegate method
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getAliases()
+    {
+        return afsConsoleCommandHelper::getAliases();
+    }
+    
+    /**
+     * Execute command - delegates call execute command to afsConsoleCommand class
+     *
+     * @param mixed $commands - array(multiple commands) or string(single command)
+     * @return string
+     * @author Sergey Startsev
+     */
     public function execute($commands)
     {
-        if ($commands != 'start') {		
-            if (!is_array($commands)) {
-                $commandsArray[] = $commands;
-			} else {
-                $commandsArray = $commands;
-			}
+        if ($commands != 'start') {
+			$aCommands = (!is_array($commands)) ? (array) $commands : $commands;
             
             $result = array();
-            
-            foreach ($commandsArray as $command) {		
-                if (substr($command, 0, 2) == "sf") {
-                    $prefix = 'symfony ';
-                    $command = substr($command, 3);
-                    $exec = sprintf('%s "%s" %s', '/opt/local/bin/php', afStudioUtil::getRootDir().'/symfony', $command);
-                } elseif (substr($command, 0, 3) == "afs"&&substr($command, 0, 8) != "afsbatch") {
-                    $prefix = 'symfony ';
-                    $command = 'afs:'.substr($command, 4);
-                    $exec = sprintf('%s "%s" %s', '/opt/local/bin/php', afStudioUtil::getRootDir().'/symfony', $command);
-                } elseif (substr($command, 0, 5) == "batch") {
-                    $prefix = '../batch/';
-                    $command = substr($command, 6);
-                    
-                    if ($command == '') {
-                        $files = sfFinder::type('file')->name('*.*')->in(afStudioUtil::getRootDir().'/batch/');
-                        
-                        foreach ($files as $file) {
-                            $baseFiles[] = basename($file);
-                        }
-                        $result[] = $this->renderCommand('../batch/<file>') . '<li class=\'afStudio_result_command\'><b>Usage:</b> batch "file"<br><b>Found batches:</b> '.implode('; ',$baseFiles).'</li>';
-                    } else {
-                        $exec = sprintf('%s%s', afStudioUtil::getRootDir().'/batch/', $command);
-                    }
-                } elseif (substr($command, 0, 8) == "afsbatch") {
-                    $prefix = '../plugins/appFlowerStudioPlugin/batch/';
-                    $command = substr($command, 9);
-                    
-                    if ($command == '') {
-                        $files = sfFinder::type('file')->name('*.*')->in(afStudioUtil::getRootDir().'/plugins/appFlowerStudioPlugin/batch/');
-                        
-                        foreach ($files as $file) {
-                            $baseFiles[] = basename($file);
-                        }
-                        
-                        $result[] = $this->renderCommand('../plugins/appFlowerStudioPlugin/batch/<file>').'<li class=\'afStudio_result_command\'><b>Usage:</b> afsbatch "file"<br><b>Found batches:</b> '.implode('; ',$baseFiles).'</li>';
-                    } else {
-                        $exec = sprintf('%s%s', afStudioUtil::getRootDir().'/plugins/appFlowerStudioPlugin/batch/', $command);
-                    }
-                } else {
-                    $prefix = '';
-                    $parts = explode(" ", $command);
-                    $parts[0] = afStudioUtil::getValueFromArrayKey(self::getAliases(), $parts[0], $parts[0]);
-                    
-                    $command = implode(" ", $parts);
-                    $parts = explode(" ", $command);
-                    $command = afStudioUtil::getValueFromArrayKey(self::getAliases(), $command, $command);
-                    
-                    if (!in_array($parts[0], self::getCommands()))
-                        $result[] = sprintf(
-                            "%s<li>This command is not available. You can do : <strong>%s</strong></li>",
-                            $this->renderCommand($prefix . $command), implode(' ', self::getCommands())
-                        );
-                        
-                    $exec = sprintf('%s', $command);
-                }
+            foreach ($aCommands as $command) {
+                $command_instance = afsConsoleCommand::create($command)->setPrompt($this->getPrompt());
+                $result = array_merge($result, $command_instance->execute());
                 
-                if (isset($exec)) {
-                    ob_start();
-                    passthru($exec . ' 2>&1', $return);
-                    $raw = ob_get_clean();
-                    
-                    $this->lastExecReturnCode = $return;
-                    
-                    if ($return > 0) {
-                        $result[] = $this->renderCommand($prefix . $command) . "<li class='afStudio_result_command'>" . $raw . "</li>";
-                    } else {
-                        $arr = explode("\n", $raw);
-                        $result[] = $this->renderCommand($prefix . $command);
-                        
-                        foreach ($arr as $a) {
-                            $res[] = "<li class='afStudio_result_command'>{$a}</li>";
-                        }
-                        
-                        if ($res) {
-                            $result[] = implode('',$res);
-                        }
-                    }
-                }
+                $this->lastExecReturnCode = $command_instance->getLastStatus();
             }
         } else {
-            $result[] = '<li>'.sprintf("Logged as %s on %s", $this->whoami, $this->uname).'</li>';
-            $result[] = '<li>'.str_repeat("-", 20).'</li>';
-            $result[] = '<li>'."Current working directory : ".$this->pwd.'</li>';
-            $result[] = '<li>'."Commands Available :".'</li>';
-            $result[] = '<li>'."<strong>".self::getCommands(false)."</strong>".'</li>';
-            $result[] = '<li>'."Symfony commands can be run by prefixing with sf<br />Example: sf cc ( clear cache )".'</li>';
-            $result[] = '<li>'."AppFlower Studio tasks commands can be run by prefixing with afs<br />Example: afs fix-perms ( fixes the permissions needed by the Studio )".'</li>';
-            $result[] = '<li>'.str_repeat("-", 20).'</li>';
+            $result = $this->getDescription();
         }
         
         return implode('', $result);
     }
     
-    protected function renderCommand($command)
+    /**
+     * Getting description
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getDescription()
     {
-        return '<li class="afStudio_command_user">' . $this->prompt . $command . '</li>';
+        $rows = array(
+            "Logged as {$this->getWhoami()} on {$this->getUname()}",
+            str_repeat("-", 20),
+            "Current working directory : {$this->getPwd()}",
+            "Commands Available :",
+            "<strong>" . afsConsoleCommandHelper::getCommands(false) . "</strong>",
+            "Symfony commands can be run by prefixing with sf<br />Example: sf cc ( clear cache )",
+            "AppFlower Studio tasks commands can be run by prefixing with afs<br />Example: afs fix-perms ( fixes the permissions needed by the Studio )",
+            str_repeat("-", 20),
+        );
+        
+        $result = array();
+        foreach ($rows as $row) $result[] = afsRenderConsoleCommand::render($row);
+        
+        return $result;
     }
     
+    /**
+     * Getting last command status code
+     *
+     * @return boolean
+     * @author Łukasz Wojciechowski
+     */
     public function wasLastCommandSuccessfull()
     {
-        return $this->lastExecReturnCode === 0;
+        return $this->lastExecReturnCode;
+    }
+    
+    /**
+     * Getting Whoami description
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getWhoami()
+    {
+        if (empty($this->whoami)) {
+            if (afsConsoleHelper::isUnixLikeOs()) {
+                $whoami = afsFileSystem::create()->execute('whoami');
+                $this->whoami = (strlen($whoami[1]) == 0) ? trim($whoami[0]) : 'unknown_user';
+            }
+        }
+        
+        return $this->whoami;
+    }
+    
+    /**
+     * Getting pwd command result
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getPwd()
+    {
+        if (empty($this->pwd)) {
+            if (afsConsoleHelper::isUnixLikeOs()) {
+                $pwd = afsFileSystem::create()->execute('pwd');
+                $this->pwd = (strlen($pwd[1]) == 0) ? $pwd[0] : '';
+            }
+        }
+        
+        return $this->pwd;
+    }
+    
+    /**
+     * Getting uname
+     *
+     * @param boolean $short 
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getUname($short = false)
+    {
+        return ($short) ? php_uname('n') : php_uname();
+    }
+    
+    /**
+     * Getting prompt
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getPrompt()
+    {
+        if (empty($this->prompt)) {
+            $this->prompt = $this->getWhoami() . '@' . $this->getUname(true) . ':' . '~/' . afStudioUtil::unRootify($this->getPwd()) . '$&nbsp;';
+        }
+        
+        return $this->prompt;
     }
     
 }
