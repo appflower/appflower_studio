@@ -151,9 +151,7 @@ class appFlowerStudioActions extends afsActions
 	public function executeConsole(sfWebRequest $request)
 	{		
 		$command = trim($request->getParameter("command"));
-		
-		$afConsole=new afStudioConsole();
-		$result=$afConsole->execute($command);		
+		$result = afStudioConsole::getInstance()->execute($command);
 		
 		return $this->renderJson(
 			array(

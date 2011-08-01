@@ -11,27 +11,27 @@ class afStudioConsole
     /**
      * Current working directory 
      */
-    public $pwd;
+    private $pwd;
     
     /**
      * Uname system
      */
-    public $uname;
+    private $uname;
     
     /**
      * Short uname
      */
-    public $uname_short;
+    private $uname_short;
     
     /**
      * Current prompt
      */
-    public $prompt;
+    private $prompt;
     
     /**
      * Whoami
      */
-    public $whoami;
+    private $whoami;
     
     /**
      * Last executed command status
@@ -43,13 +43,10 @@ class afStudioConsole
      */
     static private $instance = null;
     
-    public function __construct() 
-    {
-        $this->uname = $this->getUname(false);
-        $this->uname_short = $this->getUname(true);
-        
-        $this->prompt = $this->getPrompt();
-    }
+    /**
+     * Private constructor
+     */
+    private function __construct() {}
     
     /**
      * Retrieve the instance of this class.
@@ -189,13 +186,31 @@ class afStudioConsole
     /**
      * Getting uname
      *
-     * @param boolean $short 
      * @return string
      * @author Sergey Startsev
      */
-    public function getUname($short = false)
+    public function getUname()
     {
-        return ($short) ? php_uname('n') : php_uname();
+        if (empty($this->uname)) {
+            $this->uname = php_uname();
+        }
+        
+        return $this->uname;
+    }
+    
+    /**
+     * Getting short uname
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getUnameShort()
+    {
+        if (empty($this->uname_short)) {
+            $this->uname_short = php_uname('n');
+        }
+        
+        return $this->uname_short;
     }
     
     /**
@@ -207,7 +222,7 @@ class afStudioConsole
     private function getPrompt()
     {
         if (empty($this->prompt)) {
-            $this->prompt = $this->getWhoami() . '@' . $this->getUname(true) . ':' . '~/' . afStudioUtil::unRootify($this->getPwd()) . '$&nbsp;';
+            $this->prompt = $this->getWhoami() . '@' . $this->getUnameShort() . ':' . '~/' . afStudioUtil::unRootify($this->getPwd()) . '$&nbsp;';
         }
         
         return $this->prompt;
