@@ -54,8 +54,29 @@ class afStudioModelCommand extends afBaseStudioCommand
 	    }
     }
     
+    /**
+     * Checking existed model or not
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function processHas()
+    {
+        $response = afResponseHelper::create();
+        
+        if (!is_null($this->getSchemaByModel($this->modelName))) {
+		    return $response->success(true)->message("Model <b>{$this->modelName}</b> exists")->asArray();
+		}
+		
+		return $response->success(false)->message("Model <b>{$this->modelName}</b> doesn't exists")->asArray();
+    }
     
-    
+    /**
+     * Process get command
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     protected function processGet()
     {
         if (count($this->propelSchemaArray) > 0) {
@@ -162,10 +183,12 @@ class afStudioModelCommand extends afBaseStudioCommand
 		return $response-asArray();
     }
     
-    
-    
-    
-    
+    /**
+     * Process read command
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     protected function processRead()
     {
         $rows = $this->readModelFields($this->propelModel);
@@ -180,9 +203,12 @@ class afStudioModelCommand extends afBaseStudioCommand
 		);
     }
     
-    
-    
-    
+    /**
+     * Process alter model command
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     protected function processAlterModel()
     {
         $response = afResponseHelper::create();
@@ -204,6 +230,16 @@ class afStudioModelCommand extends afBaseStudioCommand
         return $response->asArray();
     }
     
+    /**
+     * Update schemas command
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function processUpdateSchemas()
+    {
+        return afResponseHelper::create()->success(true)->console(afStudioModelCommandHelper::updateSchemas())->asArray();
+    }
     
     
     /*
@@ -212,8 +248,6 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processUpdate()
     {
         $response = afResponseHelper::create();
-        // FirePHP::getInstance(true)->fb('update');
-        // $rows = $this->request->getParameterHolder()->has('rows') ? $this->request->getParameterHolder()->get('rows') : null;
         $rows = $this->getParameter('rows');
         
 		if ($rows != null) {
@@ -229,7 +263,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 		}
         
 		$response->success(true);
-        // $this->result['success']=true;
         
         return $response->asArray();
     }
@@ -239,7 +272,7 @@ class afStudioModelCommand extends afBaseStudioCommand
     */
     protected function processReadrelation()
     {
-        // FirePHP::getInstance(true)->fb('readRelation');
+        var_dump('readRelation');
         $this->result = array('success' => true, 'data' => $this->buildRelationComboModels());
     }
     
@@ -248,8 +281,6 @@ class afStudioModelCommand extends afBaseStudioCommand
     */
     protected function processAlterModelUpdateField()
     {
-        // FirePHP::getInstance(true)->fb('processAlterModelUpdateField');
-        
         $response = afResponseHelper::create();
         try {
 			$field = $this->getParameter('field');
@@ -275,8 +306,6 @@ class afStudioModelCommand extends afBaseStudioCommand
     */
     protected function processAlterModelCreateField()
     {
-        // FirePHP::getInstance(true)->fb('processAlterModelCreateField');
-        
         $response = afResponseHelper::create();
         try {
 			$fieldDef = json_decode($this->getParameter('fieldDef'));
@@ -299,7 +328,11 @@ class afStudioModelCommand extends afBaseStudioCommand
     
     
     
-    
+    /**
+     * Load schemas procedure
+     *
+     * @author Sergey Startsev
+     */
 	private function loadSchemas()
 	{
 		$this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
@@ -381,12 +414,12 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 * @param array $propelModel the model definition
 	 * @return array - of model's fields 
 	 */
-	private function readModelFields(Array $propelModel) 
+	private function readModelFields($propelModel) 
 	{
 		$fields = array();
 		
 		$k = 0;
-	    foreach ($propelModel['columns'] as $name => $column) {
+	    foreach ((array)$propelModel['columns'] as $name => $column) {
 	    	$fields[$k]['id'] = $k;
 	    	$fields[$k]['name'] = $name;
 	    	
@@ -414,7 +447,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 	}
 	
 	
-
 	/**
 	 * Validates Field uniqueness inside the Model
 	 * 
@@ -527,8 +559,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 	{
 		$models = array();
         
-        // FirePHP::getInstance(true)->fb('buildRelationComboModels');
-        
 		if (count($this->propelSchemaArray) > 0) {
 			$query = $this->getParameter('query');
 			$relation = explode('.', trim($query));
@@ -574,7 +604,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 */
 	private function buildFieldDefinition($f) 
 	{
-        // FirePHP::getInstance(true)->fb('buildFieldDefinition');
 	    
 		$definition = array();
 		
@@ -705,9 +734,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 * @param mixed $value the key's value to be set
 	 */
 	private function arraySetKeyValue(Array &$array, $key, $newKey, $value) 
-	{    
-        // FirePHP::getInstance(true)->fb('arraySetKeyValue');
-	    
+	{
 		$initial = array();
 		foreach ($array as $k => $v) {
 			if ($k != $key) {

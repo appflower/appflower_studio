@@ -19,7 +19,25 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
             'sf cc',
             'sf appflower:validator-cache frontend cache yes',
             'sf propel:insert-sql-diff', 
-            'sf propel:build-model'
+            'sf propel:build-model',
+        ));
+        
+        return $console;
+	}
+	
+	/**
+	 * Update existed schemas from database
+	 *
+	 * @return string - Console results
+	 * @author Sergey Startsev
+	 */
+	static public function updateSchemas()
+	{
+	    $console = afStudioConsole::getInstance()->execute(array(
+            'sf cc',
+            'sf appflower:validator-cache frontend cache yes',
+            'sf propel:build-schema',
+            'sf propel:build-model',
         ));
         
         return $console;
@@ -35,8 +53,6 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
 	{
 		return preg_match("/^[^\d]\w*$/i", $name);
 	}
-	
-	
 	
 	
 	/**
