@@ -47,21 +47,16 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
     }
     
     /**
-     * Validation functionality
+     * Validation functionality - if needed to deprecate some methods need to update this method 
+     * nothing to validate, all validation on catching propel exception.
      * 
      * @param string $query
      * @return afResponse
      * @author Sergey Startsev
      */
     protected function validate($query)
-    {   
-        if (preg_match('/alter|drop|create/si', $query)) {
-            $afResponse = afResponseHelper::create()->success(false)->message('This operation or functionality has been disabled');
-        } else {
-            $afResponse = afResponseHelper::create()->success(true)->message('Validated successfully');
-        }
-        
-        return $afResponse;
+    {
+        return afResponseHelper::create()->success(true)->message('Validated successfully');
     }
     
     /**
@@ -73,15 +68,9 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
      */
     protected function getType($query)
     {   
-        if (preg_match('/(?:(select|show))/sim', $query)) {
-            $type = self::TYPE_SELECT;
-        } elseif (preg_match('/(?:(update|delete|truncate|insert))/sim', $query)) {
-            $type = self::TYPE_UPDATE;
-        } elseif (preg_match('/(?:(drop|alter|create))/sim', $query)) {
-            $type = self::TYPE_STRUCT;
-        }
-        
-        return $type;
+        if (preg_match('/(?:(select|show))/sim', $query)) return self::TYPE_SELECT;
+        if (preg_match('/(?:(update|delete|truncate|insert))/sim', $query)) return self::TYPE_UPDATE;
+        if (preg_match('/(?:(drop|alter|create))/sim', $query)) return self::TYPE_STRUCT;
     }
     
     /**
@@ -98,6 +87,7 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
         $stm = $this->dbh->prepare($query);
         $bExecuted = $stm->execute();
         
+        $response = afResponseHelper::create();
         if ($bExecuted) {
             if ($stm->rowCount() > 0) {
                 $total = $stm->rowCount();
@@ -112,19 +102,18 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                     $data = $stm->fetchAll(PDO::FETCH_ASSOC);
                     $meta = $this->getFields($data);
 
-                    $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
+                    $response->success(true)->data($meta, $data, $total)->query($query);
                 } else {
-                    $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+                    $response->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
                 }
             } else {
-                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+                $response->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
             }
-        } else {
-            $error_info = $stm->errorInfo();
-            $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
-        }
+            
+            return $response;
+        } 
         
-        return $afResponse;
+        return $response->success(false)->message($stm->errorInfo())->query($query);
     }
     
     /**
@@ -139,16 +128,10 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
     protected function processQueryUpdate($query, $offset, $limit)
     {
         $stm = $this->dbh->prepare($query);
-        $bExecuted = $stm->execute();
         
-        if ($bExecuted) {
-            $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Query successfully executed')->query($query);
-        } else {
-            $error_info = $stm->errorInfo();
-            $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
-        }
+        if ($stm->execute()) return afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Query successfully executed')->query($query);
         
-        return $afResponse;
+        return afResponseHelper::create()->success(false)->message($stm->errorInfo())->query($query);
     }
     
     /**
@@ -165,21 +148,14 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
         $stm = $this->dbh->prepare($query);
         $bExecuted = $stm->execute();
         
+        $response = afResponseHelper::create();
         if ($bExecuted) {
+            afStudioCommand::process('model', 'updateSchemas');
             
-            // Run from refactored models functionality of changing schema, regenerate models
-            
-            $afResponse = afResponseHelper::create()
-                            ->success(true)
-                            ->data(array(), array(), 0)
-                            ->message('Query successfully executed. Models regenerated')
-                            ->query($query);
-        } else {
-            $error_info = $stm->errorInfo();
-            $afResponse = afResponseHelper::create()->success(false)->message($error_info)->query($query);
-        }
+            return $response->success(true)->data(array(), array(), 0)->message('Query successfully executed. Models regenerated')->query($query);
+        } 
         
-        return $afResponse;
+        return $response->success(false)->message($stm->errorInfo())->query($query);
     }
     
     /**
@@ -201,9 +177,7 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                 $nOffset = (int)$matched[1] + $offset;
                 $nLimit = ($matched[2] < $limit) ? $matched[2] : $limit;
                 
-                if (($nOffset + $nLimit) > ($matched[1] + $matched[2])) {
-                    $nLimit = ($matched[1] + $matched[2]) - $nOffset;
-                }
+                if (($nOffset + $nLimit) > ($matched[1] + $matched[2])) $nLimit = ($matched[1] + $matched[2]) - $nOffset;
                 
                 $query = preg_replace('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', "LIMIT {$nOffset}, {$nLimit}", $query);
                 
@@ -218,7 +192,6 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                 
                 $query = preg_replace('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', "LIMIT {$offset}, {$nLimit}", $query);
             }
-            
         } else {
             // query doesn't have native limit
             $query = $query . " LIMIT {$offset}, {$limit}";

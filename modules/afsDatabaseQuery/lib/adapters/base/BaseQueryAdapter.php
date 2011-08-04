@@ -83,7 +83,7 @@ abstract class BaseQueryAdapter
      * @return afResponse
      * @author Sergey Startsev
      */
-    public function process($query, $offset = 0, $limit = 50)
+    public final function process($query, $offset = 0, $limit = 50)
     {
         $this->setQuery(trim($query));
         

@@ -45,7 +45,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 	    	} else {
 				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {
 			    	return afResponseHelper::create()->success(false)->message("Model doesn't exists")->asArray();
-			    	return false;
+                    // return false;
 				}
 				
 		    	$this->tableName = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]['tableName'];
@@ -81,7 +81,9 @@ class afStudioModelCommand extends afBaseStudioCommand
     {
         if (count($this->propelSchemaArray) > 0) {
 			$models = array();
+			
 			foreach ($this->propelSchemaArray as $schemaFile => $array) {
+			    if (empty($array)) continue;
 				foreach ($array['classes'] as $phpName => $attributes) {
 					$models[] = array('text' => $phpName,'leaf' => true,'schema' => $schemaFile, 'iconCls' => 'icon-model');
 				}
@@ -97,6 +99,12 @@ class afStudioModelCommand extends afBaseStudioCommand
         }
     }
     
+    /**
+     * Add model functionality
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     protected function processAdd()
     {
         $response = afResponseHelper::create();
@@ -446,7 +454,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 	    return $fields;
 	}
 	
-	
+    
 	/**
 	 * Validates Field uniqueness inside the Model
 	 * 
@@ -466,13 +474,14 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 */
 	private function modelFieldVerification($fieldName) 
 	{
+	    /*
+	       TODO wrap response to afResponse
+	    */
 		if (!afStudioModelCommandHelper::isValidName($fieldName)) {
 			return "Field name '{$fieldName}' is not valid. Field name must contains only characters, digits or '_' and starts from '_' or character";
 		}
 		
-		if (!$this->isFieldNameUnique($fieldName)) {
-			return "Field name '{$fieldName}' is duplicated";
-		}
+		if (!$this->isFieldNameUnique($fieldName)) return "Field name '{$fieldName}' is duplicated";
 		
 		return true;
 	}
@@ -541,6 +550,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 	private function getSchemaByModel($model) 
 	{
 		foreach ($this->propelSchemaArray as $schemaFile => $array) {
+		    if (empty($array)) continue;
 			foreach ($array['classes'] as $phpName => $attributes) {
 				if ($model == $phpName) return $schemaFile;
 			}
@@ -607,17 +617,9 @@ class afStudioModelCommand extends afBaseStudioCommand
 	    
 		$definition = array();
 		
-		if (!empty($f->type)) {
-			$definition['type'] = $f->type;
-		}
-		
-		if (!empty($f->default)) {
-			$definition['default'] = $f->default;
-		}
-		
-		if (!empty($f->autoIncrement)) {
-			$definition['autoIncrement'] = $f->autoIncrement;
-		}
+		if (!empty($f->type)) $definition['type'] = $f->type;
+		if (!empty($f->default)) $definition['default'] = $f->default;
+		if (!empty($f->autoIncrement)) $definition['autoIncrement'] = $f->autoIncrement;
 		
 		if (!empty($f->key)) {
 			switch ($f->key) {
@@ -635,9 +637,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 			}
 		}
 		
-		if (!empty($f->required)) {
-			$definition['required'] = $f->required;
-		}
+		if (!empty($f->required)) $definition['required'] = $f->required;
 		
 		if (!empty($f->relation)) {
 			$ref = explode('.', $f->relation);
@@ -645,13 +645,8 @@ class afStudioModelCommand extends afBaseStudioCommand
 			$definition['foreignReference'] = $ref[1];
 		}
 		
-		if (!empty($f->size)) {
-			$definition['size'] = intval($f->size);
-		}
-		
-		if (!empty($f->onDelete)) {
-			$definition['onDelete'] = $f->onDelete;
-		}
+		if (!empty($f->size)) $definition['size'] = intval($f->size);
+		if (!empty($f->onDelete)) $definition['onDelete'] = $f->onDelete;
         
 		return $definition;
 	}

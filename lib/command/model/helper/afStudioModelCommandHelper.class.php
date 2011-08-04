@@ -36,7 +36,7 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
 	    $console = afStudioConsole::getInstance()->execute(array(
             'sf cc',
             'sf appflower:validator-cache frontend cache yes',
-            'sf propel:build-schema',
+            'sf afs:update-schema',
             'sf propel:build-model',
         ));
         
