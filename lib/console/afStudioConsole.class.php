@@ -69,9 +69,11 @@ class afStudioConsole
      * @return mixed
      * @author Sergey Startsev
      */
-    static public function getCommands($explode = true)
+    static public function getCommands($as_array = true)
     {
-        return afsConsoleCommandHelper::getCommands($explode);
+        $commands = afsConsoleCommandHelper::create()->getCommands();
+        
+        return (!$as_array) ? implode(' ', $commands) : $commands;
     }
     
     /**
@@ -82,7 +84,7 @@ class afStudioConsole
      */
     static public function getAliases()
     {
-        return afsConsoleCommandHelper::getAliases();
+        return afsConsoleCommandHelper::create()->getAliases();
     }
     
     /**
@@ -98,11 +100,16 @@ class afStudioConsole
 			$aCommands = (!is_array($commands)) ? (array) $commands : $commands;
             
             $result = array();
-            foreach ($aCommands as $command) {
-                $command_instance = afsConsoleCommand::create($command)->setPrompt($this->getPrompt());
-                $result = array_merge($result, $command_instance->execute());
-                
-                $this->lastExecReturnCode = $command_instance->getLastStatus();
+            if (!afsConsoleCommandHelper::create()->hasDeprecated($aCommands)) {
+                foreach ($aCommands as $command) {
+                    $command_instance = afsConsoleCommand::create($command)->setPrompt($this->getPrompt());
+                    $result = array_merge($result, $command_instance->execute());
+
+                    $this->lastExecReturnCode = $command_instance->getLastStatus();
+                }
+            } else {
+                $result[] = afsRenderConsoleCommand::render("some commands that you wanna execute has been deprecated");
+                $result[] = afsRenderConsoleCommand::render("deprecated commands: " . implode(', ', afsConsoleCommandHelper::create()->getDeprecated()));
             }
         } else {
             $result = $this->getDescription();
@@ -124,7 +131,7 @@ class afStudioConsole
             str_repeat("-", 20),
             "Current working directory : {$this->getPwd()}",
             "Commands Available :",
-            "<strong>" . afsConsoleCommandHelper::getCommands(false) . "</strong>",
+            "<strong>" . $this->getCommands(false) . "</strong>",
             "Symfony commands can be run by prefixing with sf<br />Example: sf cc ( clear cache )",
             "AppFlower Studio tasks commands can be run by prefixing with afs<br />Example: afs fix-perms ( fixes the permissions needed by the Studio )",
             str_repeat("-", 20),

@@ -8,8 +8,22 @@
 class afsResponseTest extends sfBasePhpunitTestCase implements sfPhpunitFixtureFileAggregator
 {
     /**
+     * Testing exists needed class or not
+     * 
+     * @author Sergey Startsev
+     */
+    public function testClassesExisting() 
+    {
+        $this->assertTrue(class_exists('afResponseBase'), "'afResponseBase' class doesn't exists");
+        $this->assertTrue(class_exists('afResponse'), "'afResponse' class doesn't exists");
+        $this->assertTrue(class_exists('afResponseHelper'), "'afResponse' class doesn't exists");
+    }
+    
+    /**
      * Testing presentations - json and array
      *
+     * @depends testClassesExisting
+     * 
      * @author Sergey Startsev
      */
     public function testPresentations() 
@@ -29,6 +43,7 @@ class afsResponseTest extends sfBasePhpunitTestCase implements sfPhpunitFixtureF
     /**
      * Test on exception
      * 
+     * @depends testClassesExisting
      * @expectedException afResponseException
      * 
      * @author Sergey Startsev

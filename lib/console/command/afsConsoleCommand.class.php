@@ -28,11 +28,10 @@ class afsConsoleCommand
      */
     static public function create($command)
     {
-        $command_class = self::getCommandClassName(self::getCommandName($command));
+        $command_name = ($command_name = self::getCommandName($command)) ? $command_name : self::DEFAULT_COMMAND;
+        $command_class = self::getCommandClassName($command_name);
         
-        if (!class_exists($command_class)) {
-            $command_class = self::getCommandClassName('default');
-        }
+        if (!class_exists($command_class)) $command_class = self::getCommandClassName(self::DEFAULT_COMMAND);
         
         $command_reflection = new ReflectionClass($command_class);
         $command_instance = $command_reflection->newInstance();
@@ -62,7 +61,7 @@ class afsConsoleCommand
      */
     static public function getCommandName($command)
     {
-        return (preg_match('/(\w+)(?:\s|).*?/si', $command, $matched)) ? $matched[1] : self::DEFAULT_COMMAND;
+        return (preg_match('/(\w+)(?:\s|).*?/si', $command, $matched)) ? $matched[1] : false;
     }
     
 }

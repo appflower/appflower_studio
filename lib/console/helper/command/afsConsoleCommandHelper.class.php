@@ -8,50 +8,38 @@
 class afsConsoleCommandHelper
 {
     /**
-     * Config commands identificator
-     */
-    const CONFIG_COMMANDS = 'afStudio_console_commands';
-    
-    /**
-     * Config aliases identificator
-     */
-    const CONFIG_ALIASES = 'afStudio_console_aliases';
-    
-    /**
-     * Default aliases 
-     */
-    static public $default_aliases = array(
-        'll' => 'ls -l',
-    );
-    
-    /**
-     * default commands
-     */
-    static public $default_commands = 'sf appflower afs git batch man ll ls pwd cat mkdir rm cp mv touch chmod free df find clear php';
-    
-    /**
-     * Getting commands list
+     * Fabric method
      *
-     * @param boolean $explode 
-     * @return mixed - string or array
+     * @return afsConsoleCommandHelper
      * @author Sergey Startsev
      */
-    static public function getCommands($explode = true)
+    static public function create()
     {
-        $commands = sfConfig::get(self::CONFIG_COMMANDS, self::$default_commands);
-        
-        return ($explode) ? explode(' ', $commands) : $commands;
+        return new self;
     }
-	
-	/**
-	 * Getting aliases 
-	 *
-	 * @return array
-	 * @author Sergey Startsev
-	 */
-    static public function getAliases()
+    
+    /**
+     * Delegate call to command helper classes
+     *
+     * @param string $method 
+     * @param string $arguments 
+     * @return mixed
+     * @author Sergey Startsev
+     */
+    public function __call($method, $arguments)
     {
-        return sfConfig::get(self::CONFIG_ALIASES, self::$default_aliases);
+        $helper = 'afs' . ucfirst(afsConsoleHelper::getOsType()) . 'ConsoleCommandHelper';
+        
+        if (class_exists($helper)) {
+            $reflection = new ReflectionClass($helper);
+            $instance = $reflection->newInstance();
+            
+            if (!method_exists($instance, $method)) throw new afsConsoleCommandHelperException("Method '{$method}' doesn't exists in '{$helper}' helper");
+            
+            return call_user_func_array(array($instance, $method), $arguments);
+        } else {
+            throw new afsConsoleCommandHelperException("This '{$helper}' adaptee doesn't exists");
+        }
     }
     
 }

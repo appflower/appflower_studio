@@ -23,16 +23,16 @@ class afsConsoleCommandHelperTest extends sfBasePhpunitTestCase
     }
     
     /**
-     * Testing class params
+     * Testing on non existed helper method
      * 
      * @depends testClassExisting
+     * @expectedException afsConsoleCommandHelperException
      * 
      * @author Sergey Startsev
      */
-    public function testParameters() 
+    public function testNotExistedConsoleCommandHelperMethod() 
     {
-        $this->assertClassHasStaticAttribute('default_aliases', self::CONSOLE_COMMAND_HELPER_CLASS, 'Console helper should contain default_aliases property');
-        $this->assertClassHasStaticAttribute('default_commands', self::CONSOLE_COMMAND_HELPER_CLASS, 'Console helper should contain default_commands property');
+        afsConsoleCommandHelper::create()->testNonExistedMethod();
     }
     
 }

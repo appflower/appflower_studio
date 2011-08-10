@@ -10,7 +10,7 @@ class afsConsoleHelper
     /**
      * Mac Os X os type
      */
-    const OS_MAC = 'mac os x';
+    const OS_MAC = 'mac';
     
     /**
      * Linux os type
