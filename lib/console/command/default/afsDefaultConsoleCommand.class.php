@@ -32,12 +32,7 @@ class afsDefaultConsoleCommand extends afsBaseConsoleCommand
         $parts = explode(" ", $command);
         $command = afStudioUtil::getValueFromArrayKey(afsConsoleCommandHelper::create()->getAliases(), $command, $command);
         
-        $exec = '';
-        if (in_array($parts[0], afsConsoleCommandHelper::create()->getCommands())) {
-            $exec = sprintf('%s', $command);
-        }
-        
-        return $exec;
+        return (in_array($parts[0], afsConsoleCommandHelper::create()->getCommands())) ? (string) $command : '';
     }
     
     /**

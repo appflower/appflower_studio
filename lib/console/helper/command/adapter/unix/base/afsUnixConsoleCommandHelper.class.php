@@ -25,6 +25,11 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
     protected $base_deprecated_commands = array('top', 'htop', 'irb', 'ping',);
     
     /**
+     * Commands separators
+     */
+    protected $commands_separators = array('&&', '&', '||', '|',);
+    
+    /**
      * Reload deprecated method to extend parent list
      *
      * @return array
@@ -32,7 +37,9 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
      */
     public function getDeprecated()
     {
-        return array_merge($this->base_deprecated_commands, $this->deprecated_commands);
+        $this->deprecated_commands = array_merge($this->base_deprecated_commands, $this->deprecated_commands);
+        
+        return parent::getDeprecated();
     }
     
     /**
@@ -43,7 +50,9 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
      */
     public function getAliases()
     {
-        return array_merge($this->base_default_aliases, $this->default_aliases);
+        $this->default_aliases = array_merge($this->base_default_aliases, $this->default_aliases);
+        
+        return parent::getAliases();
     }
     
     /**
@@ -54,7 +63,9 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
      */
     public function getCommands()
     {
-        return array_merge($this->base_default_commands, $this->default_commands);
+        $this->default_commands = array_merge($this->base_default_commands, $this->default_commands);
+        
+        return parent::getCommands();
     }
     
 }

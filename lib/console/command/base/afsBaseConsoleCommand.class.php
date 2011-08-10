@@ -45,11 +45,10 @@ abstract class afsBaseConsoleCommand
         $result = array();
         
         if (empty($command)) {
-            if (method_exists($this, 'getDescription')) {
-                $result[] = $this->getDescription();
-            } else {
+            if (!method_exists($this, 'getDescription')) {
                 throw new afsBaseConsoleCommandException("If command empty - you should define getDescription method");
             }
+            $result[] = $this->getDescription();
         } else {
             // execute 
             ob_start();

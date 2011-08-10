@@ -56,7 +56,7 @@ class afStudioConsole
     static public function getInstance()
     {
         if (!isset(self::$instance)) {
-          self::$instance = new self;
+            self::$instance = new self;
         }
         
         return self::$instance;
@@ -108,8 +108,8 @@ class afStudioConsole
                     $this->lastExecReturnCode = $command_instance->getLastStatus();
                 }
             } else {
-                $result[] = afsRenderConsoleCommand::render("some commands that you wanna execute has been deprecated");
-                $result[] = afsRenderConsoleCommand::render("deprecated commands: " . implode(', ', afsConsoleCommandHelper::create()->getDeprecated()));
+                $result[] = afsRenderConsoleCommand::render("Some commands that you wanna execute has been deprecated");
+                $result[] = afsRenderConsoleCommand::render("Allowed commands: " . implode(', ', afsConsoleCommandHelper::create()->getCommands()));
             }
         } else {
             $result = $this->getDescription();
