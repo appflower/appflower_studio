@@ -68,7 +68,9 @@ N.ModelNode = {
 	
 	CLASS : 'i:class',
 	
-	METHOD : 'i:method'
+	METHOD : 'i:method',
+	
+	HANDLER : 'i:handler'
 };
 
 //shortcut

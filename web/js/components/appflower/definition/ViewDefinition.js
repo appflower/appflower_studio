@@ -10,10 +10,33 @@ Ext.ns('afStudio.definition');
  */
 afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefinition, {
 	/**
-	 * Definition Object. <i>Read-Only</i>
+	 * <i>Read-only</i> definition object.
 	 * @property data
 	 * @type {Object}
 	 */
+	
+	/**
+	 * Checks if a node can be added to another node. 
+	 * Returns true if node can be added to parent otherwise false.
+	 * @public
+	 * @param {Node} parent The parent node being checked for addition
+	 * @param {Node} node The node to add
+	 * @return {Boolean}
+	 */
+	canBeAdded : function(parent, node) {
+		var parent = this.getEntity(parent),
+			key = node.tag;
+			
+		if (Ext.isDefined(parent[key])) {
+			if (Ext.isArray(parent[key])) {
+				return this.searchEntityIndex(parent[key], node) != null ? false : true;				
+			} else {
+				return !this.equal(parent[key], node);
+			}
+		}
+		
+		return true;
+	},
 	
 	/**
 	 * Returns definition's entity by model node.
@@ -23,57 +46,37 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @return {Mixed} entity
 	 */
 	getEntity : function(node) {
-		var entity = this._getEntity(node);
+		var ent = this.getEntityObj(node).entity;
 		
-		return this.out(entity);
+		return this.out(ent);
 	},
 	//eo getEntity
-
-	/**
-	 * @private
-	 */
-	_getEntity : function(node) {
-		var entObj = this.getEntityAncestor(node),
-			ea = entObj.ancestor,
-			ek = entObj.entityKey,
-			entity;
-		
-		if (Ext.isArray(ea[ek])) {
-			var eArray = ea[ek],
-				eIdx = entObj.entityIdx;
-			entity = eArray[eIdx];			
-		} else {
-			entity = ea[ek];
-		}
-	
-		return entity;
-	},
 	
 	/**
 	 * Sets entity's attribute.
+	 * @protected
 	 * @param {Node} node The model node 
 	 * @param {String} p The property name
 	 * @param {Mixed} v The property value
 	 */
 	setEntityAttribute : function(node, p, v) {
-		var ent = this._getEntity(node);
+		var entObj = this.getEntityObj(node),
+			ep = entObj.parent,
+			ek = entObj.key,
+			ent = entObj.entity;
 		
 		var property = node.getProperty(p);
 		if (p != '_content' && Ext.isEmpty(property.defaultValue) && Ext.isEmpty(v)) {
-			if (ent) {
-				this.removeEntityAttribute(ent, p);
-				return;
-			}
+			this.removeEntityAttribute(ent, p);
+			return;
 		}
 		
-		if (!Ext.isDefined(ent)) {
-			var entObj = this.getEntityAncestor(node),
-				ea = entObj.ancestor,
-				ek = entObj.entityKey;
+		//fix definition entity if node has properties and children
+		if (!Ext.isObject(ent)) {
 			if (node.getProperties().length > 0 || node.nodeTypes.length > 0) {
-				ent = ea[ek] = {}
-			} else {
-				ent = ea[ek] = null;
+				ent = ep[ek] = {
+					_content: ent
+				};
 			}
 		}
 		
@@ -81,10 +84,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			if (Ext.isObject(ent)) {
 				ent._content = v;
 			} else {
-				var entObj = this.getEntityAncestor(node),
-					ea = entObj.ancestor,
-					ek = entObj.entityKey;
-				ea[ek] = v;
+				ep[ek] = v;
 			}
 		} else {
 			if (!ent.attributes) {
@@ -97,6 +97,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	
 	/**
 	 * Removes entity's attribute
+	 * @public
 	 * @param {Object} ent The entity object
 	 * @param {String} attr The attribute being deleted
 	 */
@@ -105,48 +106,50 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	},
 	
 	/**
+	 * Adds entity.
 	 * @override
 	 * @public
-	 * @param {afStudio.model.Node} parent
-	 * @param {afStudio.model.Node} node
+	 * @param {Node} parent The parent node to which a new child is added
+	 * @param {Node} node The node being added
 	 */
 	addEntity : function(parent, node) {
-		var entObj = this.getEntityAncestor(parent),
-			ea = entObj.ancestor,
-			ek = entObj.entityKey,
-			eParent = ea[ek];
-		
+		var entObj = this.getEntityObj(parent),
+			ep = entObj.parent,
+			ek = entObj.key,
+			ent = entObj.entity;
+
 		var entity = this.createEntity(node);
-		if (!Ext.isDefined(entity)) {
+//		Nothing to do right now, a node which has no properties and value-data(_content - ViewDefinition, data - Node)
+//		is treated as empty that is why newly created entity can be = "null".
+//		if (entity == null) {
 //			throw new afStudio.definition.error.DefinitionError('create-entity');
-		}
+//		}
 		
-		//parent element is not exists.
-		if (!eParent) {
-			eParent = ea[ek] = {};
-		}
-		var eTag = node.tag;
-		if (eParent[eTag]) {
-			if (!Ext.isArray(eParent[eTag])) {
-				var pr = eParent[eTag];
-				eParent[eTag] = [pr];
+		var child = ent[node.tag];
+		
+		if (Ext.isDefined(child)) {
+			if (!Ext.isArray(child)) {
+				child = ent[node.tag] = [child];
 			}
-			eParent[eTag].push(entity);
+			child.push(entity);
 		} else {
-			eParent[eTag] = entity;
+			ent[node.tag] = entity;
 		}
 	},
 	//eo addEntity	
 	
 	/**
+	 * Inserts node's corresponding entity before refNode's corresponding entity. 
 	 * @public
+	 * @param {None} parent
+	 * @param {None} node
+	 * @param {None} refNode
 	 */
 	insertBeforeEntity : function(parent, node, refNode) {
-		var entObj = this.getEntityAncestor(refNode),	
-			ea = entObj.ancestor,
-			ek = entObj.entityKey,
-			eIdx = entObj.entityIdx,
-			eParent = ea[ek];
+		var entObj = this.getEntityObj(refNode),	
+			ep = entObj.parent,
+			ek = entObj.key,
+			ei = entObj.idx;
 
 		//node should be added
 		if (node.tag != refNode.tag) {
@@ -154,47 +157,43 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		}
 		
 		var entity = this.createEntity(node);
-		if (Ext.isDefined(eIdx)) {
-			eParent.splice(eIdx, 0, entity);
+		if (Ext.isDefined(ei)) {
+			ep[ek].splice(ei, 0, entity);
 		}
 	},
 	
 	/**
-	 * Removes entity corresponding to the model node passed in.
+	 * Removes node's corresponding entity.
 	 * @override
 	 * @public
-	 * @param {afStudio.model.Node} node The model node
+	 * @param {afStudio.model.Node} node The model node whose corresponding entity being removed
 	 */
 	removeEntity : function(node) {
-		var entObj = this.getEntityAncestor(node),
-			ea = entObj.ancestor,
-			ek = entObj.entityKey,
-			entity;
+		var entObj = this.getEntityObj(node),
+			ep = entObj.parent,
+			ek = entObj.key,
+			ei = entObj.idx,
+			ent = entObj.entity;
 	
-		if (Ext.isArray(ea[ek])) {
-			var eArray = ea[ek],
-				eIdx = entObj.entityIdx;
-			entity = eArray[eIdx];
-			eArray.splice(eIdx, 1);
-			Ext.isEmpty(eArray) ? delete ea[ek] : null;
+		if (ei != null) {
+			ep[ek].splice(ei, 1);
+			Ext.isEmpty(ep[ek]) ? delete ep[ek] : null;
 		} else {
-			entity = ea[ek];
-			delete ea[ek];
+			delete ep[ek];
 		}
-		
-		entity = this.out(entity);
-		
-		this.fireEvent('entityRemove', entity);
+		this.fireEvent('entityRemove', ent);
 	},
 	//eo removeEntity
 	
 	/**
+	 * Creates entity object form model node.
 	 * @protected
+	 * @param {Node} node The model node
 	 */
 	createEntity : function(node) {
 		var eAttr = node.getPropertiesHash(),
 			eContent = node.getNodeData() ? node.getNodeData().getValue() : null,
-			entity;
+			entity = null;
 	
 		var attrEmpty = true;	
 		for (var p in eAttr) {
@@ -206,7 +205,6 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		if (node.getProperties().length > 0 || node.nodeTypes.length > 0) {
 			entity = {};
 		}
-		
 		if (eAttr && !attrEmpty) {
 			entity = {
 				attributes: {}
@@ -225,61 +223,84 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	},
 	
 	/**
-	 * Returns entity's parent object and its reference inside the parent. 
-	 * @private
-	 * 
-	 * @return {Object} entityObj:
+	 * Returns entity object:
 	 * <ul>
 	 * {
-	 * 	<li><b>ancestor</b>: The entity's parent object(wrapper)</li>
-	 * 	<li><b>entityKey</b>: The entity's property name inside parent object</li>
-	 * 	<li><b>entityIdx</b>: (Optional) The entity's index inside an array, if <i>entityKey</i> is reference to an array</li>
+	 * 	<li><b>parent</b>:{Object} The entity's parent object(wrapper).</li>
+	 * 	<li><b>entity</b>:{Mixed} The entity corresponding to a node parameter.
+	 * 	If entity can be found this property is set to null. 
+	 * 	</li>
+	 * 	<li><b>key</b>:{String} The entity's key name inside parent object.</li>
+	 * 	<li><b>idx</b>:{Number} If <i>parent[key]</i> is reference to an array,
+	 * 	the idx contains entity's index inside it, otherwise it is null. 
+	 * 	</li>
 	 * }
 	 * </ul>
+	 * @private
+	 * @return {Object}
 	 */
-	getEntityAncestor : function(node) {
-		var d = this.data,
+    getEntityObj : function(node) {
+		var ctr = node.getOwnerTree(),
 			sep = node.getPathSeparator(),
     		path = node.getPath().split(sep);
-
+    		
     	//remove "/root"
     	path.splice(0, 2);
-
-    	var i = 0,
-    		len = path.length,
-    		ancestor = d,
-    		ent = d;
-    	while (i < len && ent[path[i]]) {
-    		if (i > 0) {
-    			ancestor = ent;
-    		}
-    		ent = ent[path[i]];
-    		i++;
+    	
+    	//node is the model root
+    	if (path.length == 0) {
+    		return {
+	    		parent: null,
+	    		entity: this.data,
+	    		key: 'root',
+	    		idx: null
+    		};
     	}
+    	
+    	var parent, 
+    		ent, 
+    		idx = null;
+    	parent = ent = this.data;
+    	for (var i = 0, l = path.length; i < l; i++) {
+    		var nodeId = path[i],
+    				ek = nodeId.replace(/-\d+$/, '');
+
+			parent = ent;
+			
+			var nextEnt = ent[ek]; 
+			
+    		if (Ext.isDefined(nextEnt)) {
+   				if (Ext.isArray(nextEnt)) {
+   					var n = ctr.getNodeById(nodeId);
+   					if (!n) {
+   						throw new Ext.Error(String.format('ViewDefinition. Model does not contain Node {0} with ID = "{1}"', node, nodeId));
+   					}
+					idx = this.searchEntityIndex(nextEnt, n);
+					if (idx == null) {
+						throw new Ext.Error(String.format('ViewDefinition. Cannot get model node\'s entity, node: {0}, path: {1}', node, path));
+					}
+					ent = nextEnt[idx];
+		    	} else {
+    				ent = nextEnt;
+		    	}
+    		} else {
+    			ent = null;
+    			break;
+    		}
+    	}
+    	
+    	var entKey = (path[path.length - 1]).replace(/-\d+$/, '');
     	
     	var result = {
-    		ancestor: ancestor,
-    		entityKey: path[i - 1]
+    		parent: parent,
+    		entity: ent,
+    		key: entKey,
+    		idx: Ext.isArray(parent[entKey]) ? idx : null
     	};
     	
-    	if (i < len) {
-    		//remove id suffix
-    		var entKey = path[i].replace(/-\d+$/, '');
-    		result.ancestor  = ent;
-    		result.entityKey = entKey;
-    		
-    		if (Ext.isArray(ent[entKey])) {
-    			var entIdx = this.searchEntityIndex(ent[entKey], node);
-    			if (entIdx == null) {
-    				throw new Ext.Error(String.format('ViewDefinition. Entity equal to node {0} was not found.', node));
-    			}
-    			result.entityIdx = entIdx;
-    		}
-    	}
-    	
     	return result;
-	},
-	//eo getEntityAncestor
+    },
+    //eo getEntityWithParent
 
 	/**
 	 * Compares entity and model node, returns true if model node represents the entity - they are equal. 
@@ -300,13 +321,11 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 				return (!(Ext.isEmpty(np[k]) || Ext.isEmpty(v)) && np[k] !== v) ? (equal = false) : true;
 			});
 			//compare _content
-			if (equal) {
-				if (Ext.isPrimitive(nc) && nc != entity._content) {
-					equal = false;
-				}
+			if (equal && Ext.isDefined(entity._content) && nc != entity._content) {
+				equal = false;
 			}
 		} else {
-			equal = entity == nc;	
+			equal = (entity == nc);	
 		}
 		
 		return equal;
@@ -322,9 +341,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @return {Number} entity's index inside entArray or null if entity was not found. 
 	 */
 	searchEntityIndex : function(entArray, node) {
-		var np = node.getPropertiesHash(),
-			entIdx;
-			
+		var	entIdx;
 		for (var i = 0, len = entArray.length; i < len; i++) {
 			if (this.equal(entArray[i], node)) {
 				entIdx = i;

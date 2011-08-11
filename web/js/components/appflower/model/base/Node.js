@@ -5,12 +5,10 @@ Ext.ns('afStudio.model');
 Ext.ns('afStudio.model.widget');
 
 /**
- * Base <b>Model Node</b> class. All model's node are descendants of this class.
+ * Base <b>Model Node</b> class. All model's nodes are descendants or instances of this class.
  * Borrows methods from {@link Ext.data.Node} class, these methods marked with @borrows marker. 
- * <p>
- * Responsible for storing/managing atomic model data. Node can be treated as a equvivalent to a view's xml tag.
- * Encapsulates tag's attributes inside <u>properties</u>, all inner tags(nodes) are stored in the <u>childNodes</u>.
- * </p>
+ * <p>Responsible for storing/managing atomic model data. Node can be treated as a equvivalent to a view's xml tag.</p>
+ * <p>Encapsulates tag's attributes inside <u>properties</u>, all inner tags(nodes) are stored in the <u>childNodes</u>.</p>
  * 
  * @class afStudio.model.Node
  * @extends Ext.util.Observable
@@ -66,12 +64,16 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 */
     nodeTypes : [],
     /**
-     * Specifies default node content information
+     * Defines default node content information
      * @property _content (defaults to {name: '_content', type: 'string'})
      * @type {Object}
      */
 	_content : {name: '_content', type: 'string'},
     
+	/**
+	 * @constructor
+	 * @param {Object} config
+	 */
     constructor : function(config) {
         config = config || {};
 
@@ -270,15 +272,15 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Object} (Optional) properties
      */
     initProperties : function(properties) {
-    	var _self = this,
-			   ps = this.properties || properties;
+    	var _me = this,
+			   ps = properties || this.properties;
 			   
     	this.properties = new Ext.util.MixedCollection(false, function(property) {
     		return property.name;
 		});
 		
 		Ext.iterate(ps, function(p) {
-			_self.properties.add(
+			_me.properties.add(
 				new afStudio.model.Property(p)
 			);
 		});
@@ -293,18 +295,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      */
     initNodeDefinition : function(definition) {
 		this.applyNodeDefinition(definition, true);
-    },
-    
-	/**
-     * Template method.
-     * @protected
-	 */    
-    initEvents : function() {
-    	var _me = this;
-    	
-		_me.on({
-			modelNodeCreated : _me.onModelNodeCreated
-		});
     },
     
     /**
@@ -362,7 +352,21 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     //eo applyNodeDefinition
     
+	/**
+	 * Initialises event listeners
+     * Template method.
+     * @protected
+	 */    
+    initEvents : function() {
+    	var _me = this;
+    	
+		_me.on({
+			modelNodeCreated : _me.onModelNodeCreated
+		});
+    },    
+    
     /**
+     * Fires event.
      * @override
      * @borrows
      * @return {Boolean}
@@ -437,22 +441,61 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
+     * Checks if this node is required.
+     * @return {Boolean}
+     */
+    isRequired : function() {
+    	var d = this.getStructuralData();
+		return d.required == true ? true : false;    	
+    },
+    
+    /**
+     * Checks if the parent of this node can contain more than one node as this one.
+     * @return {Boolean}
+     */
+    hasMany : function() {
+    	var d = this.getStructuralData();
+		return d.hasMany == true ? true : false; 	
+    },
+    
+    /**
+     * Returns this node structural data. This data is located in the parent node.
+     * @private
+     * @return {Object}
+     */
+    getStructuralData : function() {
+    	var data = {};
+    	
+    	if (this.parentNode) {
+    		var nodes = this.parentNode.nodeTypes,
+    			selfTag = this.tag;
+    		
+    		for (var i = 0, l = nodes.length; i < l; i++) {
+    			var current = nodes[i];
+    			if (Ext.isObject(current)) {
+    				if (selfTag == current.name) {
+    					Ext.apply(data, current);
+						break;
+    				}
+    			} else {
+    				if (selfTag == current) {
+						break;
+    				}
+    			}
+    		}
+    	}
+    	
+    	return data;
+    },
+    //eo getStructuralData
+    
+    /**
      * Returns true if this node has one or more child nodes, else false.
      * @borrows
      * @return {Boolean}
      */
     hasChildNodes : function() {
         return !this.isLeaf() && this.childNodes.length > 0;
-    },
-
-    /**
-     * Returns true if this node has one or more child nodes, or if the <tt>expandable</tt>
-     * node attribute is explicitly specified as true (see {@link #config}), otherwise returns false.
-     * @borrows
-     * @return {Boolean}
-     */
-    isExpandable : function() {
-        return this.attributes.expandable || this.hasChildNodes();
     },
 
     /**
@@ -650,6 +693,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Removes this node from its parent
+     * @borrows
      * @param {Boolean} destroy <tt>true</tt> to destroy the node upon removal. Defaults to <tt>false</tt>.
      * @return {Node} this
      */
@@ -663,6 +707,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Removes all child nodes from this node.
+     * @borrows
      * @param {Boolean} destroy <tt>true</tt> to destroy the node upon removal. Defaults to <tt>false</tt>.
      * @return {Node} this
      */
@@ -678,6 +723,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns the child node at the specified index.
+     * @borrows
      * @param {Number} index
      * @return {Node}
      */
@@ -687,6 +733,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Replaces one child node in this node with another.
+     * @borrows
      * @param {Node} newChild The replacement node
      * @param {Node} oldChild The node to replace
      * @return {Node} The replaced node
@@ -701,6 +748,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns the index of a child node
+     * @borrows
      * @param {Node} node
      * @return {Number} The index of the node or -1 if it was not found
      */
@@ -709,7 +757,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * Returns the tree this node is in.
+     * Returns the tree(controller) this node is in.
+     * @borrows
      * @return {Tree}
      */
     getOwnerTree : function() {
@@ -731,6 +780,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns depth of this node (the root node has a depth of 0)
+     * @borrows
      * @return {Number}
      */
     getDepth : function() {
@@ -745,6 +795,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
+     * Sets this node tree owner(controller)
      * @protected
      * @param {Tree} tree
      * @param {Boolean} destroy
@@ -770,6 +821,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Changes the id of this node.
+     * @borrows
      * @param {String} id The new id for the node.
      */
     setId : function(id) {
@@ -822,6 +874,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Bubbles up the tree from this node, calling the specified function with each node. The arguments to the function
      * will be the args provided or the current node. If the function returns false at any point,
      * the bubble is stopped.
+     * @borrows
      * @param {Function} fn The function to call
      * @param {Object} scope (optional) The scope (<code>this</code> reference) in which the function is executed. Defaults to the current Node.
      * @param {Array} args (optional) The args to call the function with (default to passing the current Node)
@@ -840,6 +893,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Cascades down the tree from this node, calling the specified function with each node. The arguments to the function
      * will be the args provided or the current node. If the function returns false at any point,
      * the cascade is stopped on that branch.
+     * @borrows
      * @param {Function} fn The function to call
      * @param {Object} scope (optional) The scope (<code>this</code> reference) in which the function is executed. Defaults to the current Node.
      * @param {Array} args (optional) The args to call the function with (default to passing the current Node)
@@ -857,6 +911,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * Interates the child nodes of this node, calling the specified function with each node. The arguments to the function
      * will be the args provided or the current node. If the function returns false at any point,
      * the iteration stops.
+     * @borrows
      * @param {Function} fn The function to call
      * @param {Object} scope (optional) The scope (<code>this</code> reference) in which the function is executed. Defaults to the current Node in the iteration.
      * @param {Array} args (optional) The args to call the function with (default to passing the current Node)
@@ -868,6 +923,35 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
                 break;
             }
         }
+    },
+    
+    /**
+     * Filters child nodes by tag name.
+     * @param {String} tagName The tag name to filter by
+     * @return {Array} child nodes
+     */
+    filterChildren : function(tagName) {
+    	return this.filterChildrenBy(function(n) {
+    		return n.tag == tagName; 
+    	});
+    },
+    
+    /**
+     * Filters the child nodes of this node, calling the specified function with each node. 
+     * If a child node should be included in filtered array the calling function should return true otherwise false.
+     * @param {Function} fn The function to call
+     * @param {Object} scope (optional) The scope (<code>this</code> reference) in which the function is executed. Defaults to the current Node in the iteration.
+     * @return {Array} filtered children nodes  
+     */
+    filterChildrenBy : function(fn, scope) {
+    	var filtered = [];
+    	this.eachChild(function(node) {
+    		if (fn.apply(scope || node, [node]) === true) {
+                filtered.push(node);
+            }
+    	}, scope);
+    	
+    	return filtered;
     },
 
     /**
@@ -929,6 +1013,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Sorts this nodes children using the supplied sort function.
+     * @borrows
      * @param {Function} fn A function which, when passed two Nodes, returns -1, 0 or 1 depending upon required sort order.
      * @param {Object} scope (optional)The scope (<code>this</code> reference) in which the function is executed. Defaults to the browser window.
      */
@@ -954,6 +1039,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns true if this node is an ancestor (at any point) of the passed node.
+     * @borrows
      * @param {Node} node
      * @return {Boolean}
      */
@@ -963,6 +1049,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns true if the passed node is an ancestor (at any point) of this node.
+     * @borrows
      * @param {Node} node
      * @return {Boolean}
      */
@@ -987,16 +1074,17 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Returns defined node's properties as a hash object key/value pair {k:v}.
+     * Returns defined node's properties as a hash object key/value pair {k: v[, k1: v1[,...]]}.
+     * @param {Boolean} (Optional) defVal Flag responsible for returning node's properties with "defaultValue" property defined even when "value" property is undefined 
      * @return {Object} properties hash
      */
-    getPropertiesHash : function() {
+    getPropertiesHash : function(defVal) {
     	var ps = this.getProperties(),
     		hash = {};
     	
     	ps.eachKey(function(k, p) {
-    		if (!Ext.isEmpty(p.value)) {
-    			hash[k] = p.value;
+    		if (!Ext.isEmpty(p.value) || (defVal && !Ext.isEmpty(p.defaultValue))) {
+    			hash[k] = defVal ? (Ext.isDefined(p.value) ? p.value : p.defaultValue) : p.value;
     		}
     	});
     	
@@ -1032,6 +1120,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      */
     setProperty : function(p, v) {
     	var property = this.properties.get(p);
+    	
     	if (!Ext.isDefined(property)) {
     		return null;
     	}
@@ -1044,15 +1133,25 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	return property;
     },
     //eo setProperty
-    
+
     /**
-     * Returns {@link #NODE_DATA} value.
-     * @return {Mixed} node data value.
+     * Returns {@link #NODE_DATA}.
+     * @return {Property} node data.
      */
     getNodeData : function() {
     	return this[this.NODE_DATA];
     },
 
+    /**
+     * Returns {@link #NODE_DATA} value.
+     * @return {Mixed} node value
+     */
+    getNodeDataValue : function() {
+    	var data = this.getNodeData();
+    	
+    	return data ? data.getValue() : undefined;
+    },
+    
     /**
      * Sets node's {@link #NODE_DATA} property.
      * @param {Mixed} value The node's data value being set.
@@ -1273,15 +1372,15 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 					
 				if (!hasMany) {
 					canBeAdded = false;
-					message = String.format("{0} can contain only one {1} child node.", parent.tag, nodeTag);
+					message = String.format("<b>{0}</b> can contain only one <u>{1}</u> child node.", parent.tag, nodeTag);
 				} else if (unique && parent.findChild(nodeTag, unique, node.getPropertyValue(unique))) {
 					canBeAdded = false;
-					message = String.format('{0} property "{1}" should be unique.', nodeTag, unique);
+					message = String.format('<b>{0}</b> property <u>{1}</u> should be unique.', nodeTag, unique);
 				}
 			}
 		} else {
 			canBeAdded = false;
-			message = String.format("{0} cannot contain {1} child node.", parent.tag, nodeTag);
+			message = String.format("<b>{0}</b> cannot contain <u>{1}</u> child node.", parent.tag, nodeTag);
 		}
 		
 		if (!canBeAdded) {

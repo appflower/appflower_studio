@@ -25,9 +25,9 @@ afStudio.wd.list.ActionColumn = Ext.extend(Ext.grid.ActionColumn, {
     	
         me.renderer = function(v, meta) {
             v = Ext.isFunction(cfg.renderer) ? (cfg.renderer.apply(this, arguments) || '') : '';
-
+            
             meta.css += ' x-action-col-cell';
-            for (i = 0; i < l; i++) {
+            for (i = 0, len = items.length; i < len; i++) {
                 item = items[i];
                 v += '<img width="16" alt="' + me.altText + '" src="' + (item.icon || Ext.BLANK_IMAGE_URL) +
                     '" class="x-action-col-icon x-action-col-' + String(i) + ' ' + (item.iconCls || '') +
@@ -36,9 +36,8 @@ afStudio.wd.list.ActionColumn = Ext.extend(Ext.grid.ActionColumn, {
             }
             return v;
         };
-    }//eo constructor
+    }
 });
-
 
 Ext.apply(Ext.grid.Column.types, {
 	listactioncolumn : afStudio.wd.list.ActionColumn	

@@ -53,7 +53,7 @@ afStudio.view.property.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
         for (var k in o) {
             if (this.isEditableProperty(o[k])) {
             	//apply default value
-            	o[k].value = o[k].value || o[k].defaultValue;
+            	o[k].value = Ext.isDefined(o[k].value) ? o[k].value : o[k].defaultValue;
                 data.push(new afStudio.view.property.PropertyRecord(o[k], k));
             }
         }
@@ -68,7 +68,7 @@ afStudio.view.property.PropertyStore = Ext.extend(Ext.grid.PropertyStore, {
      * @return {Boolean}
      */
     isEditableProperty : function(property) {
-    	var types = afStudio.model.Types,
+    	var types = afStudio.data.Types,
     		pt = property.type;
     		
 		if (pt) {

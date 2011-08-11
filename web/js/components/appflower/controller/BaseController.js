@@ -69,7 +69,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      */
     pathSeparator: "/",
     /**
-     * The root node for this controller
+     * The Model (model's root node) associated with this controller.
+     * Read-only property.
      * @property root
      * @type {Node}
      */
@@ -210,6 +211,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         if (!this.viewDefinition.getData()) {
         	this.loadViewDefinition();
         }
+        //TODO run initController if view definiton data was in configuration object
+        //to not load it again.
     },
     //eo constructor
     
@@ -258,7 +261,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     			showNoteOnSuccess: false,
     			scope: _me,
     			run: function(response, ops) {
-				   	//set up viewDefinition object
+				   	//setup viewDefinition object
     				this.viewDefinition.setData(response.data);
     				this.fireEvent('loadViewDefinition', this.viewDefinition);
     				this.initController();
@@ -333,7 +336,20 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	
     	_me.on({
     		scope: _me,
-  			
+
+    		/**
+             * @bubbled
+             */
+    		modelNodeCreated : function(ctr, parent, node) {
+    			console.log('@controller modelNodeCreated');
+    			var canAdd = this.viewDefinition.canBeAdded(parent, node);
+    			if (!canAdd) {
+    				afStudio.Msg.warning('View Definition', 
+    					String.format('You have already added "{0}" but did not modified it. <br /> It should be modefied before you can add a new one.', node.tag));
+    			}
+    			
+    			return canAdd;
+    		},
             /**
              * @bubbled
              */
@@ -448,14 +464,12 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * @param {Ext.Component} (Optional) view The component which triggers selection
      */
     selectModelNode : function(node, view) {
-    	node = Ext.isString(node) ? this.getNodeById(node) : node;
+    	console.log('@controller selectModelNode', node);
     	
+    	node = Ext.isString(node) ? this.getNodeById(node) : node;
     	if (!node) {
     		return;
     	}
-    	
-    	console.log('@controller selectModelNode', node);
-    	
     	this.fireEvent('modelNodeSelect', node, view ? view : undefined);
     }
     //eo selectModelNode

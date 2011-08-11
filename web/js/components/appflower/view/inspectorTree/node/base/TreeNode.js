@@ -78,6 +78,7 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 * Sets required attributes.
 	 * 
 	 * Template method.
+	 * @abstract
 	 * @protected
 	 * @param {Object} attr
 	 */
@@ -97,7 +98,7 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	},
 	
 	/**
-	 * This method should be overrided in descendants classes to provide node's context menu implementation 
+	 * This method can be overrided in descendants classes to provide node's context menu implementation 
 	 * and setting up {@link #contextMenu} property.
 	 * The method should set up {@link #contextMenu} property to apply new context menu.
 	 * 
@@ -105,7 +106,8 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 * @protected
 	 */
 	initContextMenu : function() {
-		if (this.modelNode.isDirectRootChild()) {
+		var model = this.modelNode;
+		if (model.isRequired() && !model.hasMany()) {
 			this.contextMenu = null;
 		}
 	},

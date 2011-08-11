@@ -11,9 +11,5 @@ afStudio.model.Description = Ext.extend(afStudio.model.Node, {
 		{name: 'image', type: 'token'},
 		{name: 'condition', type: 'token'},
 		{name: 'permissions', type: 'permissionType', defaultValue: "*"}
-	],
-	
-	defaultDefinition : { 
-		_content: 'New description'
-	}
+	]
 });

@@ -64,7 +64,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo _afterInitComponent 
 	
 	/**
-	 * Expands a specified path in this InspectorTree based on associated with tree node's models.
+	 * Expands a specified path in this tree based on tree-model association.
 	 * @public 
 	 * @param {Node} mn The model node
 	 * @param {Function} callback The callback function, called with two parameters:
@@ -170,8 +170,11 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			modelNodeSelect: _me.onModelNodeSelect,
 			
 			contextmenu:  _me.onNodeContextMenu,
+			
 			nodedragover: _me.onNodeDragOver,
+			
 			nodedrop: _me.onNodeDrop,
+			
 			click: _me.onNodeClick
 		});
 	},

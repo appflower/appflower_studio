@@ -68,57 +68,6 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 		}//eo addMoreAction
 		
 		/**
-		 * Creates row action object.
-		 * @param {Object} a The row action config object.
-		 * @return {Object} rowaction
-		 */
-		,createRowAction : function(a) {
-			var rowAction = {
-				name: a.name,
-				iconCls: a.iconCls ? a.iconCls : null,
-				icon: a.icon ? a.icon : null,				
-				altText: a.text ? a.text : a.name,
-				tooltip: a.tooltip ? a.tooltip : a.name
-			};		
-			
-			return rowAction;
-		}//eo createRowAction	
-		
-		/**
-		 * Creates <i>Actions</i> column.
-		 * @param {Mixed} act The action object or array of actions
-		 * @return {Ext.grid.ActionColumn} action column object
-		 */
-		,createRowActionColumn : function(act) {			
-			var	_this       = this,
-				aWidth      = 18, 
-				actClmWidth = 50;
-			
-			var actClm = {
-				id: 'action-column',
-	            xtype: 'listactioncolumn',
-	            header: 'Actions',
-	            menuDisabled: true,
-	            width: actClmWidth,
-	            fixed: true,
-	            items: []
-			};			
-			
-			if (Ext.isArray(act)) {
-				Ext.iterate(act, function(ra, idx, all) {
-					var a = _this.createRowAction(ra);
-					actClm.items.push(a);
-				});
-				actClm.width = (act.length * aWidth) > actClmWidth ? (act.length * aWidth) : actClmWidth;
-			} else {
-				var a = _this.createRowAction(act);
-				actClm.items.push(a);
-			}
-			
-			return actClm;			
-		}//eo createRowActionColumn
-		
-		/**
 		 * Adds rowaction.
 		 * @param {Object} a The row action configuration object.
 		 */
@@ -205,32 +154,7 @@ afStudio.wd.list.ListMetaProcessor = (function() {
 				aMore = aBar.getComponent('more');
 				
 			switch (t.name) {
-				case 'select':
-					var cmCfg = this.getColumnModel().config;
-					if (t.value) {						
-						if (cmCfg[0] && (cmCfg[0].id != 'checker')) {
-							var cSm = new Ext.grid.CheckboxSelectionModel();
-							Ext.destroy(this.selModel);
-							this.selModel = cSm;
-							this.selModel.init(this);
-							cmCfg.unshift(cSm);
-							var cm    = new Ext.grid.ColumnModel(cmCfg),
-								store = this.getStore();
-							this.reconfigure(store, cm);							
-						}
-					} else {						
-						if (cmCfg[0] && (cmCfg[0].id == 'checker')) {
-							var cSm = new Ext.grid.RowSelectionModel();
-							Ext.destroy(this.selModel);
-							this.selModel = cSm;
-							this.selModel.init(this);
-							cmCfg.shift();
-							var cm    = new Ext.grid.ColumnModel(cmCfg),
-								store = this.getStore();
-							this.reconfigure(store, cm);							
-						}
-					}
-				break;
+//				case 'select':
 				
 				case 'exportable':
 					var bExport = aMore.menu.getComponent('exports');

@@ -20,7 +20,8 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	 */
 	id : 'root',
 	//TODO think a bit over about model Root node ID.
-	//Maybe it can be optimized and be more flexibile, depends of Model future usage.
+	//it can be optimized and be more flexibile, depends of Model future usage.
+	//by @Nick
 	
 	/**
 	 * Root node tag property, value = "root".
@@ -125,6 +126,11 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 		return this.findChildById(nodeId, true);
 	},
 	
+	/**
+	 * Returns direct(immediate) child model node of this model(root model node).
+	 * @param {String} nodeId The searching child node's ID
+	 * @return {Node} child model node
+	 */
 	getImmediateModelNode : function(nodeId) {	
 		return this.findChildById(nodeId, false, true);
 	}

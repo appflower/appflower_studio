@@ -27,7 +27,7 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     enableHdMenu : false,
     
     viewConfig : {
-        forceFit:true
+        forceFit: true
     },    
 
 	/**
@@ -239,7 +239,6 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * @private
 	 */
 	hideMandatoryChecker: function() {
-        //Hide mandatory checkers
         var hd = Ext.select('div[id$="gp-required-true-hd"]');
 		if (hd) {
 			hd.setStyle({display: 'none'});

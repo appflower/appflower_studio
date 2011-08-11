@@ -3,10 +3,9 @@ Ext.ns('afStudio.view.inspector');
 /**
  * Inspector tree Loader.
  * 
- * @dependency
- * Model: {@link afStudio.model.Node}
- * Inspector nodes: {@link afStudio.view.inspector.TreeNode}
- * Errors: {@link afStudio.view.inspector.error}
+ * @dependency {afStudio.model} models
+ * @dependency {afStudio.view.inspector.nodeType} inspector tree nodes
+ * @dependency {afStudio.view.inspector.error} errors
  * 
  * @class afStudio.view.inspector.InspectorLoader
  * @extends Ext.util.Observable

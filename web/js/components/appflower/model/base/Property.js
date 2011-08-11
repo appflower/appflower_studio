@@ -5,8 +5,7 @@ Ext.ns('afStudio.model');
  * <p>This class encapsulates the property definition information specified in the {@link afStuio.model.Node#properties}.</p>
  * <p>Developers do not need to instantiate this class. Instances are created by {@link afStuio.model.Node#initProperties}</p>
  * 
- * @dependency
- * Types: {@link afStudio.model.Types}
+ * @dependency {afStudio.data.Types} types
  * 
  * @author Nikolai Babinski <niba@appflower.com>
  */
@@ -45,11 +44,11 @@ afStudio.model.Property = Ext.extend(Object, {
     constructor : function(config) {
         Ext.apply(this, config);
 
-        var types = afStudio.model.Types;
+        var types = afStudio.data.Types;
 
         if (this.type) {
             if (Ext.isString(this.type)) {
-                this.type = types[this.type.toUpperCase()] || types.AUTO;
+                this.type = types.getType(this.type) || types.AUTO;
             }
         } else {
             this.type = types.AUTO;
@@ -62,23 +61,24 @@ afStudio.model.Property = Ext.extend(Object, {
      * @return {Boolean}
      */
     validate : function(v) {
-    	return this.type.validate(v);
+    	return (v == '' || this.type.validate(v) === true) ? true : false;
     },
     
     /**
-     * Validates property value.
-     * @return {Boolean} true if valid otherwise false.
+     * Checks if a property is valid. 
+     * Returns true if property is valid otherwise false. 
+     * @return {Boolean}
      */
     isValid : function() {
-    	return this.required && this.value ? this.validate(this.value) : true;
+    	return this.required ? this.validate(this.value) : true;
     },
     
     /**
-     * Returns property value.
+     * Returns property's value. If {@link #value} property is not defined returns {@link #defaultValue}.
      * @return {Mixed} value
      */
     getValue : function() {
-    	return this.value ? this.value : this.defaultValue;
+    	return Ext.isDefined(this.value) ? this.value : this.defaultValue;
     },
     
     /**
@@ -93,7 +93,7 @@ afStudio.model.Property = Ext.extend(Object, {
     },
     
     /**
-     * Returns property's data object.
+     * Returns property's data object. 
      * @return {Object} property
      */
     getPropertyHash : function() {

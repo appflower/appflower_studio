@@ -5,7 +5,7 @@ Ext.ns('afStudio.wd.list');
  * 
  * @class afStudio.wd.list.ListGridView
  * @extends Ext.grid.GridView
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 
@@ -13,28 +13,25 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	 * @cfg {String} invalidColumnName (defaults to )
 	 * Invalid column name text.
 	 */	 
-	invalidColumnName : 'Column name must contain only characters, digits or "_" and start from character or "_"'	 
+	invalidColumnName : 'Column name must contain only characters, digits or "_" and start from character or "_"',
     
 	/**
-	 * @override
-	 *  
-     * @private
      * Click handler for the shared column dropdown menu, called on beforeshow. Builds the menu
      * which displays the list of columns for the user to show or hide.
+	 * @override
+     * @private
 	 */
-    ,beforeColMenuShow : function() {        
+    beforeColMenuShow : function() {
         var colModel = this.cm,
             colCount = colModel.getColumnCount(),
             colMenu  = this.colMenu,
             i;
 
         colMenu.removeAll();
-
+        
         for (i = 0; i < colCount; i++) {
         	var clm = colModel.config[i];
-            if (clm.hideable !== false && !clm.uninit 
-            && clm.xtype != 'actioncolumn') 
-            {
+            if (clm.hideable !== false && clm.xtype != 'listactioncolumn') {
                 colMenu.add(new Ext.menu.CheckItem({
                     text       : colModel.getColumnHeader(i),
                     itemId     : 'col-' + colModel.getColumnId(i),
@@ -44,16 +41,16 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
                 }));
             }
         }
-    }//eo beforeColMenuShow
+    },
+    //eo beforeColMenuShow
 	
 	/**
-	 * @override
-	 *  
-     * @private
      * This is always intended to be called after renderUI. Sets up listeners on the UI elements
      * and sets up options like column menus, moving and resizing.
+	 * @override
+     * @private
 	 */
-	,afterRenderUI : function() {
+	afterRenderUI : function() {
 		var grid = this.grid;
 		
         this.initElements();
@@ -94,7 +91,7 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 			    }
 			});
 			
-			this.colMenu = new Ext.menu.Menu({id:grid.id + "-hcols-menu"});
+			this.colMenu = new Ext.menu.Menu({id: grid.id + "-hcols-menu"});
 			this.colMenu.on({
 				scope: this,
 				beforeshow: this.beforeColMenuShow,
@@ -102,10 +99,7 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 			});
 			
 			this.hmenu.add(
-				//TODO will be added in future release			
-				//{itemId: "addClmBefore", text: 'Add Column Before'},
-				//{itemId: "addClmAfter", text: 'Add Column After'},
-				{itemId: "renameClm", text: 'Rename Column'},				
+				{itemId: 'renameClm', text: 'Rename Column'},				
 				{itemId: 'deleteClm', text: 'Delete Column'},
 				'-',
 				{
@@ -134,20 +128,19 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
         }
 
         this.updateHeaderSortState();
-	}//eo afterRenderUI
+	},
+	//eo afterRenderUI
 	
 	/**
 	 * Attached as the 'itemclick' handler to the header's column submenu (if available).
 	 * @private
-	 * 
 	 * @param {Ext.menu.Item} item The menu item being clicked.
 	 * @return {Boolean}
 	 */
-	,handleColumnMenuClick : function(item) {
+	handleColumnMenuClick : function(item) {
 		var index = this.hdCtxIndex,
 			   cm = this.cm, 
 			   ds = this.ds;
-			   
 	    index = cm.getIndexById(item.itemId.substr(4));	    
 	    if (index != -1) {
 	        if (item.checked && cm.getColumnsBy(this.isHideableColumn, this).length <= 1) {
@@ -158,75 +151,32 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	    }
 	    
 		return true;
-	}//eo handleColumnMenuClick
+	},
+	//eo handleColumnMenuClick
 	
 	/**
-	 * Returns first uninitialised column index.
-	 * @private
-	 * @return {Number} column index. 
-	 */
-	,getUninitColumn : function() {
-		for (var i = 0; i < this.cm.config.length; i++) {
-			var column = this.cm.config[i];
-			if (column.uninit) {
-				return i;
-			}
-		}
-		
-		return -1;
-	}//eo getUninitColumn
-	
-	/**
-     * @override
-     *  
-	 * @private
 	 * Attached as the 'itemclick' handler to the header menu.
-	 *  
+     * @override
+	 * @private
 	 * @param {Ext.menu.Item} item The menu item being clicked.
 	 * @return {Boolean}
 	 */
-	,handleHdMenuClick : function(item) {
+	handleHdMenuClick : function(item) {
 		var index = this.hdCtxIndex,			
 			   cm = this.cm,
 			   ds = this.ds,
-		dataIndex = cm.getDataIndex(index);			   
+		dataIndex = cm.getDataIndex(index);
 			   
 		switch (item.itemId) {				
-			case 'addClmAfter':
-				var _index = this.getUninitColumn();
-				this.cm.config[_index].uninit = false;
-				this.cm.moveColumn(_index, index + 1);
-				this.cm.setHidden(index + 1, false);
-			break;
-				
-			case 'addClmBefore' :
-				var _index = this.getUninitColumn();
-				this.cm.config[_index].uninit = false;
-				this.cm.moveColumn(_index, index);
-				this.cm.setHidden(index, false);
-			break;							
-				
 			case 'renameClm':
 				var hd = this.findHeaderCell(item.parentMenu._el);
+				
 				this.editHeadColumn(hd.firstChild, index);
 			break;				
 				
 			case 'deleteClm':
-				var visibleCount = cm.getColumnCount(true);
-				if (visibleCount > 1) {
-					var clmName = cm.config[index].name;
-					cm.setHidden(index, true);
-					cm.config[index].uninit = true;
-					cm.config[index].header = this.grid.columnName;
-					delete cm.config[index].name;
-					//correct indexes
-					if (index < visibleCount - 1) {
-						for (var i = index; i < visibleCount; i++) {
-							cm.moveColumn(i, i + 1);	
-						}	
-					}
-					this.grid.fireEvent('deleteColumn', clmName);					
-				}
+				var clm = cm.config[index]
+				this.grid.removeColumn(clm);
 			break;
 		}
 		return true;
@@ -235,7 +185,6 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	/**
 	 * Starts edit the column. 
 	 * @private
-	 * 
 	 * @param {HtmlElement} el
 	 * @param {Number} index The column index
 	 */
@@ -245,10 +194,6 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 		
 		var ed = new Ext.grid.GridEditor(new Ext.form.TextField({
 			allowBlank: false
-//			maskRe: /[\w]/,
-//			validator: function(value) {
-//				return /^[^\d]\w*$/im.test(value) ? true : _this.invalidColumnName;					
-//			}
 		}));
 		
 		ed._index = index;		
@@ -274,11 +219,9 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 	}//eo onHeadColumnEditComplete	
 	
     /**
-     * @override
-     * 
-     * @private
      * Called when a header cell is clicked - shows the menu if the click happened over a trigger button
-     * 
+     * @override
+     * @private
      * @param {Ext.EventObject} e The {@link Ext.EventObject} encapsulating the DOM event.
      * @param {HtmlElement} t The target of the event.
      */	
@@ -311,7 +254,7 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
 				if (Ext.isDefined(clmId)) {			
 					var clm = this.cm.getColumnById(clmId);
 					//checkbox selection model column and rowactions column are not editable 
-					if (clmId == 'checker' || clm.xtype == 'actioncolumn') {
+					if (clmId == 'checker' || clm.xtype == 'listactioncolumn') {
 						return false;
 					}
 				}
@@ -330,7 +273,6 @@ afStudio.wd.list.ListGridView = Ext.extend(Ext.grid.GridView, {
  * @author Nikolai
  */
 afStudio.wd.list.ListGridView.ColumnDragZone = Ext.extend(Ext.grid.GridView.ColumnDragZone, {
-	
     /**
      * Before drag event handler.
      * For more information look at {@link Ext.dd.DragZone#onBeforeDrag} 
@@ -345,8 +287,7 @@ afStudio.wd.list.ListGridView.ColumnDragZone = Ext.extend(Ext.grid.GridView.Colu
 		
 		if (Ext.isDefined(clmId)) {
 			var clm = cm.getColumnById(clmId);			
-			//checker {@link Ext.grid.CheckboxSelectionModel} 
-			//and actions column should not be draggable
+			//checker {@link Ext.grid.CheckboxSelectionModel} and actions column should not be draggable 
 			if (clmId == 'checker' || clm.xtype == 'actioncolumn') {
 				return false;
 			}

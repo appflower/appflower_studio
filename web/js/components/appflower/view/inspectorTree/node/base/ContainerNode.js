@@ -48,17 +48,20 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
      * @type {afStudio.view.inspector.InspectorLoader}
      */
 	
-	//TODO refactor and make method more flexible @Nikolai
+	//TODO refactor and make method more flexible by @Nik
 	/**
+	 * Template method.
 	 * @override
 	 */
 	initContextMenu : function() {
+		var I = afStudio.view.inspector;
+		
 		var _me = this,
 			model = this.modelNode,
 			nodes = model.nodeTypes,
-			addText = afStudio.view.inspector.TreeNode.addNodeCxtText,
-			deleteText = afStudio.view.inspector.TreeNode.deleteNodeCxtText,
-			deleteAllText = afStudio.view.inspector.ContainerNode.deleteAllNodeCxtText,
+			addText = I.TreeNode.addNodeCxtText,
+			deleteText = I.TreeNode.deleteNodeCxtText,
+			deleteAllText = I.ContainerNode.deleteAllNodeCxtText,
 			mItems = [];
 		
 		//---
@@ -95,14 +98,15 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 			mItems[0].text = String.format('{0} {1}', addText, mItems[0].text);
 			mItems[0].iconCls = 'icon-add';
 		}
-		
-		if (!model.isDirectRootChild()) {
+		 
+		if (!model.isRequired() || model.isRequired() && model.hasMany()) {
 			mItems.push({
 				itemId: 'delete',
 				text: deleteText,
 				iconCls: 'afs-icon-delete'
 			});
 		}
+		
 		mItems.push({
 			itemId: 'deleteAllChildren',
 			text: deleteAllText,
@@ -125,6 +129,7 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	            			node.removeAllModelNodes();
 	            		break;
 	            		case 'delete' :
+	            			node.removeAllModelNodes(); //rename
 	            			node.removeModelNode();
 	            		break;
 	            	}
@@ -157,8 +162,8 @@ Ext.extend(afStudio.view.inspector.ContainerNode, afStudio.view.inspector.TreeNo
 	
 	/**
 	 * Cleaning all node's resources.
-	 * @protected
 	 * @override
+	 * @protected
 	 * @param {Boolean} silent
 	 */
     destroy : function(silent) {

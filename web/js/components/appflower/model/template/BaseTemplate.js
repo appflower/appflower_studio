@@ -17,15 +17,19 @@ N.BaseTemplate = Ext.extend(Object, {
 	
 	/**
 	 * Goes over {@link #structure} property and examines model on existance of structural nodes.
-	 * If any structural node is not exists in the model then it is created.
+	 * If any required structural node is not exists in the model then it is created.
 	 * 
 	 * @param {afStudio.model.Root} model The root model node.
 	 */
 	processStructure : function(model) {
 		Ext.iterate(this.structure, function(n, idx) {
-			var sName = Ext.isObject(n) ? n.name : n;
-			if (model.getImmediateModelNode(sName) == null) {
-				model.createNode(sName);
+			var tag = n, required = false;
+			if (Ext.isObject(n)) {
+				tag = n.name;
+				required = (n.required === true) ? true : false;
+			}
+			if (model.getImmediateModelNode(tag) == null && required) {
+				model.createNode(tag);
 			}
 		});
 	}

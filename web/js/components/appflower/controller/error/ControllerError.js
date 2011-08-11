@@ -12,7 +12,7 @@ afStudio.controller.error.ControllerError = Ext.extend(Ext.Error, {
     
     lang: {
         'widget-cfg-incorrect' : 'Widget configuration object is not correct.',
-        'init-view' : 'View initialization, object is not correct.',
+        'init-view' : 'View initialization error.',
         'view-constructor': 'View constructor is not a Function.'
     }
 });
