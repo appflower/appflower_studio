@@ -17,7 +17,7 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
     /**
      * default commands
      */
-    protected $base_default_commands = array('sf', 'appflower', 'afs', 'git', 'batch', 'man', 'll', 'ls', 'pwd', 'cat', 'mkdir', 'rm', 'cp', 'mv', 'touch', 'chmod', 'free', 'df', 'find', 'clear', 'php',);
+    protected $base_default_commands = array('sf', 'appflower', 'afs', 'git', 'batch', 'afsbatch', 'man', 'll', 'ls', 'pwd', 'cat', 'mkdir', 'rm', 'cp', 'mv', 'touch', 'chmod', 'free', 'df', 'find', 'clear', 'php',);
     
     /**
      * Default deprecated commands list

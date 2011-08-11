@@ -14,7 +14,7 @@ class afsPermissionsTask extends sfBaseTask
     const DEFAULT_MODE = "g+rwX";
     
     /**
-     * default recursive parameter
+     * Default recursive parameter
      */
     const DEFAULT_RECURSIVE = false;
     
@@ -44,6 +44,11 @@ class afsPermissionsTask extends sfBaseTask
     const CONFIG_FOLDER_RECURSIVE = 'recursive';
     
     /**
+     * Config path type
+     */
+    const CONFIG_PATH_TYPE = 'path_type';
+    
+    /**
      * Config server identifacator
      */
     const CONFIG_SERVER = 'server';
@@ -57,6 +62,16 @@ class afsPermissionsTask extends sfBaseTask
      * Config server user name identifacator
      */
     const CONFIG_SERVER_USER_NAME = 'name';
+    
+    /**
+     * Related path type
+     */
+    const PATH_TYPE_RELATED = 'related';
+    
+    /**
+     * Absolute path type
+     */
+    const PATH_TYPE_ABSOLUTE = 'absolute';
     
     /**
      * Parsed config file content
@@ -116,14 +131,13 @@ EOF;
                     
                     $folders = $this->getFolders();
                     foreach ($folders as $folder) {
-                        $path = $root_dir . $this->getFolderPath($folder);
+                        $path = (!$this->isAbsolute($folder)) ? $root_dir : '';
+                        $path .= $this->getFolderPath($folder);
                         
                         if (file_exists($path)) {
                             $command = array();
                             $command[] = "chmod";
-                            if ($this->isRecursive($folder)) {
-                                $command[] = "-R";
-                            }
+                            if ($this->isRecursive($folder)) $command[] = "-R";
                             $command[] = $this->getFolderMode($folder);
                             $command[] = $path;
                             
@@ -132,9 +146,12 @@ EOF;
                             $change_creds = $this->run_command($command);
                             
                             $command_log[] = $command;
+                            
+                            $this->logSection('path', sprintf('change permissions %s to %s', $path, $this->getFolderMode($folder)));
                         }
                     }
                     
+                    /*
             	    $this->log_it(
             	        "User: {$current_user}. " .
             	        "Owner (Id: {$owner_id}, Name: {$owner_name}, Group Id: {$owner_gid}). " .
@@ -142,6 +159,8 @@ EOF;
             	        "Group Changed: {$owner_gid} -> {$apache_user_gid}. Added group to user '{$owner_name}' group '{$apache_user_gid}'\n".
             	        "Chmods:\n". implode("\n", $command_log)
             	    );
+            	    */
+            	    
                 } else {
                     $this->log("Please run task using root credentials. {$change_usermod}");
                     $this->log_it("User: {$current_user}. Trying to set credentials - fail. Need to run as root");
@@ -200,9 +219,8 @@ EOF;
      */
     private function getConfig()
     {
-        if (is_null($this->config)) {
-            $this->config = sfYaml::load($this->getConfigPath());
-        }
+        if (!file_exists($this->getConfigPath())) throw new Exception("Please, define " . self::CONFIGURATION . " config");
+        if (is_null($this->config)) $this->config = sfYaml::load($this->getConfigPath());
         
         return $this->config;
     }
@@ -320,6 +338,46 @@ EOF;
         }
         
         return self::DEFAULT_MODE;
+    }
+    
+    /**
+     * Getting path type
+     *
+     * @param Array $folder 
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getPathType(Array $folder)
+    {
+        if (isset($folder[self::CONFIG_PATH_TYPE])) {
+            return $folder[self::CONFIG_PATH_TYPE];
+        }
+        
+        return self::PATH_TYPE_RELATED;
+    }
+    
+    /**
+     * Checking is absolute path
+     *
+     * @param Array $folder 
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    private function isAbsolute(Array $folder)
+    {
+        return $this->getPathType($folder) == self::PATH_TYPE_ABSOLUTE;
+    }
+    
+    /**
+     * Checking is related path
+     *
+     * @param Array $folder 
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    private function isRelated(Array $folder)
+    {
+        return $this->getPathType($folder) == self::PATH_TYPE_RELATED;
     }
     
 }

@@ -26,16 +26,19 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
      */
     public function testAddModel() 
     {
-        $response = afStudioCommand::process('model', 'has', $this->getParameters());
+        $response = afStudioCommand::process('model', 'add', $this->getParameters());
+        $this->assertArrayHasKey('success', $response, "response from command get should contains 'success'");
         
-        if (isset($response[afResponseSuccessDecorator::IDENTIFICATOR]) && !$response[afResponseSuccessDecorator::IDENTIFICATOR]) {
-            $response = afStudioCommand::process('model', 'add', $this->getParameters());
-            $this->assertArrayHasKey('success', $response, "response from command get should contains 'success'");
+        $has_response = afStudioCommand::process('model', 'has', $this->getParameters());
+        
+        if (isset($response[afResponseSuccessDecorator::IDENTIFICATOR]) && $response[afResponseSuccessDecorator::IDENTIFICATOR]) {
             $this->assertTrue($response['success'], "response should be true - model should be created");
-
-            $response = afStudioCommand::process('model', 'add', $this->getParameters());
-            $this->assertFalse($response['success'], "response should be false - please check model checking existed model");
+        } else {
+            $this->assertFalse($response['success'], "response should be false - model already exists");
         }
+        
+        $response = afStudioCommand::process('model', 'add', $this->getParameters());
+        $this->assertFalse($response['success'], "response should be false - please check model checking existed model");
     }
     
     /**

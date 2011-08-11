@@ -1,11 +1,25 @@
-# all folders paths should be from project root folder, with first slash - example paht: '/apps', path: '/lib/mode'
+# all folders paths should be from project root folder, with first slash - example path: '/apps', path: '/lib/mode'
 # default 
 #     mode: g+rwX
 #     recursive: false
+#     path_type: related
 # chmod modes more detailed in  `man chmod`
 # examples chmod modes(separated by comma):   g+rwx, 775, 664, go-rw, u=rw, g+rwX, a-x
 #                                             where u - file owner, g - group, o - other, a - all (alias for ugo)
+# 
+# path by default setted as related - means path from current project, path can be also defined as absolute - path_type: absolute
+# path can be setted if type related like:  
+#                                         /
+#                                         /../
+#                                         /apps
 folders:
+  # set permissions for web environment, where projects will be created by studio
+  # web_environment:
+    # path: '/Users/username/Sites/web_environment_folder'
+    # mode: 'ug+rwX'
+    # recursive: true
+    # path_type: absolute
+  # current project environment - not system root! be carefully
   root:
     path: '/'
     mode: 'ug+X'
