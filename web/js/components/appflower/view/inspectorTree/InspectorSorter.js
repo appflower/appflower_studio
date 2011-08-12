@@ -1,42 +1,42 @@
 Ext.ns('afStudio.view.inspector');
 
 afStudio.view.inspector.sorter = {};
-N = afStudio.view.inspector.sorter;
-NS = afStudio.ModelNode;
+S = afStudio.view.inspector.sorter;
+N = afStudio.ModelNode;
 
-N[NS.TITLE] = 1;
-N[NS.PARAMS] = 4;
-N[NS.ACTIONS] = 8; 
-N[NS.FIELDS] = 12;
-N[NS.ROW_ACTIONS] = 16; 
-N[NS.MORE_ACTIONS] = 20;
-N[NS.CONFIRM] = 24;
-N[NS.DATA_SOURCE] = 6; 
-N[NS.DATA_STORE] = 6;
-N[NS.GROUPING] = 28;
-N[NS.DESCRIPTION] = 32;
-N[NS.ALTERNATE_DESCRIPTIONS] = 34;
-N[NS.MENU] = 2;
-N[NS.SCRIPTS] = 3; 
-N[NS.FIELD] = 100;
-N[NS.COLUMN] = 100;
-N[NS.BUTTON] = 101;
-N[NS.LINK] = 102;
-N[NS.RADIO_GROUP] = 103; 
-N[NS.ACTION] = 110;
-N[NS.IF] = 111;
-N[NS.SET] = 104;
-N[NS.REF] = 105;
-N[NS.PARAM] = 130;
-N[NS.AREA] = 10;
-N[NS.WIDGET_CATEGORIES] = 
-N[NS.EXTRA_HELP] = 36; 
-N[NS.OPTIONS] = 5;
-N[NS.CLASS] = 108;
-N[NS.METHOD] = 109;
+S[N.TITLE] = 1;
+S[N.PARAMS] = 4;
+S[N.ACTIONS] = 8; 
+S[N.FIELDS] = 12;
+S[N.ROW_ACTIONS] = 16; 
+S[N.MORE_ACTIONS] = 20;
+S[N.CONFIRM] = 24;
+S[N.DATA_SOURCE] = 6; 
+S[N.DATA_STORE] = 6;
+S[N.GROUPING] = 28;
+S[N.DESCRIPTION] = 32;
+S[N.ALTERNATE_DESCRIPTIONS] = 34;
+S[N.MENU] = 2;
+S[N.SCRIPTS] = 3; 
+S[N.FIELD] = 100;
+S[N.COLUMN] = 100;
+S[N.BUTTON] = 101;
+S[N.LINK] = 102;
+S[N.RADIO_GROUP] = 103; 
+S[N.ACTION] = 110;
+S[N.IF] = 111;
+S[N.SET] = 104;
+S[N.REF] = 105;
+S[N.PARAM] = 130;
+S[N.AREA] = 10;
+S[N.WIDGET_CATEGORIES] = 
+S[N.EXTRA_HELP] = 36; 
+S[N.OPTIONS] = 5;
+S[N.CLASS] = 108;
+S[N.METHOD] = 109;
 
-delete NS;
 delete N;
+delete S;
 
 /**
  * InspectorTree sorter.
@@ -46,10 +46,36 @@ delete N;
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.view.inspector.InspectorSorter = Ext.extend(Ext.tree.TreeSorter, {
+
+	constructor : function(tree, config) {
+		afStudio.view.inspector.InspectorSorter.superclass.constructor.apply(this, [tree, config]);
 		
+		var desc = this.dir && this.dir.toLowerCase() == 'desc',
+			sortType = this.sortType;
+		
+	    this.sortFn = function(n1, n2) {
+	        var m1 = n1.modelNode,
+	            m2 = n2.modelNode;
+	            
+	        var v1 = sortType(m1.tag),
+	            v2 = sortType(m2.tag);
+	        
+	        if (v1 < v2) {
+	            return desc ? 1 : -1;
+	        } else if (v1 > v2) {
+	            return desc ? -1 : 1;
+	        }
+	        return 0;
+	    };
+	},	
+	
+	/**
+	 * @protected
+	 * @param {String} node The model node's tag name
+	 * @return {Number}
+	 */
 	sortType : function(node) {
 		var nodeValue = afStudio.view.inspector.sorter[node];
-		
-		return nodeValue ? nodeValue : 500;
+		return Ext.isDefined(nodeValue) ? nodeValue : 500;
 	}
 });

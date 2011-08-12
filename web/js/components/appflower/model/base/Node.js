@@ -1021,7 +1021,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         var cs = this.childNodes;
         var len = cs.length;
         if (len > 0) {
-            var sortFn = scope ? function(){fn.apply(scope, arguments);} : fn;
+            var sortFn = scope ? function(){return fn.apply(scope, arguments);} : fn;
             cs.sort(sortFn);
             for (var i = 0; i < len; i++) {
                 var n = cs[i];
