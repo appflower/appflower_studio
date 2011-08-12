@@ -25,7 +25,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.enableDD = true;
 		
 		this.root = {
-			text: String.format("{0} ({1}-{2})", view.uri, view.place, view.placeType),
+			name: String.format("{0} ({1}-{2})", view.uri, view.place, view.placeType),
 			expanded: true,
 			modelNode: root
 		};
@@ -147,7 +147,8 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	initEvents : function() {
 		afStudio.view.inspector.TreePanel.superclass.initEvents.apply(this, arguments);
 		
-		var _me = this;
+		var _me = this,
+			 sm = _me.getSelectionModel();
 		
 		_me.on({
 			scope: _me,
@@ -168,14 +169,21 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 			 * @relayed controller
 			 */
 			modelNodeSelect: _me.onModelNodeSelect,
+			/**
+			 * @relayed controller
+			 */
+			modelPropertyChanged: _me.onModelPropertyChanged,
 			
 			contextmenu:  _me.onNodeContextMenu,
 			
 			nodedragover: _me.onNodeDragOver,
 			
-			nodedrop: _me.onNodeDrop,
-			
-			click: _me.onNodeClick
+			nodedrop: _me.onNodeDrop
+		});
+		
+		_me.mon(sm, {
+			selectionchange : _me.onNodeSelectionChange,
+			scope: _me
 		});
 	},
 	//eo initEvents
@@ -188,7 +196,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	onModelNodeSelect : function(mn, trigger) {
 		if (trigger != this) {
-			console.log('@view [InspectorTree] "onModelNodeSelect"');
+			console.log('@view [InspectorTree] onModelNodeSelect');
 			var viewNode = this.getCmpByModel(mn);
 			this.selectPath(viewNode.getPath());
 		}
@@ -243,6 +251,20 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo onModelNodeRemove	
 	
 	/**
+	 * Relayed <u>modelPropertyChanged</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelPropertyChanged}.
+	 * @protected
+	 * @interface
+	 */
+	onModelPropertyChanged : function(node, p, v) {
+		console.log('@view [InspectorTree] "modelPropertyChanged"', node, p, v);
+		var viewNode = this.getCmpByModel(node);
+		if (viewNode.labelProperty == p) {
+			viewNode.setText(v);
+		}
+	},	
+	
+	/**
 	 * <u>contextmenu</u> event listener. 
 	 * More details {@link Ext.tree.TreePanel#contextmenu}. 
 	 * @protected
@@ -286,14 +308,16 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	//eo onNodeDrop
 	
 	/**
-	 * <u>click</u> event listener.
-	 * @param {Node} node The clicked node
-	 * @param {Ext.EventObject} e The event object
+	 * This tree selection-model <u>selectionchange</u> event listener.
+	 * @param {DefaultSelectionModel} sm This tree selection-model
+	 * @param {TreeNode} node The new selection
 	 * @protected
 	 */
-	onNodeClick : function(node, e) {
-		console.log('@view [InspectorTree] "selectModelNode"', node.modelNode);
-		this.controller.selectModelNode(node.modelNode, this);
+	onNodeSelectionChange : function(sm, node) {
+		if (node) {
+			console.log('@view [InspectorTree] "selectModelNode"', node.modelNode);
+			this.controller.selectModelNode(node.modelNode, this);
+		}
 	}
 	//eo onNodeClick
 });

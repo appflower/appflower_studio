@@ -48,6 +48,15 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 */
 	
 	/**
+	 * The {@link #modelNode} property's name which TreeNode uses to specify 
+	 * its {@link #text} property and text attribute (defaults to "name").
+	 * This property should be used to change the text("label") of tree node.   
+	 * @property
+	 * @type {String}
+	 */
+	labelProperty : "name",
+	
+	/**
 	 * The context menu object for this node.
 	 * @property contextMenu
 	 * @type {Ext.menu.Menu}
@@ -92,9 +101,15 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 * @protected
 	 */
 	resolveNodeText : function() {
-		var attr = this.attributes;
-		//this.attributes.text is required for tree sorter class
-		this.text = this.attributes.text = attr.name || attr.text || this.modelNode.tag;
+		var attr = this.attributes,
+			lp = this.labelProperty;
+		
+		if (Ext.isDefined(attr[lp])) {
+			this.text = attr.text = attr[lp];
+		} else {
+			this.labelProperty = 'tag';
+			this.text = attr.text = this.modelNode.tag;
+		}
 	},
 	
 	/**

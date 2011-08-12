@@ -79,13 +79,18 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
     //eo load
 
     /**
-     * Returns required model node's properties.
+     * Returns model node's properties. 
      * @protected
      * @param {afStudio.model.Node} m The model node
      * @return {Object} properties
      */
     getModelProperties : function(m) {
-    	return Ext.copyTo({}, m.getPropertiesHash(), 'name, text');
+    	var ps = m.getPropertiesHash();
+    	//remove icon & iconCls properties to prevent overlapping with the same TreeNode's  attributes
+    	delete 	ps.icon;
+		delete 	ps.iconCls;
+
+    	return ps;
     },
     
     /**
@@ -119,7 +124,7 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
 	            
 	         	this.fireEvent("load", this, node);
         	} else {
-		        throw new afStudio.view.inspector.error.LoaderError('incorrect-model');    		
+		        throw new afStudio.view.inspector.error.LoaderError('incorrect-model');
         	}
         }
 	},
