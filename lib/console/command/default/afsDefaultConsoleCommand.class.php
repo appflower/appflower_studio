@@ -25,14 +25,7 @@ class afsDefaultConsoleCommand extends afsBaseConsoleCommand
      */
     protected function prepare()
     {
-        $parts = explode(" ", $this->getCommand());
-        $parts[0] = afStudioUtil::getValueFromArrayKey(afsConsoleCommandHelper::create()->getAliases(), $parts[0], $parts[0]);
-        
-        $command = implode(" ", $parts);
-        $parts = explode(" ", $command);
-        $command = afStudioUtil::getValueFromArrayKey(afsConsoleCommandHelper::create()->getAliases(), $command, $command);
-        
-        return (in_array($parts[0], afsConsoleCommandHelper::create()->getCommands())) ? (string) $command : '';
+        return (in_array(afsConsoleCommand::getCommandName($this->getCommand()), afsConsoleCommandHelper::create()->getCommands())) ? $this->getCommand() : '';
     }
     
     /**

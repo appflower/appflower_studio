@@ -77,6 +77,17 @@ abstract class afsBaseConsoleCommandHelper
     }
     
     /**
+     * Getting separators
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getCommandsSeparators()
+    {
+        return $this->commands_separators;
+    }
+    
+    /**
      * Checking does command contains deprecated sub commands
      * for example:  sf cc && top && htop && irb
      *
@@ -108,11 +119,46 @@ abstract class afsBaseConsoleCommandHelper
      */
     public function getSubCommands($command)
     {
-        $command_prepared = str_replace($this->commands_separators, self::PREPARED_SUBCOMMANDS_SEPARATOR, $command);
+        $command_prepared = str_replace($this->getCommandsSeparators(), self::PREPARED_SUBCOMMANDS_SEPARATOR, $command);
         $commands = explode(self::PREPARED_SUBCOMMANDS_SEPARATOR, $command_prepared);
         foreach ($commands as &$sub_command) $sub_command = trim($sub_command);
         
         return $commands;
+    }
+    
+    /**
+     * Prepare command for executing - replace alias commands with associated commands
+     *
+     * @param mixed $command 
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function prepare($command)
+    {
+        $commands_array = (!is_array($command)) ? (array) $command : $command;
+        
+        if ($separators = $this->getCommandsSeparators()) {
+            $patterns = array();
+            $replacements = array();
+            
+            $separators_slashed = array();
+            foreach ($separators as $separator) $separators_slashed[] = addcslashes($separator, '|\/?:');
+            
+            $separators_slashed = implode('|', $separators_slashed);
+            $pre_pattern = "/((?:{$separators_slashed}|^)(?: |))(";
+            $post_pattern = ")((?:$| |[". implode('', $separators) ."]))/";
+            
+            foreach ($this->getAliases() as $alias_name => $command_replacement) {
+                $patterns[] = "{$pre_pattern}{$alias_name}{$post_pattern}";
+                $replacements = "$1{$command_replacement}$3";
+            }
+            
+            if (!empty($patterns) && !empty($replacements)) {
+                foreach ($commands_array as &$command_element) $command_element = preg_replace($patterns, $replacements, $command_element);
+            }
+        }
+        
+        return $commands_array;
     }
     
 }

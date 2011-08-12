@@ -151,7 +151,6 @@ EOF;
                         }
                     }
                     
-                    /*
             	    $this->log_it(
             	        "User: {$current_user}. " .
             	        "Owner (Id: {$owner_id}, Name: {$owner_name}, Group Id: {$owner_gid}). " .
@@ -159,8 +158,6 @@ EOF;
             	        "Group Changed: {$owner_gid} -> {$apache_user_gid}. Added group to user '{$owner_name}' group '{$apache_user_gid}'\n".
             	        "Chmods:\n". implode("\n", $command_log)
             	    );
-            	    */
-            	    
                 } else {
                     $this->log("Please run task using root credentials. {$change_usermod}");
                     $this->log_it("User: {$current_user}. Trying to set credentials - fail. Need to run as root");

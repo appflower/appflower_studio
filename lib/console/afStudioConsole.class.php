@@ -101,11 +101,15 @@ class afStudioConsole
             
             $result = array();
             if (!afsConsoleCommandHelper::create()->hasDeprecated($aCommands)) {
+                $aCommands = afsConsoleCommandHelper::create()->prepare($aCommands);
+                
                 foreach ($aCommands as $command) {
-                    $command_instance = afsConsoleCommand::create($command)->setPrompt($this->getPrompt());
-                    $result = array_merge($result, $command_instance->execute());
+                    foreach (afsConsoleCommandHelper::create()->getSubCommands($command) as $sub_command) {
+                        $command_instance = afsConsoleCommand::create($sub_command)->setPrompt($this->getPrompt());
+                        $result = array_merge($result, $command_instance->execute());
 
-                    $this->lastExecReturnCode = $command_instance->getLastStatus();
+                        $this->lastExecReturnCode = $command_instance->getLastStatus();
+                    }
                 }
             } else {
                 $result[] = afsRenderConsoleCommand::render("Some commands that you wanna execute has been deprecated");
