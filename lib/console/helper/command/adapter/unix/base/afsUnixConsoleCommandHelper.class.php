@@ -17,7 +17,7 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
     /**
      * default commands
      */
-    protected $base_default_commands = array('sf', 'appflower', 'afs', 'git', 'batch', 'afsbatch', 'man', 'll', 'ls', 'pwd', 'cat', 'mkdir', 'rm', 'cp', 'mv', 'touch', 'chmod', 'free', 'df', 'find', 'clear', 'php',);
+    protected $base_default_commands = array('git', 'man', 'll', 'ls', 'pwd', 'cat', 'mkdir', 'rm', 'cp', 'mv', 'touch', 'chmod', 'free', 'df', 'find', 'clear',);
     
     /**
      * Default deprecated commands list
@@ -37,7 +37,7 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
      */
     public function getDeprecated()
     {
-        $this->deprecated_commands = array_merge($this->base_deprecated_commands, $this->deprecated_commands);
+        $this->deprecated_commands = array_unique(array_merge($this->base_deprecated_commands, $this->deprecated_commands));
         
         return parent::getDeprecated();
     }
@@ -50,7 +50,7 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
      */
     public function getAliases()
     {
-        $this->default_aliases = array_merge($this->base_default_aliases, $this->default_aliases);
+        $this->default_aliases = array_unique(array_merge($this->base_default_aliases, $this->default_aliases));
         
         return parent::getAliases();
     }
@@ -63,7 +63,7 @@ abstract class afsUnixConsoleCommandHelper extends afsBaseConsoleCommandHelper
      */
     public function getCommands()
     {
-        $this->default_commands = array_merge($this->base_default_commands, $this->default_commands);
+        $this->default_commands = array_unique(array_merge($this->default_commands, $this->base_default_commands));
         
         return parent::getCommands();
     }

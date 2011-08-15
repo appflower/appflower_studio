@@ -10,12 +10,12 @@ abstract class afsBaseConsoleCommandHelper
     /**
      * Config commands identificator
      */
-    const CONFIG_COMMANDS = 'afStudio_console_commands';
+    const CONFIG_COMMANDS = 'app_afStudio_console_commands';
     
     /**
      * Config aliases identificator
      */
-    const CONFIG_ALIASES = 'afStudio_console_aliases';
+    const CONFIG_ALIASES = 'app_afStudio_console_aliases';
     
     /**
      * Prepared sub-commands separator
@@ -30,7 +30,7 @@ abstract class afsBaseConsoleCommandHelper
     /**
      * default commands
      */
-    protected $default_commands = array('sf', 'appflower', 'afs', 'php',);
+    protected $default_commands = array();
     
     /**
      * Deprecated commands list
@@ -43,6 +43,11 @@ abstract class afsBaseConsoleCommandHelper
     protected $commands_separators = array();
     
     /**
+     * System commands list
+     */
+    protected $system_commands = array('sf', 'appflower', 'afs', 'batch', 'afsbatch', 'php', );
+    
+    /**
      * Getting commands list
      *
      * @param boolean $explode 
@@ -51,7 +56,13 @@ abstract class afsBaseConsoleCommandHelper
      */
     public function getCommands()
     {
-        return array_diff(sfConfig::get(self::CONFIG_COMMANDS, $this->default_commands), $this->getDeprecated());
+        // getting commands array 
+        $commands = array_unique(array_merge(
+            $this->getSystemCommands(), 
+            sfConfig::get(self::CONFIG_COMMANDS, $this->default_commands)
+        ));
+        
+        return array_diff($commands, $this->getDeprecated());
     }
 	
 	/**
@@ -85,6 +96,17 @@ abstract class afsBaseConsoleCommandHelper
     public function getCommandsSeparators()
     {
         return $this->commands_separators;
+    }
+    
+    /**
+     * Getting system commands 
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getSystemCommands()
+    {
+        return $this->system_commands;
     }
     
     /**

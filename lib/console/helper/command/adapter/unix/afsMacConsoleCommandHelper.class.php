@@ -10,6 +10,6 @@ class afsMacConsoleCommandHelper extends afsUnixConsoleCommandHelper
     /**
      * Deprecated commands
      */
-    protected $deprecated_commands = array('wget',);
+    protected $deprecated_commands = array('wget', 'free',);
     
 }
