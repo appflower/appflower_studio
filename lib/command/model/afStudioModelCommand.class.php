@@ -79,24 +79,22 @@ class afStudioModelCommand extends afBaseStudioCommand
      */
     protected function processGet()
     {
-        if (count($this->propelSchemaArray) > 0) {
-			$models = array();
-			
-			foreach ($this->propelSchemaArray as $schemaFile => $array) {
-			    if (empty($array)) continue;
-				foreach ($array['classes'] as $phpName => $attributes) {
-					$models[] = array('text' => $phpName,'leaf' => true,'schema' => $schemaFile, 'iconCls' => 'icon-model');
-				}
+        $response = afResponseHelper::create();
+        
+        if (count($this->propelSchemaArray) == 0) return $response->success(true)->asArray();
+        
+		$models = array();
+		foreach ($this->propelSchemaArray as $schemaFile => $array) {
+		    if (empty($array)) continue;
+			foreach ($array['classes'] as $phpName => $attributes) {
+				$models[] = array('text' => $phpName,'leaf' => true,'schema' => $schemaFile, 'iconCls' => 'icon-model');
 			}
-			
-            /*
-                TODO wrap models result to data decorator, need frontend changes
-            */
-            $models = afStudioModelCommandHelper::sortModels($models);
-            $this->result = $models;
-        } else {
-            $this->result = array('success' => true);
-        }
+		}
+		
+        /*
+            TODO wrap models result to data decorator, need frontend changes
+        */
+        return afStudioModelCommandHelper::sortModels($models);
     }
     
     /**
@@ -121,19 +119,19 @@ class afStudioModelCommand extends afBaseStudioCommand
 		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;
 		
 		if ($this->saveSchema()) {
-		    $afConsole = afStudioConsole::getInstance();
+		    $console = afStudioConsole::getInstance();
 		    
 			$consoleResult = afStudioModelCommandHelper::deploy();
 			
-            if ($afConsole->wasLastCommandSuccessfull()) $consoleResult .= $afConsole->execute('sf propel:build-form');
+            if ($console->wasLastCommandSuccessfull()) $consoleResult .= $console->execute('sf propel:build-form');
             
-            if ($afConsole->wasLastCommandSuccessfull()) {
+            if ($console->wasLastCommandSuccessfull()) {
                 $message = 'Added model <b>'.$this->modelName.'</b>!';
             } else {
                 $message = 'Model was propery defined but build-model and/or build-form tasks returned some errors.';
             }
 			
-            $response->success($afConsole->wasLastCommandSuccessfull())->message($message)->console($consoleResult);
+            $response->success($console->wasLastCommandSuccessfull())->message($message)->console($consoleResult);
 		} else {
 			$response->success(false)->message("Can't add model <b>{$this->modelName}</b>! Please check schema file permissions.");
 		}
@@ -221,16 +219,10 @@ class afStudioModelCommand extends afBaseStudioCommand
     {
         $response = afResponseHelper::create();
         try {
-			$fields = json_decode($this->getParameter('fields'));
-            
-			if (($message = $this->alterModel($fields)) === true) {
-				$success = true;
-				$message = "{$this->modelName} structure was successfully updated";
-			} else {
-				$success = false;
+			$response = $this->alterModel(json_decode($this->getParameter('fields')));
+			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+				$response->message("{$this->modelName} structure was successfully updated");
 			}
-			
-			$response->success($success)->message($message);
         } catch ( Exception $e ) {
         	$response->success(false)->message($e->getMessage());
         }
@@ -249,44 +241,23 @@ class afStudioModelCommand extends afBaseStudioCommand
         return afResponseHelper::create()->success(true)->console(afStudioModelCommandHelper::updateSchemas())->asArray();
     }
     
-    
-    /*
-        TODO check used anywhere or not
-    */
-    protected function processUpdate()
-    {
-        $response = afResponseHelper::create();
-        $rows = $this->getParameter('rows');
-        
-		if ($rows != null) {
-			$rows = json_decode($rows); print_r($rows); die();
-			//$rows=afStudioUtil::objectToArray($rows);
-			//$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$rows->name]=$this->reconstructTableField($rows);
-			
-			if ($this->saveSchema()) {
-				$response->success(true)->message('Updated model <b>'.$this->modelName.'</b> !')->console(afStudioModelCommandHelper::deploy());
-			} else {
-			    $response->success(false)->message("Can't update model <b>{$this->modelName}</b>!");
-			}
-		}
-        
-		$response->success(true);
-        
-        return $response->asArray();
-    }
-    
-    /*
-        TODO check is used from frontend this command - RelationCombo.js
-    */
+    /**
+     * Get relations list for autocomplete
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     protected function processReadrelation()
     {
-        var_dump('readRelation');
-        $this->result = array('success' => true, 'data' => $this->buildRelationComboModels());
+        return afResponseHelper::create()->success(true)->data(array(), $this->buildRelationComboModels($this->getParameter('query')), 0)->asArray();
     }
     
-    /*
-        TODO check is used this command from frontend
-    */
+    /**
+     * Altering model - update field
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     protected function processAlterModelUpdateField()
     {
         $response = afResponseHelper::create();
@@ -294,38 +265,10 @@ class afStudioModelCommand extends afBaseStudioCommand
 			$field = $this->getParameter('field');
 			$fieldDef = json_decode($this->getParameter('fieldDef'));
 			
-			if (($message = $this->alterModelField($field, $fieldDef)) === true) {
-				$success = true;
-				$message = 'Field "' . $fieldDef->name . '" was successfully updated';
-			} else {
-				$success = false;
-			}
-			
-			$response->success($success)->message($message);
-        } catch( Exception $e ) {
-        	$response->success(false)->message($e->getMessage());
-        }
-        
-        return $response->asArray();
-    }
-    
-    /*
-        TODO check is used this command from frontend
-    */
-    protected function processAlterModelCreateField()
-    {
-        $response = afResponseHelper::create();
-        try {
-			$fieldDef = json_decode($this->getParameter('fieldDef'));
-			
-			if (($message = $this->createModelField($fieldDef)) === true) {
-				$success = true;
-				$message = 'Field "' . $fieldDef->name . '" was successfully created';
-			} else {
-				$success = false;
-			}
-			
-			$response->success($success)->message($message);
+            $response = $this->changeModelField($fieldDef, $field);
+			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+				$response->message("Field '{$fieldDef->name}' was successfully updated");
+			} 
         } catch ( Exception $e ) {
         	$response->success(false)->message($e->getMessage());
         }
@@ -333,8 +276,27 @@ class afStudioModelCommand extends afBaseStudioCommand
         return $response->asArray();
     }
     
-    
-    
+    /**
+     * Altering model - creating field
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function processAlterModelCreateField()
+    {
+        $response = afResponseHelper::create();
+        try {
+			$fieldDef = json_decode($this->getParameter('fieldDef'));
+			$response = $this->changeModelField($fieldDef);
+			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+			    $response->message("Field '{$fieldDef->name}' was successfully created");
+		    }
+        } catch ( Exception $e ) {
+        	$response->success(false)->message($e->getMessage());
+        }
+        
+        return $response->asArray();
+    }
     
     /**
      * Load schemas procedure
@@ -344,7 +306,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 	private function loadSchemas()
 	{
 		$this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
-		$finder = sfFinder::type('file')->name('*schema.yml')->prune('doctrine');
 		
     	$dirs = array_merge(array(sfConfig::get('sf_config_dir')), $this->configuration->getPluginSubPaths('/config'));
     	
@@ -356,15 +317,12 @@ class afStudioModelCommand extends afBaseStudioCommand
     	
     	$dirs = array_values($dirs);
     	
-    	$schemas = $finder->in($dirs);
+    	$schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->in($dirs);
     	
     	foreach ($schemas as $schema) {
             $this->originalSchemaArray[$schema] = sfYaml::load($schema);
             
-    	    if (!is_array($this->originalSchemaArray[$schema])) {
-    	      	$this->originalSchemaArray[$schema];
-    	        continue; // No defined schema here, skipping
-    	    }
+    	    if (!is_array($this->originalSchemaArray[$schema])) continue;
             
     	    if (!isset($this->originalSchemaArray[$schema]['classes'])) {
     	        // Old schema syntax: we convert it
@@ -399,22 +357,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 	{
         return afStudioUtil::writeFile($this->schemaFile, sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3));
 	}
-	
-	/*
-	   TODO check this method, remove
-	*/
-	public function reconstructTableField(Array $params)
-	{
-		$retparams = array();
-		
-		if (isset($params['type']) && $params['type'] != '') $retparams['type'] = $params['type'];
-		if (isset($params['size']) && $params['size'] != '') $retparams['size'] = $params['size'];
-		if (isset($params['required'])) $retparams['required'] = $params['required'];
-    	if (isset($params['default_value'])) $retparams['default'] = $params['default_value'];
-    	
-		return $retparams;
-	}
-	
 	
 	/**
 	 * Read Models fields(columns)
@@ -470,20 +412,21 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 * Verifies field name
 	 * 
 	 * @param string $fieldName
-	 * @return mixed - true on success otherwise error message
+	 * @return afResponse
 	 */
 	private function modelFieldVerification($fieldName) 
 	{
-	    /*
-	       TODO wrap response to afResponse
-	    */
+	    $response = afResponseHelper::create();
+	    
 		if (!afStudioModelCommandHelper::isValidName($fieldName)) {
-			return "Field name '{$fieldName}' is not valid. Field name must contains only characters, digits or '_' and starts from '_' or character";
+		    return $response
+		                ->success(false)
+		                ->message("Field name '{$fieldName}' is not valid. Field name must contains only characters, digits or '_' and starts from '_' or character");
 		}
 		
-		if (!$this->isFieldNameUnique($fieldName)) return "Field name '{$fieldName}' is duplicated";
+		if (!$this->isFieldNameUnique($fieldName)) return $response->success(false)->message("Field name '{$fieldName}' is duplicated");
 		
-		return true;
+		return $response->success(true);
 	}
 	
 	/**
@@ -502,6 +445,172 @@ class afStudioModelCommand extends afBaseStudioCommand
 		
         return null;
 	}
+	
+	
+	/**
+	 * Creates Relation modelName.modelField value
+	 * based on "query" parameter
+	 * 
+	 * @return array - the relation
+	 */
+	private function buildRelationComboModels($query)
+	{
+		$models = array();
+		
+		if (count($this->propelSchemaArray) > 0) {
+			$relation = explode('.', trim($query));
+			
+			if (count($relation) > 1) {
+				$modelName  = $relation[0];
+				$modelField = $relation[1];
+				
+				if (!empty($modelName)) {
+					$schema = $this->getSchemaByModel($modelName);
+					if (!empty($schema)) {
+						$propelModel = $this->propelSchemaArray[$schema]['classes'][$modelName];
+						
+  						foreach ($propelModel['columns'] as $name => $params) {
+							if (empty($modelField) || stripos($name, $modelField) === 0) {
+								$models[] = array('id' => "{$modelName}.{$name}", 'value' => "{$modelName}.{$name}");
+							}
+	    				}
+					}
+				} else {
+					$m = $this->getModelsByMask($modelName);
+					for ($i = 0, $len = count($m); $i < $len; $i++) {
+						$models[] = array('id' => $m[$i], 'value' => $m[$i]);
+					}
+				}
+			} else {
+				$modelName = $relation[0];
+				$m = $this->getModelsByMask($modelName);
+				for ($i = 0, $len = count($m); $i < $len; $i++) {
+					$models[] = array('id' => $m[$i], 'value' => $m[$i]);
+				}
+			}
+			
+			
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Creates field definition from json decoded object
+	 * 
+	 * @param stdClass $f json decoded field definition
+	 * @return array field's definition 
+	 */
+	private function buildFieldDefinition($f) 
+	{
+		$definition = array();
+		
+		if (!empty($f->type)) $definition['type'] = $f->type;
+		if (!empty($f->default)) $definition['default'] = $f->default;
+		if (!empty($f->autoIncrement)) $definition['autoIncrement'] = $f->autoIncrement;
+		
+		if (!empty($f->key)) {
+			switch ($f->key) {
+				case 'primary':
+					$definition['primaryKey'] = true;
+				    break;
+				    
+				case 'unique':
+					$definition['index'] = 'unique';
+				    break;
+				    
+				case 'index':
+					$definition['index'] = true;
+				    break;
+			}
+		}
+		
+		if (!empty($f->required)) $definition['required'] = $f->required;
+		
+		if (!empty($f->relation)) {
+			$ref = explode('.', $f->relation);
+			$definition['foreignTable'] = $this->getTableNameByModel($ref[0]);
+			$definition['foreignReference'] = $ref[1];
+		}
+		
+		if (!empty($f->size)) $definition['size'] = intval($f->size);
+		if (!empty($f->onDelete)) $definition['onDelete'] = $f->onDelete;
+        
+		return $definition;
+	}
+	
+	/**
+	 * Alters Model structure 
+	 * 
+	 * @param array $fields - the new models fields
+	 * @return afResponse
+	 */
+	private function alterModel(Array $fields)
+	{
+	    $response = afResponseHelper::create();
+	    
+		//remove previous table structure 
+		foreach ($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName] as $k => $v) {
+			if ($k != '_attributes') unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$k]);
+		}
+		
+		//build new structure
+		foreach ($fields as $f) {
+		    $response = $this->modelFieldVerification($f->name);
+			if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
+			
+			$definition = $this->buildFieldDefinition($f);
+			$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name] = $definition;
+		}
+        
+		$this->saveSchema();
+        afStudioModelCommandHelper::deploy();
+		
+		return $response->success(true);
+	}
+	
+	
+	private function changeModelField($fieldData, $field = null)
+	{
+	    $response = $this->modelFieldVerification($fieldData->name);
+	    if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
+	    
+		$fieldDefinition = $this->buildFieldDefinition($fieldData);
+		
+		if (!is_null($field)) {
+		    $this->arraySetKeyValue($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName], $field, $fieldData->name, $fieldDefinition);
+		} else {
+		    $this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$fieldData->name] = $fieldDefinition;
+		}
+		
+		$this->saveSchema();
+		afStudioModelCommandHelper::deploy();
+		
+		return $response->success(true);
+	}
+	
+	/**
+	 * Utility function.
+	 * Sets specified array key's value and changes its name if $newKey was specified.
+	 * 
+	 * @param array $array the array to set key
+	 * @param string $key to set up
+	 * @param string $newKey the new key name 
+	 * @param mixed $value the key's value to be set
+	 */
+	private function arraySetKeyValue(Array &$array, $key, $newKey, $value) 
+	{
+		$initial = array();
+		foreach ($array as $k => $v) {
+			if ($k != $key && ($initial[$k] = $v)) continue;
+			
+            empty($newKey) ? $initial[$key] = $value : $initial[$newKey] = $value;
+		}
+		
+		$array = $initial;
+	}
+	
+	
 	
 	/**
 	 * Returns table name by the model
@@ -545,7 +654,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 	 * Returns path to schema of specified model
 	 * 
 	 * @param string $model
-	 * @return string schema path
+	 * @return string - schema path if exists
 	 */
 	private function getSchemaByModel($model) 
 	{
@@ -557,189 +666,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 		}
 		
 		return null;
-	}
-	
-	/**
-	 * Creates Relation modelName.modelField value
-	 * based on "query" parameter
-	 * 
-	 * @return array the relation
-	 */
-	private function buildRelationComboModels()
-	{
-		$models = array();
-        
-		if (count($this->propelSchemaArray) > 0) {
-			$query = $this->getParameter('query');
-			$relation = explode('.', trim($query));
-			
-			if (count($relation) > 1) {
-				$modelName  = $relation[0];
-				$modelField = $relation[1];
-				
-				if (!empty($modelName)) {
-					$schema = $this->getSchemaByModel($modelName);
-					if (!empty($schema)) {
-						$propelModel = $this->propelSchemaArray[$schema]['classes'][$modelName];
-						
-  						foreach ($propelModel['columns'] as $name => $params) {
-							if (empty($modelField) || stripos($name, $modelField) === 0) {
-								$models[] = array('id' => "{$modelName}.{$name}", 'value' => "{$modelName}.{$name}");
-							}
-	    				}
-					}
-				} else {
-					$m = $this->getModelsByMask($modelName);
-					for ($i = 0, $len = count($m); $i < $len; $i++) {
-						$models[] = array('id' => $m[$i], 'value' => $m[$i]);
-					}
-				}
-			} else {
-				$modelName = $relation[0];
-				$m = $this->getModelsByMask($modelName);
-				for ($i = 0, $len = count($m); $i < $len; $i++) {
-					$models[] = array('id' => $m[$i], 'value' => $m[$i]);
-				}
-			}
-		}
-		
-		return $models;
-	}
-	
-	/**
-	 * Creates field definition from json decoded object
-	 * 
-	 * @param stdClass $f json decoded field definition
-	 * @return array field's definition 
-	 */
-	private function buildFieldDefinition($f) 
-	{
-	    
-		$definition = array();
-		
-		if (!empty($f->type)) $definition['type'] = $f->type;
-		if (!empty($f->default)) $definition['default'] = $f->default;
-		if (!empty($f->autoIncrement)) $definition['autoIncrement'] = $f->autoIncrement;
-		
-		if (!empty($f->key)) {
-			switch ($f->key) {
-				case 'primary':
-					$definition['primaryKey'] = true;
-				    break;
-				    
-				case 'unique':
-					$definition['index'] = 'unique';
-				    break;
-				    
-				case 'index':
-					$definition['index'] = true;
-				    break;
-			}
-		}
-		
-		if (!empty($f->required)) $definition['required'] = $f->required;
-		
-		if (!empty($f->relation)) {
-			$ref = explode('.', $f->relation);
-			$definition['foreignTable'] = $this->getTableNameByModel($ref[0]);
-			$definition['foreignReference'] = $ref[1];
-		}
-		
-		if (!empty($f->size)) $definition['size'] = intval($f->size);
-		if (!empty($f->onDelete)) $definition['onDelete'] = $f->onDelete;
-        
-		return $definition;
-	}
-	
-	/**
-	 * Alters Model structure 
-	 * 
-	 * @param array $fields the new models fields
-	 */
-	private function alterModel(Array $fields)
-	{
-		//remove previous table structure 
-		foreach ($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName] as $k => $v) {
-			if ($k != '_attributes') unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$k]);
-		}
-		
-		//build new structure
-		foreach ($fields as $f) {
-			if (($error = $this->modelFieldVerification($f->name)) !== true) return $error;
-			
-			$definition = $this->buildFieldDefinition($f);
-			$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name] = $definition;
-		}
-        
-		$this->saveSchema();
-		
-        afStudioModelCommandHelper::deploy();
-		
-		return true;
-	}
-	
-	/**
-	 * Alters model's field
-	 * 
-	 * @param string $field the field to update
-	 * @param stdClass $fieldData json decoded new field definition
-	 */
-	private function alterModelField($field, $fieldData)
-	{
-		if (!afStudioModelCommandHelper::isValidName($fieldData->name)) {
-			return "Field name '{$fieldData->name}' is not valid. Field name must contains only characters, digits or '_' and starts from '_' or character";
-		}
-		$fieldDefinition = $this->buildFieldDefinition($fieldData);
-		
-		$this->arraySetKeyValue($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName], $field, $fieldData->name, $fieldDefinition);
-		
-		$this->saveSchema();
-		
-		afStudioModelCommandHelper::deploy();
-		
-		return true;
-	}
-	
-	/**
-	 * Creates model's field
-	 * 
-	 * @param stdClass $fieldData - json decoded field definition
-	 */
-	private function createModelField($fieldData)
-	{
-		if (($error = $this->modelFieldVerification($fieldData->name)) !== true) return $error;
-		
-		$fieldDefinition = $this->buildFieldDefinition($fieldData);
-		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$fieldData->name] = $fieldDefinition;
-		
-		$this->saveSchema();
-		
-		afStudioModelCommandHelper::deploy();
-		
-		return true;
-	}
-	
-	/**
-	 * Utility function.
-	 * Sets specified array key's value and changes its name if $newKey was specified.
-	 * 
-	 * @param array $array the array to set key
-	 * @param string $key to set up
-	 * @param string $newKey the new key name 
-	 * @param mixed $value the key's value to be set
-	 */
-	private function arraySetKeyValue(Array &$array, $key, $newKey, $value) 
-	{
-		$initial = array();
-		foreach ($array as $k => $v) {
-			if ($k != $key) {
-				$initial[$k] = $v;
-			} else {
-				empty($newKey) ? $initial[$key] = $value : $initial[$newKey] = $value;
-			}
-		}
-		
-		$array = $initial;
 	}
 	
 }
