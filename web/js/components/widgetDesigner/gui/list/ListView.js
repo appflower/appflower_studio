@@ -841,16 +841,18 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 			
 		var dn = this.getModelNodeByPath(nodes.DESCRIPTION);
 		
-		var descData = this.getModelNodeValue(dn);
-		if (descData[v]) {
-			dsc.hidden = false;
-			dsc.items.text = descData[v]; 			
+		if (dn) {
+			var descData = this.getModelNodeValue(dn);
+			if (descData[v]) {
+				dsc.hidden = false;
+				dsc.items.text = descData[v]; 			
+			}
+			this.mapCmpToModel(descData[mpr], this.createMapper(function(){
+				return this.getTopToolbar().getComponent('desc');
+			}));
+			dsc[mpr] = descData[mpr];
 		}
-
-		this.mapCmpToModel(descData[mpr], this.createMapper(function(){
-			return this.getTopToolbar().getComponent('desc');
-		}));
-		dsc[mpr] = descData[mpr];
+		
 		
 		return dsc;
 	},
