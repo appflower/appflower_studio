@@ -91,26 +91,26 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
         if ($bExecuted) {
             if ($stm->rowCount() > 0) {
                 $total = $stm->rowCount();
-
+                
                 // Limiting query
                 $query_limited = $this->limiting($query, $offset, $limit);
-
+                
                 $stm = $this->dbh->prepare($query_limited);
                 $stm->execute();
-
+                
                 if ($stm->rowCount() > 0) {
                     $data = $stm->fetchAll(PDO::FETCH_ASSOC);
                     $meta = $this->getFields($data);
-
-                    $response->success(true)->data($meta, $data, $total)->query($query);
+                    
+                    $response->data($meta, $data, $total);
                 } else {
-                    $response->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
-                }
+                    $response->data(array(), array(), 0)->message('Nothing has been found');
+                }   
             } else {
-                $response->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+                $response->data(array(), array(), 0)->message('Nothing has been found');
             }
             
-            return $response;
+            return $response->success(true)->query($query);
         } 
         
         return $response->success(false)->message($stm->errorInfo())->query($query);
@@ -127,11 +127,18 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
      */
     protected function processQueryUpdate($query, $offset, $limit)
     {
+        $response = afResponseHelper::create();
+        
         $stm = $this->dbh->prepare($query);
+        if ($stm->execute()) {
+            if (preg_match('/(?:update|delete\s{1,}from|truncate|insert\s{1,}into)\s{1,}(.*?)(?:\s|$)/si', $query, $matched)) {
+               return $this->processQuerySelect("SELECT * FROM {$matched[1]}", 0, 50);
+            }
+            
+            return $response->success(true)->data(array(), array(), 0)->message('Query successfully executed')->query($query);
+        }
         
-        if ($stm->execute()) return afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Query successfully executed')->query($query);
-        
-        return afResponseHelper::create()->success(false)->message($stm->errorInfo())->query($query);
+        return $response->success(false)->message($stm->errorInfo())->query($query);
     }
     
     /**
@@ -151,6 +158,10 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
         $response = afResponseHelper::create();
         if ($bExecuted) {
             afStudioCommand::process('model', 'updateSchemas');
+            
+            if (preg_match('/(?:alter\s{1,}table)\s{1,}(.*?)(?:\s|$)/si', $query, $matched)) {
+               return $this->processQuerySelect("SELECT * FROM {$matched[1]}", 0, 50);
+            }
             
             return $response->success(true)->data(array(), array(), 0)->message('Query successfully executed. Models regenerated')->query($query);
         } 

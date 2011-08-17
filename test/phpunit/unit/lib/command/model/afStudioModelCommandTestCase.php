@@ -137,9 +137,19 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
         $response = afStudioCommand::process('model', 'delete', $this->getParameters());
         $this->assertArrayHasKey('success', $response, "response from command delete should contains 'success'");
         $this->assertTrue($response['success'], "response should be true - model should be deleted");
-        
+    }
+    
+    /**
+     * Testing delete non existen model
+     *
+     * @depends testDeleteModel
+     * @expectedException afStudioModelCommandModificatorException
+     * 
+     * @author Sergey Startsev
+     */
+    public function testDeleteNonExistenModel() 
+    {
         $response = afStudioCommand::process('model', 'delete', $this->getParameters());
-        $this->assertFalse($response['success'], "response should be false - model should be already deleted");
     }
     
     /**

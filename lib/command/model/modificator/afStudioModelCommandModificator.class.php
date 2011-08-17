@@ -90,12 +90,12 @@ class afStudioModelCommandModificator
         $response = afResponseHelper::create();
         
         if (!afStudioModelCommandHelper::isValidName($this->modelName)) {
-			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"')->asArray();
+			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
             // return false;
 		}
 		
 		if (!is_null($this->getSchemaByModel($this->modelName))) {
-		    return $response->success(false)->message("Model <b>{$this->modelName}</b> already exists")->asArray();
+		    return $response->success(false)->message("Model <b>{$this->modelName}</b> already exists");
 		}
 		
 		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;
