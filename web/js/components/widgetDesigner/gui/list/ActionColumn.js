@@ -29,7 +29,7 @@ afStudio.wd.list.ActionColumn = Ext.extend(Ext.grid.ActionColumn, {
             meta.css += ' x-action-col-cell';
             for (i = 0, len = items.length; i < len; i++) {
                 item = items[i];
-                v += '<img width="16" alt="' + me.altText + '" src="' + (item.icon || Ext.BLANK_IMAGE_URL) +
+                v += '<img width="16" alt="' + item.altText + '" src="' + (item.icon ? item.icon : (Ext.isEmpty(item.iconCls) ? '' : Ext.BLANK_IMAGE_URL)) +
                     '" class="x-action-col-icon x-action-col-' + String(i) + ' ' + (item.iconCls || '') +
                     ' ' + (Ext.isFunction(item.getClass) ? item.getClass.apply(item.scope||this.scope||this, arguments) : '') + '"' +
                     ((item.tooltip) ? ' ext:qtip="' + item.tooltip + '"' : '') + ' />';

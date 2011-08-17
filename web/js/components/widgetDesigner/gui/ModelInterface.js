@@ -15,6 +15,7 @@ afStudio.wd.ModelInterface = (function() {
 	var modelNodeMapper = '_model_';
 	
 	/**
+	 * The key name of model node's data-value.
 	 * @constant modelNodeValue
 	 */
 	var modelNodeValue = 'value';
@@ -29,6 +30,9 @@ afStudio.wd.ModelInterface = (function() {
 			return modelNodeMapper;
 		},
 		
+		/**
+		 * Returns modelNodeValue constant.
+		 */
 		getValueKey : function() {
 			return modelNodeValue;
 		},
@@ -36,7 +40,7 @@ afStudio.wd.ModelInterface = (function() {
 		/**
 		 * Returns model node based on its relative path from the root node.
 		 * Path is based on node's id or partial id (tag name without trailing "-xxx", where xxx are numbers).
-		 * Node searching first is based on exact id if failed used id's partial version.
+		 * Node searching first is based on exact id if failed is used id's partial version.
 		 * For example: <code>i:datasource/i:method/i:param</code> returns parameter model node.
 		 * @param {String} nodePath The node path
 		 * @return {Node} node or null if searching failed
@@ -60,7 +64,7 @@ afStudio.wd.ModelInterface = (function() {
 		
 		/**
 		 * Returns model node.
-		 * @param {String/Node} node The node id or node's relative path 
+		 * @param {String|Node} node The node id or node's relative path 
 		 * @return {Node} model node 
 		 */
 		getModelNode : function(node) {
@@ -74,7 +78,7 @@ afStudio.wd.ModelInterface = (function() {
 		
 		/**
 		 * Returns model node properties + model node's id in modelNodeMapper property {@link #getModelNodeMapper}.
-		 * @param {String/Node} node
+		 * @param {String|Node} node
 		 * @return {Object} properties
 		 */
 		getModelNodeProperties : function(node) {
@@ -87,7 +91,7 @@ afStudio.wd.ModelInterface = (function() {
 	
 		/**
 		 * Returns model node data-value(_content).
-		 * @param {String/Node} node
+		 * @param {String|Node} node
 		 * @return {Object} value + model node's id in modelNodeMapper property {@link #getModelNodeMapper} 
 		 */
 		getModelNodeValue : function(node) {
@@ -100,9 +104,23 @@ afStudio.wd.ModelInterface = (function() {
 		},
 		
 		/**
+		 * Returns node's property editor field.
+		 * @param {Node} node The model node
+		 * @param {String} property The property which type's editor is returned
+		 * @param {Object} (Optional) edCfg The editor configuration object
+		 * @return {Ext.form.Field} editor
+		 */
+		getPropertyEditor : function(node, property, edCfg) {
+			var edCfg = edCfg || {},
+				p = node.getProperty(property);
+			return p.type.editor(edCfg);
+		},
+		
+		/**
 		 * Checks model's node existence.
-		 * @param {String/Node} node The model id or the model node object
-		 * @param {Boolean} (Optional) notExact Checking not exact match. (defaults to false)
+		 * @param {String|Node} node The model id or the model node object
+		 * @param {Boolean} (Optional) notExact Checking not exact match, 
+		 * removes "-x" part, where x is a number from ID. (defaults to false)
 		 * @return {Boolean}
 		 */
 		isModelNodeExists : function(node, notExact) {
@@ -117,8 +135,9 @@ afStudio.wd.ModelInterface = (function() {
 		
 		/**
 		 * Returns the child nodes properties of specified model node. 
-		 * @param {String/Node} parent The parent model node, ID or object
-		 * @param {String/Node} child The child node tag name or child node object
+		 * Children nodes are filtered by tag name. 
+		 * @param {String|Node} parent The parent model node, ID or object
+		 * @param {String|Node} child The child node's tag name or node object
 		 * @return {Array} child nodes properties
 		 */
 		getModelChildrenProperties : function(parent, child) {
@@ -140,7 +159,7 @@ afStudio.wd.ModelInterface = (function() {
 		
 		/**
 		 * Checks model node existence and properties status.
-		 * @param {String/Node} node The model id or the model node object
+		 * @param {String|Node} node The model id or the model node object
 		 * @param {Object} st The model node status object, key/value pairs of properties
 		 * @return {Boolean} returns true if the node is present in the model with properties whose values equal to status object
 		 */
@@ -163,7 +182,7 @@ afStudio.wd.ModelInterface = (function() {
 		},
 		
 		/**
-		 * Returns actions properties.
+		 * Returns action nodes properties.
 		 * @return {Array} actions properties
 		 */
 		getActions : function() {
@@ -172,7 +191,7 @@ afStudio.wd.ModelInterface = (function() {
 		},
 		
 		/**
-		 * Returns more-actions properties.
+		 * Returns more-action nodes properties.
 		 * @return {Array} actions properties
 		 */
 		getMoreActions : function() {

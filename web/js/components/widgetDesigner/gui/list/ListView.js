@@ -3,8 +3,8 @@ Ext.ns('afStudio.wd.list');
 /**
  * GUI List View.
  * 
- * @dependency
- * Model nodes: {@link afStudio.ModelNode}
+ * @dependency {@link afStudio.data.Types} model types
+ * @dependency {@link afStudio.ModelNode} model nodes
  * 
  * @class afStudio.wd.list.ListView
  * @extends Ext.grid.GridPanel
@@ -15,9 +15,6 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
 	 * The associated with this tree controller.
 	 */
-
-	//TODO should be deleted after ListGridView cleaning
-	columnName : 'newcolumn',
 	
 	EXEC_ADD : 'add',
 	
@@ -34,11 +31,10 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	_beforeInitComponent : function() {
 		var _me = this,
-			nodes = afStudio.ModelNode,
-			vm = this.controller.viewDefinition.getData();
-
+			nodes = afStudio.ModelNode;
+		
 		/**
-		 * model->component associations holder
+		 * Model->Component associations holder.
 		 * @property modelMapper
 		 * @type {Object}
 		 */
@@ -84,7 +80,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	//eo _beforeInitComponent	
 	
 	/**
-	 * ExtJS template method
+	 * Template method
 	 * @private
 	 */
 	initComponent : function() {
@@ -92,7 +88,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
 		
-		afStudio.wd.list.SimpleListView.superclass.initComponent.apply(this, arguments);
+		afStudio.wd.list.ListView.superclass.initComponent.apply(this, arguments);
 		
 		this._afterInitComponent();
 	},
@@ -109,6 +105,42 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	//eo _afterInitComponent
 	
 	/**
+	 * Template method
+	 * @private
+	 */
+	afterRender : function() {
+		afStudio.wd.list.ListView.superclass.afterRender.call(this);
+
+		//sets header visibility mode
+		this.header.setVisibilityMode(Ext.Element.DISPLAY);
+		if (!this.title) {
+			this.hideHeader();
+		}
+	},
+	
+	/**
+	 * Sets & registers view's title.
+	 * @protected
+	 * @param {Node} nTitle
+	 */
+	setHeaderTitle : function(nTitle) {
+		var v = this.getValueKey(),
+			vTitle = this.getModelNodeValue(nTitle);
+		this.setTitle(vTitle[v] ?  vTitle[v] : '&#160;');
+		this.mapCmpToModel(nTitle.id, this);
+	},
+	
+	/**
+	 * Hides view's header {@link #header}
+	 * @protected
+	 */
+	hideHeader : function() {
+		var h = this.getResizeEl().getHeight();
+		this.header.hide();
+		this.setHeight(h);
+	},
+	
+	/**
 	 * After construction view configuration
 	 * @protected
 	 */
@@ -121,10 +153,10 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		    ma = a.getComponent('more').menu;
 		
 		//title    
-		var nTitle = this.getModelNodeByPath(nodes.TITLE),
-			vTitle = this.getModelNodeValue(nTitle);
-		this.setTitle(vTitle[v]);
-		this.mapCmpToModel(nTitle.id, this);
+		var nTitle = this.getModelNodeByPath(nodes.TITLE);
+		if (nTitle) {
+			this.setHeaderTitle(nTitle);
+		}
 		
 		//top toolbar
 		var nFields = this.getModelNode(nodes.FIELDS);
@@ -172,37 +204,16 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		
 		var _me = this;
 		
-		this.addEvents(
-			/**
-			 * @event 'changeColumnPosition' Fires when a column was moved from his previous position.
-			 * @param {Ext.grid.Column} clm The column being moved.
-			 * @param {Number} oldPos The column's previous(old) position.
-			 * @param {Number} newPos The column's new position where it was moved.
-			 */
-			'changeColumnPosition',
-			
-			/**
-			 * @event 'changeColumnLabel' Fires when a column's header was modified 
-			 * @param {Ext.grid.Column} clm The column which header was modified.
-			 * @param {Number} clmIndex The column index inside {@link Ext.grid.ColumnModel}.
-			 * @param {String} value The header's new value.
-			 */
-			'changeColumnLabel',
-			
-			/**
-			 * @event 'deleteColumn' Fires after a column was deleted
-			 * @param {String} clmName The colomn <tt>name</tt> attribute
-			 */
-			'deleteColumn'
-		);
-		
 		this.on({
 			scope: _me,
 			
 			contextmenu: function(e) {
 				e.preventDefault();
 			},
+			
 			columnmove: _me.onColumnMove,
+			
+			columnresize: _me.onColumnResize,
 			
             /**
              * @relayed controller
@@ -225,32 +236,39 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	//eo initEvents
 	
 	/**
-	 * Returns executor method.
+	 * Returns executor method. Executors {@link afStudio.wd.list.ModelReflector}
 	 * @protected
 	 * @param {String} type The executor type
-	 * @param {String} tag The node's tag name
+	 * @param {Node} node The model node
 	 * @param {String} (Optional) property The node's property name
 	 * @return {Function} executor or null if executor is not exist
 	 */
-	getExecutor : function(type, tag, property) {
-		var line = tag.replace(/^i:(\w+)/i, '$1').ucfirst(),
-			exe  = String.format('execute{0}{1}{2}', type.ucfirst(), line.ucfirst(), property ? property.ucfirst() : '');
+	getExecutor : function(type, node, property) {
+		//TODO centralize this code snippet
+		var line = node.tag.replace(/^i:(\w+)/i, '$1').ucfirst();
 		
-		console.log('executor', exe);
+		if (Ext.isObject(node) && ['Action', 'Description'].indexOf(line) != -1) {
+			var pt = node.parentNode.tag.replace(/^i:(\w+)/i, '$1').ucfirst();
+			line = pt + line;
+		}
+		var exec = String.format('execute{0}{1}{2}', type.ucfirst(), line, property ? property.ucfirst() : '');
 			
-		return Ext.isFunction(this[exe]) ? this[exe].createDelegate(this) : null;
+		console.log('executor', exec);
+			
+		return Ext.isFunction(this[exec]) ? this[exec].createDelegate(this) : null;
 	},
 	
 	/**
 	 * Returns grid's component by a model.
 	 * @public
 	 * @interface
-	 * @param {String/afStudio.model.Node} node The model node or its id
+	 * @param {String|Node} node The model node or model node's id
+	 * @param {String} property The model node's property
 	 * @return {Ext.Component} node
 	 */
-	getCmpByModel : function(node) {
+	getCmpByModel : function(node, property) {
 		var nId = Ext.isString(node) ? node : node.id;
-		var mapping = this.modelMapper[nId];
+		var mapping = this.modelMapper[nId] || (property ? this.modelMapper[nId + '#' + property] : false);
 		if (mapping) {
 			return  Ext.isFunction(mapping) ? mapping() : mapping;
 		}
@@ -281,7 +299,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	onModelNodeAppend : function(ctr, parent, node, index) {
 		console.log('@view [ListView] modelNodeAppend');
-		var executor = this.getExecutor(this.EXEC_ADD, node.tag);
+		var executor = this.getExecutor(this.EXEC_ADD, node);
 		if (executor) {
 			executor(node, index);
 		}
@@ -297,7 +315,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	onModelNodeInsert : function(ctr, parent, node, refNode) {
 		console.log('@view [ListView] modelNodeInsert');
 		var refCmp = this.getCmpByModel(refNode),
-			executor = this.getExecutor(this.EXEC_INSERT, node.tag);
+			executor = this.getExecutor(this.EXEC_INSERT, node);
 		if (executor) {
 			executor(node, refNode, refCmp);
 		}
@@ -313,7 +331,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	onModelNodeRemove : function(ctr, parent, node) {
     	console.log('@view [ListView] modelNodeRemove');
 		var vCmp = this.getCmpByModel(node),
-			executor = this.getExecutor(this.EXEC_REMOVE, node.tag);
+			executor = this.getExecutor(this.EXEC_REMOVE, node);
 		if (executor) {
 			executor(node, vCmp);
 		}
@@ -328,23 +346,50 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	onModelPropertyChanged : function(node, p, v) {
 		console.log('@view [ListView] modelPropertyChanged');
-		var vCmp = this.getCmpByModel(node),
-			executor = this.getExecutor(this.EXEC_UPDATE, node.tag, p);
+		var vCmp = this.getCmpByModel(node, p),
+			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
 		if (executor) {
 			executor(node, vCmp, p, v);
 		}
 	},
 	
 	/**
-	 * Handler of <u>columnmove</u> event.
+	 * <u>columnmove</u> event listener.
+	 * Details {@link Ext.grid.GridPanel#columnmove}
 	 * @param {Number} oldIndex
 	 * @param {Number} newIndex
 	 */
 	onColumnMove : function(oldIndex, newIndex) {
+		var cm = this.getColumnModel();
+		
 		if (oldIndex != newIndex) {
-			var clm = this.getColumnModel().config[newIndex];
-			this.fireEvent('changeColumnPosition', clm, oldIndex, newIndex);	
+			var clm = cm.config[newIndex],
+				node = this.getModelByCmp(clm),
+				parent = node.parentNode;
+				
+			if (this.hasCheckboxSelModel()) {
+				oldIndex--;
+				newIndex--;
+			}
+			
+			var idx = (oldIndex < newIndex) ? newIndex + 1 : newIndex;
+			var target = parent.item(idx);
+			
+			parent.insertBefore(node, target);
 		}
+	},
+	
+	/**
+	 * <u>columnresize</u> event listener.
+	 * Details {@link Ext.grid.GridPanel#columnresize}
+	 * @param {Number} idx
+	 * @param {Number} w
+	 */
+	onColumnResize : function(idx, w) {
+		var cm = this.getColumnModel(),
+			node = this.getModelByCmp(cm.config[idx]);
+		
+		node.setProperty('width', w);
 	},
 	
 	/**
@@ -580,20 +625,21 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Object} column {@link Ext.grid.Column} init object
 	 */
 	createColumn : function(clm, idx) {
-		var mpr = this.getModelNodeMapper();
+		var mpr = this.getModelNodeMapper(),
+			clmId = clm[mpr];
 		
-		this.mapCmpToModel(clm[mpr], this.createMapper(this.columnMapper, clm[mpr]));
+		this.mapCmpToModel(clm[mpr], this.createMapper(this.columnMapper, clmId));
 		
 		var column = {
+			id: clmId,
 			header:   clm.label,
-			name:     clm.name,
 			width:    clm.width,
 			hidden:   clm.hidden,
 			hideable: clm.hideable
 		};
 		
 		//add model node mapping
-		column[mpr] = clm[mpr];
+		column[mpr] = clmId;
 		
 		return column;
 	},
@@ -613,7 +659,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @param {Array} actions The actions definition
 	 * @return {Object} action column {Ext.grid.ActionColumn} init object
 	 */
-	createRowActionColumn : function(actions) {			
+	createRowActionColumn : function(actions) {
 		var	_me = this,
 			aWidth = 18, //default row action width
 			actClmWidth = 50; //default action column width
@@ -652,13 +698,13 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		var rowAction = {
 			name: action.name,
 			iconCls: action.iconCls,
-			icon: action.icon,				
+			icon: action.icon,
 			altText: action.text ? action.text : action.name,
 			tooltip: action.tooltip ? action.tooltip : action.name
 		};
 		
 		//add model node mapping
-		rowAction[mpr] = action[mpr];		
+		rowAction[mpr] = action[mpr];
 		
 		return rowAction;
 	},

@@ -10,9 +10,43 @@ afStudio.wd.list.ModelReflector = (function() {
 	
 	return {
 		
+		executeAddTitle : function(node) {
+			console.log('@reflector [ListView] executeAddTitle', arguments);
+			this.setHeaderTitle(node);
+			this.header.show();
+			if (this.ownerCt && Ext.isFunction(this.ownerCt.doLayout)) {
+				this.ownerCt.doLayout();
+			}
+		},
+		executeRemoveTitle : function(node, cmp) {
+			console.log('@reflector [ListView] executeRemoveTitle', arguments);
+			this.unmapCmpFromModel(node);
+			this.hideHeader();
+		},
+		/**
+		 * Updates title's value(<u>_content</u>).
+		 */		
+		executeUpdateTitle_content : function(node, cmp, p, v) {
+			console.log('@reflector [ListView] executeUpdateTitle_content', arguments);
+			cmp.setTitle(v.trim() ? v : '&#160;');
+		},
+		
+		executeAddRootDescription : function(node) {
+			var dsc = this.getTopToolbar().getComponent('desc');
+			dsc.show();
+		},
+		executeRemoveRootDescription : function(node, cmp) {
+			var dsc = this.getTopToolbar().getComponent('desc');
+			dsc.hide();
+			this.doLayout();
+		},
+		executeUpdateRootDescription_content : function(node, cmp, p, v) {
+			var cmp = this.getTopToolbar().getComponent('desc');
+			cmp.get(0).setText(v.trim() ? v : '&#160;');
+		},
+		
 		/**
 		 * Checks if the selection model {@link #selModel} is check-box.
-		 * @private
 		 * @return {Boolean}
 		 */
 		hasCheckboxSelModel : function() {
@@ -31,11 +65,12 @@ afStudio.wd.list.ModelReflector = (function() {
 		},
 		
 		/**
-		 * Adds new column and associate it with passed in modal.
+		 * Adds new column and associates it with passed in modal.
 		 * @protected
 		 * @param {Node} node The model node, this node will be associated with newly created column
 		 * @param {Number} idx The column being created index inside {@link Ext.grid.ColumnModel}
-		 * @param {Boolean} (Optional) insert The flag to avoid idx incrementation in executing insertion culumn operation with CheckboxSelectionModel.
+		 * @param {Boolean} (Optional) insert The flag to avoid idx incrementation in 
+		 * executing insertion culumn operation when CheckboxSelectionModel is used.
 		 * (defaults to false)  
 		 */
 		executeAddColumn : function(node, idx, insert) {
@@ -44,7 +79,6 @@ afStudio.wd.list.ModelReflector = (function() {
 			var cm = this.getColumnModel(),
 				pColumn = this.getModelNodeProperties(node),
 				oColumn = this.createColumn(pColumn, idx);
-				
 			idx = !insert && this.hasCheckboxSelModel() ? ++idx : idx;
 			cm.config.splice(idx, 0, oColumn);
 			cm.setConfig(cm.config);
@@ -59,8 +93,7 @@ afStudio.wd.list.ModelReflector = (function() {
 		executeRemoveColumn : function(node, clm) {
 			console.log('@reflector [ListView] executeRemoveColumn', node, clm);
 			
-			var m = this.getModelNodeMapper(),
-				cm = this.getColumnModel(),
+			var cm = this.getColumnModel(),
 				idx = clm[1];
 			this.unmapCmpFromModel(node);
 			cm.config.splice(idx, 1);
@@ -77,14 +110,70 @@ afStudio.wd.list.ModelReflector = (function() {
 		executeInsertColumn : function(node, refNode, refClm) {
 			console.log('@reflector [ListView] executeInsertColumn', node, refNode, refClm);
 			
-			var m = this.getModelNodeMapper(),
-				cm = this.getColumnModel(),
-				idx = refClm[1];
+			var idx = refClm[1];
 			this.executeAddColumn(node, idx, true);	
 		},
 		
 		/**
-		 * Updates fields' select property => updates grid's selection model  
+		 * Updates column's <u>label</u> property.
+		 * @param {Node} node The column model node
+		 * @param {Array} clm The column which label being updated. More details {@link #columnMapper}
+		 * @param {String} p The property name
+		 * @param {String} v The label property value to be set
+		 */
+		executeUpdateColumnLabel : function(node, clm, p, v) {
+			console.log('@reflector [ListView] executeUpdateColumnLabel', arguments);
+			
+			var cm = this.getColumnModel(),
+				idx = clm[1];
+			cm.setColumnHeader(idx, v);
+		},
+		/**
+		 * Updates column's <u>hidden</u> property.
+		 */
+		executeUpdateColumnHidden : function(node, clm, p, v) {
+			console.log('@reflector [ListView] executeUpdateColumnHidden', arguments);
+			
+			var cm = this.getColumnModel(),
+				idx = clm[1];
+			cm.setHidden(idx, v);
+		},
+		/**
+		 * Updates column's <u>hideable</u> property.
+		 */
+		executeUpdateColumnHideable : function(node, clm, p, v) {
+			console.log('@reflector [ListView] executeUpdateColumnHideable', arguments);
+			
+			var cm = this.getColumnModel(),
+				idx = clm[1];
+			cm.config[idx].hideable = v;
+			cm.setConfig(cm.config);
+		},
+		/**
+		 * Updates column's <u>resizable</u> property.
+		 */
+		executeUpdateColumnResizable : function(node, clm, p, v) {
+			console.log('@reflector [ListView] executeUpdateColumnResizable', arguments);
+			
+			var cm = this.getColumnModel(),
+				idx = clm[1];
+			cm.config[idx].fixed = !v;
+			cm.setConfig(cm.config);
+		},
+		/**
+		 * Updates column's <u>width</u> property.
+		 */
+		executeUpdateColumnWidth : function(node, clm, p, v) {
+			console.log('@reflector [ListView] executeUpdateColumnWidth', arguments);
+			
+			var cm = this.getColumnModel(),
+				idx = clm[1];
+			cm.config[idx].width = v;
+			cm.setConfig(cm.config);
+		},
+		
+		/**
+		 * Updates fields' <u>select</u> property => updates grid's selection model  
 		 * @protected
 		 * @param {Node} node The fields model node
 		 * @param {Object} cmp The component associated with model node
@@ -92,7 +181,8 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {Mixed} v The "select" property value
 		 */
 		executeUpdateFieldsSelect : function(node, cmp, p, v) {
-			console.log('@reflector [ListView] executeUpdateFieldsSelect', node, cmp, p, v);
+			console.log('@reflector [ListView] executeUpdateFieldsSelect', arguments);
+			
 			var cm = this.getColumnModel();
 			if (v) {
 				var cbsm = new Ext.grid.CheckboxSelectionModel();
@@ -106,24 +196,73 @@ afStudio.wd.list.ModelReflector = (function() {
 				cm.setConfig(cm.config);
 			}
 		},
-		
 		/**
-		 * Remove action executor dispatcher.
+		 * Updates fields' <u>exportable</u> property.
 		 */
-		executeRemoveAction : function(node, act) {
-			var executor = this.getExecutor(this.EXEC_REMOVE, node.parentNode.tag);
-			if (executor) {
-				executor(node, act);
+		executeUpdateFieldsExportable : function(node, cmp, p, v) {
+			console.log('@reflector [ListView] executeUpdateFieldsExportable', arguments);
+			v ? cmp.show() : cmp.hide();
+			this.updateActionBarVisibilityState();
+		},
+		/**
+		 * Updates fields' <u>selectable</u> property.
+		 */
+		executeUpdateFieldsSelectable : function(node, cmp, p, v) {
+			console.log('@reflector [ListView] executeUpdateFieldsSelectable', arguments);
+			var	bSel = cmp[0], bDesel = cmp[1];					
+			v ? (bSel.enable(), bDesel.enable()) : (bSel.disable(), bDesel.disable());
+			this.updateActionBarVisibilityState();
+		},
+		/**
+		 * Updates fields' <u>expandButton</u> property.
+		 */
+		executeUpdateFieldsExpandButton : function(node, cmp, p, v) {
+			console.log('@reflector [ListView] executeUpdateFieldsExpandButton', arguments);
+			v ? cmp.show() : cmp.hide();
+			this.updateActionBarVisibilityState();
+		},
+		/**
+		 * Updates fields' <u>pager</u> property.
+		 */
+		executeUpdateFieldsPager : function(node, cmp, p, v) {
+			console.log('@reflector [ListView] executeUpdateFieldsPager', arguments);
+			v ? cmp.show() : cmp.hide();
+			this.doLayout();
+		},
+
+		/**
+		 * Adds a row-action to actions column and associates it with passed in modal.
+		 * @protected
+		 * @param {Node} node The model node, this node will be associated with newly created row-action
+		 * @param {Number} idx The row-action index inside row-actions column {@link afStudio.wd.list.ActionColumn}
+		 */
+		executeAddRowactionsAction : function(node, idx) {
+			console.log('@reflector [ListView] executeAddRowactionsAction', node, idx);
+			
+			var cm = this.getColumnModel(),
+			  	ac = cm.getColumnById('action-column'),
+				pAction = this.getModelNodeProperties(node);
+				
+			if (!ac) {
+				ac = this.createRowActionColumn([pAction]);
+				cm.config.push(ac);
+				cm.setConfig(cm.config);
+			} else {
+				var oAction = this.createRowAction(pAction, idx);
+				ac.items.splice(idx, 0, oAction);
 			}
+			this.view.refresh();
 		},
 		
 		/**
 		 * Removes row-action.
+		 * @protected
 		 * @param {Node} The model node to which removing action is associated
 		 * @param {Array} act The action being removed. More details {@link #rowActionMapper}
 		 */
-		executeRemoveRowactions : function(node, act) {
-			console.log('@reflector [ListView] executeRemoveRowactions', node, act);
+		executeRemoveRowactionsAction : function(node, act) {
+			console.log('@reflector [ListView] executeRemoveRowactionsAction', node, act);
+			
 			var cm = this.getColumnModel(),
 			  	ac = cm.getColumnById('action-column'),
 			  	idx = act[1];
@@ -134,6 +273,61 @@ afStudio.wd.list.ModelReflector = (function() {
 				cm.setConfig(cm.config);
 			}
 			this.view.refresh();
-		}		
+		},
+		
+		/**
+		 * Inserts row-action before the refCmp row-action(associated with refNode).
+		 * @protected
+		 * @param {Node} node The model node, is the source for newly created row-action which is being inserted
+		 * @param {Node} refNode The model node associated with the row-action before which insertion will be done
+		 * @param {Array} refCmp The row-action before which insertion take place. More details {@link #rowActionMapper}
+		 */
+		executeInsertRowactionsAction : function(node, refNode, refCmp) {
+			console.log('@reflector [ListView] executeInsertRowactionsAction', node, refNode, refCmp);
+			
+			var idx = refCmp[1];
+			this.executeAddRowactionsAction(node, idx);	
+		},
+		
+		/**
+		 * Updates rowaction's <u>name</u> property.
+		 */
+		executeUpdateRowactionsActionName : function(node, cmp, p, v) {
+			var act = cmp[0],
+				oldValue = act.name;
+			act.name = v;
+			act.tooltip = (Ext.isEmpty(act.tooltip) || act.tooltip == oldValue) ? v : act.tooltip;
+			act.altText = (Ext.isEmpty(act.altText) || act.altText == oldValue) ? v : act.altText;
+			this.view.refresh();
+		},
+		/**
+		 * Updates rowaction's <u>iconCls</u> property.
+		 */
+		executeUpdateRowactionsActionIconCls : function(node, cmp, p, v) {
+			cmp[0].iconCls = v;
+			this.view.refresh();
+		},
+		/**
+		 * Updates rowaction's <u>icon</u> property.
+		 */
+		executeUpdateRowactionsActionIcon : function(node, cmp, p, v) {
+			cmp[0].icon = v;
+			this.view.refresh();
+		},
+		/**
+		 * Updates rowaction's <u>text</u> property.
+		 */
+		executeUpdateRowactionsActionText : function(node, cmp, p, v) {
+			cmp[0].altText = v ? v : cmp[0].name;
+			this.view.refresh();
+		},
+		/**
+		 * Updates rowaction's <u>tooltip</u> property.
+		 */
+		executeUpdateRowactionsActionTooltip : function(node, cmp, p, v) {
+			cmp[0].tooltip = v ? v : cmp[0].name;					
+			this.view.refresh();
+		}
+		
 	};
 })();

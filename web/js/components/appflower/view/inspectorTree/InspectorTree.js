@@ -25,9 +25,11 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.enableDD = true;
 		
 		this.root = {
-			name: String.format("{0} ({1}-{2})", view.uri, view.place, view.placeType),
 			expanded: true,
-			modelNode: root
+			modelNode: root,
+			properties: {
+				name: String.format("{0} ({1}-{2})", view.uri, view.place, view.placeType)
+			}
 		};
 		
 		var l = this.loader;
@@ -260,7 +262,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		console.log('@view [InspectorTree] "modelPropertyChanged"', node, p, v);
 		var viewNode = this.getCmpByModel(node);
 		if (viewNode.labelProperty == p) {
-			viewNode.setText(v);
+			viewNode.setText(Ext.value(v, '(none)'));
 		}
 	},	
 	
@@ -285,8 +287,10 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @protected 
 	 */
 	onNodeDragOver : function(de) {
-		var n = de.dropNode, p = de.point, t = de.target;
-		if (p == 'append' || (n.modelNode.tag != t.modelNode.tag)) {
+		var n = de.dropNode, p = de.point, t = de.target,
+			dm = n.modelNode, 
+			tm = t.modelNode;
+		if (p == 'append' || (dm.tag != tm.tag) || (dm.parentNode != tm.parentNode)) {
 			return false;
 		}
 	},

@@ -85,12 +85,7 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
      * @return {Object} properties
      */
     getModelProperties : function(m) {
-    	var ps = m.getPropertiesHash();
-    	//remove icon & iconCls properties to prevent overlapping with the same TreeNode's  attributes
-    	delete 	ps.icon;
-		delete 	ps.iconCls;
-
-    	return ps;
+		return m.getPropertiesHash();
     },
     
     /**
@@ -99,7 +94,7 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
      * @param {afStudio.view.inspector.TreeNode} node The tree's node which modelNode is processed
      */
 	processData : function(node) {
-        if (this.fireEvent("beforeload", this, node) !== false) {    	
+        if (this.fireEvent("beforeload", this, node) !== false) {
         	var mn = node.modelNode;
         	
         	if (mn instanceof afStudio.model.Node) {
@@ -108,11 +103,11 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
 				Ext.each(mn.childNodes, function(m) {
 					var leaf = m.nodeTypes.length > 0 ? false : true;
 					
-	        		var attr = Ext.apply(
-	        			{
-	        				modelNode: m,
-	        				leaf: leaf
-	        			}, this.getModelProperties(m));
+	        		var attr = {
+        				modelNode: m,
+        				leaf: leaf,
+        				properties: this.getModelProperties(m)
+	        		};
 	        			
 	        		var n = this.createNode(attr);
 	                if (n) {

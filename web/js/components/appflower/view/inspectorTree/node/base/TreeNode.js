@@ -14,6 +14,9 @@ afStudio.view.inspector.TreeNode = function(attr) {
 		delete attr.modelNode;
 	}
 	
+	this.properties = attr.properties;
+	delete attr.properties;
+	
 	this.initNode(attr);
 	
 	afStudio.view.inspector.TreeNode.superclass.constructor.call(this, attr);
@@ -50,7 +53,7 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	/**
 	 * The {@link #modelNode} property's name which TreeNode uses to specify 
 	 * its {@link #text} property and text attribute (defaults to "name").
-	 * This property should be used to change the text("label") of tree node.   
+	 * This property should be used to change the text("label") of a tree node.   
 	 * @property
 	 * @type {String}
 	 */
@@ -102,12 +105,12 @@ Ext.extend(afStudio.view.inspector.TreeNode, Ext.tree.TreeNode, {
 	 */
 	resolveNodeText : function() {
 		var attr = this.attributes,
+			ps = this.properties,
 			lp = this.labelProperty;
 		
-		if (Ext.isDefined(attr[lp])) {
-			this.text = attr.text = attr[lp];
+		if (Ext.isDefined(ps[lp])) {
+			this.text = attr.text = ps[lp];
 		} else {
-			this.labelProperty = 'tag';
 			this.text = attr.text = this.modelNode.tag;
 		}
 	},

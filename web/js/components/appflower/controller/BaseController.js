@@ -321,7 +321,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 			if (e instanceof afStudio.controller.error.ControllerError) {
 				throw e;
 			} else {
-    			throw new afStudio.controller.error.ControllerError('init-view');
+				throw e;
+//    			throw new afStudio.controller.error.ControllerError('init-view');
 			}
     	}
     },

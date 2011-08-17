@@ -8,6 +8,7 @@ Ext.ns('afStudio.wd.list');
  */
 afStudio.wd.list.ListModelInterface = (function() {
 	
+	//shortcut to nodes list
 	var nodes = afStudio.ModelNode;
 	
 	return {

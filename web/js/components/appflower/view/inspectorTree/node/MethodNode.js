@@ -5,13 +5,8 @@
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.view.inspector.MethodNode = Ext.extend(afStudio.view.inspector.ContainerNode, {
-	/**
-	 * Setting correct node's label. 
-	 * @override
-	 */
-	initNode : function(attr) {
-		attr.name = this.modelNode.tag;
-	}
+
+	labelProperty : 'tag'
 });
 
 
