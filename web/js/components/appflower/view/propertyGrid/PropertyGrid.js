@@ -198,8 +198,10 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 */
 	onModelPropertyChanged : function(node, p, v) {
 		console.log('@view [PropertyGrid] "modelPropertyChanged"');
-		this.setProperty(p, v);
-		this.onViewRefresh(this.view);
+		if (this.modelNode == node) {
+			this.setProperty(p, v);
+			this.onViewRefresh(this.view);
+		}
 	},
     
     /**

@@ -11,7 +11,6 @@ afStudio.wd.list.ModelReflector = (function() {
 	return {
 		
 		executeAddTitle : function(node) {
-			console.log('@reflector [ListView] executeAddTitle', arguments);
 			this.setHeaderTitle(node);
 			this.header.show();
 			if (this.ownerCt && Ext.isFunction(this.ownerCt.doLayout)) {
@@ -19,7 +18,6 @@ afStudio.wd.list.ModelReflector = (function() {
 			}
 		},
 		executeRemoveTitle : function(node, cmp) {
-			console.log('@reflector [ListView] executeRemoveTitle', arguments);
 			this.unmapCmpFromModel(node);
 			this.hideHeader();
 		},
@@ -27,7 +25,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates title's value(<u>_content</u>).
 		 */		
 		executeUpdateTitle_content : function(node, cmp, p, v) {
-			console.log('@reflector [ListView] executeUpdateTitle_content', arguments);
 			cmp.setTitle(v.trim() ? v : '&#160;');
 		},
 		
@@ -74,11 +71,9 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * (defaults to false)  
 		 */
 		executeAddColumn : function(node, idx, insert) {
-			console.log('@reflector [ListView] executeAddColumn', node, idx);
-			
 			var cm = this.getColumnModel(),
 				pColumn = this.getModelNodeProperties(node),
-				oColumn = this.createColumn(pColumn, idx);
+				oColumn = this.createColumn(pColumn);
 			idx = !insert && this.hasCheckboxSelModel() ? ++idx : idx;
 			cm.config.splice(idx, 0, oColumn);
 			cm.setConfig(cm.config);
@@ -91,8 +86,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {Array} clm The column being removed. More details {@link #columnMapper}
 		 */
 		executeRemoveColumn : function(node, clm) {
-			console.log('@reflector [ListView] executeRemoveColumn', node, clm);
-			
 			var cm = this.getColumnModel(),
 				idx = clm[1];
 			this.unmapCmpFromModel(node);
@@ -108,8 +101,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {Array} refClm The column before which insertion take place. More details {@link #columnMapper}
 		 */
 		executeInsertColumn : function(node, refNode, refClm) {
-			console.log('@reflector [ListView] executeInsertColumn', node, refNode, refClm);
-			
 			var idx = refClm[1];
 			this.executeAddColumn(node, idx, true);	
 		},
@@ -122,8 +113,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {String} v The label property value to be set
 		 */
 		executeUpdateColumnLabel : function(node, clm, p, v) {
-			console.log('@reflector [ListView] executeUpdateColumnLabel', arguments);
-			
 			var cm = this.getColumnModel(),
 				idx = clm[1];
 			cm.setColumnHeader(idx, v);
@@ -132,8 +121,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates column's <u>hidden</u> property.
 		 */
 		executeUpdateColumnHidden : function(node, clm, p, v) {
-			console.log('@reflector [ListView] executeUpdateColumnHidden', arguments);
-			
 			var cm = this.getColumnModel(),
 				idx = clm[1];
 			cm.setHidden(idx, v);
@@ -142,8 +129,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates column's <u>hideable</u> property.
 		 */
 		executeUpdateColumnHideable : function(node, clm, p, v) {
-			console.log('@reflector [ListView] executeUpdateColumnHideable', arguments);
-			
 			var cm = this.getColumnModel(),
 				idx = clm[1];
 			cm.config[idx].hideable = v;
@@ -153,8 +138,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates column's <u>resizable</u> property.
 		 */
 		executeUpdateColumnResizable : function(node, clm, p, v) {
-			console.log('@reflector [ListView] executeUpdateColumnResizable', arguments);
-			
 			var cm = this.getColumnModel(),
 				idx = clm[1];
 			cm.config[idx].fixed = !v;
@@ -164,8 +147,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates column's <u>width</u> property.
 		 */
 		executeUpdateColumnWidth : function(node, clm, p, v) {
-			console.log('@reflector [ListView] executeUpdateColumnWidth', arguments);
-			
 			var cm = this.getColumnModel(),
 				idx = clm[1];
 			cm.config[idx].width = v;
@@ -181,8 +162,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {Mixed} v The "select" property value
 		 */
 		executeUpdateFieldsSelect : function(node, cmp, p, v) {
-			console.log('@reflector [ListView] executeUpdateFieldsSelect', arguments);
-			
 			var cm = this.getColumnModel();
 			if (v) {
 				var cbsm = new Ext.grid.CheckboxSelectionModel();
@@ -200,7 +179,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates fields' <u>exportable</u> property.
 		 */
 		executeUpdateFieldsExportable : function(node, cmp, p, v) {
-			console.log('@reflector [ListView] executeUpdateFieldsExportable', arguments);
 			v ? cmp.show() : cmp.hide();
 			this.updateActionBarVisibilityState();
 		},
@@ -208,7 +186,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates fields' <u>selectable</u> property.
 		 */
 		executeUpdateFieldsSelectable : function(node, cmp, p, v) {
-			console.log('@reflector [ListView] executeUpdateFieldsSelectable', arguments);
 			var	bSel = cmp[0], bDesel = cmp[1];					
 			v ? (bSel.enable(), bDesel.enable()) : (bSel.disable(), bDesel.disable());
 			this.updateActionBarVisibilityState();
@@ -217,7 +194,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates fields' <u>expandButton</u> property.
 		 */
 		executeUpdateFieldsExpandButton : function(node, cmp, p, v) {
-			console.log('@reflector [ListView] executeUpdateFieldsExpandButton', arguments);
 			v ? cmp.show() : cmp.hide();
 			this.updateActionBarVisibilityState();
 		},
@@ -225,7 +201,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates fields' <u>pager</u> property.
 		 */
 		executeUpdateFieldsPager : function(node, cmp, p, v) {
-			console.log('@reflector [ListView] executeUpdateFieldsPager', arguments);
 			v ? cmp.show() : cmp.hide();
 			this.doLayout();
 		},
@@ -237,8 +212,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {Number} idx The row-action index inside row-actions column {@link afStudio.wd.list.ActionColumn}
 		 */
 		executeAddRowactionsAction : function(node, idx) {
-			console.log('@reflector [ListView] executeAddRowactionsAction', node, idx);
-			
 			var cm = this.getColumnModel(),
 			  	ac = cm.getColumnById('action-column'),
 				pAction = this.getModelNodeProperties(node);
@@ -248,7 +221,7 @@ afStudio.wd.list.ModelReflector = (function() {
 				cm.config.push(ac);
 				cm.setConfig(cm.config);
 			} else {
-				var oAction = this.createRowAction(pAction, idx);
+				var oAction = this.createRowAction(pAction);
 				ac.items.splice(idx, 0, oAction);
 			}
 			this.view.refresh();
@@ -261,8 +234,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {Array} act The action being removed. More details {@link #rowActionMapper}
 		 */
 		executeRemoveRowactionsAction : function(node, act) {
-			console.log('@reflector [ListView] executeRemoveRowactionsAction', node, act);
-			
 			var cm = this.getColumnModel(),
 			  	ac = cm.getColumnById('action-column'),
 			  	idx = act[1];
@@ -283,8 +254,6 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * @param {Array} refCmp The row-action before which insertion take place. More details {@link #rowActionMapper}
 		 */
 		executeInsertRowactionsAction : function(node, refNode, refCmp) {
-			console.log('@reflector [ListView] executeInsertRowactionsAction', node, refNode, refCmp);
-			
 			var idx = refCmp[1];
 			this.executeAddRowactionsAction(node, idx);	
 		},
@@ -325,9 +294,168 @@ afStudio.wd.list.ModelReflector = (function() {
 		 * Updates rowaction's <u>tooltip</u> property.
 		 */
 		executeUpdateRowactionsActionTooltip : function(node, cmp, p, v) {
-			cmp[0].tooltip = v ? v : cmp[0].name;					
+			cmp[0].tooltip = v ? v : cmp[0].name;
 			this.view.refresh();
-		}
+		},
 		
+		/**
+		 * Removes action destroying it and unmapping from associated model node.
+		 * @protected
+		 * @param {Node} The model node an action is associated with
+		 * @param {Object} The action being removed
+		 */
+		removeAction : function(node, act) {
+			act.destroy();
+			this.unmapCmpFromModel(node);
+			this.updateActionBarVisibilityState();
+		},
+		
+		/**
+		 * Sets action <u>name</u> property.
+		 * @protected
+		 * @param {Object} act The action whose name property being set
+		 * @param {String} v The name value
+		 */
+		setActionName : function(act, v) {
+			var oldValue = act.name;
+			act.name = v;
+			if (Ext.isEmpty(act.text) || act.text == oldValue) {
+				act.setText(v);
+			}
+		},
+		
+		/**
+		 * Sets action <u>style</u> property.
+		 * @protected
+		 * @param {Object} act The action whose name property being set
+		 * @param {String} v The name value
+		 */
+		setActionStyle : function(act, v) {
+			act.el.dom.removeAttribute('style', '');
+			act.el.applyStyles(v);
+		},
+		
+		/**
+		 * Adds action.
+		 */
+		executeAddActionsAction : function(node, idx) {
+			var ab = this.getActionToolBar(),
+				pAction = this.getModelNodeProperties(node),
+				oAction = this.createAction(pAction);
+			ab.insertButton(idx, oAction);
+			this.updateActionBarVisibilityState();
+		},
+		/**
+		 * Removes action.
+		 */
+		executeRemoveActionsAction : function(node, act) {
+			this.removeAction(node, act[0]);
+		},
+		/**
+		 * Inserts action.
+		 */
+		executeInsertActionsAction : function(node, refNode, refAct) {
+			var idx = refAct[1];
+			this.executeAddActionsAction(node, idx);
+		},
+		/**
+		 * Updates action's <u>name</u> property.
+		 */		
+		executeUpdateActionsActionName : function(node, cmp, p, v) {
+			this.setActionName(cmp[0], v);
+		},
+		/**
+		 * Updates action's <u>text</u> property.
+		 */		
+		executeUpdateActionsActionText : function(node, cmp, p, v) {
+			cmp[0].setText(v ? v : cmp[0].name);
+		},
+		/**
+		 * Updates action's <u>iconCls</u> property.
+		 */		
+		executeUpdateActionsActionIconCls : function(node, cmp, p, v) {
+			cmp[0].setIconClass(v);
+		},
+		/**
+		 * Updates action's <u>tooltip</u> property.
+		 */		
+		executeUpdateActionsActionTooltip : function(node, cmp, p, v) {
+			cmp[0].setTooltip(v);	
+		},
+		/**
+		 * Updates action's <u>icon</u> property.
+		 */		
+		executeUpdateActionsActionIcon : function(node, cmp, p, v) {
+			cmp[0].setIcon(v);
+		},
+		/**
+		 * Updates action's <u>style</u> property.
+		 */		
+		executeUpdateActionsActionStyle : function(node, cmp, p, v) {
+			this.setActionStyle(cmp[0], v);
+		},
+		
+		/**
+		 * Adds more-action.
+		 */
+		executeAddMoreactionsAction : function(node, idx, insert) {
+			var ab = this.getActionToolBar(),
+		    	m  = ab.getComponent('more').menu,
+				pAction = this.getModelNodeProperties(node),
+				oAction = this.createMoreAction(pAction);
+			//idx + 3 because of previous 3 components "exports", "sel-all" and "desel-all"	
+			idx = !insert ? idx + 3 : idx; 	
+			m.insert(idx, oAction);
+			this.updateActionBarVisibilityState();
+		},
+		/**
+		 * Removes more-action.
+		 */
+		executeRemoveMoreactionsAction : function(node, act) {
+			this.removeAction(node, act[0]);			
+		},
+		/**
+		 * Inserts more-action.
+		 */
+		executeInsertMoreactionsAction : function(node, refNode, refAct) {
+			var idx = refAct[1];
+			this.executeAddMoreactionsAction(node, idx, true);
+		},
+		/**
+		 * Updates more-action's <u>name</u> property.
+		 */		
+		executeUpdateMoreactionsActionName : function(node, cmp, p, v) {
+			this.setActionName(cmp[0], v);
+		},
+		/**
+		 * Updates more-action's <u>text</u> property.
+		 */		
+		executeUpdateMoreactionsActionText : function(node, cmp, p, v) {
+			cmp[0].setText(v ? v : cmp[0].name);
+		},
+		/**
+		 * Updates more-action's <u>iconCls</u> property.
+		 */		
+		executeUpdateMoreactionsActionIconCls : function(node, cmp, p, v) {
+			cmp[0].setIconClass(v);
+		},
+		/**
+		 * Updates more-action's <u>icon</u> property.
+		 */		
+		executeUpdateMoreactionsActionIcon : function(node, cmp, p, v) {
+			cmp[0].icon = v;
+			try {
+				cmp[0].el.child('img').set({src: v});
+			} catch(e){}
+		},
+		/**
+		 * Updates more-action's <u>style</u> property.
+		 */		
+		executeUpdateMoreactionsActionStyle : function(node, cmp, p, v) {
+			cmp[0].style = v;
+			try {
+				this.setActionStyle(cmp[0], v);
+			} catch(e){}
+		}
 	};
 })();

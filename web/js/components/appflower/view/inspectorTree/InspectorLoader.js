@@ -157,7 +157,7 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
     /**
      * Returns node's constructor function by its type.
      * @protected
-     * @param {String} type The node type
+     * @param {String} type The model node tag 
      * @return {Function} node constructor or null if it was not found
      */
     resolveNodeType : function(type) {

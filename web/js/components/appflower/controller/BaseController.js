@@ -310,21 +310,12 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     initView : function() {
     	var _me = this;
     
-    	try {
-	    	Ext.iterate(this.views, function(k, v, views) {
-	    		if (!Ext.isFunction(v.view)) {
-	    			throw new afStudio.controller.error.ControllerError('view-constructor');
-	    		}
-	    		views[k] = new v.view( Ext.apply(v.cfg ? v.cfg : {}, {controller: _me}) );
-	    	});
-    	} catch(e) {
-			if (e instanceof afStudio.controller.error.ControllerError) {
-				throw e;
-			} else {
-				throw e;
-//    			throw new afStudio.controller.error.ControllerError('init-view');
-			}
-    	}
+    	Ext.iterate(this.views, function(k, v, views) {
+    		if (!Ext.isFunction(v.view)) {
+    			throw new afStudio.controller.error.ControllerError('view-constructor');
+    		}
+    		views[k] = new v.view( Ext.apply(v.cfg ? v.cfg : {}, {controller: _me}) );
+    	});
     },
     //eo initView
     

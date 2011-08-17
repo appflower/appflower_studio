@@ -148,8 +148,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		var nodes = afStudio.ModelNode,
 			mpr = this.getModelNodeMapper(),
 			v = this.getValueKey(),
-		    tb = this.getTopToolbar(),
-		    a = tb.getComponent('actions'),
+		    a = this.getActionToolBar(),
 		    ma = a.getComponent('more').menu;
 		
 		//title    
@@ -253,7 +252,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		}
 		var exec = String.format('execute{0}{1}{2}', type.ucfirst(), line, property ? property.ucfirst() : '');
 			
-		console.log('executor', exec);
+		console.log('@executor [ListView]', exec);
 			
 		return Ext.isFunction(this[exec]) ? this[exec].createDelegate(this) : null;
 	},
@@ -397,7 +396,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @protected 
 	 */
 	updateActionBarVisibilityState : function() {
-		var aBar = this.getTopToolbar().getComponent('actions'),		
+		var aBar = this.getActionToolBar(),		
 			aHidden = 0;
 
 		this.updateMoreActionVisibilityState();
@@ -421,7 +420,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @protected
 	 */
 	updateMoreActionVisibilityState : function() {
-		var aBar   = this.getTopToolbar().getComponent('actions'),		
+		var aBar   = this.getActionToolBar(),		
 			aMore  = aBar.getComponent('more'),
 			bSel   = aMore.menu.getComponent('sel-all'),
 			bDesel = aMore.menu.getComponent('desel-all');				
@@ -527,7 +526,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	actionMapper : function(n) {
 		var mpr = this.getModelNodeMapper(),
-			ab = this.getTopToolbar().getComponent('actions'),
+			ab = this.getActionToolBar(),
 			idx;
 			
 		ab.items.each(function(a, i, l) {
@@ -556,7 +555,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	moreActionMapper : function(n) {
     	var mpr = this.getModelNodeMapper(),
-    		ab = this.getTopToolbar().getComponent('actions'),
+    		ab = this.getActionToolBar(),
     		more = ab.getComponent('more').menu,
     		idx;
     		
@@ -600,7 +599,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 			var clm = _me.getColumns();
 			
 			for (var i = 0, l = clm.length; i < l; i++) {
-				var c = this.createColumn(clm[i], i);
+				var c = this.createColumn(clm[i]);
 				columns.push(c);
 			}
 		}
@@ -621,10 +620,9 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * Creates grid's column object.
 	 * @protected
 	 * @param {Object} clm The column definition object
-	 * @param {Number} idx The column index inside column model {@link #colModel}
 	 * @return {Object} column {@link Ext.grid.Column} init object
 	 */
-	createColumn : function(clm, idx) {
+	createColumn : function(clm) {
 		var mpr = this.getModelNodeMapper(),
 			clmId = clm[mpr];
 		
@@ -637,7 +635,6 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 			hidden:   clm.hidden,
 			hideable: clm.hideable
 		};
-		
 		//add model node mapping
 		column[mpr] = clmId;
 		
@@ -675,7 +672,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		};
 		
 		Ext.iterate(actions, function(ra, idx) {
-			var a = _me.createRowAction(ra, idx);
+			var a = _me.createRowAction(ra);
 			actClm.items.push(a);
 		});
 		actClm.width = (actions.length * aWidth) > actClmWidth ? (actions.length * aWidth) : actClmWidth;
@@ -687,10 +684,9 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	/**
 	 * Creates row-action.
 	 * @param {Object} action The row-action definition object
-	 * @param {Number} idx The row-action index inside action column
 	 * @return {Object} row-action init object 
 	 */
-	createRowAction : function(action, idx) {
+	createRowAction : function(action) {
 		var mpr = this.getModelNodeMapper();
 
 		this.mapCmpToModel(action[mpr], this.createMapper(this.rowActionMapper, action[mpr]));
@@ -709,6 +705,14 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		return rowAction;
 	},
 	//eo createRowAction
+
+	/**
+	 * Returns action toolbar.
+	 * @return {Ext.Toolbar} action toolbar
+	 */
+	getActionToolBar : function() {
+		return this.getTopToolbar().getComponent('actions'); 
+	},
 	
 	/**
 	 * Creates actions toolbar.
@@ -749,20 +753,20 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		//i:actions
 		var act = this.getActions();
 		if (!Ext.isEmpty(act)) {
-			Ext.iterate(act, function(a, idx) {
+			var alen = act.length
+			for (var i = alen -1; i >= 0; i--) {
 				actions.items.unshift(
-					this.createAction(a, idx)
+					this.createAction(act[i])
 				);
-			}, this);
+			}
 		}
 		
 		//i:moreactions
 		act = this.getMoreActions();
 		if (!Ext.isEmpty(act)) {
-			Ext.iterate(act, function(a, idx) {
+			Ext.iterate(act, function(a) {
 				moreAct.menu.items.push(
-					//idx + 3 because of previous 3 components "exports", "sel-all" and "desel-all"
-					this.createMoreAction(a, idx + 3)
+					this.createMoreAction(a)
 				);
 			}, this);
 		}
@@ -787,7 +791,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 			style: a.style
 		};			
 		//add model node mapping
-		action[mpr] = a[mpr];		
+		action[mpr] = a[mpr];
 		
 		return action;		
 	},
@@ -798,7 +802,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @param {Object} act The action definition object.
 	 * @return {Object} action init object 
 	 */
-	createAction : function(act, idx) {
+	createAction : function(act) {
 		var mpr = this.getModelNodeMapper();
 		this.mapCmpToModel(act[mpr], this.createMapper(this.actionMapper, act[mpr]));
 		
@@ -812,7 +816,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @param {Object} act The action definition object.
 	 * @return {Object} action init object 
 	 */
-	createMoreAction : function(act, idx) {
+	createMoreAction : function(act) {
 		var mpr = this.getModelNodeMapper();
 		this.mapCmpToModel(act[mpr], this.createMapper(this.moreActionMapper, act[mpr]));
 		
@@ -849,7 +853,16 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		dsc[mpr] = descData[mpr];
 		
 		return dsc;
-	}
+	},
+	
+	/**
+	 * Clearing resources.
+	 * @private
+	 */
+    onDestroy : function() {
+        afStudio.wd.list.ListView.superclass.onDestroy.call(this);
+		this.modelMapper = null;        
+    }	
 
 });
 
