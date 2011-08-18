@@ -5,7 +5,7 @@
  * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsDatabaseQueryPropel extends BaseQueryAdapter
+class afsDatabaseQueryPropel extends afsBaseQueryAdapter
 {
     /**
      * For checking validation handler

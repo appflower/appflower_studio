@@ -2,11 +2,12 @@
 /**
  * Database Query Helper class 
  * 
- * @author startsev.sergey@gmail.com
+ * @package appFlowerStudio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 class afsDatabaseQueryHelper
 {
-    
     /**
      * Databases and tables list helper
      * 
@@ -33,20 +34,12 @@ class afsDatabaseQueryHelper
             $aTables = afsDatabaseQuery::getTables($db_connection);
             
             // Generate list of databases and tables
-            $database = array(
-                'name' => $aDsnInfo['dbname'],
-            	'tables_num' => count($aTables),
-            	'connection' =>  $db_connection
+            $aDatabases[] = array(
+                'name'          => $aDsnInfo['dbname'],
+            	'tables_num'    => count($aTables),
+            	'connection'    => $db_connection,
+                'tables'        => array_values((array) $aTables)
             );
-            
-            $tables = array();
-            foreach ((array)$aTables as $sTable) {
-                $tables[] = $sTable;
-            }
-            
-            $database['tables'] = $tables;
-            
-            $aDatabases[] = $database;
         }
         
         return $aDatabases;
@@ -62,26 +55,24 @@ class afsDatabaseQueryHelper
     	
     	$dbList = $this->processDatabaseList();
     	foreach ($dbList as $db) {
-    		$treeNode = array(
-                'text'    => $db['name'] . ' (' . $db['tables_num'] . ')',
-    			'connection' => $db['connection'],
-                'iconCls' => 'icon-tree-db',
-                'expanded' => true
-            );
-
-            $tables = array();
+    	    $tables = array();
             foreach ($db['tables'] as $t) {
                 $tables[] = array(
-                	'text' => $t['tableName'],
-                	'model' => $t['modelName'],
-                	'schema' => $t['schemaFile'],
-                	'iconCls' => 'icon-tree-table', 
-                	'leaf' => true
+                	'text'      => $t['tableName'],
+                	'model'     => $t['modelName'],
+                	'schema'    => $t['schemaFile'],
+                	'iconCls'   => 'icon-tree-table', 
+                	'leaf'      => true
                 );
             }
             
-    		$treeNode['children'] = $tables;    		
-    		$tree[] = $treeNode;
+    		$tree[] = array(
+                'text'          => $db['name'] . ' (' . $db['tables_num'] . ')',
+    			'connection'    => $db['connection'],
+                'iconCls'       => 'icon-tree-db',
+                'expanded'      => true,
+                'children'      => $tables,
+            );
     	}
     	
     	return $tree;

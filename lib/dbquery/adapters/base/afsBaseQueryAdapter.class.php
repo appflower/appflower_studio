@@ -2,10 +2,10 @@
 /**
  * Base query adapter class
  *
- * @package appflower studio
+ * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-abstract class BaseQueryAdapter
+abstract class afsBaseQueryAdapter
 {
     /**
      * Query executed message
@@ -116,13 +116,13 @@ abstract class BaseQueryAdapter
      */
     protected function processQuery($query, $offset, $limit)
     {
-        $afResponse = $this->validate($query);
+        $response = $this->validate($query);
         
-        if ($afResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-            $afResponse = $this->processQueryType($query, $offset, $limit);
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            $response = $this->processQueryType($query, $offset, $limit);
         }
         
-        return $afResponse;
+        return $response;
     }
     
     /**
@@ -136,12 +136,10 @@ abstract class BaseQueryAdapter
      */
     protected function processQueryType($query, $offset, $limit)
     {
-        $type = $this->getType($query);
-        
-        $method = 'processQuery' . ucfirst($type);
+        $method = 'processQuery' . ucfirst($this->getType($query));
         
         if (!method_exists($this, $method)) {
-            throw new afsDatabaseQueryException("You should define method '{$method}'");
+            throw new afsBaseQueryAdapterException("You should define method '{$method}'");
         }
         
         return call_user_func_array(array($this, $method), array($query, $offset, $limit));
@@ -178,13 +176,7 @@ abstract class BaseQueryAdapter
      */
     protected function getFields(Array $data)
     {
-        $fields = array();
-        
-        if (isset($data[0])) {
-            $fields = array_keys($data[0]);
-        }
-        
-        return $fields;
+        return (isset($data[0])) ? array_keys($data[0]) : array();
     }
     
     /**

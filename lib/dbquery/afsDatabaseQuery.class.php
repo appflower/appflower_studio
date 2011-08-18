@@ -7,6 +7,11 @@
 class afsDatabaseQuery 
 {
     /**
+     * Adapter class prefix
+     */
+    const ADAPTER_PREFIX = 'afsDatabaseQuery';
+    
+    /**
      * Getting Adaptee class
      * 
      * @param string $connection_name - db connection name
@@ -14,12 +19,16 @@ class afsDatabaseQuery
      * @return object
      * @author Sergey Startsev
      */
-    public static function getAdapter($connection_name, $type)
+    static public function getAdapter($connection_name, $type)
     {
-        $class_name = 'afsDatabaseQuery' . ucfirst(strtolower($type));
-        $oAdapter = new $class_name($connection_name);
+        $class_name = self::getAdapterName($type);
+        if (!class_exists($class_name)) {
+            throw new afsDatabaseQueryException("Class '{$class_name}' adapter doesn't exists");
+        }
         
-        return $oAdapter;
+        $reflection = new ReflectionClass($class_name);
+        
+        return $reflection->newInstanceArgs(array($connection_name));
     }
     
     /**
@@ -33,33 +42,43 @@ class afsDatabaseQuery
      * @return afResponse
      * @author Sergey Startsev
      */
-    public static function processQuery($query, $connection = 'propel', $type = 'sql', $offset = 0, $limit = 50)
+    static public function processQuery($query, $connection = 'propel', $type = 'sql', $offset = 0, $limit = 50)
     {
         return self::getAdapter($connection, $type)->process($query, $offset, $limit);
+    }
+    
+    /**
+     * Getting adapter name rule
+     *
+     * @param string $type 
+     * @return string
+     * @author Sergey Startsev
+     */
+    static public function getAdapterName($type)
+    {
+        return self::ADAPTER_PREFIX . ucfirst(strtolower($type));
     }
     
     /**
      * Parse dsn field
      * 
      * @param string $dsn - DSN string example:  mysql:dbname=studio;host=localhost
-     * @return string
+     * @return array
      * @author Sergey Startsev
      */
-    public static function parseDSN($dsn)
+    static public function parseDSN($dsn)
     {
         $info = array();
         list($info['driver'], $info['query']) = explode(':', $dsn);
         
         if (isset($info['query'])) {
             $opts = explode(';', $info['query']);
-                foreach ($opts as $opt) {
-                    list($key, $value) = explode('=', $opt);
-                    if (!isset($parsed[$key])) {
-                        $parsed[$key] = urldecode($value);
-                    }
-                }
+            foreach ($opts as $opt) {
+                list($key, $value) = explode('=', $opt);
+                if (!isset($parsed[$key])) $parsed[$key] = urldecode($value);
+            }
         }
- 
+        
         return $parsed;
     }
     
@@ -70,16 +89,12 @@ class afsDatabaseQuery
      * @return array
      * @author Sergey Startsev
      */
-    public static function getTables($connection_name)
+    static public function getTables($connection_name)
     {
-        $aPropelSchemaArray = self::getSchemas();
-        
         $tables = array();
-        foreach ($aPropelSchemaArray as $schemaFile => $array)
-        {
+        foreach ((array) self::getSchemas() as $schemaFile => $array) {
             if ($array['connection'] == $connection_name) {
-                foreach ($array['classes'] as $phpName => $attributes)
-                {
+                foreach ($array['classes'] as $phpName => $attributes) {
                     $attributes['modelName'] = $phpName;
                     $attributes['schemaFile'] = $schemaFile;
                     $tables[] = $attributes;
@@ -96,23 +111,21 @@ class afsDatabaseQuery
      * @return array - Connections and tables
      * @author Sergey Startsev
      */
-    private static function getSchemas()
+    static private function getSchemas()
     {
+        $aPropelSchemaArray = array();
         $configuration = new ProjectConfiguration(null, new sfEventDispatcher());
-        $finder = sfFinder::type('file')->name('*schema.yml')->prune('doctrine');
-        $dirs = array_merge(array(sfConfig::get('sf_config_dir')), $configuration->getPluginSubPaths('/config'));
-        
         $db_schema = new sfPropelDatabaseSchema();
         
+        $dirs = array_merge(array(sfConfig::get('sf_config_dir')), $configuration->getPluginSubPaths('/config'));
         foreach ($dirs as $k => $dir) {
-            if(substr_count($dir, 'appFlower')>0 || substr_count($dir, 'sfPropelPlugin') > 0 || substr_count($dir, 'sfProtoculousPlugin') > 0) {
+            if (substr_count($dir, 'appFlower') > 0 || substr_count($dir, 'sfPropelPlugin') > 0 || substr_count($dir, 'sfProtoculousPlugin') > 0) {
                 unset($dirs[$k]);
             }
         }
-        
         $dirs = array_values($dirs);
         
-        $schemas = $finder->in($dirs);
+        $schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->in($dirs);
         
         foreach ($schemas as $schema) {
             $aOriginalSchemaArray[$schema] = sfYaml::load($schema);
@@ -138,8 +151,7 @@ class afsDatabaseQuery
     
             foreach ($customSchemas as $customSchema) {
                 $aOriginalSchemaArray[$customSchema] = sfYaml::load($customSchema);
-                if (!isset($aOriginalSchemaArray[$customSchema]['classes']))
-                {
+                if (!isset($aOriginalSchemaArray[$customSchema]['classes'])) {
                     // Old schema syntax: we convert it
                     $aPropelSchemaArray[$customSchema] = $db_schema->convertOldToNewYaml($$aOriginalSchemaArray[$customSchema]);
                 }
@@ -150,4 +162,3 @@ class afsDatabaseQuery
     }
 
 }
-

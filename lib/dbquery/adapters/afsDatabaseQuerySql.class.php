@@ -5,7 +5,7 @@
  * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsDatabaseQuerySql extends BaseQueryAdapter
+class afsDatabaseQuerySql extends afsBaseQueryAdapter
 {
     /*
      * Database connection handler
