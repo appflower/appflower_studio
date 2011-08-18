@@ -148,18 +148,22 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		   },
 		   success: function(result, request) {
 		       _this.unmaskContent();		
-		       var response = Ext.decode(result.responseText);
+		       var response = Ext.decode(result.responseText),
+				   resultCtn = {};
 		       
 		       if (response.success) {
-			       var tableTab = new afStudio.dbQuery.TableModelTab({
+			       resultCtn = new afStudio.dbQuery.TableModelTab({
 					   metaData: response.rows,
 					   modelName: m,
 					   schemaName: s
 			       });
-			       _this.clearPanel();
-			       _this.add(tableTab);
-			       _this.doLayout();
-		       }			   
+		       } else {
+			       resultCtn.html = String.format('<div>Error: {0}</div>', response.message);
+		       }
+		       
+		       _this.clearPanel()
+		       		.add(resultCtn);
+		       _this.doLayout();
 		   }
 		});
 	}//eo showTableData
