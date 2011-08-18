@@ -2,6 +2,7 @@
 /**
  * Database Propel Query class 
  * 
+ * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afsDatabaseQueryPropel extends BaseQueryAdapter
@@ -87,76 +88,42 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      */
     protected function validate($query)
     {
-        $response = afResponseHelper::create();
-        if (strpos($query, ';')) {
-            $response->success(false)->message("Query shouldn't have ';' symbol")->query($query);
-        } else {
-            if ($this->checkSyntax($query)) {
-            
-                $bError = false;
-                
-                if (preg_match('/(.*?)\:\:create\(\)->/si', $query, $aMatchedClassName)) {
-                    $sClassName = $aMatchedClassName[1];
-                    
-                    if (class_exists($sClassName)) {
-                        
-                        $aError = array();
-                        if (preg_match_all('/->(.*?)\(.*?\)/si', $query, $aMatchedFunctions)){
-                            
-                            foreach ($aMatchedFunctions[1] as $function) {
-                                if (!method_exists($sClassName, $function)) {
-                                    $bError = true;
-                                    $aError[] = $function;
-                                }
-                            }
-                            
-                            $response->success(true)->message($aMatchedFunctions[1])->query($query);
-                        }
-                        
-                        if (!$bError) {
-                            // Checking for errors when executing query
-                            
-                            // Handle shutdown function to catch fatal error
-                            register_shutdown_function(array($this, 'handleShutdown'));
-                            
-                            // adding error handling to catching errors
-                            set_error_handler(array($this, 'eval_error_handler'));
-                            
-                            // using try-catch to catching errors that symfony catch
-                            try {
-                                @eval('$execute_query = ' . $query . ';');
-                            } catch (Exception $e) {
-                                $this->is_valid = false;
-                                $sMessage = $e->getMessage();
-                            }
-                            restore_error_handler();
-                            
-                            if ($this->is_valid) {
-                                $response->success(true)->message('Validated successfully')->query($query);
-                            } else {
-                                if (isset($sMessage) && !empty($sMessage)) {
-                                    $response->success(false)->message($sMessage)->query($query);
-                                } else {
-                                    $response->success(false)->message("Please, check syntax")->query($query);
-                                }
-                            }
-                        } else {
-                            $sError = implode(', ', $aError);
-                            $response->success(false)->message("Class {$sClassName} doesn't have functions: {$sError}")->query($query);
-                        }
-                    } else {
-                        $response->success(false)->message("Class {$sClassName} doesn't exists")->query($query);
-                    }
-                    
-                } else {
-                    $response->success(false)->message("Query doesn't look a valid")->query($query);
-                }
-            } else {
-                $response->success(false)->message("Syntax error")->query($query);
-            }
+        $response = afResponseHelper::create()->query($query);
+        
+        if (strpos($query, ';')) return $response->success(false)->message("Query shouldn't have ';' symbol");
+        if (!$this->checkSyntax($query)) return $response->success(false)->message("Syntax error");
+        if (!preg_match('/(.*?)\:\:create\(\)->/si', $query, $aMatchedClassName)) return $response->success(false)->message("Query doesn't look a valid");
+        if (!class_exists($aMatchedClassName[1])) return $response->success(false)->message("Class {$aMatchedClassName[1]} doesn't exists");
+        
+        $sClassName = $aMatchedClassName[1];
+        
+        $aError = array();
+        if (preg_match_all('/->(.*?)\(.*?\)/si', $query, $aMatchedFunctions)) {
+            foreach ($aMatchedFunctions[1] as $function) if (!method_exists($sClassName, $function)) $aError[] = $function;
         }
         
-        return $response;
+        if (empty($aError)) {
+            // Handle shutdown function to catch fatal error
+            register_shutdown_function(array($this, 'handleShutdown'));
+            
+            // adding error handling to catching errors
+            set_error_handler(array($this, 'eval_error_handler'));
+            
+            try {
+                @eval('$execute_query = ' . $query . ';');
+            } catch (Exception $e) {
+                $this->is_valid = false;
+                $sMessage = $e->getMessage();
+            }
+            restore_error_handler();
+            
+            if ($this->is_valid) return $response->success(true)->message('Validated successfully');
+            if (isset($sMessage) && !empty($sMessage)) return $response->success(false)->message($sMessage);
+            
+            return $response->success(false)->message("Please, check syntax")->query($query);
+        } 
+        
+        return $response->success(false)->message("Class {$sClassName} doesn't have functions: " . implode(', ', $aError));
     }
     
     /**
@@ -210,6 +177,8 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
      */
     private function processClass($query, $execute_query, $total)
     {
+        $response = afResponseHelper::create()->query($query);
+        
         if ($execute_query instanceof PropelObjectCollection) {
             $oFormatter = $execute_query->getFormatter();
             
@@ -219,20 +188,20 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                 $data = $this->prepareList($aResult);
                 $meta = $this->getFields($data);
                 
-                $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
+                $response->success(true)->data($meta, $data, $total);
             } else {
-                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+                $response->success(true)->data(array(), array(), 0)->message('Nothing has been found');
             }
         } elseif ($execute_query instanceof ModelCriteria) {
-            $afResponse = afResponseHelper::create()->success(false)->message('Please, check syntax')->query($query);
+            $response->success(false)->message('Please, check syntax')->query($query);
         } elseif ($execute_query instanceof BaseObject) {
             if (is_null($execute_query)) {
-                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+                $response->success(true)->data(array(), array(), 0)->message('Nothing has been found');
             } else {
                 $data = array($this->prepareOutput($execute_query));
                 $meta = $this->getFields($data);
                 
-                $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
+                $response->success(true)->data($meta, $data, $total);
             }
         } elseif ($execute_query instanceof PropelArrayCollection) {
             $aResults = (array)$execute_query;
@@ -243,23 +212,21 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
                     $aColumns = $oFormatter->getAsColumns();
                     $sColumn = str_replace('"', '', key($aColumns));
                     
-                    foreach ($aResults as &$row) {
-                        $row = array($sColumn => $row);
-                    }
+                    foreach ($aResults as &$row) $row = array($sColumn => $row);
                 }
                 
                 $data = $aResults;
                 $meta = $this->getFields($data);
                 
-                $afResponse = afResponseHelper::create()->success(true)->data($meta, $data, $total)->query($query);
+                $response->success(true)->data($meta, $data, $total);
             } else {
-                $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+                $response->success(true)->data(array(), array(), 0)->message('Nothing has been found');
             }
         } else {
-            $afResponse = afResponseHelper::create()->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
+            $response->success(true)->data(array(), array(), 0)->message('Nothing has been found');
         }
         
-        return $afResponse;
+        return $response;
     }
     
     /**
@@ -336,8 +303,9 @@ class afsDatabaseQueryPropel extends BaseQueryAdapter
     public function handleShutdown() 
     {
         $error = error_get_last();
-        if($error !== NULL){
+        if ($error !== NULL) {
             echo afResponseHelper::create()->success(false)->message('Please, check syntax. Fatal Error: ' . $error['message'])->asJson();
+            die;
         } 
     }
     

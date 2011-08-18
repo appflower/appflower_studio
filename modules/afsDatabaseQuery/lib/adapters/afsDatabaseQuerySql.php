@@ -2,7 +2,7 @@
 /**
  * Database SQL Query class 
  * 
- * @package appflower studio
+ * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afsDatabaseQuerySql extends BaseQueryAdapter
@@ -102,15 +102,11 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                     $data = $stm->fetchAll(PDO::FETCH_ASSOC);
                     $meta = $this->getFields($data);
                     
-                    $response->data($meta, $data, $total);
-                } else {
-                    $response->data(array(), array(), 0)->message('Nothing has been found');
+                    return $response->success(true)->data($meta, $data, $total)->query($query);
                 }   
-            } else {
-                $response->data(array(), array(), 0)->message('Nothing has been found');
-            }
+            } 
             
-            return $response->success(true)->query($query);
+            return $response->success(true)->data(array(), array(), 0)->message('Nothing has been found')->query($query);
         } 
         
         return $response->success(false)->message($stm->errorInfo())->query($query);
@@ -197,9 +193,7 @@ class afsDatabaseQuerySql extends BaseQueryAdapter
                 
                 $nLimit = ($matched[1] < $limit) ? $matched[1] : $limit;
                 
-                if (($offset + $limit) > $matched[1]) {
-                    $nLimit = $matched[1] - $offset;
-                }
+                if (($offset + $limit) > $matched[1]) $nLimit = $matched[1] - $offset;
                 
                 $query = preg_replace('/limit\s+?(\d+)\s*?(?:,\s*(\d+))?$/im', "LIMIT {$offset}, {$nLimit}", $query);
             }
