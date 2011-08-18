@@ -196,6 +196,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/definition/ViewDefinition.js"></script>
 	<!-- controller -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/BaseController.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/ViewController.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/error/ControllerError.js"></script>
 	<!-- view -->
 		<!-- inspector tree -->

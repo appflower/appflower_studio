@@ -4,34 +4,17 @@ Ext.ns('afStudio.controller');
 /**
  * Base Model controller class.
  * 
- * @dependency
- * Error: {@link afStudio.controller.error}
- * Model: {@link afStudio.model.Root}
- * Definition: {@link afStudio.definition.ViewDefinition}
+ * @dependency {afStudio.controller.error} errors 
+ * @dependency {afStudio.model.Root} model 
+ * @dependency {afStudio.definition.ViewDefinition} definition 
  * 
  * @class afStudio.controller.BaseController
  * @extends Ext.util.Observable
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
-
 	/**
-	 * TODO place real url! correct afStudioWSUrls.getGetWidgetUrl 
-	 * 
-	 * @cfg {String} url (defaults to 'URL_HERE')
-	 */
-	url : '/afsWidgetBuilder/getWidget',
-	
-	/**
-	 * @cfg {Object} widget
-	 * <ul>
-	 * 	<li><b>uri</b>: The view URI.</li>
-	 * 	<li><b>placeType</b>: The type of the place where a view is located ("apps"/"plugin").</li>
-	 * 	<li><b>place</b>: The place name.</li>
-	 * 	<li><b>actionPath</b>: View's actions class path</li>
-	 * 	<li><b>securityPath</b>: View's security file path</li>
-	 * </ul>
-	 * (Required) The widget meta information.
+	 * @cfg {String} url
 	 */
 	/**
 	 * @cfg {Object} viewDefinition
@@ -41,13 +24,16 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 	 * The Views to be associated with this controller.
 	 * @cfg {Object} views:
 	 * <ul>
-	 * 	<li><b>viewID</b>: {String} The view ID inside the views object
+	 * {
+	 * 	<li><b>viewID</b>: {String} The view ID inside the views object, must be unique
 	 * 		<ul>
 	 * 		{
 	 * 			<li><b>view</b>: {Function} The view constructor function</li>	
 	 * 			<li><b>cfg</b>: {Object} (Optional) The view configuration object</li>	
 	 * 		}</ul>
 	 * 	</li>
+	 * 	<li>[, ...]</li>
+	 * }
 	 * </ul>
 	 */
 	
@@ -92,7 +78,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         this.id = config.id || this.id;
         if (!this.id) {
             this.id = Ext.id(null, 'view-controller-');
-        }    	
+        }
     	
     	if (config.url) {
     		this.url = config.url;
@@ -106,10 +92,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     		this.viewDefinition = new afStudio.definition.ViewDefinition();
     	}
     	
-    	if (!config.widget && !Ext.isObject(config.widget)) {
-    		throw new afStudio.controller.error.ControllerError('widget-cfg-incorrect');
-    	}
-		this.widget = config.widget;
     	/**
     	 * @property views After views instantiation contains key/values pairs of attached to this controller views. 
     	 * @type {Object}
@@ -206,15 +188,24 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             "saveViewDefinition"
         );
         
-        afStudio.controller.BaseController.superclass.constructor.call(this);
-
-        if (!this.viewDefinition.getData()) {
-        	this.loadViewDefinition();
+        if (config.listeners) {
+        	this.listeners = config.listeners; 
         }
-        //TODO run initController if view definiton data was in configuration object
-        //to not load it again.
+        
+        afStudio.controller.BaseController.superclass.constructor.call(this);
     },
     //eo constructor
+    
+    /**
+     * Launches controller.
+     */
+    run : function() {
+        if (!this.viewDefinition.getData()) {
+        	this.loadViewDefinition();
+        } else {
+        	this.initController();
+        }
+    },
     
     /**
      * Initialises controller and all its resources.
@@ -251,12 +242,11 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * @protected
      */
     loadViewDefinition : function() {
-    	var _me = this,
-    		viewUrl = Ext.urlAppend(this.url, Ext.urlEncode({uri: this.widget.uri}));
+    	var _me = this;
     	
     	if (this.fireEvent('beforeLoadViewDefinition')) {
     		afStudio.xhr.executeAction({
-    			url: viewUrl,
+    			url: _me.url,
     			mask: {region: 'center'},
     			showNoteOnSuccess: false,
     			scope: _me,

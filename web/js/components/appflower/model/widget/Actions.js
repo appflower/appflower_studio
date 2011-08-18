@@ -15,7 +15,7 @@ afStudio.model.widget.BaseAction = Ext.extend(afStudio.model.Node, {
 	
 	nodeTypes : [
 		{name: afStudio.ModelNode.ACTION, required: true, hasMany: true, unique: 'name'},
-		{name: afStudio.ModelNode.IF}
+		{name: afStudio.ModelNode.IF, hasMany: true}
 	]
 });
 

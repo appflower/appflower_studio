@@ -12,6 +12,8 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * The associated with this tree controller.
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
 	 */
+
+	autoScroll : true,
 	
 	/**
 	 * Initializes component
