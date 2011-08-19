@@ -8,13 +8,20 @@
 afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseController, {
 
 	/**
-	 * TODO place real url! correct afStudioWSUrls.getGetWidgetUrl 
-	 * 
-	 * @cfg {String} url (defaults to 'URL_HERE')
+	 * @cfg {String|Object} url 
+	 * Defaults to url:
+	 * <ul>
+	 * 	<li><b>read</b>: {@link afStudioWSUrls#widgetGetDefinitionUrl}</li>
+	 * 	<li><b>read</b>: {@link afStudioWSUrls#widgetSaveDefinitionUrl}</li>
+	 * </ul>
 	 */
-	url : '/afsWidgetBuilder/getWidget',
+	url : {
+		read: afStudioWSUrls.widgetGetDefinitionUrl,
+		save: afStudioWSUrls.widgetSaveDefinitionUrl
+	},
+	
 	/**
-	 * The view meta information (Required).
+	 * The view meta information (Required)
 	 * @cfg {Object} widget
 	 * <ul>
 	 * 	<li><b>uri</b>: The view URI.</li>
@@ -39,11 +46,22 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
     	}
 		this.widget = config.widget;
 		
-    	this.url = Ext.urlAppend(this.url, Ext.urlEncode({uri: this.widget.uri}));
+		this.setupUrls();
 		
     	this.setupViews();
     },
     //eo constructor
+    
+    /**
+     * Configures urls.
+     * @protected
+     */
+    setupUrls : function() {
+		this.url = {
+			read: this.getUrl('read', {uri: this.widget.uri}),
+			save: this.getUrl('save', {uri: this.widget.uri})
+		}
+    },
     
     /**
      * Configures views.
@@ -64,6 +82,16 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
 	            }
 	        }
     	});
+    },
+    
+    /**
+     * Returns model type. This method should be used only when controller is ready, look at {@link #isReady}.
+     * @return {String} model type
+     */
+    getModelType : function() {
+    	var model = this.getRootNode();
+    	
+    	return model.getModelType();
     }
 
 });

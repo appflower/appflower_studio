@@ -14,7 +14,7 @@ Ext.ns('afStudio.controller');
  */
 afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 	/**
-	 * @cfg {String} url
+	 * @cfg {String|Object} url
 	 */
 	/**
 	 * @cfg {Object} viewDefinition
@@ -81,7 +81,11 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         }
     	
     	if (config.url) {
-    		this.url = config.url;
+    		if (Ext.isObject(config.url)) {
+    			this.url = Ext.apply(Ext.isObject(this.url) ? this.url : {}, config.url);
+    		} else {
+    			this.url = config.url;
+    		}
     	}
     	
     	if (config.viewDefinition) {
@@ -198,6 +202,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     
     /**
      * Launches controller.
+     * @public
      */
     run : function() {
         if (!this.viewDefinition.getData()) {
@@ -209,12 +214,16 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     
     /**
      * Initialises controller and all its resources.
+     * <ul>
+     * 	<li>1. Init Models</li>
+     * 	<li>2. Init Views</li>
+     * 	<li>3. Fires ready event</li>
+     * </ul> 
      * @protected
      */
     initController : function() {
     	this.initModel();
     	this.initView();
-        this.initEvents();
     	
         this.ready = true;
         this.fireEvent("ready");
@@ -222,7 +231,9 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     //eo initController
     
     /**
-     * Returns controller's state.
+     * Returns controller's ready state. 
+     * Controller is ready means that model, views were instantiated and registered.
+     * @public
      * @return {Boolean} ready state
      */
     isReady : function() {
@@ -231,6 +242,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 
     /**
      * Returns view definition object.
+     * @public
      * @return {Object}
      */
     getViewDefinition : function() {
@@ -238,15 +250,43 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     
     /**
+     * Returns url by the action.
+     * @public
+     * @param {String} action
+     * @param {Object} params The parameters being added to url path 
+     * @return {String} url or null if url was not found
+     */
+    getUrl : function(action, params) {
+    	var url = this.url;
+    	url = Ext.isObject(url) ? url[action] : url;
+    	
+    	if (url) {
+    		return params ? Ext.urlAppend(url, Ext.urlEncode(params)) : url;
+    	} 
+    	
+    	return null;
+    },
+    
+    /**
+     * Returns registered view.
+     * @param {String} id The view id
+     * @return {Object} view
+     */
+    getView : function(id) {
+    	return this.views[id];	
+    },
+    
+    /**
      * Loads view definition and execute {@link #initController()}.
      * @protected
      */
     loadViewDefinition : function() {
-    	var _me = this;
+    	var _me = this,
+    		defUrl = this.getUrl('read');
     	
     	if (this.fireEvent('beforeLoadViewDefinition')) {
     		afStudio.xhr.executeAction({
-    			url: _me.url,
+    			url: defUrl,
     			mask: {region: 'center'},
     			showNoteOnSuccess: false,
     			scope: _me,
@@ -263,14 +303,15 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     
     /**
      * Saves view definiton.
+     * @public
      */
-    saveViewDefinition : function() {
+    saveViewDefinition : function(url) {
     	var _me = this,
-    		   vd = this.viewDefinition;
+    		saveUrl = this.getUrl('save'),
+			vd = this.viewDefinition;
     		   
     	if (this.fireEvent('beforeSaveViewDefinition', vd)) {
-    		//code
-    		
+    		//TODO implement
     		this.fireEvent('saveViewDefinition');
     	}
     },
@@ -289,6 +330,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	});
     	
     	this.registerModel(root);
+    	
+    	this.initModelEvents();
     },
     //eo initModel
     
@@ -298,22 +341,20 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * @protected
      */
     initView : function() {
-    	var _me = this;
-    
     	Ext.iterate(this.views, function(k, v, views) {
     		if (!Ext.isFunction(v.view)) {
     			throw new afStudio.controller.error.ControllerError('view-constructor');
     		}
-    		views[k] = new v.view( Ext.apply(v.cfg ? v.cfg : {}, {controller: _me}) );
-    	});
+    		this.registerView(k, v.view, v.cfg ? v.cfg : {});
+    	}, this);
     },
     //eo initView
     
     /**
-     * Template method.
+     * Init model events
      * @protected
      */
-    initEvents : function() {
+    initModelEvents : function() {
     	var _me = this;
     	
     	_me.on({
@@ -365,15 +406,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             	console.log('definition', this.viewDefinition.getData());
             }
     	});
-    	
-    	//TODO improve - move to the separate method
-    	//Relays controller's events to View layer
-    	Ext.iterate(this.views, function(k, v) {
-    		v.relayEvents(_me, [
-    			'modelNodeAppend', 'modelNodeInsert', 'modelNodeRemove', 'modelNodeMove',
-    			'modelNodeSelect', 'modelPropertyChanged'
-    		]);
-    	});
     },
     //eo initEvents
     
@@ -385,15 +417,16 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * Returns the root node for this controller.
-     * @return {Node}
+     * Returns the model - root node for this controller.
+     * @public
+     * @return {Node} model
      */
     getRootNode : function() {
         return this.root;
     },
 
     /**
-     * Registers a Model. Sets up a model's root node.
+     * Registers a model. Sets up a model's root node.
      * @protected
      * @param {Node} node
      * @return {Node} model's root node.
@@ -407,19 +440,37 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     //eo registerModel
     
-    registerView : function (view) {
+    /**
+     * Registers a view.
+     * @public
+     * @param {String} id The view's ID inside {@link #views} object
+     * @param {Function} view The view constructor
+     * @param {Object} cfg The view configuration object
+     */
+    registerView : function(id, view, cfg) {
+    	var me = this;
+    	
+    	Ext.apply(cfg, {controller: me});
+    	view = me.views[id] = new view(cfg);
+    	
+		view.relayEvents(me, [
+			'modelNodeAppend', 'modelNodeInsert', 'modelNodeRemove', 'modelNodeMove',
+			'modelNodeSelect', 'modelPropertyChanged'
+		]);
     },
 
     /**
-     * Gets a model node in this controller by its id.
+     * Returns a model node in this controller by its id.
      * @param {String} id
-     * @return {Node}
+     * @public
+     * @return {Node} node
      */
     getNodeById : function(id) {
         return this.nodeHash[id];
     },
 
     /**
+     * Registers model node
      * @private
      * @param {Node} node
      */
@@ -428,6 +479,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
 
     /**
+     * Unregisters model node
      * @private
      * @param {Node} node
      */
@@ -435,6 +487,12 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
         delete this.nodeHash[node.id];
     },
 
+    /**
+     * Returns controller as a string.
+     * @override
+     * @public
+     * @return {String} controller
+     */
     toString : function() {
         return "[BaseController" + (this.id ? " " + this.id : "") + "]";
     },
@@ -453,6 +511,18 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     		return;
     	}
     	this.fireEvent('modelNodeSelect', node, view ? view : undefined);
-    }
+    },
     //eo selectModelNode
+    
+    /**
+     * Cleanup resources. Destroys all views, model.
+     */
+    destroy : function() {
+    	Ext.iterate(this.views, function(k, v){
+    		Ext.destroy(v);
+    	});
+    	this.views = null;
+    	
+		this.root = this.viewDefinition = this.nodeHash = null;
+    }
 });

@@ -115,9 +115,8 @@ afStudio.xhr = {
 				if (Ext.isFunction(action.error)) {
 					Ext.util.Functions.createDelegate(action.error, this, [xhr, opt], false)();
 				}
-			   
-				var message  = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText || 'none'),
-					msgTitle = "Server side Error";
+				var message  = String.format('Status code: {0} <br /> Message: {1}', xhr.status, xhr.statusText || 'none'),
+					msgTitle = "Server communication failure";
 					
 				afStudio.Msg.error(msgTitle, message);
 			}

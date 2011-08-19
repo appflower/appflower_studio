@@ -51,6 +51,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	
 	pluginDeleteUrl : '/afsPluginManager/delete',
 	
+    widgetGetDefinitionUrl : '/afsWidgetBuilder/getWidget',
+    
+    widgetSaveDefinitionUrl : '/afsWidgetBuilder/saveWidget',
     
     getCodepressUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/codepress');
@@ -82,14 +85,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
     getLoadDatabaseConnectionSettingsUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/loadDatabaseConnectionSettings');
-    },
-    
-    getGetWidgetUrl: function(widgetUri) {
-        return this.buildUrlFor('/afsWidgetBuilder/getWidget?uri='+widgetUri);
-    },
-    
-    getSaveWidgetUrl: function(widgetUri) {
-        return this.buildUrlFor('/afsWidgetBuilder/saveWidget?uri='+widgetUri);
     },
     
     getDBQueryDatabaseListUrl: function() {
