@@ -1,23 +1,11 @@
 Ext.namespace('afStudio.wd');
 
-/**
- * WidgetTabPanel
- * 
- * @class afStudio.wd.WidgetTabPanel
- * @extends Ext.TabPanel
- */
-afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
+afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 
 	/**
-	 * Widget meta data.
-	 * @cfg {Object} widgetMeta
-	 */
-	
-	/**
-	 * Reference to the this tabs panel container - widget panel
-	 * @property widgetPanel
-	 * @type {afStudio.wd.WidgetPanel}
-	 */ 
+	 * Required. WD controller
+	 * @cfg {ViewController} controller
+	 */	
 	 
 	/**
 	 * Initializes component
@@ -25,32 +13,34 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 	 * @return {Object} The configuration object 
 	 */
 	_beforeInitComponent : function() {
-		var _this = this;
-		
-		this.widgetPanel = this.ownerCt;		
+		var c = this.controller,
+			w = c.getWidget();
 		
 		return {
-			itemId: 'widget-designer',
 			border: false,			
 			activeTab: 0,
+			enableTabScroll : true,
 			items: [
 			{
-				xtype: 'afStudio.wd.designerTab',				
-				widgetMeta: this.widgetMeta
+				xtype: 'wd.designer',
+				controller: c
 			},{
-				xtype: 'afStudio.wd.codeEditorTab',
+				xtype: 'wd.codeEditor',
 				fileName: 'security.yml',
-				filePath: this.widgetMeta.securityPath,
-				tabTip: this.widgetMeta.securityPath,
-				file: this.widgetMeta.securityPath
+				filePath: w.securityPath,
+				tabTip: w.securityPath,
+				file: w.securityPath
 			},{
-				xtype: 'afStudio.wd.codeEditorTab',
-				fileName: this.widgetMeta.actionName,
-				filePath: this.widgetMeta.actionPath,
-				tabTip: this.widgetMeta.actionPath,
-				file: this.widgetMeta.actionPath				
-			}],
+				xtype: 'wd.codeEditor',
+				fileName: w.actionName,
+				filePath: w.actionPath,
+				tabTip: w.actionPath,
+				file: w.actionPath				
+			}]
+			/*
+			TODO Should be improved 
 			plugins: new Ext.ux.TabMenu()
+			*/
 		}
 	}//eo _beforeInitComponent
 	
@@ -62,7 +52,7 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
-		afStudio.wd.WidgetTabPanel.superclass.initComponent.apply(this, arguments);		
+		afStudio.wd.WidgetDesigner.superclass.initComponent.apply(this, arguments);		
 		this._afterInitComponent();
 	}//eo initComponent
 	
@@ -93,7 +83,7 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 	 */
 	,addCodeEditorTab : function(fileName, path, tabTip, file) {
 		var t = this.add({
-			xtype: 'afStudio.wd.codeEditorTab',
+			xtype: 'wd.codeEditorTab',
 			fileName: fileName,
 			filePath: path,
 			tabTip: tabTip,
@@ -105,6 +95,6 @@ afStudio.wd.WidgetTabPanel = Ext.extend(Ext.TabPanel, {
 });
 
 /**
- * @type 'afStudio.wd.widgetTabPanel'
+ * @type 'widgetdesigner'
  */
-Ext.reg('afStudio.wd.widgetTabPanel', afStudio.wd.WidgetTabPanel);
+Ext.reg('widgetdesigner', afStudio.wd.WidgetDesigner);

@@ -449,8 +449,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      */
     registerView : function(id, view, cfg) {
     	var me = this;
-    	
-    	Ext.apply(cfg, {controller: me});
+    	cfg = Ext.apply(cfg || {}, {controller: me});
     	view = me.views[id] = new view(cfg);
     	
 		view.relayEvents(me, [

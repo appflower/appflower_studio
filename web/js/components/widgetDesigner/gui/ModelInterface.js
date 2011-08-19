@@ -125,7 +125,7 @@ afStudio.wd.ModelInterface = (function() {
 		 */
 		isModelNodeExists : function(node, notExact) {
 			var c = this.controller,
-				m = this.controller.getRootNode();
+				m = c.getRootNode();
 			
 			node = !Ext.isString(node) ? node.id : node;	
 				

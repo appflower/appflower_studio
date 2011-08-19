@@ -21,7 +21,8 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
 	},
 	
 	/**
-	 * The view meta information (Required)
+	 * Required & Read-Only.
+	 * The view meta information.
 	 * @cfg {Object} widget
 	 * <ul>
 	 * 	<li><b>uri</b>: The view URI.</li>
@@ -58,8 +59,8 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
      */
     setupUrls : function() {
 		this.url = {
-			read: this.getUrl('read', {uri: this.widget.uri}),
-			save: this.getUrl('save', {uri: this.widget.uri})
+			read: this.getUrl('read', {uri: this.widget.widgetUri}), /* TODO name should be changed to uri not widgetUri*/
+			save: this.getUrl('save', {uri: this.widget.widgetUri})
 		}
     },
     
@@ -92,6 +93,14 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
     	var model = this.getRootNode();
     	
     	return model.getModelType();
+    },
+    
+    /**
+     * Returns widget data.
+     * @return {Object} widget
+     */
+    getWidget : function() {
+    	return this.widget;
     }
 
 });

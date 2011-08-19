@@ -13,46 +13,42 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 	/**
 	 * @cfg {String} layout (sets to 'accordion') 
 	 */
-	layout : 'accordion'
+	layout : 'accordion',
 	
 	/**
 	 * @cfg {String} style
 	 */
-	,style: 'border-top: 1px solid #99BBE8;'
-	
-	/**
-	 * Widget metadata.
-	 * @cfg {Object} (Required) widgetMeta
-	 */
-	
-	/**
-	 * Reference to Widget inspector panel.
-	 * 
-	 * @property inspectorPanel
-	 * @type {afStudio.wi.InspectorPanel}
-	 */
-	
-	/**
-	 * Reference to Code browser.
-	 * 
-	 * @property codeBrowser
-	 * @type {Ext.ux.FileTreePanel}
-	 */
+	style: 'border-top: 1px solid #99BBE8;',
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
-   		var _this = this;
+	_beforeInitComponent : function() {
+   		var self = this,
+   			c = this.controller,
+   			tr = c.getView('inspectorTree'),
+   			pg = c.getView('propertyGrid');
+   			
         
 		return {
 			items: [
 			{
-				xtype: 'afStudio.wi.inspectorPanel',				
-				ref: 'inspectorPanel',
-				widgetMeta: this.widgetMeta
+				layout: 'border',
+				
+	            title: 'Widget Inspector',
+				items: [
+				{
+					region: 'center',
+					items: tr
+				},{
+					region: 'south',
+					split: true,			
+					height: 150,				        
+			        layout: 'fit',
+			        items: pg
+				}]
 			},{
 				xtype: 'filetreepanel',
 				ref: 'codeBrowser',
@@ -91,10 +87,10 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 		this.on({
 			scope: this,
 			afterrender: function() {
-				//TODO: calculate and width to the WidgetInpectorTree and Properties grid
-				(function(){	
-					var pg = this.inspectorPanel.propertyGrid,
-						it = this.inspectorPanel.inspectorTree;
+				//TODO: review and rewrite 
+				(function(){
+					var pg = this.controller.getView('propertyGrid'),
+						it = this.controller.getView('inspectorTree');
 
 					var h1 = pg.getHeight(),
 						h2 = it.getHeight(),			
@@ -109,20 +105,11 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 				}).defer(100, this);
 			}
 		});
-		
-	}//eo _afterInitComponent
-	
-	,getPropertyGrid : function() {
-		return this.inspectorPanel.propertyGrid;
-	}
-	
-	,getInspectorTree : function() {
-		return this.inspectorPanel.inspectorTree;
 	}
 	
 });
 
 /**
- * @type 'afStudio.wi.inspectorPalette'
+ * @type 'wi.inspectorPalette'
  */
-Ext.reg('afStudio.wi.inspectorPalette', afStudio.wi.InspectorPalette);
+Ext.reg('wi.inspectorPalette', afStudio.wi.InspectorPalette);

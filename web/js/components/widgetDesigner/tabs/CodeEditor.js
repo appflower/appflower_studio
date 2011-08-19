@@ -1,12 +1,12 @@
 Ext.namespace('afStudio.wd');
 
 /**
- * CodeEditorTab
- * @class afStudio.wd.CodeEditorTab
+ * CodeEditor
+ * @class afStudio.wd.CodeEditor
  * @extends Ext.Panel
  * @author Nikolai
  */
-afStudio.wd.CodeEditorTab = Ext.extend(Ext.Panel, {	
+afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {	
 	/**
 	 * @cfg {String} layout
 	 */
@@ -107,7 +107,7 @@ afStudio.wd.CodeEditorTab = Ext.extend(Ext.Panel, {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);		
-		afStudio.wd.CodeEditorTab.superclass.initComponent.apply(this, arguments);
+		afStudio.wd.CodeEditor.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
 	}//eo initComponent
 	
@@ -148,6 +148,6 @@ afStudio.wd.CodeEditorTab = Ext.extend(Ext.Panel, {
 });
 
 /**
- * @type 'afStudio.wd.codeEditorTab'
+ * @type 'wd.codeEditor'
  */
-Ext.reg('afStudio.wd.codeEditorTab', afStudio.wd.CodeEditorTab);
+Ext.reg('wd.codeEditor', afStudio.wd.CodeEditor);
