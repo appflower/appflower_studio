@@ -2,27 +2,19 @@ Ext.namespace('afStudio.wd');
 
 /**
  * Designer tab panel. 
- * Contains from two parts: {@link afStudio.wd.DesignerPanel} and {@link afStudio.wi.InspectorPalett}.
+ * Consists of two parts: {@link afStudio.wd.DesignerPanel} and {@link afStudio.wd.InspectorPalett}.
  * DesignerPanel is a GUI for building widget.
  * InspectorPalett is a palett of instruments dedicated for building/manipulating of widget's properties.
  * 
  * @class afStudio.wd.Designer
  * @extends Ext.Panel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.wd.Designer = Ext.extend(Ext.Panel, {	
 	/**
 	 * @cfg {String} layout
 	 */
-	layout : 'hbox'
-	
-	/**
-	 * @cfg {Object} layoutConfig
-	 */
-	,layoutConfig : {
-	    align: 'stretch',
-	    pack: 'start'
-	}
+	layout : 'border'
 	
 	/**
 	 * Initializes component
@@ -36,19 +28,26 @@ afStudio.wd.Designer = Ext.extend(Ext.Panel, {
 			title: 'Widget Designer',
 			defaults: {
 				layout: 'fit',
-				style: 'padding: 2px;'
+				border: false,
+				style: 'padding: 4px;'
 			},
 			items: [
 			{
-				xtype: 'wd.designerPanel',
-				controller: c,
-				flex: 3
-			},{
-				xtype: 'container',
-				flex: 1,
+				region: 'center',
 				items: [
 				{
-					xtype: 'wi.inspectorPalette',
+					xtype: 'wd.designerPanel',
+					controller: c
+				}]
+			},{
+	            region: 'east',
+	            width: 350,
+	            minWidth: 300,
+	            split: true,
+	            collapseMode: 'mini',
+				items: [
+				{
+					xtype: 'wd.inspectorPalette',
 					controller: c
                 }]
 			}]
@@ -64,10 +63,8 @@ afStudio.wd.Designer = Ext.extend(Ext.Panel, {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
-		
 		afStudio.wd.Designer.superclass.initComponent.apply(this, arguments);
 	}
-
 });
 
 /**

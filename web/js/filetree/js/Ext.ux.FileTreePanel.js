@@ -923,19 +923,14 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	* open the file into a tab from the center tabpanel
 	*/
 	,openFile : function(node, path) {
-		var id = Ext.id();
-		
-		var tabPanel = this.findParentByType('afStudio.wd.widgetTabPanel');
-
-		var currentTabs = tabPanel.items.items;
-		var fileName = this.getFileName(path);
+		var tabPanel = this.findParentByType('widgetdesigner'),
+			fileName = this.getFileName(path);
 		
 		//find if the current path is opened
-		var opened_tabs = tabPanel.find('filePath', path);
+		var opened = tabPanel.find('filePath', path);
 		
-		if (opened_tabs.length > 0) {
-			var opened_tab = opened_tabs[0];
-			opened_tab.show();
+		if (opened.length > 0) {
+			opened[0].show();
 		} else {
 			tabPanel.addCodeEditorTab(fileName, path, path, path);
 		}
@@ -1366,17 +1361,23 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * create delete handler after the file is deleted from tree
 	 * @param node
 	 */
-	,onDeleteSuccess:function(tree,node) {
-	    var tabPanel=Ext.getCmp(this.tabPanelId);
-		var path=this.getPath(node);
-		
+	,onDeleteSuccess : function(tree, node) {
+		var tabPanel = this.findParentByType('widgetdesigner'),
+			path = this.getPath(node);
+//	    var tabPanel = Ext.getCmp(this.tabPanelId);
+//		fileName = this.getFileName(path);
+//		console.log('path', path);
+//		
+//		var opened_tabs = tabPanel.findBy(function(c){
+//			console.log('c', c, c.path);
+//            return c['path'].indexOf(path) === 0;
+//        });
 		//find if the current path is opened
-		var opened_tabs=tabPanel.find('path',path);
+//		var opened_tabs = tabPanel.find('path', path);
+//		console.log('opened_tabs', opened_tabs);
 		
-		if(opened_tabs.length>0)
-		{
-			for(var tab in opened_tabs)
-			{
+		if (opened_tabs.length > 0) {
+			for (var tab in opened_tabs) {
 				tabPanel.remove(tab);
 			}
 		}

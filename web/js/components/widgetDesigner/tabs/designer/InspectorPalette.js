@@ -1,15 +1,11 @@
-Ext.namespace('afStudio.wi');
-
 /**
- * InspectorPalette is the palette of instruments dedicated for browsing/building/manipulating of
- * widget's metadata/properties and handling its appearance. 
+ * InspectorPalette is the palette of instruments dedicated for browsing/building/manipulating of widget's data. 
  * 
  * @class afStudio.wi.InspectorPalette
  * @extends Ext.Container
- * @author Nikolai
+ * @author Nikolai Babinski
  */
-afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
-	
+afStudio.wd.InspectorPalette = Ext.extend(Ext.Container, {
 	/**
 	 * @cfg {String} layout (sets to 'accordion') 
 	 */
@@ -18,7 +14,18 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 	/**
 	 * @cfg {String} style
 	 */
-	style: 'border-top: 1px solid #99BBE8;',
+	style : 'border-top: 1px solid #99BBE8;',
+	
+	/**
+	 * Inspector tree container component.
+	 * @property itCt
+	 * @type {Ext.Panel}
+	 */
+	/**
+	 * Property grid container component.
+	 * @property pgCt
+	 * @type {Ext.Panel}
+	 */
 	
 	/**
 	 * Initializes component
@@ -31,22 +38,25 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
    			tr = c.getView('inspectorTree'),
    			pg = c.getView('propertyGrid');
    			
-        
 		return {
 			items: [
 			{
-				layout: 'border',
-				
 	            title: 'Widget Inspector',
+				layout: 'border',
+				defaults: {
+					layout: 'fit',
+					border: false
+				},
 				items: [
 				{
 					region: 'center',
+					ref: '../itCt',
 					items: tr
 				},{
 					region: 'south',
-					split: true,			
-					height: 150,				        
-			        layout: 'fit',
+					ref: '../pgCt',
+					split: true,
+                    collapseMode: 'mini',					
 			        items: pg
 				}]
 			},{
@@ -73,7 +83,7 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
-		afStudio.wi.InspectorPalette.superclass.initComponent.apply(this, arguments);
+		afStudio.wd.InspectorPalette.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
 	}//eo initComponent
 		
@@ -86,30 +96,19 @@ afStudio.wi.InspectorPalette = Ext.extend(Ext.Container, {
 		
 		this.on({
 			scope: this,
+			
 			afterrender: function() {
-				//TODO: review and rewrite 
 				(function(){
-					var pg = this.controller.getView('propertyGrid'),
-						it = this.controller.getView('inspectorTree');
-
-					var h1 = pg.getHeight(),
-						h2 = it.getHeight(),			
-						 h = (h1 + h2) / 2;
-					
-					pg.setHeight(h);
-					it.setHeight(h);
-					
-					//Hot fix
-					this.layout.setActiveItem(1);
-					this.layout.setActiveItem(0);
+					h = this.pgCt.ownerCt.getInnerHeight() / 2;
+					this.pgCt.setHeight(h);	 
+					this.pgCt.ownerCt.doLayout();	 
 				}).defer(100, this);
 			}
 		});
 	}
-	
 });
 
 /**
- * @type 'wi.inspectorPalette'
+ * @type 'wd.inspectorPalette'
  */
-Ext.reg('wi.inspectorPalette', afStudio.wi.InspectorPalette);
+Ext.reg('wd.inspectorPalette', afStudio.wd.InspectorPalette);
