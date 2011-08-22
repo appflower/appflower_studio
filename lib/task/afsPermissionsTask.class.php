@@ -105,10 +105,12 @@ EOF;
             $root_dir = sfConfig::get('sf_root_dir');
             $dir_info = stat($root_dir);
             
-            
             $owner_id = $dir_info['uid'];
             $owner_gid = $dir_info['gid'];
             $owner_name = $this->run_command("id -un {$owner_id}");
+            if (empty($owner_name)) {
+                $owner_name = $this->run_command("getent passwd | awk -F: '$3 == {$owner_id} { print $1 }'");
+            }
             
             $current_user = get_current_user();
             
@@ -194,7 +196,10 @@ EOF;
     private function log_it($row)
     {
         $root_dir = sfConfig::get('sf_root_dir');
-        file_put_contents("{$root_dir}/log/afsPermissions.log", date("Y-m-d H:i:s") . " - {$row}\n", FILE_APPEND);
+        $log_dir = "{$root_dir}/log";
+        if (is_writable($log_dir)) {
+            file_put_contents("{$log_dir}/afsPermissions.log", date("Y-m-d H:i:s") . " - {$row}\n", FILE_APPEND);
+        }
     }
     
     /**
