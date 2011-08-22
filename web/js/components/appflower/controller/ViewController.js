@@ -59,8 +59,8 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
      */
     setupUrls : function() {
 		this.url = {
-			read: this.getUrl('read', {uri: this.widget.widgetUri}), /* TODO name should be changed to uri not widgetUri*/
-			save: this.getUrl('save', {uri: this.widget.widgetUri})
+			read: this.getUrl('read', {uri: this.widget.uri}),
+			save: this.getUrl('save', {uri: this.widget.uri})
 		}
     },
     

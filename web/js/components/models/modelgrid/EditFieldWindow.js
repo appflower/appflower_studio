@@ -68,13 +68,14 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	/**
 	 * Runs Field's actions (update, create)
 	 * @private
-	 * @param {Object} o
+	 * @param {Object} o:
+	 * <ul>
 	 * {
-	 * 	 action - update/create
-	 *   field  - field to update
-	 *   fieldData - field's data
-	 *   callback  - callback function to be executed
+	 *   <li><b>field</b>: {String} field to update, if field is not specified it is created</li>
+	 *   <li><b>fieldData</b>: {Object} - field's data</li>
+	 *   <li><b>callback</b>: {Function} - callback function to be executed</li>
 	 * }
+	 * </ul>
 	 */
 	,doFieldAction : function(o) {		
 		var _this = this,
@@ -82,18 +83,10 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			model = grid.model, 
 		   schema = grid.schema,
 		   url, xaction;
-		
-		switch (o.action) {
-			case 'update':
-				url = window.afStudioWSUrls.getModelsUrl();
-				xaction = 'alterModelUpdateField';
-			break;
-			case 'create':
-				url = window.afStudioWSUrls.getModelsUrl();
-				xaction = 'alterModelCreateField';
-			break;
-			
-		}
+	
+		   
+		url = afStudioWSUrls.getModelsUrl();
+		xaction = 'alterModelUpdateField';
 
 		_this.maskWindow();
 		
@@ -135,7 +128,6 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		var _this = this;
 		
 		this.doFieldAction({
-			action: 'update',
 			field: field,
 			fieldData: fData,
 			callback: Ext.util.Functions.createDelegate((function() {
@@ -155,7 +147,6 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			   cm = _this.gridView.cm;
 		
 		this.doFieldAction({
-			action: 'create',
 			fieldData: field,
 			callback: Ext.util.Functions.createDelegate((function() {
 				//field created
@@ -178,7 +169,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 
 	/**
 	 * "Save" button handler.
-	 * Saves field definition changes
+	 * Saves field definition changes.
 	 */
 	,saveUpdates : function() {
 		var _this = this,

@@ -521,7 +521,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		var pluginName = this.getParentNodeAttribute(node.parentNode, 'text');
 		
         afStudio.wd.WidgetFactory.showWidgetDesigner({
-			widgetUri: this.getNodeAttribute(node, 'widgetUri'),
+			uri: this.getNodeAttribute(node, 'widgetUri'),
 			actionPath: this.getNodeAttribute(node, 'actionPath'),
 			actionName: this.getNodeAttribute(node, 'actionName'),
 			securityPath: this.getNodeAttribute(node, 'securityPath'),

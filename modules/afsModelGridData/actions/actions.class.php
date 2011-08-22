@@ -55,9 +55,13 @@ class afsModelGridDataActions extends afsActions
         $query->limit($recordsPerPage);                
         $data = $query->find();
         
-        foreach ($data as &$row) $row = $this->getModelObjectData($row);
+        $modelData = array();
+        foreach ($data as &$row) {
+            $row = $this->getModelObjectData($row);
+            $modelData[] = $row;
+        }
         
-        return afResponseHelper::create()->success(true)->data(array(), $data, $totalRecordsNum)->asArray();
+        return afResponseHelper::create()->success(true)->data(array(), $modelData, $totalRecordsNum)->asArray();
     }
     
     /**
@@ -130,7 +134,10 @@ class afsModelGridDataActions extends afsActions
                 }
             }
             
-            $data[] = (!$object->isNew()) ? $this->getModelObjectData($object) : $rowl;
+            if (!$object->isNew()) {
+                $data[] = $this->getModelObjectData($object);
+            }
+//             $data[] = (!$object->isNew()) ? $this->getModelObjectData($object) : $rowl; //$rowl is not defined
         }
         
         if (count($errors) > 0) return $response->success(false)->message($errors)->asArray();
@@ -193,7 +200,7 @@ class afsModelGridDataActions extends afsActions
         $rawData = file_get_contents('php://input');
         $data = json_decode($rawData, true);
         
-        return $data['rows'];
+        return $data['data'];
     }
     
 }

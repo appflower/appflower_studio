@@ -3,7 +3,7 @@ Ext.ns('afStudio.models');
 /** 
  * @class afStudio.models.ModelTab
  * @extends Ext.TabPanel
- * @author Nikolay
+ * @author Nikolai
  */
 afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 

@@ -204,7 +204,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		    	schema: _this.schema
 		    },
 		    storeId: 'model-fields-st', 
-		    root: 'rows',
+		    root: 'data',
 		    idProperty: 'id',
 		    fields: [		    
 				{name: 'id'},

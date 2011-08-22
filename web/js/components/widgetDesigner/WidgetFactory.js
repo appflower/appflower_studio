@@ -41,23 +41,26 @@ afStudio.wd.WidgetFactory = function() {
 		 * @param {Object} cfg The {@link afStudio.wd.WidgetPanel} configuration object.
 		 */
 		showWidgetDesigner : function(cfg) {
+			
 			var c = new afStudio.controller.ViewController({
-			    widget: cfg
-			});
-			c.on('ready', function() {
-				var mt = this.getModelType();
-				
-				if (mt == 'list') {
-					this.registerView('widget', afStudio.wd.list.ListView);
-				} else {
-					afStudio.vp.clearWorkspace();
-					afStudio.Msg.info(String.format('{0} is under development', mt));
-					return;
-				}
-				afStudio.vp.addToWorkspace({
-					xtype: 'widgetdesigner', 
-					controller: c
-				}, true);
+			    widget: cfg,
+			    listeners: {
+			    	ready: function() {
+						var mt = this.getModelType();
+						
+						if (mt == 'list') {
+							this.registerView('widget', afStudio.wd.list.ListView);
+						} else {
+							afStudio.vp.clearWorkspace();
+							afStudio.Msg.info(String.format('View type {0} is under development', mt));
+							return;
+						}
+						afStudio.vp.addToWorkspace({
+							xtype: 'widgetdesigner', 
+							controller: c
+						}, true);
+					}
+			    }
 			});
 			
 			c.run();
