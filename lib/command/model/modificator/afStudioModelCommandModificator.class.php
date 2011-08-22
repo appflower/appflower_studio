@@ -38,8 +38,6 @@ class afStudioModelCommandModificator
 		    	$this->propelModel = $this->modelName;
 	    	} else {
 				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {
-                    // return afResponseHelper::create()->success(false)->message("Model doesn't exists")->asArray();
-                    // return false;
                     throw new afStudioModelCommandModificatorException("Model doesn't exists");
 				}
 				
@@ -62,7 +60,6 @@ class afStudioModelCommandModificator
         
         if (!afStudioModelCommandHelper::isValidName($name)) {
 			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
-            // return false;
 		}
 		
 		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $name;
@@ -91,7 +88,6 @@ class afStudioModelCommandModificator
         
         if (!afStudioModelCommandHelper::isValidName($this->modelName)) {
 			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
-            // return false;
 		}
 		
 		if (!is_null($this->getSchemaByModel($this->modelName))) {

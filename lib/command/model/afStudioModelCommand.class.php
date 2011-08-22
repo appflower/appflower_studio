@@ -118,14 +118,7 @@ class afStudioModelCommand extends afBaseStudioCommand
     {
         $rows = $this->getModificator()->readModelFields();
         
-        /*
-            TODO make compatible with afResponse 'data' decorator, rows -> data
-        */
-		$this->result = array(
-			'success' => true,
-			'rows' => $rows,
-			'totalCount' => count($rows)
-		);
+		return afResponseHelper::create()->success(true)->data(array(), $rows, count($rows))->asArray();
     }
     
     /**
@@ -187,31 +180,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
 				$response->message("Field '{$fieldDef->name}' was successfully updated");
 			} 
-        } catch ( Exception $e ) {
-        	$response = afResponseHelper::create()->success(false)->message($e->getMessage());
-        }
-        
-        return $response->asArray();
-    }
-    
-    /**
-     * Altering model - creating field
-     *
-     * TODO remove this method when in frontend will be changed call to method above
-     *
-     * @return array
-     * @author Sergey Startsev
-     */
-    protected function processAlterModelCreateField()
-    {
-        try {
-			$fieldDef = json_decode($this->getParameter('fieldDef'));
-			
-			$response = $this->getModificator()->changeModelField($fieldDef);
-			
-			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-			    $response->message("Field '{$fieldDef->name}' was successfully created");
-		    }
         } catch ( Exception $e ) {
         	$response = afResponseHelper::create()->success(false)->message($e->getMessage());
         }
