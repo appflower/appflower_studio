@@ -93,7 +93,15 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 		});
 		
 		this.setActiveTab(t.getId());
-	}
+	},
+	
+	/**
+	 * @private
+	 */
+    beforeDestroy : function() {
+        Ext.destroy(this.controller);
+        afStudio.wd.WidgetDesigner.superclass.beforeDestroy.apply(this);
+    }
 	
 });
 
