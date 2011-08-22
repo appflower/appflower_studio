@@ -1,10 +1,9 @@
 Ext.namespace('afStudio.wd');
 
 /**
- * CodeEditor
  * @class afStudio.wd.CodeEditor
  * @extends Ext.Panel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {	
 	/**

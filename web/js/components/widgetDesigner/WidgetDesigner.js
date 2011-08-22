@@ -42,25 +42,26 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 			plugins: new Ext.ux.TabMenu()
 			*/
 		}
-	}//eo _beforeInitComponent
+	},
+	//eo _beforeInitComponent
 	
 	/**
 	 * ExtJS template method
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
 		afStudio.wd.WidgetDesigner.superclass.initComponent.apply(this, arguments);		
 		this._afterInitComponent();
-	}//eo initComponent
+	},
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
-	,_afterInitComponent : function() {
+	_afterInitComponent : function() {
 		var _this = this;		
 		
         this.on('beforetabchange', function(tabPanel, newTab, oldTab) {        	
@@ -71,7 +72,8 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
                  newTab.toggleIframe();
             }
 		}, this);
-	}//eo _afterInitComponent
+	},
+	//eo _afterInitComponent
 	
 	/**
 	 * Adds {@link afStudio.wd.CodeEditorTab} code editor tab.
@@ -81,9 +83,9 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	 * @param {String} tabTip The tab panel tooltip string
 	 * @param {String} file  The file
 	 */
-	,addCodeEditorTab : function(fileName, path, tabTip, file) {
+	addCodeEditorTab : function(fileName, path, tabTip, file) {
 		var t = this.add({
-			xtype: 'wd.codeEditorTab',
+			xtype: 'wd.codeEditor',
 			fileName: fileName,
 			filePath: path,
 			tabTip: tabTip,
@@ -91,7 +93,8 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 		});
 		
 		this.setActiveTab(t.getId());
-	}//eo addCodeEditorTab
+	}
+	
 });
 
 /**

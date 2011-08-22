@@ -1,23 +1,22 @@
 /**
- * DesignerPanel
- * Container of WD GUI part.
+ * WD GUI container.
  * 
  * @class afStudio.wd.DesignerPanel
  * @extends Ext.Panel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * @cfg {String} layout (sets to 'fit')
 	 */
-	layout : 'fit'
+	layout : 'fit',
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
+	_beforeInitComponent : function() {
 		var self = this,
 			c = this.controller,
 			widget = c.getView('widget');
@@ -76,7 +75,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 
 	onPreviewWidgetView : function() {
 		afStudio.Msg.info('preview');
-//		var widgetUri = this.widgetMeta.widgetUri,			
+//		var widgetUri = this.widgetMeta.widgetUri,
 //			viRootNode = this.viewInspector.getRootNode();		
 //		
 //		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);			
