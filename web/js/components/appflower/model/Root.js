@@ -133,5 +133,18 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	 */
 	getImmediateModelNode : function(nodeId) {	
 		return this.findChildById(nodeId, false, true);
+	},
+	
+	isValid : function() {
+		var errors = [];
+		
+		this.eachChild(function(node){
+			var e = node.validate();
+			if (e !== true) {
+				errors.push(e);
+			}
+		});
+		
+		return errors;
 	}
 });

@@ -27,6 +27,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 				itemId: 'saveBtn',
 				iconCls: 'icon-save',
 				listeners: {
+					scope: self,
 					click: self.onSaveWidgetView
 				}
 			},'-',{
@@ -34,6 +35,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 				itemId: 'previewBtn',
 				iconCls: 'icon-preview',
 				listeners: {
+					scope: self,
 					click: self.onPreviewWidgetView
 				}
 			}
@@ -71,6 +73,9 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	
 	onSaveWidgetView : function() {
 		afStudio.Msg.info('save');
+		
+//		var valid = this.controller.getRootNode().isValid();
+//		console.log('model valid', valid);
 	},
 
 	onPreviewWidgetView : function() {
