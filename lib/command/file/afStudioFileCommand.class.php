@@ -9,115 +9,114 @@ class afStudioFileCommand extends afBaseStudioCommand
 {
     /**
      * Getting tree list
+     * 
+     * @return afResponse
      */
     protected function processGet()
     {
-        $path = $this->hasParameter('path') ? str_replace('root', afStudioUtil::getRootDir(), $this->getParameter('path')) : null;
+        $path = afStudioFileCommandHelper::getPath($this->getParameter('path'));
+        
         $files = sfFinder::type('any')->ignore_version_control()->maxdepth(0)->in($path);
         
         if (count($files) > 0) {
-            foreach ($files as $file) {
-                $this->result[] = array(
-                    'text' => basename($file),
-                    'leaf' => (is_file($file) ? true : false)
-                );
-            }
-        } else {
-            $this->result = array('success' => true);
-        }
+            return afResponseHelper::create()->success(true)->data(array(), afStudioFileCommandHelper::prepareList($files), 0);
+        } 
+        
+        return afResponseHelper::create()->success(true);
     }
     
     /**
      * Create new dir
+     * 
+     * @return afResponse
      */
     protected function processNewdir()
     {
-        $dir = $this->hasParameter('dir') ? str_replace('root', afStudioUtil::getRootDir(), $this->getParameter('dir')) : null;
+        $dir_path = $this->getParameter('dir');
+        $dir = afStudioFileCommandHelper::getPath($dir_path);
         
         if (!Util::makeDirectory($dir)) {
-            $this->result = array(
-                'success' => false,
-                'error' => 'Cannot create directory ' . $this->getParameter('dir')
-            );
+            return afResponseHelper::create()->success(false)->message("Cannot create directory {$dir_path}");
         }
         
-        return array('success' => true);
+        return afResponseHelper::create()->success(true);
     }
     
     /**
      * Create new file
+     * 
+     * @return afResponse
      */
     protected function processNewfile()
     {
-        $file = $this->hasParameter('file') ? str_replace('root', afStudioUtil::getRootDir(), $this->getParameter('file')) : null;
+        $file_path = $this->getParameter('file');
+        $file = afStudioFileCommandHelper::getPath($file_path);
         
         if (!Util::makeFile($file)) {
-            $this->result = array(
-                'success' => false, 
-                'error' => 'Cannot create file ' . $this->getParameter('file')
-            );
+            return afResponseHelper::create()->success(false)->message("Cannot create file {$file_path}");
         }
         
-        return array('success' => true);
+        return afResponseHelper::create()->success(true);
     }
     
     /**
      * Delete file 
+     * 
+     * @return afResponse
      */
     protected function processDelete()
     {
-        $file = $this->hasParameter('file') ? str_replace('root', afStudioUtil::getRootDir(), $this->getParameter('file')) : null;
+        $file_path = $this->getParameter('file');
+        $file = afStudioFileCommandHelper::getPath($file_path);
         
         if (!Util::removeResource($file)) {
-            $this->result = array(
-                'success' => false,
-                'error' => 'Cannot delete ' . (is_file($file) ? 'file' : 'directory') . ' ' . $this->getParameter('file')
-            );
+            return afResponseHelper::create()->success(false)->message('Cannot delete ' . (is_file($file) ? 'file' : 'directory') . ' ' . $file_path);
         }
         
-        return array('success' => true);
+        return afResponseHelper::create()->success(true);
     }
     
     /**
      * Rename file
+     * 
+     * @return afResponse
      */
     protected function processRename()
     {
-        $new = $this->hasParameter('newname') ? str_replace('root', afStudioUtil::getRootDir(), $this->getParameter('newname')) : null;
-        $old = $this->hasParameter('oldname') ? str_replace('root', afStudioUtil::getRootDir(), $this->getParameter('oldname')) : null;
+        $oldname = $this->getParameter('oldname');
+        $new = afStudioFileCommandHelper::getPath($this->getParameter('newname'));
+        $old = afStudioFileCommandHelper::getPath($oldname);
         
         if (!Util::renameResource($old, $new)) {
-            $this->result = array(
-                'success' => false,
-                'error' => 'Cannot rename ' . (is_file($old) ? 'file' : 'directory') . ' ' . $this->getParameter('oldname')
-            );
+            return afResponseHelper::create()->success(false)->message('Cannot rename ' . (is_file($old) ? 'file' : 'directory') . ' ' . $oldname);
         }
         
-        return array('success' => true);
+        return afResponseHelper::create()->success(true);
     }
     
     /**
      * Upload files
+     * 
+     * @return afResponse
      */
     protected function processUpload()
     {
-        $path = $this->hasParameter('path') ? str_replace('root', afStudioUtil::getRootDir(), $this->getParameter('path')) : null;
+        $path = afStudioFileCommandHelper::getPath($this->getParameter('path'));
         
         if (!empty($_FILES)) {
             foreach ($_FILES as $file => $params) {
                 if ($params['size'] > 0) {
                     $extension = substr($params['name'], strrpos($params['name'], '.') + 1);
-                    
                     $fileName = Util::stripText(substr($params['name'], 0, (strlen($params['name']) - strlen($extension) - 1))) . '.' . $extension;
                     
-                    if (!$this->request->moveFile($file, "{$path}/{$fileName}", 0777)) $errors[$file] = 'File upload error';
+                    if (!move_uploaded_file($params["tmp_name"], "{$path}/{$fileName}" )) $errors[$file] = 'File upload error';
                 }
             }
         }
         
-        if (isset($errors)) return array('success' => false, 'errors' => $errors);
+        if (isset($errors)) return afResponseHelper::create()->success(false)->message($errors);
         
-        return array('success' => true);
+        return afResponseHelper::create()->success(true);
     }
     
 }

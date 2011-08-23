@@ -1,9 +1,11 @@
 <?php
 /**
+ * Main studio actions class
  *
- * @package    appFlowerStudio
- * @subpackage plugin
- * @author     radu@immune.dk
+ * @package     appFlowerStudio
+ * @subpackage  plugin
+ * @author      Radu Topala <radu@immune.dk>
+ * @author      Sergey Startsev <startsev.sergey@gmail.com>
  */
 class appFlowerStudioActions extends afsActions
 {
@@ -75,12 +77,25 @@ class appFlowerStudioActions extends afsActions
   		}
 	}
 	
-	public function executeFiletree()
-	{
-		$filetree_command=new afStudioFileTreeCommand($this->realRoot);
-		
-		return $this->renderText($filetree_command->end());
-	}
+	/**
+	 * Process filetree functionality
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 * @author Sergey Startsev
+	 */
+    public function executeFiletree(sfWebRequest $request)
+    {
+        $response = afStudioCommand::process('file', $request->getParameter('cmd'), $request->getParameterHolder()->getAll());
+        
+        if ($request->getParameter('cmd') == 'get') {
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+            }
+        }
+        
+        return $this->renderJson($response->asArray());
+    }
 	
 	/**
 	 * Execute models command
@@ -94,9 +109,15 @@ class appFlowerStudioActions extends afsActions
 		$command = $request->getParameter('cmd', $request->getParameter('xaction'));
         $response = afStudioCommand::process('model', $command, $request->getParameterHolder()->getAll());
         
-        return $this->renderJson($response);
+        if ($command == 'get') {
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+            }
+        }
+        
+        return $this->renderJson($response->asArray());
 	}
-		
+	
 	public function executeCssfilestree(){
 		$cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
 		$cssExtensions = sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
@@ -354,7 +375,7 @@ class appFlowerStudioActions extends afsActions
 	/**
 	 * Execute run project coomand
 	 * 
-	 * @author startsev.sergey@gmail.com
+	 * @author Sergey Startsev
 	 */
 	public function executeRun()
 	{        
