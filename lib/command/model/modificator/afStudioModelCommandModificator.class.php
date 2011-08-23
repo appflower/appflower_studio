@@ -7,44 +7,191 @@
  */
 class afStudioModelCommandModificator
 {
-    protected 
-        $realRoot = null,
-        $dbSchema = null,
-        $propelSchemaArray = null,
-        $originalSchemaArray = null,
-        $tableName = null,
-        $modelName = null,
-        $configuration = null,
-        $schemaFile = null,
-        $propelModel = null;
+    /**
+     * Table name
+     */
+    private $tableName = null;
     
-    protected $defaultSchema;
+    /**
+     * Model name
+     */
+    private $modelName = null;
     
-    public function __construct($model = null, $schema = null, $command = null)
+    /**
+     * Schema file path
+     */
+    private $schemaFile = null;
+    
+    /**
+     * Propel model array
+     */
+    private $propelModel = null;
+    
+    /**
+     * Propel schema
+     */
+    private $propelSchemaArray = null;
+    
+    /**
+     * Original schema
+     */
+    private $originalSchemaArray = null;
+    
+    /**
+     * Fabric method creator
+     *
+     * @return afStudioModelCommandModificator
+     * @author Sergey Startsev
+     */
+    static public function create()
     {
-        $this->dbSchema = new sfPropelDatabaseSchema();
-		$this->defaultSchema = afStudioUtil::getRootDir() . '/config/schema.yml';
-		
+        return new self;
+    }
+    
+    /**
+     * Private constructor - initializer
+     *
+     * @author Sergey Startsev
+     */
+    private function __construct()
+    {
         $this->loadSchemas();
+    }
+    
+    /**
+     * Getting table name
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getTableName()
+    {
+        if (is_null($this->tableName)) {
+            $model = $this->getModelName();
+            if (!$model) throw new afStudioModelCommandModificatorException("Model not defined. Please set model name.");
+            
+            $schema = $this->getSchemaFile();
+            
+            $propel = $this->getPropelSchema();
+            if (isset($propel[$this->getSchemaFile()]['classes'][$this->getModelName()])) {
+                $this->tableName = $propel[$this->getSchemaFile()]['classes'][$this->getModelName()]['tableName'];
+			} else {
+			    $this->tableName = strtolower($model);
+			}
+        }
         
-        if (!is_null($model)) {
-	    	$this->modelName = $model;
-            // $this->schemaFile = $this->getParameter('schema', $this->defaultSchema);
-	    	
-	    	if (empty($this->schemaFile)) $this->schemaFile = $this->defaultSchema;
-	    	
-	    	if ($command == 'add') {
-		    	$this->tableName = strtolower($this->modelName);
-		    	$this->propelModel = $this->modelName;
-	    	} else {
-				if (!isset($this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName])) {
-                    throw new afStudioModelCommandModificatorException("Model doesn't exists");
-				}
-				
-		    	$this->tableName = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName]['tableName'];
-		    	$this->propelModel = $this->propelSchemaArray[$this->schemaFile]['classes'][$this->modelName];
-	    	}
-	    }
+        return $this->tableName;
+    }
+    
+    /**
+     * Getting propel model
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getPropelModel()
+    {
+        if (is_null($this->propelModel)) {
+            $model = $this->getModelName();
+            $schema = $this->getSchemaFile();
+            
+            $propel = $this->getPropelSchema();
+            if (isset($propel[$this->getSchemaFile()]['classes'][$this->getModelName()])) {
+                $this->propelModel = $propel[$this->getSchemaFile()]['classes'][$this->getModelName()];
+			} else {
+			    $this->propelModel = $model;
+			}
+        }
+        
+        return $this->propelModel;
+    }
+    
+    /**
+     * Getting model name
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    public function getModelName()
+    {
+        if (is_null($this->modelName)) {
+            throw new afStudioModelCommandModificatorException("Model not defined. Please set model name.");
+        }
+        
+        return $this->modelName;
+    }
+    
+    /**
+     * Getting schema file
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getSchemaFile()
+    {
+        if (is_null($this->schemaFile)) {
+            $this->schemaFile = afStudioUtil::getRootDir() . '/config/schema.yml';
+        }
+        
+        return $this->schemaFile;
+    }
+    
+    /**
+     * Setting model name
+     *
+     * @param string $name 
+     * @return afStudioModelCommandModificator
+     * @author Sergey Startsev
+     */
+    public function setModelName($name)
+    {
+        $this->modelName = $name;
+        
+        return $this;
+    }
+    
+    /**
+     * Setting schema file
+     *
+     * @param string $file 
+     * @return afStudioModelCommandModificator
+     * @author Sergey Startsev
+     */
+    public function setSchemaFile($file)
+    {
+        $this->schemaFile = $file;
+        
+        return $this;
+    }
+    
+    /**
+     * Getting propel schema array
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getPropelSchema()
+    {
+        if (is_null($this->propelSchemaArray)) {
+            $this->loadSchemas();
+        }
+        
+        return $this->propelSchemaArray;
+    }
+    
+    /**
+     * Getting original schema array
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function getOriginalSchema()
+    {
+        if (is_null($this->originalSchemaArray)) {
+            $this->loadSchemas();
+        }
+        
+        return $this->originalSchemaArray;
     }
     
     /**
@@ -62,18 +209,16 @@ class afStudioModelCommandModificator
 			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
 		}
 		
-		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $name;
+		$this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]['_attributes']['phpName'] = $name;
 		
 		if ($this->saveSchema()) {
-			$response
-			    ->success(true)
-			    ->message("Renamed model's phpName from <b>{$this->modelName}</b> to <b>{$name}</b>!")
-			    ->console(afStudioModelCommandHelper::deploy());
-		} else {
-			$response->success(false)->message("Can't rename model's phpName from <b>{$this->modelName}</b> to <b>{$name}</b>!");
+			return $response
+			            ->success(true)
+			            ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!")
+			            ->console(afStudioModelCommandHelper::deploy());
 		}
 		
-		return $response;
+        return $response->success(false)->message("Can't rename model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!");
     }
     
     /**
@@ -86,15 +231,15 @@ class afStudioModelCommandModificator
     {
         $response = afResponseHelper::create();
         
-        if (!afStudioModelCommandHelper::isValidName($this->modelName)) {
+        if (!afStudioModelCommandHelper::isValidName($this->getModelName())) {
 			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
 		}
 		
-		if (!is_null($this->getSchemaByModel($this->modelName))) {
-		    return $response->success(false)->message("Model <b>{$this->modelName}</b> already exists");
+		if (!is_null($this->getSchemaByModel($this->getModelName()))) {
+		    return $response->success(false)->message("Model <b>{$this->getModelName()}</b> already exists");
 		}
 		
-		$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]['_attributes']['phpName'] = $this->modelName;
+        $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]['_attributes']['phpName'] = $this->getModelName();
 		
 		if ($this->saveSchema()) {
 		    $console = afStudioConsole::getInstance();
@@ -102,16 +247,15 @@ class afStudioModelCommandModificator
 			
             if ($console->wasLastCommandSuccessfull()) $consoleResult .= $console->execute('sf propel:build-form');
             if ($console->wasLastCommandSuccessfull()) {
-                $message = 'Added model <b>'.$this->modelName.'</b>!';
+                $message = "Added model <b>{$this->getModelName()}</b>!";
             } else {
                 $message = 'Model was propery defined but build-model and/or build-form tasks returned some errors.';
             }
-            $response->success($console->wasLastCommandSuccessfull())->message($message)->console($consoleResult);
-		} else {
-			$response->success(false)->message("Can't add model <b>{$this->modelName}</b>! Please check schema file permissions.");
+            
+            return $response->success($console->wasLastCommandSuccessfull())->message($message)->console($consoleResult);
 		}
-		
-		return $response;
+		 
+		return $response->success(false)->message("Can't add model <b>{$this->getModelName()}</b>! Please check schema file permissions.");
     }
     
     /**
@@ -124,19 +268,17 @@ class afStudioModelCommandModificator
     {
         $response = afResponseHelper::create();
         
-        if (!isset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName])) {
-            return $response->success(false)->message("Model '{$this->modelName}' already deleted")->asArray();
+        if (!isset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()])) {
+            return $response->success(false)->message("Model '{$this->getModelName()}' already deleted");
         }
         
-        unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]);
+        unset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]);
 		
         if ($this->saveSchema()) {
-            $response->success(true)->message('Deleted model <b>'.$this->modelName.'</b>!')->console(afStudioModelCommandHelper::deploy());
-        } else {
-            $response->success(false)->message("Can't delete model <b>{$this->modelName}</b>!");
-        }
+            return $response->success(true)->message('Deleted model <b>'.$this->getModelName().'</b>!')->console(afStudioModelCommandHelper::deploy());
+        } 
         
-        return $response;
+        return $response->success(false)->message("Can't delete model <b>{$this->getModelName()}</b>!");
     }
     
     /**
@@ -147,13 +289,18 @@ class afStudioModelCommandModificator
      */
     public function getList()
     {
-        if (count($this->propelSchemaArray) == 0) return $response->success(true)->asArray();
+        if (count($this->propelSchemaArray) == 0) return $response->success(true);
         
 		$models = array();
 		foreach ($this->propelSchemaArray as $schemaFile => $array) {
 		    if (empty($array)) continue;
 			foreach ($array['classes'] as $phpName => $attributes) {
-				$models[] = array('text' => $phpName,'leaf' => true,'schema' => $schemaFile, 'iconCls' => 'icon-model');
+				$models[] = array(
+				    'text' => $phpName,
+				    'leaf' => true,
+				    'schema' => $schemaFile, 
+				    'iconCls' => 'icon-model'
+				);
 			}
 		}
 		
@@ -168,7 +315,7 @@ class afStudioModelCommandModificator
 	 */
 	public function readModelFields() 
 	{
-	    $propelModel = $this->propelModel;
+	    $propelModel = $this->getPropelModel();
 	    
 		$fields = array();
 		
@@ -208,7 +355,7 @@ class afStudioModelCommandModificator
 	 */
 	public function isFieldNameUnique($name) 
 	{
-		return !array_key_exists($name, $this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName]);
+		return !array_key_exists($name, $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]);
 	}
 	
 	/**
@@ -350,8 +497,8 @@ class afStudioModelCommandModificator
 	    $response = afResponseHelper::create();
 	    
 		//remove previous table structure 
-		foreach ($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName] as $k => $v) {
-			if ($k != '_attributes') unset($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$k]);
+		foreach ($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()] as $k => $v) {
+			if ($k != '_attributes') unset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$k]);
 		}
 		
 		//build new structure
@@ -360,7 +507,7 @@ class afStudioModelCommandModificator
 			if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
 			
 			$definition = $this->buildFieldDefinition($f);
-			$this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$f->name] = $definition;
+			$this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$f->name] = $definition;
 		}
         
 		$this->saveSchema();
@@ -385,9 +532,9 @@ class afStudioModelCommandModificator
 		$fieldDefinition = $this->buildFieldDefinition($fieldData);
 		
 		if (!is_null($field)) {
-		    $this->arraySetKeyValue($this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName], $field, $fieldData->name, $fieldDefinition);
+		    $this->arraySetKeyValue($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()], $field, $fieldData->name, $fieldDefinition);
 		} else {
-		    $this->originalSchemaArray[$this->schemaFile]['propel'][$this->tableName][$fieldData->name] = $fieldDefinition;
+		    $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$fieldData->name] = $fieldDefinition;
 		}
 		
 		$this->saveSchema();
@@ -466,7 +613,7 @@ class afStudioModelCommandModificator
 		foreach ($this->propelSchemaArray as $schemaFile => $array) {
 		    if (empty($array)) continue;
 			foreach ($array['classes'] as $phpName => $attributes) {
-				if ($model == $phpName) return $schemaFile;
+			    if ($model == $phpName) return $schemaFile;
 			}
 		}
 		
@@ -481,6 +628,7 @@ class afStudioModelCommandModificator
      */
     private function loadSchemas()
 	{
+	    $this->dbSchema = new sfPropelDatabaseSchema();
 		$this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
 		
     	$dirs = array_merge(array(sfConfig::get('sf_config_dir')), $this->configuration->getPluginSubPaths('/config'));
@@ -531,7 +679,7 @@ class afStudioModelCommandModificator
 	 */
 	private function saveSchema()
 	{
-        return afStudioUtil::writeFile($this->schemaFile, sfYaml::dump($this->originalSchemaArray[$this->schemaFile], 3));
+        return afStudioUtil::writeFile($this->getSchemaFile(), sfYaml::dump($this->originalSchemaArray[$this->getSchemaFile()], 3));
 	}
     
 }

@@ -31,7 +31,8 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function getModificator()
 	{
 	    if (is_null($this->modificator)) {
-	        $this->modificator = new afStudioModelCommandModificator($this->modelName, $this->schemaFile, $this->getCommand());
+            // $this->modificator = new afStudioModelCommandModificator($this->modelName, $this->schemaFile, $this->getCommand());
+	        $this->modificator = afStudioModelCommandModificator::create()->setModelName($this->modelName)->setSchemaFile($this->schemaFile);
 	    }
 	    
 	    return $this->modificator;
@@ -51,80 +52,83 @@ class afStudioModelCommand extends afBaseStudioCommand
     /**
      * Checking existed model or not
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processHas()
     {
         if (!is_null($this->getModificator()->getSchemaByModel($this->modelName))) {
-		    return afResponseHelper::create()->success(true)->message("Model <b>{$this->modelName}</b> exists")->asArray();
+		    return afResponseHelper::create()->success(true)->message("Model <b>{$this->modelName}</b> exists");
 		}
 		
-		return afResponseHelper::create()->success(false)->message("Model <b>{$this->modelName}</b> doesn't exists")->asArray();
+		return afResponseHelper::create()->success(false)->message("Model <b>{$this->modelName}</b> doesn't exists");
     }
     
     /**
      * Process get command
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processGet()
     {
         $models = $this->getModificator()->getList();
 		
-        /*
-            TODO wrap models result to data decorator, need frontend changes
-        */
-        return afStudioModelCommandHelper::sortModels($models);
+        return afResponseHelper::create()->success(true)->data(array(), $models, 0);
     }
     
     /**
      * Add model functionality
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processAdd()
     {
-		return $this->getModificator()->addModel()->asArray();
+		return $this->getModificator()->addModel();
     }
     
     /**
      * Delete model command
+     * 
+     * @return afResponse
+     * @author Sergey Startsev
      */
     protected function processDelete()
     {
-		return $this->getModificator()->deleteModel()->asArray();
+		return $this->getModificator()->deleteModel();
     }
     
     /**
      * Rename model functionality
+     * 
+     * @return afResponse
+     * @author Sergey Startsev
      */
     protected function processRename()
     {
         $renamedModelName = $this->getParameter('renamedModel');
 		
-		return $this->getModificator()->renameModel($renamedModelName)-asArray();
+		return $this->getModificator()->renameModel($renamedModelName);
     }
     
     /**
      * Process read command
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processRead()
     {
         $rows = $this->getModificator()->readModelFields();
         
-		return afResponseHelper::create()->success(true)->data(array(), $rows, count($rows))->asArray();
+		return afResponseHelper::create()->success(true)->data(array(), $rows, count($rows));
     }
     
     /**
      * Process alter model command
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processAlterModel()
@@ -138,35 +142,35 @@ class afStudioModelCommand extends afBaseStudioCommand
         	$response = afResponseHelper::create()->success(false)->message($e->getMessage());
         }
         
-        return $response->asArray();
+        return $response;
     }
     
     /**
      * Update schemas command
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processUpdateSchemas()
     {
-        return afResponseHelper::create()->success(true)->console(afStudioModelCommandHelper::updateSchemas())->asArray();
+        return afResponseHelper::create()->success(true)->console(afStudioModelCommandHelper::updateSchemas());
     }
     
     /**
      * Get relations list for autocomplete
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processReadrelation()
     {
-        return afResponseHelper::create()->success(true)->data(array(), $this->getModificator()->buildRelationComboModels($this->getParameter('query')), 0)->asArray();
+        return afResponseHelper::create()->success(true)->data(array(), $this->getModificator()->buildRelationComboModels($this->getParameter('query')), 0);
     }
     
     /**
      * Altering model - update field
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processAlterModelUpdateField()
@@ -179,12 +183,11 @@ class afStudioModelCommand extends afBaseStudioCommand
             
 			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
 				$response->message("Field '{$fieldDef->name}' was successfully updated");
-			} 
+			}
+			return $response;
         } catch ( Exception $e ) {
-        	$response = afResponseHelper::create()->success(false)->message($e->getMessage());
+        	return afResponseHelper::create()->success(false)->message($e->getMessage());
         }
-        
-        return $response->asArray();
     }
     
 }
