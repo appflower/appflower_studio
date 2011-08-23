@@ -1,5 +1,12 @@
 Ext.namespace('afStudio.wd');
 
+/**
+ * Widget Designer main tab panel container. 
+ * 
+ * @class afStudio.wd.WidgetDesigner
+ * @extends Ext.TabPanel
+ * @author Nikolai Babinski
+ */
 afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 
 	/**
@@ -38,7 +45,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 				file: w.actionPath				
 			}]
 			/*
-			TODO Should be improved 
+			TODO tabs context menu must be added and improved. Ext.ux.TabMenu is useless and should be removed 
 			plugins: new Ext.ux.TabMenu()
 			*/
 		}
@@ -46,7 +53,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	//eo _beforeInitComponent
 	
 	/**
-	 * ExtJS template method
+	 * Base template method.
 	 * @private
 	 */
 	initComponent : function() {
@@ -57,6 +64,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 		this._afterInitComponent();
 	},
 	
+	//TODO This method should be removed after resolving all issues with code-editor.
 	/**
 	 * Initializes events & does post configuration
 	 * @private
@@ -96,6 +104,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	},
 	
 	/**
+	 * Release widget designer resources.
 	 * @private
 	 */
     beforeDestroy : function() {

@@ -217,18 +217,16 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <!-- end of appflower view model -->
 
 <!-- widget designer -->
-<!-- refactor tab menu and remove-->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
-
+	<!-- gui views -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelInterface.js"></script>
-	<!-- list view -->
+		<!-- list -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ModelReflector.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListGridView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ActionColumn.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListView.js"></script>
-	<!-- wd -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetFactory.js"></script>	
+	<!-- containers -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WD.js"></script>	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/InspectorPalette.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/DesignerPanel.js"></script>

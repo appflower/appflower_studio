@@ -101,18 +101,20 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 	
 	/**
 	 * Adds component(s) to viewport center region.
-	 * @param {Ext.Component/Array} component The component/array of component being added.
-	 * @param {Boolean} (Optional) removeOthers This specifies if should be deleted all region's components before add (defaults is false).
-	 * @author Nikolai
+	 * @param {Ext.Component|Array} component The component/array of components being added.
+	 * @param {Boolean} (Optional) removeOthers This specifies if should be deleted all region's components before add (defaults to false).
+	 * @return {Ext.Component|Array} components that were added.
+	 * @author Nikolai Babinski
 	 */
 	,addToWorkspace : function(component, removeOthers) {
 		var cp = this.viewRegions.center;
-		    
 		if (removeOthers === true) {
 			cp.removeAll(true);
 		}		
-		cp.add(component);
-		cp.doLayout();    
+		var cmp = cp.add(component);
+		cp.doLayout();
+		
+		return cmp;
 	}//eo addToWorkspace
 	
 	/**

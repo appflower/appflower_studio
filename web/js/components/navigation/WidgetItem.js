@@ -549,7 +549,7 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 */
     ,showWidgetDesignerForNode : function(node) {
         
-        afStudio.wd.WidgetFactory.showWidgetDesigner({
+        afStudio.WD.showWidgetDesigner({
 			uri: this.getNodeAttribute(node, 'widgetUri'),
 			actionPath: this.getNodeActionPath(node),
 			actionName: this.getNodeAttribute(node, 'actionName'),

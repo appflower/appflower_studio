@@ -45,6 +45,7 @@ afStudio.wd.Designer = Ext.extend(Ext.Panel, {
 	            minWidth: 300,
 	            split: true,
 	            collapseMode: 'mini',
+	            baseCls: 'x-plain',
 				items: [
 				{
 					xtype: 'wd.inspectorPalette',

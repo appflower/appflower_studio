@@ -181,6 +181,11 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
              */
             "modelNodeSelect",
             
+            /**
+             * @event ready
+             * Fires when controller is ready - model & views were instantiated and registered
+             * @param {Object} controller
+             */
             "ready",
             
             "beforeLoadViewDefinition",
@@ -226,7 +231,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	this.initView();
     	
         this.ready = true;
-        this.fireEvent("ready");
+        this.fireEvent("ready", this);
     },
     //eo initController
     
