@@ -76,16 +76,20 @@ afStudio.data.type.Type = Ext.extend(Object, {
 			}
 		}
 		
+		var valid = true;
+		
 		for (var r in rest) {
-			var restriction = tr[r], 
-				facet = rest[r];
-			var valid = restriction.validate(value, facet);
+			var restriction = tr[r],
+				facet = rest[r],
+				valid = restriction.validate(value, facet);
+			
 			if (valid !== true) {
-				return valid;
+				valid = false;
+				break;
 			}
 		}
 		
-		return true;
+		return valid ? true : this.invalidMessage;
 	},
 	
 	/**
@@ -103,7 +107,7 @@ afStudio.data.type.Type = Ext.extend(Object, {
 		
 		for (var i = 0, l = un.length; i < l; i++) {
 			var type = Ext.isString(un[i]) ? t.getType(un[i]) : un[i];
-			if (type.validate(value) == true) {
+			if (type.validate(value) === true) {
 				return true;
 			}
 		}

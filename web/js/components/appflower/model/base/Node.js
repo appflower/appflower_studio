@@ -317,9 +317,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	//not ruin the definition object
 	    	var def = Ext.apply({}, definition);
 	    	
-	    	//DEBUG
-	    	//console.log('node', String.format('[{0}] {1}', this.tag, this.id), def);
-	    	
 	    	if (def.attributes) {
 	    		this.applyProperties(def.attributes);
 		    	delete def.attributes;
@@ -341,12 +338,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     			});
     		}
     	} else {
-    		//DEBUG
-    		//console.log('set data value', String.format('[{0}] {1}', this.tag, this.id), definition);
     		this.setNodeData(definition);
     	}
-    	
-    	//createNode createChild
     	
     	silent ? this.resumeEvents() : null;
     },
@@ -1205,8 +1198,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 			source[k] = p.getPropertyHash();
     	});
     	
-    	var _content = this.getNodeData();
-    	if (Ext.isEmpty(this.nodeTypes) && _content) {
+    	if (this.isNodeDataUsed()) {
+    		var _content = this.getNodeData();
     		source['_content'] = _content.getPropertyHash();
     	}
     	
@@ -1214,6 +1207,17 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     //eo getPropertiesSource
 
+    /**
+     * Node data {@link #NODE_DATA} property is used if node has no children and {@link #_content} is defined.
+     * @protected
+     * @return {Boolean}
+     */
+    isNodeDataUsed : function() {
+    	var _content = this.getNodeData();
+    	
+    	return Ext.isEmpty(this.nodeTypes) && _content;
+    },
+    
     /**
      * Returns model's root node.
      * @protected
@@ -1327,16 +1331,51 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     //eo toString
     
-    //TODO @Nikolai
+    /**
+     * 
+     * 
+     * 
+     * @protected
+     * 
+     * @return {Boolean}
+     */
     validate : function() {
     	var ps = this.getProperties(),
     		nt = this.nodeTypes;
-    		
+    	
+    	var errors = {
+    		node : this.tag,
+    		error: null,
+    		children: []
+    	};	
+    	
+    	var err = [];
     	ps.eachKey(function(k, p) {
     		if (!p.isValid()) {
-    			
+    			var o = {};
+    			o[k] = p.getErrors();
+    			err.push(o);
     		}
     	});
+    	
+    	if (this.isNodeDataUsed()) {
+	    	var value = this.getNodeData();
+			if (!value.isValid()) {
+				err.push({'_content' : value.getErrors()});
+			}
+    	}
+    	
+		this.eachChild(function(node){
+			var e = node.validate();
+			if (e !== true) {
+				errors.children.push(e);
+			}
+		});    	
+    	
+    	if (err.length > 0 || errors.children.length > 0) {
+    		errors.error = err;
+    		return errors
+    	}
     	
     	return true;
     },
