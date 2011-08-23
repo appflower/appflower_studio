@@ -93,7 +93,7 @@ afStudio.model.Property = Ext.extend(Object, {
     },
     
     /**
-     * Returns property's data object. 
+     * Returns data object consists of all property's fields. 
      * @return {Object} property
      */
     getPropertyHash : function() {

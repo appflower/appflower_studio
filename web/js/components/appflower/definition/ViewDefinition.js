@@ -64,9 +64,9 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			ep = entObj.parent,
 			ek = entObj.key,
 			ent = entObj.entity;
-		
+			
 		var property = node.getProperty(p);
-		if (p != '_content' && Ext.isEmpty(property.defaultValue) && Ext.isEmpty(v)) {
+		if (p != '_content' && Ext.isEmpty(v)) {
 			this.removeEntityAttribute(ent, p);
 			return;
 		}
@@ -102,7 +102,28 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @param {String} attr The attribute being deleted
 	 */
 	removeEntityAttribute : function(ent, attr) {
-		delete ent.attributes[attr];
+		if (ent.attributes) {
+			delete ent.attributes[attr];
+			
+			if (this.isEmptyEntityAttributes(ent)) {
+				delete ent.attributes;
+			}
+		}
+	},
+	
+	/**
+	 * Checks if an entity has any attributes.
+	 * Returns true if the passed entity has at least one attribute. 
+	 * @protected
+	 * @param {Object} ent
+	 * @return {Boolean}
+	 */
+	isEmptyEntityAttributes : function(ent) {
+		for (var p in ent.attributes) {
+			return false;
+		}
+		
+		return true;
 	},
 	
 	/**
@@ -195,7 +216,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			eContent = node.getNodeData() ? node.getNodeData().getValue() : null,
 			entity = null;
 	
-		var attrEmpty = true;	
+		var attrEmpty = true;
 		for (var p in eAttr) {
 			attrEmpty = false;
 			break;
@@ -246,7 +267,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
     		
     	//remove "/root"
     	path.splice(0, 2);
-    	
+
     	//node is the model root
     	if (path.length == 0) {
     		return {
@@ -261,13 +282,14 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
     		ent, 
     		idx = null;
     	parent = ent = this.data;
+    	
     	for (var i = 0, l = path.length; i < l; i++) {
     		var nodeId = path[i],
     				ek = nodeId.replace(/-\d+$/, '');
 
 			parent = ent;
 			
-			var nextEnt = ent[ek]; 
+			var nextEnt = ent[ek];
 			
     		if (Ext.isDefined(nextEnt)) {
    				if (Ext.isArray(nextEnt)) {
