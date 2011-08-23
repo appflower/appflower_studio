@@ -31,7 +31,6 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function getModificator()
 	{
 	    if (is_null($this->modificator)) {
-            // $this->modificator = new afStudioModelCommandModificator($this->modelName, $this->schemaFile, $this->getCommand());
 	        $this->modificator = afStudioModelCommandModificator::create()->setModelName($this->modelName)->setSchemaFile($this->schemaFile);
 	    }
 	    
@@ -138,11 +137,11 @@ class afStudioModelCommand extends afBaseStudioCommand
 			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
 				$response->message("{$this->modelName} structure was successfully updated");
 			}
+			
+			return $response;
         } catch ( Exception $e ) {
-        	$response = afResponseHelper::create()->success(false)->message($e->getMessage());
+        	return afResponseHelper::create()->success(false)->message($e->getMessage());
         }
-        
-        return $response;
     }
     
     /**
@@ -184,6 +183,7 @@ class afStudioModelCommand extends afBaseStudioCommand
 			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
 				$response->message("Field '{$fieldDef->name}' was successfully updated");
 			}
+			
 			return $response;
         } catch ( Exception $e ) {
         	return afResponseHelper::create()->success(false)->message($e->getMessage());

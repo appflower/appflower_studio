@@ -250,13 +250,16 @@ class appFlowerStudioActions extends afsActions
     
     /**
      * Notifications action
+     * 
+     * @return string - json
+     * @author Sergey Startsev
      */
-    public function executeNotifications()
+    public function executeNotifications(sfWebRequest $request)
 	{
-		$notifications_command = new afStudioNotificationsCommand($this->realRoot);
-				
-		return $this->renderText($notifications_command->end());
-	}    
+        $response = afStudioCommand::process('notification', $request->getParameter('cmd'), $request->getParameterHolder()->getAll());
+        
+        return $this->renderJson($response);
+	}
     
     /**
      * Getting widgets list by app nane and module name
