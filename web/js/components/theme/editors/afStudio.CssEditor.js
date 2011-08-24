@@ -1,8 +1,7 @@
 /**
  * Css Editor
- * Widget Designer
  * @class afStudio.CssEditor
- * @extends Ext.TabPanel
+ * @extends Ext.Window
  * @author PavelK
  */
 afStudio.CssEditor = Ext.extend(Ext.Window, { 
@@ -15,11 +14,15 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	initComponent: function(){
 		this.createRegions();
 		var config = {
-			title: 'CSS Editor', width: 813,
-			height: 550, closable: true,
+			title: 'CSS Editor', 
+			width: 813,
+			height: 550, 
+			closable: true,
 	        draggable: true, 
-	        modal: true, resizable: false,
-	        bodyBorder: false, border: false,
+	        modal: true, 
+	        resizable: false,
+	        bodyBorder: false, 
+	        border: false,
 	        layout: 'border',
 	        items: [
 	        	this.westPanel,
@@ -42,7 +45,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	createRegions: function(){
 		//Create TreeLoader component
 		this.loader = new Ext.tree.TreeLoader({
-			 dataUrl: window.afStudioWSUrls.getCssFilestreeUrl()
+			 dataUrl: afStudioWSUrls.getCssFilestreeUrl
 		});
 		
 		this.westPanel = new Ext.ux.FileTreePanel({
@@ -107,7 +110,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	
 	save: function(){
 		Ext.Ajax.request({
-		   url: window.afStudioWSUrls.getCssFilesSaveUrl(),
+		   url: afStudioWSUrls.getCssFilesSaveUrl,
 		   params: { node: this.westPanel.getSelectionModel().getSelectedNode().text},
 		   xmlData:this.codeEditor.getValue(),
 		   success: function(result,request){			   

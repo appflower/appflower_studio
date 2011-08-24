@@ -17,13 +17,9 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/appFlowerStudio/filetree');
     },
     
-    getCssFilestreeUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/cssfilestree');
-    },
+    getCssFilestreeUrl : '/appFlowerStudio/cssfilestree',
     
-    getCssFilesSaveUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/cssfilesSave');
-    },    
+    getCssFilesSaveUrl : '/appFlowerStudio/cssfilesSave',    
     
     moduleListUrl : '/afsModuleManager/getList',
     
