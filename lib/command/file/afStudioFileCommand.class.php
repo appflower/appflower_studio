@@ -119,4 +119,31 @@ class afStudioFileCommand extends afBaseStudioCommand
         return afResponseHelper::create()->success(true);
     }
     
+    /**
+     * Getting file content
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processContent()
+    {
+        $file = $this->getParameter('file', false);
+        $code = $this->getParameter('code', false);
+        $is_post = $this->getParameter('is_post', false);
+        
+		$file = (substr($file, 0, 4) == 'root') ? str_replace('root', afStudioUtil::getRootDir(), substr($file, 0, 4)) . substr($file, 4) : $file;
+		
+		$response = afResponseHelper::create();
+		
+		if ($is_post) {
+  			if ($file && $code && is_writable($file) && afStudioUtil::writeFile($file, $code)) return $response->success(true);
+			
+			return $response->success(false);
+  		}
+  		
+		if ($file && $file_content = @file_get_contents($file)) return $response->success(true)->data(array(), $file_content, 0);
+		
+        return $response->success(false);
+    }
+    
 }

@@ -9,72 +9,56 @@
  */
 class appFlowerStudioActions extends afsActions
 {
-	public function preExecute()
-	{
-		$this->realRoot = sfConfig::get('sf_root_dir');
-		$this->afExtjs = afExtjs::getInstance();        
-		$this->afStudioUser = json_encode(afStudioUser::getInstance()->getInfo());
-	}
+    /**
+     * Pre-execute mehtod
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    public function preExecute()
+    {
+        $this->realRoot = sfConfig::get('sf_root_dir');
+        $this->afExtjs = afExtjs::getInstance();
+        $this->afStudioUser = json_encode(afStudioUser::getInstance()->getInfo());
+    }
+    
+    /**
+     * Studio runner action
+     */
+    public function executeStudio()
+    {
+        $this->setTemplate(sfConfig::get('afs_debug') ? 'devStudio' : 'prodStudio');
+    }
+    
+    /**
+     * Code editor - higlighter action
+     *
+     * @param sfWebRequest $request 
+     */
+    public function executeCodepress(sfWebRequest $request)
+    {
+        $this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';
+        $this->language = (($request->hasParameter('language') && $request->getParameter('language') != 'undefined') ? $request->getParameter('language'):'generic');
+        
+        return $this->renderPartial('codepress');
+    }
 	
-	public function executeStudio()
-	{
-		$this->setTemplate(sfConfig::get('afs_debug') ? 'devStudio' : 'prodStudio');				
-	}
-			
-	public function executeCodepress($request)
-	{
-		$this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';						
-		$this->language=(($this->hasRequestParameter('language')&&$this->getRequestParameter('language')!='undefined')?$this->getRequestParameter('language'):'generic');
-		
-		return $this->renderPartial('codepress');		
-	}
-	
-	public function executeFilecontent($request)
-	{
-		$file=$this->hasRequestParameter('file')?$this->getRequestParameter('file'):false;
-		$code=$this->hasRequestParameter('code')?$this->getRequestParameter('code'):false;
-				
-		$file=(substr($file,0,4)=='root')?str_replace('root',$this->realRoot,substr($file,0,4)).substr($file,4):$file;
-		
-		if($this->getRequest()->getMethod()==sfRequest::POST)
-  		{
-  			if($file&&$code)
-  			{
-  				if(is_writable($file))
-  				{
-  					if(afStudioUtil::writeFile($file,$code))
-					{
-						return $this->renderText(json_encode(array('success'=>true)));
-					}
-					else {
-						return $this->renderText(json_encode(array('success'=>false)));
-					}
-  				}
-  				else {
-					return $this->renderText(json_encode(array('success'=>false)));
-				}
-  			}
-  			else {
-				return $this->renderText(json_encode(array('success'=>false)));
-			}  			
-  		}
-  		else {
-		
-			if($file)
-			{
-				$file_content=@file_get_contents($file);
-				if($file_content)
-				{
-					return $this->renderText(json_encode(array('response'=>$file_content)));
-				}
-				else {
-					return $this->renderText(json_encode(array('success'=>false)));
-				}
-			}
-			else {
-				return $this->renderText(json_encode(array('success'=>false)));
-			}		
-  		}
+	/**
+	 * Getting file content
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 * @author Sergey Startsev
+	 */
+    public function executeFilecontent(sfWebRequest $request)
+    {
+        $parameters = array(
+            'file'      => $request->getParameter('file', false),
+            'code'      => $request->getParameter('code', false),
+            'is_post'   => $request->getMethod() == sfRequest::POST,
+        );
+        
+        return afStudioCommand::process('file', 'content', $parameters)->asArray();
 	}
 	
 	/**

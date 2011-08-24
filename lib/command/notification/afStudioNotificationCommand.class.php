@@ -21,7 +21,9 @@ class afStudioNotificationCommand extends afBaseStudioCommand
     protected function processSet()
     {
         $message = $this->getParameter('message');
-        $messageType = ($messageType = $this->getParameter('messageType') && $messageType != 'false') ? $messageType : self::DEFAULT_MESSAGE_TYPE;
+        $messageType = $this->getParameter('messageType');
+        
+        $messageType = ($messageType != 'false') ? $messageType : self::DEFAULT_MESSAGE_TYPE;
         
         afsNotificationPeer::log($message, $messageType);
         
