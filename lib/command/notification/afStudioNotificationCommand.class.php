@@ -8,6 +8,11 @@
 class afStudioNotificationCommand extends afBaseStudioCommand
 {
     /**
+     * Default message type notification
+     */
+    const DEFAULT_MESSAGE_TYPE = 'notification';
+    
+    /**
      * Process setting notification
      *
      * @return array
@@ -16,7 +21,7 @@ class afStudioNotificationCommand extends afBaseStudioCommand
     protected function processSet()
     {
         $message = $this->getParameter('message');
-        $messageType = ($messageType = $this->getParameter('messageType') && $messageType != 'false') ? $messageType : 'notification';
+        $messageType = ($messageType = $this->getParameter('messageType') && $messageType != 'false') ? $messageType : self::DEFAULT_MESSAGE_TYPE;
         
         afsNotificationPeer::log($message, $messageType);
         
@@ -37,22 +42,14 @@ class afStudioNotificationCommand extends afBaseStudioCommand
         
         if ($notifications) {
             foreach ($notifications as $notification) {
-                switch ($notification->getUser()) {
-                    case 0:
-                        $user = 'Guest';
-                        break;
-                        
-                    default:
-                        $user = afGuardUserPeer::retrieveByPK($notification->getUser());
-                        $user = $user->getUsername();
-                        break;
-                }
-                $data[] = '<li>'.$notification->getCreatedAt('d/m/Y H:i').' '.$user.' ['.$notification->getMessageType().'] {'.$notification->getIp().'} '.$notification->getMessage().'</li>';
-                
+                $data[] = afStudioNotificationCommandHelper::render($notification);
                 $offset++;
             }
         }
         
+        /*
+            TODO wrap to afResponse
+        */
 		$this->result = array('success' => true, 'notifications' => implode('', $data), 'offset' => $offset);
     }
     
