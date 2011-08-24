@@ -49,7 +49,7 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 	/**
 	* file content url, from where to get the file content
 	*/
-	fileContentUrl:window.afStudioWSUrls.getFilecontentUrl(),
+	fileContentUrl: afStudioWSUrls.getFilecontentUrl,
 	
 	/**
 	 * delayedStart - set to ttrue in config if you do not want to load data after initialization..
@@ -450,7 +450,7 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
 			this.hideMask();
 			
           	var r = Ext.decode(response.responseText);
-          	var code = r.response;
+          	var code = r.data;
             this.code = code;
             this.editor.setCode(this.code);
             this.editor.syntaxHighlight('init');
@@ -511,7 +511,7 @@ Ext.ux.CodePress = Ext.extend(Ext.form.Field, {
           success:function(response, options){
 			this.hideMask();
 			var r = Ext.decode(response.responseText);
-          	var code = r.response;
+          	var code = r.data;
             this.code = code;
             this.editor.setCode(this.code);
         	this.editor.syntaxHighlight('init');

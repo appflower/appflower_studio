@@ -59,9 +59,7 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/appFlowerStudio/codepress');
     },
     
-    getFilecontentUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/filecontent');
-    },
+    getFilecontentUrl : '/appFlowerStudio/filecontent',
     
     getDebugUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/debug');
