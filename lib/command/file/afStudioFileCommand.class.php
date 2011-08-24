@@ -131,19 +131,47 @@ class afStudioFileCommand extends afBaseStudioCommand
         $code = $this->getParameter('code', false);
         $is_post = $this->getParameter('is_post', false);
         
-		$file = (substr($file, 0, 4) == 'root') ? str_replace('root', afStudioUtil::getRootDir(), substr($file, 0, 4)) . substr($file, 4) : $file;
-		
-		$response = afResponseHelper::create();
-		
-		if ($is_post) {
-  			if ($file && $code && is_writable($file) && afStudioUtil::writeFile($file, $code)) return $response->success(true);
-			
-			return $response->success(false);
-  		}
-  		
-		if ($file && $file_content = @file_get_contents($file)) return $response->success(true)->data(array(), $file_content, 0);
-		
+        $file = (substr($file, 0, 4) == 'root') ? str_replace('root', afStudioUtil::getRootDir(), substr($file, 0, 4)) . substr($file, 4) : $file;
+        
+        $response = afResponseHelper::create();
+        
+        if ($is_post) {
+            if ($file && $code && is_writable($file) && afStudioUtil::writeFile($file, $code)) return $response->success(true);
+            
+            return $response->success(false);
+        }
+        
+        if ($file && $file_content = @file_get_contents($file)) return $response->success(true)->data(array(), $file_content, 0);
+        
         return $response->success(false);
     }
+    
+    /**
+     * Getting css files list
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processCssfiles()
+    {
+        $cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
+		$cssExtensions = sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
+		
+		$i = 0;
+		$nodes = array();
+		foreach ($cssExtensions as $cssExtension) {
+			$cssExtension = str_replace(sfConfig::get('sf_root_dir') . "/plugins/appFlowerStudioPlugin/web/css/", "", $cssExtension);
+			$nodes[$i] = array(
+				'text' => $cssExtension, 
+				'id' => 'css/' . $cssExtension, 
+				'leaf' => true
+		    );
+			$i++;
+		}
+		
+		return afResponseHelper::create()->success(true)->data(array(), $nodes, 0);
+    }
+    
+    
     
 }

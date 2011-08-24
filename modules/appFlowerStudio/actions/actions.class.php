@@ -58,7 +58,9 @@ class appFlowerStudioActions extends afsActions
             'is_post'   => $request->getMethod() == sfRequest::POST,
         );
         
-        return afStudioCommand::process('file', 'content', $parameters)->asArray();
+        $response = afStudioCommand::process('file', 'content', $parameters);
+        
+        return $this->renderJson($response->asArray());
 	}
 	
 	/**
@@ -102,30 +104,25 @@ class appFlowerStudioActions extends afsActions
         return $this->renderJson($response->asArray());
 	}
 	
-	public function executeCssfilestree(){
-		$cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
-		$cssExtensions = sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
-		$i = 0;
-		foreach ($cssExtensions as $cssExtension) {
-			$cssExtension = str_replace(sfConfig::get('sf_root_dir')."/plugins/appFlowerStudioPlugin/web/css/","",$cssExtension);
-			$nodes[$i] = array(
-				'text' => $cssExtension, 
-				'id' => 'css/'.$cssExtension, 
-				'leaf' => true
-		    );
-			$i++;
-		}
-		/*
-		$nodes = array(
-			array('text' => 'afStudio.console.css', 'id' => 'css/afStudio.console.css', 'leaf' => true),
-			array('text' => 'afStudio.css', 'id' => 'css/afStudio.css', 'leaf' => true),
-			array('text' => 'afStudio.tplSelector.css', 'id' => 'css/afStudio.tplSelector.css', 'leaf' => true),
-			array('text' => 'afStudio.tplSelector.css1', 'id' => 'css/afStudio.tplSelector.css1', 'leaf' => true)
-		);*/
-		return $this->renderJson($nodes);
+	/**
+	 * Css Files tree list
+	 *
+	 * @return void
+	 * @author Sergey Startsev
+	 */
+	public function executeCssfilestree()
+	{
+	    $response = afStudioCommand::process('file', 'cssfiles', $request->getParameterHolder()->getAll());
+	    
+	    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+        }
+	    
+		return $this->renderJson($response->asArray());
 	}
 
-	public function executeCssfilesSave(){
+	public function executeCssfilesSave()
+	{
 		$result=true;
 		
 		$content=file_get_contents("php://input");
