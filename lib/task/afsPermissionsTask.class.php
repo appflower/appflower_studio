@@ -66,6 +66,12 @@ EOF;
 	  {
 	  	$this->getFilesystem()->chmod($module, 0777);
 	  }
+      
+	  /**
+	   * fixing perms on studio plugin data dir
+	   */
+	  $dataDir = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/data';
+      $this->getFilesystem()->chmod($dataDir, 0777);
 	  
 	  /**
 	   * fixing perms on all yml files
