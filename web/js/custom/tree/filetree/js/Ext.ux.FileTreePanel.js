@@ -436,6 +436,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			beforenodedrop: this.onBeforeNodeDrop,
 			nodedrop: this.onNodeDrop,
 			nodedragover: this.onNodeDragOver,
+			//TODO examin
 			newfile: this.onNewFileSuccess,
 			'delete': this.onDeleteSuccess
 		});
@@ -730,11 +731,11 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,confirmOverwrite:function(filename, callback, scope) {
 		Ext.Msg.show({
-			 title:this.confirmText
-			,msg:String.format(this.existsText, filename) + '. ' + this.overwriteText
-			,icon:Ext.Msg.QUESTION
-			,buttons:Ext.Msg.YESNO
-			,fn:callback.createDelegate(scope || this)
+			title: this.confirmText,
+			msg: String.format(this.existsText, filename) + '. ' + this.overwriteText,
+			icon: Ext.Msg.QUESTION,
+			buttons: Ext.Msg.YESNO,
+			fn: callback.createDelegate(scope || this)
 		});
 	}
 	// }}}
@@ -922,11 +923,14 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		form.submit();
 	}
-	
+
 	/**
-	* open the file into a tab from the center tabpanel
-	*/
+	 * TODO make common interface
+	 * 
+	 * open the file into a tab from the center tabpanel
+	 */
 	,openFile : function(node, path) {
+		//TODO configurable container for files being opened in it.
 		var tabPanel = this.findParentByType('widgetdesigner'),
 			fileName = this.getFileName(path);
 		
@@ -982,19 +986,19 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		} else {
 			return this.fileCls + '-' + atmp.pop().toLowerCase();
 		}
-	}
-	// }}}
-	// {{{
-	,getFileName:function(path) {
-		var atmp=path.split('/');
+	},
+
+	getFileName : function(path) {
+		var atmp = path.split('/');
 		
 		return atmp[atmp.length-1];
-	}
+	},
+	
 	/**
-	 * returns path of node (file/directory)
+	 * Returns path of node (file/directory)
 	 * @private
 	 */
-	,getPath:function(node) {
+	getPath : function(node) {
 		var path, p, a;
 
 		// get path for non-root node
@@ -1018,40 +1022,39 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		// full path security checking has to be implemented on server
 		path = path.replace(/^[\/\.]*/, '');
 		return path;
-	} // eo function getPath
-	// }}}
-	// {{{
+	}, 
+	// eo function getPath
+	
 	/**
 	 * returns true if node has child with the specified name (text)
 	 * @private
 	 * @param {Ext.data.Node} node
 	 * @param {String} childName
 	 */
-	,hasChild:function(node, childName) {
+	hasChild : function(node, childName) {
 		return (node.isLeaf() ? node.parentNode : node).findChild('text', childName) !== null;
-	}
-	// }}}
-	// {{{
+	},
+	
 	/**
 	 * Hides context menu
 	 * @return {Ext.ux.FileTreeMenu} this
 	 */
-	,hideContextMenu:function() {
-		if(this.contextmenu && this.contextmenu.isVisible()) {
+	hideContextMenu : function() {
+		if (this.contextmenu && this.contextmenu.isVisible()) {
 			this.contextmenu.hide();
 		}
 		return this;
-	} // eo function hideContextMenu
-	// }}}
-	// {{{
+	},
+	// eo function hideContextMenu
+	
 	/**
-	 * called before editing is completed - allows edit cancellation
+	 * Called before editing is completed - allows edit cancellation
 	 * @private
 	 * @param {TreeEditor} editor
 	 * @param {String} newName
 	 * @param {String} oldName
 	 */
-	,onBeforeEditComplete:function(editor, newName, oldName) {
+	onBeforeEditComplete : function(editor, newName, oldName) {
 		if(editor.cancellingEdit) {
 			editor.cancellingEdit = false;
 			return;
@@ -1064,16 +1067,14 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			editor.cancelEdit();
 			return false;
 		}
-	}
-	// }}}
-	// {{{
+	},
+	
 	/**
-	 * runs before node is dropped
+	 * Runs before node is dropped
 	 * @private
 	 * @param {Object} e dropEvent object
 	 */
-	,onBeforeNodeDrop:function(e) {
-
+	onBeforeNodeDrop : function(e) {
 		// source node, node being dragged
 		var s = e.dropNode;
 
@@ -1081,20 +1082,20 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		var d = e.target.leaf ? e.target.parentNode : e.target;
 
 		// node has been dropped within the same parent
-		if(s.parentNode === d) {
+		if (s.parentNode === d) {
 			return false;
 		}
 
 		// check if same name exists in the destination
 		// this works only if destination node is loaded
-		if(this.hasChild(d, s.text) && undefined === e.confirmed) {
+		if (this.hasChild(d, s.text) && undefined === e.confirmed) {
 			this.confirmOverwrite(s.text, function(response) {
 				e.confirmed = 'yes' === response;
 				this.onBeforeNodeDrop(e);
 			});
 			return false;
 		}
-		if(false === e.confirmed) {
+		if (false === e.confirmed) {
 			return false;
 		}
 
@@ -1105,71 +1106,70 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		var newName = this.getPath(d) + '/' + s.text;
 
 		// fire beforerename event
-		if(true !== this.eventsSuspended && false === this.fireEvent('beforerename', this, s, newName, oldName)) {
+		if (true !== this.eventsSuspended && false === this.fireEvent('beforerename', this, s, newName, oldName)) {
 			return false;
 		}
 
 		var options = {
-			 url:this.renameUrl || this.url
-			,method:this.method
-			,scope:this
-			,callback:this.cmdCallback
-			,node:s
-			,oldParent:s.parentNode
-			,e:e
-			,params:{
-				 cmd:'rename'
-				,oldname:oldName
-				,newname:newName
+			url: this.renameUrl || this.url,
+			method: this.method,
+			scope: this,
+			callback: this.cmdCallback,
+			node: s,
+			oldParent: s.parentNode,
+			e: e,
+			params: {
+				cmd: 'rename',
+				oldname: oldName,
+				newname: newName
 			}
 		};
 		Ext.Ajax.request(options);
+		
 		return true;
-	}
-	// }}}
-	// {{{
+	},
+	//eo onBeforeNodeDrop
+	
 	/**
-	 * sets uploadPanel's destination path
+	 * Sets uploadPanel's destination path
 	 * @private
 	 */
-	,onBeforeUpload:function(uploadPanel) {
-
+	onBeforeUpload : function(uploadPanel) {
 		var menu = this.getContextMenu();
 		var path = this.getPath(menu.node);
-		if(menu.node.isLeaf()) {
+		if (menu.node.isLeaf()) {
 			path = path.replace(/\/[^\/]+$/, '', path);
 		}
 		uploadPanel.setPath(path);
-
-	} // eo function onBeforeUpload
-	// }}}
-	// {{{
+	}, 
+	// eo function onBeforeUpload
+	
 	/**
-	 * reloads tree node on upload finish
+	 * Reloads tree node on upload finish
 	 * @private
 	 */
-	,onAllFinished:function(uploader) {
+	onAllFinished : function(uploader) {
 		var menu = this.getContextMenu();
 		(menu.node.isLeaf() ? menu.node.parentNode : menu.node).reload();
-	} // eo function onAllFinished
-	// }}}
-	// {{{
+	}, 
+	// eo function onAllFinished
+	
 	/**
+	 * Context menu click handler
 	 * @private
-	 * context menu click handler
 	 * @param {Ext.menu.Menu} context menu
 	 * @param {Ext.menu.Item} item clicked
 	 * @param {Ext.EventObject} raw event
 	 */
-	,onContextClick:function(menu, item, e) {
-		if(item.disabled) {
+	onContextClick : function(menu, item, e) {
+		if (item.disabled) {
 			return;
 		}
 		var node = menu.node;
-		if(!node) {
+		if (!node) {
 			node = menu.parentMenu.node;
 		}
-		switch(item.cmd) {
+		switch (item.cmd) {
 			case 'reload':
 				node.reload();
 			break;
@@ -1221,151 +1221,150 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			default:
 			break;
 		}
-	} // eo function onContextClick
-	// }}}
-	// {{{
+	}, 
+	// eo function onContextClick
+	
 	/**
 	 * contextmenu event handler
 	 * @private
 	 */
-	,onContextMenu:function(node, e) {
-		if(this.readOnly) {
+	onContextMenu : function(node, e) {
+		if (this.readOnly) {
 			return false;
 		}
 		this.showContextMenu(node);
 
 		return false;
-	} // eo function onContextMenu
-	// }}}
-	// {{{
+	}, 
+	// eo function onContextMenu
+	
 	/**
-	 * dblclick handlers
+	 * Dblclick handler
 	 * @private
 	 */
-	,onDblClick:function(node, e) {
+	onDblClick : function(node, e) {
 		this.openNode(node);
-	} // eo function onDblClick
-	// }}}
-	// {{{
+	},
+	// eo function onDblClick
+	
 	/**
 	 * Destroys the FileTreePanel and sub-components
 	 * @private
 	 */
-	,onDestroy:function() {
-
+	onDestroy : function() {
 		// destroy contextmenu
-		if(this.contextmenu) {
+		if (this.contextmenu) {
 			this.contextmenu.purgeListeners();
 			this.contextmenu.destroy();
 			this.contextmenu = null;
 		}
 
 		// destroy treeEditor
-		if(this.treeEditor) {
+		if (this.treeEditor) {
 			this.treeEditor.purgeListeners();
 			this.treeEditor.destroy();
 			this.treeEditor = null;
 		}
 
 		// remover reference to treeSorter
-		if(this.treeSorter) {
+		if (this.treeSorter) {
 			this.treeSorter = null;
 		}
 
 		// call parent
 		Ext.ux.FileTreePanel.superclass.onDestroy.call(this);
-
-	} // eo function onDestroy
-	// }}}
-	// {{{
+	}, 
+	// eo function onDestroy
+	
 	/**
-	 * runs when editing of a node (rename) is completed
+	 * Runs when editing of a node (rename) is completed
 	 * @private
 	 * @param {Ext.Editor} editor
 	 * @param {String} newName
 	 * @param {String} oldName
 	 */
-	,onEditComplete:function(editor, newName, oldName) {
-
+	onEditComplete : function(editor, newName, oldName) {
 		var node = editor.editNode;
 
-		if(newName === oldName || editor.creatingNewDir || editor.creatingNewFile) {
+		if (newName === oldName || editor.creatingNewDir || editor.creatingNewFile) {
 			editor.creatingNewDir = false;
 			editor.creatingNewFile = false;
 			return;
 		}
 		var path = this.getPath(node.parentNode);
 		var options = {
-			 url:this.renameUrl || this.url
-			,method:this.method
-			,scope:this
-			,callback:this.cmdCallback
-			,node:node
-			,oldName:oldName
-			,params:{
-				 cmd:'rename'
-				,oldname:path + '/' + oldName
-				,newname:path + '/' + newName
+			url: this.renameUrl || this.url,
+			method: this.method,
+			scope: this,
+			callback: this.cmdCallback,
+			node: node,
+			oldName: oldName,
+			params: {
+				cmd: 'rename',
+				oldname: path + '/' + oldName,
+				newname: path + '/' + newName
 			}
 		};
 		Ext.Ajax.request(options);
-	}
-	// }}}
-	// {{{
+	},
+	
 	/**
-	 * create new directory handler
+	 * Create new directory handler
 	 * @private
 	 * runs after editing of new directory name is completed
 	 * @param {Ext.Editor} editor
 	 */
-	,onNewDir:function(editor) {
+	onNewDir : function(editor) {
 		var path = this.getPath(editor.editNode);
 		var options = {
-			 url:this.newdirUrl || this.url
-			,method:this.method
-			,scope:this
-			,node:editor.editNode
-			,callback:this.cmdCallback
-			,params:{
-				 cmd:'newdir'
-				,dir:path
+			url: this.newdirUrl || this.url,
+			method: this.method,
+			scope: this,
+			node: editor.editNode,
+			callback: this.cmdCallback,
+			params: {
+				cmd: 'newdir',
+				dir: path
 			}
 		};
 		Ext.Ajax.request(options);
-	}
+	},
+	
 	/**
-	 * create new file handler
+	 * Create new file handler
 	 * @private
 	 * runs after editing of new file name is completed
 	 * @param {Ext.Editor} editor
 	 */
-	,onNewFile:function(editor) {
+	onNewFile : function(editor) {
 		var path = this.getPath(editor.editNode);
 		var options = {
-			 url:this.newfileUrl || this.url
-			,method:this.method
-			,scope:this
-			,node:editor.editNode
-			,callback:this.cmdCallback
-			,params:{
-				 cmd:'newfile'
-				,file:path
+			url: this.newfileUrl || this.url,
+			method: this.method,
+			scope: this,
+			node: editor.editNode,
+			callback: this.cmdCallback,
+			params: {
+				cmd: 'newfile',
+				file: path
 			}
 		};
 		Ext.Ajax.request(options);
-	}
+	},
+	
 	/**
-	 * create new file handler after the file is saved
+	 * Create new file handler after the file is saved
 	 * @param node
 	 */
-	,onNewFileSuccess:function(tree,node) {
+	onNewFileSuccess : function(tree, node) {
 	    this.openNode(node,'_self');
-	}
+	},
+	
 	/**
-	 * create delete handler after the file is deleted from tree
+	 * Create delete handler after the file is deleted from tree
 	 * @param node
 	 */
-	,onDeleteSuccess : function(tree, node) {
+	onDeleteSuccess : function(tree, node) {
 		var tabPanel = this.findParentByType('widgetdesigner'),
 			path = this.getPath(node);
 //	    var tabPanel = Ext.getCmp(this.tabPanelId);
@@ -1395,15 +1394,15 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,onNodeDragOver:function(e) {
 		e.cancel = e.target.disabled || e.dropNode.parentNode === e.target.parentNode && e.target.isLeaf();
-	} // eo function onNodeDragOver
-	// }}}
-	// {{{
+	}, 
+	// eo function onNodeDragOver
+
 	/**
 	 * called when node is dropped
 	 * @private
 	 * @param {Object} dd event
 	 */
-	,onNodeDrop:function(e) {
+	onNodeDrop : function(e) {
 
 		// failure can be signalled by cmdCallback
 		// put drop node to the original parent in that case
@@ -1417,17 +1416,16 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		if(sameNode && sameNode !== e.dropNode) {
 			sameNode.parentNode.removeChild(sameNode);
 		}
-	}
-	// }}}
-	// {{{
+	},
+	
 	/**
 	 * Opens node
 	 * @param {Ext.tree.AsyncTreeNode} node
 	 * @param {String} mode Can be "_self", "_blank", or "popup". Defaults to (this.openMode)
 	 */
-	,openNode:function(node, mode) {
+	openNode : function(node, mode) {
 
-		if(!this.enableOpen) {
+		if (!this.enableOpen) {
 			return;
 		}
 
@@ -1435,28 +1433,30 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		var url;
 		var path;
-		if(node.isLeaf()) {
+		if (node.isLeaf()) {
 			path = this.getPath(node);
 						
 			url = this.hrefPrefix + path + this.hrefSuffix;
 
 			// fire beforeopen event
-			if(true !== this.eventsSuspended && false === this.fireEvent('beforeopen', this, node.text, url, mode)) {
+			if (true !== this.eventsSuspended && false === this.fireEvent('beforeopen', this, node.text, url, mode)) {
 				return;
 			}
 
-			switch(mode) {
+			switch (mode) {
 				case 'popup':
-					if(!this.popup || this.popup.closed) {
+					if (!this.popup || this.popup.closed) {
 						this.popup = window.open(url, this.hrefTarget, this.popupFeatures);
 					}
 					this.popup.location = url;
-					if(this.focusPopup) {
+					if (this.focusPopup) {
 						this.popup.focus();
 					}
 				break;
 
 				case '_self':
+//TODO implement "container" mode and make it configurable 				
+					//window.location = url;
 					this.openFile(node,path);
 				break;
 
@@ -1470,139 +1470,135 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 
 			// fire open event
-			if(true !== this.eventsSuspended) {
+			if (true !== this.eventsSuspended) {
 				this.fireEvent('open', this, node.text, url, mode);
 			}
 		}
-
-	}
-	// }}}
-	// {{{
+	},
+	//eo function openNode
+	
 	/**
 	 * Sets/Unsets delete of files/directories disabled/enabled
 	 * @param {Boolean} disabled
 	 * @return {Ext.ux.FileTreePanel} this
 	 */
-	,setDeleteDisabled:function(disabled) {
+	setDeleteDisabled : function(disabled) {
 		disabled = !(!disabled);
-		if(!this.enableDelete === disabled) {
+		if (!this.enableDelete === disabled) {
 			return this;
 		}
 		this.hideContextMenu();
 		this.enableDelete = !disabled;
-	} // eo function setDeleteDisabled
-	// }}}
-	// {{{
+	}, 
+	// eo function setDeleteDisabled
+	
 	/**
 	 * Sets/Unsets creation of new directory disabled/enabled
 	 * @param {Boolean} disabled
 	 * @return {Ext.ux.FileTreePanel} this
 	 */
-	,setNewdirDisabled:function(disabled) {
+	setNewdirDisabled : function(disabled) {
 		disabled = !(!disabled);
-		if(!this.enableNewDir === disabled) {
+		if (!this.enableNewDir === disabled) {
 			return this;
 		}
 		this.hideContextMenu();
 		this.enableNewDir = !disabled;
-
-	} // eo function setNewdirDisabled
-	// }}}
-	// {{{
+	}, 
+	// eo function setNewdirDisabled
+	
 	/**
 	 * Sets/Unsets open files disabled/enabled
 	 * @param {Boolean} disabled
 	 * @return {Ext.ux.FileTreePanel} this
 	 */
-	,setOpenDisabled:function(disabled) {
+	setOpenDisabled : function(disabled) {
 		disabled = !(!disabled);
-		if(!this.enableOpen === disabled) {
+		if (!this.enableOpen === disabled) {
 			return this;
 		}
 		this.hideContextMenu();
 		this.enableOpen = !disabled;
 
 		return this;
-	} // eo function setOpenDisabled
-	// }}}
-	// {{{
+	}, 
+	// eo function setOpenDisabled
+
 	/**
 	 * Sets/Unsets this tree to/from readOnly state
 	 * @param {Boolean} readOnly
 	 * @return {Ext.ux.FileTreePanel} this
 	 */
-	,setReadOnly:function(readOnly) {
+	setReadOnly : function(readOnly) {
 		readOnly = !(!readOnly);
-		if(this.readOnly === readOnly) {
+		if (this.readOnly === readOnly) {
 			return this;
 		}
 		this.hideContextMenu();
-		if(this.dragZone) {
+		if (this.dragZone) {
 			this.dragZone.locked = readOnly;
 		}
 		this.readOnly = readOnly;
 
 		return this;
+	}, 
+	// eo function setReadOnly
 
-	} // eo function setReadOnly
-	// }}}
-	// {{{
 	/**
 	 * Sets/Unsets rename of files/directories disabled/enabled
 	 * @param {Boolean} disabled
 	 * @return {Ext.ux.FileTreePanel} this
 	 */
-	,setRenameDisabled:function(disabled) {
+	setRenameDisabled : function(disabled) {
 		disabled = !(!disabled);
-		if(!this.enableRename === disabled) {
+		if (!this.enableRename === disabled) {
 			return this;
 		}
 		this.hideContextMenu();
-		if(this.dragZone) {
+		if (this.dragZone) {
 			this.dragZone.locked = disabled;
 		}
 		this.enableRename = !disabled;
 
 		return this;
-	} // eo function setRenameDisabled
-	// }}}
-	// {{{
+	},
+	// eo function setRenameDisabled
+	
 	/**
 	 * Sets/Unsets uploading of files disabled/enabled
 	 * @param {Boolean} disabled
 	 * @return {Ext.ux.FileTreePanel} this
 	 */
-	,setUploadDisabled:function(disabled) {
+	setUploadDisabled : function(disabled) {
 		disabled = !(!disabled);
-		if(!this.enableUpload === disabled) {
+		if (!this.enableUpload === disabled) {
 			return this;
 		}
 		this.hideContextMenu();
 		this.enableUpload = !disabled;
 
 		return this;
-	} // of function setUploadDisabled
-	// }}}
-	// {{{
+	}, 
+	// of function setUploadDisabled
+	
 	/**
-	 * adjusts context menu depending on many things and shows it
+	 * Adjusts context menu depending on many things and shows it
 	 * @private
 	 * @param {Ext.tree.AsyncTreeNode} node Node on which was right-clicked
 	 */
-	,showContextMenu:function(node) {
-
+	showContextMenu : function(node) {
 		// setup node alignment
 		var topAlign = false;
 		var alignEl = this.topMenu ? this.topMenu.getEl() : this.body;
 
-		if(!node) {
+		if (!node) {
 			node = this.getSelectionModel().getSelectedNode();
 			topAlign = true;
-		}
-		else {
+		} else {
 			alignEl = node.getUI().getEl();
 		}
-		if(!node) {
+		
+		if (!node) {
 			return;
 		}
 
@@ -1640,22 +1636,21 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		node.select();
 
 		// show menu
-		if(topAlign) {
+		if (topAlign) {
 			menu.showAt(menu.getEl().getAlignToXY(alignEl, 'tl-bl?'));
-		}
-		else {
+		} else {
 			menu.showAt(menu.getEl().getAlignToXY(alignEl, 'tl-tl?', [0, 18]));
 		}
-	} // eo function 
-	// }}}
-	// {{{
+	}, 
+	// eo function 
+
 	/**
-	 * universal show error function
+	 * Universal show error function
 	 * @private
 	 * @param {String} msg message
 	 * @param {String} title title
 	 */
-	,showError : function(msg, title) {
+	showError : function(msg, title) {
 		Ext.Msg.show({
 			title: title || this.errorText,
 			msg: Ext.util.Format.ellipsis(msg, this.maxMsgLen),
@@ -1664,26 +1659,23 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			buttons: Ext.Msg.OK,
 			minWidth: 1200 > String(msg).length ? 360 : 600
 		});
-	} // eo function showError
-	// }}}
-	// {{{
+	}, 
+	// eo function showError
+	
 	/**
 	 * updates class of leaf after rename
 	 * @private
 	 * @param {Ext.tree.AsyncTreeNode} node Node to update class of
 	 * @param {String} oldName Name the node had before
 	 */
-	,updateCls : function(node, oldName) {
+	updateCls : function(node, oldName) {
 		if (node.isLeaf()) {
 			Ext.fly(node.getUI().iconNode).removeClass(this.getFileCls(oldName));
 			Ext.fly(node.getUI().iconNode).addClass(this.getFileCls(node.text));
 		}
 	}
-	// }}}
-
-}); // eo extend
+}); 
+// eo extend
 
 // register xtype
 Ext.reg('filetreepanel', Ext.ux.FileTreePanel);
-
-// eof
