@@ -43,7 +43,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 */
     
 	/**
-	 * @property tag The node tag name 
+	 * The node's tag name -> determines node type.
+	 * @property tag 
 	 * @type {String}
 	 */
 	/**
@@ -51,15 +52,25 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * @type {Boolean}   
 	 */
 	/**
-	 * @property properties (Read-only) The model node properties.
+	 * (Read-only) The model node properties.
+	 * @property properties 
 	 * @type {Ext.util.MixedCollection}
 	 */	
 	/**
 	 * The array of node types which this node can contains.
-	 * Node type can be specified as a string like afStudio.ModelNode.BUTTON or
-	 * as an object like {name: afStudio.ModelNode.FIELD, required: true}.
-	 * Where "required" underlines that the node should contain this node type.
-	 * @property nodeTypes (Defaults is empty saying that a node should have no children.) 
+	 * Node type can be specified as a string like {@link afStudio.ModelNode.BUTTON} -> "i:button" or
+	 * as an object like {name: afStudio.ModelNode.FIELD, required: true, hasMany: false, unique: "name"}.
+	 * Where:
+	 * <u>
+	 * 	<li><b>name</b>{String} : The node type</li>
+	 * 	<li><b>required</b>{Boolean} : (Optional) Underlines that the node should contain this node type, defaults to false.</li>
+	 * 	<li><b>hasMany</b>{Boolean} : (Optional) Defines that the node can contain more than one nodes 
+	 * 	with type specified in name property, defaults to false.</li>
+	 * 	<li><b>unique</b>{String} : (Optional) Defines node's property which should be unique across all 
+	 * 	children nodes with the same type. unique property has sense only if hasMany is true.</li>
+	 * </u>
+	 * Defaults is empty saying that a node should have no children.
+	 * @property nodeTypes 
 	 * @type {Array}
 	 */
     nodeTypes : [],
@@ -438,8 +449,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Boolean}
      */
     isRequired : function() {
-    	var d = this.getStructuralData();
-		return d.required == true ? true : false;    	
+		return this.getStructuralData().required;    	
     },
     
     /**
@@ -447,40 +457,70 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Boolean}
      */
     hasMany : function() {
-    	var d = this.getStructuralData();
-		return d.hasMany == true ? true : false; 	
+		return this.getStructuralData().hasMany; 	
     },
     
     /**
-     * Returns this node structural data. This data is located in the parent node.
-     * @private
-     * @return {Object}
+     * Returns type data. Types are instances from {@link #nodeTypes} array. 
+     * @param {String|Object} type
+     * @return {Object} type structure
      */
-    getStructuralData : function() {
-    	var data = {};
+    getTypeStructure : function(type) {
+    	var structure = {
+    		name: null,
+    		required: false,
+	    	hasMany: false, 
+	    	unique: null
+    	};
+
+    	if (Ext.isObject(type)) {
+			structure.name = type.name;
+			structure.required = Ext.isBoolean(type.required) ? type.required : false;
+			structure.hasMany = Ext.isBoolean(type.hasMany) ? type.hasMany : false;
+			structure.unique = Ext.value(type.unique, null);
+    	} else {
+    		structure.name = type;
+    	}
+		
+		return structure;
+	},
+    
+    /**
+     * Returns structural data for the node. 
+     * Structural data is located in the parent node {@link #nodeTypes} property.
+     * @param {Node} (Optional) parent The parent node. It is used when node isn't inside the model but his structural data is needed
+     * @return {Object} structural data or null if node is the root or model's structure doesn't contain this node 
+     */
+    getStructuralData : function(parent) {
+    	var parent = this.parentNode || parent;
     	
-    	if (this.parentNode) {
-    		var nodes = this.parentNode.nodeTypes,
-    			selfTag = this.tag;
-    		
-    		for (var i = 0, l = nodes.length; i < l; i++) {
-    			var current = nodes[i];
-    			if (Ext.isObject(current)) {
-    				if (selfTag == current.name) {
-    					Ext.apply(data, current);
-						break;
-    				}
-    			} else {
-    				if (selfTag == current) {
-						break;
-    				}
-    			}
-    		}
+    	if (parent) {
+			var nodeTag = this.tag,
+				nt = parent.nodeTypes;
+				
+			var idx = Ext.each(nt, function(n){
+				return !(nodeTag == (Ext.isObject(n) ? n.name : n));
+			});
+
+			var nodeType = Ext.isDefined(idx) ? nt[idx] : null;
+			
+			if (nodeType) {
+				return this.getTypeStructure(nodeType);
+			}
     	}
     	
-    	return data;
+    	return null;
     },
-    //eo getStructuralData
+    //eo getStructuralData    
+    
+    /**
+     * Returns true if the node contains child node of specified type. 
+     * @param {String} tag
+     * @return {Boolean}
+     */
+    hasChildWithType : function(tag) {
+		return this.findChildById(tag, false, true) != null ? true : false;    	
+    },
     
     /**
      * Returns true if this node has one or more child nodes, else false.
@@ -1234,7 +1274,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     //eo getRootNode
     
     /**
-	 * Returns Model's type.
+	 * Returns model's type.
      * @protected
      * @return {String} type if specified otherwise returns null
      */
@@ -1332,12 +1372,17 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     //eo toString
     
     /**
-     * 
-     * 
+     * Validates the node and all his children.
+     * Returns true if the node is valid otherwise returns errors object:
+     * <u>
+     * 	<li><b>node</b>: {String} The node's tag name</li>
+     * 	<li><b>error</b>: {null|Array} The node's properties and structural errors</li>
+     * 	<li><b>children</b>: {Array} The node's children validation result</li>
+     * </u>
      * 
      * @protected
      * 
-     * @return {Boolean}
+     * @return {Boolean|Object} validation result
      */
     validate : function() {
     	var ps = this.getProperties(),
@@ -1349,7 +1394,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		children: []
     	};	
     	
+    	//properties
     	var err = [];
+    	
     	ps.eachKey(function(k, p) {
     		if (!p.isValid()) {
     			var o = {};
@@ -1358,6 +1405,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		}
     	});
     	
+    	//value
     	if (this.isNodeDataUsed()) {
 	    	var value = this.getNodeData();
 			if (!value.isValid()) {
@@ -1365,15 +1413,27 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 			}
     	}
     	
+    	//structure
+    	Ext.each(nt, function(it){
+			var t = this.getTypeStructure(it);
+			if (t.required && !this.hasChildWithType(t.name)) {
+   				var o = {};
+    			o[t.name] = String.format('Required {0} <u>{1}</u> node', t.hasMany ? 'at least one' : '', t.name); 				
+				err.push(o);
+			}
+    	}, this);
+    	
+    	//children
 		this.eachChild(function(node){
 			var e = node.validate();
 			if (e !== true) {
 				errors.children.push(e);
 			}
-		});    	
+		});
     	
     	if (err.length > 0 || errors.children.length > 0) {
-    		errors.error = err;
+    		errors.error = Ext.value(err, null);
+    		
     		return errors
     	}
     	
@@ -1390,31 +1450,19 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		console.log('@model "modelNodeCreated"', parent, node);
 		
 		var nodeTag = node.tag,
-			nt = parent.nodeTypes,
+			ns = node.getStructuralData(parent),
 			canBeAdded = true;
-		
-		var n;
-		for (var i = 0, len = nt.length; i < len; i++) {
-			if (nodeTag == (Ext.isObject(nt[i]) ? nt[i].name : nt[i])) {
-				n = nt[i];
-				break;
-			}
-		}
-		
-		var message;
-		if (n) {
-			var similarNode = parent.findChildById(nodeTag, false, true);
 			
-			if (similarNode) {
-				var hasMany = Ext.isObject(n) && n.hasMany,
-					unique  = Ext.isObject(n) && n.unique ? n.unique : false;
-					
-				if (!hasMany) {
-					canBeAdded = false;
+		var message;
+		
+		if (ns) {
+			if (parent.hasChildWithType(nodeTag)) {
+				if (!ns.hasMany) {
+					canBeAdded = false; 
 					message = String.format("<b>{0}</b> can contain only one <u>{1}</u> child node.", parent.tag, nodeTag);
-				} else if (unique && parent.findChild(nodeTag, unique, node.getPropertyValue(unique))) {
+				} else if (ns.unique && parent.findChild(nodeTag, ns.unique, node.getPropertyValue(ns.unique))) {
 					canBeAdded = false;
-					message = String.format('<b>{0}</b> property <u>{1}</u> should be unique.', nodeTag, unique);
+					message = String.format('<b>{0}</b> property <u>{1}</u> should be unique.', nodeTag, ns.unique);
 				}
 			}
 		} else {

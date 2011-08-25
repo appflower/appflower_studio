@@ -6,12 +6,14 @@
  * @author Nikolai Babinski
  */
 afStudio.model.Root = Ext.extend(afStudio.model.Node, {
-	
 	/**
 	 * @cfg {Function/String} (Optional) structureTpl
 	 * <u>structureTpl</u> can be a Function or a String class name of model template structure.   
 	 */
-	
+
+	//TODO think a bit over about model Root node ID.
+	//it can be optimized and be more flexibile, depends of Model future usage.
+	//by @Nick
 	/**
 	 * Root node ID, value = "root".
 	 * Read-only.
@@ -19,10 +21,6 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	 * @type {String}
 	 */
 	id : 'root',
-	//TODO think a bit over about model Root node ID.
-	//it can be optimized and be more flexibile, depends of Model future usage.
-	//by @Nick
-	
 	/**
 	 * Root node tag property, value = "root".
 	 * @property tag
@@ -135,16 +133,23 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 		return this.findChildById(nodeId, false, true);
 	},
 	
+	/**
+	 * Validates model.
+	 * Returns true if the model is valid otherwise returns array of errors {@link afStudio.model.Node#validate}.
+	 * @return {Boolean|Array} 
+	 */
 	isValid : function() {
-		var errors = [];
+		var errors = {
+			children: []
+		};
 		
 		this.eachChild(function(node){
 			var e = node.validate();
 			if (e !== true) {
-				errors.push(e);
+				errors.children.push(e);
 			}
 		});
 		
-		return errors;
+		return errors.children.length > 0 ? errors : true;
 	}
 });

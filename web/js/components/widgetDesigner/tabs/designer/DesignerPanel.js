@@ -12,6 +12,12 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	layout : 'fit',
 	
 	/**
+	 * Widget errors window.
+	 * @property errorWin
+	 * @type {Ext.Window}
+	 */
+	
+	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
@@ -28,7 +34,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 				iconCls: 'icon-save',
 				listeners: {
 					scope: self,
-					click: self.onSaveWidgetView
+					click: self.onSaveWidget
 				}
 			},'-',{
 				text: 'Preview', 
@@ -36,7 +42,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 				iconCls: 'icon-preview',
 				listeners: {
 					scope: self,
-					click: self.onPreviewWidgetView
+					click: self.onPreviewWidget
 				}
 			}
 		];
@@ -71,14 +77,36 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		return this.getTopToolbar().getComponent(item);
 	},
 	
-	onSaveWidgetView : function() {
-		afStudio.Msg.info('save');
+	/**
+	 * Shows widget's errors.
+	 * @param {Object} errors The errors object
+	 */
+	showWidgetErrors : function(errors) {
+		if (!this.errorWin) {
+			this.errorWin = new afStudio.wd.ModelErrorWindow();
+		}
+		this.errorWin.modelErrors = errors;
+		this.errorWin.show();
+	},
+	
+	/**
+	 * @protected
+	 */
+	onSaveWidget : function() {
+		var c = this.controller,
+			valid = c.validateModel();
 		
-//		var valid = this.controller.getRootNode().isValid();
-//		console.log('model valid', valid);
+		if (valid === true) {
+			c.saveView();
+		} else {
+			this.showWidgetErrors(valid);
+		}
 	},
 
-	onPreviewWidgetView : function() {
+	/**
+	 * @protected
+	 */
+	onPreviewWidget : function() {
 		afStudio.Msg.info('preview');
 //		var widgetUri = this.widgetMeta.widgetUri,
 //			viRootNode = this.viewInspector.getRootNode();		

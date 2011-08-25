@@ -307,17 +307,39 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     //eo loadViewDefinition
     
     /**
-     * Saves view definiton.
+     * Saves view model.
      * @public
+     * @param {Object} (Optional) params The save parameters
      */
-    saveViewDefinition : function(url) {
+    saveView : function(params) {
+    	this.saveViewDefinition(params);
+    },
+    
+    /**
+     * Saves view definiton.
+     * @protected
+     * @param {Object} (Optional) params The parameters
+     */
+    saveViewDefinition : function(params) {
     	var _me = this,
     		saveUrl = this.getUrl('save'),
-			vd = this.viewDefinition;
-    		   
+			vd = this.viewDefinition.getData();
+    	
+		params = Ext.apply(params || {}, {
+			data: Ext.util.JSON.encode(vd),
+			createNewWidget: false 
+		});
+			
     	if (this.fireEvent('beforeSaveViewDefinition', vd)) {
-    		//TODO implement
-    		this.fireEvent('saveViewDefinition');
+    		afStudio.xhr.executeAction({
+    			url: saveUrl,
+    			params: params, 
+    			mask: {msg: 'Processing...', region: 'center'},
+    			scope: _me,
+    			run: function(response, ops) {
+    				this.fireEvent('saveViewDefinition', vd);
+    			}
+    		});
     	}
     },
     //eo saveViewDefinition
@@ -463,6 +485,14 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
 		]);
     },
 
+    /**
+     * Runs model validation.
+     * @return {Boolean|Array} true if valid otherwise array of errors
+     */
+    validateModel : function() {
+    	return this.root.isValid();
+    },
+    
     /**
      * Returns a model node in this controller by its id.
      * @param {String} id

@@ -101,6 +101,19 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
      */
     getWidget : function() {
     	return this.widget;
+    },
+    
+    /**
+     * Saves view model.
+     * @override
+     * @public
+     * @param {Object} (Optional) params The save parameters
+     */    
+    saveView : function(params) {
+    	params = Ext.copyTo(params || {}, this.widget, 'uri, place, placeType');
+    	params.widgetType = this.getModelType();
+    	
+    	afStudio.controller.ViewController.superclass.saveView.apply(this, [params]);
     }
 
 });
