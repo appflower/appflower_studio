@@ -31,6 +31,8 @@ class afsXmlDefinitionHelper extends afsBaseDefinitionHelper
      */
     static public function updateCdataFields($definition)
     {
+        $default_internal_errors = libxml_use_internal_errors(true);
+        
         // create dom document instance
         $dom_xml = new DOMDocument;
         $dom_xml->formatOutput = true;
@@ -52,9 +54,9 @@ class afsXmlDefinitionHelper extends afsBaseDefinitionHelper
             }
         }
         
-        // update definition
-        $definition = $dom_xml->saveXML();
+        libxml_clear_errors();
+        libxml_use_internal_errors($default_internal_errors);
         
-        return $definition;
+        return $dom_xml->saveXML();
     }
 }

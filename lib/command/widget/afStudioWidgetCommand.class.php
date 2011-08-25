@@ -68,6 +68,8 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $place_type = $this->getParameter('placeType', 'app');
             $type = $this->getParameter('widgetType');
             
+            if (!is_array($data)) return $response->success(false)->message("Wrong data defined. Please check request.")->asArray();
+            
             // retrieve widget object
             $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
             

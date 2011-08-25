@@ -23,7 +23,7 @@ class afsXmlDefinition extends afsBaseDefinition
         'mode' => 'simplexml',
         'addDecl' => true,
         'encoding' => 'UTF-8',
-        'contentName' => '_content'
+        'contentName' => '_content',
     );
     
     /**
@@ -35,7 +35,7 @@ class afsXmlDefinition extends afsBaseDefinition
         'mode' => 'simplexml',
         'complexType' => 'array',
         'contentName' => '_content',
-        'guessTypes' => true
+        'guessTypes' => true,
     );
     
     /**
@@ -111,14 +111,10 @@ class afsXmlDefinition extends afsBaseDefinition
         // check unserialize status
         $status = $unserializer->unserialize($definition, false);
         
-        if (!$status) {
-            throw new afsXmlDefinitionException($status->getMessage());
-        }
+        if (!$status) throw new afsXmlDefinitionException($status->getMessage());
         
         // get unserialized data
-        $definition = $unserializer->getUnserializedData();
-        
-        return $definition;
+        return $unserializer->getUnserializedData();
     }
     
     /**
