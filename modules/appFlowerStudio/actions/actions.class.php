@@ -120,7 +120,9 @@ class appFlowerStudioActions extends afsActions
 	    
 		return $this->renderJson($response->asArray());
 	}
-
+    
+    
+    
 	public function executeCssfilesSave()
 	{
 		$result=true;
@@ -150,62 +152,62 @@ class appFlowerStudioActions extends afsActions
 		return $this->renderJson($info);
 	}
 	
-	public function executeConsole(sfWebRequest $request)
-	{		
-		$command = trim($request->getParameter("command"));
-		$result = afStudioConsole::getInstance()->execute($command);
-		
-		return $this->renderJson(
-			array(
-				'success' => true,
-				'console' => $result
-			)
-		);
-	}	
-
+	
+	/**
+	 * Execute console command actiom
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 * @author Sergey Startsev
+	 */
+    public function executeConsole(sfWebRequest $request)
+    {		
+        return $this->renderJson(
+            afResponseHelper::create()
+                ->success(true)
+                ->console(afStudioConsole::getInstance()->execute(trim($request->getParameter("command"))))
+                ->asArray()
+        );
+    }	
+    
+    /**
+     * Load Database connection settings action
+     *
+     * @param sfWebRequest $request 
+     * @return string - json
+     */
     public function executeLoadDatabaseConnectionSettings(sfWebRequest $request)
     {
         $dcm = new DatabaseConfigurationManager();
-        $data = $dcm->getDatabaseConnectionParams();
-        $info = array('success'=>true, 'data' => $data );
-        $info = json_encode($info);
-
-        return $this->renderText($info);
+        
+        return $this->renderJson(
+            afResponseHelper::create()
+                ->success(true)
+                ->data(array(), $dcm->getDatabaseConnectionParams(), 0)
+                ->asArray()
+            );
     }
-
+    
+    /**
+     * Configure database
+     *
+     * @param sfWebRequest $request 
+     * @return string - json
+     */
     public function executeConfigureDatabase(sfWebRequest $request)
     {
         $dcm = new DatabaseConfigurationManager();
         $dcm->setDatabaseConnectionParams($request->getPostParameters());
-        $result = $dcm->save();
-
-        if($result) {
-            $success = true;
-            $message = 'Database Connection Settings saved successfully';
-        } else {
-            $success = false;
-            $message =  'Error while saving file to disk!';
-        }
         
-        $info=array('success'=>$success, "message"=>$message, 'redirect'=>$this->getRequest()->getReferer());
-        $info=json_encode($info);
-
-        return $this->renderText($info);
-    }
-    
-	/**
-	 * Function getRecentProjects
-	 */
-    public static function getRecentProjects(){
-        $projects = array(
-        	array('id' => '1', 'text' => 'Firt project'),
-        	array('id' => '2', 'text' => 'Second project'),
-        	array('id' => '3', 'text' => 'Third project'),
-        	array('id' => '4', 'text' => 'Fourth project'),
-        	array('id' => '5', 'text' => 'Fifth project')
-		);
-        $projects = json_encode($projects);    	
-    	return $projects;	
+        $isSaved = $dcm->save();
+        
+        return $this->renderJson(
+            afResponseHelper::create()
+                ->success($isSaved)
+                ->message(($isSaved) ? 'Database Connection Settings saved successfully' : 'Error while saving file to disk!')
+                ->redirect($this->getRequest()->getReferer())
+                ->asArray()
+        );
     }
     
     /**
@@ -242,6 +244,8 @@ class appFlowerStudioActions extends afsActions
         return $this->renderJson($response);
 	}
     
+    
+    
     /**
      * Getting widgets list by app nane and module name
      */
@@ -259,6 +263,8 @@ class appFlowerStudioActions extends afsActions
         
         return $this->renderJson($aExtWidgets);        
     }
+    
+    
     
     /**
      * Process layout pages functionality
@@ -279,7 +285,8 @@ class appFlowerStudioActions extends afsActions
         return $this->renderText($result);
     }
     
-	public function executeHelperFileSave($request)
+    
+	public function executeHelperFileSave(sfWebRequest $request)
 	{
 		$result=true;
 		$JDATA=file_get_contents("php://input");
