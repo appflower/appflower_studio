@@ -63,7 +63,7 @@ afStudio.wd.InspectorPalette = Ext.extend(Ext.Container, {
 				xtype: 'filetreepanel',
 				ref: 'codeBrowser',
 	        	title: 'Code Browser',
-				url: afStudioWSUrls.getFiletreeUrl(),
+				url: afStudioWSUrls.getFiletreeUrl,
 				rootText: 'Home',
 				rootPath: 'root',
 				rootVisible: true,				

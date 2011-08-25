@@ -27,7 +27,7 @@ Ext.ux.FileTreeMenu = function(config) {
 	config = config || {};
 
 	var uploadPanelConfig = {
-        hideOnClick:false
+        hideOnClick: false
         ,cmd:'upload-panel'
         ,contextmenu:this
         ,buttonsAt:config.buttonsAt || 'tbar'

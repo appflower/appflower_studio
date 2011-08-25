@@ -61,7 +61,7 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 			rootPath: 'root', 
 			rootVisible: true, 
 			rootText: 'Home',
-			url: afStudioWSUrls.getFiletreeUrl(), 
+			url: afStudioWSUrls.getFiletreeUrl, 
 			maxFileSize: 524288 * 2 * 10,
 			topMenu: false, 
 			autoScroll: true, 

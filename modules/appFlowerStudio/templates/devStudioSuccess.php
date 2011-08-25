@@ -23,7 +23,6 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/grid/Ext.ux.Grid.GroupingStoreOverride.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/grid/RowExpander.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/cheatJS.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/rowactionsImm/js/Ext.ux.GridRowActions.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/lovcombo-1.0/js/Ext.ux.form.LovCombo.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/treegrid/Ext.ux.CheckboxSelectionModel.js"></script>
 
@@ -67,23 +66,34 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.xhr.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
+
+<!-- custom ext ux -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/GroupingComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/grid/PagingRowNumberer.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tab/TabCloseMenu.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 
-<!-- ux treegrid -->
-<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/treegrid/treegrid.css" rel="stylesheet" /> 
+<!-- filetree -->
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/filetree/css/filetype.css" />
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/filetree/css/filetree.css" />
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/filetree/css/icons.css" />
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.FileTreePanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.FileTreeMenu.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.form.BrowseButton.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.FileUploader.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.UploadPanel.js"></script>
+
+<!-- treegrid -->
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/treegrid/treegrid.css" /> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridSorter.js"></script> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridColumnResizer.js"></script> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridNodeUI.js"></script> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridLoader.js"></script> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridColumns.js"></script> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGrid.js"></script> 
-<!-- end of ux treegrid -->
+<!-- end of custom ext ux -->
 
 <!-- Error -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/error/ApsError.js"></script>
@@ -117,6 +127,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portlet.js"></script>
 
 <!-- models -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationPicker.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationCombo.js"></script>
@@ -150,12 +161,6 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/DesignerPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/TabNamePickerWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/WidgetSelectorTreeWindow.js"></script>
-
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreePanel.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreeMenu.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.form.BrowseButton.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileUploader.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
 
 <!-- appflower view model -->
 	<!-- data type -->
@@ -265,8 +270,6 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/css/my-extjs.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/rowactionsImm/css/Ext.ux.GridRowActions.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/rowactionsImm/css/icons.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/form/lovcombo-1.0/css/Ext.ux.form.LovCombo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/grid-filtering/resources/style.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/portal/portal.css" />
@@ -275,10 +278,6 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/grid/Ext.ux.grid.RowEditor.css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/afStudio.css" />
-
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetype.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetree.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/icons.css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/form/groupingcombobox/Ext.ux.form.GroupingComboBox.css" />
 

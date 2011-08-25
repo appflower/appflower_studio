@@ -5,12 +5,12 @@ S = afStudio.view.inspector.sorter;
 N = afStudio.ModelNode;
 
 S[N.TITLE] = 1;
-S[N.PARAMS] = 4;
-S[N.ACTIONS] = 8; 
+S[N.CONFIRM] = 4;
+S[N.PARAMS] = 5;
+S[N.ROW_ACTIONS] = 8; 
 S[N.FIELDS] = 12;
-S[N.ROW_ACTIONS] = 16; 
+S[N.ACTIONS] = 16;
 S[N.MORE_ACTIONS] = 20;
-S[N.CONFIRM] = 24;
 S[N.DATA_SOURCE] = 6; 
 S[N.DATA_STORE] = 6;
 S[N.GROUPING] = 28;

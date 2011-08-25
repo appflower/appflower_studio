@@ -95,7 +95,7 @@ margin: 10px 0 10px 0;
 	margin-bottom:1px;
 	position:relative;
 	background-color:#e0e0e0;
-	background-image:url(../img/white_bg.png);
+	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/white_bg.png);
 	background-repeat:no-repeat
 }
 .ux-up-icon-file {
@@ -103,7 +103,7 @@ margin: 10px 0 10px 0;
 	height:16px;
 	vertical-align:-3px;
 	margin-right:4px;
-	background-image:url(../ext/resources/images/default/tree/leaf.gif);
+	background-image:url(/appFlowerPlugin/extjs-3/resources/images/default/tree/leaf.gif);
 	float:left;
 }
 .ux-up-item-selected {
@@ -127,19 +127,19 @@ margin: 10px 0 10px 0;
 	z-index:-1;
 }
 .ux-up-icon-queued {
-	background-image:url(../img/silk/icons/page_white_get.png);
+	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/page_white_get.png);
 }
 .ux-up-icon-uploading {
-	background-image:url(../ext/resources/images/default/grid/wait.gif);
+	background-image:url(/appFlowerPlugin/extjs-3/resources/images/default/grid/wait.gif);
 }
 .ux-up-icon-done {
-	background-image:url(../img/silk/icons/accept.png);
+	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/accept.png);
 }
 .ux-up-icon-failed {
-	background-image:url(../img/silk/icons/error.png);
+	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/error.png);
 }
 .ux-up-icon-stopped {
-	background-image:url(../img/silk/icons/stop.png);
+	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/stop.png);
 }
 .ux-up-text {
 	float:left;
