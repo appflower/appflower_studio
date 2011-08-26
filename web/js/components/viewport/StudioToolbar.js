@@ -224,7 +224,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			url: runUrl,
 			mask: {msg: 'Run command...'},
 			showNoteOnSuccess: false,
-			run: function(){
+			run: function(response){
 				window.open(response.query, 'runProject');
 			}
 		});
