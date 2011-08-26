@@ -253,15 +253,19 @@ class appFlowerStudioActions extends afsActions
     {
         $app = $request->getParameter('app_name', 'frontend');
         $module = $request->getParameter('module_name', '');
+        FirePHP::getInstance(true)->fb('module widgets');
+        /*
+            TODO move to helper
+        */
         
         $aWidgets = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
         
         $aExtWidgets = array();
-    	foreach ($aWidgets as $i => $name) {
-    		$aExtWidgets[] = array('id' => $i, 'name' => strstr($name, '.xml', true));
-		}
+        foreach ($aWidgets as $i => $name) {
+            $aExtWidgets[] = array('id' => $i, 'name' => strstr($name, '.xml', true));
+        }
         
-        return $this->renderJson($aExtWidgets);        
+        return $this->renderJson($aExtWidgets);
     }
     
     
@@ -277,6 +281,61 @@ class appFlowerStudioActions extends afsActions
         return $this->renderJson($aResult);        
     }
     
+    
+    
+    
+    
+    /**
+	 * Check if file exists and if not there create a new one based on the template
+	 * 
+	 * @return string - json
+	 * @author Sergey Startsev 
+	 */
+	public function executeCheckHelperFileExist(sfWebRequest $request)
+	{
+		return $this->renderJson(
+		    afStudioCommand::process('file', 'isHelperExists', $request->getParameterHolder()->getAll())->asArray()
+		);
+	}
+    
+    /**
+     * Delegator saving helper file
+     *
+     * @param sfWebRequest $request 
+     * @return string - json
+     * @author Sergey Startsev
+     */
+	public function executeHelperFileSave(sfWebRequest $request)
+	{
+	    return $this->renderJson(
+		    afStudioCommand::process('file', 'saveHelper', $request->getParameterHolder()->getAll())->asArray()
+		);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Getting info for template selector
+	 * 
+	 * @return string - json for templateSelector
+	 * @author Radu Topala
+	 */
+	public function executeTemplateSelector($request)
+	{        
+        $response = afStudioCommand::process('templateSelector', $request->getParameter('cmd'),array('request'=>$request));
+              
+        return $this->renderJson($aResult);
+	}
+	
+	
+	
+	
+	
     public function executeConfigureProject(sfWebRequest $request)
     {
         $pcm = new ProjectConfigurationManager($request);
@@ -284,72 +343,6 @@ class appFlowerStudioActions extends afsActions
             
         return $this->renderText($result);
     }
-    
-    
-	public function executeHelperFileSave(sfWebRequest $request)
-	{
-		$result=true;
-		$JDATA=file_get_contents("php://input");
-		
-		$helper = $request->getParameter('helper');
-		
-		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/'.$helper.'Helper.php';
-		try{
-			$fp = fopen($filePath,"w");
-			if(!$fp)throw new Exception("file open error");
-			if(!fWrite($fp,$JDATA))throw new Exception("file write error");
-			if(!fclose($fp))throw new Exception("file close error");
-		}catch(Exception $e){
-			$result=false;	
-		}
-
-	 	if($result) {
-		    $success = true;
-		    $message = 'File saved successfully';
-		    
-		    afsNotificationPeer::log('File saved successfully ['.$filePath.']', $helper);
-		} else {
-		    $success = false;
-		    $message =  'Error while saving file to disk!';
-		    
-		    afsNotificationPeer::log('Error while saving file to disk! ['.$filePath.']', $helper);
-		}
-		
-		$info=array('success'=>$success, "message"=>$message);
-		
-		return $this->renderJson($info);
-	}
-	
-	/**
-	 * Check if file exists and if not there create a new one based on the template
-	 */
-	public function executeCheckHelperFileExist($request)
-	{
-		$result = true;
-		$message = "";
-		
-		$helper = $request->getParameter('helper');
-		
-		$filePath=sfConfig::get('sf_root_dir').'/apps/frontend/lib/helper/'.$helper.'Helper.php';
-		
-		if (!file_exists($filePath)) {
-			try{
-				$_helper = file_get_contents(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_'.$helper.'Helper.php', true);
-				$fp = fopen($filePath,"w");
-				fWrite($fp,$_helper);
-				fclose($fp);
-			}catch (Exception $e) {
-				$result=false;
-				$message = 'Error while saving file to disk!';
-			}
-			
-			$message = 'File created successfully';
-		}
-		
-		$info=array('success'=>$result, "message"=>$message);
-		
-		return $this->renderJson($info);
-	}
 	
 	/**
 	 * @return json for load project feature
@@ -391,7 +384,25 @@ class appFlowerStudioActions extends afsActions
               
         return $this->renderJson($aResult);
 	}
-
+	
+	public function executeCreateProjectWizardCheckDatabase($request)
+	{
+	    $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));
+	            
+        return $this->renderJson($aResult);
+	}
+	
+	public function executeCreateProjectWizard($request)
+	{        
+		$result = afStudioCommand::process('createProject', 'saveWizard', array('request'=>$request));
+		
+        return $this->renderJson($result);
+	}
+	
+	
+	
+	
+	
 	public function executeWelcome($request)
 	{		
       	try {
@@ -412,32 +423,6 @@ class appFlowerStudioActions extends afsActions
         );
         
 		return $this->renderJson($info);
-	}
-	
-	/**
-	 * @return json for templateSelector
-	 * 
-	 * @author radu
-	 */
-	public function executeTemplateSelector($request)
-	{        
-        $aResult = afStudioCommand::process('templateSelector', $request->getParameter('cmd'),array('request'=>$request));
-              
-        return $this->renderJson($aResult);
-	}
-	
-	public function executeCreateProjectWizardCheckDatabase($request)
-	{
-	    $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));
-	            
-        return $this->renderJson($aResult);
-	}
-	
-	public function executeCreateProjectWizard($request)
-	{        
-		$result = afStudioCommand::process('createProject', 'saveWizard', array('request'=>$request));
-		
-        return $this->renderJson($result);
 	}
 	
 }

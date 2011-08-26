@@ -172,6 +172,81 @@ class afStudioFileCommand extends afBaseStudioCommand
 		return afResponseHelper::create()->success(true)->data(array(), $nodes, 0);
     }
     
+    /**
+     * Checking exists file helper or not
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processIsHelperExists()
+    {
+        $result = true;
+        $message = "";
+        
+        $helper = $this->getParameter('helper');
+        $place = $this->getParameter('place', 'frontend');
+        $place_type = $this->getParameter('place_type', 'app');
+        
+        $filePath = afStudioUtil::getRootDir() . "/{$place_type}s/{$place}/lib/helper/{$helper}Helper.php";
+        
+        if (!file_exists($filePath)) {
+            try{
+                $engine_helper = afStudioUtil::getRootDir() . "/plugins/appFlowerStudioPlugin/modules/appFlowerStudio/templates/_{$helper}Helper.php";
+                
+                $_helper = (file_exists($engine_helper)) ? file_get_contents($engine_helper, true) : '';
+                
+                $fp = fopen($filePath,"w");
+                fWrite($fp, $_helper);
+                fclose($fp);
+            } catch (Exception $e) {
+                $result = false;
+                $message = 'Error while saving file to disk!';
+            }
+            
+            $message = 'File created successfully';
+        }
+        
+        return afResponseHelper::create()->success($result)->message($message);
+    }
     
+    /**
+     * Saving helper file
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processSaveHelper()
+    {
+        $result = true;
+        $JDATA = file_get_contents("php://input");
+        
+        $helper = $this->getParameter('helper');
+        $place = $this->getParameter('place', 'frontend');
+        $place_type = $this->getParameter('place_type', 'app');
+        
+        $filePath = afStudioUtil::getRootDir() . "/{$place_type}s/{$place}/lib/helper/{$helper}Helper.php";
+        try {
+            $fp = fopen($filePath, "w");
+            if (!$fp) throw new Exception("file open error");
+            if (!fWrite($fp, $JDATA)) throw new Exception("file write error");
+            if (!fclose($fp)) throw new Exception("file close error");
+        } catch (Exception $e) {
+            $result = false;
+        }
+        
+        if ($result) {
+            $success = true;
+            $message = 'File saved successfully';
+            
+            afsNotificationPeer::log("File saved successfully [{$filePath}]", $helper);
+        } else {
+            $success = false;
+            $message =  'Error while saving file to disk!';
+            
+            afsNotificationPeer::log("Error while saving file to disk! [{$filePath}]", $helper);
+        }
+        
+        return afResponseHelper::create()->success($success)->message($message);
+    }
     
 }
