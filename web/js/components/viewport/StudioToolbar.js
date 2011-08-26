@@ -218,30 +218,15 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 * Runs projects commands and opens project in a new browser's tab
 	 */
 	,runProject : function() {	
-		var runUrl = window.afStudioWSUrls.getProjectRunUrl();
+		var runUrl = afStudioWSUrls.getProjectRunUrl;
 		
-		afStudio.vp.mask({
-			msg: 'Run command...'
-		});
-		
-		Ext.Ajax.request({
-		   url: runUrl,
-		   success: function(xhr, opt) {
-			   afStudio.vp.unmask();
-			   
-			   var response = Ext.decode(xhr.responseText);
-			   
-			   if (response.success) {			   	
-			   	   afStudio.updateConsole(response.content);
-			   	   window.open(response.homepage, 'runProject');
-			   } else {
-			   	   Ext.Msg.alert('Failure', response.content);
-			   }
-		   }, 
-		   failure: function(xhr, opt) {
-		   	   afStudio.vp.unmask();
-		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
-		   }
+		afStudio.xhr.executeAction({
+			url: runUrl,
+			mask: {msg: 'Run command...'},
+			showNoteOnSuccess: false,
+			run: function(){
+				window.open(response.redirect, 'runProject');
+			}
 		});
 	}//eo runProject
 	
