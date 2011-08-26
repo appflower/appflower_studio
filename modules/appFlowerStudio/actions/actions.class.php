@@ -327,9 +327,6 @@ class appFlowerStudioActions extends afsActions
         );
 	}
 	
-	
-	
-	
 	/**
 	 * Configuring project
 	 *
@@ -346,49 +343,54 @@ class appFlowerStudioActions extends afsActions
 	/**
 	 * Load project tree
 	 * 
+	 * @param sfWebRequest $request
 	 * @return string - json
 	 * @author Radu Topala
-	 */
-	public function executeLoadProjectTree($request)
-	{        
-        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'), array('request'=>$request));
-               
-        return $this->renderJson($aResult);
-	}
-	
-	/**
-	 * Execute run project coomand
-	 * 
 	 * @author Sergey Startsev
 	 */
-	public function executeRun()
-	{        
-        $aResult = afStudioCommand::process('execute', 'run');        
-        $aResult = array_merge(
-            $aResult, 
-            array('homepage' => sfContext::getInstance()->getController()->genUrl('@homepage'))
-        );        
-        afsNotificationPeer::log('[run] Run was executed on the project');
-        
-        return $this->renderJson($aResult);
+	public function executeLoadProjectTree(sfWebRequest $request)
+	{
+        return $this->renderJson(
+            afStudioCommand::process('project', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())
+        );
 	}
 	
+    /**
+     * Execute run project coomand
+     * 
+     * @param sfWebRequest $request
+     * @return string - json
+     * @author Sergey Startsev
+     */
+    public function executeRun(sfWebRequest $request)
+    {
+        afsNotificationPeer::log('[run] Run was executed on the project');
+        
+        return $this->renderJson(
+            afStudioCommand::process('project', 'run')->redirect(sfContext::getInstance()->getController()->genUrl('@homepage'))->asArray()
+        );
+    }
+	
+	
+	
 	/**
-	 * @return json for create project feature
+	 * Create project feature
 	 * 
-	 * @author radu
+	 * @return string - json
+	 * @author Radu Topala
+	 * @author Sergey Startsev
 	 */
 	public function executeCreateProject($request)
 	{        
         $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));
-              
+        
         return $this->renderJson($aResult);
 	}
 	
 	public function executeCreateProjectWizardCheckDatabase($request)
 	{
 	    $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));
-	            
+	    
         return $this->renderJson($aResult);
 	}
 	

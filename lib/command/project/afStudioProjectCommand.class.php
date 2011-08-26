@@ -2,15 +2,17 @@
 /**
  * Studio Project Command Class
  * 
- * @author Radu Topala
+ * @author Radu Topala <radu@appflower.com>
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afStudioProjectCommand extends afBaseStudioCommand
 {
     /**
      * Getting tree list
+     * 
+     * todo - rename to getTree, should be also renamed in frontend
      */
-    protected function processGetTree()
+    protected function processGet()
     {
         $path = $this->getParameter('path');
         if ($path) {
@@ -24,11 +26,15 @@ class afStudioProjectCommand extends afBaseStudioCommand
             foreach ($files as $file) {
                 $this->result[] = array(
                     'text' => basename($file), 
-                    'leaf' => (is_file($file) ? true : false));
+                    'leaf' => (is_file($file) ? true : false)
+                );
             }
-        } else {
-            $this->result = array('success' => true);
+            
+            return $this->result;
+            
         }
+        
+        return afResponseHelper::create()->success(true)->asArray();
     }
 	
 	/**
@@ -172,6 +178,17 @@ class afStudioProjectCommand extends afBaseStudioCommand
             $this->result['message'] = 'Project was not created in path <b>'.$path.'</b> due to some errors!';
             $this->result['console'] = $console;
         }
+    }
+    
+    /**
+     * Execute run controller
+     * 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processRun()
+    {
+        return afResponseHelper::create()->success(true)->console(afStudioProjectCommandHelper::processRun());
     }
     
     /**
