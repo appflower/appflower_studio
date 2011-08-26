@@ -372,7 +372,6 @@ class appFlowerStudioActions extends afsActions
     }
 	
 	
-	а
 	/**
 	 * Create project feature
 	 * 
