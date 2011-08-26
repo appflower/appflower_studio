@@ -367,12 +367,12 @@ class appFlowerStudioActions extends afsActions
         afsNotificationPeer::log('[run] Run was executed on the project');
         
         return $this->renderJson(
-            afStudioCommand::process('project', 'run')->redirect(sfContext::getInstance()->getController()->genUrl('@homepage'))->asArray()
+            afStudioCommand::process('project', 'run')->query(sfContext::getInstance()->getController()->genUrl('@homepage'))->asArray()
         );
     }
 	
 	
-	
+	а
 	/**
 	 * Create project feature
 	 * 
@@ -380,7 +380,7 @@ class appFlowerStudioActions extends afsActions
 	 * @author Radu Topala
 	 * @author Sergey Startsev
 	 */
-	public function executeCreateProject($request)
+	public function executeCreateProject(sfWebRequest $request)
 	{        
         $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));
         
