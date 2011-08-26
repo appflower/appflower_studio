@@ -239,9 +239,9 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeNotifications(sfWebRequest $request)
 	{
-        $response = afStudioCommand::process('notification', $request->getParameter('cmd'), $request->getParameterHolder()->getAll());
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('notification', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())
+        );
 	}
     
     
@@ -272,13 +272,14 @@ class appFlowerStudioActions extends afsActions
     
     /**
      * Process layout pages functionality
+     * 
+     * @return string - json
      */
     public function executeLayout(sfWebRequest $request)
     {
-        $sCommand = $request->getParameter('cmd');        
-        $aResult = afStudioCommand::process('layout', $sCommand);
-        
-        return $this->renderJson($aResult);        
+        return $this->renderJson(
+            afStudioCommand::process('layout', $request->getParameter('cmd'))
+        );
     }
     
     
@@ -312,46 +313,45 @@ class appFlowerStudioActions extends afsActions
 		);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Getting info for template selector
 	 * 
 	 * @return string - json for templateSelector
 	 * @author Radu Topala
+	 * @author Sergey Startsev
 	 */
-	public function executeTemplateSelector($request)
-	{        
-        $response = afStudioCommand::process('templateSelector', $request->getParameter('cmd'),array('request'=>$request));
-              
-        return $this->renderJson($aResult);
+	public function executeTemplateSelector(sfWebRequest $request)
+	{
+        return $this->renderJson(
+            afStudioCommand::process('template', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())->asArray()
+        );
 	}
 	
 	
 	
 	
-	
+	/**
+	 * Configuring project
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string
+	 */
     public function executeConfigureProject(sfWebRequest $request)
     {
         $pcm = new ProjectConfigurationManager($request);
-	    $result = $pcm->build();
-            
-        return $this->renderText($result);
+        
+        return $this->renderText($pcm->build());
     }
 	
 	/**
-	 * @return json for load project feature
+	 * Load project tree
 	 * 
-	 * @author radu
+	 * @return string - json
+	 * @author Radu Topala
 	 */
 	public function executeLoadProjectTree($request)
 	{        
-        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'),array('request'=>$request));
+        $aResult = afStudioCommand::process('loadProjectTree', $request->getParameter('cmd'), array('request'=>$request));
                
         return $this->renderJson($aResult);
 	}
