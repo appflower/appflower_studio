@@ -9,20 +9,19 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 	/**
 	 * @cfg {String} layout
 	 */
-	layout : 'hbox'
+	layout : 'hbox',
 	
 	/**
 	 * @cfg {Object} layoutConfig
 	 */
-	,layoutConfig : {
+	layoutConfig : {
 	    align: 'stretch'
-	}
+	},
 	
-    ,closable : true
+    closable : true,
     
 	/**
 	 * @cfg {String} filePath
-	 * 
 	 */
 
     /**
@@ -42,10 +41,11 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
-		var _this = this;
+	_beforeInitComponent : function() {
+		var me = this,
+			wd = this.findParentByType('widgetdesigner');
 		
-		_this.codePress = new Ext.ux.CodePress({
+		me.codePress = new Ext.ux.CodePress({
 			title: this.fileName, 
 			path: this.filePath,
 			tabTip: this.tabTip, 
@@ -55,15 +55,13 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 			ctCls: 'codeEditorCls'
 		});
 		
-        _this.codeBrowserTree = new Ext.ux.FileTreePanel({
+        me.codeBrowserTree = new Ext.ux.FileTreePanel({
 			title: 'Code Browser',
 			flex: 1,
-			rootPath: 'root', 
-			rootVisible: true, 
+			url: afStudioWSUrls.getFiletreeUrl,
+			fileCt: wd,
 			rootText: 'Home',
-			url: afStudioWSUrls.getFiletreeUrl, 
 			maxFileSize: 524288 * 2 * 10,
-			topMenu: false, 
 			autoScroll: true, 
 			enableProgress: false, 
 			singleUpload: true
@@ -90,60 +88,58 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 				{
 					border: false,
 					layout: 'fit',
-					items: _this.codePress
+					items: me.codePress
 				}]					
 			},
-				_this.codeBrowserTree
+				me.codeBrowserTree
 			]
 		};
-	}//eo _beforeInitComponent	
+	},
+	//eo _beforeInitComponent	
 	
 	/**
-	 * ExtJS template method
+	 * Template method
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);		
 		afStudio.wd.CodeEditor.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}//eo initComponent
-	
+	},
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */
-	,_afterInitComponent : function() {
-		var _this = this,
+	_afterInitComponent : function() {
+		var me = this,
 		    saveBtn = this.getTopToolbar().getComponent('saveBtn');
 		    
-		saveBtn.on('click', _this.onCodeSaveClick, _this);
+		saveBtn.on('click', me.onCodeSave, me);
 		
-	}//eo _afterInitComponent
+	},
 	
-	,onCodeSaveClick : function() {
-		var _this = this;
+    //TODO: add this handler to codeEditor tabs contextMenu "Save" item
+	/**
+	 * Saves code.
+	 */
+	onCodeSave : function() {
+		var me = this,
+			cp = me.codePress;
 		
-    	//TODO: add this handler to codeEditor tabs contextMenu "Save" item
-    	Ext.Ajax.request({
-        	url: _this.codePress.fileContentUrl,
+		afStudio.xhr.executeAction({
+			url: cp.fileContentUrl,
 	        params: {
-    	    	'file': _this.codePress.file,
-        		'code': _this.codePress.getCode()			          	
+    	    	file: cp.file,
+        		code: cp.getCode()			          	
         	},
-        	success: function(response, options) {			
-        		_this.fireEvent("logmessage", _this, "Widget Designer code Saved");
-        		afStudio.Msg.info(String.format("File <u>{0}</u> was successfully saved.", _this.codePress.title));			            
-        	},
-		    failure: function (xhr, request) {
-			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
-			   afStudio.Msg.error('Server side error', message);
-		    }
-        });	    	
-	}//eo onCodeSaveClick
-	
+        	scope: me,
+			logMessage: String.format('WD file "{0}" [{1}] was saved', cp.title, cp.file)
+		});
+	}
+	//eo onCodeSave
 });
 
 /**

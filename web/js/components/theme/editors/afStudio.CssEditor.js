@@ -16,23 +16,26 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		
 		var config = {
 			title: 'CSS Editor', 
+	        layout: 'border',
 			width: 813,
 			height: 550, 
+	        modal: true, 
 			closable: true,
 	        draggable: true, 
-	        modal: true, 
 	        resizable: false,
 	        bodyBorder: false, 
 	        border: false,
-	        layout: 'border',
 	        items: [
 	        	this.westPanel,
 	        	this.centerPanel
 	        ],
+			buttonAlign: 'center',
 			buttons: [
-				{text: 'Cancel', handler: this.cancel, scope: this}
-			],
-			buttonAlign: 'center'
+			{
+				text: 'Cancel',
+				scope: this,
+				handler: this.cancel
+			}]
 		};
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
@@ -45,10 +48,6 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	 * This function creates west and center panels and needful components
 	 */
 	createRegions : function() {
-		//Create TreeLoader component
-		this.loader = new Ext.tree.TreeLoader({
-			 dataUrl: afStudioWSUrls.getCssFilestreeUrl
-		});
 		
 		this.westPanel = new Ext.ux.FileTreePanel({
 			title: 'Files',  
@@ -56,58 +55,28 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 			split: true,
         	region: 'west',
 			url: afStudioWSUrls.getFiletreeUrl,
+			loadMask: true,
 			width: 220,
-			rootPath: 'root/plugins/appFlowerStudioPlugin/web/css',
-			path: 'pluigns',
-			rootVisible: true,
 			rootText: 'CSS',
+			rootPath: 'root/plugins/appFlowerStudioPlugin/web/css',
 			newfileText: 'file.css',
 			maxFileSize: 524288 * 2 * 10,
-			topMenu: false,
 			autoScroll: true,
 			enableProgress: false,
 			singleUpload: true,
-			listeners: {
-				scope: this,
-				click: function(node, e) {
-					if (node.leaf) {
-						this.codeEditor.loadFile('appFlowerStudioPlugin/css/' + node.text);
-					}
-				}
-			}
-		});
-
-		// setup loading mask if configured
-		this.loader.on({
-			beforeload: function (loader, node, clb) {
-			 	(function(){
-				 	node.getOwnerTree().body.mask('Loading, please Wait...', 'x-mask-loading');
-			 	}).defer(100);
-			},
-			load: function (loader, node, resp) {
-				node.getOwnerTree().body.unmask();
-			},
-			loadexception: function(loader, node, resp) {
-				node.getOwnerTree().body.unmask();
-			}
+			fileCt: this,
+			fileOpenSingleClick: true
 		});
 		
 		//Create CodePress element
 		this.codeEditor = new Ext.ux.CodePress({
-			delayedStart: true, 
-			closable: true,
-			
-			//TODO: check this
-			title: 'Code editor - actions.class.php',
-			path: 'appFlowerStudioPlugin/desktop.html',
-			tabTip: 'appFlowerStudioPlugin/desktop.html',
-			file: 'appFlowerStudioPlugin/desktop.html'
+			delayedStart: true
 		});
 		
 		this.centerPanel = new Ext.Panel({
 			region: 'center',
 			layout: 'fit',  
-			items: [this.codeEditor],
+			items: this.codeEditor,
 			tbar: [
 			{
 				text: 'Save', 
@@ -136,8 +105,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	},
 	
 	/**
-	 * Function cancel
-	 * Close active wimdow
+	 * Closes active window.
 	 */
 	cancel : function() {
 		this.close();
@@ -149,5 +117,29 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	tdshortcut : function() {
 		this.close();
 		(new afStudio.Theme()).show();
-	}
+	},
+	
+	/**
+	 * Opens file inside {@link #codeEditor}.
+	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.  
+	 * @param {String} name The file name
+	 * @param {String} path The file path
+	 */
+	openFile : function(name, path) {
+		var path = 'appFlowerStudioPlugin/css/' + name;
+		
+		if (path != this.codeEditor.file) {
+			this.codeEditor.loadFile('appFlowerStudioPlugin/css/' + name);
+		}
+	},
+	
+	/**
+	 * Clears {@link #codeEditor} file associated with deleted file(s)/folder.
+	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.
+	 * @param {String} path The deleted file/folder path
+	 */
+	deleteFile : function(path) {
+		//just clean the editor, should be implemented more carefull check based on opened file name and deleted path
+		this.codeEditor.setCode('');
+	}	
 });

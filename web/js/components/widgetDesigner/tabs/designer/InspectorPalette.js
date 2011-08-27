@@ -36,7 +36,8 @@ afStudio.wd.InspectorPalette = Ext.extend(Ext.Container, {
    		var self = this,
    			c = this.controller,
    			tr = c.getView('inspectorTree'),
-   			pg = c.getView('propertyGrid');
+   			pg = c.getView('propertyGrid'),
+   			wd = this.findParentByType('widgetdesigner');
    			
 		return {
 			items: [
@@ -61,16 +62,14 @@ afStudio.wd.InspectorPalette = Ext.extend(Ext.Container, {
 				}]
 			},{
 				xtype: 'filetreepanel',
-				ref: 'codeBrowser',
 	        	title: 'Code Browser',
 				url: afStudioWSUrls.getFiletreeUrl,
+	        	fileCt: wd,
 				rootText: 'Home',
-				rootPath: 'root',
-				rootVisible: true,				
 				maxFileSize: 524288 * 2 * 10,
 				autoScroll: true,
 				enableProgress: false,
-				singleUpload: true				
+				singleUpload: true
 			}]
 		};
 	}//eo _beforeInitComponent	

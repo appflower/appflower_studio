@@ -85,22 +85,51 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	
 	/**
 	 * Adds {@link afStudio.wd.CodeEditorTab} code editor tab.
-	 * 
 	 * @param {String} fileName The file Name
 	 * @param {String} path The file Path
-	 * @param {String} tabTip The tab panel tooltip string
-	 * @param {String} file  The file
 	 */
-	addCodeEditorTab : function(fileName, path, tabTip, file) {
+	addCodeEditorTab : function(fileName, path) {
 		var t = this.add({
 			xtype: 'wd.codeEditor',
 			fileName: fileName,
 			filePath: path,
-			tabTip: tabTip,
-			file: file
+			tabTip: path,
+			file: path
 		});
 		
 		this.setActiveTab(t.getId());
+	},
+	
+	/**
+	 * Opens file inside WD.
+	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.  
+	 * @param {String} name The file name
+	 * @param {String} path The file path
+	 */
+	openFile : function(name, path) {
+		//find if the current path is opened
+		var opened = this.find('filePath', path);
+		
+		if (opened.length > 0) {
+			opened[0].show();
+		} else {
+			this.addCodeEditorTab(name, path);
+		}
+	},
+	
+	/**
+	 * Removes opened tabs associated with deleted file/folder.
+	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.
+	 * @param {String} path The deleted file/folder path
+	 */
+	deleteFile : function(path) {
+		var openedTabs = this.findBy(function(c){
+            return c['filePath'] && c['filePath'].indexOf(path) === 0;
+        });
+		
+		Ext.each(openedTabs, function(t){
+			this.remove(t);
+		}, this);
 	},
 	
 	/**

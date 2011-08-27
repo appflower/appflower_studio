@@ -127,4 +127,5 @@ afStudio.xhr = {
 	
 	//TODO add supporting of all Ext.Ajax.request parameters
 	//TODO add success message instead using of server-side msg
+	//TODO add masking container - mask: {ctn: String|Ext.Element|Container}
 };

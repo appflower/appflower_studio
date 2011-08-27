@@ -113,6 +113,13 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	fileText : 'File',
 
 	/**
+	 * The number of clicks on file to open it. true means one click opens file otherwise dblclick (defaults to false)
+	 * @cfg {Boolean} fileOpenSingleClick 
+	 * @author Nikolai Babinski
+	 */
+	fileOpenSingleClick : false,
+	
+	/**
 	 * @cfg {Boolean} focusPopup true to focus new browser popup window for 'popup' openMode
 	 * (defaults to true)
 	 */
@@ -184,11 +191,28 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 
 	/**
-	 * @cfg {String} openMode Default file open mode. This mode is used when user dblclicks 
-	 * a file. Other valid values are '_self', '_blank' and 'download' (defaults to 'popup')
+	 * True to open new files right after creation (defaults to true).
+	 * @cfg {Boolean} openNewFile
+	 * @author Nikolai Babinski
 	 */
-	openMode : '_self',
+	openNewFile : true,
+	
+	/**
+	 * @cfg {String} openMode Default file open mode. This mode is used when user dblclicks 
+	 * a file. Other valid values are 'container', '_self', '_blank' and 'download' (defaults to 'container')
+	 */
+	openMode : 'container',
 
+	/**
+	 * This configuration option is required for "container" open mode {@link #openMode}.
+	 * In <i>container</i> open mode files are opened inside a container specified by this configuration:
+	 * <li><b>String</b> - for defining container's ID</li> 
+	 * <li><b>Ext.Container</b> - container's object reference</li> 
+	 * <li><b>Function</b> - the function returning container object</li>
+	 * @cfg {String|Ext.Container|Function} fileCt
+	 * @author Nikolai Babinski
+	 */
+	
 	/**
 	 * @cfg {String} overwriteText Text to use in overwrite confirmation message box
 	 */
@@ -428,28 +452,10 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			});
 		}
 		
-		// install event handlers
-		this.on({
-			scope: this,
-			
-			contextmenu: {
-				fn: this.onContextMenu, 
-				stopEvent: true
-			},
-			
-			dblclick: this.onDblClick,
-			
-			beforenodedrop: this.onBeforeNodeDrop,
-			
-			nodedrop: this.onNodeDrop,
-			
-			nodedragover: this.onNodeDragOver,
-			
-			//TODO examin
-			newfile: this.onNewFileSuccess,
-			
-			'delete': this.onDeleteSuccess
-		});
+		// sets files container when openMode = 'container'
+		if (this.openMode == 'container') {
+			this.fileCt = this.getFileContainer();
+		}
 
 		this.addEvents(
 			/**
@@ -618,6 +624,33 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	}, 
 	// eo function onRender
 
+	/**
+	 * Init events.
+	 * @override
+	 * @private
+	 */
+	initEvents : function() {
+		Ext.ux.FileTreePanel.superclass.initEvents.call(this);
+		
+		this.on({
+			scope: this,
+			
+			contextmenu: {
+				fn: this.onContextMenu, 
+				stopEvent: true
+			},
+			
+			beforenodedrop: this.onBeforeNodeDrop,
+			
+			nodedrop: this.onNodeDrop,
+			
+			nodedragover: this.onNodeDragOver
+		});
+
+		this.on(this.fileOpenSingleClick ? 'click' : 'dblclick', this.onClick, this, {buffer: 100});			
+	},
+	//eo function initEvents
+	
 	// new methods
 	
 	/**
@@ -649,6 +682,9 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 							this.fireEvent('delete', this, options.node);
 						}
 						options.node.parentNode.removeChild(options.node);
+						if (this.openMode == 'container') {
+							this.fileCt.deleteFile(options.params.file);
+						}
 					break;
 
 					case 'newdir':
@@ -660,6 +696,9 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 					case 'newfile':
 						if (true !== this.eventsSuspended) {
 							this.fireEvent('newfile', this, options.node);
+						}
+						if (this.openNewFile) {
+							this.openNode(options.node);
 						}
 					break;
 
@@ -720,7 +759,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 				}
 
 				// show default message box with server error
-				this.showError(o.error || response.responseText);
+				this.showError(o.message || response.responseText);
 			} // eo process command failure
 		} // eo process Ajax success
 
@@ -933,23 +972,34 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	},
 
 	/**
-	 * TODO make common interface
-	 * 
-	 * open the file into a tab from the center tabpanel
+	 * Opens the file inside container {@link #fileCt}.
+	 * @param {String} path The file path being opened
+	 * @author Nikolai Babinski
 	 */
-	openFile : function(node, path) {
-		//TODO configurable container for files being opened in it.
-		var tabPanel = this.findParentByType('widgetdesigner'),
-			fileName = this.getFileName(path);
+	openFileInContainer : function(path) {
+		var name = this.getFileName(path);
+		this.fileCt.openFile(name, path);
+	},
+	
+	/**
+	 * Returns file container. It is used when {@link #openMode} = "container".
+	 * For more details look at {@link #fileCt} and {@link #openMode}.
+	 * @property
+	 * @return {Ext.Container} file container
+	 * @author Nikolai Babinski
+	 */
+	getFileContainer : function() {
+		var ctn = this.fileCt;
 		
-		//find if the current path is opened
-		var opened = tabPanel.find('filePath', path);
-		
-		if (opened.length > 0) {
-			opened[0].show();
-		} else {
-			tabPanel.addCodeEditorTab(fileName, path, path, path);
+		if (Ext.isString(ctn)) {
+			return Ext.getCmp(ctn);
 		}
+		
+		if (Ext.isFunction(ctn)) {
+			return ctn();
+		}
+		
+		return ctn;
 	},
 	
 	/**
@@ -1000,10 +1050,16 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		}
 	},
 
+	/**
+	 * Returns file name.
+	 * @param {String} path The file path
+	 * @return {String} file name
+	 * @author Nikolai Babinski
+	 */
 	getFileName : function(path) {
-		var atmp = path.split('/');
+		var p = path.split('/');
 		
-		return atmp[atmp.length-1];
+		return p[p.length-1];
 	},
 	
 	/**
@@ -1255,9 +1311,18 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @private
 	 */
 	onDblClick : function(node, e) {
-		this.openNode(node);
 	},
 	// eo function onDblClick
+	
+	/**
+	 * Click handler
+	 * @private
+	 * @author Nikolai Babinski
+	 */
+	onClick : function(node, e) {
+		this.openNode(node);
+	},
+	// eo function onClick
 	
 	/**
 	 * Destroys the FileTreePanel and sub-components
@@ -1283,6 +1348,11 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			this.treeSorter = null;
 		}
 
+		// remove reference to file container 
+		if (this.fileCt) {
+			this.fileCt = null
+		}
+		
 		// call parent
 		Ext.ux.FileTreePanel.superclass.onDestroy.call(this);
 	}, 
@@ -1343,9 +1413,9 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	},
 	
 	/**
-	 * Create new file handler
+	 * Create new file handler.
+	 * Runs after editing of new file name is completed.
 	 * @private
-	 * runs after editing of new file name is completed
 	 * @param {Ext.Editor} editor
 	 */
 	onNewFile : function(editor) {
@@ -1365,45 +1435,11 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	},
 	
 	/**
-	 * Create new file handler after the file is saved
-	 * @param node
-	 */
-	onNewFileSuccess : function(tree, node) {
-	    this.openNode(node, '_self');
-	},
-	
-	/**
-	 * Create delete handler after the file is deleted from tree
-	 * @param node
-	 */
-	onDeleteSuccess : function(tree, node) {
-		var tabPanel = this.findParentByType('widgetdesigner'),
-			path = this.getPath(node);
-//	    var tabPanel = Ext.getCmp(this.tabPanelId);
-//		fileName = this.getFileName(path);
-//		console.log('path', path);
-//		
-//		var opened_tabs = tabPanel.findBy(function(c){
-//			console.log('c', c, c.path);
-//            return c['path'].indexOf(path) === 0;
-//        });
-		//find if the current path is opened
-//		var opened_tabs = tabPanel.find('path', path);
-//		console.log('opened_tabs', opened_tabs);
-		
-		if (opened_tabs.length > 0) {
-			for (var tab in opened_tabs) {
-				tabPanel.remove(tab);
-			}
-		}
-	},
-	
-	/**
 	 * Called while dragging over, decides if drop is allowed
 	 * @private
 	 * @param {Object} dd event
 	 */
-	onNodeDragOver:function(e) {
+	onNodeDragOver : function(e) {
 		e.cancel = e.target.disabled || e.dropNode.parentNode === e.target.parentNode && e.target.isLeaf();
 	}, 
 	// eo function onNodeDragOver
@@ -1414,17 +1450,16 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Object} dd event
 	 */
 	onNodeDrop : function(e) {
-
 		// failure can be signalled by cmdCallback
 		// put drop node to the original parent in that case
-		if(true === e.failure) {
+		if (true === e.failure) {
 			e.oldParent.appendChild(e.dropNode);
 			return;
 		}
 
 		// if we already have node with the same text, remove the duplicate
 		var sameNode = e.dropNode.parentNode.findChild('text', e.dropNode.text);
-		if(sameNode && sameNode !== e.dropNode) {
+		if (sameNode && sameNode !== e.dropNode) {
 			sameNode.parentNode.removeChild(sameNode);
 		}
 	},
@@ -1432,7 +1467,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * Opens node
 	 * @param {Ext.tree.AsyncTreeNode} node
-	 * @param {String} mode Can be "_self", "_blank", or "popup". Defaults to (this.openMode)
+	 * @param {String} mode Can be "container", "_self", "_blank", or "popup". Defaults to (this.openMode)
 	 */
 	openNode : function(node, mode) {
 
@@ -1455,6 +1490,10 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 
 			switch (mode) {
+				case 'container':
+					this.openFileInContainer(path);				
+				break;
+				
 				case 'popup':
 					if (!this.popup || this.popup.closed) {
 						this.popup = window.open(url, this.hrefTarget, this.popupFeatures);
@@ -1464,11 +1503,9 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 						this.popup.focus();
 					}
 				break;
-
+				
 				case '_self':
-//TODO implement "container" mode and make it configurable 				
-					//window.location = url;
-					this.openFile(node,path);
+					window.location = url;
 				break;
 
 				case '_blank':
@@ -1487,6 +1524,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		}
 	},
 	//eo function openNode
+	
 	
 	/**
 	 * Sets/Unsets delete of files/directories disabled/enabled
