@@ -223,6 +223,7 @@ afStudio.wd.list.ModelReflector = (function() {
 			} else {
 				var oAction = this.createRowAction(pAction);
 				ac.items.splice(idx, 0, oAction);
+				this.updateActionsColumnWidth();
 			}
 			this.view.refresh();
 		},
@@ -242,6 +243,8 @@ afStudio.wd.list.ModelReflector = (function() {
 			if (ac.items.length == 0) {
 				cm.config.pop();
 				cm.setConfig(cm.config);
+			} else {
+				this.updateActionsColumnWidth();
 			}
 			this.view.refresh();
 		},

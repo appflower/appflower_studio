@@ -5,7 +5,7 @@ Ext.ns('afStudio.wd.list');
  * 
  * @class afStudio.wd.list.ActionColumn
  * @extends Ext.grid.ActionColumn
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.wd.list.ActionColumn = Ext.extend(Ext.grid.ActionColumn, {
 	

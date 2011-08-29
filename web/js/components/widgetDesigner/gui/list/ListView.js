@@ -25,6 +25,19 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	EXEC_UPDATE : 'update',
 	
 	/**
+	 * Rowaction width (defaults to 18).
+	 * @property rowActionWidth
+	 * @type {Number}
+	 */
+    rowActionWidth : 18,
+	/**
+	 * Rowactions column width (defaults to 58).
+	 * @property actionsColumnWidth
+	 * @type {Number}
+	 */
+    actionsColumnWidth : 58,
+	
+	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
@@ -658,8 +671,8 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	createRowActionColumn : function(actions) {
 		var	_me = this,
-			aWidth = 18, //default row action width
-			actClmWidth = 50; //default action column width
+			aWidth = this.rowActionWidth,
+			actClmWidth = this.actionsColumnWidth;
 			
 		var actClm = {
 			id: 'action-column',
@@ -680,6 +693,20 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		return actClm;
 	},
 	//eo createRowActionColumn
+	
+	/**
+	 * Updates/Recalculated Actions column width.
+	 * @protected
+	 */
+	updateActionsColumnWidth : function() {
+		var cm = this.getColumnModel(),
+			ac = cm.getColumnById('action-column'),
+			idx = cm.getIndexById('action-column'),
+			actNum = ac.items.length;
+		
+		var width = (actNum * this.rowActionWidth) > this.actionsColumnWidth ? (actNum * this.rowActionWidth) : this.actionsColumnWidth;
+		cm.setColumnWidth(idx, width);
+	},
 	
 	/**
 	 * Creates row-action.
@@ -863,6 +890,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
     onDestroy : function() {
         afStudio.wd.list.ListView.superclass.onDestroy.call(this);
+        
 		this.modelMapper = null;        
     }	
 
