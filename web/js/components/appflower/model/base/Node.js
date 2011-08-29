@@ -449,7 +449,12 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Boolean}
      */
     isRequired : function() {
+    	//root node is required
+    	if (this.getDepth() == 0) {
+    		return true;
+    	}
     	var sd = this.getStructuralData();
+    	
 		return sd ? sd.required : false;
     },
     
