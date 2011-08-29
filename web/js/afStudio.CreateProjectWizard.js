@@ -378,7 +378,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 						  //contains boolean value
 						  _this.databaseExist = obj.data.databaseExist;
 						  
-						  switch(_this.data.databaseExist)
+						  switch(_this.databaseExist)
 						  {
 						    case true:
 						      Ext.Msg.show({
