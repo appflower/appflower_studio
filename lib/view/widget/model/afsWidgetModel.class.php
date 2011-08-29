@@ -230,34 +230,27 @@ class afsWidgetModel extends afsBaseModel
      */
     public function save()
     {
-        $definition = afsXmlDefinition::create()->init($this->getDefinition());
-        if ($this->isNew()) {
-            $definition->rootAttributes($this->getType());
-        }
+        $definition_array = $this->getDefinition();
+        $definition_array = afsWidgetModelHelper::fixOrder($definition_array);
+        
+        $definition = afsXmlDefinition::create()->init($definition_array);
+        if ($this->isNew()) $definition->rootAttributes($this->getType());
+        
         $definition->pack();
         
         // prepare folder for definition saving 
         $config_path = $this->getPlaceConfigPath();
-        if (!file_exists($config_path)) {
-            afsFileSystem::create()->mkdirs($config_path, 0774);
-        }
+        if (!file_exists($config_path)) afsFileSystem::create()->mkdirs($config_path, 0774);
         $path = "{$config_path}/{$this->getAction()}.xml";
         
-        // validate
-        $status = $definition->validate();
-        
-        // save
-        $response = afResponseHelper::create();
-        if ($status) {
+        if ($definition->validate()) {
             afStudioUtil::writeFile($path, $definition->get());
             
             // check exists action or not
-            $response->success($this->ensureActionExists());
-        } else {
-            $response->success(false)->message('Widget XML is not valid.');
+            return afResponseHelper::create()->success($this->ensureActionExists());
         }
         
-        return $response;
+        return afResponseHelper::create()->success(false)->message('Widget XML is not valid.');
     }
     
     /**
