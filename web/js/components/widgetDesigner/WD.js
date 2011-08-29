@@ -1,4 +1,3 @@
-
 /**
  * This class is dedicated for WD managing.
  * 
@@ -59,7 +58,6 @@ afStudio.WD = function() {
 			
 			ctr.run();
 		}
-		
-		
+		//eo showWidgetDesigner
 	};
 }();

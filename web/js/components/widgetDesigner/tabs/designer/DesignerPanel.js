@@ -73,7 +73,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @param {String} item The itemId property  
 	 * @return {Ext.Toolbar.Item} top toolbar item
 	 */
-	getMenuItem : function(item) {		
+	getMenuItem : function(item) {
 		return this.getTopToolbar().getComponent(item);
 	},
 	
@@ -90,6 +90,8 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	},
 	
 	/**
+	 * Save button <u>click</u>event listener.
+	 * Saves view definition 
 	 * @protected
 	 */
 	onSaveWidget : function() {

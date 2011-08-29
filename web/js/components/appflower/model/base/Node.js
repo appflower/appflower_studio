@@ -449,7 +449,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Boolean}
      */
     isRequired : function() {
-		return this.getStructuralData().required;    	
+    	var sd = this.getStructuralData();
+		return sd ? sd.required : false;
     },
     
     /**
@@ -457,7 +458,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Boolean}
      */
     hasMany : function() {
-		return this.getStructuralData().hasMany; 	
+    	var sd = this.getStructuralData();
+		return sd ? sd.hasMany : false; 	
     },
     
     /**

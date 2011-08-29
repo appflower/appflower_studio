@@ -12,7 +12,7 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
 	 * Defaults to url:
 	 * <ul>
 	 * 	<li><b>read</b>: {@link afStudioWSUrls#widgetGetDefinitionUrl}</li>
-	 * 	<li><b>read</b>: {@link afStudioWSUrls#widgetSaveDefinitionUrl}</li>
+	 * 	<li><b>save</b>: {@link afStudioWSUrls#widgetSaveDefinitionUrl}</li>
 	 * </ul>
 	 */
 	url : {
@@ -34,6 +34,7 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
 	 */
     
     /**
+     * ViewController
      * @constructor
      * @param {Object} config Controller configuration object
      */
@@ -66,12 +67,14 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
     
     /**
      * Configures views.
+     * ViewController has two registered views by default: {@link afStudio.view.inspector.InspectorTree}
+     * and {@link afStudio.view.property.PropertyGrid}.
      * @protected
      */
     setupViews : function() {
     	Ext.apply(this.views, {
 	        inspectorTree: {
-	            view: afStudio.view.inspector.TreePanel,
+	            view: afStudio.view.inspector.InspectorTree,
 	            cfg: {
 	                border: false
 	            }

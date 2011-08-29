@@ -323,13 +323,13 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     saveViewDefinition : function(params) {
     	var _me = this,
     		saveUrl = this.getUrl('save'),
-			vd = this.viewDefinition.getData();
+			vd = this.viewDefinition.getDataForSave();
     	
 		params = Ext.apply(params || {}, {
 			data: Ext.util.JSON.encode(vd),
 			createNewWidget: false 
 		});
-			
+		
     	if (this.fireEvent('beforeSaveViewDefinition', vd)) {
     		afStudio.xhr.executeAction({
     			url: saveUrl,

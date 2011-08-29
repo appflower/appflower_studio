@@ -1570,7 +1570,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.enableOpen = !disabled;
 
 		return this;
-	}, 
+	},
 	// eo function setOpenDisabled
 
 	/**

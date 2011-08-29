@@ -3,11 +3,11 @@ Ext.ns('afStudio.view.inspector');
 /**
  * The InspectorTree view, represents the whole model structure.
  * 
- * @class afStudio.view.inspector.TreePanel
+ * @class afStudio.view.inspector.InspectorTree
  * @extends Ext.tree.TreePanel
  * @author Nikolai Babinski <niba@appflower.com>
  */
-afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
+afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * The associated with this tree controller.
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
@@ -51,7 +51,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */	
 	initComponent : function() {
 		this._beforeInitComponent();
-		afStudio.view.inspector.TreePanel.superclass.initComponent.apply(this, arguments);
+		afStudio.view.inspector.InspectorTree.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
 	},
 	//eo initComponent
@@ -149,7 +149,7 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @private
 	 */
 	initEvents : function() {
-		afStudio.view.inspector.TreePanel.superclass.initEvents.apply(this, arguments);
+		afStudio.view.inspector.InspectorTree.superclass.initEvents.apply(this, arguments);
 		
 		var _me = this,
 			 sm = _me.getSelectionModel();
@@ -331,6 +331,6 @@ afStudio.view.inspector.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 afStudio.view.inspector.nodeType = {}
 
 /**
- * @type 'inspector.treePanel'
+ * @type 'inspector.inspectorTree'
  */
-Ext.reg('inspector.treePanel', afStudio.view.inspector.TreePanel);
+Ext.reg('inspector.inspectorTree', afStudio.view.inspector.InspectorTree);

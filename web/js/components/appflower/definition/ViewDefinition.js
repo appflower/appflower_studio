@@ -50,7 +50,18 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		
 		return this.out(ent);
 	},
-	//eo getEntity
+	
+	/**
+	 * Returns definition being saved.
+	 * @public
+	 * @return {Object} data
+	 */
+	getDataForSave : function() {
+		//convert boolean values to string because of incorrect server-side serialization process
+		var d = this.out(this.data, true);
+		
+		return d;
+	},
 	
 	/**
 	 * Sets entity's attribute.

@@ -98,19 +98,22 @@ afStudio.definition.DataDefinition = Ext.extend(Ext.util.Observable, {
 	 * Returning properties/object from DataDefinition class should be safe and cannot be modified outside the class.
 	 * @protected
 	 * @param {Mixed} obj The variable to be returned safely without keeping the old reference
+	 * @param {Boolean} (Optional) wrapBoolean Flag defines if boolean values should be converted to strings (defaults to false).
+	 * @return {Object} cloned object
 	 */
-	out : function(obj) {
-		return this.cloneObj(obj);
+	out : function(obj, wrapBoolean) {
+		return this.cloneObj(obj, wrapBoolean);
 	},
 	
 	//TODO in ExtJS 4.* remove this method, instead should be used Ext.clone/Object.merge
   	/**
-  	 * @private
      * Clone almost any type of variable including array, object and Date without keeping the old reference
+  	 * @private
      * @param {Mixed} item The variable to clone
+     * @param {Boolean} (Optional) wrapBoolean Flag defines if boolean values should be converted to strings (defaults to false).
      * @return {Mixed} clone
      */
-    cloneObj : function(item) {
+    cloneObj : function(item, wrapBoolean) {
         if (item === null || item === undefined) {
             return item;
         }
@@ -129,17 +132,22 @@ afStudio.definition.DataDefinition = Ext.extend(Ext.util.Observable, {
             i = item.length;
             clone = [];
             while (i--) {
-                clone[i] = this.cloneObj(item[i]);
+                clone[i] = this.cloneObj(item[i], wrapBoolean);
             }
         }
         // Object
         else if (type === '[object Object]' && item.constructor === Object) {
             clone = {};
             for (key in item) {
-                clone[key] = this.cloneObj(item[key]);
+                clone[key] = this.cloneObj(item[key], wrapBoolean);
             }
         }
 
+        //Boolean values converting to string
+        if (wrapBoolean === true && Ext.isBoolean(item)) {
+        	item = String(item);
+        }
+        
         return clone || item;
     }
     //eo clone
