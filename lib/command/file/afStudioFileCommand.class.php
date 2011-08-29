@@ -147,32 +147,6 @@ class afStudioFileCommand extends afBaseStudioCommand
     }
     
     /**
-     * Getting css files list
-     *
-     * @return afResponse
-     * @author Sergey Startsev
-     */
-    protected function processCssfiles()
-    {
-        $cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
-		$cssExtensions = sfFinder::type('file')->name('*.css')->sort_by_name()->in($cssPath);
-		
-		$i = 0;
-		$nodes = array();
-		foreach ($cssExtensions as $cssExtension) {
-			$cssExtension = str_replace(sfConfig::get('sf_root_dir') . "/plugins/appFlowerStudioPlugin/web/css/", "", $cssExtension);
-			$nodes[$i] = array(
-				'text' => $cssExtension, 
-				'id' => 'css/' . $cssExtension, 
-				'leaf' => true
-		    );
-			$i++;
-		}
-		
-		return afResponseHelper::create()->success(true)->data(array(), $nodes, 0);
-    }
-    
-    /**
      * Checking exists file helper or not
      *
      * @return afResponse

@@ -31,7 +31,6 @@ class afStudioProjectCommand extends afBaseStudioCommand
             }
             
             return $this->result;
-            
         }
         
         return afResponseHelper::create()->success(true)->asArray();
@@ -69,6 +68,10 @@ class afStudioProjectCommand extends afBaseStudioCommand
     
     /**
      * Save project functionality
+     * 
+     * @return afResponse
+     * @author Radu Topala
+     * @author Sergey Startsev
      */
     protected function processSave()
     {
@@ -83,20 +86,15 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $unique = afStudioUtil::unique();
         
-        file_put_contents('/tmp/project-'.$unique.'.yml', $this->dumpYaml(array('project'=>$params)));
+        file_put_contents('/tmp/project-'.$unique.'.yml', sfYaml::dump(array('project' => $params), 4));
    	    
         $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml');
     	
-        if (is_readable($path.'/config/project.yml')) {    	    	
-            $this->result['success'] = true;
-            $this->result['message'] = 'Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!';
-            $this->result['console'] = $console;
-        } else {
-            $this->result['success'] = false;
-            $this->result['message'] = 'Project was not created in path <b>'.$path.'</b> due to some errors!';
-            $this->result['console'] = $console;
+        if (is_readable($path.'/config/project.yml')) {
+            return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
         }
         
+        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($console);
     }
     
     /**
@@ -104,41 +102,51 @@ class afStudioProjectCommand extends afBaseStudioCommand
      */
     protected function processCheckDatabase()
     {
-        $form = json_decode($this->getParameter($form));
+        $response = afResponseHelper::create();
+        
+        $form = json_decode($this->getParameter('form'));
         
         //check database connection
         $form->port = empty($form->port) ? '3306' : $form->port;
-        $dsn = "mysql:dbname={$form->database};host={$form->host};port={$form->port}";      
+        $dsn = "mysql:dbname={$form->database};host={$form->host};port={$form->port}";
         
         error_reporting(0);
+        
+        $data = array();
         
         try {
             $conn = new PDO($dsn, $form->username, $form->password);
             
-            $this->result['success'] = true;
-            $this->result['databaseExist']= true;
+            $response->success(true);
+            $data['databaseExist']= true;
         } catch (PDOException $e) {
-            $error=$e->getMessage();
+            $error = $e->getMessage();
             
-            if(substr_count($error,'Access denied for user')>0) {
-                $this->result['success'] = false;
-                $this->result['fields'][] = array('fieldName'=>'infor','error'=>'Cannot connect to database server using the provided username and/or password');
-                $this->result['fields'][] = array('fieldName'=>'username','error'=>'Username and/or password does not match');
-                $this->result['fields'][] = array('fieldName'=>'password','error'=>'Username and/or password does not match');
-            } elseif (substr_count($error,'Unknown MySQL server host')>0||substr_count($error,'Can\'t connect to MySQL server')>0||substr_count($error,'is not allowed to connect to this MySQL')>0) {
-                $this->result['success'] = false;
-                $this->result['fields'][] = array('fieldName'=>'infor','error'=>'Cannot connect to database server using the provided host and/or port');
-                $this->result['fields'][] = array('fieldName'=>'host','error'=>'Host and/or port does not match');
-                $this->result['fields'][] = array('fieldName'=>'port','error'=>'Host and/or port does not match');
-            } elseif (substr_count($error,'Unknown database')>0) {
-                $this->result['success'] = true;
-                $this->result['databaseExist']= false;
+            if (substr_count($error, 'Access denied for user') > 0) {
+                $response->success(false);
+                $data['fields'][] = array('fieldName' => 'infor', 'error' => 'Cannot connect to database server using the provided username and/or password');
+                $data['fields'][] = array('fieldName' => 'username', 'error' => 'Username and/or password does not match');
+                $data['fields'][] = array('fieldName' => 'password', 'error' => 'Username and/or password does not match');                
+            } elseif (substr_count($error, 'Unknown MySQL server host') > 0 || substr_count($error, "Can't connect to MySQL server") > 0 || substr_count($error, 'is not allowed to connect to this MySQL') > 0) {
+                $response->success(false);
+                $data['fields'][] = array('fieldName'=>'infor','error'=>'Cannot connect to database server using the provided host and/or port');
+                $data['fields'][] = array('fieldName'=>'host','error'=>'Host and/or port does not match');
+                $data['fields'][] = array('fieldName'=>'port','error'=>'Host and/or port does not match');
+            } elseif (substr_count($error, 'Unknown database') > 0) {
+                $response->success(true);
+                $data['databaseExist'] = false;
             }
         }
+        
+        return $response->data(array(), $data, 0);
     }
     
     /**
      * Save wizard processing
+     * 
+     * @return afResponse
+     * @author Radu Topala
+     * @author Sergey Startsev
      */
     protected function processSaveWizard()
     {
@@ -157,7 +165,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $project);
         $unique = afStudioUtil::unique();
         
-        file_put_contents('/tmp/project-'.$unique.'.yml', $this->dumpYaml(array('project'=>$project)));
+        file_put_contents('/tmp/project-'.$unique.'.yml', sfYaml::dump(array('project'=>$project), 4));
         
         //create db configuration
         $dcm = new DatabaseConfigurationManager('/tmp/databases-'.$unique.'.yml');
@@ -169,15 +177,12 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
         
-        if (is_readable($path.'/config/project.yml')) {    	    	
-            $this->result['success'] = true;
-            $this->result['message'] = 'Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!';
-            $this->result['console'] = $console;
-        } else {
-            $this->result['success'] = false;
-            $this->result['message'] = 'Project was not created in path <b>'.$path.'</b> due to some errors!';
-            $this->result['console'] = $console;
+        $response = afResponseHelper::create();
+        if (is_readable($path.'/config/project.yml')) {
+            return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
         }
+        
+        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($console);
     }
     
     /**
@@ -189,20 +194,6 @@ class afStudioProjectCommand extends afBaseStudioCommand
     protected function processRun()
     {
         return afResponseHelper::create()->success(true)->console(afStudioProjectCommandHelper::processRun());
-    }
-    
-    /**
-     * Dump yaml
-     *
-     * @param array $data 
-     * @return string
-     */
-    private function dumpYaml(array $data)
-    {
-        $sfYaml = new sfYaml();
-        $yamlData = $sfYaml->dump($data, 4);
-        
-        return $yamlData;
     }
     
 }

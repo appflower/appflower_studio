@@ -38,7 +38,7 @@ class appFlowerStudioActions extends afsActions
     public function executeCodepress(sfWebRequest $request)
     {
         $this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';
-        $this->language = (($request->hasParameter('language') && $request->getParameter('language') != 'undefined') ? $request->getParameter('language'):'generic');
+        $this->language = ($request->hasParameter('language') && $request->getParameter('language') != 'undefined') ? $request->getParameter('language') :'generic';
         
         return $this->renderPartial('codepress');
     }
@@ -90,9 +90,9 @@ class appFlowerStudioActions extends afsActions
 	 * @return string -json
 	 * @author Sergey Startsev
 	 */
-	public function executeModels(sfWebRequest $request)
-	{
-		$command = $request->getParameter('cmd', $request->getParameter('xaction'));
+    public function executeModels(sfWebRequest $request)
+    {
+        $command = $request->getParameter('cmd', $request->getParameter('xaction'));
         $response = afStudioCommand::process('model', $command, $request->getParameterHolder()->getAll());
         
         if ($command == 'get') {
@@ -104,54 +104,34 @@ class appFlowerStudioActions extends afsActions
         return $this->renderJson($response->asArray());
 	}
 	
-	/**
-	 * Css Files tree list
-	 *
-	 * @return void
-	 * @author Sergey Startsev
-	 */
-	public function executeCssfilestree()
-	{
-	    $response = afStudioCommand::process('file', 'cssfiles', $request->getParameterHolder()->getAll());
-	    
-	    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-            return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
-        }
-	    
-		return $this->renderJson($response->asArray());
-	}
-    
-    
-    
-	public function executeCssfilesSave()
-	{
-		$result=true;
-		
-		$content=file_get_contents("php://input");
-		
-		$cssPath=sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
-		
-		$node=$this->hasRequestParameter('node')?$this->getRequestParameter('node'):"";
-		
-		afStudioUtil::writeFile($cssPath.$node,$content);
-
-	 	if($result) {
-		    $success = true;
-		    $message = 'File saved successfully';
-		    
-		    afsNotificationPeer::log('Css file ['.$cssPath.$node.'] saved successfully', 'afStudioCssEditor');
-		    
-		} else {
-		    $success = false;
-		    $message =  'Error while saving file to disk!';
-		    
-		    afsNotificationPeer::log('Error while saving file to disk! ['.$cssPath.$node.']', 'afStudioCssEditor');
-		}
-		
-		$info=array('success'=>$success, "message"=>$message);
-		return $this->renderJson($info);
-	}
 	
+    public function executeCssfilesSave(sfWebRequest $request)
+    {
+        $result = true;
+        
+        $content = file_get_contents("php://input");
+        
+        $cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
+        $node = $request->getParameter('node', "");
+        
+        afStudioUtil::writeFile($cssPath . $node, $content);
+        
+        if ($result) {
+            $success = true;
+            $message = 'File saved successfully';
+            
+            afsNotificationPeer::log('Css file ['.$cssPath.$node.'] saved successfully', 'afStudioCssEditor');
+        } else {
+            $success = false;
+            $message =  'Error while saving file to disk!';
+            
+            afsNotificationPeer::log('Error while saving file to disk! ['.$cssPath.$node.']', 'afStudioCssEditor');
+        }
+        
+        $info=array('success'=>$success, "message"=>$message);
+        
+        return $this->renderJson($info);
+    }
 	
 	/**
 	 * Execute console command actiom
@@ -181,11 +161,8 @@ class appFlowerStudioActions extends afsActions
         $dcm = new DatabaseConfigurationManager();
         
         return $this->renderJson(
-            afResponseHelper::create()
-                ->success(true)
-                ->data(array(), $dcm->getDatabaseConnectionParams(), 0)
-                ->asArray()
-            );
+            afResponseHelper::create()->success(true)->data(array(), $dcm->getDatabaseConnectionParams(), 0)->asArray()
+        );
     }
     
     /**
@@ -205,7 +182,7 @@ class appFlowerStudioActions extends afsActions
             afResponseHelper::create()
                 ->success($isSaved)
                 ->message(($isSaved) ? 'Database Connection Settings saved successfully' : 'Error while saving file to disk!')
-                ->redirect($this->getRequest()->getReferer())
+                ->redirect($request->getReferer())
                 ->asArray()
         );
     }
@@ -226,14 +203,15 @@ class appFlowerStudioActions extends afsActions
         
         $command = ($command = $request->getParameter('command', 'main')) ? $command : 'main';
         
-        $response = afStudioCommand::process('debug', $command, $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('debug', $command, $parameters)
+        );
     }
     
     /**
      * Notifications action
      * 
+     * @param sfWebRequest $request
      * @return string - json
      * @author Sergey Startsev
      */
@@ -244,35 +222,10 @@ class appFlowerStudioActions extends afsActions
         );
 	}
     
-    
-    
-    /**
-     * Getting widgets list by app nane and module name
-     */
-    public function executeModuleWidgets(sfWebRequest $request)
-    {
-        $app = $request->getParameter('app_name', 'frontend');
-        $module = $request->getParameter('module_name', '');
-        FirePHP::getInstance(true)->fb('module widgets');
-        /*
-            TODO move to helper
-        */
-        
-        $aWidgets = afStudioUtil::getFiles($this->realRoot."/apps/".$app."/modules/".$module."/config/", true, "xml");
-        
-        $aExtWidgets = array();
-        foreach ($aWidgets as $i => $name) {
-            $aExtWidgets[] = array('id' => $i, 'name' => strstr($name, '.xml', true));
-        }
-        
-        return $this->renderJson($aExtWidgets);
-    }
-    
-    
-    
     /**
      * Process layout pages functionality
      * 
+     * @param sfWebRequest $request
      * @return string - json
      */
     public function executeLayout(sfWebRequest $request)
@@ -282,13 +235,10 @@ class appFlowerStudioActions extends afsActions
         );
     }
     
-    
-    
-    
-    
     /**
 	 * Check if file exists and if not there create a new one based on the template
 	 * 
+	 * @param sfWebRequest $request
 	 * @return string - json
 	 * @author Sergey Startsev 
 	 */
@@ -316,6 +266,7 @@ class appFlowerStudioActions extends afsActions
 	/**
 	 * Getting info for template selector
 	 * 
+	 * @param sfWebRequest $request
 	 * @return string - json for templateSelector
 	 * @author Radu Topala
 	 * @author Sergey Startsev
@@ -371,59 +322,71 @@ class appFlowerStudioActions extends afsActions
         );
     }
 	
-	
 	/**
 	 * Create project feature
 	 * 
+	 * @param sfWebRequest $request
 	 * @return string - json
 	 * @author Radu Topala
 	 * @author Sergey Startsev
 	 */
 	public function executeCreateProject(sfWebRequest $request)
-	{        
-        $aResult = afStudioCommand::process('createProject', $request->getParameter('cmd'),array('request'=>$request));
-        
-        return $this->renderJson($aResult);
-	}
-	
-	public function executeCreateProjectWizardCheckDatabase($request)
 	{
-	    $aResult = afStudioCommand::process('createProject', 'checkDatabase',array('request'=>$request));
-	    
-        return $this->renderJson($aResult);
+        return $this->renderJson(
+            afStudioCommand::process('project', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())->asArray()
+        );
 	}
 	
-	public function executeCreateProjectWizard($request)
+	/**
+	 * Checking database in create project wizard
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 * @author Sergey Startsev
+	 */
+	public function executeCreateProjectWizardCheckDatabase(sfWebRequest $request)
+	{
+        return $this->renderJson(
+            afStudioCommand::process('project', 'checkDatabase', $request->getParameterHolder()->getAll())->asArray()
+        );
+	}
+	
+	/**
+	 * Create project wizard
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 * @author Radu Topala
+	 * @author Sergey Startsev
+	 */
+	public function executeCreateProjectWizard(sfWebRequest $request)
 	{        
-		$result = afStudioCommand::process('createProject', 'saveWizard', array('request'=>$request));
-		
-        return $this->renderJson($result);
+        return $this->renderJson(
+            afStudioCommand::process('project', 'saveWizard', $request->getParameterHolder()->getAll())->asArray()
+        );
 	}
 	
-	
-	
-	
-	
-	public function executeWelcome($request)
-	{		
-      	try {
-		$vimeoService = new VimeoInstanceService();
-        	$data = $vimeoService->getDataFromRemoteServer();        	
-      	} catch (Exception $e) { 
+	/**
+	 * Welcome page functionality
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 */
+    public function executeWelcome(sfWebRequest $request)
+    {		
+        try {
+            $vimeoService = new VimeoInstanceService();
+            $data = $vimeoService->getDataFromRemoteServer();
+        } catch (Exception $e) {
             if (sfConfig::get('sf_environment') == 'dev') {
                 throw $e;
-            } else {
-      		$data = array();
-            }
-      	}        
-		$message = $this->getPartial('welcome', array('data'=>$data));		
-        $info = array(
-        	"success" => true, 
-        	"message" => $message, 
-        	"code" => "jQuery('#studio_video_tours ul').jScrollPane();"
-        );
+            } 
+            $data = array();
+        }
         
-		return $this->renderJson($info);
+        return $this->renderJson(
+            afResponseHelper::create()->success(true)->message($this->getPartial('welcome', array('data'=>$data)))->asArray()
+        );
 	}
 	
 }
