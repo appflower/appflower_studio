@@ -140,7 +140,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		_this.maskContent('loading metadata...');	    
 			    
 		Ext.Ajax.request({
-		   url: afStudioWSUrls.getModelsUrl(),
+		   url: afStudioWSUrls.modelListUrl,
 		   params: {
 			   xaction: 'read',
 			   model: m,

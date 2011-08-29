@@ -710,7 +710,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            	
 	            	afStudio.vp.mask({region:'center', msg: 'Saving ' + _this.model + ' model...'});
 					Ext.Ajax.request({
-						url: afStudioWSUrls.getModelsUrl(),
+						url: afStudioWSUrls.modelListUrl,
 						params: {
 							xaction: 'alterModel',
 							model: _this.model, 

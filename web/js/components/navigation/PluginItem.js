@@ -204,7 +204,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 */
 	,onAddWidget : function() {
 		var _this = this,
-			  url = afStudioWSUrls.getModelsUrl();
+			  url = afStudioWSUrls.modelListUrl;
 		
 		var wb = new afStudio.wd.WidgetsBuilder({
 			modelsUrl: url,

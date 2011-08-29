@@ -215,8 +215,12 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				forceFit: true
 			},
 			columns: [
-				{header: 'Selected fields', sortable: true, width: 170, dataIndex: 'name'}
-			],
+			{
+				header: 'Selected fields', 
+				sortable: true, 
+				width: 170, 
+				dataIndex: 'name'
+			}],
 			loadMask: true,
 			border: true,
 			style: 'padding-bottom: 5px;',
@@ -234,7 +238,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				baseParams: {
 					xaction: 'read'
 				},
-				root: 'rows',
+				root: 'data',
 				idProperty: 'id',    							
 				fields: ['id', 'name', 'type', 'size', 'required']
 			}),
@@ -266,6 +270,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			groupField: 'group',
 			valueField: 'value',
 			displayField: 'text',
+			forceSelection: true,
             fieldLabel: 'Module Location',
 			loadingText: 'Please wait...',
 			emptyText: 'Please select the module location...',
@@ -289,11 +294,13 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		this.typeCombo = new Ext.form.ComboBox({
             fieldLabel: 'Widget Type', 
             triggerAction: 'all', 
-            anchor: '100%', 
-			store: [['list', 'List'], 
-					['grid', 'Grid'], 
-					['edit', 'Edit'], 
-					['show', 'Show']],
+            anchor: '100%',
+            forceSelection: true,
+			store: [
+				['list', 'List'], 
+				['edit', 'Edit'], 
+				['show', 'Show']
+			],
 			value: 'list'
 		});
 		
@@ -304,51 +311,64 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			modal: true, 
 			tbar: {
 				xtype: 'toolbar',
-				id: this.id + 'help-toolbar', hidden: true,
+				id: this.id + 'help-toolbar', 
+				hidden: true,
 				items: [
 					'Please select the fields for each model you want to have displayed in your Widget. And drag each field to the Selected fields area.'
 				]
 			},
-
 			layout: 'card',
 			activeItem: 0,
-			
+			defaults: {
+				border: false, 
+				bodyBorder: false
+			},
 			items: [
 			{
-				border: false, bodyBorder: false,
 				hideBorders: true,
 				items: [
-					new Ext.FormPanel({
-						bodyStyle: 'padding: 5px;', labelWidth: 100,
-						items: [
-							this.modulesCombo,
-							this.actionInput,
-							this.typeCombo
-						]
-					})
-				]
+				{
+					xtype: 'form',
+					labelWidth: 100,
+					bodyStyle: 'padding: 5px;', 
+					items: [
+						this.modulesCombo,
+						this.actionInput,
+						this.typeCombo
+					]
+				}]
 			},{
-				border: false, bodyBorder: false,
-				xtype: 'panel',
 				layout: 'border',
 				items: [
+				{
+					region: 'west', 
+					margins: '5 5 5 5',
+					layout: 'fit',
+					width: 220,
+					items: [
 					{
-						region: 'west', layout: 'fit',
-						margins: '5 5 5 5', width: 220,
-						items: [
-							{xtype: 'afStudio.models.modelTree', url: _this.modelsUrl, border: false, ref: '../../modelsTree'}
-						]
-					}, {	
-						region: 'center', margins: '5 5 5 0', layout: 'fit',
-						items: this.fieldsGrid
-					},{	
-						region: 'east', margins: '5 5 5 0', 
-						width: 235, layout: 'vbox', 
-						border: false, bodyBorder: false,
-						bodyStyle: 'background-color: #DFE8F6',
-						items: [this.relationsGrid, this.basket]
-					}		
-				]
+						xtype: 'afStudio.models.modelTree', 
+						ref: '../../modelsTree',
+						url: _this.modelsUrl, 
+						border: false
+					}]
+				},{	
+					region: 'center', 
+					margins: '5 5 5 0', 
+					layout: 'fit',
+					items: this.fieldsGrid
+				},{	
+					region: 'east',
+					margins: '5 5 5 0', 
+					layout: 'vbox',
+					width: 235, 
+					border: false, bodyBorder: false,
+					bodyStyle: 'background-color: #DFE8F6',
+					items: [
+						this.relationsGrid, 
+						this.basket
+					]
+				}]
 			}],
 			buttonAlign: 'left',
 			buttons: [

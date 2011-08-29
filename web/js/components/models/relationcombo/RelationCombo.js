@@ -102,8 +102,8 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 		var _this = this;
 		
 		_this.relationPicker = new afStudio.models.RelationPicker({
-			modelsUrl: window.afStudioWSUrls.getModelsUrl(),
-			fieldsUrl: window.afStudioWSUrls.getModelsUrl(),
+			modelsUrl: afStudioWSUrls.modelListUrl,
+			fieldsUrl: afStudioWSUrls.modelListUrl,
 			closable: true,
 			closeAction: 'hide',
 			listeners: {

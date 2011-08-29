@@ -11,9 +11,7 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
 	welcomeWinUrl : '/appFlowerStudio/welcome',
 	
-    getModelsUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/models');
-    },
+    modelListUrl: '/appFlowerStudio/models',
     
     getFiletreeUrl : '/appFlowerStudio/filetree',
     

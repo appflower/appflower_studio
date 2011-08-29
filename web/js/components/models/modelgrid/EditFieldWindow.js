@@ -85,7 +85,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		   url, xaction;
 	
 		   
-		url = afStudioWSUrls.getModelsUrl();
+		url = afStudioWSUrls.modelListUrl;
 		xaction = 'alterModelUpdateField';
 
 		_this.maskWindow();
@@ -337,7 +337,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 					items: [
 					{
 						xtype: 'relationcombo',
-						relationUrl: window.afStudioWSUrls.getModelsUrl(),
+						relationUrl: afStudioWSUrls.modelListUrl,
 						listWidth: 250,
 						fieldLabel: 'Relation',
 						name: 'relation'

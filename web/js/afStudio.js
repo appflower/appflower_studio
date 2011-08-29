@@ -41,11 +41,11 @@ var afStudio = function () {
 			Ext.data.DataProxy.on('exception', function(proxy, type, action, options, response, arg) {
 				var message,
 					title = String.format('Request Failed {0}', options.url);
-					
+				
 				if (type == 'response') {
+					var r = Ext.decode(response.responseText);
 					if (response.status == 200) {
-						var r = Ext.decode(response.responseText);
-						message = getMessage(r);
+						message = getMessage(r) || 'The remote-request succeeded but the reader could not read the response';
 					} else {
 						message = String.format('Server side error <br/> status code: {0}, message: {1}', r.status, r.statusText || '---');
 					}		
