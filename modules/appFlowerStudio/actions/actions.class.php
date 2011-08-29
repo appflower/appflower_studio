@@ -385,7 +385,7 @@ class appFlowerStudioActions extends afsActions
         }
         
         return $this->renderJson(
-            afResponseHelper::create()->success(true)->message($this->getPartial('welcome', array('data'=>$data)))->asArray()
+            afResponseHelper::create()->success(true)->data(array(), $this->getPartial('welcome', array('data'=>$data)), 0)->asArray()
         );
 	}
 	
