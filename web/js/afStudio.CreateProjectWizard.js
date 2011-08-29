@@ -357,28 +357,28 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			  
 				var _this = this;
 				Ext.Ajax.request({
-					url: window.afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl(),
+					url: afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl,
 					params: { 
 						form: Ext.encode(form5Values)
 					},
 					success: function(result,request){			   
 						var obj = Ext.decode(result.responseText);
 						if (!obj.success) {
-						  for(var i in obj.fields)
-						  {
-						    if(obj.fields[i].fieldName)
-						    {
-							    _this.form5.getForm().findField(obj.fields[i].fieldName).markInvalid(obj.fields[i].error);
-						    }
-						  }
+							var fields = obj.data.fields;
+						  	for (var i in fields) {
+						  		if (fields[i].fieldName) {
+							    	_this.form5.getForm().findField(fields[i].fieldName).markInvalid(fields[i].error);
+						    	}
+						  	}
+						  	
 							return;
 						}
 						else
 						{
 						  //contains boolean value
-						  _this.databaseExist = obj.databaseExist;
+						  _this.databaseExist = obj.data.databaseExist;
 						  
-						  switch(_this.databaseExist)
+						  switch(_this.data.databaseExist)
 						  {
 						    case true:
 						      Ext.Msg.show({

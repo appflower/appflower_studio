@@ -9,6 +9,8 @@ afStudio.WSUrlsClass = function() {
 
 afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
+	welcomeWinUrl : '/appFlowerStudio/welcome',
+	
     getModelsUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/models');
     },
@@ -30,10 +32,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	widgetRenameUrl : '/afsModuleManager/renameView',
 	
 	widgetDeleteUrl : '/afsModuleManager/deleteView',   
-	
-    getModuleWidgetsUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/moduleWidgets');
-    },    
     
     pluginListUrl : '/afsPluginManager/getList',
     
@@ -135,9 +133,7 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     	return this.buildUrlFor('/afsUserManager/checkUserExist');
     },
     
-    getCreateProjectWizardCheckDatabaseUrl: function() {
-      return this.buildUrlFor('/appFlowerStudio/createProjectWizardCheckDatabase');
-    },
+    getCreateProjectWizardCheckDatabaseUrl : '/appFlowerStudio/createProjectWizardCheckDatabase',
     
     buildUrlFor: function(url) {
         return url;
