@@ -1070,17 +1070,16 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		var path, p, a;
 
 		// get path for non-root node
-		if(node !== this.root) {
+		if (node !== this.root) {
 			p = node.parentNode;
 			a = [node.text];
-			while(p && p !== this.root) {
+			while (p && p !== this.root) {
 				a.unshift(p.text);
 				p = p.parentNode;
 			}
 			a.unshift(this.root.attributes.path || '');
 			path = a.join(this.pathSeparator);
 		}
-
 		// path for root node is it's path attribute
 		else {
 			path = node.attributes.path || '';
@@ -1089,6 +1088,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		// a little bit of security: strip leading / or .
 		// full path security checking has to be implemented on server
 		path = path.replace(/^[\/\.]*/, '');
+		
 		return path;
 	}, 
 	// eo function getPath
@@ -1491,7 +1491,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 			switch (mode) {
 				case 'container':
-					this.openFileInContainer(path);				
+					this.openFileInContainer(path);
 				break;
 				
 				case 'popup':

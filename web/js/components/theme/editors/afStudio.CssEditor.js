@@ -93,14 +93,17 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	},
 	
 	save : function() {
-		Ext.Ajax.request({
-		   url: afStudioWSUrls.getCssFilesSaveUrl,
-		   params: {node: this.westPanel.getSelectionModel().getSelectedNode().text},
-		   xmlData: this.codeEditor.getValue(),
-		   success: function(result, request) {			   
-			   var obj = Ext.decode(result.responseText);
-			   afStudio.Msg.info(obj.message);
-		   }
+		var me = this,
+			cp = this.codeEditor;
+		
+		afStudio.xhr.executeAction({
+			url: cp.fileContentUrl,
+	        params: {
+    	    	file: cp.file,
+        		code: cp.getCode()			          	
+        	},
+        	scope: me,
+			logMessage: String.format('CssEditor file [{0}] was saved', cp.file)
 		});
 	},
 	
@@ -126,10 +129,9 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	 * @param {String} path The file path
 	 */
 	openFile : function(name, path) {
-		var path = 'appFlowerStudioPlugin/css/' + name;
-		
+		//prevent loading already loaded file
 		if (path != this.codeEditor.file) {
-			this.codeEditor.loadFile('appFlowerStudioPlugin/css/' + name);
+			this.codeEditor.loadFile(path);
 		}
 	},
 	

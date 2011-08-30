@@ -15,8 +15,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
     getFiletreeUrl : '/appFlowerStudio/filetree',
     
-    getCssFilesSaveUrl : '/appFlowerStudio/cssfilesSave',    
-    
     moduleListUrl : '/afsModuleManager/getList',
     
     moduleGroupedUrl : '/afsModuleManager/getGrouped',
