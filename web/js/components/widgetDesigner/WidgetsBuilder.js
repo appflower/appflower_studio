@@ -1,7 +1,7 @@
 /**
  * Move into overrides or create custom component?
+ * TODO should be done via inheritance (Ext.extend) @Nick
  */
-
 Ext.override(Ext.grid.GridDragZone, {
 	afterRepair : function() {
 		Ext.fly(this.DDM.currentTarget).parent('TABLE').frame('#FFA7A7', 1);
@@ -42,7 +42,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	    /**
 	     * DZ for relations grid
 	     */
-	    var relGridDropTargetEl =  this.relationsGrid.getView().scroller.dom;;
+	    var relGridDropTargetEl =  this.relationsGrid.getView().scroller.dom;
 	    
 	    new Ext.dd.DropTarget(relGridDropTargetEl, {
             ddGroup: 'widgetsBuilder',
@@ -422,7 +422,8 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				handler: this.create 
 			}]
 		};	
-	}//eo _beforeInitComponent	
+	}
+	//eo _beforeInitComponent	
 	
 	/**
 	 * ExtJS template method
@@ -515,26 +516,71 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			type      = this.typeCombo.getValue(),
 			place     = moduleRec.get('group');		
 			
-		var widgetMetaData = afStudio.wd.WidgetFactory.buildWidgetDefinition(items, type);
+//		var widgetMetaData = afStudio.wd.WidgetFactory.buildWidgetDefinition(items, type);
+//		
+//		var afsWD = new afStudio.wd.WidgetDefinition({
+//			widgetUri: widgetUri,
+//			widgetType: type
+//		});
+//		
+//		var callback = Ext.util.Functions.createDelegate(function(response) {			
+//			this.fireEvent('widgetcreated', response);
+//			this.close();
+//		}, this);
+//		
+//		afsWD.saveDefinition({
+//			metaData: widgetMetaData, 
+//			success: callback, 
+//			newWidget: true,
+//			placeType: this.placeType,
+//			place: place
+//		});
 		
-		var afsWD = new afStudio.wd.WidgetDefinition({
-			widgetUri: widgetUri,
-			widgetType: type
-		});
+		type = type.toLowerCase();
+		var meta = afStudio.WD.getViewCarcass(type.toLowerCase()),
+			nd = afStudio.ModelNode;
+		meta[nd.FIELDS] = {};
 		
-		var callback = Ext.util.Functions.createDelegate(function(response) {			
-			this.fireEvent('widgetcreated', response);
-			this.close();
-		}, this);
+		var clm;
+		if (items.length > 1) {
+			clm = [];
+			Ext.each(items, function(f){
+				clm.push({
+					attributes: {
+						name: f.field,
+						label: f.field
+					}
+				});				
+			});
+		} else {
+			clm = {
+				attributes: {
+					name: items[0].field,
+					label: items[0].field
+				}
+			};
+		}
+		if (type != 'list') {
+			meta[nd.FIELDS][nd.FIELD] = clm;	
+		} else {
+			meta[nd.FIELDS][nd.COLUMN] = clm;
+		}
 		
-		afsWD.saveDefinition({
-			metaData: widgetMetaData, 
-			success: callback, 
-			newWidget: true,
-			placeType: this.placeType,
-			place: place
-		});
-	}//eo create
+		console.log('view definition', meta);
+		
+//		afStudio.xhr.executeAction({
+//			url: afStudioWSUrls.widgetSaveDefinitionUrl,
+//			params: {
+//				
+//			}, 
+//			mask: true,
+//			scope: _me,
+//			run: function(response, ops) {
+//				this.fireEvent('saveViewDefinition', vd);
+//			}
+//		});
+	}
+	//eo create
 	
 	/**
 	 * Function cancel
@@ -542,6 +588,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 */
 	,cancel : function() {
 		this.close();
-	}//eo cancel	
+	}
 
 });
