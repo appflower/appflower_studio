@@ -10,7 +10,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
     /**
      * Getting tree list
      * 
-     * todo - rename to getTree, should be also renamed in frontend
+     * @return afResponse
      */
     protected function processGet()
     {
@@ -22,22 +22,24 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $files = sfFinder::type('any')->ignore_version_control()->maxdepth(0)->in($path);
         
+        $data = array();
+        
         if (count($files) > 0) {
             foreach ($files as $file) {
-                $this->result[] = array(
+                $data[] = array(
                     'text' => basename($file), 
                     'leaf' => (is_file($file) ? true : false)
                 );
             }
-            
-            return $this->result;
         }
         
-        return afResponseHelper::create()->success(true)->asArray();
+        return afResponseHelper::create()->success(true)->data(array(), $data, 0);
     }
 	
 	/**
 	 * Checking is valid path
+	 * 
+	 * @return array
 	 */
     protected function processIsPathValid()
     {

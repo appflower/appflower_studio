@@ -59,9 +59,9 @@ class appFlowerStudioActions extends afsActions
             'is_post'   => $request->getMethod() == sfRequest::POST,
         );
         
-        $response = afStudioCommand::process('file', 'content', $parameters);
-        
-        return $this->renderJson($response->asArray());
+        return $this->renderJson(
+            afStudioCommand::process('file', 'content', $parameters)->asArray()
+        );
 	}
 	
 	/**
@@ -273,9 +273,16 @@ class appFlowerStudioActions extends afsActions
 	 */
 	public function executeLoadProjectTree(sfWebRequest $request)
 	{
-        return $this->renderJson(
-            afStudioCommand::process('project', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())
-        );
+        $command = $request->getParameter('cmd');
+        $response = afStudioCommand::process('project', $command, $request->getParameterHolder()->getAll());
+        
+        if ($command == 'get') {
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+            }
+        }
+        
+        return $this->renderJson($response);
 	}
 	
     /**
