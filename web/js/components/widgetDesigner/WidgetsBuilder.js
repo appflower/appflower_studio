@@ -42,19 +42,19 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	    /**
 	     * DZ for relations grid
 	     */
-	    var relGridDropTargetEl =  this.relationsGrid.getView().scroller.dom;
+	    var relGridDropTargetEl =  this.relationsGrid.getView().scroller.dom;;
 	    
 	    new Ext.dd.DropTarget(relGridDropTargetEl, {
-            ddGroup    : 'widgetsBuilder',
-            notifyDrop : function(ddSource, e, data){
-
-                var records =  ddSource.dragData.selections;
-                var fr = _this.fieldsGrid.getSelectionModel().getSelected();
-				var mn = _this.modelsTree.getSelectionModel().getSelectedNode();
-				var m  = _this.modelsTree.getModel(mn);
+            ddGroup: 'widgetsBuilder',
+            
+            notifyDrop: function(ddSource, e, data) {
+                var records = ddSource.dragData.selections,
+                	fr = _this.fieldsGrid.getSelectionModel().getSelected(),
+					mn = _this.modelsTree.getSelectionModel().getSelectedNode(),
+					m  = _this.modelsTree.getModel(mn);
 				
-				if(fr){
-                    Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+				if (fr) {
+					ddSource.grid.store.remove(records);
 					var r = new _this.RelationRec({
 				        id: fr.get('id'),
 				        model: m ,
@@ -62,11 +62,11 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				        field: fr.get('name'),
 				        type: fr.get('type'),
 				        size: fr.get('size'),
-                                        required: fr.get('required')
+						required: fr.get('required')
 					});
-					
                     _this.relationsGrid.store.add(r);
                     _this.relationsGrid.store.sort('name', 'ASC');
+                    
                     return true;
 				} else {
 					this.dragging = false;    
@@ -77,15 +77,16 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		/**
 		 * Create Basket drop zone
 		 */
-		var basket = Ext.getCmp('widgets-basket');
+		var basket = _this.basket;
 		var basketDropTargetEl =  basket.body.dom;
 
 		new Ext.dd.DropTarget(basketDropTargetEl, {
-			ddGroup     : 'widgetsBuilderRel',
-			notifyEnter : function(ddSource, e, data) {
+			ddGroup: 'widgetsBuilderRel',
+			
+			notifyEnter: function(ddSource, e, data) {
 		        basket.body.stopFx();
 		        var grid_id = data.grid.getId();
-		        if('fields-grid' == grid_id){
+		        if ('fields-grid' == grid_id) {
 			        return this.dropNotAllowed;
 		        } else {
 					//Add some flare to invite drop.
@@ -94,20 +95,39 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		        }
 			},
 				
-			notifyDrop  : function(ddSource, e, data){
+			notifyDrop: function(ddSource, e, data) {
 				var grid_id = data.grid.getId();
-				if('fields-grid' == grid_id){
+				
+				if ('fields-grid' == grid_id) {
 					Ext.fly(this.DDM.currentTarget).parent('TABLE').frame('#8db2e3', 1);
 					this.dragging = false;
 					return false;
 				} else {
-					var selectedRecord = ddSource.dragData.selections[0];
-					ddSource.grid.store.remove(selectedRecord);
+					var selectedRecords = ddSource.dragData.selections;
+					ddSource.grid.store.remove(selectedRecords);
+					
+					var mn = _this.modelsTree.getSelectionModel().getSelectedNode(),
+						m  = _this.modelsTree.getModel(mn),
+						fs = _this.fieldsGrid.store;
+					Ext.each(selectedRecords, function(r) {
+						if (r.get('model') == m && !fs.getById(r.get('id'))) {
+							var rec = new fs.recordType({
+								id: r.get('id'),
+								name: r.get('field'),
+								type: r.get('type'),
+								size: r.get('size'),
+								required: r.get('required')
+							});
+							fs.add(rec);
+						}
+					});
+					
 					return true;						
 				}
 			}
 		});
 	}
+	//eo onWndShow
 	
 	/**
 	 * Loads Model's Fields
@@ -148,7 +168,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 * Function onRelGridRefresh
 	 * Function creates Tooltips with specification of selected field.
 	 *  
-	 * @param {Object} GridView
+	 * @param {Ext.grid.GridView} view The {@link #relationsGrid} view   
 	 */
 	,onRelGridRefresh : function(view) {
 		var grid = view.grid,
@@ -161,25 +181,27 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
     		var html = '<b>Field Specification</b><br>';
     		html += '<br><b>Model: </b>' + rec.get('model');
     		html += '<br><b>Field: </b>' + rec.get('field');
-			
-			if(type = rec.get('type')) {
+
+    		var type = rec.get('type');
+			if (type) {
 	    		html += '<br><b>Type: </b>' + type;
 			}
-
-			if(size = rec.get('size')) {
+			var size = rec.get('size');
+			if (size) {
 	    		html += '<br><b>Size: </b>' + size;
 			}
 			
         	var row = view.getRow(i);
         	var els = Ext.get(row).select('.x-grid3-cell-inner');
-    		for (var j=0, ccnt=els.getCount(); j<ccnt; j++) {
+    		for (var j = 0, ccnt = els.getCount(); j < ccnt; j++) {
           		Ext.QuickTips.register({
             		target: els.item(j),
             		text: html
         		});
     		}
 		}
-	}//eo 
+	}
+	//eo onRelGridRefresh
 	
 	/**
 	 * Initializes component
@@ -196,7 +218,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		    'field',
 		    'type',
 		    'size'
-		])
+		]);
 		
 		this.relationsGrid = new Ext.grid.GridPanel({
 			id: 'rel-grid',
@@ -258,7 +280,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		
 		this.basket = new Ext.Panel({
 			id: 'widgets-basket',
-			xtype: 'panel',  
 			html: '<center><br>Drop Item here,<br> to remove it</br></center>', 
 			bodyStyle: 'padding: 5px;', 
 			height: 70, 
@@ -274,6 +295,9 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
             fieldLabel: 'Module Location',
 			loadingText: 'Please wait...',
 			emptyText: 'Please select the module location...',
+			allowBlank: false,
+			blankText: 'Module is required',
+			msgTarget: 'qtip',
             store: new Ext.data.JsonStore({
 	            url: afStudioWSUrls.moduleGroupedUrl,
             	autoLoad: true,
@@ -289,7 +313,13 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
             hiddenName: 'model'
 		});		
 		
-		this.actionInput = new Ext.form.TextField({fieldLabel: 'Widget Name', anchor: '100%'});
+		this.actionInput = new Ext.form.TextField({
+			fieldLabel: 'Widget Name',
+			allowBlank: false,
+			blankText: 'Widget name is required',
+			msgTarget: 'qtip',
+			anchor: '100%'
+		});
 				
 		this.typeCombo = new Ext.form.ComboBox({
             fieldLabel: 'Widget Type', 
@@ -304,13 +334,22 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			value: 'list'
 		});
 		
+		this.widgetForm = new Ext.FormPanel({
+			labelWidth: 100,
+			bodyStyle: 'padding: 5px;', 
+			items: [
+				this.modulesCombo,
+				this.actionInput,
+				this.typeCombo
+			]
+		});
+		
 		return {
 			title: 'Create new widget',
 			y: 150,
 			width: 450, height: 150,
 			modal: true, 
 			tbar: {
-				xtype: 'toolbar',
 				id: this.id + 'help-toolbar', 
 				hidden: true,
 				items: [
@@ -326,17 +365,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			items: [
 			{
 				hideBorders: true,
-				items: [
-				{
-					xtype: 'form',
-					labelWidth: 100,
-					bodyStyle: 'padding: 5px;', 
-					items: [
-						this.modulesCombo,
-						this.actionInput,
-						this.typeCombo
-					]
-				}]
+				items: _this.widgetForm 
 			},{
 				layout: 'border',
 				items: [
@@ -374,13 +403,13 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			buttons: [
 			{
 				text: 'Cancel', 
-				handler: this.cancel, 
-				scope: this
+				scope: this,
+				handler: this.cancel 
 			},'->',{	
 				text: '&laquo; Back',
 				id: this.id + '-back-btn',
-				handler: this.chStep.createDelegate(_this, [0]), 
-				disabled: true
+				disabled: true,
+				handler: this.chStep.createDelegate(_this, [0]) 
 			},{
 				text: 'Next &raquo;',
 				id: this.id + '-next-btn',
@@ -389,8 +418,8 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				text: 'Save &raquo;',
 				id: this.id + '-save-btn',
 				hidden: true,
-				handler: this.create, 
-				scope: this
+				scope: this,
+				handler: this.create 
 			}]
 		};	
 	}//eo _beforeInitComponent	
@@ -435,11 +464,17 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	/**
 	 * Function chStep
 	 * Changes wizard step and prepares page UI
-	 * @param {Number}  stepNo - New step number
+	 * @param {Number} stepNo The new step number
 	 */
 	,chStep : function(stepNo) {
 		var panel = Ext.getCmp(this.id);
+		
 		if (1 == stepNo) {
+			//small validation fix
+			var form = this.widgetForm;
+			if (!form.getForm().isValid()) {
+				return;
+			}
 			var size = {width: 840, height: 450};
 			Ext.getCmp(this.id + '-save-btn').show();
 			Ext.getCmp(this.id + '-next-btn').hide();
@@ -456,7 +491,8 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		this.setSize(size);
 		this.setPagePosition( (Ext.getBody().getWidth()-size.width)/2, 150);		
 		panel.getLayout().setActiveItem(stepNo);
-	}//eo chStep
+	}
+	//eo chStep
 	
 	/**
 	 * Function create
