@@ -34,6 +34,7 @@ class appFlowerStudioActions extends afsActions
      * Code editor - higlighter action
      *
      * @param sfWebRequest $request 
+     * @return string
      */
     public function executeCodepress(sfWebRequest $request)
     {
@@ -103,35 +104,6 @@ class appFlowerStudioActions extends afsActions
         
         return $this->renderJson($response->asArray());
 	}
-	
-	
-    public function executeCssfilesSave(sfWebRequest $request)
-    {
-        $result = true;
-        
-        $content = file_get_contents("php://input");
-        
-        $cssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';
-        $node = $request->getParameter('node', "");
-        
-        afStudioUtil::writeFile($cssPath . $node, $content);
-        
-        if ($result) {
-            $success = true;
-            $message = 'File saved successfully';
-            
-            afsNotificationPeer::log('Css file ['.$cssPath.$node.'] saved successfully', 'afStudioCssEditor');
-        } else {
-            $success = false;
-            $message =  'Error while saving file to disk!';
-            
-            afsNotificationPeer::log('Error while saving file to disk! ['.$cssPath.$node.']', 'afStudioCssEditor');
-        }
-        
-        $info=array('success'=>$success, "message"=>$message);
-        
-        return $this->renderJson($info);
-    }
 	
 	/**
 	 * Execute console command actiom
@@ -373,19 +345,17 @@ class appFlowerStudioActions extends afsActions
 	 * @return string - json
 	 */
     public function executeWelcome(sfWebRequest $request)
-    {		
+    {
+        $data = array();
         try {
             $vimeoService = new VimeoInstanceService();
             $data = $vimeoService->getDataFromRemoteServer();
         } catch (Exception $e) {
-            if (sfConfig::get('sf_environment') == 'dev') {
-                throw $e;
-            } 
-            $data = array();
+            if (sfConfig::get('sf_environment') == 'dev') throw $e;
         }
         
         return $this->renderJson(
-            afResponseHelper::create()->success(true)->data(array(), $this->getPartial('welcome', array('data'=>$data)), 0)->asArray()
+            afResponseHelper::create()->success(true)->data(array(), $this->getPartial('welcome', array('data' => $data)), 0)->asArray()
         );
 	}
 	

@@ -18,9 +18,7 @@ class afStudioFileCommand extends afBaseStudioCommand
         
         $files = sfFinder::type('any')->ignore_version_control()->maxdepth(0)->in($path);
         
-        if (count($files) > 0) {
-            return afResponseHelper::create()->success(true)->data(array(), afStudioFileCommandHelper::prepareList($files), 0);
-        } 
+        if (count($files) > 0) return afResponseHelper::create()->success(true)->data(array(), afStudioFileCommandHelper::prepareList($files), 0);
         
         return afResponseHelper::create()->success(true);
     }
