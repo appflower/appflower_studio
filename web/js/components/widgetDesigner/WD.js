@@ -57,7 +57,19 @@ afStudio.WD = function() {
 			});
 			
 			ctr.run();
-		}
+		},
 		//eo showWidgetDesigner
+		
+		getViewCarcass : function(type) {
+			return {
+			    attributes: {
+			        'type': type,
+			        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+			        'xsi:schemaLocation': 'http:\/\/www.appflower.com\/schema\/appflower.xsd',
+			        'xmlns:i': 'http://www.appflower.com/schema/'
+			    }
+			}
+		}
+		
 	};
 }();
