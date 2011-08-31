@@ -15,7 +15,7 @@ class afStudioNotificationCommand extends afBaseStudioCommand
     /**
      * Process setting notification
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processSet()
@@ -27,13 +27,13 @@ class afStudioNotificationCommand extends afBaseStudioCommand
         
         afsNotificationPeer::log($message, $messageType);
         
-        return afResponseHelper::create()->success(true)->message('Saved notification!')->asArray();
+        return afResponseHelper::create()->success(true)->message('Saved notification!');
     }
     
     /**
      * Process getting notifications
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processGet()
@@ -49,10 +49,7 @@ class afStudioNotificationCommand extends afBaseStudioCommand
             }
         }
         
-        /*
-            TODO wrap to afResponse
-        */
-		$this->result = array('success' => true, 'notifications' => implode('', $data), 'offset' => $offset);
+		return afResponseHelper::create()->success(true)->data(array(), array('notifications' => implode('', $data), 'offset' => $offset), 0);
     }
     
 }

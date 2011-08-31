@@ -190,7 +190,7 @@ class appFlowerStudioActions extends afsActions
     public function executeNotifications(sfWebRequest $request)
 	{
         return $this->renderJson(
-            afStudioCommand::process('notification', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())
+            afStudioCommand::process('notification', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())->asArray()
         );
 	}
     
