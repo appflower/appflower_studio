@@ -74,7 +74,7 @@ afStudio.xhr = {
 		   
 			scope: action.scope ? action.scope : _this,
 		   
-			success: function(xhr, opt) {			
+			success: function(xhr, opt) {
 		   		unmask();
 		   		
 				var response = Ext.decode(xhr.responseText),

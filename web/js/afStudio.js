@@ -22,7 +22,12 @@ var afStudio = function () {
 		 */
 		initAjaxRedirect : function() {
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
-				var response = Ext.decode(xhr.responseText);
+				try {
+					var response = Ext.decode(xhr.responseText);
+				} catch(e) {
+					afStudio.Msg.error('Response cannot be decoded', 'url: ' + opt.url);
+					return;
+				}
 				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
 					location.href = response.redirect;
 				}

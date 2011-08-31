@@ -445,9 +445,19 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		
 		this.addEvents(
 			/**
-			 * @event 'widgetcreated' 
-			 * Fires when widget is created.
-			 * @param {Object} response The create request response object.
+			 * @event widgetcreated Fires when widget was created.
+			 * @param {Object} response The response object:
+			 * <ul>
+			 * 	<li><b>place</b>{String} : The widget place name</li>
+			 * 	<li><b>placeType</b>{String} : The place type (app/plugin)</li>
+			 * 	<li><b>module</b>{String} : The module name</li>
+			 * 	<li><b>widgetUri</b>{String} : The widget URI</li>
+			 * 	<li><b>securityPath</b>{String} : The security file path for widget</li>
+			 * 	<li><b>xmlPath</b>{String} : The widget xml definition file path</li>
+			 * 	<li><b>actionPath</b>{String} : The actions for a widget path</li>
+			 * 	<li><b>actionName</b>{String} : The actions file name</li>
+			 * 	<li><b>name</b>{String} : The widget name</li>
+			 * </ul>
 			 */
 			'widgetcreated'
 		);
@@ -516,29 +526,10 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			type      = this.typeCombo.getValue(),
 			place     = moduleRec.get('group');		
 			
-//		var widgetMetaData = afStudio.wd.WidgetFactory.buildWidgetDefinition(items, type);
-//		
-//		var afsWD = new afStudio.wd.WidgetDefinition({
-//			widgetUri: widgetUri,
-//			widgetType: type
-//		});
-//		
-//		var callback = Ext.util.Functions.createDelegate(function(response) {			
-//			this.fireEvent('widgetcreated', response);
-//			this.close();
-//		}, this);
-//		
-//		afsWD.saveDefinition({
-//			metaData: widgetMetaData, 
-//			success: callback, 
-//			newWidget: true,
-//			placeType: this.placeType,
-//			place: place
-//		});
-		
-		type = type.toLowerCase();
-		var meta = afStudio.WD.getViewCarcass(type.toLowerCase()),
+		var meta = afStudio.WD.getViewCarcass(type),
 			nd = afStudio.ModelNode;
+			
+		meta[nd.TITLE] = action;
 		meta[nd.FIELDS] = {};
 		
 		var clm;
@@ -566,19 +557,23 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			meta[nd.FIELDS][nd.COLUMN] = clm;
 		}
 		
-		console.log('view definition', meta);
-		
-//		afStudio.xhr.executeAction({
-//			url: afStudioWSUrls.widgetSaveDefinitionUrl,
-//			params: {
-//				
-//			}, 
-//			mask: true,
-//			scope: _me,
-//			run: function(response, ops) {
-//				this.fireEvent('saveViewDefinition', vd);
-//			}
-//		});
+		afStudio.xhr.executeAction({
+			url: afStudioWSUrls.widgetSaveDefinitionUrl,
+			params: {
+				uri: widgetUri,
+		    	data: Ext.util.JSON.encode(meta),
+				createNewWidget: true,
+				widgetType: type,
+				place: place,
+				placeType: this.placeType
+			},
+			mask: true,
+			scope: this,
+			run: function(response, ops) {
+				this.fireEvent('widgetcreated', response);
+				this.close();
+			}
+		});
 	}
 	//eo create
 	

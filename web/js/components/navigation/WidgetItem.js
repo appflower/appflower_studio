@@ -346,27 +346,29 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * Add Widget button handler.
 	 */
 	,onAddWidget : function() {
-		var _this = this,
-			  url = afStudioWSUrls.modelListUrl;
+		var me = this,
+			url = afStudioWSUrls.modelListUrl;
 		
 		var wb = new afStudio.wd.WidgetsBuilder({
 			modelsUrl: url,
 			fieldsUrl: url,
 			placeType: 'app',
 			listeners: {
-				widgetcreated: function(response) {					
-					 var path = String.format('/root/{0}/{1}.xml', response.data.place, response.data.widgetUri);
+				widgetcreated: function(response) {
+					var path = String.format('/{0}/{1}/{2}.xml', me.root.text, response.data.place, response.data.widgetUri);
 					 
-					 _this.loadRootNode(function() {					 
-							this.selectPath(path, 'text', Ext.util.Functions.createDelegate(function(success, node){
-								if (success) {
-									this.showWidgetDesignerForNode(node);
-								} else {
-									this.initialItemState();
-									afStudio.wd.WidgetFactory.showWidgetDesigner(response.data);									
-								}
-							}, this));
-					 });					
+					me.loadRootNode(function() {
+						this.selectPath(path, 'text', function(success, node) {
+							if (success) {
+								me.showWidgetDesignerForNode(node);
+							} else {
+								me.initialItemState();
+								var cfg = Ext.copyTo({}, response.data, 'actionPath, securityPath, place, placeType');
+								cfg.uri = response.data.widgetUri;
+								afStudio.WD.showWidgetDesigner(cfg);
+							}
+						});
+					});					
 				}
 			}
 		});
