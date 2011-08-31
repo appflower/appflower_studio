@@ -74,11 +74,19 @@ afStudio.xhr = {
 		   
 			scope: action.scope ? action.scope : _this,
 		   
+			//specified that the response object should be json
+			jsonResponse: true,
+			
 			success: function(xhr, opt) {
 		   		unmask();
 		   		
-				var response = Ext.decode(xhr.responseText),
-					message  = response.message || response.content 
+		   		try {
+					var response = Ext.decode(xhr.responseText);
+		   		} catch(e) {
+		   			return;
+		   		}
+				
+				var	message = response.message || response.content 
 					|| (response.success ? 'Operation was successfully processed!' : 'Error occured during action execution.');
 			   
 				if (response.success) {

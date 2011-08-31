@@ -16,23 +16,27 @@ var afStudio = function () {
 	
 	return {
 		/**
-		 * Redirects browser to specified URL during ajax requests.
-		 * URL is specified in <u>redirect</u> response property.
-		 * {@link Ext.Ajax#requestcomplete} event listener.
+		 * Adds <u>requestcomplete</u> listener to global {@link Ext.Ajax} request class.
+		 * If XHR response is JSON and it contains <i>redirect</i> property - holding redirect URL 
+		 * then browser is redirected to specified URL.
 		 */
-		initAjaxRedirect : function() {
+		initAjaxRequestComplete : function() {
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
 				try {
 					var response = Ext.decode(xhr.responseText);
 				} catch(e) {
-					afStudio.Msg.error('Response cannot be decoded', 'url: ' + opt.url);
+					if (opt.jsonResponse) {
+						afStudio.Msg.error('Response cannot be decoded', 
+							String.format('<u>url</u>: <b>{0}</b> <br/>{1}', opt.url, xhr.responseText));
+					}
 					return;
 				}
 				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
 					location.href = response.redirect;
 				}
 			});
-		}//eo initAjaxRedirect
+		}
+		//eo initAjaxRequestComplete
 		
 		/**
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
@@ -157,7 +161,7 @@ var afStudio = function () {
 			});
 			Ext.form.Field.prototype.msgTarget = 'side';
 			
-			this.initAjaxRedirect();
+			this.initAjaxRequestComplete();
 			this.initDataProxyErrorsHandling();
 			
 			//timeout 5 minutes
