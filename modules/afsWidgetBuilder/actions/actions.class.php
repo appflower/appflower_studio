@@ -25,10 +25,10 @@ class afsWidgetBuilderActions extends afsActions
             'placeType' => $request->getParameter('placeType', 'app'),
             'place'     => $request->getParameter('place', 'frontend'),
         );
-
-        $response = afStudioCommand::process('widget', 'get', $parameters);
-
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'get', $parameters)->asArray()
+        );
     }
     
     /**
@@ -50,10 +50,10 @@ class afsWidgetBuilderActions extends afsActions
             'placeType'         => $request->getParameter('placeType', 'app'),
             'place'             => $request->getParameter('place', 'frontend'),
         );
-
-        $response = afStudioCommand::process('widget', 'save', $parameters);
-
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'save', $parameters)->asArray()
+        );
     }
     
 }

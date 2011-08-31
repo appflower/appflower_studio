@@ -20,7 +20,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
     /**
      * Get widget functionality
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processGet()
@@ -35,23 +35,18 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             
             $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
             
-            if (!$widget->isNew()) {
-                $data = $widget->getDefinition();
-                $response->success(true)->data(array(), $data, 0);
-            } else {
-                $response->success(false)->message("Widget '{$this->module}/{$this->action}' doesn't exists");
-            }
+            if (!$widget->isNew()) return $response->success(true)->data(array(), $widget->getDefinition(), 0);
+            
+            return $response->success(false)->message("Widget '{$this->module}/{$this->action}' doesn't exists");
         } catch( Exception $e ) {
-            $response->success(false)->message($e->getMessage());
+            return $response->success(false)->message($e->getMessage());
         }
-        
-        return $response->asArray();
     }
     
     /**
      * Save widget functionality
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processSave()
@@ -81,29 +76,26 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             // apply modifiers
             $widget->modify();
             
-            $saveResponse = $widget->save();
-            
-            if ($saveResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            if ($widget->save()->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
                 // deploy libs to main project 
                 afStudioWidgetCommandHelper::deployLibs();
                 
-                $message = $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved';
-                
-                $response->success(true)->message($message)->data(array(), afsWidgetModelHelper::getInfo($widget), 0);
-            } else {
-                $response->success(false)->message($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+                return $response
+                            ->success(true)
+                            ->message($createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved')
+                            ->data(array(), afsWidgetModelHelper::getInfo($widget), 0);
             }
+            
+            return $response->success(false)->message($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
         } catch( Exception $e ) {
-            $response->success(false)->message($e->getMessage());
+            return $response->success(false)->message($e->getMessage());
         }
-        
-        return $response->asArray();
     }
     
     /**
 	 * Rename xml functionality
 	 * 
-	 * @return array
+	 * @return afResponse
 	 * @author Sergey Startsev
 	 */
 	protected function processRename()
@@ -125,17 +117,17 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
 		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
 		    }
-		} else {
-		    $response = afResponseHelper::create()->success(false)->message("Can't retrieve widget");
+		    
+		    return $response;
 		}
 		
-		return $response->asArray();
+        return afResponseHelper::create()->success(false)->message("Can't retrieve widget");
 	}
 	
 	/**
 	 * Delete xml functionality
 	 * 
-	 * @return array
+	 * @return afResponse
 	 * @author Sergey Startsev
 	 */
 	protected function processDelete()
@@ -154,13 +146,13 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
 		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
 		    }
-		} else {
-		    $response = afResponseHelper::create()->success(false)->message("Widget <b>{$name}</b> doesn't exists");
+		    
+		    return $response;
 		}
 		
-		return $response->asArray();
+		return afResponseHelper::create()->success(false)->message("Widget <b>{$name}</b> doesn't exists");
 	}
-    
+	
     /**
      * Parse input uri
      *

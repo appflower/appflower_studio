@@ -112,9 +112,9 @@ class afsModuleManagerActions extends afsActions
             'newValue'  => $request->getParameter('newValue'),
         );
         
-        $response = afStudioCommand::process('widget', 'rename', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'rename', $parameters)->asArray()
+        );
     }
     
     /**
@@ -132,9 +132,9 @@ class afsModuleManagerActions extends afsActions
             'name'      => $request->getParameter('name'),
         );
         
-        $response = afStudioCommand::process('widget', 'delete', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'delete', $parameters)->asArray()
+        );
     }
     
 }

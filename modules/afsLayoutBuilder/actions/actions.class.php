@@ -63,9 +63,9 @@ class afsLayoutBuilderActions extends afsActions
             'placeType' => 'app'
         );
         
-        $response = afStudioCommand::process('widget', 'get', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'get', $parameters)->asArray()
+        );
     }
 
     /**
