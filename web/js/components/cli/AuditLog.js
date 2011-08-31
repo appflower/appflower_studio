@@ -53,9 +53,9 @@ afStudio.cli.AuditLog = Ext.extend(afStudio.cli.CommandLine, {
 				cmd: 'get',
 				offset: this.notificationOffset
 			},
-		    run: function(response) {
-		    	this.notificationOffset = response.offset;
-		    	this.updateCli(response.notifications);     		
+		    run: function(r) {
+		    	this.notificationOffset = r.data.offset;
+		    	this.updateCli(r.data.notifications);     		
 		    }
 		});
 	}//eo loadCli
