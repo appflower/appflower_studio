@@ -97,38 +97,41 @@ class afsWidgetEditModifier extends afsBaseModelModifier
     private function checkAndModifyForeignTableField(Array $fieldDefinition)
     {
         $peerClassName = $this->getDatasource();
-
-        /* @var $tableMap TableMap */
-        $tableMap = call_user_func("{$peerClassName}::getTableMap");
-        $columnName = $fieldDefinition['name'];
         
-        if ($tableMap->hasColumn($columnName)) {
-            /* @var $column ColumnMap */
-            $column = $tableMap->getColumn($columnName);
+        if (!is_null($peerClassName)) {
+            /* @var $tableMap TableMap */
+            $tableMap = call_user_func("{$peerClassName}::getTableMap");
             
-            if ($column->isForeignKey()) {
-                $relatedColumnTableMap = $column->getRelation()->getForeignTable();
-                $relatedModelName = $relatedColumnTableMap->getPhpName();
+            $columnName = $fieldDefinition['name'];
 
-                $fieldDefinition['type'] = 'combo';
-                $fieldDefinition['selected'] = '{'.$columnName.'}';
-                $fieldDefinition['i:value'] = array(
-                    'type' => 'orm',
-                    'i:class' => self::MODEL_CRITERIA_FETCHER,
-                    'i:method' => array(
-                        'name' => self::FETCHER_METHOD,
-                        'i:param' => array(
-                            array(
-                                'name' => 'does_not_matter',
-                                '_content' => $relatedModelName
+            if ($tableMap->hasColumn($columnName)) {
+                /* @var $column ColumnMap */
+                $column = $tableMap->getColumn($columnName);
+
+                if ($column->isForeignKey()) {
+                    $relatedColumnTableMap = $column->getRelation()->getForeignTable();
+                    $relatedModelName = $relatedColumnTableMap->getPhpName();
+
+                    $fieldDefinition['type'] = 'combo';
+                    $fieldDefinition['selected'] = '{'.$columnName.'}';
+                    $fieldDefinition['i:value'] = array(
+                        'type' => 'orm',
+                        'i:class' => self::MODEL_CRITERIA_FETCHER,
+                        'i:method' => array(
+                            'name' => self::FETCHER_METHOD,
+                            'i:param' => array(
+                                array(
+                                    'name' => 'does_not_matter',
+                                    '_content' => $relatedModelName
+                                )
                             )
                         )
-                    )
-                );
-
+                    );
+                }
+                
             }
         }
-
+        
         return $fieldDefinition;
     }
     
