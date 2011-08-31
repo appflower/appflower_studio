@@ -525,43 +525,14 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			widgetUri = module + '/' + action,			
 			type      = this.typeCombo.getValue(),
 			place     = moduleRec.get('group');		
-			
-		var meta = afStudio.WD.getViewCarcass(type),
-			nd = afStudio.ModelNode;
-			
-		meta[nd.TITLE] = action;
-		meta[nd.FIELDS] = {};
 		
-		var clm;
-		if (items.length > 1) {
-			clm = [];
-			Ext.each(items, function(f){
-				clm.push({
-					attributes: {
-						name: f.field,
-						label: f.field
-					}
-				});				
-			});
-		} else {
-			clm = {
-				attributes: {
-					name: items[0].field,
-					label: items[0].field
-				}
-			};
-		}
-		if (type != 'list') {
-			meta[nd.FIELDS][nd.FIELD] = clm;	
-		} else {
-			meta[nd.FIELDS][nd.COLUMN] = clm;
-		}
+		var wDefinition = this.buildWidgetDefinition(action, type, items);
 		
 		afStudio.xhr.executeAction({
 			url: afStudioWSUrls.widgetSaveDefinitionUrl,
 			params: {
 				uri: widgetUri,
-		    	data: Ext.util.JSON.encode(meta),
+		    	data: Ext.util.JSON.encode(wDefinition),
 				createNewWidget: true,
 				widgetType: type,
 				place: place,
@@ -583,6 +554,51 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 */
 	,cancel : function() {
 		this.close();
+	},
+	
+	/**
+	 * Returns widget definition object. 
+	 * TODO should be extended for the rest types of widgets 
+	 * @private
+	 * @param {String} title The widget title
+	 * @param {String} type The type of widget
+	 * @param {Object} fields The widget's fields
+	 * @return {Object} widget definition
+	 */
+	buildWidgetDefinition : function(title, type, fields) {
+		var meta = afStudio.WD.getViewCarcass(type),
+			nd = afStudio.ModelNode;
+			
+		meta[nd.TITLE] = title;
+		meta[nd.FIELDS] = {};
+		
+		var clm;
+		if (fields.length > 1) {
+			clm = [];
+			Ext.each(fields, function(f){
+				clm.push({
+					attributes: {
+						name: f.field,
+						label: f.field
+					}
+				});				
+			});
+		} else {
+			clm = {
+				attributes: {
+					name: fields[0].field,
+					label: fields[0].field
+				}
+			};
+		}
+		if (type != 'list') {
+			meta[nd.FIELDS][nd.FIELD] = clm;	
+		} else {
+			meta[nd.FIELDS][nd.COLUMN] = clm;
+		}
+		
+		return meta;
 	}
+	//eo buildWidgetDefinition
 
 });
