@@ -106,15 +106,8 @@ class afsPageModel extends afsBaseModel
      */
     public function load()
     {
-        // getting page file path
-        $path = $this->getPagePath();
-        
-        if (is_readable($path)) {
-            $definition = file_get_contents($path);
-            $definition = afsXmlDefinition::create()->init($definition)->unpack()->get();
-            
-            $this->setDefinition($definition);
-            
+        if (is_readable($this->getPagePath())) {
+            $this->setDefinition(afsXmlDefinition::create()->init(file_get_contents($this->getPagePath()))->unpack()->get());
             $this->setNew(false);
         }
         
@@ -140,23 +133,18 @@ class afsPageModel extends afsBaseModel
         }
         $definition->pack();
         
-        $path = $this->getPagePath();
-        $response = afResponseHelper::create();
-        
         $status = $definition->validate();
         
         if (is_bool($status) && $status) {
-            afStudioUtil::writeFile($path, $definition->get());
+            afStudioUtil::writeFile($this->getPagePath(), $definition->get());
             $this->setNew(false);
             
             $this->createAction();
             
-            $response->success(true);
-        } else {
-            $response->success(false)->message($status);
+            return afResponseHelper::create()->success(true);
         }
         
-        return $response;
+        return afResponseHelper::create()->success(false)->message($status);
     }
     
     /**
@@ -170,30 +158,23 @@ class afsPageModel extends afsBaseModel
     {
         $response = afResponseHelper::create();
         
-        if (!$this->isNew()) {
-            $old_name = $this->getName();
-            
-    		$oldPath = $this->getPagePath();
-    		$newPath = $this->getPagePath($new_name);
-            
-    		if (!file_exists($newPath)) {
-        		$renamed = afsViewModelHelper::renameAction($old_name, $new_name, self::MODULE, $this->getApplication(), 'app');
-                
-                afsFileSystem::create()->rename($oldPath, $newPath);
-                
-        		if (!file_exists($oldPath) && file_exists($newPath)) {
-        			$response->success(true)->message("Renamed page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
-        		} else {
-        		    $response->success(false)->message("Can't rename page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
-        		}
-    		} else {
-    		    $response->success(false)->message("Page <b>{$new_name}</b> already exists");
-    		}
-        } else {
-            $response->success(false)->message("Page doesn't exists, create widget first");
-        }
+        if ($this->isNew()) return $response->success(false)->message("Page doesn't exists, create widget first");
         
-        return $response;
+        $old_name = $this->getName();
+        
+		$oldPath = $this->getPagePath();
+		$newPath = $this->getPagePath($new_name);
+        
+		if (file_exists($newPath)) return $response->success(false)->message("Page <b>{$new_name}</b> already exists");
+		
+		$renamed = afsViewModelHelper::renameAction($old_name, $new_name, self::MODULE, $this->getApplication(), 'app');
+        afsFileSystem::create()->rename($oldPath, $newPath);
+        
+		if (!file_exists($oldPath) && file_exists($newPath)) {
+			return $response->success(true)->message("Renamed page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
+		}
+        
+        return $response->success(false)->message("Can't rename page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
     }
     
     /**
@@ -205,30 +186,21 @@ class afsPageModel extends afsBaseModel
     public function delete()
     {
         $response = afResponseHelper::create();
-        if (!$this->isNew()) {
-    		$page_path = $this->getPagePath();
-    		$page_action_path = $this->getPageActionPath();
-    		
-            $filesystem = afsFileSystem::create();
-            
-            if (file_exists($page_path)) {
-                $filesystem->remove($page_path);
-            }
-            
-            if (file_exists($page_action_path)) {
-                $filesystem->remove($page_action_path);
-            }
-            
-    		if (!file_exists($page_path)) {
-    			$response->success(true)->message("Page <b>{$this->getName()}</b> has been successfully deleted");
-    		} else {
-    		    $response->success(false)->message("Can't delete page <b>{$this->getName()}</b>!");
-    		}
-        } else {
-            $response->success(false)->message("Page <b>{$this->getName()}</b> doesn't exists");
-        }
+        if ($this->isNew()) return $response->success(false)->message("Page <b>{$this->getName()}</b> doesn't exists");
+        
+        $page_path = $this->getPagePath();
+		$page_action_path = $this->getPageActionPath();
 		
-		return $response;
+        $filesystem = afsFileSystem::create();
+        
+        if (file_exists($page_path)) $filesystem->remove($page_path);
+        if (file_exists($page_action_path)) $filesystem->remove($page_action_path);
+        
+		if (!file_exists($page_path)) {
+			return $response->success(true)->message("Page <b>{$this->getName()}</b> has been successfully deleted");
+		}
+		
+		return $response->success(false)->message("Can't delete page <b>{$this->getName()}</b>!");
     }
     
     /**
@@ -243,7 +215,7 @@ class afsPageModel extends afsBaseModel
             $name = $this->getName();
         }
         
-        return "{$this->getPagesPath()}/{$name}.xml";
+        return $this->getPagesPath() . DIRECTORY_SEPARATOR . "{$name}.xml";
     }
     
     /**
@@ -258,7 +230,7 @@ class afsPageModel extends afsBaseModel
             $name = $this->getName();
         }
         
-        return "{$this->getPagesModulePath()}/actions/{$name}Action.class.php";
+        return $this->getPagesModulePath() . DIRECTORY_SEPARATOR . "actions" . DIRECTORY_SEPARATOR . "{$name}Action.class.php";
     }
     
     /**
@@ -269,7 +241,7 @@ class afsPageModel extends afsBaseModel
      */
     private function getPagesPath()
     {
-        return "{$this->getPagesApplicationPath()}/config/pages";
+        return $this->getPagesApplicationPath() . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "pages";
     }
     
     /**
@@ -281,7 +253,7 @@ class afsPageModel extends afsBaseModel
      */
     private function getPagesModulePath($module = self::MODULE)
     {
-        return "{$this->getPagesApplicationPath()}/modules/{$module}";
+        return $this->getPagesApplicationPath() . DIRECTORY_SEPARATOR . "modules" . DIRECTORY_SEPARATOR . $module;
     }
     
     /**
@@ -292,7 +264,7 @@ class afsPageModel extends afsBaseModel
      */
     private function getPagesApplicationPath()
     {
-        return afStudioUtil::getRootDir() . "/apps/{$this->getApplication()}";
+        return afStudioUtil::getRootDir() . DIRECTORY_SEPARATOR . "apps" . DIRECTORY_SEPARATOR . $this->getApplication();
     }
     
     /**
@@ -366,26 +338,17 @@ class afsPageModel extends afsBaseModel
     {
         $response = afResponseHelper::create();
         
-        if (!$this->isNew()) {
-            $name = $this->getName();
-            $path = $this->getPageActionPath();
-            
-            $definition = afsPageModelTemplate::create()->action($name);
-            
-            if (!file_exists($path)) {
-                if (afStudioUtil::writeFile($path, $definition)) {
-                    $response->success(true)->message("Action has been successfully created");
-                } else {
-                    $response->success(false)->message("Can't create action file");
-                }
-            } else {
-                $response->success(true)->message("Action for '{$name}' already exists");
-            }
-        } else {
-            $response->success(false)->message("can't create action for new page. Please first create and save definition");
-        }
+        if ($this->isNew()) return $response->success(false)->message("can't create action for new page. Please first create and save definition");
         
-        return $response;
+        $name = $this->getName();
+        $path = $this->getPageActionPath();
+        
+        $definition = afsPageModelTemplate::create()->action($name);
+        
+        if (file_exists($path)) return $response->success(true)->message("Action for '{$name}' already exists");
+        if (afStudioUtil::writeFile($path, $definition)) return $response->success(true)->message("Action has been successfully created");
+        
+        return $response->success(false)->message("Can't create action file");
     }
     
 }
