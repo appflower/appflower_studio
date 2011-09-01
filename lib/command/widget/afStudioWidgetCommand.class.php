@@ -86,7 +86,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
                             ->data(array(), afsWidgetModelHelper::getInfo($widget), 0);
             }
             
-            return $response->success(false)->message($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+            return $response->success(false)->message($widget->save()->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
         } catch( Exception $e ) {
             return $response->success(false)->message($e->getMessage());
         }
