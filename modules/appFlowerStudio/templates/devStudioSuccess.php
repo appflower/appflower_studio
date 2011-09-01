@@ -92,7 +92,15 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridNodeUI.js"></script> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridLoader.js"></script> 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridColumns.js"></script> 
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGrid.js"></script> 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGrid.js"></script>
+
+<!-- ace code-editor -->
+<script src="/appFlowerStudioPlugin/js/ace/src/ace-uncompressed.js" type="text/javascript" charset="utf-8"></script> 
+<script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/ace/Ext.ux.AceComponent.js"></script>
+
+ 
 <!-- end of custom ext ux -->
 
 <!-- Error -->

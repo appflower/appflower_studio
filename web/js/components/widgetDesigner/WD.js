@@ -60,6 +60,11 @@ afStudio.WD = function() {
 		},
 		//eo showWidgetDesigner
 		
+		/**
+		 * Returns view definition carcass.
+		 * @param {String} type The view type
+		 * @return {Object} view definition
+		 */
 		getViewCarcass : function(type) {
 			return {
 			    attributes: {
@@ -70,6 +75,7 @@ afStudio.WD = function() {
 			    }
 			}
 		}
+		//eo getViewCarcass
 		
 	};
 }();
