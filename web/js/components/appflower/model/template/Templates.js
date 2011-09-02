@@ -31,7 +31,7 @@ N.WidgetViewTemplate = Ext.extend(N.WidgetTemplate, {
 		
 		this.structure = this.structure.concat([
 			afStudio.ModelNode.SCRIPTS,
-			afStudio.ModelNode.DATA_SOURCE,
+			{name: afStudio.ModelNode.DATA_SOURCE, required: true},
 			{name: afStudio.ModelNode.FIELDS, required: true},
 			afStudio.ModelNode.DESCRIPTION,
 			afStudio.ModelNode.ALTERNATE_DESCRIPTIONS,

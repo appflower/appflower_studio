@@ -572,6 +572,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		meta[nd.TITLE] = title;
 		meta[nd.FIELDS] = {};
 		
+		//fields
 		var clm;
 		if (fields.length > 1) {
 			clm = [];
@@ -596,6 +597,27 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		} else {
 			meta[nd.FIELDS][nd.COLUMN] = clm;
 		}
+
+		//datasource
+		//getting the model from the first field
+		var model = fields[0].model,
+		ds = meta[nd.DATA_SOURCE] = {
+			attributes: {
+				type: 'orm'
+			}
+		};
+		ds[nd.CLASS] = model + 'Peer'; 
+		var mth = ds[nd.METHOD] = {
+			attributes: {
+				name: 'retrieveByPk'
+			}
+		};
+		mth[nd.PARAM] = {
+			attributes: {
+				name: 'id'
+			},
+			_content: '{id}'
+		};
 		
 		return meta;
 	}
