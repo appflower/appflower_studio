@@ -8,6 +8,9 @@ class afsFileSystem
 {
     /**
      * Create self instance
+     * small fabric method, that let u possiblity to use FileSystem class in 1 row
+     *
+     * @example afsFileSystem::create()->touch($file_path);
      *
      * @return afsFileSystem
      * @author Sergey Startsev
@@ -18,9 +21,9 @@ class afsFileSystem
     }
     
     /**
-     * Constructor.
+     * Constructor. private.
      */
-    public function __construct() {}
+    private function __construct() {}
     
     /**
      * Copies a file.
@@ -34,17 +37,14 @@ class afsFileSystem
      * @param string $originFile  The original filename
      * @param string $targetFile  The target filename
      * @param array  $options     An array of options
+     * @return boolean
      */
-    public function copy($originFile, $targetFile, $options = array())
+    public function copy($originFile, $targetFile, array $options = array())
     {
-        if (!array_key_exists('override', $options)) {
-            $options['override'] = false;
-        }
+        if (!array_key_exists('override', $options)) $options['override'] = false;
         
         // we create target_dir if needed
-        if (!is_dir(dirname($targetFile))) {
-            $this->mkdirs(dirname($targetFile));
-        }
+        if (!is_dir(dirname($targetFile))) $this->mkdirs(dirname($targetFile));
         
         $mostRecent = false;
         if (file_exists($targetFile)) {
@@ -53,9 +53,9 @@ class afsFileSystem
             $mostRecent = ($stat_origin['mtime'] > $statTarget['mtime']) ? true : false;
         }
         
-        if ($options['override'] || !file_exists($targetFile) || $mostRecent) {
-            copy($originFile, $targetFile);
-        }
+        if ($options['override'] || !file_exists($targetFile) || $mostRecent) return copy($originFile, $targetFile);
+        
+        return false;
     }
     
     /**
@@ -63,14 +63,11 @@ class afsFileSystem
      *
      * @param  string $path  The directory path
      * @param  int    $mode  The directory mode
-     *
-     * @return bool true if the directory has been created, false otherwise
+     * @return boolean true if the directory has been created, false otherwise
      */
     public function mkdirs($path, $mode = 0777)
     {
-        if (is_dir($path)) {
-            return true;
-        }
+        if (is_dir($path)) return true;
         
         return @mkdir($path, $mode, true);
     }
@@ -79,37 +76,40 @@ class afsFileSystem
      * Creates empty files.
      *
      * @param mixed $files  The filename, or an array of filenames
+     * @return boolean - is exists last file defined in parameter
      */
     public function touch($files)
     {
-        if (!is_array($files)) {
-            $files = array($files);
-        }
+        if (!is_array($files)) $files = array($files);
         
-        foreach ($files as $file) {
-            touch($file);
-        }
+        foreach ($files as $file) touch($file);
+        
+        return file_exists($file);
     }
     
     /**
      * Removes files or directories.
      *
      * @param mixed $files  A filename or an array of files to remove
+     * @return boolean - status of last removed folder
      */
     public function remove($files)
     {
-        if (!is_array($files)) {
-            $files = array($files);
-        }
+        if (!is_array($files)) $files = array($files);
 
         $files = array_reverse($files);
         foreach ($files as $file) {
+            if (!file_exists($file)) continue;
+            
             if (is_dir($file) && !is_link($file)) {
                 $this->recursiveRemove($file);
-            } else {
-                unlink($file);
+                continue;
             }
+            
+            $is_removed = unlink($file);
         }
+        
+        return $is_removed;
     }
     
     /**
@@ -123,13 +123,14 @@ class afsFileSystem
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (filetype($dir . DIRECTORY_SEPARATOR . $object) == "dir") {
-                        $this->recursiveRemove($dir . DIRECTORY_SEPARATOR . $object);
-                    } else {
-                        unlink($dir . DIRECTORY_SEPARATOR . $object);
-                    }
+                if ($object == "." || $object == "..") continue;
+                
+                if (filetype($dir . DIRECTORY_SEPARATOR . $object) == "dir") {
+                    $this->recursiveRemove($dir . DIRECTORY_SEPARATOR . $object);
+                    continue;
                 }
+                
+                unlink($dir . DIRECTORY_SEPARATOR . $object);
             }
             reset($objects);
             
@@ -149,9 +150,7 @@ class afsFileSystem
         $currentUmask = umask();
         umask($umask);
         
-        if (!is_array($files)) {
-            $files = array($files);
-        }
+        if (!is_array($files)) $files = array($files);
         
         foreach ($files as $file) {
             if ($recursive && is_dir($file) && !is_link($file)) {
@@ -159,9 +158,10 @@ class afsFileSystem
                 $this->recursiveChmod($file, $mode, sfFinder::type('file'));
                 
                 chmod($file, 0774);
-            } else {
-                chmod($file, $mode);
+                continue;
             }
+            
+            chmod($file, $mode);
         }
         
         umask($currentUmask);
@@ -171,16 +171,13 @@ class afsFileSystem
      * Make recursive chmod
      *
      * @param string $dir 
-     * @param int $mode 
+     * @param int $mode - octal
      * @param sfFinder $finder 
      * @author Sergey Startsev
      */
     public function recursiveChmod($dir, $mode, sfFinder $finder)
     {
-        foreach ($finder->relative()->in($dir) as $file) {
-            $path = $dir . DIRECTORY_SEPARATOR . $file;
-            chmod($path, $mode);
-        }
+        foreach ($finder->relative()->in($dir) as $file) chmod($dir . DIRECTORY_SEPARATOR . $file, $mode);
     }
     
     /**
@@ -196,7 +193,7 @@ class afsFileSystem
             throw new sfException(sprintf('Cannot rename because the target "%s" already exist.', $target));
         }
         
-        rename($origin, $target);
+        return rename($origin, $target);
     }
 
     /**
@@ -204,7 +201,8 @@ class afsFileSystem
      *
      * @param string $originDir      The origin directory path
      * @param string $targetDir      The symbolic link name
-     * @param bool   $copyOnWindows  Whether to copy files if on windows
+     * @param boolean   $copyOnWindows  Whether to copy files if on windows
+     * @return boolean
      */
     public function symlink($originDir, $targetDir, $copyOnWindows = false)
     {
@@ -223,17 +221,16 @@ class afsFileSystem
             }
         }
         
-        if (!$ok) {
-            symlink($originDir, $targetDir);
-        }
+        if (!$ok) return symlink($originDir, $targetDir);
     }
     
     /**
      * Creates a symbolic link using a relative path if possible.
      *
-     * @param string $originDir      The origin directory path
-     * @param string $targetDir      The symbolic link name
-     * @param bool   $copyOnWindows  Whether to copy files if on windows
+     * @param string  $originDir      The origin directory path
+     * @param string  $targetDir      The symbolic link name
+     * @param boolean $copyOnWindows  Whether to copy files if on windows
+     * @param boolean
      */
     public function relativeSymlink($originDir, $targetDir, $copyOnWindows = false)
     {
@@ -241,7 +238,7 @@ class afsFileSystem
             $originDir = $this->calculateRelativeDir($targetDir, $originDir);
         }
         
-        $this->symlink($originDir, $targetDir, $copyOnWindows);
+        return $this->symlink($originDir, $targetDir, $copyOnWindows);
     }
     
     /**
@@ -273,7 +270,6 @@ class afsFileSystem
      * @param string $cmd            The command to execute on the shell
      * @param array  $stdoutCallback A callback for stdout output
      * @param array  $stderrCallback A callback for stderr output
-     *
      * @return array An array composed of the content output and the error output
      */
     public function execute($cmd, $stdoutCallback = null, $stderrCallback = null)
@@ -296,22 +292,16 @@ class afsFileSystem
         $err = '';
         while (!feof($pipes[1])) {
             foreach ($pipes as $key => $pipe) {
-                if (!$line = fread($pipe, 128)) {
-                    continue;
-                }
+                if (!$line = fread($pipe, 128)) continue;
                 
                 if (1 == $key) {
                     // stdout
                     $output .= $line;
-                    if ($stdoutCallback) {
-                        call_user_func($stdoutCallback, $line);
-                    }
+                    if ($stdoutCallback) call_user_func($stdoutCallback, $line);
                 } else {
                     // stderr
                     $err .= $line;
-                    if ($stderrCallback) {
-                        call_user_func($stderrCallback, $line);
-                    }
+                    if ($stderrCallback) call_user_func($stderrCallback, $line);
                 }
             }
             
@@ -336,11 +326,9 @@ class afsFileSystem
      * @param string $endToken    The end token delimiter
      * @param array  $tokens      An array of token/value pairs
      */
-    public function replaceTokens($files, $beginToken, $endToken, $tokens)
+    public function replaceTokens($files, $beginToken, $endToken, Array $tokens)
     {
-        if (!is_array($files)) {
-            $files = array($files);
-        }
+        if (!is_array($files)) $files = array($files);
         
         foreach ($files as $file) {
             $content = file_get_contents($file);
@@ -359,7 +347,6 @@ class afsFileSystem
      *
      * @param string $from The directory from which to calculate the relative path
      * @param string $to   The target directory
-     *
      * @return string
      */
     protected function calculateRelativeDir($from, $to)
@@ -372,13 +359,8 @@ class afsFileSystem
 
         // count how many chars the strings have in common
         for ($i = 0; $i < $minPathLength; $i++) {
-            if ($from[$i] != $to[$i]) {
-                break;
-            }
-            
-            if (DIRECTORY_SEPARATOR == $from[$i]) {
-                $commonLength = $i + 1;
-            }
+            if ($from[$i] != $to[$i]) break;
+            if (DIRECTORY_SEPARATOR == $from[$i]) $commonLength = $i + 1;
         }
         
         if ($commonLength) {
@@ -398,26 +380,22 @@ class afsFileSystem
 
     /**
      * @param string A filesystem path
-     *
      * @return string
      */
     protected function canonicalizePath($path)
     {
-        if (empty($path)) {
-          return '';
-        }
+        if (empty($path)) return '';
 
         $out = array();
         foreach (explode(DIRECTORY_SEPARATOR, $path) as $i => $fold) {
-            if ('' == $fold || '.' == $fold) {
-                continue;
-            }
+            if ('' == $fold || '.' == $fold) continue;
             
             if ('..' == $fold && $i > 0 && '..' != end($out)) {
                 array_pop($out);
-            } else {
-                $out[] = $fold;
+                continue;
             }
+            
+            $out[] = $fold;
         }
         
         $result  = DIRECTORY_SEPARATOR == $path[0] ? DIRECTORY_SEPARATOR : '';
