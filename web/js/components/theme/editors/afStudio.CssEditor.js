@@ -58,7 +58,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 			loadMask: true,
 			width: 220,
 			rootText: 'CSS',
-			rootPath: 'root/plugins/appFlowerStudioPlugin/web/css',
+			rootPath: 'root/web/css',
 			newfileText: 'file.css',
 			maxFileSize: 524288 * 2 * 10,
 			autoScroll: true,
@@ -92,6 +92,10 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 		})
 	},
 	
+	/**
+	 * Saves file
+	 * @author Nikolai Babinski
+	 */
 	save : function() {
 		var me = this,
 			cp = this.codeEditor;
@@ -127,6 +131,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.  
 	 * @param {String} name The file name
 	 * @param {String} path The file path
+	 * @author Nikolai Babinski
 	 */
 	openFile : function(name, path) {
 		//prevent loading already loaded file
@@ -134,11 +139,24 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 			this.codeEditor.loadFile(path);
 		}
 	},
+
+	/**
+	 * Renames file {@link #codeEditor}.
+	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.  
+	 * @param {String} name The new file name
+	 * @param {String} newpath The new file path
+	 * @param {String} oldpath The old file path
+	 * @author Nikolai Babinski
+	 */
+	renameFile : function(name, newpath, oldpath) {
+		this.openFile(name, newpath);
+	},
 	
 	/**
 	 * Clears {@link #codeEditor} file associated with deleted file(s)/folder.
 	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.
 	 * @param {String} path The deleted file/folder path
+	 * @author Nikolai Babinski
 	 */
 	deleteFile : function(path) {
 		//just clean the editor, should be implemented more carefull check based on opened file name and deleted path

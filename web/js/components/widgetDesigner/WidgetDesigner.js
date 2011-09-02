@@ -118,6 +118,18 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	},
 	
 	/**
+	 * Reopens the file tab inside WD.
+	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.  
+	 * @param {String} name The new file name
+	 * @param {String} newpath The new file path
+	 * @param {String} oldpath The old file path
+	 */
+	renameFile : function(name, newpath, oldpath) {
+		this.deleteFile(oldpath);
+		this.openFile(name, newpath);
+	},
+	
+	/**
 	 * Removes opened tabs associated with deleted file/folder.
 	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.
 	 * @param {String} path The deleted file/folder path

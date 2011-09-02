@@ -707,6 +707,10 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 						if (true !== this.eventsSuspended) {
 							this.fireEvent('rename', this, options.node, options.params.newname, options.params.oldname);
 						}
+						if (this.openMode == 'container') {
+							var fname = this.getFileName(options.params.newname);
+							this.fileCt.renameFile(fname, options.params.newname, options.params.oldname);
+						}
 					break;
 				}
 			} // eo process command success
