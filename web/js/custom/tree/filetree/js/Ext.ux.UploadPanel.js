@@ -527,6 +527,8 @@ Ext.ux.UploadPanel = Ext.extend(Ext.Panel, {
 
 		if(true !== this.eventsSuspended) {
 			this.fireEvent('fileadd', this, this.store, rec);
+			//fix menu height
+			this.ownerCt.doLayout();
 		}
 
 	} // eo onAddFile
@@ -610,8 +612,9 @@ Ext.ux.UploadPanel = Ext.extend(Ext.Panel, {
 		var inp = record.get('input');
 		var wrap = inp.up('em');
 		inp.remove();
-		if(wrap) {
-			wrap.remove();
+		if (wrap) {
+			//this removes add button
+			//wrap.remove();
 		}
 
 		// remove record from store

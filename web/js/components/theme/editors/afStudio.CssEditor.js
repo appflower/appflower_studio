@@ -63,7 +63,6 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 			maxFileSize: 524288 * 2 * 10,
 			autoScroll: true,
 			enableProgress: false,
-			singleUpload: true,
 			fileCt: this,
 			fileOpenSingleClick: true
 		});

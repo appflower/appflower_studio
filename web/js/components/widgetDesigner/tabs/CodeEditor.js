@@ -63,8 +63,7 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 			rootText: 'Home',
 			maxFileSize: 524288 * 2 * 10,
 			autoScroll: true, 
-			enableProgress: false, 
-			singleUpload: true
+			enableProgress: false 
 		});
 		
 		return {
