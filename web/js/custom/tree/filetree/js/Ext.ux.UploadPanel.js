@@ -628,6 +628,9 @@ Ext.ux.UploadPanel = Ext.extend(Ext.Panel, {
 			this.fireEvent('fileremove', this, this.store);
 			this.syncShadow();
 		}
+		
+		//fix menu height
+		this.ownerCt.doLayout();
 	} // eo function onRemoveFile
 	// }}}
 	// {{{
