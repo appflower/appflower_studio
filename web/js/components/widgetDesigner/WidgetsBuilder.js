@@ -65,7 +65,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 						required: fr.get('required')
 					});
                     _this.relationsGrid.store.add(r);
-                    _this.relationsGrid.store.sort('name', 'ASC');
                     
                     return true;
 				} else {
@@ -73,7 +72,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				}
             }
         });
-		
+
 		/**
 		 * Create Basket drop zone
 		 */
@@ -224,7 +223,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			id: 'rel-grid',
 			flex: 1, 
 			width: 234,
-			ddGroup: 'widgetsBuilderRel', 
+			ddGroup: 'widgetsBuilderRel',
 			enableDragDrop: true,
 			store: new Ext.data.ArrayStore({
 			    idIndex: 0,
@@ -239,7 +238,8 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			columns: [
 			{
 				header: 'Selected fields', 
-				sortable: true, 
+				sortable: false, 
+				menuDisabled: true,
 				width: 170, 
 				dataIndex: 'name'
 			}],
