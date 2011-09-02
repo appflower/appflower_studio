@@ -38,9 +38,7 @@ class afsWidgetEditModifier extends afsBaseModelModifier
         
         $this->datasource = $this->processGetDatasource($definition);
         
-        if ($model->getIsNewMode()) {
-            $definition = $this->searchForAndModifyForeignTableFields($definition);
-        }
+        if ($model->getIsNewMode()) $definition = $this->searchForAndModifyForeignTableFields($definition);
         
         $model->setDefinition($definition);
         
@@ -76,9 +74,7 @@ class afsWidgetEditModifier extends afsBaseModelModifier
                 if (is_array($fields) && count($fields) > 0) {
                     foreach ($fields as $fieldKey => $field) {
                         $modifiedField = $this->checkAndModifyForeignTableField($field);
-                        if ($modifiedField) {
-                            $definition['i:fields']['i:field'][$fieldKey] = $modifiedField;
-                        }
+                        if ($modifiedField) $definition['i:fields']['i:field'][$fieldKey] = $modifiedField;
                     }
                 }
             }
@@ -102,33 +98,31 @@ class afsWidgetEditModifier extends afsBaseModelModifier
             /* @var $tableMap TableMap */
             $tableMap = call_user_func("{$peerClassName}::getTableMap");
             
-            $columnName = $fieldDefinition['name'];
-
+            $columnName = $fieldDefinition['attributes']['name'];
+            
             if ($tableMap->hasColumn($columnName)) {
                 /* @var $column ColumnMap */
                 $column = $tableMap->getColumn($columnName);
-
+                
                 if ($column->isForeignKey()) {
-                    $relatedColumnTableMap = $column->getRelation()->getForeignTable();
-                    $relatedModelName = $relatedColumnTableMap->getPhpName();
-
-                    $fieldDefinition['type'] = 'combo';
-                    $fieldDefinition['selected'] = '{'.$columnName.'}';
+                    $fieldDefinition['attributes']['type'] = 'combo';
+                    $fieldDefinition['attributes']['selected'] = "{$columnName}";
+                    
                     $fieldDefinition['i:value'] = array(
-                        'type' => 'orm',
+                        'attributes' => array('type' => 'orm'),
                         'i:class' => self::MODEL_CRITERIA_FETCHER,
                         'i:method' => array(
-                            'name' => self::FETCHER_METHOD,
+                            'attributes' => array('name' => self::FETCHER_METHOD),
                             'i:param' => array(
                                 array(
-                                    'name' => 'does_not_matter',
-                                    '_content' => $relatedModelName
+                                    'attributes' => array('name' => 'does_not_matter'),
+                                    '_content' => $column->getRelation()->getForeignTable()->getPhpName()
                                 )
                             )
                         )
                     );
+                    
                 }
-                
             }
         }
         

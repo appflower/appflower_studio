@@ -235,12 +235,10 @@ class afsWidgetModel extends afsBaseModel
         $definition->pack();
         
         // prepare folder for definition saving 
-        $config_path = $this->getPlaceConfigPath();
-        if (!file_exists($config_path)) afsFileSystem::create()->mkdirs($config_path, 0774);
-        $path = $config_path . DIRECTORY_SEPARATOR . "{$this->getAction()}.xml";
+        if (!file_exists($this->getPlaceConfigPath())) afsFileSystem::create()->mkdirs($this->getPlaceConfigPath(), 0774);
         
         if ($definition->validate()) {
-            afStudioUtil::writeFile($path, $definition->get());
+            afStudioUtil::writeFile($this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$this->getAction()}.xml", $definition->get());
             
             $this->ensureSecurityExists();
             
@@ -304,8 +302,8 @@ class afsWidgetModel extends afsBaseModel
         
         $filesystem = afsFileSystem::create();
         
-        $filesystem->remove($xml_dir);
-        $filesystem->remove($action_dir);
+        if (file_exists($xml_dir)) $filesystem->remove($xml_dir);
+        if (file_exists($action_dir)) $filesystem->remove($action_dir);
         
         // init response object
 		$response = afResponseHelper::create();
