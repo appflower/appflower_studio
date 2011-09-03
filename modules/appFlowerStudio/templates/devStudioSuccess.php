@@ -73,7 +73,6 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/GroupingComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/grid/PagingRowNumberer.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tab/TabCloseMenu.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
 
 <!-- filetree -->
 <link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/filetree/css/filetype.css" />
@@ -95,7 +94,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGrid.js"></script>
 
 <!-- ace code-editor -->
-<script src="/appFlowerStudioPlugin/js/ace/src/ace.js" type="text/javascript" charset="utf-8"></script> 
+<script src="/appFlowerStudioPlugin/js/ace/src/ace-uncompressed.js" type="text/javascript" charset="utf-8"></script> 
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-textile.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-css.js" type="text/javascript" charset="utf-8"></script>
@@ -261,7 +260,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/InspectorPalette.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/DesignerPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/ModelErrorWindow.js"></script>
-
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/codeEditor/Editor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/Designer.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/CodeEditor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDesigner.js"></script>

@@ -64,7 +64,6 @@
 					<file>js/custom/form</file>
 					<file>js/custom/grid</file>
 					<file>js/custom/tab</file>
-					<file>js/codepress/Ext.ux.CodePress.js</file>
 					<file>js/components/models/TypeComboBox.js</file>
 	
 					<file>js/afStudio.CreateProject.js</file>

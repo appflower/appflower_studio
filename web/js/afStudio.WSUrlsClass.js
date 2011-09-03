@@ -41,10 +41,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
     widgetSaveDefinitionUrl : '/afsWidgetBuilder/saveWidget',
     
-    getCodepressUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/codepress');
-    },
-    
     getFilecontentUrl : '/appFlowerStudio/filecontent',
     
     getDebugUrl: function() {

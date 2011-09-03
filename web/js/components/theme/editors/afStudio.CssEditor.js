@@ -67,10 +67,8 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 			fileOpenSingleClick: true
 		});
 		
-		//Create CodePress element
-		this.codeEditor = new Ext.ux.CodePress({
-			delayedStart: true
-		});
+		//Ace editor
+		this.codeEditor = new Ext.ux.AceComponent();
 		
 		this.centerPanel = new Ext.Panel({
 			region: 'center',
@@ -92,7 +90,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	},
 	
 	/**
-	 * Saves file
+	 * Saves file.
 	 * @author Nikolai Babinski
 	 */
 	save : function() {
@@ -100,7 +98,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 			cp = this.codeEditor;
 		
 		afStudio.xhr.executeAction({
-			url: cp.fileContentUrl,
+			url: afStudioWSUrls.getFilecontentUrl,
 	        params: {
     	    	file: cp.file,
         		code: cp.getCode()			          	
@@ -140,7 +138,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	},
 
 	/**
-	 * Renames file {@link #codeEditor}.
+	 * Resets {@link #codeEditor} file property.
 	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.  
 	 * @param {String} name The new file name
 	 * @param {String} newpath The new file path
@@ -148,7 +146,10 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	 * @author Nikolai Babinski
 	 */
 	renameFile : function(name, newpath, oldpath) {
-		this.openFile(name, newpath);
+		var ace = this.codeEditor;
+		if (ace.file == oldpath) {
+			ace.setFile(newpath);
+		}
 	},
 	
 	/**
@@ -158,7 +159,6 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	 * @author Nikolai Babinski
 	 */
 	deleteFile : function(path) {
-		//just clean the editor, should be implemented more carefull check based on opened file name and deleted path
 		this.codeEditor.setCode('');
 	}	
 });

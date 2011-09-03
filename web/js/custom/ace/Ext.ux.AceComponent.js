@@ -1,6 +1,8 @@
 /**
  * Ace editor https://github.com/ajaxorg/ace extension.
  * 
+ * ace editor's global name is <b>ace</b>, be aware to not override it! 
+ * 
  * @class Ext.ux.AceComponent
  * @extends Ext.BoxComponent
  * @author Nikolai Babinski
@@ -21,20 +23,33 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
 	mode : 'textile',
 	
 	/**
-	 * @cfg {String} fileRootText The file root text
-	 */
-	fileRootText : 'root',
-	
-	/**
 	 * @cfg {String} fileUrl The url to get file content
 	 */
 	fileUrl : afStudioWSUrls.getFilecontentUrl,
 	
 	/**
-	 * @cfg {String} file The file to be shown in ace editor (defaults to null).
+	 * @cfg {String} file The file path to be shown in ace editor (defaults to null).
 	 */
 	file : null,
 
+	/**
+	 * @cfg {String} fileParam The file path parameter holder (defaults to "file"). 
+	 */
+	fileParam : 'file',
+	
+	/**
+	 * @cfg {String} loadingText The loading editor's mask text (defaults to "loading...").
+	 */
+	loadingText : 'loading...',
+	
+	/**
+	 * The loading parameters being send with file path to the server to get 
+	 * file content (defaults to empty object <i>{}</i>).
+	 * @cfg {Object} loadingParams
+	 */
+	loadingParams : {},
+	
+	
 	/**
 	 * @override
 	 * @private
@@ -60,9 +75,25 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
 			this.editor.resize();
 		}
     },
-
+    
+    /**
+     * Sets file loading content url.
+     * @param {String} url
+     */
     setFileUrl : function(url) {
     	this.fileUrl = url;
+    },
+    
+    /**
+     * Sets file path.
+     * @param {String} file The file path being set
+     * @param {Boolean} reload (optional) The flag responsible for reloading editor's content (defaults to false) 
+     */
+    setFile : function(file, reload) {
+		this.file = file;
+		if (reload == true) {
+			this.loadFile(this.file);
+		}
     },
     
     /**
@@ -82,14 +113,16 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
     },
     
     /**
-     * Sets editor's mode.
+     * Sets editor's mode. If passed mode is not available the "default plain" text mode is used.
+     * Modes {@link Ext.ux.AceComponent.modes}.
      * @param {String} mode The mode being set
      */
     setMode : function(mode) {
-	    if (Ext.ux.AceComponent.modes.indexOf(mode) != -1) {
-		    var aceMode = require("ace/mode/" + mode).Mode;
-		    this.editor.getSession().setMode(new aceMode());
-	    }
+    	var aceMode = (Ext.ux.AceComponent.modes.indexOf(mode) != -1) 
+    					? require("ace/mode/" + mode).Mode
+    					: require("ace/mode/textile").Mode;
+	    
+	    this.editor.getSession().setMode(new aceMode());
     },
     
     /**
@@ -103,45 +136,64 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
     },
     
     /**
+     * Masks editor.
+     * @protected
+     */
+    maskEditor : function() {
+    	this.el.mask(this.loadingText ? this.loadingText : null);
+    },
+    
+    /**
+     * Removes editor's mask
+     * @protected
+     */
+    unmaskEditor : function() {
+    	var el = this.el;
+    	if (el.isMasked()) {
+    		el.unmask();
+    	}
+    },
+    
+    /**
      * Loads file content into the editor.
      * @param {String} file The file path which content being loaded 
      */
     loadFile : function(file) {
-    	afStudio.xhr.executeAction({
-    		url: this.fileUrl,
-    		params: {
-    			file: file
-    		},
-    		showNoteOnSuccess: false,
-    		scope: this,
-    		run: function(response) {
-    			this.setMode('css');
-    			this.setCode(response.data);
-    		}
-    	});
+    	var parameters = Ext.apply({}, this.loadingParams);
+    	parameters[this.fileParam] = file;
     	
-//       Ext.Ajax.request({
-//          url: this.fileUrl,
-//          scope: this,
-//          method:'GET', 
-//    		params: {
-//    			file: file
-//    		},
-//          success: function(response, options){
-//			var r = Ext.decode(response.responseText);
-//			
-//				if (r.success) {
-//    			this.setMode('css');
-//    			this.setCode(r.data);
-//					
-//				}
-//			
-//	      },	
-//	      failure: function() {
-//				Ext.Msg.alert("","The server can't read '"+this.file+"' !");
-//			}
-//        });    
+    	this.maskEditor();
+    	
+		Ext.Ajax.request({
+			url: this.fileUrl,
+			method:'GET',
+    		params: parameters,
+			scope: this,
+			success: function(response, opt) {
+				this.unmaskEditor();
+				var r = Ext.decode(response.responseText);
+				if (r.success) {
+					//sets file property
+					this.file = file;
+					//binary data
+					if (r.data == null) {
+						this.setCode('');
+						return;
+					}
+	    			this.setMode(this.getModeByFileExtension(file));
+	    			this.setCode(r.data);
+				}
+			},	
+			failure: function(response, opt) {
+				this.unmaskEditor();
+				var message  = String.format('File "{0}" loading failure. <br/> status code: {1} <br /> Message: {2}', file, xhr.status, xhr.statusText || '(none)'),
+					msgTitle = "Ace editor";
+					
+				Ext.Msg.alert(msgTitle, message);	
+			}
+        });    
 	},
+	//eo loadFile
     
 	/**
 	 * Initialises ace editor.
@@ -159,17 +211,65 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
 
 	    this.setTheme(this.theme);
 	   
-		this.setMode(this.mode);
+	    if (!this.file) {
+			this.setMode(this.mode);
+	    }
 		
-	    if (this.code) {
+	    if (this.code && !this.file) {
 	    	this.setCode(this.code);
 	    }
 	    
 	    if (this.file) {
 	    	this.loadFile(this.file);
 	    }
-	}
+	},
 	//eo initAce
+	
+	/**
+	 * Resolves mode by file extension.
+	 * @param {String} file The file being examined
+	 * @return {String} mode
+	 * @protected
+	 */
+	getModeByFileExtension : function(file) {
+ 		var ext = /\.(\w+)$/.exec(file);
+ 		ext = ext ? ext[1] : null;
+		
+ 		var mode = 'textile';
+ 		
+	  	switch (ext) {
+	  		case 'php': case 'phtml':
+	  			mode = 'php';
+	  		break;
+	  			
+	  		case 'js':
+	  			mode = 'javascript';
+  			break;
+	  			
+	  		case 'css':
+	  			mode = 'css';
+  			break;
+	  			
+	  		case 'html': case 'htm':
+	  			mode = 'html';
+  			break;
+  			
+	  		case 'json':
+	  			mode = 'json';
+  			break;
+  			
+	  		case 'md':
+	  			mode = 'markdown';
+  			break;
+  			
+	  		case 'xml':
+	  			mode = 'xml';
+  			break;
+	  	}		
+		
+		return mode;
+	}
+	//eo getModeByFileExtension
 });
 
 /**
@@ -183,3 +283,9 @@ Ext.ux.AceComponent.modes = ['textile', 'javascript', 'css', 'html', 'json', 'ma
  * @type Array
  */
 Ext.ux.AceComponent.themes = ['twilight'];
+
+/**
+ * Registers type.
+ * @type ace
+ */
+Ext.reg('ace', Ext.ux.AceComponent);

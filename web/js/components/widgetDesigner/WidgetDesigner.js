@@ -34,13 +34,11 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 			},{
 				xtype: 'wd.codeEditor',
 				fileName: 'security.yml',
-				filePath: w.securityPath,
 				tabTip: w.securityPath,
 				file: w.securityPath
 			},{
 				xtype: 'wd.codeEditor',
 				fileName: w.actionName,
-				filePath: w.actionPath,
 				tabTip: w.actionPath,
 				file: w.actionPath				
 			}]
@@ -61,27 +59,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
 		afStudio.wd.WidgetDesigner.superclass.initComponent.apply(this, arguments);		
-		this._afterInitComponent();
 	},
-	
-	//TODO This method should be removed after resolving all issues with code-editor.
-	/**
-	 * Initializes events & does post configuration
-	 * @private
-	 */	
-	_afterInitComponent : function() {
-		var _this = this;		
-		
-        this.on('beforetabchange', function(tabPanel, newTab, oldTab) {        	
-            if (oldTab && oldTab.iframe) {
-                 oldTab.toggleIframe();
-            }
-            if (newTab && newTab.iframe) {
-                 newTab.toggleIframe();
-            }
-		}, this);
-	},
-	//eo _afterInitComponent
 	
 	/**
 	 * Adds {@link afStudio.wd.CodeEditorTab} code editor tab.
@@ -92,12 +70,31 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 		var t = this.add({
 			xtype: 'wd.codeEditor',
 			fileName: fileName,
-			filePath: path,
 			tabTip: path,
 			file: path
 		});
 		
 		this.setActiveTab(t.getId());
+	},
+	
+	/**
+	 * Searches code tabs relative/equal to path.
+	 * @private
+	 * @param {String} path The path to search by
+	 * @return {Array} code tabs
+	 */
+	findCodeTabs : function(path, equal) {
+		var codeTabs = this.findByType('wd.codeEditor', true),
+			tabs = [];
+			
+		Ext.each(codeTabs, function(c){
+			var f = c.file;
+			if (f && (equal ? f == path : f.indexOf(path) === 0)) {
+				tabs.push(c);
+			}
+		});
+		
+		return tabs;
 	},
 	
 	/**
@@ -107,8 +104,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	 * @param {String} path The file path
 	 */
 	openFile : function(name, path) {
-		//find if the current path is opened
-		var opened = this.find('filePath', path);
+		var opened = this.findCodeTabs(path, true);
 		
 		if (opened.length > 0) {
 			opened[0].show();
@@ -118,15 +114,18 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	},
 	
 	/**
-	 * Reopens the file tab inside WD.
+	 * Corrects file paths.
 	 * File tree {@link Ext.ux.FileTreePanel#fileCt} container's interface method.  
 	 * @param {String} name The new file name
 	 * @param {String} newpath The new file path
 	 * @param {String} oldpath The old file path
 	 */
 	renameFile : function(name, newpath, oldpath) {
-		this.deleteFile(oldpath);
-		this.openFile(name, newpath);
+		var openedTabs = this.findCodeTabs(oldpath);
+		
+		Ext.each(openedTabs, function(t){
+			t.setFile(name, newpath, oldpath);
+		}, this);
 	},
 	
 	/**
@@ -135,9 +134,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 	 * @param {String} path The deleted file/folder path
 	 */
 	deleteFile : function(path) {
-		var openedTabs = this.findBy(function(c){
-            return c['filePath'] && c['filePath'].indexOf(path) === 0;
-        });
+		var openedTabs = this.findCodeTabs(path);
 		
 		Ext.each(openedTabs, function(t){
 			this.remove(t);

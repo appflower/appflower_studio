@@ -19,10 +19,6 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 	},
 	
     closable : true,
-    
-	/**
-	 * @cfg {String} filePath
-	 */
 
     /**
      * @cfg {String} fileName
@@ -45,14 +41,8 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 		var me = this,
 			wd = this.findParentByType('widgetdesigner');
 		
-		me.codePress = new Ext.ux.CodePress({
-			title: this.fileName, 
-			path: this.filePath,
-			tabTip: this.tabTip, 
-			file: this.file,
-			closable: true, 
-			tabPanel: this,			
-			ctCls: 'codeEditorCls'
+		me.ace = new afStudio.wd.Editor({
+			file: this.file
 		});
 		
         me.codeBrowserTree = new Ext.ux.FileTreePanel({
@@ -87,7 +77,7 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 				{
 					border: false,
 					layout: 'fit',
-					items: me.codePress
+					items: me.ace
 				}]					
 			},
 				me.codeBrowserTree
@@ -126,19 +116,37 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 	 */
 	onCodeSave : function() {
 		var me = this,
-			cp = me.codePress;
+			cp = me.ace;
 		
 		afStudio.xhr.executeAction({
-			url: cp.fileContentUrl,
+			url: afStudioWSUrls.getFilecontentUrl,
 	        params: {
-    	    	file: cp.file,
-        		code: cp.getCode()			          	
+    	    	file: cp.getFile(),
+        		code: cp.getCode()		          	
         	},
         	scope: me,
-			logMessage: String.format('WD file "{0}" [{1}] was saved', cp.title, cp.file)
+			logMessage: String.format('WD file "{0}" [{1}] was saved', this.fileName, this.file)
 		});
-	}
+	},
 	//eo onCodeSave
+	
+	/**
+	 * Sets {@link #file} property + undercover ace editor file property and title if needed.
+	 * @param {String} name
+	 * @param {String} newpath
+	 * @param {String} oldpath
+	 */
+	setFile : function(name, newpath, oldpath) {
+		if (oldpath == this.file) {
+			this.setTitle(name);
+			this.fileName = name;
+			this.file = newpath;
+			this.ace.setFile(this.file, true);
+		} else {
+			this.file = this.file.replace(oldpath, newpath);
+			this.ace.setFile(this.file);
+		}
+	}
 });
 
 /**
