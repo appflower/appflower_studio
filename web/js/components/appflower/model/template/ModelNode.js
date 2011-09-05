@@ -70,7 +70,19 @@ N.ModelNode = {
 	
 	METHOD : 'i:method',
 	
-	HANDLER : 'i:handler'
+	HANDLER : 'i:handler',
+	
+	VALUE : 'i:value',
+	
+	TOOLTIP : 'i:tooltip',
+	
+	VALIDATOR : 'i:validator',
+	
+	HELP : 'i:help',
+	
+	TRIGGER : 'i:trigger',
+	
+	WINDOW : 'i:window'
 };
 
 //shortcut

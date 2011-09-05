@@ -223,3 +223,26 @@ afStudio.data.type.ButtonType = Ext.extend(afStudio.data.type.String, {
 		enumeration: ['button', 'reset', 'submit']
 	}
 });
+
+
+/**
+ * This is the data type of form fields. 
+ * It determines what kind of field will be rendered.
+ * @class afStudio.data.type.InputType
+ * @extends afStudio.data.type.String
+ */
+afStudio.data.type.InputType = Ext.extend(afStudio.data.type.String, {
+	type : "inputType",
+	
+	union : ['varType'],
+	
+	restrictions : {
+		enumeration: [
+			'input', 'textarea', 'checkbox', 'radio', 'password', 'hidden', 
+			'file', 'combo', 'extendedCombo', 'extendedDayTimeSelect', 'itemSelectorAutoSuggest', 
+			'remoteComboAutoSuggest', 'multicombo', 'doublemulticombo', 'static', 
+			'doubletree', 'datetime', 'color', 'date', 'include', 'superBoxSelect'
+		]
+	}
+});
+

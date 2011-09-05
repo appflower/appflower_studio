@@ -66,7 +66,9 @@ afStudio.data.Types = (function() {
 		
 		STATETYPE : new T.StateType,
 		
-		BUTTONTYPE : new T.ButtonType
+		BUTTONTYPE : new T.ButtonType,
+		
+		INPUTTYPE : new T.InputType
 	}
 })();
 
