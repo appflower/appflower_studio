@@ -366,4 +366,12 @@ class appFlowerStudioActions extends afsActions
         );
 	}
 	
+	/**
+	 * Preview action 
+	 *
+	 * @param sfWebRequest $request 
+	 * @author Sergey Startsev
+	 */
+	public function executePreview(sfWebRequest $request) {}
+	
 }
