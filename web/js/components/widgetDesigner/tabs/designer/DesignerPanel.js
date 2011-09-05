@@ -110,16 +110,11 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @protected
 	 */
 	onPreviewWidget : function() {
-		afStudio.Msg.info('preview');
-		
 		var c = this.controller,
 			widget = c.getWidget();
-			
 		var url = Ext.urlAppend(afStudioWSUrls.widgetPreviewUrl, Ext.urlEncode({uri: widget.uri}));
 		
 		window.open(url, 'widget-preview');
-		
-//		afApp.widgetPopup(widget.uri, widget.uri, null, null, afStudio);			
 	}
 });
 
