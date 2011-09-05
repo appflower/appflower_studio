@@ -27,18 +27,20 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
     public function testAddModel() 
     {
         $response = afStudioCommand::process('model', 'add', $this->getParameters());
-        $this->assertArrayHasKey('success', $response, "response from command get should contains 'success'");
+        $this->assertTrue($response instanceof afResponse, 'response should be afResponse instance');
+        $this->assertTrue($response->hasParameter(afResponseSuccessDecorator::IDENTIFICATOR), "response from command get should contains 'success'");
         
         $has_response = afStudioCommand::process('model', 'has', $this->getParameters());
         
-        if (isset($response[afResponseSuccessDecorator::IDENTIFICATOR]) && $response[afResponseSuccessDecorator::IDENTIFICATOR]) {
-            $this->assertTrue($response['success'], "response should be true - model should be created");
+        $response_success = $has_response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR);
+        if ($response_success) {
+            $this->assertTrue($response_success, "response should be true - model should be created");
         } else {
-            $this->assertFalse($response['success'], "response should be false - model already exists");
+            $this->assertFalse($response_success, "response should be false - model already exists");
         }
         
         $response = afStudioCommand::process('model', 'add', $this->getParameters());
-        $this->assertFalse($response['success'], "response should be false - please check model checking existed model");
+        $this->assertFalse($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR), "response should be false - please check model checking existed model");
     }
     
     /**
@@ -51,7 +53,7 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
     public function testGetModel() 
     {
         $response = afStudioCommand::process('model', 'get', $this->getParameters());
-        $this->assertTrue(is_array($response), 'response from get command should be array');
+        $this->assertTrue($response instanceof afResponse, 'response from get command should be afResponse instance');
     }
     
     /**
@@ -65,10 +67,11 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
     {
         $model_expected_json = file_get_contents($this->fixture()->getFileOwn('ModelEmpty.json'));
         
-        $response = afStudioCommand::process('model', 'read', $this->getParameters());
-        $response_json = json_encode($response);
-        
-        $this->assertEquals($model_expected_json, $response_json, "actual and expected json model doesn't match");
+        $this->assertEquals(
+            $model_expected_json, 
+            afStudioCommand::process('model', 'read', $this->getParameters())->asJson(), 
+            "actual and expected json model doesn't match"
+        );
     }
     
     /**
@@ -87,15 +90,16 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
         
         $response = afStudioCommand::process('model', 'alterModel', $parameters);
         
-        $this->assertTrue(is_array($response), 'response from alterModel command should be array');
-        $this->assertArrayHasKey('success', $response, "in response should be 'success'");
-        $this->assertTrue($response['success'], "fields should be successfully created, given response not success");
+        $this->assertTrue($response instanceof afResponse, 'response from alterModel command should be afResponse instance');
         
-        // reading model params
-        $response = afStudioCommand::process('model', 'read', $this->getParameters());
-        $response_json = json_encode($response);
+        $this->assertTrue($response->hasParameter(afResponseSuccessDecorator::IDENTIFICATOR), "in response should be 'success'");
+        $this->assertTrue($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR), "fields should be successfully created, given response not success");
         
-        $this->assertStringEqualsFile($this->fixture()->getFileOwn('ModelAddingFieldsResponse.json'), $response_json, "actual and expected json model doesn't match");
+        $this->assertStringEqualsFile(
+            $this->fixture()->getFileOwn('ModelAddingFieldsResponse.json'), 
+            afStudioCommand::process('model', 'read', $this->getParameters())->asJson(), 
+            "actual and expected json model doesn't match"
+        );
     }
     
     /**
@@ -114,15 +118,15 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
         
         $response = afStudioCommand::process('model', 'alterModel', $parameters);
         
-        $this->assertTrue(is_array($response), 'response from alterModel command should be array');
-        $this->assertArrayHasKey('success', $response, "in response should be 'success'");
-        $this->assertTrue($response['success'], "fields should be successfully created, given response not success");
+        $this->assertTrue($response instanceof afResponse, 'response from alterModel command should be array');
+        $this->assertTrue($response->hasParameter(afResponseSuccessDecorator::IDENTIFICATOR), "in response should be 'success'");
+        $this->assertTrue($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR), "fields should be successfully created, given response not success");
         
-        // reading params
-        $response = afStudioCommand::process('model', 'read', $this->getParameters());
-        $response_json = json_encode($response);
-        
-        $this->assertStringEqualsFile($this->fixture()->getFileOwn('ModelRemovingFieldsResponse.json'), $response_json, "actual and expected json model doesn't match");
+        $this->assertStringEqualsFile(
+            $this->fixture()->getFileOwn('ModelRemovingFieldsResponse.json'), 
+            afStudioCommand::process('model', 'read', $this->getParameters())->asJson(), 
+            "actual and expected json model doesn't match"
+        );
     }
     
     /**
@@ -135,21 +139,24 @@ class afStudioModelCommandTest extends sfBasePhpunitTestCase implements sfPhpuni
     public function testDeleteModel() 
     {
         $response = afStudioCommand::process('model', 'delete', $this->getParameters());
-        $this->assertArrayHasKey('success', $response, "response from command delete should contains 'success'");
-        $this->assertTrue($response['success'], "response should be true - model should be deleted");
+        $this->assertTrue($response instanceof afResponse, "response should be afResponse instance");
+        $this->assertTrue($response->hasParameter(afResponseSuccessDecorator::IDENTIFICATOR), "response from command delete should contains 'success'");
+        $this->assertTrue($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR), "response should be true - model should be deleted");
     }
     
     /**
      * Testing delete non existen model
      *
      * @depends testDeleteModel
-     * @expectedException afStudioModelCommandModificatorException
      * 
      * @author Sergey Startsev
      */
     public function testDeleteNonExistenModel() 
     {
         $response = afStudioCommand::process('model', 'delete', $this->getParameters());
+        $this->assertTrue($response instanceof afResponse, 'response should be afResponse instance');
+        $this->assertTrue($response->hasParameter(afResponseSuccessDecorator::IDENTIFICATOR), "response from command delete should contains 'success'");
+        $this->assertFalse($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR), "response should be false - model should be already deleted");
     }
     
     /**
