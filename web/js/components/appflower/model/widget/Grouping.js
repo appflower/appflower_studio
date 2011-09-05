@@ -1,5 +1,6 @@
 /**
  * <u>i:grouping</u> model node.
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.widget.Grouping = Ext.extend(afStudio.model.Node, {
 
@@ -9,8 +10,8 @@ afStudio.model.widget.Grouping = Ext.extend(afStudio.model.Node, {
 	
 	properties : [
 		{name: 'title', type: 'token', defaultValue: 'Default'},
-		{name: 'isSetting', type: 'boolean', defaultValue: 'false'},
-		{name: 'collapsed', type: 'boolean', defaultValue: 'false'}      	
+		{name: 'isSetting', type: 'boolean', defaultValue: false},
+		{name: 'collapsed', type: 'boolean', defaultValue: false}      	
 	],
 	
 	nodeTypes : [

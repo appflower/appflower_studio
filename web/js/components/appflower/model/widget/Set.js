@@ -1,6 +1,7 @@
 /**
  * <u>i:set</u> model node.
- * The inner node of <u>i:grouping</u> inside <b>edit</b> view type.
+ * The inner node of <u>i:grouping</u>.
+ * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.model.widget.Set = Ext.extend(afStudio.model.Node, {
 

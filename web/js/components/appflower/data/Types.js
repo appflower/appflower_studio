@@ -62,7 +62,11 @@ afStudio.data.Types = (function() {
 		
 		DBNAMETYPE : new T.DbNameType,
 		
-		ARRAYTYPE : new T.ArrayType
+		ARRAYTYPE : new T.ArrayType,
+		
+		STATETYPE : new T.StateType,
+		
+		BUTTONTYPE : new T.ButtonType
 	}
 })();
 

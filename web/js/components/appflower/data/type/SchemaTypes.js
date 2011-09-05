@@ -182,3 +182,44 @@ afStudio.data.type.ArrayType = Ext.extend(afStudio.data.type.String, {
 		pattern: /^\[\w+\s*:\s*["'\w]+?(\s*,\s*\w+\s*:\s*["'\w]+?)*\]$/
 	}
 });
+
+/**
+ * This is the data type of the state of form fields.
+ * There are three valid states:
+ * <ul>
+ * 	<li><b>editable</b>: Normal state, field can be edited and will posted. This is the default</li>
+ * 	<li><b>readonly</b>: Field cannot be edited but will still be posted</li>
+ * 	<li><b>disabled</b>: Field may not be edited and wont be posted</li>
+ * </ul>				
+ * @class afStudio.data.type.StateType
+ * @extends afStudio.data.type.String
+ */
+afStudio.data.type.StateType = Ext.extend(afStudio.data.type.String, {
+	type : "stateType",
+	
+	union : ['varType'],
+	
+	restrictions : {
+		enumeration: ['editable', 'readonly', 'disabled']
+	}
+});
+
+/**
+ * This is the data type for buttons. It determines what kind of button will be created.
+ * <ul>
+ * 	<li><b>normal</b>: A simple button, it will trigger some action or may execute JS.</li>
+ * 	<li><b>submit</b>: A submit button, will POST list or edit view.</li>
+ * 	<li><b>reset</b>: A reset button</li>
+ * </ul>				
+ * @class afStudio.data.type.ButtonType
+ * @extends afStudio.data.type.String
+ */
+afStudio.data.type.ButtonType = Ext.extend(afStudio.data.type.String, {
+	type : "buttonType",
+	
+	union : ['varType'],
+	
+	restrictions : {
+		enumeration: ['button', 'reset', 'submit']
+	}
+});
