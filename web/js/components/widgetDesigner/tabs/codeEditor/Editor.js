@@ -58,14 +58,27 @@ afStudio.wd.Editor = Ext.extend(Ext.Container, {
 		afStudio.wd.Editor.superclass.initComponent.apply(this, arguments);	
 	},
 	
+	/**
+	 * Returns editor code {@link Ext.ux.AceComponent#getCode}
+	 * @return {String} code
+	 */
 	getCode : function() {
 		return this.ace.getCode();
 	},
 	
+	/**
+	 * Sets editor file property {@link Ext.ux.AceComponent#setFile}.
+	 * @param {String} file The file being set
+	 * @param {Boolean} reload The reload file flag
+	 */
 	setFile : function(file, reload) {
 		this.ace.setFile(file, reload);
 	},
 	
+	/**
+	 * Rerturns editor's file property {@link Ext.ux.AceComponent#file}.
+	 * @return {String} file path
+	 */
 	getFile : function() {
 		return this.ace.file; 
 	}

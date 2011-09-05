@@ -90,8 +90,8 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	},
 	
 	/**
-	 * Save button <u>click</u>event listener.
-	 * Saves view definition 
+	 * Save button <u>click</u> event listener.
+	 * Saves view definition.
 	 * @protected
 	 */
 	onSaveWidget : function() {
@@ -106,14 +106,20 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	},
 
 	/**
+	 * Opens widget preview in new browsers window.
 	 * @protected
 	 */
 	onPreviewWidget : function() {
 		afStudio.Msg.info('preview');
-//		var widgetUri = this.widgetMeta.widgetUri,
-//			viRootNode = this.viewInspector.getRootNode();		
-//		
-//		afApp.widgetPopup(widgetUri, viRootNode.text, null, null, afStudio);			
+		
+		var c = this.controller,
+			widget = c.getWidget();
+			
+		var url = Ext.urlAppend(afStudioWSUrls.widgetPreviewUrl, Ext.urlEncode({uri: widget.uri}));
+		
+		window.open(url, 'widget-preview');
+		
+//		afApp.widgetPopup(widget.uri, widget.uri, null, null, afStudio);			
 	}
 });
 

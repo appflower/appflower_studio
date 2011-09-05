@@ -29,6 +29,8 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	
 	widgetDeleteUrl : '/afsModuleManager/deleteView',   
     
+	widgetPreviewUrl : '/appFlowerStudio/preview',
+	
     pluginListUrl : '/afsPluginManager/getList',
     
 	pluginAddUrl : '/afsPluginManager/add',
