@@ -12,6 +12,17 @@ afStudio.model.widget.Value = Ext.extend(afStudio.model.Node, {
  		{name: 'permissions', type: 'permissionType', defaultValue: '*'}        
 	],
 	
+	defaultDefinition : {
+		attributes: {
+			type: 'orm'
+		},
+		'i:source': {
+			attributes: {
+				name: 'value'
+			}
+		}
+	},
+	
 	nodeTypes : [
 //			i:class" minOccurs="1" maxOccurs="1"
 //			i:method" minOccurs="1" maxOccurs="1"
