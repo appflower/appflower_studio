@@ -8,22 +8,31 @@ afStudio.model.widget.Value = Ext.extend(afStudio.model.Node, {
 	tag : afStudio.ModelNode.VALUE,
 	
 	properties : [
-        {name: 'type', type: 'valueType', required: true},
+        {name: 'type', type: 'valueType', required: true, 
+        	reconfigure: {
+        		'orm': [
+        			{name: afStudio.ModelNode.SOURCE, required: true}
+        		],
+        		'file': [
+        			{name: afStudio.ModelNode.CLASS, required: true},
+        			{name: afStudio.ModelNode.METHOD, required: true}
+        		],
+        		'static': [
+        			{name: afStudio.ModelNode.ITEM, required: true, hasMany: true}
+        		]
+        	}
+        },
  		{name: 'permissions', type: 'permissionType', defaultValue: '*'}        
 	],
 	
 	defaultDefinition : {
 		attributes: {
 			type: 'orm'
-		},
-		'i:source': {
-			attributes: {
-				name: 'value'
-			}
 		}
 	},
 	
 	nodeTypes : [
+		{name: afStudio.ModelNode.SOURCE, required: true}
 //			i:class" minOccurs="1" maxOccurs="1"
 //			i:method" minOccurs="1" maxOccurs="1"
 //

@@ -17,7 +17,7 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
         {name: 'style', type: 'token'},
         {name: 'width', type: 'positiveInteger'}, 
     	{name: 'height', type: 'positiveInteger'}, 
-		{name: 'checked', type: 'boolean'}, 
+		{name: 'checked', type: 'boolean'},
 		{name: 'rich', type: 'boolean', defaultValue: false}, 
  		{name: 'content', type: 'token'},
  		{name: 'module', type: 'token'},

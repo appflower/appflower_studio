@@ -182,6 +182,13 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             "modelNodeSelect",
             
             /**
+             * @event modelReconfigure
+             * Fires when a model node structural configuration changed
+             * @param {Node} modelNode The model node being reconfigured
+             */
+            "modelReconfigure",
+            
+            /**
              * @event ready
              * Fires when controller is ready - model & views were instantiated and registered
              * @param {Object} controller
@@ -481,7 +488,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	
 		view.relayEvents(me, [
 			'modelNodeAppend', 'modelNodeInsert', 'modelNodeRemove', 'modelNodeMove',
-			'modelNodeSelect', 'modelPropertyChanged'
+			'modelNodeSelect', 'modelPropertyChanged', 'modelReconfigure'
 		]);
     },
 
