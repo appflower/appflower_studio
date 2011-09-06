@@ -7,6 +7,9 @@
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/widgetJS.js"></script>
 
 <script type="text/javascript">
+Ext.BLANK_IMAGE_URL = '/appFlowerPlugin/extjs-3/resources/images/default/s.gif';
+Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
 Ext.onReady(function(){
 	Ext.QuickTips.init();
 
@@ -14,6 +17,6 @@ Ext.onReady(function(){
 
 	afApp.urlPrefix = '/';
 	GLOBAL_JS_VAR = GLOBAL_CSS_VAR = new Array();
-	afApp.widgetPopup(path.uri, path.uri, null, null, Ext.getBody());	
+	afApp.widgetPopup(path.uri, path.uri, null, null, {});	
 });
 </script>

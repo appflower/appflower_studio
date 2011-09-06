@@ -468,8 +468,9 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Object} cmpMeta
 	 */
 	,previewWidget : function(name, module, cmpMeta) {		
-		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;		
-		afApp.widgetPopup(widgetUri, widgetUri, null, null, afStudio);		
+		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;
+		
+		afStudio.WD.previewWidget(widgetUri);
 	}//eo previewWidget
 	
 	/**

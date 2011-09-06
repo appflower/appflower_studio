@@ -106,15 +106,14 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	},
 
 	/**
-	 * Opens widget preview in new browsers window.
+	 * Opens widget for preview.
 	 * @protected
 	 */
 	onPreviewWidget : function() {
 		var c = this.controller,
 			widget = c.getWidget();
-		var url = Ext.urlAppend(afStudioWSUrls.widgetPreviewUrl, Ext.urlEncode({uri: widget.uri}));
-		
-		window.open(url, 'widget-preview');
+			
+		afStudio.WD.previewWidget(widget.uri);	
 	}
 });
 

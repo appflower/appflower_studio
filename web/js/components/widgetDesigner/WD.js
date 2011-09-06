@@ -10,6 +10,15 @@ afStudio.WD = function() {
 	return {
 		
 		/**
+		 * Opens widget for preview in new browser's window.
+		 * @param {String} uri The widget's uri being opened
+		 */
+		previewWidget : function(uri) {
+			var url = Ext.urlAppend(afStudioWSUrls.widgetPreviewUrl, Ext.urlEncode({uri: uri}));
+			window.open(url, 'widget-preview');
+		},
+		
+		/**
 		 * Returns gui view constructor.
 		 * @param {String} type The view type
 		 * @return {Function} view constructor or null if view's constructor was not found 
