@@ -107,13 +107,15 @@ afStudio.model.Property = Ext.extend(Object, {
      * @return {Object} property
      */
     getPropertyHash : function() {
-    	var pr = {};
+    	var vl = ['name', 'value', 'type', 'required', 'readOnly', 'defaultValue'],
+    		pr = {};
+    	
     	for(var p in this) {
-    		if (!Ext.isFunction(this[p])) {
+    		if (!Ext.isFunction(this[p]) && vl.indexOf(p) !== -1) {
     			pr[p] = this[p];
     		}
     	}
-    	
+
     	return pr;
     }
 });

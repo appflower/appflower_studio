@@ -1,5 +1,5 @@
 /**
- * <u>field</u> model node.
+ * <u>i:field</u> model node.
  * 
  * @author Nikolai Babinski <niba@appflower.com>
  */
@@ -17,7 +17,7 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
         {name: 'style', type: 'token'},
         {name: 'width', type: 'positiveInteger'}, 
     	{name: 'height', type: 'positiveInteger'}, 
-		{name: 'checked', type: 'boolean'}, 
+		{name: 'checked', type: 'boolean'},
 		{name: 'rich', type: 'boolean', defaultValue: false}, 
  		{name: 'content', type: 'token'},
  		{name: 'module', type: 'token'},
@@ -38,8 +38,8 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
 	    {name: afStudio.ModelNode.VALUE}, 
 	    {name: afStudio.ModelNode.TOOLTIP}, 
 	    {name: afStudio.ModelNode.HELP}, 
-	    {name: afStudio.ModelNode.VALIDATOR, hasMany: true}, 
-	    {name: afStudio.ModelNode.HANDLER, hasMany: true, unique: 'name'}, 
+	    {name: afStudio.ModelNode.VALIDATOR, hasMany: true, unique: 'name'}, 
+	    {name: afStudio.ModelNode.HANDLER, hasMany: true}, 
 	    {name: afStudio.ModelNode.TRIGGER}, 
 	    {name: afStudio.ModelNode.WINDOW},
 	    {name: afStudio.ModelNode.IF}

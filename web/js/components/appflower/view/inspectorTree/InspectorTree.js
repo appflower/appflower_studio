@@ -177,6 +177,10 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			 * @relayed controller
 			 */
 			modelPropertyChanged: _me.onModelPropertyChanged,
+			/**
+			 * @relayed controller
+			 */
+			modelReconfigure: _me.onModelNodeReconfigure,
 			
 			contextmenu:  _me.onNodeContextMenu,
 			
@@ -267,6 +271,21 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			viewNode.setText(Ext.value(v, '(none)'));
 		}
 	},	
+
+	/**
+	 * Relayed <u>modelReconfigure</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelReconfigure}.
+	 * @protected
+	 * @interface
+	 */
+	onModelNodeReconfigure : function(node) {
+		console.log('@view [InspectorTree] "reconfigure"', node);
+		var viewNode = this.getCmpByModel(node.parentNode ? node.parentNode : node);
+		viewNode.reload(function() {
+			var viewNode = this.getCmpByModel(node);
+			viewNode.select();
+		}, this);
+	},
 	
 	/**
 	 * <u>contextmenu</u> event listener. 

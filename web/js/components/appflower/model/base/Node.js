@@ -260,7 +260,14 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              * @param {Node} This node
              * @param {Node} The created child node 
              */
-            "modelNodeCreated" : true
+            "modelNodeCreated" : true,
+            
+            /**
+             * @event modelReconfigure
+             * Fires when a node structural configuration changed
+             * @param {Node} modelNode The node being reconfigured
+             */
+            "modelReconfigure" : true
         });
         
         this.listeners = config.listeners;
@@ -1167,7 +1174,12 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	if (property.validate(v) && this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
     		property.setValue(v);
+    		
 	    	this.fireEvent("modelPropertyChanged", this, p, v);
+	    	
+    		if (property.reconfigure) {
+    			this.reconfigure(property, p, v);
+    		}
     	}
     	
     	return property;
@@ -1356,6 +1368,30 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	return n;
     },
     //eo createNode
+    
+    /**
+     * Reconfigures node's structural data.
+     * @protected
+     * 
+     * @param {Property} property The property holding reconfigure data
+     * @param {String} name The property's name
+     * @param {Mixed} value The new property's value which runs reconfiguration
+     */
+    reconfigure : function(property, name, value) {
+    	var cfg = property.reconfigure;
+    	
+    	if (Ext.isDefined(cfg[value])) {
+			//remove all structure for the moment (will be changed)
+			this.nodeTypes.length = 0;
+			this.removeAll(true);
+			
+    		Ext.each(cfg[value], function(n){
+    			this.nodeTypes.push(n);
+    		}, this);
+    		
+    		this.fireEvent('modelReconfigure', this);
+    	}
+    },
     
     /**
      * Returns node's string representation.

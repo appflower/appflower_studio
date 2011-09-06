@@ -22,8 +22,9 @@ var afStudio = function () {
 		 */
 		initAjaxRequestComplete : function() {
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
+                var response;
 				try {
-					var response = Ext.decode(xhr.responseText);
+					response = Ext.decode(xhr.responseText);
 				} catch(e) {
 					if (opt.jsonResponse) {
 						afStudio.Msg.error('Response cannot be decoded', 

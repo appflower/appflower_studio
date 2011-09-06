@@ -82,7 +82,11 @@ N.ModelNode = {
 	
 	TRIGGER : 'i:trigger',
 	
-	WINDOW : 'i:window'
+	WINDOW : 'i:window',
+	
+	SOURCE : 'i:source',
+	
+	ITEM : 'i:item'
 };
 
 //shortcut
