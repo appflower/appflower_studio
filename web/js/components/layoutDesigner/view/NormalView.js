@@ -476,7 +476,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	/**
 	 * Runs WD (Widget Designer) for specified view component.
 	 * 
-	 * //TODO should be optimized
+	 * //TODO should be fixed and adapted to new design
 	 * 
 	 * @param {String} name The widget action name
 	 * @param {String} module The widget module name
