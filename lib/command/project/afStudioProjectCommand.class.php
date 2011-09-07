@@ -198,4 +198,20 @@ class afStudioProjectCommand extends afBaseStudioCommand
         return afResponseHelper::create()->success(true)->console(afStudioProjectCommandHelper::processRun());
     }
     
+    /**
+     * Export project functionality
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processExport()
+    {
+        $by_os = $this->getParameter('by_os', 'false');
+        $path = $this->getParameter('path', './data');
+        $console = afStudioConsole::getInstance();
+        $console_result = $console->execute("sf afs:export-project --by_os={$by_os} --path={$path}");
+        
+        return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->console($console_result);
+    }
+    
 }
