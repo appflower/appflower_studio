@@ -346,6 +346,20 @@ class appFlowerStudioActions extends afsActions
 	}
 	
 	/**
+	 * Export project call
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 * @author Sergey Startsev
+	 */
+	public function executeExportProject(sfWebRequest $request)
+	{
+	    return $this->renderJson(
+            afStudioCommand::process('project', 'export', $request->getParameterHolder()->getAll())->asArray()
+        );
+	}
+	
+	/**
 	 * Welcome page functionality
 	 *
 	 * @param sfWebRequest $request 
