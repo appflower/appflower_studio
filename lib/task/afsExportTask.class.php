@@ -9,6 +9,16 @@
 class afsExportTask extends sfBaseTask
 {
     /**
+     * OS export type
+     */
+    const TYPE_OS = 'os';
+    
+    /**
+     * Extension export type
+     */
+    const TYPE_EXTENSION = 'extension';
+    
+    /**
      * @see sfTask
      */
     protected function configure()
@@ -48,21 +58,41 @@ EOF;
      */
     private function extract($source, $destination, $by_os)
     {
-        $delegator_name = (($by_os == false || $by_os == 'false') && extension_loaded('zlib')) ? 'ByExtension' : 'ByOS';
+        $type = $this->getType($by_os);
+        $delegator_name = "extractBy" . ucfirst($type);
         
         if (!file_exists($destination)) afsFileSystem::create()->mkdirs($destination, 0777);
         if (substr($destination, -1, 1) != DIRECTORY_SEPARATOR) $destination .= DIRECTORY_SEPARATOR;
         
         $project_name = pathinfo($source, PATHINFO_BASENAME);
         
+        $this->logSection('type', sprintf('export by %s', $type));
         $this->logSection('path', sprintf('export project %s to %s folder', $project_name, $destination));
         $this->logSection('archive', sprintf('in destination path created %s archive', "{$project_name}.tar.gz"));
         
-        $this->log('Extracting. Please wait..');
+        $this->log('Exporting. Please wait..');
         
-        call_user_func(array($this, "extract{$delegator_name}"), $source, $destination, $project_name);
+        call_user_func(array($this, $delegator_name), $source, $destination, $project_name);
         
         $this->log('Done.');
+    }
+    
+    /**
+     * Getting export type
+     *
+     * @param string $by_os 
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function getType($by_os = false)
+    {
+        if (($by_os === false || $by_os =='false')) {
+            if (extension_loaded('zlib')) return self::TYPE_EXTENSION;
+            if (strtolower(substr(PHP_OS, 0, 3)) === 'win') throw new sfCommandException("for export feature you should add 'zlib' extension");
+            $this->log("Extension 'zlib' not loaded. Will try to export via os command..");
+        }
+        
+        return self::TYPE_OS;
     }
     
     /**
@@ -101,10 +131,11 @@ EOF;
     private function extractByOS($source, $destination, $project)
     {
         if (strtolower(substr(PHP_OS, 0, 3)) !== 'win') {
-            $this->run_command( 
-                "tar -czf {$destination}{$project}.tar.gz ".
-                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' ".
-                "../{$project}"
+            $this->run_command(
+                "tar -czf {$destination}{$project}.tar.gz " .
+                "-C .. " .
+                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='{$project}.tar.gz' " .
+                "{$project}"
             );
         }
     }
