@@ -593,7 +593,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			};
 		}
 		if (type != 'list') {
-			meta[nd.FIELDS][nd.FIELD] = clm;	
+			meta[nd.FIELDS][nd.FIELD] = clm;
 		} else {
 			meta[nd.FIELDS][nd.COLUMN] = clm;
 		}
@@ -606,21 +606,33 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				type: 'orm'
 			}
 		};
-		ds[nd.CLASS] = model + 'Peer'; 
 		var mth = ds[nd.METHOD] = {
 			attributes: {
-				name: 'retrieveByPk'
+				name: null
 			}
 		};
-		mth[nd.PARAM] = {
-			attributes: {
-				name: 'id'
-			},
-			_content: '{id}'
-		};
+		if (type == 'list') {
+			ds.attributes.modelName = model;
+			ds[nd.CLASS] = 'ModelCriteriaFetcher';
+			mth.attributes.name = 'getDataForList';
+			mth[nd.PARAM] = {
+				attributes: {
+					name: 'modelName'
+				},
+				_content: model
+			};
+		} else {
+			ds[nd.CLASS] = model + 'Peer';
+			mth.attributes.name = 'retrieveByPk';
+			mth[nd.PARAM] = {
+				attributes: {
+					name: 'id'
+				},
+				_content: '{id}'
+			};
+		}
 		
 		return meta;
 	}
 	//eo buildWidgetDefinition
-
 });
