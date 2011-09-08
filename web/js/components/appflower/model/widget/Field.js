@@ -9,7 +9,7 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
 	
 	properties : [
         {name: 'name', type: 'token', required: true},
-        {name: 'label', type: 'token'},
+        {name: 'label', type: 'token', required: true},
         {name: 'type', type: 'inputType', defaultValue: 'input'},
         {name: 'selected', type: 'token'},
         {name: 'state', type: 'stateType', defaultValue: 'editable'},

@@ -189,7 +189,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		}
 		
 		var entity = this.createEntity(node);
-		if (Ext.isDefined(ei)) {
+		if (ei != null) {
 			ep[ek].splice(ei, 0, entity);
 		}
 	},

@@ -29,11 +29,19 @@ S[N.SET] = 104;
 S[N.REF] = 105;
 S[N.PARAM] = 130;
 S[N.AREA] = 10;
-S[N.WIDGET_CATEGORIES] = 
 S[N.EXTRA_HELP] = 36; 
 S[N.OPTIONS] = 5;
 S[N.CLASS] = 108;
 S[N.METHOD] = 109;
+//i:field children	
+S[N.VALUE] = 140;
+S[N.TOOLTIP] = 142;
+S[N.HELP] = 144;
+S[N.VALIDATOR] = 146;
+S[N.HANDLER] = 148;
+S[N.WINDOW] = 150;
+S[N.TRIGGER] = 152;
+
 
 delete N;
 delete S;
