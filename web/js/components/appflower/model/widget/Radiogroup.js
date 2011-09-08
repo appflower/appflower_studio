@@ -16,6 +16,6 @@ afStudio.model.widget.Radiogroup = Ext.extend(afStudio.model.Node, {
 	],
 	
 	nodeTypes : [
-	    {name: afStudio.ModelNode.Field, required: true, hasMany: true, unique: 'name'}
+	    {name: afStudio.ModelNode.FIELD, required: true, hasMany: true, unique: 'name'}
 	]
 });
