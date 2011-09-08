@@ -52,6 +52,8 @@ afStudio.data.Types = (function() {
 		
 		VALUETYPE : new T.ValueType,
 		
+		VALUESTRUCTURETYPE : new T.ValueStructureType,
+		
 		FETCHTYPE : new T.FetchType,
 		
 		ALIGNTYPE : new T.AlignType,

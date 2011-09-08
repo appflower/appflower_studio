@@ -116,6 +116,17 @@ afStudio.data.type.ValueType = Ext.extend(afStudio.data.type.String, {
 	}
 });
 
+afStudio.data.type.ValueStructureType = Ext.extend(afStudio.data.type.String, {
+	type : "valueStructureType",
+	
+	union : ['varType'],
+	
+	//TODO 'static' enum is not used, should be tested AF engine and how this type is used
+	restrictions : {
+		enumeration : ['class & method', 'source', 'item']
+	}
+});
+
 afStudio.data.type.FetchType = Ext.extend(afStudio.data.type.String, {
 	type : "fetchType",
 	

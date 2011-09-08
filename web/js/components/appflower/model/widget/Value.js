@@ -8,16 +8,17 @@ afStudio.model.widget.Value = Ext.extend(afStudio.model.Node, {
 	tag : afStudio.ModelNode.VALUE,
 	
 	properties : [
-        {name: 'type', type: 'valueType', required: true, 
+        {name: 'type', type: 'valueType', required: true},
+        {name: 'structure', type: 'valueStructureType', defaultValue: 'source',
         	reconfigure: {
-        		'orm': [
-        			{name: afStudio.ModelNode.SOURCE, required: true}
-        		],
-        		'file': [
+        		'class & method': [
         			{name: afStudio.ModelNode.CLASS, required: true},
         			{name: afStudio.ModelNode.METHOD, required: true}
         		],
-        		'static': [
+        		'source': [
+        			{name: afStudio.ModelNode.SOURCE, required: true}
+        		],
+        		'item': [
         			{name: afStudio.ModelNode.ITEM, required: true, hasMany: true}
         		]
         	}
@@ -33,13 +34,5 @@ afStudio.model.widget.Value = Ext.extend(afStudio.model.Node, {
 	
 	nodeTypes : [
 		{name: afStudio.ModelNode.SOURCE, required: true}
-//			i:class" minOccurs="1" maxOccurs="1"
-//			i:method" minOccurs="1" maxOccurs="1"
-//
-//			i:source" minOccurs="1" maxOccurs="1"
-//
-//			i:item" minOccurs="1" maxOccurs="unbounded"
-//
-//			i:static" minOccurs="1" maxOccurs="1"
 	]
 });
