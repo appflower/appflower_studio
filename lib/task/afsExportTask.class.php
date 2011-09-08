@@ -53,12 +53,11 @@ EOF;
      * Extracting project
      *
      * @param string $source 
-     * @param string $destination 
-     * @param string $by_os 
+     * @param Array $options 
      * @return void
      * @author Sergey Startsev
      */
-    private function extract($source, array $options)
+    private function extract($source, Array $options)
     {
         $destination = $options['path'];
         $by_os = $options['by_os'];
@@ -70,6 +69,8 @@ EOF;
         $project_name = pathinfo($source, PATHINFO_BASENAME);
         $export_method = "export" . ucfirst($type);
         
+        if (!method_exists($this, $export_method)) throw new sfCommandException("Type '{$type}' doesn't supports");
+        
         call_user_func(array($this, $export_method), $source, $destination, $by_os, $project_name, $options);
     }
     
@@ -80,10 +81,11 @@ EOF;
      * @param string $destination 
      * @param string $by_os 
      * @param string $project_name 
+     * @param Array $options 
      * @return void
      * @author Sergey Startsev
      */
-    private function exportDb($source, $destination, $by_os, $project_name, $options)
+    private function exportDb($source, $destination, $by_os, $project_name, Array $options)
     {
         if (($by_os === false || $by_os =='false')) {
             return $this->exportDbByPropel($source, $destination, $project_name, $options);
@@ -98,15 +100,20 @@ EOF;
      * @param string $source 
      * @param string $destination 
      * @param string $project_name 
+     * @param Array $options 
      * @return void
      * @author Sergey Startsev
      */
-    private function exportDbByOs($source, $destination, $project_name, $options)
+    private function exportDbByOs($source, $destination, $project_name, Array $options)
     {
         $this->log("Building sql file.");
         
         $configuration = sfYaml::load(sfConfig::get('sf_config_dir') . "/databases.yml");
         $connection = $options['connection'];
+        
+        if (!isset($configuration['all'][$connection])) {
+            throw new sfCommandException("Connection '{$connection}' doesn't found in databases.yml");
+        }
         
         $db = $configuration['all'][$connection]['param'];
         $dsn = $this->parseDSN($db['dsn']);
@@ -122,10 +129,11 @@ EOF;
      * @param string $source 
      * @param string $destination 
      * @param string $project_name 
+     * @param Array $options 
      * @return void
      * @author Sergey Startsev
      */
-    private function exportDbByPropel($source, $destination, $project_name, $options)
+    private function exportDbByPropel($source, $destination, $project_name, Array $options)
     {
         $properties = $this->getProperties(sfConfig::get('sf_config_dir') . '/propel.ini');
         $sql_dir = str_replace('${propel.output.dir}', $properties['propel.output.dir'], $properties['propel.sql.dir']);
@@ -171,10 +179,11 @@ EOF;
      * @param string $destination 
      * @param string $by_os 
      * @param string $project_name 
+     * @param Array $options 
      * @return void
      * @author Sergey Startsev
      */
-    private function exportProject($source, $destination, $by_os, $project_name, $options)
+    private function exportProject($source, $destination, $by_os, $project_name, Array $options)
     {
         $type_extract = $this->getType($by_os);
         $delegator_name = "extractProjectBy" . ucfirst($type_extract);
@@ -184,6 +193,8 @@ EOF;
         $this->logSection('archive', sprintf('in destination path created %s archive', "{$project_name}.tar.gz"));
         
         $this->log('Exporting. Please wait..');
+        
+        if (!method_exists($this, $delegator_name)) throw new sfCommandException("Method '{$delegator_name}' doesn't exists");
         
         call_user_func(array($this, $delegator_name), $source, $destination, $project_name);
         
@@ -226,6 +237,7 @@ EOF;
             '.gitignore',
             '.gitmodules',
             '.svn',
+            'data',
             "{$project}.tar.gz",
         ));
         
@@ -247,7 +259,7 @@ EOF;
             $this->run_command(
                 "tar -czf {$destination}{$project}.tar.gz " .
                 "-C .. " .
-                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='{$project}.tar.gz' " .
+                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='data/' --exclude='{$project}.tar.gz' " .
                 "{$project}"
             );
         }
