@@ -120,7 +120,7 @@ class appFlowerStudioActions extends afsActions
                 ->console(afStudioConsole::getInstance()->execute(trim($request->getParameter("command"))))
                 ->asArray()
         );
-    }	
+    }
     
     /**
      * Load Database connection settings action
@@ -342,6 +342,20 @@ class appFlowerStudioActions extends afsActions
 	{        
         return $this->renderJson(
             afStudioCommand::process('project', 'saveWizard', $request->getParameterHolder()->getAll())->asArray()
+        );
+	}
+	
+	/**
+	 * Execute project functionality
+	 *
+	 * @param sfWebRequest $request 
+	 * @return string - json
+	 * @author Sergey Startsev
+	 */
+	public function executeProject(sfWebRequest $request)
+	{
+	    return $this->renderJson(
+            afStudioCommand::process('project', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())->asArray()
         );
 	}
 	
