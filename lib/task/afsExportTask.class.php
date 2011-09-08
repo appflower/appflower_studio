@@ -6,7 +6,7 @@
  * @subpackage  task
  * @author      Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsExportTask extends sfBaseTask
+class afsExportTask extends sfPropelBaseTask
 {
     /**
      * OS export type
@@ -25,17 +25,19 @@ class afsExportTask extends sfBaseTask
     {
         $this->addOptions(array(
             new sfCommandOption('by_os', null, sfCommandOption::PARAMETER_OPTIONAL, 'Should be exported via os command tar', false),
-            new sfCommandOption('path', null, sfCommandOption::PARAMETER_OPTIONAL, 'Where should be located exported archive', './data'),
+            new sfCommandOption('path', null, sfCommandOption::PARAMETER_OPTIONAL, 'Where should be located exported archive', './data/export'),
+            new sfCommandOption('type', null, sfCommandOption::PARAMETER_OPTIONAL, "What type should be exported 'project' or 'db'", 'project'),
+            new sfCommandOption('connection', null, sfCommandOption::PARAMETER_OPTIONAL, "DB connection", 'propel'),
         ));
         
         $this->namespace = 'afs';
-        $this->name = 'export-project';
-        $this->briefDescription = 'Exports project';
+        $this->name = 'export';
+        $this->briefDescription = 'Exports project or db dump';
         
         $this->detailedDescription = <<<EOF
-The [afs:export-project|INFO] task export/pack current project:
+The [afs:export|INFO] task export/pack current project:
 
-  [./symfony afs:export-project|INFO]
+  [./symfony afs:export|INFO]
 EOF;
     }
     
@@ -44,7 +46,7 @@ EOF;
      */
     protected function execute($arguments = array(), $options = array())
     {
-        $this->extract(sfConfig::get('sf_root_dir'), $options['path'], $options['by_os']);
+        $this->extract(sfConfig::get('sf_root_dir'), $options);
     }
     
     /**
@@ -56,17 +58,128 @@ EOF;
      * @return void
      * @author Sergey Startsev
      */
-    private function extract($source, $destination, $by_os)
+    private function extract($source, array $options)
     {
-        $type = $this->getType($by_os);
-        $delegator_name = "extractBy" . ucfirst($type);
+        $destination = $options['path'];
+        $by_os = $options['by_os'];
+        $type = $options['type'];
         
-        if (!file_exists($destination)) afsFileSystem::create()->mkdirs($destination, 0777);
+        if (!file_exists($destination)) afsFileSystem::create()->mkdirs($destination, 0775);
         if (substr($destination, -1, 1) != DIRECTORY_SEPARATOR) $destination .= DIRECTORY_SEPARATOR;
         
         $project_name = pathinfo($source, PATHINFO_BASENAME);
+        $export_method = "export" . ucfirst($type);
         
-        $this->logSection('type', sprintf('export by %s', $type));
+        call_user_func(array($this, $export_method), $source, $destination, $by_os, $project_name, $options);
+    }
+    
+    /**
+     * Export db structure procedure
+     *
+     * @param string $source 
+     * @param string $destination 
+     * @param string $by_os 
+     * @param string $project_name 
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function exportDb($source, $destination, $by_os, $project_name, $options)
+    {
+        if (($by_os === false || $by_os =='false')) {
+            return $this->exportDbByPropel($source, $destination, $project_name, $options);
+        }
+        
+        return $this->exportDbByOs($source, $destination, $project_name, $options);
+    }
+    
+    /**
+     * Export db by os
+     *
+     * @param string $source 
+     * @param string $destination 
+     * @param string $project_name 
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function exportDbByOs($source, $destination, $project_name, $options)
+    {
+        $this->log("Building sql file.");
+        
+        $configuration = sfYaml::load(sfConfig::get('sf_config_dir') . "/databases.yml");
+        $connection = $options['connection'];
+        
+        $db = $configuration['all'][$connection]['param'];
+        $dsn = $this->parseDSN($db['dsn']);
+        
+        $this->run_command("mysqldump -u{$db['username']} -p{$db['password']} {$dsn['dbname']} > {$destination}{$project_name}.sql");
+        
+        $this->logSection('exported', "{$destination}{$project_name}.sql");
+    }
+    
+    /**
+     * Export db by propel generates sql's
+     *
+     * @param string $source 
+     * @param string $destination 
+     * @param string $project_name 
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function exportDbByPropel($source, $destination, $project_name, $options)
+    {
+        $properties = $this->getProperties(sfConfig::get('sf_config_dir') . '/propel.ini');
+        $sql_dir = str_replace('${propel.output.dir}', $properties['propel.output.dir'], $properties['propel.sql.dir']);
+        
+        // build task
+        $this->schemaToXML(self::DO_NOT_CHECK_SCHEMA, 'generated-');
+        $this->copyXmlSchemaFromPlugins('generated-');
+        $ret = $this->callPhing('sql', self::CHECK_SCHEMA);
+        $this->cleanup();
+        
+        $main_sql = 'lib.model.schema.sql';
+        $export_sql = "{$project_name}.sql";
+        $export_path = "{$destination}{$export_sql}";
+        
+        $this->log("Building sql files.");
+        
+        if (file_exists("{$sql_dir}/{$main_sql}")) {
+            $this->logSection('main-sql', "{$sql_dir}/{$main_sql}");
+        }
+        
+        afsFileSystem::create()->copy("{$sql_dir}/{$main_sql}", $export_path);
+        
+        $schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->in($this->configuration->getPluginSubPaths('/config'));
+        
+        foreach ($schemas as &$schema) {
+            $pattern = sfConfig::get('sf_plugins_dir') . "/(.*?)/";
+            if (preg_match("#{$pattern}#si", $schema, $match)) $schema = $match[1];
+            
+            $plugin_sql_path = "{$sql_dir}/plugins.{$schema}.lib.model.schema.sql";
+            if (file_exists($plugin_sql_path)) file_put_contents($export_path, file_get_contents($plugin_sql_path), FILE_APPEND);
+            
+            $this->logSection('plugin-sql', $plugin_sql_path);
+        }
+        
+        $this->log("Created 1 file for import.");
+        $this->logSection('exported', $export_path);
+    }
+    
+    /**
+     * Export project procedure
+     *
+     * @param string $source 
+     * @param string $destination 
+     * @param string $by_os 
+     * @param string $project_name 
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function exportProject($source, $destination, $by_os, $project_name, $options)
+    {
+        $type_extract = $this->getType($by_os);
+        $delegator_name = "extractProjectBy" . ucfirst($type_extract);
+        
+        $this->logSection('type', sprintf('export by %s', $type_extract));
         $this->logSection('path', sprintf('export project %s to %s folder', $project_name, $destination));
         $this->logSection('archive', sprintf('in destination path created %s archive', "{$project_name}.tar.gz"));
         
@@ -104,7 +217,7 @@ EOF;
      * @return void
      * @author Sergey Startsev
      */
-    private function extractByExtension($source, $destination, $project)
+    private function extractProjectByExtension($source, $destination, $project)
     {
         $arch = new Archive_Tar("{$destination}{$project}.tar.gz", 'gz');
         
@@ -128,7 +241,7 @@ EOF;
      * @return void
      * @author Sergey Startsev
      */
-    private function extractByOS($source, $destination, $project)
+    private function extractProjectByOS($source, $destination, $project)
     {
         if (strtolower(substr(PHP_OS, 0, 3)) !== 'win') {
             $this->run_command(
@@ -156,4 +269,26 @@ EOF;
         return (!$executed) ? $console : false;
     }
     
+    /**
+     * Parse dsn field
+     * 
+     * @param string $dsn - DSN string example:  mysql:dbname=studio;host=localhost
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function parseDSN($dsn)
+    {
+        $info = array();
+        list($info['driver'], $info['query']) = explode(':', $dsn);
+        
+        if (isset($info['query'])) {
+            $opts = explode(';', $info['query']);
+            foreach ($opts as $opt) {
+                list($key, $value) = explode('=', $opt);
+                if (!isset($parsed[$key])) $parsed[$key] = urldecode($value);
+            }
+        }
+        
+        return $parsed;
+    }
 }

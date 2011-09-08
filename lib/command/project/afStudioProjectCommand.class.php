@@ -207,9 +207,11 @@ class afStudioProjectCommand extends afBaseStudioCommand
     protected function processExport()
     {
         $by_os = $this->getParameter('by_os', 'false');
-        $path = $this->getParameter('path', './data');
+        $type = $this->getParameter('type', 'project');
+        $path = $this->getParameter('path', "./data/export/{$type}");
+        
         $console = afStudioConsole::getInstance();
-        $console_result = $console->execute("sf afs:export-project --by_os={$by_os} --path={$path}");
+        $console_result = $console->execute("sf afs:export --type={$type} --by_os={$by_os} --path={$path}");
         
         return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->console($console_result);
     }
