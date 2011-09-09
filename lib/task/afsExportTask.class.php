@@ -28,6 +28,7 @@ class afsExportTask extends sfPropelBaseTask
             new sfCommandOption('path', null, sfCommandOption::PARAMETER_OPTIONAL, 'Where should be located exported archive', './data/export'),
             new sfCommandOption('type', null, sfCommandOption::PARAMETER_OPTIONAL, "What type should be exported 'project' or 'db'", 'project'),
             new sfCommandOption('connection', null, sfCommandOption::PARAMETER_OPTIONAL, "DB connection", 'propel'),
+            new sfCommandOption('project_name', null, sfCommandOption::PARAMETER_OPTIONAL, "Project name", ''),
         ));
         
         $this->namespace = 'afs';
@@ -66,7 +67,9 @@ EOF;
         if (!file_exists($destination)) afsFileSystem::create()->mkdirs($destination, 0775);
         if (substr($destination, -1, 1) != DIRECTORY_SEPARATOR) $destination .= DIRECTORY_SEPARATOR;
         
-        $project_name = pathinfo($source, PATHINFO_BASENAME);
+        // $project_name = pathinfo($source, PATHINFO_BASENAME);
+        $project_name = (!empty($options['project_name'])) ? $options['project_name'] : pathinfo($source, PATHINFO_BASENAME);
+        
         $export_method = "export" . ucfirst($type);
         
         if (!method_exists($this, $export_method)) throw new sfCommandException("Type '{$type}' doesn't supports");
@@ -241,7 +244,7 @@ EOF;
             "{$project}.tar.gz",
         ));
         
-        $arch->create(array("../{$project}"));
+        $arch->create(array("../" . pathinfo($source, PATHINFO_BASENAME)));
     }
     
     /**
@@ -260,7 +263,7 @@ EOF;
                 "tar -czf {$destination}{$project}.tar.gz " .
                 "-C .. " .
                 "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='data/' --exclude='{$project}.tar.gz' " .
-                "{$project}"
+                pathinfo($source, PATHINFO_BASENAME)
             );
         }
     }

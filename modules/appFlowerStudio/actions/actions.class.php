@@ -368,9 +368,25 @@ class appFlowerStudioActions extends afsActions
 	 */
 	public function executeExport(sfWebRequest $request)
 	{
-	    return $this->renderJson(
-            afStudioCommand::process('project', 'export', $request->getParameterHolder()->getAll())->asArray()
-        );
+        $response = afStudioCommand::process('project', 'export', $request->getParameterHolder()->getAll());
+        
+        if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $this->renderJson($response->asArray());
+        
+        $data = $response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA);
+        $file_name = $data['file'];
+        $file_path = $data['path'];
+        
+	    $response = $this->getContext()->getResponse();
+        $response->clearHttpHeaders();
+        $response->addCacheControlHttpHeader('Cache-control', 'must-revalidate, post-check=0, pre-check=0');
+        $response->setContentType('application/octet-stream', true);
+        $response->setHttpHeader('Content-Transfer-Encoding', 'binary', true);
+        $response->setHttpHeader('Content-Disposition', "attachment; filename={$file_name}", true);
+        $response->sendHttpHeaders();
+        
+        readfile("{$file_path}{$file_name}");
+        
+        return sfView::NONE;
 	}
 	
 	/**

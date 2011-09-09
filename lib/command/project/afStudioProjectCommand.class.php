@@ -206,14 +206,22 @@ class afStudioProjectCommand extends afBaseStudioCommand
      */
     protected function processExport()
     {
+        $response = afResponseHelper::create();
+        
         $by_os = $this->getParameter('by_os', 'false');
         $type = $this->getParameter('type', 'project');
-        $path = $this->getParameter('path', "./data/export/{$type}");
         
-        $console = afStudioConsole::getInstance();
-        $console_result = $console->execute("sf afs:export --type={$type} --by_os={$by_os} --path={$path}");
+        $path = $this->getParameter('path', afStudioUtil::getRootDir() . "/data/export/");
+        if (substr($path, -1, 1) != DIRECTORY_SEPARATOR) $path .= DIRECTORY_SEPARATOR;
         
-        return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->console($console_result);
+        $name = $this->getParameter('name', pathinfo(afStudioUtil::getRootDir(), PATHINFO_BASENAME));
+        
+        $console_result = afStudioConsole::getInstance()->execute("sf afs:export --type={$type} --by_os={$by_os} --path={$path} --project_name={$name}");
+        $postfix = ($type == 'db') ? 'sql' : 'tar.gz';
+        
+        if (!file_exists("{$path}{$name}.{$postfix}")) return $response->success(false)->message('Please check permissions');
+        
+        return $response->success(true)->data(array(), array('name' => $name, 'file' => "{$name}.{$postfix}", 'path' => $path), 0)->console($console_result);
     }
     
 }
