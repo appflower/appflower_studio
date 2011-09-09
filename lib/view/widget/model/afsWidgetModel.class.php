@@ -227,7 +227,7 @@ class afsWidgetModel extends afsBaseModel
     public function save()
     {
         $definition_array = $this->getDefinition();
-        $definition_array = afsWidgetModelHelper::fixOrder($definition_array);
+        $definition_array = afsWidgetModelOrderHelper::fixing($definition_array, $this->getType());
         
         $definition = afsXmlDefinition::create()->init($definition_array);
         if ($this->isNew()) $definition->rootAttributes($this->getType());
