@@ -129,6 +129,8 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
     getCreateProjectWizardCheckDatabaseUrl : '/appFlowerStudio/createProjectWizardCheckDatabase',
     
+    exportUrl : '/appFlowerStudio/export',
+    
     buildUrlFor: function(url) {
         return url;
     }
