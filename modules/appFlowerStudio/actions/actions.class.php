@@ -363,14 +363,14 @@ class appFlowerStudioActions extends afsActions
 	 * Export project call
 	 *
 	 * @param sfWebRequest $request 
-	 * @return string - json
+	 * @return mixed
 	 * @author Sergey Startsev
 	 */
 	public function executeExport(sfWebRequest $request)
 	{
         $response = afStudioCommand::process('project', 'export', $request->getParameterHolder()->getAll());
         
-        if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $this->renderJson($response->asArray());
+        if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response->getParameter(afResponseMessageDecorator::IDENTIFICATOR);
         
         $data = $response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA);
         $file_name = $data['file'];

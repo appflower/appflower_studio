@@ -219,7 +219,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $console_result = afStudioConsole::getInstance()->execute("sf afs:export --type={$type} --by_os={$by_os} --path={$path} --project_name={$name}");
         $postfix = ($type == 'db') ? 'sql' : 'tar.gz';
         
-        if (!file_exists("{$path}{$name}.{$postfix}")) return $response->success(false)->message('Please check permissions');
+        if (!file_exists("{$path}{$name}.{$postfix}")) return $response->success(false)->message('Please check permissions, and propel settings');
         
         return $response->success(true)->data(array(), array('name' => $name, 'file' => "{$name}.{$postfix}", 'path' => $path), 0)->console($console_result);
     }

@@ -153,9 +153,9 @@ EOF;
         
         $this->log("Building sql files.");
         
-        if (file_exists("{$sql_dir}/{$main_sql}")) {
-            $this->logSection('main-sql', "{$sql_dir}/{$main_sql}");
-        }
+        if (!file_exists("{$sql_dir}/{$main_sql}")) throw sfCommandException("Oops, please check credentials to data and right propel output dir.");
+        
+        $this->logSection('main-sql', "{$sql_dir}/{$main_sql}");
         
         afsFileSystem::create()->copy("{$sql_dir}/{$main_sql}", $export_path);
         
