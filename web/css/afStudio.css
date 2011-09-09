@@ -10,6 +10,9 @@
 .icon-studio-project{background:url('/appFlowerStudioPlugin/images/application.png') no-repeat center left !important;}
 .icon-studio-create-project{background:url('/appFlowerStudioPlugin/images/application_add.png') no-repeat center left !important;}
 .icon-studio-load-project{background:url('/appFlowerStudioPlugin/images/application_get.png') no-repeat center left !important;}
+.icon-studio-export-project{background:url('/appFlowerStudioPlugin/images/application_put.png') no-repeat center left !important;}
+.icon-studio-export-project-source{background:url('/appFlowerStudioPlugin/images/script_go.png') no-repeat center left !important;}
+.icon-studio-export-project-sql{background:url('/appFlowerStudioPlugin/images/database_go.png') no-repeat center left !important;}
 .icon-studio-recent-projects{background:url('/appFlowerStudioPlugin/images/application_cascade.png') no-repeat center left !important;}
 .icon-studio-settings{background:url('/appFlowerStudioPlugin/images/cog.png') no-repeat center left !important;}
 .icon-studio-help{background:url('/appFlowerStudioPlugin/images/help.png') no-repeat center left !important;}

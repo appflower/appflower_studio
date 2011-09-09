@@ -185,6 +185,29 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				(new afStudio.LoadProject()).show();
 			}
 		});
+		
+		menuItem.menu.addMenuItem({
+			text: 'Export project',
+			iconCls: 'icon-studio-export-project',
+			menu: {
+				items: [
+				{
+					text: 'Sources',
+					iconCls: 'icon-studio-export-project-source',
+					handler: function() {
+						var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({type: 'project'}));
+						window.open(url, 'export-win');
+					}
+				},{
+					text: 'Sql structure',
+					iconCls: 'icon-studio-export-project-sql',
+					handler: function (b, e) {
+						var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({type: 'db'}));
+						window.open(url, 'export-win');
+					}
+				}]
+			}
+		});
 				
 		if (recentProjects.length > 0) {
 			menuItem.menu.addSeparator();			
@@ -228,8 +251,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				window.open(response.query, 'runProject');
 			}
 		});
-	}//eo runProject
-	
+	}
 });
 
 /**
