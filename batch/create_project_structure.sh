@@ -1,52 +1,23 @@
 #!/bin/sh
 
 CURRENT_DIR=$(pwd)
-TARGET_DIR=$1
-FETCH_LATEST_TGZ=$2
-PROJECT_YML_FILE=$3
-DATABASES_YML_FILE=$4
-USERS_YML_FILE=$5
-DATABASE_EXIST=$6
-DB_NAME=$7
-DB_HOST=$8
-DB_PORT=$9
-DB_USER=${10}
-DB_PASS=${11}
-
 cd $CURRENT_DIR/../
-CURRENT_DIR=$(pwd)
-SKELETON_FILE=$CURRENT_DIR/plugins/appFlowerStudioPlugin/data/skeleton.tgz
+PROJECT_DIR=$(pwd)
 
-mkdir -p $CURRENT_DIR/plugins/appFlowerStudioPlugin/data/
+TARGET_DIR=$1
+PROJECT_YML_FILE=$2
+DATABASES_YML_FILE=$3
+USERS_YML_FILE=$4
+DATABASE_EXIST=$5
+DB_NAME=$6
+DB_HOST=$7
+DB_PORT=$8
+DB_USER=$9
+DB_PASS=${10}
 
-echo Fetching skeleton.tgz if needed
-if [ "$FETCH_LATEST_TGZ" = "1" ]; then
-	rm -rf $SKELETON_FILE
-    wget -q --directory-prefix="$CURRENT_DIR/plugins/appFlowerStudioPlugin/data/" http://www.appflower.com/uploads/skeleton.tgz
-else
-    if [ -e $SKELETON_FILE ]; then
-		wget -q --directory-prefix="/tmp/" http://www.appflower.com/uploads/skeleton.tgz
-		
-		if `diff $SKELETON_FILE /tmp/skeleton.tgz >/dev/null` ; then
-		  rm -rf /tmp/skeleton.tgz
-		else
-		  rm -rf $SKELETON_FILE
-		  cp -pR /tmp/skeleton.tgz $SKELETON_FILE
-		fi
-	else 
-	    rm -rf $SKELETON_FILE
-		wget -q --directory-prefix="$CURRENT_DIR/plugins/appFlowerStudioPlugin/data/" http://www.appflower.com/uploads/skeleton.tgz
-	fi
-fi
+echo Cloning current project into target directory
+$PROJECT_DIR/plugins/appFlowerStudioPlugin/batch/cloneLocalGitRepository.php $PROJECT_DIR $TARGET_DIR vm-image || exit 1
 
-echo Creating new project from skeleton
-mkdir -p $TARGET_DIR
-cd /tmp
-tar xzpf $SKELETON_FILE
-mv /tmp/skeleton/* $TARGET_DIR
-rm -rf /tmp/skeleton
-mkdir -p $TARGET_DIR/plugins/appFlowerStudioPlugin/data/
-cp $SKELETON_FILE $TARGET_DIR/plugins/appFlowerStudioPlugin/data/
 if [ -e $PROJECT_YML_FILE ]; then
 	cp $PROJECT_YML_FILE $TARGET_DIR/config/project.yml
 	rm -rf $PROJECT_YML_FILE

@@ -96,7 +96,7 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
     	$project['name'] = $params['name'];    	
     	$project['template'] = $params['template'];
     	
-    	$latest = true;
+    	$latest = false;
     	$path = $params['path'];
     	
     	$project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'],$project);

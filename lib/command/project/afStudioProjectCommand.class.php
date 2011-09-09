@@ -69,7 +69,6 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $params = $this->getParameter('params');
         
         $params['autodeploy'] = !isset($params['autodeploy']) ? false : true;
-        $latest = !isset($params['latest']) ? false : true;
         $path = $params['path'];
         
         
@@ -79,7 +78,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         file_put_contents('/tmp/project-'.$unique.'.yml', $this->dumpYaml(array('project'=>$params)));
    	    
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml');
+        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml');
     	
         if (is_readable($path.'/config/project.yml')) {    	    	
             $this->result['success'] = true;
@@ -145,7 +144,6 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $project['name'] = $this->getParameter('name');    	
         $project['template'] = $this->getParameter('template');
         
-        $latest = true;
         $path = $params['path'];
         
         $project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $project);
@@ -161,7 +159,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         //create user configuration
         afStudioUserHelper::createNewUserForCPW($userForm, '/tmp/users-'.$unique.'.yml');
         
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
+        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
         
         if (is_readable($path.'/config/project.yml')) {    	    	
             $this->result['success'] = true;
