@@ -10,10 +10,18 @@ afStudio.view.inspector.TreeNode = function(attr) {
 	attr = attr || {};
 	
 	if (attr.modelNode) {
+		/**
+		 * @property modelNode The model node reference associated with this tree-node
+		 * @type {Node}
+		 */
 		this.modelNode = attr.modelNode;
 		delete attr.modelNode;
 	}
 	
+	/**
+	 * @property properties Model node's {@link #modelNode} properties
+	 * @type {Object}
+	 */
 	this.properties = attr.properties;
 	delete attr.properties;
 	

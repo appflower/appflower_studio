@@ -31,7 +31,7 @@ afStudio.data.type.String = Ext.extend(afStudio.data.type.Type, {
 	 * @override
 	 */
 	validate : function(value) {
-		if (Ext.isString(value)) {
+		if (Ext.isString(value) || Ext.isString(this.convert(value))) {
 			return afStudio.data.type.String.superclass.validate.call(this, value);
 		}
 		

@@ -127,6 +127,9 @@ afStudio.data.type.Type = Ext.extend(Object, {
 	 * @return {Ext.form.Field} editor
 	 */
 	editor : function(cfg, convert) {
+		//convert is true by default
+		convert = Ext.isDefined(convert) ? Boolean(convert) : true;
+		
 		var cfg = cfg || {},
 			vls = this.restrictions ? this.restrictions.enumeration : [],
 			editor;
@@ -135,7 +138,7 @@ afStudio.data.type.Type = Ext.extend(Object, {
 			if (v == '') {
 				return true;
 			}
-			v = !convert ? this.convert(v) : v;
+			v = convert ? this.convert(v) : v;
 			return this.validate(v);
 		}.createDelegate(this);
 		

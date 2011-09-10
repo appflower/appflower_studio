@@ -236,8 +236,8 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     initController : function() {
     	this.initModel();
     	this.initView();
-    	
-        this.ready = true;
+
+    	this.ready = true;
         this.fireEvent("ready", this);
     },
     //eo initController
