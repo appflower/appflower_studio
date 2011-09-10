@@ -211,7 +211,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $by_os = $this->getParameter('by_os', 'false');
         $type = $this->getParameter('type', 'project');
         
-        $path = $this->getParameter('path', afStudioUtil::getRootDir() . "/data/export/");
+        $path = $this->getParameter('path', sys_get_temp_dir());
         if (substr($path, -1, 1) != DIRECTORY_SEPARATOR) $path .= DIRECTORY_SEPARATOR;
         
         $name = $this->getParameter('name', pathinfo(afStudioUtil::getRootDir(), PATHINFO_BASENAME));
