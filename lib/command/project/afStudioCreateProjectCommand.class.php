@@ -121,6 +121,8 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
                 $serverEnv = afStudioUtil::getServerEnvironment();
                 $vhost = $serverEnv->createNewProjectVhost($params['slug'], $path.'/web');
                 if ($vhost) {
+                    $serverEnv->executeSymfonyTask($path, 'project:permission');
+                    $serverEnv->executeSymfonyTask($path, 'afs:fix-perms');
                     $serverEnv->restartWebServer();
                     $projectURL = 'http://'.$_SERVER['SERVER_ADDR'].':'.$vhost->getPort();
                 }

@@ -80,6 +80,13 @@ class ServerEnvironmentService
         return $retVal === 0;
     }
     
+    public function executeSymfonyTask($symfonyProjectDir, $taskAndParameters)
+    {
+        $cmd = "cd $symfonyProjectDir; sudo ./symfony $taskAndParameters";
+        exec($cmd, $output, $retVal);
+        return $retVal === 0;
+    }
+    
     /**
      * Issues graceful restart of web server
      */
