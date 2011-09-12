@@ -83,7 +83,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		
 		_self = this;
 		this.tree = new Ext.ux.FileTreePanel({
-			url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
+			url: afStudioWSUrls.project,
 			rootPath:'root',
 			rootVisible:true,
 			rootText:afStudioHost.user+'@'+afStudioHost.name,
@@ -357,7 +357,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			  
 				var _this = this;
 				Ext.Ajax.request({
-					url: afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl,
+					url: Ext.urlAppend(afStudioWSUrls.project, {cmd: 'checkDatabase'}),
 					params: { 
 						form: Ext.encode(form5Values)
 					},
@@ -446,7 +446,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
     mask.show();
 		
 		Ext.Ajax.request({
-			url: window.afStudioWSUrls.getProjectCreateWizardUrl(),
+			url: Ext.urlAppend(afStudioWSUrls.project, {cmd: 'saveWizard'}),
 			params: { 
 				name: this.form1.getForm().findField('name').getValue(),
 				path: this.form2.getForm().findField('path').getValue(),

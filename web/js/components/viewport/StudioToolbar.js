@@ -255,8 +255,8 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	/**
 	 * Runs projects commands and opens project in a new browser's tab
 	 */
-	,runProject : function() {	
-		var runUrl = afStudioWSUrls.getProjectRunUrl;
+	,runProject : function() {
+		var runUrl = Ext.urlAppend(afStudioWSUrls.project, {cmd: 'run'});
 		
 		afStudio.xhr.executeAction({
 			url: runUrl,

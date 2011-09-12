@@ -97,16 +97,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/afsModelGridData/delete?model=' + modelName);
     },
     
-    getProjectLoadTreeUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/loadProjectTree');
-    },
-    
-    getProjectCreateUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/createProject');
-    },
-    
-    getProjectRunUrl : '/appFlowerStudio/run',
-    
     getTemplateSelectorUrl: function() {
     	return this.buildUrlFor('/appFlowerStudio/templateSelector');
     },
@@ -119,15 +109,11 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     	return this.buildUrlFor('/appFlowerStudio/checkHelperFileExist');
     },
     
-    getProjectCreateWizardUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/createProjectWizard');
-    },
-    
     getCheckUserExistUrl: function() {
     	return this.buildUrlFor('/afsUserManager/checkUserExist');
     },
-    
-    getCreateProjectWizardCheckDatabaseUrl : '/appFlowerStudio/createProjectWizardCheckDatabase',
+
+	project : '/appFlowerStudio/project',
     
     exportUrl : '/appFlowerStudio/export',
     
