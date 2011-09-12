@@ -190,6 +190,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			text: 'Export project',
 			iconCls: 'icon-studio-export-project',
 			menu: {
+				ignoreParentClicks: true,
 				items: [
 				{
 					text: 'Sources',
@@ -201,7 +202,6 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				},{
 					text: 'DB',
 					iconCls: 'icon-studio-export-project-sql',
-					ignoreParentClicks: true,
 					menu: {
 						items: [
 						{
