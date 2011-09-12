@@ -250,7 +250,6 @@ class appFlowerStudioActions extends afsActions
         );
     }
     
-    
     /**
      * Configuring project
      *
@@ -265,89 +264,6 @@ class appFlowerStudioActions extends afsActions
     }
     
     /**
-     * Load project tree
-     * 
-     * @param sfWebRequest $request
-     * @return string - json
-     * @author Radu Topala
-     * @author Sergey Startsev
-     */
-    public function executeLoadProjectTree(sfWebRequest $request)
-    {
-        $command = $request->getParameter('cmd');
-        $response = afStudioCommand::process('project', $command, $request->getParameterHolder()->getAll());
-        
-        if ($command == 'get') {
-            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-                return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
-            }
-        }
-        
-        return $this->renderJson($response->asArray());
-    }
-    
-    /**
-     * Execute run project coomand
-     * 
-     * @param sfWebRequest $request
-     * @return string - json
-     * @author Sergey Startsev
-     */
-    public function executeRun(sfWebRequest $request)
-    {
-        afsNotificationPeer::log('[run] Run was executed on the project');
-        
-        return $this->renderJson(
-            afStudioCommand::process('project', 'run')->query(sfContext::getInstance()->getController()->genUrl('@homepage'))->asArray()
-        );
-    }
-    
-    /**
-     * Create project feature
-     * 
-     * @param sfWebRequest $request
-     * @return string - json
-     * @author Radu Topala
-     * @author Sergey Startsev
-     */
-    public function executeCreateProject(sfWebRequest $request)
-    {
-        return $this->renderJson(
-            afStudioCommand::process('project', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())->asArray()
-        );
-    }
-    
-    /**
-     * Checking database in create project wizard
-     *
-     * @param sfWebRequest $request 
-     * @return string - json
-     * @author Sergey Startsev
-     */
-    public function executeCreateProjectWizardCheckDatabase(sfWebRequest $request)
-    {
-        return $this->renderJson(
-            afStudioCommand::process('project', 'checkDatabase', $request->getParameterHolder()->getAll())->asArray()
-        );
-    }
-    
-    /**
-     * Create project wizard
-     *
-     * @param sfWebRequest $request 
-     * @return string - json
-     * @author Radu Topala
-     * @author Sergey Startsev
-     */
-    public function executeCreateProjectWizard(sfWebRequest $request)
-    {
-        return $this->renderJson(
-            afStudioCommand::process('project', 'saveWizard', $request->getParameterHolder()->getAll())->asArray()
-        );
-    }
-    
-    
-    /**
      * Execute project functionality
      *
      * @param sfWebRequest $request 
@@ -356,9 +272,21 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeProject(sfWebRequest $request)
     {
-        return $this->renderJson(
-            afStudioCommand::process('project', $request->getParameter('cmd'), $request->getParameterHolder()->getAll())->asArray()
-        );
+        $command = $request->getParameter('cmd');
+        $response = afStudioCommand::process('project', $command, $request->getParameterHolder()->getAll());
+        
+        if ($command == 'run') {
+            afsNotificationPeer::log('[run] Run was executed on the project');
+            $response->query(sfContext::getInstance()->getController()->genUrl('@homepage'));
+        }
+        
+        if ($command == 'get') {
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+            }
+        }
+        
+        return $this->renderJson($response->asArray());
     }
     
     /**
