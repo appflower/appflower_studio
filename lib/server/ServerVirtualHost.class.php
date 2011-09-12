@@ -21,7 +21,7 @@ NameVirtualHost *:__SERVER_PORT__
   ServerName __SERVER_NAME__
   DocumentRoot __DOCUMENT_ROOT__
 
-  <Directory "__DOCUMENT_ROOT__/web">
+  <Directory "__DOCUMENT_ROOT__">
     AllowOverride All
   </Directory>
   
