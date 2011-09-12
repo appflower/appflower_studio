@@ -113,17 +113,35 @@ class afStudioCreateProjectCommand extends afBaseStudioCommand
       afStudioUserHelper::createNewUserForCPW($userForm, '/tmp/users-'.$unique.'.yml');
     	   	
     	$console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
+        $this->result['console'] = $console;
     	    	
     	if(is_readable($path.'/config/project.yml'))
-    	{    	    	
-      	$this->result['success'] = true;
-        $this->result['message'] = 'Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!';
-        $this->result['console'] = $console;
+    	{
+            try {
+                $serverEnv = afStudioUtil::getServerEnvironment();
+                $vhost = $serverEnv->createNewProjectVhost($params['slug'], $path.'/web');
+                if ($vhost) {
+                    $serverEnv->restartWebServer();
+                    $projectURL = 'http://'.$_SERVER['SERVER_ADDR'].':'.$vhost->getPort();
+                }
+                
+                $this->result['success'] = true;
+                $this->result['message'] = 'Project created in path <b>'.$path.'</b>.<br />';
+                $this->result['message'] .= "You can access it with this URL: <a href=\"$projectURL\">$projectURL</a>";
+                
+            } catch (ServerException $e) {
+                if (sfConfig::get('sf_environment') == 'dev') {
+                    throw $e;
+                } else {
+                    $this->result['success'] = false;
+                    $this->result['message'] = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!';
+                    $this->result['console'] .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
+                }
+            }
     	}
     	else {
-    	  $this->result['success'] = false;
-        $this->result['message'] = 'Project was not created in path <b>'.$path.'</b> due to some errors!';
-        $this->result['console'] = $console;
+    	    $this->result['success'] = false;
+            $this->result['message'] = 'Project was not created in path <b>'.$path.'</b> due to some errors!';
     	}
 	}
 }

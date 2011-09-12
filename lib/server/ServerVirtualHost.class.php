@@ -13,7 +13,7 @@ class ServerVirtualHost {
     private $port;
     private $slug;
     private $filename;
-    private $vhostDomain = 'studio.local';
+    private $vhostDomain = 'local';
     private $vhostDefinitionTemplate =
 '<VirtualHost *:__SERVER_PORT__>
   ServerName __SERVER_NAME__
