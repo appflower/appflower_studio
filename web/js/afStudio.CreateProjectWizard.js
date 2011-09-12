@@ -339,7 +339,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
   			var path = this.form2.getForm().findField('path').getValue();
   			var html = '<div  class="guide_header"> <div class="date_cover"> <div>06</div> </div> <h2>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</h2> </div> <br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'.local</b> in your browser.<br><br>Here is an example:<br>';
   					
-  			html+='<pre><code>&lt;VirtualHost *:80&gt;<br>&nbsp;&nbsp;ServerName '+slug+'.local<br>&nbsp;&nbsp;DocumentRoot '+path+'/web<br>&nbsp;&nbsp;DirectoryIndex index.php<br>&nbsp;&nbsp;Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"<br><br>&nbsp;&nbsp;&lt;Directory "'+path+'/web"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;AllowOverride All<br>&nbsp;&nbsp;&nbsp;&nbsp;Allow from All<br>&nbsp;&nbsp;&lt;/Directory&gt;<br>&lt;/VirtualHost&gt;</code></pre>';
+  			html+='<pre><code>&lt;VirtualHost *:80&gt;<br>&nbsp;&nbsp;ServerName '+slug+'.local<br>&nbsp;&nbsp;DocumentRoot '+path+'/web<br>&lt;/VirtualHost&gt;</code></pre>';
             html+='<br /><i><b>Create Project Wizard</b> will try to set up Apache virtual host automatically for you.</i>';
   			
   			this.form6.getForm().findField('infor').update(html);

@@ -2,15 +2,15 @@
 /**
  * This is a "service" class that can be used to fetch informations about
  * server environment that studio is currently running on.
- * It can also be used to modify that environment
+ * It can also be used to modify that environment (especially create new vhost)
  * 
  * This one is made only for apache but it can be broken apart to some
  * interface and many classes for many werbservers (nginx ?)
  * 
  * Some assumtions that needs to be taken into account.
- * * Apache must be configured to listen on 10001-10100 ports - each port is dedicated to one AF/studio project
- *   So we are assuming maximum number of 100 projects managed on one server environment
- * * Apache must have Include statement used somewhere that includes dediacted
+ * * Vhosts will be launched on different port numbers starting from 10001
+ *   So there should be no other service running on port > 10000 that could cause conflicts
+ * * Apache must have Include statement used somewhere that includes dedicated
  *   directory with vhosts definitions of studio projects.
  *   the same directory must be passed to the constructor of this class
  * * There must be sudo installed and configured to allow www-data user use it without password

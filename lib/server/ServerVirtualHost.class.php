@@ -15,7 +15,9 @@ class ServerVirtualHost {
     private $filename;
     private $vhostDomain = 'local';
     private $vhostDefinitionTemplate =
-'<VirtualHost *:__SERVER_PORT__>
+'Listen *:__SERVER_PORT__
+NameVirtualHost *:__SERVER_PORT__
+<VirtualHost *:__SERVER_PORT__>
   ServerName __SERVER_NAME__
   DocumentRoot __DOCUMENT_ROOT__
 </VirtualHost>';
