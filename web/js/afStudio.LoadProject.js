@@ -2,7 +2,7 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 	
 	initComponent: function(){
 		this.tree = new Ext.ux.FileTreePanel({
-			url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
+			url: afStudioWSUrls.project,
 			rootPath:'root',
 			rootVisible:true,
 			rootText:afStudioHost.user+'@'+afStudioHost.name,
@@ -85,7 +85,7 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
             
             //first check if there is a AF project inside path, and if it is load the selected project in browser
             Ext.Ajax.request({
-                url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
+                url: afStudioWSUrls.project,
                 method: 'post',
                 params: {
                     cmd: 'isPathValid',
