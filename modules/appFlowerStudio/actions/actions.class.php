@@ -31,20 +31,6 @@ class appFlowerStudioActions extends afsActions
     }
     
     /**
-     * Code editor - higlighter action
-     *
-     * @param sfWebRequest $request 
-     * @return string
-     */
-    public function executeCodepress(sfWebRequest $request)
-    {
-        $this->codepress_path = '/appFlowerStudioPlugin/js/codepress/';
-        $this->language = ($request->hasParameter('language') && $request->getParameter('language') != 'undefined') ? $request->getParameter('language') :'generic';
-        
-        return $this->renderPartial('codepress');
-    }
-    
-    /**
      * Getting file content
      *
      * @param sfWebRequest $request 
