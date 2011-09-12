@@ -12,6 +12,11 @@ class ServerVirtualHostCollection {
         $this->vhosts = $this->fetchStudioProjects($vhostsFilesDirectory);
     }
     
+    function getAll()
+    {
+        return $this->vhosts;
+    }
+    
     /**
      * Iterates through existing vhosts looking for first not used port number
      * @return int 

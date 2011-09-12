@@ -63,6 +63,11 @@ class ServerEnvironmentService
         $this->existingVhostCollection = new ServerVirtualHostCollection($this->vhostsFilesDirectory);
     }
     
+    public function getExistingVhosts()
+    {
+        return $this->existingVhostCollection;
+    }
+    
     private function isSyntaxValid()
     {
         return $this->executeApachectl('-t');
