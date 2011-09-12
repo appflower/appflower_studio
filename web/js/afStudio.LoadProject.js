@@ -77,53 +77,44 @@ afStudio.LoadProject = Ext.extend(Ext.Window, {
 		this.close();
 	},
 	
-	load: function()
-	{
-		var node = this.tree.getSelectionModel().getSelectedNode();	
-		if(node)
-		{	
-			var path = this.tree.getPath(node);
-			
-			//first check if there is a AF project inside path, and if it is load the selected project in browser
-			Ext.Ajax.request({
-				url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
-				method: 'post',
-				params: {
-					cmd: 'isPathValid',
-					path: path
-				},
-				callback: function(options, success, response) {				
-					response = Ext.decode(response.responseText);
-					
-					if(response.success)
-	                {
-	                    Ext.Msg.show({
-	                    	title: response.title, 
-	                    	msg: response.message,
-	                    	buttons: Ext.Msg.OKCANCEL,
-	                    	modal: true,
-	                    	fn: function(buttonId){
-	                    		
-	                    		if(buttonId=='ok'&&response.project){
-	                                window.location.href=response.project.url+'/studio';
-	                            }
-	                            else{
-	                            	this.close();
-	                            }
-	                    	}
-	                    });
-	                }
-	                else
-	                {
-	                    afStudio.Msg.info(response.message);
-	                }
-				}
-				
-			});
-		}
-		else
-		{
-			Ext.Msg.alert('','Please select a directory !');	
-		}
-	}
+    load: function()
+    {
+        var node = this.tree.getSelectionModel().getSelectedNode();	
+        if (node) {
+            var path = this.tree.getPath(node);
+            
+            //first check if there is a AF project inside path, and if it is load the selected project in browser
+            Ext.Ajax.request({
+                url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
+                method: 'post',
+                params: {
+                    cmd: 'isPathValid',
+                    path: path
+                },
+                callback: function(options, success, response) {
+                    response = Ext.decode(response.responseText);
+                    
+                    if (response.success) {
+                        Ext.Msg.show({
+                            title: 'Success', 
+                            msg: response.message,
+                            buttons: Ext.Msg.OKCANCEL,
+                            modal: true,
+                            fn: function(buttonId){
+                                if (buttonId == 'ok' && response.query) {
+                                    window.location.href = response.query + '/studio';
+                                } else{
+                                    this.close();
+                                }
+                            }
+                        });
+                    } else {
+                        afStudio.Msg.info(response.message);
+                    }
+                }
+            });
+        } else {
+            Ext.Msg.alert('','Please select a directory !');	
+        }
+    }
 });

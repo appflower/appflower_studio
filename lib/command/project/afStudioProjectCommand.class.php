@@ -39,34 +39,38 @@ class afStudioProjectCommand extends afBaseStudioCommand
 	/**
 	 * Checking is valid path
 	 * 
-	 * @return array
+	 * @return afResponse
 	 */
     protected function processIsPathValid()
     {
+        $response = afResponseHelper::create();
+        
         $path = $this->getParameter('path');
         if ($path) {
             $path = str_replace('root/', '/', $path);
             $path = str_replace('root', '/', $path);
         }
         
-        $projectYmlPath = $projectPath . '/config/project.yml';
-        $appFlowerPluginPath = $projectPath . '/plugins/appFlowerPlugin/';
-        $appFlowerStudioPluginPath = $projectPath . '/plugins/appFlowerStudioPlugin/';
+        $projectYmlPath = $path . '/config/project.yml';
+        $appFlowerPluginPath = $path . '/plugins/appFlowerPlugin/';
+        $appFlowerStudioPluginPath = $path . '/plugins/appFlowerStudioPlugin/';
         
         if (file_exists($appFlowerPluginPath) && file_exists($appFlowerStudioPluginPath)) {
             $sfYaml = new sfYaml();
             $projectYmlData = $sfYaml->load($projectYmlPath);
             
             if (file_exists($projectYmlPath) && !empty($projectYmlData['project']['url'])) {
-                $this->result = array_merge(array('success'=>true, 'title'=>'Success', 'message'=>'The selected path contains a valid project. <br>You will now be redirected to <b>'.$projectYmlData['project']['url'].'/studio</b>'),$projectYmlData);
-            } else {
-                $this->result = array('success'=>false, 'message'=> 'The selected path contains an AppFlower project, but the URL for the project is not set!');
+                return $response
+                    ->success(true)
+                    ->message('The selected path contains a valid project. <br>You will now be redirected to <b>'.$projectYmlData['project']['url'].'/studio</b>')
+                    ->query($projectYmlData['project']['url']);
             }
-        } else {
-            $this->result = array('success'=>false, 'message'=> 'The selected path doesn\'t contain any valid AppFlower project!');
+            
+            return $response->success(false)->message('The selected path contains an AppFlower project, but the URL for the project is not set!');
         }
+        
+        return $response->success(false)->message("The selected path doesn't contain any valid AppFlower project!");
     }
-    
     
     /**
      * Save project functionality
