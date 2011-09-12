@@ -199,11 +199,26 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						window.open(url, 'export-win');
 					}
 				},{
-					text: 'Sql structure',
+					text: 'DB',
 					iconCls: 'icon-studio-export-project-sql',
-					handler: function (b, e) {
-						var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({type: 'db'}));
-						window.open(url, 'export-win');
+					ignoreParentClicks: true,
+					menu: {
+						items: [
+						{
+							text: 'structure',
+							iconCls: 'icon-studio-export-project-sql',
+							handler: function (b, e) {
+								var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({type: 'db'}));
+								window.open(url, 'export-win');
+							}
+						},{
+							text: 'structure + data (for mysql)',
+							iconCls: 'icon-studio-export-project-sql',
+							handler: function (b, e) {
+								var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({by_os: true, type: 'db'}));
+								window.open(url, 'export-win');
+							}
+						}]
 					}
 				}]
 			}
