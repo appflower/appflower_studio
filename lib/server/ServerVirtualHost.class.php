@@ -20,6 +20,11 @@ NameVirtualHost *:__SERVER_PORT__
 <VirtualHost *:__SERVER_PORT__>
   ServerName __SERVER_NAME__
   DocumentRoot __DOCUMENT_ROOT__
+
+  <Directory "__DOCUMENT_ROOT__/web">
+    AllowOverride All
+  </Directory>
+  
 </VirtualHost>';
     
     /**
