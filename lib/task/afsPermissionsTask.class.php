@@ -85,6 +85,10 @@ class afsPermissionsTask extends sfBaseTask
      */
     protected function configure()
     {
+        $this->addOptions(array(
+            new sfCommandOption('set_web_group', null, sfCommandOption::PARAMETER_OPTIONAL, 'Should be setted www web group to project group as main', false),
+        ));
+        
         $this->namespace = 'afs';
         $this->name = 'fix-perms';
         $this->briefDescription = 'Fixes af Studio permissions';
@@ -103,71 +107,90 @@ EOF;
     {
         if (strtolower(substr(PHP_OS, 0, 3)) !== 'win') {
             $root_dir = sfConfig::get('sf_root_dir');
-            $dir_info = stat($root_dir);
             
-            $owner_id = $dir_info['uid'];
-            $owner_gid = $dir_info['gid'];
-            $owner_name = $this->run_command("id -un {$owner_id}");
-            if (empty($owner_name)) {
-                $owner_name = $this->run_command("getent passwd | awk -F: '$3 == {$owner_id} { print $1 }'");
+            if ($options['set_web_group'] == 'true' || $options['set_web_group'] === true) {
+                $this->setWebGroup($options);
             }
             
-            $current_user = get_current_user();
+            // Fix permissions for setted folders
+            $command_log = array();
             
-            $apache_user = $this->getServerUserName();
-            
-            if (!empty($apache_user)) {
-                $apache_user_gid = $this->run_command("id -g {$apache_user}");
-                $apache_user_group_name = $this->run_command("id -gn {$apache_user}");
+            $folders = $this->getFolders();
+            foreach ($folders as $folder) {
+                $path = (!$this->isAbsolute($folder)) ? $root_dir : '';
+                $path .= $this->getFolderPath($folder);
                 
-                if (strtolower(PHP_OS) === 'darwin') {
-                    $change_usermod = $this->run_command("dseditgroup -o edit -a {$owner_name} -t user {$apache_user_group_name}");
-                } else {
-                    $change_usermod = $this->run_command("usermod -a -G {$apache_user_gid} {$owner_name}");
+                if (file_exists($path)) {
+                    $command = array();
+                    $command[] = "chmod";
+                    if ($this->isRecursive($folder)) $command[] = "-R";
+                    $command[] = $this->getFolderMode($folder);
+                    $command[] = $path;
+                    
+                    $command = implode(' ', $command);
+                    
+                    $change_creds = $this->run_command($command);
+                    
+                    $command_log[] = $command;
+                    
+                    $this->logSection('path', sprintf('change permissions %s to %s', $path, $this->getFolderMode($folder)));
                 }
-                
-                if (!is_bool($change_usermod)) {
-                    $change_group = $this->run_command("chgrp -R {$apache_user_gid} {$root_dir}");
-                    
-                    $command_log = array();
-                    
-                    $folders = $this->getFolders();
-                    foreach ($folders as $folder) {
-                        $path = (!$this->isAbsolute($folder)) ? $root_dir : '';
-                        $path .= $this->getFolderPath($folder);
-                        
-                        if (file_exists($path)) {
-                            $command = array();
-                            $command[] = "chmod";
-                            if ($this->isRecursive($folder)) $command[] = "-R";
-                            $command[] = $this->getFolderMode($folder);
-                            $command[] = $path;
-                            
-                            $command = implode(' ', $command);
-                            
-                            $change_creds = $this->run_command($command);
-                            
-                            $command_log[] = $command;
-                            
-                            $this->logSection('path', sprintf('change permissions %s to %s', $path, $this->getFolderMode($folder)));
-                        }
-                    }
-                    
-            	    $this->log_it(
-            	        "User: {$current_user}. " .
-            	        "Owner (Id: {$owner_id}, Name: {$owner_name}, Group Id: {$owner_gid}). " .
-            	        "Apache User: (Name: {$apache_user}, Group Id: {$apache_user_gid}). " . 
-            	        "Group Changed: {$owner_gid} -> {$apache_user_gid}. Added group to user '{$owner_name}' group '{$apache_user_gid}'\n".
-            	        "Chmods:\n". implode("\n", $command_log)
-            	    );
-                } else {
-                    $this->log("Please run task using root credentials. {$change_usermod}");
-                    $this->log_it("User: {$current_user}. Trying to set credentials - fail. Need to run as root");
-            	}
-            } else {
-                $this->log_it("User: {$current_user}. Can't found apache user");
-                throw new Exception("Can't found apache user. Please check that apache is running");
             }
+            
+            $this->log_it("Chmods:\n". implode("\n", $command_log));
+        }
+    }
+    
+    /**
+     * Set web group as main group for project folder
+     *
+     * @param Array $options 
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function setWebGroup(Array $options)
+    {
+        $root_dir = sfConfig::get('sf_root_dir');
+        
+        $dir_info = stat($root_dir);
+        
+        $owner_id = $dir_info['uid'];
+        $owner_gid = $dir_info['gid'];
+        $owner_name = $this->run_command("id -un {$owner_id}");
+        if (empty($owner_name)) {
+            $owner_name = $this->run_command("getent passwd | awk -F: '$3 == {$owner_id} { print $1 }'");
+        }
+        
+        $current_user = get_current_user();
+        
+        $apache_user = $this->getServerUserName();
+        
+        if (!empty($apache_user)) {
+            $apache_user_gid = $this->run_command("id -g {$apache_user}");
+            $apache_user_group_name = $this->run_command("id -gn {$apache_user}");
+            
+            if (strtolower(PHP_OS) === 'darwin') {
+                $change_usermod = $this->run_command("dseditgroup -o edit -a {$owner_name} -t user {$apache_user_group_name}");
+            } else {
+                $change_usermod = $this->run_command("usermod -a -G {$apache_user_gid} {$owner_name}");
+            }
+            
+            if (!is_bool($change_usermod)) {
+                $change_group = $this->run_command("chgrp -R {$apache_user_gid} {$root_dir}");
+                
+                $this->log_it(
+                    "User: {$current_user}. " .
+                    "Owner (Id: {$owner_id}, Name: {$owner_name}, Group Id: {$owner_gid}). " .
+                    "Apache User: (Name: {$apache_user}, Group Id: {$apache_user_gid}). " . 
+                    "Group Changed: {$owner_gid} -> {$apache_user_gid}. Added group to user '{$owner_name}' group '{$apache_user_gid}'\n"
+                );
+            } else {
+                $this->log("Please run task using root credentials. {$change_usermod}");
+                $this->log_it("User: {$current_user}. Trying to set credentials - fail. Need to run as root");
+            }
+        } else {
+            $this->log_it("User: {$current_user}. Can't found apache user");
+            throw new Exception("Can't found apache user. Please check that apache is running");
         }
     }
     
