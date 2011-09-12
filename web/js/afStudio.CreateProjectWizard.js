@@ -357,7 +357,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			  
 				var _this = this;
 				Ext.Ajax.request({
-					url: Ext.urlAppend(afStudioWSUrls.project, {cmd: 'checkDatabase'}),
+					url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'checkDatabase'})),
 					params: { 
 						form: Ext.encode(form5Values)
 					},
@@ -446,7 +446,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
     mask.show();
 		
 		Ext.Ajax.request({
-			url: Ext.urlAppend(afStudioWSUrls.project, {cmd: 'saveWizard'}),
+			url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'saveWizard'})),
 			params: { 
 				name: this.form1.getForm().findField('name').getValue(),
 				path: this.form2.getForm().findField('path').getValue(),

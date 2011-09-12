@@ -53,7 +53,7 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 		});
 		
 		this.form = new Ext.FormPanel({
-			url: Ext.urlAppend(afStudioWSUrls.project, {cmd: 'save'}),
+			url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'save'})),
 		    bodyStyle: 'padding: 5px;', 
 		    labelWidth: 140, 
 			border: false,
