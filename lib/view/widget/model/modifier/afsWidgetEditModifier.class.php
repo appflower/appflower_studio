@@ -72,6 +72,8 @@ class afsWidgetEditModifier extends afsBaseModelModifier
                 $fields = $fields['i:field'];
                 
                 if (is_array($fields) && count($fields) > 0) {
+                    if (!is_numeric(key($fields))) $fields = array($fields);
+                    
                     foreach ($fields as $fieldKey => $field) {
                         $modifiedField = $this->checkAndModifyForeignTableField($field);
                         if ($modifiedField) $definition['i:fields']['i:field'][$fieldKey] = $modifiedField;
