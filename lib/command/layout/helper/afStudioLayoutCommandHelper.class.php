@@ -55,6 +55,7 @@ class afStudioLayoutCommandHelper
     public static function processGetWidgetList(Array $modules, Array $params, $name, $type)
     {
         $aExtWidgets = array();
+        
         foreach ($modules as $module) {
             if (count($params[$module]['xml_names']) > 0) {	
                 $children = array(
@@ -65,13 +66,13 @@ class afStudioLayoutCommandHelper
                 );
                 
                 foreach ($params[$module]['xml_names'] as $xk => $xmlName) {
-                    $widget = afsWidgetModelHelper::retrieve(str_replace('.xml', '', $xmlName), $module, $name, $type);
-                    
-                    $children['children'][] = array_merge(
-                        afsWidgetModelHelper::getInfo(
-                            afsWidgetModelHelper::retrieve(str_replace('.xml', '', $xmlName), $module, $name, $type)
-                        ), 
-                        array('leaf' => true)
+                    $children['children'][] = array(
+                        'module'    => $module,
+                        'widget'    => str_replace('.xml', '', $xmlName),
+                        'widgetUri' => $module.'/'.str_replace('.xml', '', $xmlName),
+                        'type'      => 'xml',
+                        'text'      => $xmlName,
+                        'leaf'      => true,
                     );
                 }
                 $aExtWidgets['children'][] = $children;
@@ -80,7 +81,7 @@ class afStudioLayoutCommandHelper
         
         if (!empty($aExtWidgets)) {
             $aExtWidgets['text'] = $name;
-            $aExtWidgets['type'] = "{$type}s";
+            $aExtWidgets['type'] = $type;
         }
         
         return $aExtWidgets;
