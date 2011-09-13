@@ -188,9 +188,16 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeLayout(sfWebRequest $request)
     {
-        return $this->renderJson(
-            afStudioCommand::process('layout', $request->getParameter('cmd'))
-        );
+        $command = $request->getParameter('cmd');
+        $response = afStudioCommand::process('layout', $command, $request->getParameterHolder()->getAll());
+        
+        if ($command == 'getList') {
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+            }
+        }
+        
+        return $this->renderJson($response->asArray());
     }
     
     /**

@@ -21,12 +21,12 @@ class afsLayoutBuilderActions extends afsActions
             'app' => $request->getParameter('app', 'frontend'),
             'page' => $request->getParameter('page', ''),
         );
-
-        $response = afStudioCommand::process('layout', 'get', $parameters);
-
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'get', $parameters)->asArray()
+        );
     }
-
+    
     /**
      * Saving changes in page definition
      *
@@ -40,10 +40,10 @@ class afsLayoutBuilderActions extends afsActions
             'page' => $request->getParameter('page', ''),
             'definition' => json_decode($request->getParameter('definition'), true)
         );
-
-        $response = afStudioCommand::process('layout', 'save', $parameters);
-
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'save', $parameters)->asArray()
+        );
     }
     
     /**
@@ -77,10 +77,14 @@ class afsLayoutBuilderActions extends afsActions
     public function executeGetWidgetList(sfWebRequest $request)
     {
         $response = afStudioCommand::process('layout', 'getWidgetList');
-
-        return $this->renderJson($response);
+        
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+        }
+        
+        return $this->renderJson($response->asArray());
     }
-
+    
     /**
      * Create new page functionality
      *
@@ -95,12 +99,12 @@ class afsLayoutBuilderActions extends afsActions
             'title' => $request->getParameter('title', $request->getParameter('page')),
             'is_new' => true
         );
-
-        $response = afStudioCommand::process('layout', 'save', $parameters);
-
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'save', $parameters)->asArray()
+        );
     }
-
+    
     /**
      * Rename Page
      *
@@ -114,12 +118,12 @@ class afsLayoutBuilderActions extends afsActions
             'page'  => $request->getParameter('page'),
             'name'  => $request->getParameter('name')
         );
-
-        $response = afStudioCommand::process('layout', 'rename', $parameters);
-
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'rename', $parameters)->asArray()
+        );
     }
-
+    
     /**
      * Delete Page functionality
      *
@@ -132,10 +136,10 @@ class afsLayoutBuilderActions extends afsActions
             'app'   => $request->getParameter('app', 'frontend'),
             'page'  => $request->getParameter('page')
         );
-
-        $response = afStudioCommand::process('layout', 'delete', $parameters);
-
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'delete', $parameters)->asArray()
+        );
     }
-
+    
 }

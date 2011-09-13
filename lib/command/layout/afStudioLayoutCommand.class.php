@@ -10,28 +10,23 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     /**
      * Default pages module
      */
-	const PAGES_MODULE = 'pages';
-	
+    const PAGES_MODULE = 'pages';
+    
     /**
      * Getting tree list controller
      *
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processGetList()
     {
-    	$tree = afStudioLayoutCommandHelper::processGetList($this->getPagesList());
-        
-        if (count($tree) > 0) {
-            $this->result = $tree;
-        } else {
-            $this->result = array('success' => true);
-        }
-        
+        return afResponseHelper::create()->success(true)->data(array(), afStudioLayoutCommandHelper::processGetList($this->getPagesList()), 0);
     }
     
     /**
      * Getting needed page definition
      *
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processGet()
@@ -42,19 +37,17 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         
         $page = afsPageModelHelper::retrieve($page_name, $application);
         
-        $response = afResponseHelper::create();
         if (!$page->isNew()) {
-            $response->success(true)->content($page->getDefinition());
-        } else {
-            $response->success(false)->content("Page <b>{$page_name}</b> doesn't exists");
+            return afResponseHelper::create()->success(true)->content($page->getDefinition());
         }
         
-        return $response->asArray();
+        return afResponseHelper::create()->success(false)->content("Page <b>{$page_name}</b> doesn't exists");
     }
     
     /**
      * Saving changed page information
      *
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processSave()
@@ -87,57 +80,56 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 "sf appflower:validator-cache frontend cache yes"
             ));
             
-            $response
+            return $response
                 ->success(true)
                 ->content((!$is_new) ? sprintf('Page <b>%s</b> has been saved', $page_name) : sprintf('Page <b>%s</b> has been created', $page_name))
                 ->console($console);
-        } else {
-            $response->success(false);
-            if ($saveResponse->hasParameter(afResponseMessageDecorator::IDENTIFICATOR)) {
-                $response->content($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
-            }
         }
         
-        return $response->asArray();
+        $response->success(false);
+        if ($saveResponse->hasParameter(afResponseMessageDecorator::IDENTIFICATOR)) {
+            $response->content($saveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+        }
+        
+        return $response;
     }
     
     /**
      * Rename page processing
      *
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processRename()
     {
         // getting parameters
-	    $page_name      = $this->getParameter('page');
-		$new_page_name  = $this->getParameter('name');
-		$application    = $this->getParameter('app');
-		
-		$page_name = pathinfo($page_name, PATHINFO_FILENAME);
-		$new_page_name = pathinfo($new_page_name, PATHINFO_FILENAME);
-		
-		$page = afsPageModelHelper::retrieve($page_name, $application);
-		
-		if (!$page->isNew()) {
-		    $response = $page->rename($new_page_name);
-		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
-		    }
-		    
-		    if ($response->hasParameter(afResponseMessageDecorator::IDENTIFICATOR)) {
-		        $response->content($response->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
-		    }
-		} else {
-		    $response = afResponseHelper::create()->success(false)->content("Can't retrieve page");
-		}
-		
-		return $response->asArray();
+        $page_name      = $this->getParameter('page');
+        $new_page_name  = $this->getParameter('name');
+        $application    = $this->getParameter('app');
+        
+        $page_name = pathinfo($page_name, PATHINFO_FILENAME);
+        $new_page_name = pathinfo($new_page_name, PATHINFO_FILENAME);
+        
+        $page = afsPageModelHelper::retrieve($page_name, $application);
+        
+        if ($page->isNew()) return afResponseHelper::create()->success(false)->content("Can't retrieve page");
+            
+        $response = $page->rename($new_page_name);
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            $response->console(afStudioConsole::getInstance()->execute('sf cc'));
+        }
+        
+        if ($response->hasParameter(afResponseMessageDecorator::IDENTIFICATOR)) {
+            $response->content($response->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+        }
+        
+        return $response;
     }
     
     /**
      * Rename page processing
      *
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processDelete()
@@ -147,79 +139,70 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         
         $page = afsPageModelHelper::retrieve($page_name, $application);
         
-		if (!$page->isNew()) {
-		    $response = $page->delete();
-		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
-		    }
-		} else {
-		    $response = afResponseHelper::create()->success(false)->message("Page <b>{$page_name}</b> doesn't exists");
-		}
+        if ($page->isNew()) return afResponseHelper::create()->success(false)->message("Page <b>{$page_name}</b> doesn't exists");
         
-        return $response->asArray();
+        $response = $page->delete();
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            $response->console(afStudioConsole::getInstance()->execute('sf cc'));
+        }
+        
+        return $response;
     }
     
     /**
      * Getting widget list action
      *
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processGetWidgetList()
     {
-        $aData = array();
-        
         $root_dir = sfConfig::get('sf_root_dir');
         
-        $aTypes = array('apps', 'plugins');
-        
-        foreach ($aTypes as $type) {
-    		$aParents = afStudioUtil::getDirectories("{$root_dir}/{$type}/", true);
-    							
-    		foreach($aParents as $parent) {
-    		    $aWidgets = $this->getWidgets($parent, $type);
-    		    if (!empty($aWidgets)) {
-    		        $aData[] = $aWidgets;
-    		    }
-    		}
+        $data = array();
+        foreach (array('apps', 'plugins') as $type) {
+            foreach(afStudioUtil::getDirectories("{$root_dir}/{$type}/", true) as $parent) {
+                $widgets = $this->getWidgets($parent, $type);
+                if (!empty($widgets)) $data[] = $widgets;
+            }
         }        
         
-        $this->result = $aData;
+        return afResponseHelper::create()->success(true)->data(array(), $data, 0);
     }
     
-	/**
-	 * Getting Widgets list 
-	 *
-	 * @param string $name
-	 * @param string $type
-	 * @return array
-	 * @author Sergey Startsev
-	 */
-	private function getWidgets($name, $type = 'apps')
-	{
-		$data = array();
+    /**
+     * Getting Widgets list 
+     *
+     * @param string $name
+     * @param string $type
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getWidgets($name, $type = 'apps')
+    {
+        $root_dir = sfConfig::get('sf_root_dir');
+        $modules_dir = "{$root_dir}/{$type}/{$name}/modules";
         
-		$root_dir = sfConfig::get('sf_root_dir');
-		$modules_dir = "{$root_dir}/{$type}/{$name}/modules";
-		
-		$modules = afStudioUtil::getDirectories($modules_dir, true);
-		
-		if (!empty($modules)) {
-            $aParams = array();
+        $modules = afStudioUtil::getDirectories($modules_dir, true);
+        
+        $data = array();
+        if (!empty($modules)) {
+            $params = array();
             
-    		foreach($modules as &$module) {
-                $aParams[$module] = array(
+            foreach($modules as &$module) {
+                $params[$module] = array(
                     'xml_paths' => afStudioUtil::getFiles("{$modules_dir}/{$module}/config/", false, "xml"),
                     'xml_names' => afStudioUtil::getFiles("{$modules_dir}/{$module}/config/", true, "xml"),
                     'security_path' => "{$modules_dir}/{$module}/config/security.yml",
                     'action_path' => $actionPath = "{$modules_dir}/{$module}/actions/actions.class.php"
                 );
-    		}
-    		
-    		$data = afStudioLayoutCommandHelper::processGetWidgetList($modules, $aParams, $name, $type);
-		}
-		
-		return $data;
-	}
+            }
+            
+            $data = afStudioLayoutCommandHelper::processGetWidgetList($modules, $params, $name, $type);
+        }
+        
+        return $data;
+    }
     
     /**
      * Getting pages list from applications 
