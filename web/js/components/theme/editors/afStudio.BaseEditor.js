@@ -40,15 +40,14 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
 	 * This function creates west and center panels and needful components
 	 */
 	createRegions: function(){
-		this.codeEditor = new Ext.ux.CodePress({
-			delayedStart: false, 
-			closable:true,
-			file: 'root/apps/frontend/lib/helper/'+this.helper+'Helper.php', 
-			language: 'php'
+		this.codeEditor = new Ext.ux.AceComponent({
+			file: 'root/apps/frontend/lib/helper/'+this.helper+'Helper.php' 
 		});
 		
 		this.centerPanel = new Ext.Panel({
-			layout: 'fit', region: 'center', items: [this.codeEditor],
+			layout: 'fit', 
+			region: 'center', 
+			items: [this.codeEditor],
 			tbar: [
 				{text: 'Save', iconCls: 'icon-save', handler: this.save, scope: this},
 				'->',
@@ -60,11 +59,11 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
 	
 	save: function(){
 		Ext.Ajax.request({
-		   url: window.afStudioWSUrls.getHelperFileSaveUrl(),
+		   url: afStudioWSUrls.getHelperFileSaveUrl(),
 		   params: {
 		   	helper: this.helper
 		   },
-		   xmlData:this.codeEditor.getValue(),
+		   xmlData:this.codeEditor.getCode(),
 		   success: function(result,request){
 			   var obj = Ext.decode(result.responseText);
 			   afStudio.Msg.info(obj.message);
@@ -75,7 +74,7 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
 	
 	checkHelperFileExist: function(){
 		Ext.Ajax.request({
-		   url: window.afStudioWSUrls.getCheckHelperFileExistUrl(),
+		   url: afStudioWSUrls.getCheckHelperFileExistUrl(),
 		   params: {
 		   	 helper: this.helper
 		   },

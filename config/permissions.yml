@@ -1,0 +1,59 @@
+# all folders paths should be from project root folder, with first slash - example path: '/apps', path: '/lib/mode'
+# default 
+#     mode: g+rwX
+#     recursive: false
+#     path_type: related
+# chmod modes more detailed in  `man chmod`
+# examples chmod modes(separated by comma):   g+rwx, 775, 664, go-rw, u=rw, g+rwX, a-x
+#                                             where u - file owner, g - group, o - other, a - all (alias for ugo)
+# 
+# path by default setted as related - means path from current project, path can be also defined as absolute - path_type: absolute
+# path can be setted if type related like:  
+#                                         /
+#                                         /../
+#                                         /apps
+folders:
+  # set permissions for web environment, where projects will be created by studio
+  # web_environment:
+    # path: '/Users/username/Sites/web_environment_folder'
+    # mode: 'ug+rwX'
+    # recursive: true
+    # path_type: absolute
+  # current project environment - not system root! be carefully
+  root:
+    path: '/'
+    mode: 'ug+X'
+    recursive: true
+  apps: 
+    path: '/apps'
+    mode: 'g+rw'
+    recursive: true
+  batch:
+    path: '/batch'
+    mode: 'g+rwx'
+    recursive: true
+  config:
+    path: '/config'
+    mode: 'g+rw'
+    recursive: true
+  lib:
+    path: '/lib'
+    mode: 'g+rw'
+    recursive: true
+  log:
+    path: '/log'
+    mode: 'g+rw'
+    recursive: true
+  plugins:
+    path: '/plugins'
+    mode: 'g+rw'
+    recursive: true
+  web:
+    path: '/web'
+    mode: 'g+rw'
+    recursive: true
+
+# If setted server option it will be used instead of prediction server options, this will be prioriteted than prediction
+# server:
+  # user:
+    # name:   '_www'

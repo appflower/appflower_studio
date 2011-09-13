@@ -13,7 +13,7 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @cfg {String} structureUrl required (defaults to "/afsDatabaseQuery/databaseList")
 	 * This tree loader's URL
 	 */
-	structureUrl : window.afStudioWSUrls.getDBQueryDatabaseListUrl()
+	structureUrl : afStudioWSUrls.getDBQueryDatabaseListUrl()
 	
 	,getCurrentConnection : function() {
 		var node = this.getSelectionModel().getSelectedNode();

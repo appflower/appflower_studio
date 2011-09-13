@@ -2,6 +2,7 @@
 /**
  * Base Studio Command class
  * 
+ * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 abstract class afBaseStudioCommand
@@ -35,10 +36,12 @@ abstract class afBaseStudioCommand
      * @return mixed
      * @author Sergey Startsev
      */
-	public function process()
+	public final function process()
 	{
 		if($this->getCommand() != null) {
 			$controller_name = 'process' . ucfirst($this->getCommand());
+            
+            $this->preProcess();
             
             if (method_exists($this, $controller_name)) {
                 $return = ($response = call_user_func(array($this, $controller_name))) ? $response : $this->result;
@@ -98,5 +101,12 @@ abstract class afBaseStudioCommand
     {
         return array_key_exists($name, $this->params);
     }
+    
+    /**
+     * Pre-process - initialize method
+     *
+     * @author Sergey Startsev
+     */
+    protected function preProcess() {}
     
 }

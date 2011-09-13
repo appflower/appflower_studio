@@ -1,145 +1,145 @@
 <?php
 /**
- * This module provides backend functionality for LayoutBuilder
+ * This module provides backend functionality for Layout Builder
  *
  * @package    appFlowerStudio
  * @subpackage plugin
- * @author     startsev.sergey@gmail.com
+ * @author     Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsLayoutBuilderActions extends sfActions
+class afsLayoutBuilderActions extends afsActions
 {
-
-    /**
-     * Catching executing ajax queries from direct call
-     */
-    public function preExecute()
-    {
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $this->forward404("This action should be used only for ajax requests");
-        }
-    }
-
-    /**
-     * Rendering json
-     */
-    protected function renderJson($result)
-    {
-        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        return $this->renderText(json_encode($result));
-    }
-
     /**
      * Getting page definition controller
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
     public function executeGet(sfWebRequest $request)
     {
         // Prepare parameters for executing layout command
-        $aParameters = array(
+        $parameters = array(
             'app' => $request->getParameter('app', 'frontend'),
             'page' => $request->getParameter('page', ''),
         );
-
-        $aResponse = afStudioCommand::process('layout', 'get', $aParameters);
-
-        return $this->renderJson($aResponse);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'get', $parameters)->asArray()
+        );
     }
-
+    
     /**
      * Saving changes in page definition
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
     public function executeSave(sfWebRequest $request)
     {
-        $aParameters = array(
+        $parameters = array(
             'app' => $request->getParameter('app', 'frontend'),
             'page' => $request->getParameter('page', ''),
             'definition' => json_decode($request->getParameter('definition'), true)
         );
-
-        $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
-
-        return $this->renderJson($aResponse);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'save', $parameters)->asArray()
+        );
     }
-
+    
     /**
      * Getting widget info
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
     public function executeGetWidget(sfWebRequest $request)
     {
-        $aParameters = array(
-            'module' => $request->getParameter('module_name'),
-            'action' => $request->getParameter('action_name'),
+        /*
+            TODO separate 'uri' request to 2 params, module, and action.
+        */
+        $parameters = array(
+            'uri' => $request->getParameter('module_name') . "/" . $request->getParameter('action_name'),
+            'place' => 'frontend',
+            'placeType' => 'app'
         );
-
-        $aResponse = afStudioCommand::process('layout', 'getWidget', $aParameters);
-
-        $afCU = new afConfigUtils($aParameters['module']);
-        $aResponse['meta'] = array(
-            'actionPath'   => $afCU->getActionFilePath('actions.class.php'),
-            'xmlPath'      => $afCU->getConfigFilePath("{$aParameters['action']}.xml"),
-            'securityPath' => $afCU->getConfigFilePath("security.yml"),
-        	"widgetUri"    => "{$aParameters['module']}/{$aParameters['action']}"
+        
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'get', $parameters)->asArray()
         );
-
-        return $this->renderJson($aResponse);
     }
 
     /**
      * Get widget list
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
     public function executeGetWidgetList(sfWebRequest $request)
     {
-        $aResponse = afStudioCommand::process('layout', 'getWidgetList');
-
-        return $this->renderJson($aResponse);
+        $response = afStudioCommand::process('layout', 'getWidgetList');
+        
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+        }
+        
+        return $this->renderJson($response->asArray());
     }
-
+    
     /**
      * Create new page functionality
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
     public function executeNew(sfWebRequest $request)
     {
-        $aParameters = array(
+        $parameters = array(
             'app' => $request->getParameter('app', 'frontend'),
             'page' => $request->getParameter('page'),
             'title' => $request->getParameter('title', $request->getParameter('page')),
             'is_new' => true
         );
-
-        $aResponse = afStudioCommand::process('layout', 'save', $aParameters);
-
-        return $this->renderJson($aResponse);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'save', $parameters)->asArray()
+        );
     }
-
+    
     /**
      * Rename Page
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
     public function executeRename(sfWebRequest $request)
     {
-        $aParameters = array(
+        $parameters = array(
             'app'   => $request->getParameter('app', 'frontend'),
             'page'  => $request->getParameter('page'),
             'name'  => $request->getParameter('name')
         );
-
-        $aResponse = afStudioCommand::process('layout', 'rename', $aParameters);
-
-        return $this->renderJson($aResponse);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'rename', $parameters)->asArray()
+        );
     }
-
+    
     /**
      * Delete Page functionality
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
     public function executeDelete(sfWebRequest $request)
     {
-        $aParameters = array(
+        $parameters = array(
             'app'   => $request->getParameter('app', 'frontend'),
             'page'  => $request->getParameter('page')
         );
-
-        $aResponse = afStudioCommand::process('layout', 'delete', $aParameters);
-
-        return $this->renderJson($aResponse);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'delete', $parameters)->asArray()
+        );
     }
-
+    
 }
-

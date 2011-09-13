@@ -468,14 +468,15 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	 * @param {Object} cmpMeta
 	 */
 	,previewWidget : function(name, module, cmpMeta) {		
-		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;		
-		afApp.widgetPopup(widgetUri, widgetUri, null, null, afStudio);		
+		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;
+		
+		afStudio.WD.previewWidget(widgetUri);
 	}//eo previewWidget
 	
 	/**
 	 * Runs WD (Widget Designer) for specified view component.
 	 * 
-	 * //TODO should be optimized
+	 * //TODO should be fixed and adapted to new design
 	 * 
 	 * @param {String} name The widget action name
 	 * @param {String} module The widget module name

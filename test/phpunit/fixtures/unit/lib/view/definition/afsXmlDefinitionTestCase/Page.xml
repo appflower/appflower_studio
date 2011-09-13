@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i:view xmlns:i="http://www.appflower.com/schema/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="layout" xsi:schemaLocation="http://www.appflower.com/schema/appflower.xsd">
+    <i:title><![CDATA[NewPage]]></i:title>
+    <i:area layout="1" type="content"/>
+</i:view>

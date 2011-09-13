@@ -1,13 +1,27 @@
 Ext.namespace('afStudio.notification');
 
+/**
+ * Notification windows positions & heights manager.
+ * @type {Object} 
+ */
 afStudio.notification.NotificationMgr = {
     positions: [],
     heights: []
 };
 
+/**
+ * NotificationWindow
+ * 
+ * @class afStudio.notification.NotificationWindow
+ * @extends Ext.Window
+ */
 afStudio.notification.NotificationWindow = Ext.extend(Ext.Window, {
 	
-	// private
+	/**
+	 * Template method.
+	 * @override
+	 * @private
+	 */
 	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, {
@@ -27,14 +41,17 @@ afStudio.notification.NotificationWindow = Ext.extend(Ext.Window, {
 		}
 		
 		afStudio.notification.NotificationWindow.superclass.initComponent.call(this);
-    }//eo initComponent
+    },
     
-	,setMessage : function(msg) {
+	setMessage : function(msg) {
 		this.body.update(msg);
-	}
+	},
 	
-	// private
-	,afterShow : function() {
+	/**
+	 * @override
+	 * @private
+	 */
+	afterShow : function() {
 		afStudio.notification.NotificationWindow.superclass.afterShow.call(this);
 		
 		this.on('move', function() {
@@ -47,19 +64,24 @@ afStudio.notification.NotificationWindow = Ext.extend(Ext.Window, {
 		if (this.autoDestroy) {
 			this.task.delay(this.hideDelay || 5000);
 		}
-	}//eo afterShow
+	},
 	
-	// private
-	,animShow : function() {
+	/**
+	 * @override
+	 * @private
+	 */
+	animShow : function() {
+		var notificationMgr = afStudio.notification.NotificationMgr,
+			h = 0;
+			
 		this.pos = 0;
-		var h = 0;
 		
-		while (afStudio.notification.NotificationMgr.positions.indexOf(this.pos) > -1) {
-			h += afStudio.notification.NotificationMgr.heights[this.pos];
+		while (notificationMgr.positions.indexOf(this.pos) > -1) {
+			h += notificationMgr.heights[this.pos];
 			this.pos++;
 		}		
-		afStudio.notification.NotificationMgr.positions.push(this.pos);		
-		afStudio.notification.NotificationMgr.heights[this.pos] = this.getSize().height + 10;
+		notificationMgr.positions.push(this.pos);		
+		notificationMgr.heights[this.pos] = this.getSize().height + 10;
 		
 		this.el.alignTo(this.animateTarget || document, "br-br", [-5, -5 - (h)]);
 		
@@ -68,10 +90,14 @@ afStudio.notification.NotificationWindow = Ext.extend(Ext.Window, {
 			callback: this.afterShow,
 			scope: this
 		});
-	}//eo animShow 
+	},
+	//eo animShow 
 	
-	// private
-	,animHide : function() {
+	/**
+	 * @override
+	 * @private
+	 */
+	animHide : function() {
 		afStudio.notification.NotificationMgr.positions.remove(this.pos);
 		
 		if (this.el) {
@@ -80,25 +106,43 @@ afStudio.notification.NotificationWindow = Ext.extend(Ext.Window, {
 				remove: false
 			});
 		}
-	}//eo animHide 
+	} 
 	
-	// private
+	/**
+	 * @override
+	 * @private
+	 */
 	,onDestroy : function() {
 		afStudio.notification.NotificationMgr.positions.remove(this.pos);
 		afStudio.notification.NotificationWindow.superclass.onDestroy.call(this);
-	}//eo onDestroy 
+	}
 });
 
+/**
+ * MessageBox
+ * 
+ * @sigleton
+ * @author Nikolai Babinski
+ */
 afStudio.notification.MessageBox = function() {
 	
+	/**
+	 * Creates and shows notification window.
+	 * @private
+	 * @param {Object} config The notification window {@link afStudio.notification.NotificationWindow} configuration object
+	 * @return {afStudio.notification.NotificationWindow} notification window
+	 */
 	var showNotification = function(config) {
-	    var win = new afStudio.notification.NotificationWindow(Ext.apply({
-	    	width: 300,
+		
+		config = Ext.apply({
+	    	width: 340,
 	    	animateTarget: Ext.getBody(),
 	    	autoScroll: true,
 			autoDestroy: false,
 			notificationType: 'INFO'
-	    }, config));
+	    }, config || {})
+		
+	    var win = new afStudio.notification.NotificationWindow(config);
 	    
 	    switch (win.notificationType) {
 	    	case 'ERROR':
@@ -115,26 +159,41 @@ afStudio.notification.MessageBox = function() {
 			break;
 	    }
 	    
-	    win.bodyStyle += 'padding-bottom:20px;';	    
+	    win.bodyStyle += 'padding-bottom: 20px;';	    
 	    win.show();
 	    
 	    return win;
 	};	
 	
 	return {
+		
 		/**
-		 * 
+		 * The amount of time notification window is shown (defaults to 10 seconds). 
+		 * When time is over such window types: INFO, WARNING are closed.
+		 * @property DURATION
 		 * @type Number
 		 */
-		DURATION : 10000 
+		DURATION : 10000, 
 		
-		,INFO : 'INFO'
+		/**
+		 * INFO window type
+		 * @constant INFO
+		 */
+		INFO : 'INFO',
 		
-		,WARNING : 'WARNING'
+		/**
+		 * WARNING window type
+		 * @constant WARNING
+		 */		
+		WARNING : 'WARNING',
 		
-		,ERROR : 'ERROR'
+		/**
+		 * ERROR window type
+		 * @constant ERROR
+		 */		
+		ERROR : 'ERROR',
 		
-		,notify : function(type, title, message, config) {
+		notify : function(type, title, message, config) {
 			config = config || {};
 			
 			var msgWin = showNotification(Ext.apply(config, {
@@ -146,9 +205,9 @@ afStudio.notification.MessageBox = function() {
 			if (type != this.ERROR) {
 				msgWin.close.defer(this.DURATION, msgWin);
 			}
-		}//eo message
+		},
 		
-		,info : function() {
+		info : function() {
 			var t, m;
 			if (arguments.length == 1) {
 				t = 'Notification';
@@ -158,9 +217,9 @@ afStudio.notification.MessageBox = function() {
 				m = arguments[1]
 			}
 			this.notify(this.INFO, t, m);
-		}//eo notify
+		},
 		
-		,warning : function() {
+		warning : function() {
 			var t, m;
 			if (arguments.length == 1) {
 				t = 'Warning';
@@ -170,9 +229,9 @@ afStudio.notification.MessageBox = function() {
 				m = arguments[1]
 			}
 			this.notify(this.WARNING, t, m);			
-		}//eo warning
+		},
 		
-		,error : function() {
+		error : function() {
 			var t, m;
 			if (arguments.length == 1) {
 				t = 'Error';
@@ -182,7 +241,7 @@ afStudio.notification.MessageBox = function() {
 				m = arguments[1]
 			}
 			this.notify(this.ERROR, t, m);			
-		}//eo warning		
+		}		
 	};
 	
 }();

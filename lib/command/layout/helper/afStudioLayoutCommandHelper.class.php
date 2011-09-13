@@ -2,14 +2,14 @@
 /**
  * Studio Layout Command Helper class 
  * 
- * @author startsev.sergey@gmail.com
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afStudioLayoutCommandHelper
 {
-    
     /**
      * Returns ExtJS data 
      * @return array the tree structure
+     * @author Sergey Startsev
      */
     public static function processGetList($aPageList)
     {
@@ -44,55 +44,51 @@ class afStudioLayoutCommandHelper
     /**
      * Prepare widgets list for output
      *
-     * @param array $aModules - list of modules names 
-     * @param array $aParams - needed parameters security path, action_path, xml_paths and xml_names
+     * @param array $modules - list of modules names 
+     * @param array $params - needed parameters security path, action_path, xml_paths and xml_names
      * @param string $name - parent name - name of application or plugin
      * @param string $type - apps/plugins
-     * 
      * @return array
+     * @author Sergey Startsev
      */
-    public static function processGetWidgetList($aModules, $aParams, $name, $type)
+    public static function processGetWidgetList($modules, $params, $name, $type)
     {
-        $aExtWidgets = array(
-            'text' => $name,
-            'type' => $type
-        );
+        $aExtWidgets = array();
         
-        foreach ($aModules as $module) {
-            $children = array(
-                'text' => $module,
-                'type' => 'module',
-                'app' => $name
-			);
-
-			if (count($aParams[$module]['xml_names']) > 0) {	
+        foreach ($modules as $module) {
+			if (count($params[$module]['xml_names']) > 0) {	
+			    $children = array(
+                    'text' => $module,
+                    'type' => 'module',
+                    'app' => $name
+    			);
+                
                 $children['leaf'] = false;
                 
-				foreach ($aParams[$module]['xml_names'] as $xk => $xmlName) {
+				foreach ($params[$module]['xml_names'] as $xk => $xmlName) {
 					$children['children'][] = array(
-                        'app' => $name,
-                        'module' => $module,
-					    'widget' => str_replace('.xml', '', $xmlName),
-                        'widgetUri' => $module.'/'.str_replace('.xml', '', $xmlName),
-                        'type' => 'xml',
-                        'text' => $xmlName,
-                        'securityPath' => $aParams[$module]['security_path'],
-                        'xmlPath' => $aParams[$module]['xml_paths'][$xk],
-                        'actionPath' => $aParams[$module]['action_path'],
-                        'leaf' => true
+                        'app'           => $name,
+                        'module'        => $module,
+					    'widget'        => str_replace('.xml', '', $xmlName),
+                        'widgetUri'     => $module.'/'.str_replace('.xml', '', $xmlName),
+                        'type'          => 'xml',
+                        'text'          => $xmlName,
+                        'securityPath'  => $params[$module]['security_path'],
+                        'xmlPath'       => $params[$module]['xml_paths'][$xk],
+                        'actionPath'    => $params[$module]['action_path'],
+                        'leaf'          => true
 					);
 				}
-			} else {
-				$children['leaf'] = true;
-				$children['iconCls'] = 'icon-folder';
-			}
-			
-			$aExtWidgets['children'][] = $children;
+				$aExtWidgets['children'][] = $children;
+			} 
+        }
+        
+        if (!empty($aExtWidgets)) {
+            $aExtWidgets['text'] = $name;
+            $aExtWidgets['type'] = $type;
         }
         
         return $aExtWidgets;
     }
-
     
 }
-

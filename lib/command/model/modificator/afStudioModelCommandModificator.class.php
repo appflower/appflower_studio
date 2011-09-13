@@ -1,0 +1,685 @@
+<?php
+/**
+ * Studio model command modificator class
+ *
+ * @package appFlowerStudio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
+ */
+class afStudioModelCommandModificator
+{
+    /**
+     * Table name
+     */
+    private $tableName = null;
+    
+    /**
+     * Model name
+     */
+    private $modelName = null;
+    
+    /**
+     * Schema file path
+     */
+    private $schemaFile = null;
+    
+    /**
+     * Propel model array
+     */
+    private $propelModel = null;
+    
+    /**
+     * Propel schema
+     */
+    private $propelSchemaArray = null;
+    
+    /**
+     * Original schema
+     */
+    private $originalSchemaArray = null;
+    
+    /**
+     * Fabric method creator
+     *
+     * @return afStudioModelCommandModificator
+     * @author Sergey Startsev
+     */
+    static public function create()
+    {
+        return new self;
+    }
+    
+    /**
+     * Private constructor - initializer
+     *
+     * @author Sergey Startsev
+     */
+    private function __construct()
+    {
+        $this->loadSchemas();
+    }
+    
+    /**
+     * Getting table name
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getTableName()
+    {
+        if (is_null($this->tableName)) {
+            $model = $this->getModelName();
+            if (!$model) throw new afStudioModelCommandModificatorException("Model not defined. Please set model name.");
+            
+            $schema = $this->getSchemaFile();
+            
+            $propel = $this->getPropelSchema();
+            if (isset($propel[$this->getSchemaFile()]['classes'][$this->getModelName()])) {
+                $this->tableName = $propel[$this->getSchemaFile()]['classes'][$this->getModelName()]['tableName'];
+			} else {
+			    $this->tableName = strtolower($model);
+			}
+        }
+        
+        return $this->tableName;
+    }
+    
+    /**
+     * Getting propel model
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getPropelModel()
+    {
+        if (is_null($this->propelModel)) {
+            $model = $this->getModelName();
+            $schema = $this->getSchemaFile();
+            
+            $propel = $this->getPropelSchema();
+            if (isset($propel[$this->getSchemaFile()]['classes'][$this->getModelName()])) {
+                $this->propelModel = $propel[$this->getSchemaFile()]['classes'][$this->getModelName()];
+			} else {
+			    $this->propelModel = $model;
+			}
+        }
+        
+        return $this->propelModel;
+    }
+    
+    /**
+     * Getting model name
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    public function getModelName()
+    {
+        if (is_null($this->modelName)) {
+            throw new afStudioModelCommandModificatorException("Model not defined. Please set model name.");
+        }
+        
+        return $this->modelName;
+    }
+    
+    /**
+     * Getting schema file
+     *
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function getSchemaFile()
+    {
+        if (is_null($this->schemaFile)) {
+            $this->schemaFile = afStudioUtil::getRootDir() . '/config/schema.yml';
+        }
+        
+        return $this->schemaFile;
+    }
+    
+    /**
+     * Setting model name
+     *
+     * @param string $name 
+     * @return afStudioModelCommandModificator
+     * @author Sergey Startsev
+     */
+    public function setModelName($name)
+    {
+        $this->modelName = $name;
+        
+        return $this;
+    }
+    
+    /**
+     * Setting schema file
+     *
+     * @param string $file 
+     * @return afStudioModelCommandModificator
+     * @author Sergey Startsev
+     */
+    public function setSchemaFile($file)
+    {
+        $this->schemaFile = $file;
+        
+        return $this;
+    }
+    
+    /**
+     * Getting propel schema array
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getPropelSchema()
+    {
+        if (is_null($this->propelSchemaArray)) {
+            $this->loadSchemas();
+        }
+        
+        return $this->propelSchemaArray;
+    }
+    
+    /**
+     * Getting original schema array
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function getOriginalSchema()
+    {
+        if (is_null($this->originalSchemaArray)) {
+            $this->loadSchemas();
+        }
+        
+        return $this->originalSchemaArray;
+    }
+    
+    /**
+     * Rename model functionality
+     *
+     * @param string $name 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function renameModel($name)
+    {
+        $response = afResponseHelper::create();
+        
+        if (!afStudioModelCommandHelper::isValidName($name)) {
+			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
+		}
+		
+		$this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]['_attributes']['phpName'] = $name;
+		
+		if ($this->saveSchema()) {
+			return $response
+			            ->success(true)
+			            ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!")
+			            ->console(afStudioModelCommandHelper::deploy());
+		}
+		
+        return $response->success(false)->message("Can't rename model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!");
+    }
+    
+    /**
+     * Adding model
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function addModel()
+    {
+        $response = afResponseHelper::create();
+        
+        if (!afStudioModelCommandHelper::isValidName($this->getModelName())) {
+			return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
+		}
+		
+		if (!is_null($this->getSchemaByModel($this->getModelName()))) {
+		    return $response->success(false)->message("Model <b>{$this->getModelName()}</b> already exists");
+		}
+		
+        $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]['_attributes']['phpName'] = $this->getModelName();
+		
+		if ($this->saveSchema()) {
+		    $console = afStudioConsole::getInstance();
+			$consoleResult = afStudioModelCommandHelper::deploy();
+			
+            if ($console->wasLastCommandSuccessfull()) $consoleResult .= $console->execute('sf propel:build-form');
+            if ($console->wasLastCommandSuccessfull()) {
+                $message = "Added model <b>{$this->getModelName()}</b>!";
+            } else {
+                $message = 'Model was propery defined but build-model and/or build-form tasks returned some errors.';
+            }
+            
+            return $response->success($console->wasLastCommandSuccessfull())->message($message)->console($consoleResult);
+		}
+		 
+		return $response->success(false)->message("Can't add model <b>{$this->getModelName()}</b>! Please check schema file permissions.");
+    }
+    
+    /**
+     * Delete model
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function deleteModel()
+    {
+        $response = afResponseHelper::create();
+        
+        if (!isset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()])) {
+            return $response->success(false)->message("Model '{$this->getModelName()}' already deleted");
+        }
+        
+        unset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]);
+		
+        if ($this->saveSchema()) {
+            return $response->success(true)->message('Deleted model <b>'.$this->getModelName().'</b>!')->console(afStudioModelCommandHelper::deploy());
+        } 
+        
+        return $response->success(false)->message("Can't delete model <b>{$this->getModelName()}</b>!");
+    }
+    
+    /**
+     * Getting models list
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getList()
+    {
+        if (count($this->propelSchemaArray) == 0) return $response->success(true);
+        
+		$models = array();
+		foreach ($this->propelSchemaArray as $schemaFile => $array) {
+		    if (empty($array)) continue;
+			foreach ($array['classes'] as $phpName => $attributes) {
+				$models[] = array(
+				    'text' => $phpName,
+				    'leaf' => true,
+				    'schema' => $schemaFile, 
+				    'iconCls' => 'icon-model'
+				);
+			}
+		}
+		
+		return $models;
+    }
+    
+	/**
+	 * Read Models fields(columns)
+	 * 
+	 * @param array $propelModel the model definition
+	 * @return array - of model's fields 
+	 */
+	public function readModelFields() 
+	{
+	    $propelModel = $this->getPropelModel();
+	    
+		$fields = array();
+		
+		$k = 0;
+	    foreach ((array)$propelModel['columns'] as $name => $column) {
+	    	$fields[$k]['id'] = $k;
+	    	$fields[$k]['name'] = $name;
+	    	
+	    	if (is_array($column)) {
+		    	foreach ($column as $property => $value) {
+		    		switch ($property) {
+		    			case 'type':
+		    				$value = strtolower($value);
+	    				    break;
+	    				    
+		    			case 'foreignTable':
+		    				$fields[$k]['foreignModel'] = $this->getModelByTableName($value);
+	    				    break;
+		    		}
+			    	$fields[$k][$property] = $value;
+		    	}
+	    	} else if (isset($column)) {
+	    		$fields[$k]['type'] = $column;
+	    	}
+	    	
+	    	$k++;
+	    }
+	    
+	    return $fields;
+	}
+    
+	/**
+	 * Validates Field uniqueness inside the Model
+	 * 
+	 * @param string $name
+	 * @return boolean
+	 */
+	public function isFieldNameUnique($name) 
+	{
+		return !array_key_exists($name, $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]);
+	}
+	
+	/**
+	 * Verifies field name
+	 * 
+	 * @param string $fieldName
+	 * @return afResponse
+	 */
+	public function modelFieldVerification($fieldName) 
+	{
+	    $response = afResponseHelper::create();
+	    
+		if (!afStudioModelCommandHelper::isValidName($fieldName)) {
+		    return $response
+		                ->success(false)
+		                ->message("Field name '{$fieldName}' is not valid. Field name must contains only characters, digits or '_' and starts from '_' or character");
+		}
+		
+		if (!$this->isFieldNameUnique($fieldName)) return $response->success(false)->message("Field name '{$fieldName}' is duplicated");
+		
+		return $response->success(true);
+	}
+	
+	/**
+	 * Returns Model name by its table name
+	 * 
+	 * @param string $table
+	 * @return string - model name if table was found otherwise null 
+	 */
+	public function getModelByTableName($table) 
+	{
+		foreach ($this->propelSchemaArray as $schema) {
+			foreach ($schema['classes'] as $modelName => $model) {
+			    if ($model['tableName'] == $table) return $modelName;
+			}
+		}
+		
+        return null;
+	}
+	
+	/**
+	 * Creates Relation modelName.modelField value
+	 * based on "query" parameter
+	 * 
+	 * @return array - the relation
+	 */
+	public function buildRelationComboModels($query)
+	{
+		$models = array();
+		
+		if (count($this->propelSchemaArray) > 0) {
+			$relation = explode('.', trim($query));
+			
+			if (count($relation) > 1) {
+				$modelName  = $relation[0];
+				$modelField = $relation[1];
+				
+				if (!empty($modelName)) {
+					$schema = $this->getSchemaByModel($modelName);
+					if (!empty($schema)) {
+						$propelModel = $this->propelSchemaArray[$schema]['classes'][$modelName];
+						
+  						foreach ($propelModel['columns'] as $name => $params) {
+							if (empty($modelField) || stripos($name, $modelField) === 0) {
+								$models[] = array('id' => "{$modelName}.{$name}", 'value' => "{$modelName}.{$name}");
+							}
+	    				}
+					}
+				} else {
+					$m = $this->getModelsByMask($modelName);
+					for ($i = 0, $len = count($m); $i < $len; $i++) {
+						$models[] = array('id' => $m[$i], 'value' => $m[$i]);
+					}
+				}
+			} else {
+				$modelName = $relation[0];
+				$m = $this->getModelsByMask($modelName);
+				for ($i = 0, $len = count($m); $i < $len; $i++) {
+					$models[] = array('id' => $m[$i], 'value' => $m[$i]);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Creates field definition from json decoded object
+	 * 
+	 * @param stdClass $f json decoded field definition
+	 * @return array field's definition 
+	 */
+	public function buildFieldDefinition($f) 
+	{
+		$definition = array();
+		
+		if (!empty($f->type)) $definition['type'] = $f->type;
+		if (!empty($f->default)) $definition['default'] = $f->default;
+		if (!empty($f->autoIncrement)) $definition['autoIncrement'] = $f->autoIncrement;
+		
+		if (!empty($f->key)) {
+			switch ($f->key) {
+				case 'primary':
+					$definition['primaryKey'] = true;
+				    break;
+				    
+				case 'unique':
+					$definition['index'] = 'unique';
+				    break;
+				    
+				case 'index':
+					$definition['index'] = true;
+				    break;
+			}
+		}
+		
+		if (!empty($f->required)) $definition['required'] = $f->required;
+		
+		if (!empty($f->relation)) {
+			$ref = explode('.', $f->relation);
+			$definition['foreignTable'] = $this->getTableNameByModel($ref[0]);
+			$definition['foreignReference'] = $ref[1];
+		}
+		
+		if (!empty($f->size)) $definition['size'] = intval($f->size);
+		if (!empty($f->onDelete)) $definition['onDelete'] = $f->onDelete;
+        
+		return $definition;
+	}
+	
+	/**
+	 * Alters Model structure 
+	 * 
+	 * @param array $fields - the new models fields
+	 * @return afResponse
+	 */
+	public function alterModel(Array $fields)
+	{
+	    $response = afResponseHelper::create();
+	    
+		//remove previous table structure 
+		foreach ($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()] as $k => $v) {
+			if ($k != '_attributes') unset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$k]);
+		}
+		
+		//build new structure
+		foreach ($fields as $f) {
+		    $response = $this->modelFieldVerification($f->name);
+			if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
+			
+			$definition = $this->buildFieldDefinition($f);
+			$this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$f->name] = $definition;
+		}
+        
+		$this->saveSchema();
+        afStudioModelCommandHelper::deploy();
+		
+		return $response->success(true);
+	}
+	
+	/**
+	 * Change model field
+	 *
+	 * @param stdClass $fieldData 
+	 * @param string $field 
+	 * @return afResponse
+	 * @author Sergey Startsev
+	 */
+	public function changeModelField($fieldData, $field = null)
+	{
+	    $response = $this->modelFieldVerification($fieldData->name);
+	    if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
+	    
+		$fieldDefinition = $this->buildFieldDefinition($fieldData);
+		
+		if (!is_null($field)) {
+		    $this->arraySetKeyValue($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()], $field, $fieldData->name, $fieldDefinition);
+		} else {
+		    $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$fieldData->name] = $fieldDefinition;
+		}
+		
+		$this->saveSchema();
+		afStudioModelCommandHelper::deploy();
+		
+		return $response->success(true);
+	}
+	
+	/**
+	 * Utility function.
+	 * Sets specified array key's value and changes its name if $newKey was specified.
+	 * 
+	 * @param array $array the array to set key
+	 * @param string $key to set up
+	 * @param string $newKey the new key name 
+	 * @param mixed $value the key's value to be set
+	 */
+	public function arraySetKeyValue(Array &$array, $key, $newKey, $value) 
+	{
+		$initial = array();
+		foreach ($array as $k => $v) {
+			if ($k != $key && ($initial[$k] = $v)) continue;
+			
+            empty($newKey) ? $initial[$key] = $value : $initial[$newKey] = $value;
+		}
+		
+		$array = $initial;
+	}
+	
+	/**
+	 * Returns table name by the model
+	 * 
+	 * @param string $model
+	 * @return string - table name if model was found otherwise null
+	 */
+	public function getTableNameByModel($model) 
+	{
+		foreach ($this->propelSchemaArray as $schema) {
+			foreach ($schema['classes'] as $modelName => $m) {
+			    if ($modelName == $model) return $m['tableName'];
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns array of models narrowed by mask.
+	 * Example: there are models "Users", "Units", "Group" and mask "u" returns two models 
+	 * "Users" and "Units". Case insensitive.
+	 * If mask is an empty string all Models are returned. 
+	 * 
+	 * @param string $mask
+	 * @return array of models
+	 */
+	public function getModelsByMask($mask) 
+	{
+		$models = array();
+		foreach ($this->propelSchemaArray as $schemaFile => $array) {
+			foreach ($array['classes'] as $model => $attributes) {
+				if (empty($mask) || stripos($model, $mask) === 0) $models[] = $model;
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Returns path to schema of specified model
+	 * 
+	 * @param string $model
+	 * @return string - schema path if exists
+	 */
+	public function getSchemaByModel($model) 
+	{
+		foreach ($this->propelSchemaArray as $schemaFile => $array) {
+		    if (empty($array)) continue;
+			foreach ($array['classes'] as $phpName => $attributes) {
+			    if ($model == $phpName) return $schemaFile;
+			}
+		}
+		
+		return null;
+	}
+    
+    /**
+     * Load schemas 
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function loadSchemas()
+	{
+	    $this->dbSchema = new sfPropelDatabaseSchema();
+		$this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
+		
+    	$dirs = array_merge(array(sfConfig::get('sf_config_dir')), $this->configuration->getPluginSubPaths('/config'));
+    	
+    	foreach ($dirs as $k => $dir) {
+    		if (substr_count($dir, 'appFlower') > 0 || substr_count($dir, 'sfPropelPlugin') > 0 || substr_count($dir, 'sfProtoculousPlugin') > 0) {
+    			unset($dirs[$k]);
+    		}
+    	}
+    	
+    	$dirs = array_values($dirs);
+    	
+    	$schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->in($dirs);
+    	
+    	foreach ($schemas as $schema) {
+            $this->originalSchemaArray[$schema] = sfYaml::load($schema);
+            
+    	    if (!is_array($this->originalSchemaArray[$schema])) continue;
+            
+    	    if (!isset($this->originalSchemaArray[$schema]['classes'])) {
+    	        // Old schema syntax: we convert it
+    	        $this->propelSchemaArray[$schema] = $this->dbSchema->convertOldToNewYaml($this->originalSchemaArray[$schema]);
+    	    }
+            
+    	    $customSchemaFilename = str_replace(array(
+    	        str_replace(DIRECTORY_SEPARATOR, '/', sfConfig::get('sf_root_dir')).'/',
+    	        'plugins/',
+    	        'config/',
+    	        '/',
+    	        'schema.yml'
+    	    ), array('', '', '', '_', 'schema.custom.yml'), $schema);
+    	    $customSchemas = sfFinder::type('file')->name($customSchemaFilename)->in($dirs);
+            
+    	    foreach ($customSchemas as $customSchema) {
+    	      	$this->originalSchemaArray[$customSchema] = sfYaml::load($customSchema);
+    	        if (!isset($this->originalSchemaArray[$customSchema]['classes'])) {
+    	            // Old schema syntax: we convert it
+    	            $this->propelSchemaArray[$customSchema] = $this->dbSchema->convertOldToNewYaml($this->originalSchemaArray[$customSchema]);
+    	        }
+    	    }
+	    }
+    }
+    
+	/**
+	 * Saving schema
+	 *
+	 * @return boolean
+	 */
+	private function saveSchema()
+	{
+        return afStudioUtil::writeFile($this->getSchemaFile(), sfYaml::dump($this->originalSchemaArray[$this->getSchemaFile()], 3));
+	}
+    
+}

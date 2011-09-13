@@ -9,21 +9,11 @@ afStudio.WSUrlsClass = function() {
 
 afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
-    getModelsUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/models');
-    },
+	welcomeWinUrl : '/appFlowerStudio/welcome',
+	
+    modelListUrl: '/appFlowerStudio/models',
     
-    getFiletreeUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/filetree');
-    },
-    
-    getCssFilestreeUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/cssfilestree');
-    },
-    
-    getCssFilesSaveUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/cssfilesSave');
-    },    
+    getFiletreeUrl : '/appFlowerStudio/filetree',
     
     moduleListUrl : '/afsModuleManager/getList',
     
@@ -45,6 +35,8 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/appFlowerStudio/moduleWidgets');
     },    
     
+	widgetPreviewUrl : '/appFlowerStudio/preview',
+	
     pluginListUrl : '/afsPluginManager/getList',
     
 	pluginAddUrl : '/afsPluginManager/add',
@@ -53,14 +45,11 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	
 	pluginDeleteUrl : '/afsPluginManager/delete',
 	
+    widgetGetDefinitionUrl : '/afsWidgetBuilder/getWidget',
     
-    getCodepressUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/codepress');
-    },
+    widgetSaveDefinitionUrl : '/afsWidgetBuilder/saveWidget',
     
-    getFilecontentUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/filecontent');
-    },
+    getFilecontentUrl : '/appFlowerStudio/filecontent',
     
     getDebugUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/debug');
@@ -84,14 +73,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
     getLoadDatabaseConnectionSettingsUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/loadDatabaseConnectionSettings');
-    },
-    
-    getGetWidgetUrl: function(widgetUri) {
-        return this.buildUrlFor('/afsWidgetBuilder/getWidget?uri='+widgetUri);
-    },
-    
-    getSaveWidgetUrl: function(widgetUri) {
-        return this.buildUrlFor('/afsWidgetBuilder/saveWidget?uri='+widgetUri);
     },
     
     getDBQueryDatabaseListUrl: function() {
@@ -122,18 +103,6 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/afsModelGridData/delete?model=' + modelName);
     },
     
-    getProjectLoadTreeUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/loadProjectTree');
-    },
-    
-    getProjectCreateUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/createProject');
-    },
-    
-    getProjectRunUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/run');
-    },
-    
     getTemplateSelectorUrl: function() {
     	return this.buildUrlFor('/appFlowerStudio/templateSelector');
     },
@@ -146,17 +115,13 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     	return this.buildUrlFor('/appFlowerStudio/checkHelperFileExist');
     },
     
-    getProjectCreateWizardUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/createProjectWizard');
-    },
-    
     getCheckUserExistUrl: function() {
     	return this.buildUrlFor('/afsUserManager/checkUserExist');
     },
+
+	project : '/appFlowerStudio/project',
     
-    getCreateProjectWizardCheckDatabaseUrl: function() {
-      return this.buildUrlFor('/appFlowerStudio/createProjectWizardCheckDatabase');
-    },
+    exportUrl : '/appFlowerStudio/export',
     
     buildUrlFor: function(url) {
         return url;

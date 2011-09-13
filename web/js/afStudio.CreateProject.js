@@ -4,7 +4,7 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 		_self = this;
 		
 		this.tree = new Ext.ux.FileTreePanel({
-			url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
+			url: afStudioWSUrls.project,
 			rootPath:'root',
 			rootVisible:true,
 			rootText:afStudioHost.user+'@'+afStudioHost.name,
@@ -53,7 +53,7 @@ afStudio.CreateProject = Ext.extend(Ext.Window, {
 		});
 		
 		this.form = new Ext.FormPanel({
-			url:window.afStudioWSUrls.getProjectCreateUrl()+'?cmd=save',
+			url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'save'})),
 		    bodyStyle: 'padding: 5px;', 
 		    labelWidth: 140, 
 			border: false,

@@ -5,7 +5,7 @@
  * @package appflower studio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afStudioPluginCommandHelper
+class afStudioPluginCommandHelper extends afBaseStudioCommandHelper
 {
     /**
      * Task needed to generate plugins and modules in plugins

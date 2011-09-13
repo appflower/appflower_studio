@@ -584,13 +584,12 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	//private
 	,beforeInit : function() {
 		var _this   = this,
-			 data   = _this._data.rows,
+			 data   = _this._data.data,
 		   	fields  = ['id'],
 			modelStructureExists = !Ext.isEmpty(data),
 			columns = [new Ext.grid.RowNumberer()];
 			
 		if (data.length > 0) {
-			
 			for (var i = 0; i < data.length; i++) {
 				columns.push({
 					header: data[i].name,
@@ -646,7 +645,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 		
 		_this.store = new Ext.data.Store({
 			reader: new afStudio.models.modelGridPanelReader({
-				root: 'rows',
+				root: 'data',
 			    idProperty: 'id'
 			}, fields),
             proxy: _this.storeProxy,
@@ -654,8 +653,6 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
             autoSave: false,
 			listeners: {
 				load : function(store, records) {
-					//adds one line if the result set is empty
-					//if (Ext.isEmpty(records))
 					var rec = store.recordType;
 					store.add([new rec()]);
 				}
@@ -713,7 +710,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            	
 	            	afStudio.vp.mask({region:'center', msg: 'Saving ' + _this.model + ' model...'});
 					Ext.Ajax.request({
-						url: afStudioWSUrls.getModelsUrl(),
+						url: afStudioWSUrls.modelListUrl,
 						params: {
 							xaction: 'alterModel',
 							model: _this.model, 

@@ -6,32 +6,8 @@
  * @subpackage plugin
  * @author     Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsModuleManagerActions extends sfActions
+class afsModuleManagerActions extends afsActions
 {
-    /**
-     * Catching executing ajax queries from direct call
-     */
-    public function preExecute()
-    {
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            $this->forward404("This action should be used only for ajax requests");
-        }
-    }
-
-    /**
-     * Rendering json
-     *
-     * @param mixed $result 
-     * @return string
-     * @author Sergey Startsev
-     */
-    protected function renderJson($result)
-    {
-        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        
-        return $this->renderText(json_encode($result));
-    }
-
     /**
      * Getting modules list action
      *
@@ -151,9 +127,9 @@ class afsModuleManagerActions extends sfActions
             'newValue'  => $request->getParameter('newValue'),
         );
         
-        $response = afStudioCommand::process('widget', 'rename', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'rename', $parameters)->asArray()
+        );
     }
     
     /**
@@ -171,9 +147,9 @@ class afsModuleManagerActions extends sfActions
             'name'      => $request->getParameter('name'),
         );
         
-        $response = afStudioCommand::process('widget', 'delete', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'delete', $parameters)->asArray()
+        );
     }
     
 }

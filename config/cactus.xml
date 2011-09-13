@@ -64,7 +64,6 @@
 					<file>js/custom/form</file>
 					<file>js/custom/grid</file>
 					<file>js/custom/tab</file>
-					<file>js/codepress/Ext.ux.CodePress.js</file>
 					<file>js/components/models/TypeComboBox.js</file>
 	
 					<file>js/afStudio.CreateProject.js</file>
@@ -135,7 +134,14 @@
 					<file>js/filetree/js/Ext.ux.form.BrowseButton.js</file>
 					<file>js/filetree/js/Ext.ux.FileUploader.js</file>
 					<file>js/filetree/js/Ext.ux.UploadPanel.js</file>
-									
+					
+					<!-- AppFlower Schema MVC -->
+					<file>js/components/appflower/model/template/ModelNode.js</file>
+					<file>js/components/appflower/model/template/BaseTemplate.js</file>
+					<file>js/components/appflower/model/template/templates.js</file>
+					<file>js/components/appflower/model/base</file>
+					<file>js/components/appflower/model/</file>
+					
 					<!-- Widget Designer -->	
 					<file>js/components/widgetDesigner/inspector/nodeBehaviors/base</file>
 					<file>js/components/widgetDesigner/inspector/nodeBehaviors</file>

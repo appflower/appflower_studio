@@ -34,8 +34,9 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	,saveLayoutUrl : 'afsLayoutBuilder/save'	
 	
 	/**
+	 * Auxiliary window dedicated to select a widget being added to the LD.
 	 * @property widgetSelectorWindow
-	 * @type {afStudio.layoutDesigner.WidgetSelectorWindow}  
+	 * @type {afStudio.layoutDesigner.WidgetSelectorTreeWindow}  
 	 */
 	
 	/**

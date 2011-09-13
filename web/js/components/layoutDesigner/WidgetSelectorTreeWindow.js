@@ -5,7 +5,7 @@ Ext.namespace('afStudio.layoutDesigner');
  * 
  * @class afStudio.layoutDesigner.WidgetSelectorTreeWindow
  * @extends Ext.Window
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 	
@@ -236,6 +236,5 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 			this.selectWidget();
 		}
 	}//eo onNodeDblClick
-	
 	
 });
