@@ -55,7 +55,6 @@ class afStudioLayoutCommandHelper
     public static function processGetWidgetList(Array $modules, Array $params, $name, $type)
     {
         $aExtWidgets = array();
-        
         foreach ($modules as $module) {
             if (count($params[$module]['xml_names']) > 0) {	
                 $children = array(
@@ -66,17 +65,13 @@ class afStudioLayoutCommandHelper
                 );
                 
                 foreach ($params[$module]['xml_names'] as $xk => $xmlName) {
-                    $children['children'][] = array(
-                        'app'           => $name,
-                        'module'        => $module,
-                        'widget'        => str_replace('.xml', '', $xmlName),
-                        'widgetUri'     => $module.'/'.str_replace('.xml', '', $xmlName),
-                        'type'          => 'xml',
-                        'text'          => $xmlName,
-                        'securityPath'  => $params[$module]['security_path'],
-                        'xmlPath'       => $params[$module]['xml_paths'][$xk],
-                        'actionPath'    => $params[$module]['action_path'],
-                        'leaf'          => true,
+                    $widget = afsWidgetModelHelper::retrieve(str_replace('.xml', '', $xmlName), $module, $name, $type);
+                    
+                    $children['children'][] = array_merge(
+                        afsWidgetModelHelper::getInfo(
+                            afsWidgetModelHelper::retrieve(str_replace('.xml', '', $xmlName), $module, $name, $type)
+                        ), 
+                        array('leaf' => true)
                     );
                 }
                 $aExtWidgets['children'][] = $children;
@@ -85,7 +80,7 @@ class afStudioLayoutCommandHelper
         
         if (!empty($aExtWidgets)) {
             $aExtWidgets['text'] = $name;
-            $aExtWidgets['type'] = $type;
+            $aExtWidgets['type'] = "{$type}s";
         }
         
         return $aExtWidgets;

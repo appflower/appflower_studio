@@ -160,8 +160,8 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $root_dir = sfConfig::get('sf_root_dir');
         
         $data = array();
-        foreach (array('apps', 'plugins') as $type) {
-            foreach(afStudioUtil::getDirectories("{$root_dir}/{$type}/", true) as $parent) {
+        foreach (array('app', 'plugin') as $type) {
+            foreach(afStudioUtil::getDirectories("{$root_dir}/{$type}s/", true) as $parent) {
                 $widgets = $this->getWidgets($parent, $type);
                 if (!empty($widgets)) $data[] = $widgets;
             }
@@ -178,10 +178,10 @@ class afStudioLayoutCommand extends afBaseStudioCommand
      * @return array
      * @author Sergey Startsev
      */
-    private function getWidgets($name, $type = 'apps')
+    private function getWidgets($name, $type = 'app')
     {
         $root_dir = sfConfig::get('sf_root_dir');
-        $modules_dir = "{$root_dir}/{$type}/{$name}/modules";
+        $modules_dir = "{$root_dir}/{$type}s/{$name}/modules";
         
         $modules = afStudioUtil::getDirectories($modules_dir, true);
         
@@ -194,7 +194,6 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                     'xml_paths' => afStudioUtil::getFiles("{$modules_dir}/{$module}/config/", false, "xml"),
                     'xml_names' => afStudioUtil::getFiles("{$modules_dir}/{$module}/config/", true, "xml"),
                     'security_path' => "{$modules_dir}/{$module}/config/security.yml",
-                    'action_path' => $actionPath = "{$modules_dir}/{$module}/actions/actions.class.php"
                 );
             }
             
