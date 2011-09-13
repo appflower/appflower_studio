@@ -408,22 +408,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @param {Object} widgetParam
 	 */
 	,onAddWidget : function(widgetParam) {
-		var _this = this,
-				p = _this.layoutView;
-		
-		_this.executeAction({
-			url: _this.widgetMetaUrl,			  
-			params: {
-		       module_name: widgetParam.module,
-		       action_name: widgetParam.widget
-		    }, 
-		    run: function(response) {
-		       p.addWidgetComponentToContentView(
-		       	 Ext.apply(widgetParam, {meta: response.content})
-		       );
-		    },
-		    loadingMessage: 'Add Widget...'			
-		});		
+		var p = this.layoutView;
+		p.addWidgetComponentToContentView(widgetParam);
 	}//eo onAddWidget	
  
 	/**

@@ -46,7 +46,8 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 		if (this.isNodeWidget(selectedNode)) {
 			var eventObj = {
 				module: this.getNodeAttribute(selectedNode, 'module'),
-				widget: this.getNodeAttribute(selectedNode, 'widget')
+				widget: this.getNodeAttribute(selectedNode, 'widget'),
+				widgetUri: this.getNodeAttribute(selectedNode, 'widgetUri')
 			};
 			
 			this.closeWidgetSelectorTreeWindow();
