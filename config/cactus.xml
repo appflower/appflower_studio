@@ -27,7 +27,6 @@
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/Ext.ux.Grid.GroupingStoreOverride.js</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/RowExpander.js</file>
 					<file>../../appFlowerPlugin/web/js/custom/cheatJS.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/rowactionsImm/js/Ext.ux.GridRowActions.js</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/lovcombo-1.0/js/Ext.ux.form.LovCombo.js</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/treegrid/Ext.ux.CheckboxSelectionModel.js</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/menu/EditableItem.js</file>
@@ -58,14 +57,51 @@
 				<output>afStudio.js</output>				
 				<files>		
 					<file>js/afStudio.js</file>		
+					<file>js/afStudio.xhr.js</file>
 					<file>js/afStudio.WSUrlsClass.js</file>		
+					
+					<!-- custom ext ux -->
 					
 					<file>js/custom</file>
 					<file>js/custom/form</file>
 					<file>js/custom/grid</file>
 					<file>js/custom/tab</file>
-					<file>js/components/models/TypeComboBox.js</file>
 	
+					<!-- Portal -->				
+					<file>js/custom/portal/Portal.js</file>
+					<file>js/custom/portal/PortalColumn.js</file>
+					<file>js/custom/portal/Portlet.js</file>
+	
+					<!-- Filetree -->
+					<file>js/custom/tree/filetree/js/Ext.ux.FileTreePanel.js</file>
+					<file>js/custom/tree/filetree/js/Ext.ux.FileTreeMenu.js</file>
+					<file>js/custom/tree/filetree/js/Ext.ux.form.BrowseButton.js</file>
+					<file>js/custom/tree/filetree/js/Ext.ux.FileUploader.js</file>
+					<file>js/custom/tree/filetree/js/Ext.ux.UploadPanel.js</file>
+	
+					<!-- Treegrid -->
+					<file>js/custom/tree/treegrid/TreeGridSorter.js</file>
+					<file>js/custom/tree/treegrid/TreeGridColumnResizer.js</file>
+					<file>js/custom/tree/treegrid/TreeGridNodeUI.js</file>
+					<file>js/custom/tree/treegrid/TreeGridLoader.js</file>
+					<file>js/custom/tree/treegrid/TreeGridColumns.js</file>
+					<file>js/custom/tree/treegrid/TreeGrid.js</file>
+	
+					<!-- ace code-editor -->
+					<file>js/ace/src/ace.js</file> 
+					<file>js/ace/src/mode-textile.js</file> 
+					<file>js/ace/src/mode-javascript.js</file> 
+					<file>js/ace/src/mode-css.js</file> 
+					<file>js/ace/src/mode-html.js</file> 
+					<file>js/ace/src/mode-json.js</file> 
+					<file>js/ace/src/mode-markdown.js</file> 
+					<file>js/ace/src/mode-php.js</file> 
+					<file>js/ace/src/mode-xml.js</file> 
+					<file>js/ace/src/theme-twilight.js</file> 
+					<file>js/custom/ace/Ext.ux.AceComponent.js</file> 
+	
+					<!-- end of custom ext ux -->
+					
 					<file>js/afStudio.CreateProject.js</file>
 					<file>js/afStudio.CreateProjectWizard.js</file>
 					<file>js/afStudio.databaseConnectionSettings.js</file>
@@ -88,7 +124,7 @@
 					<file>js/components/cli/Debug.js</file>
 					<file>js/components/cli/WindowWrapper.js</file>
 					<file>js/components/cli/CommandLineMgr.js</file>
-					
+
 					<!-- Navigation -->				
 					<file>js/components/navigation/BaseItemTreePanel.js</file>
 					<file>js/components/navigation/ModelItem.js</file>
@@ -101,13 +137,9 @@
 					<file>js/components/viewport/StudioViewport.js</file>
 					<file>js/components/viewport/WestPanel.js</file>
 					<file>js/components/viewport/SouthPanel.js</file>
-					
-					<!-- Portal -->				
-					<file>js/custom/portal/Portal.js</file>
-					<file>js/custom/portal/PortalColumn.js</file>
-					<file>js/custom/portal/Portlet.js</file>
 	
 					<!-- Models -->				
+					<file>js/components/models/TypeComboBox.js</file>
 					<file>js/components/models/TypeBuilder.js</file>
 					<file>js/components/models/relationcombo/RelationPicker.js</file>
 					<file>js/components/models/relationcombo/RelationCombo.js</file>
@@ -128,55 +160,88 @@
 					<file>js/components/layoutDesigner/view</file>
 					<file>js/components/layoutDesigner</file>
 					
-					<!-- Filetree -->
-					<file>js/filetree/js/Ext.ux.FileTreePanel.js</file>
-					<file>js/filetree/js/Ext.ux.FileTreeMenu.js</file>
-					<file>js/filetree/js/Ext.ux.form.BrowseButton.js</file>
-					<file>js/filetree/js/Ext.ux.FileUploader.js</file>
-					<file>js/filetree/js/Ext.ux.UploadPanel.js</file>
+					<!-- theme designer -->
+					<file>js/components/theme/editors/afStudio.BaseEditor.js</file>
+					<file>js/components/theme/editors/afStudio.CssEditor.js</file>
+					<file>js/components/theme/afStudio.Theme.js</file>
 					
 					<!-- AppFlower Schema MVC -->
+					<!-- ******************** -->
+					
+					<!-- data type -->
+					<file>js/components/appflower/data/type/base/Type.js</file>
+					<file>js/components/appflower/data/type/base/Number.js</file>
+					<file>js/components/appflower/data/type/</file>
+					<file>js/components/appflower/data/Types.js</file>
+					
+					<!-- model -->
 					<file>js/components/appflower/model/template/ModelNode.js</file>
 					<file>js/components/appflower/model/template/BaseTemplate.js</file>
-					<file>js/components/appflower/model/template/templates.js</file>
-					<file>js/components/appflower/model/base</file>
-					<file>js/components/appflower/model/</file>
+					<file>js/components/appflower/model/template/Templates.js</file>
 					
-					<!-- Widget Designer -->	
-					<file>js/components/widgetDesigner/inspector/nodeBehaviors/base</file>
-					<file>js/components/widgetDesigner/inspector/nodeBehaviors</file>
-					<!-- wi nodeTypes -->
-					<file>js/components/widgetDesigner/inspector/nodeTypes/base/BaseNode.js</file>
-					<file>js/components/widgetDesigner/inspector/nodeTypes/base/ContainerNode.js</file>
-					<file>js/components/widgetDesigner/inspector/nodeTypes/base/CollectionNode.js</file>
-					<file>js/components/widgetDesigner/inspector/nodeTypes/base/FieldsNode.js</file>
-					<file>js/components/widgetDesigner/inspector/nodeTypes/base/NodeBuilder.js</file>
-					<file>js/components/widgetDesigner/inspector/nodeTypes</file>
-					<!-- wi propertyType -->
-					<file>js/components/widgetDesigner/inspector/propertyType/base/PropertyGrid.js</file>
-					<file>js/components/widgetDesigner/inspector/propertyType/base/PropertyBaseType.js</file>
-					<file>js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeBoolean.js</file>
-					<file>js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeChoice.js</file>
-					<file>js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeString.js</file>
-					<file>js/components/widgetDesigner/inspector/propertyType</file>
-					<!-- wi rootNodeTypes -->
-					<file>js/components/widgetDesigner/inspector/rootNodeTypes/ObjectRootNode.js</file>
-					<file>js/components/widgetDesigner/inspector/rootNodeTypes/EditNode.js</file>
-					<file>js/components/widgetDesigner/inspector/rootNodeTypes/ListNode.js</file>
-					<file>js/components/widgetDesigner/inspector/rootNodeTypes/HtmlNode.js</file>
-					<!-- wi components -->
-					<file>js/components/widgetDesigner/inspector</file>
-					<!-- wd gui -->
-					<file>js/components/widgetDesigner/designer/list/ListMetaProcessor.js</file>
-					<file>js/components/widgetDesigner/designer/list/Column.js</file>
-					<file>js/components/widgetDesigner/designer/list/ListGridView.js</file>
-					<file>js/components/widgetDesigner/designer/list/SimpleListView.js</file>
-					<file>js/components/widgetDesigner/designer/GuiFactory.js</file>
-					<file>js/components/widgetDesigner/designer/DesignerPanel.js</file>				
-					<!-- wd -->
-					<file>js/components/widgetDesigner/tabs</file>	
-					<file>js/components/widgetDesigner</file>
-					<!-- end Widget Designer -->
+					<file>js/components/appflower/model/base/Node.js</file>
+					<file>js/components/appflower/model/base/TypedNode.js</file>
+					<file>js/components/appflower/model/base/Property.js</file>
+					
+					<!-- model errors -->
+					<file>js/components/appflower/model/error/</file>
+					
+					<file>js/components/appflower/model/</file>
+					<file>js/components/appflower/model/widget/</file>
+					
+					<!-- definition -->
+					<file>js/components/appflower/definition/error/</file>
+					<file>js/components/appflower/definition/DataDefinition.js</file>
+					<file>js/components/appflower/definition/ViewDefinition.js</file>
+					
+					<!-- controller -->
+					<file>js/components/appflower/controller/error/</file>
+					<file>js/components/appflower/controller/BaseController.js</file>
+					<file>js/components/appflower/controller/ViewController.js</file>
+					
+					<!-- view -->
+					
+					<!-- inspector tree -->
+					<file>js/components/appflower/view/inspectorTree/</file>
+					<file>js/components/appflower/view/inspectorTree/error/</file>
+					<file>js/components/appflower/view/inspectorTree/node/base/TreeNode.js</file>
+					<file>js/components/appflower/view/inspectorTree/node/base/ContainerNode.js</file>
+					<file>js/components/appflower/view/inspectorTree/node/</file>
+					
+					<!-- property grid -->
+					<file>js/components/appflower/view/propertyGrid/PropertyStore.js</file>
+					<file>js/components/appflower/view/propertyGrid/PropertyColumnModel.js</file>
+					<file>js/components/appflower/view/propertyGrid/PropertyGrid.js</file>
+
+					<!-- ******************** -->
+					<!-- end of AppFlower Schema MVC -->
+					
+					
+					<!-- widget designer -->
+					<!-- ******************** -->
+					
+					<!-- gui views -->
+					<file>js/components/widgetDesigner/gui/ModelInterface.js</file>
+					
+					<!-- list -->
+					<file>js/components/widgetDesigner/gui/list/ListModelInterface.js</file>
+					<file>js/components/widgetDesigner/gui/list/ModelReflector.js</file>
+					<file>js/components/widgetDesigner/gui/list/ListGridView.js</file>
+					<file>js/components/widgetDesigner/gui/list/ActionColumn.js</file>
+					<file>js/components/widgetDesigner/gui/list/ListView.js</file>
+					
+					<!-- edit -->
+					
+					<!-- containers -->
+					<file>js/components/widgetDesigner/WD.js</file>
+					<file>js/components/widgetDesigner/WidgetsBuilder.js</file>
+					<file>js/components/widgetDesigner/tabs/designer/</file>
+					<file>js/components/widgetDesigner/tabs/codeEditor/</file>
+					<file>js/components/widgetDesigner/tabs/</file>
+					<file>js/components/widgetDesigner/WidgetDesigner.js</file>
+					
+					<!-- ******************** -->
+					<!-- end of widget designer -->
 					
 					<!-- Users -->
 					<file>js/components/users/afStudio.UserWindow.js</file>
@@ -186,11 +251,6 @@
 					<file>js/jquery/jquery-1.4.4.min.js</file>
 					<file>js/jquery/jquery.jscrollpane.min.js</file>
 					<file>js/jquery/jquery.prettyPhoto.js</file>	
-					
-					<!-- Theme - template designer, template selector, editors -->
-					<file>js/components/theme/afStudio.Theme.js</file>
-					<file>js/components/theme/editors/afStudio.BaseEditor.js</file>
-					<file>js/components/theme/editors/afStudio.CssEditor.js</file>
 				</files>
 			</needle>
 			
@@ -207,8 +267,6 @@
 				<files>					
 					<file>http://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise</file>
 					<file>../../appFlowerPlugin/web/css/my-extjs.css</file>					
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/rowactionsImm/css/Ext.ux.GridRowActions.css</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/rowactionsImm/css/icons.css</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/groupingcombobox/Ext.ux.form.GroupingComboBox.css</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/lovcombo-1.0/css/Ext.ux.form.LovCombo.css</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/Ext.ux.grid.RowEditor.css</file>
@@ -219,8 +277,14 @@
 					<file>css/afStudio.tplSelector.css</file>
 					<file>css/prettyPhoto.css</file>
 					<file>css/welcome.css</file>
-					<file>js/filetree/css/filetype.css</file>
-					<file>js/filetree/css/icons.css</file>
+					
+					<!-- Filetree -->
+					<file>js/custom/tree/filetree/css/filetype.css</file>
+					<file>js/custom/tree/filetree/css/filetree.css</file>
+					<file>js/custom/tree/filetree/css/icons.css</file>
+					
+					<!-- Treegrid -->
+					<file>js/custom/tree/treegrid/treegrid.css</file>
 				</files>
 			</needle>
 		</needles>

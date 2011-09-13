@@ -353,7 +353,6 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			//compare attributes
 			Ext.iterate(entity.attributes, function(k, v) {
 				return (!Ext.isEmpty(v) && np[k] !== v) ? (equal = false) : true;
-//				return (!(Ext.isEmpty(np[k]) || Ext.isEmpty(v)) && np[k] !== v) ? (equal = false) : true;
 			});
 			//compare _content
 			if (equal && Ext.isDefined(entity._content) && nc != entity._content) {
@@ -376,8 +375,12 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @return {Number} entity's index inside entArray or null if entity was not found. 
 	 */
 	searchEntityIndex : function(entArray, node) {
+//		var parentNode = node.parentNode,
+//			nodeIdx = parentNode.indexOf(node);
+		
 		var	entIdx;
 		for (var i = 0, len = entArray.length; i < len; i++) {
+//			if (this.equal(entArray[i], node) && nodeIdx == i) {
 			if (this.equal(entArray[i], node)) {
 				entIdx = i;
 				break;
