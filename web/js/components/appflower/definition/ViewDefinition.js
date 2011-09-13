@@ -16,29 +16,6 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 */
 	
 	/**
-	 * Checks if a node can be added to another node. 
-	 * Returns true if node can be added to parent otherwise false.
-	 * @public
-	 * @param {Node} parent The parent node being checked for addition
-	 * @param {Node} node The node to add
-	 * @return {Boolean}
-	 */
-	canBeAdded : function(parent, node) {
-		var parent = this.getEntity(parent),
-			key = node.tag;
-			
-		if (Ext.isDefined(parent[key])) {
-			if (Ext.isArray(parent[key])) {
-				return this.searchEntityIndex(parent[key], node) != null ? false : true;				
-			} else {
-				return !this.equal(parent[key], node);
-			}
-		}
-		
-		return true;
-	},
-	
-	/**
 	 * Returns definition's entity by model node.
 	 * @override
 	 * @public
@@ -167,9 +144,10 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @param {None} parent
 	 * @param {None} node
 	 * @param {None} refNode
+	 * @param {Number} refIndex
 	 */
-	insertBeforeEntity : function(parent, node, refNode) {
-		var entObj = this.getEntityObj(refNode),	
+	insertBeforeEntity : function(parent, node, refNode, refIndex) {
+		var entObj = this.getEntityObj(refNode, refIndex),	
 			ep = entObj.parent,
 			ek = entObj.key,
 			ei = entObj.idx;
@@ -190,9 +168,10 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @override
 	 * @public
 	 * @param {afStudio.model.Node} node The model node whose corresponding entity being removed
+	 * @param {Number} nodeIdx The index of model node 
 	 */
-	removeEntity : function(node) {
-		var entObj = this.getEntityObj(node),
+	removeEntity : function(node, nodeIdx) {
+		var entObj = this.getEntityObj(node, nodeIdx),
 			ep = entObj.parent,
 			ek = entObj.key,
 			ei = entObj.idx,
@@ -270,9 +249,11 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * }
 	 * </ul>
 	 * @private
-	 * @return {Object}
+	 * @param {Node} node The model node
+	 * @param {Number} (optional) nodeIdx The model node index inside its parent.
+	 * @return {Object} entity object
 	 */
-    getEntityObj : function(node) {
+    getEntityObj : function(node, nodeIdx) {
 		var ctr = node.getOwnerTree(),
 			sep = node.getPathSeparator(),
     		path = node.getPath().split(sep);
@@ -309,7 +290,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
    					if (!n) {
    						throw new Ext.Error(String.format('ViewDefinition. Model does not contain Node {0} with ID = "{1}"', node, nodeId));
    					}
-					idx = this.searchEntityIndex(nextEnt, n);
+					idx = this.searchEntityIndex(nextEnt, n, (i == l - 1) ? nodeIdx : null);
 					if (idx == null) {
 						throw new Ext.Error(String.format('ViewDefinition. Cannot get model node\'s entity, node: {0}, path: {1}', node, path));
 					}
@@ -372,16 +353,22 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 * @private
 	 * @param {Array} entArray The array of entities.
 	 * @param {afStudio.model.Node} node The model node.
+	 * @param {Number} (optional) idx The node index, if it is not specified is used index from parentNode 
 	 * @return {Number} entity's index inside entArray or null if entity was not found. 
 	 */
-	searchEntityIndex : function(entArray, node) {
-//		var parentNode = node.parentNode,
-//			nodeIdx = parentNode.indexOf(node);
-		
+	searchEntityIndex : function(entArray, node, idx) {
+		var parentNode = node.parentNode,
+			nodeIdx = parentNode.indexOf(node);
+	
+		nodeIdx = Ext.isEmpty(idx) ? nodeIdx : idx;
+			
+		if (nodeIdx == -1) {
+			return null;
+		}
+			
 		var	entIdx;
 		for (var i = 0, len = entArray.length; i < len; i++) {
-//			if (this.equal(entArray[i], node) && nodeIdx == i) {
-			if (this.equal(entArray[i], node)) {
+			if (this.equal(entArray[i], node) && nodeIdx == i) {
 				entIdx = i;
 				break;
 			}
