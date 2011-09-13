@@ -138,7 +138,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	},
 	
 	/**
-	 * Adds entity.
+	 * Creates and adds entity from the node being added to the model.
 	 * @override
 	 * @public
 	 * @param {Node} parent The parent node to which a new child is added
@@ -156,17 +156,8 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 //		if (entity == null) {
 //			throw new afStudio.definition.error.DefinitionError('create-entity');
 //		}
-		
-		var child = ent[node.tag];
-		
-		if (Ext.isDefined(child)) {
-			if (!Ext.isArray(child)) {
-				child = ent[node.tag] = [child];
-			}
-			child.push(entity);
-		} else {
-			ent[node.tag] = entity;
-		}
+
+		this.addEntDefinition(ent, node.tag, entity);
 	},
 	//eo addEntity	
 	
@@ -249,6 +240,16 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			} else {
 				entity = eContent;
 			}
+		}
+
+		//create definition for child nodes
+		if (node.hasChildNodes()) {
+			entity = !Ext.isObject(entity) ? {_content: entity} : entity; 
+			
+			node.eachChild(function(cn) {
+				var ent = this.createEntity(cn);
+				this.addEntDefinition(entity, cn.tag, ent);
+			}, this);
 		}
 		
 		return entity;
@@ -384,6 +385,26 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 		}
 		
 		return Ext.isNumber(entIdx) ? entIdx : null;
-	}
+	},
 	//eo searchEntityIndex
+	
+	/**
+	 * Adds entity's definition.
+	 * @private
+	 * @param {Object} ent The entity's definition container
+	 * @param {String} key The definition key property inside container
+	 * @param {Mixed}  def The entity definition being added
+	 */
+	addEntDefinition : function(ent, key, def) {
+		var e = ent[key];
+		
+		if (Ext.isDefined(e)) {
+			if (!Ext.isArray(e)) {
+				ent[key] = [e];
+			}
+			ent[key].push(def);
+		} else {
+			ent[key] = def;
+		}
+	}
 });
