@@ -12,7 +12,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	/**
 	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
 	 */
-	widgetMetaUrl : 'afsLayoutBuilder/getWidget'
+	widgetMetaUrl : afStudioWSUrls.widgetUrl
 	
 	/**
 	 * @cfg {Object} viewMeta required

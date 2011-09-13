@@ -24,14 +24,14 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 */
 	
 	/**
-	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
+	 * @cfg {String} widgetMetaUrl (defaults to {@link afStudioWSUrls.widgetUrl})
 	 */
-	widgetMetaUrl : 'afsLayoutBuilder/getWidget'
+	widgetMetaUrl : afStudioWSUrls.widgetUrl
 
 	/**
 	 * @cfg {String} saveLayoutUrl (defaults to 'afsLayoutBuilder/save')
 	 */
-	,saveLayoutUrl : 'afsLayoutBuilder/save'	
+	,saveLayoutUrl : afStudioWSUrls.layoutSaveUrl	
 	
 	/**
 	 * Auxiliary window dedicated to select a widget being added to the LD.
