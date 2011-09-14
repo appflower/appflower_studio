@@ -22,27 +22,39 @@ folders:
   # current project environment - not system root! be carefully
   root:
     path: '/'
-    mode: 'ug+X'
+    mode: 'ugo+X'
     recursive: true
   apps: 
     path: '/apps'
-    mode: 'g+rw'
+    mode: 'go+rw'
     recursive: true
   batch:
     path: '/batch'
-    mode: 'g+rwx'
+    mode: 'go+rwx'
     recursive: true
   config:
     path: '/config'
-    mode: 'g+rw'
+    mode: 'go+rw'
     recursive: true
   lib:
     path: '/lib'
     mode: 'g+rw'
     recursive: true
+  lib_model:
+    path: '/lib/model'
+    mode: 'go+rw'
+    recursive: true
+  lib_form:
+    path: '/lib/form'
+    mode: 'go+rw'
+    recursive: true
+  lib_studio:
+    path: '/lib/studio'
+    mode: 'go+rwX'
+    recursive: true
   log:
     path: '/log'
-    mode: 'g+rw'
+    mode: 'go+rw'
     recursive: true
   plugins:
     path: '/plugins'
