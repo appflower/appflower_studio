@@ -36,6 +36,10 @@ folders:
     path: '/config'
     mode: 'go+rw'
     recursive: true
+  data:
+    path: '/data'
+    mode: 'go+rw'
+    recursive: true
   lib:
     path: '/lib'
     mode: 'g+rw'
@@ -52,6 +56,23 @@ folders:
     path: '/lib/studio'
     mode: 'go+rwX'
     recursive: true
+# rules in places
+  config_in_places:
+    path: '/config'
+    mode: 'go+rwX'
+    recursive: true
+    in_places: true
+  lib_model_in_places:
+    path: '/lib/model'
+    mode: 'go+rwX'
+    recursive: true
+    in_places: true
+  lib_form_in_places:
+    path: '/lib/form'
+    mode: 'go+rwX'
+    recursive: true
+    in_places: true
+  
   log:
     path: '/log'
     mode: 'go+rw'

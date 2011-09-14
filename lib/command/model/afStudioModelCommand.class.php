@@ -29,13 +29,13 @@ class afStudioModelCommand extends afBaseStudioCommand
      * @author Sergey Startsev
      */
     protected function getModificator()
-	{
-	    if (is_null($this->modificator)) {
-	        $this->modificator = afStudioModelCommandModificator::create()->setModelName($this->modelName)->setSchemaFile($this->schemaFile);
-	    }
-	    
-	    return $this->modificator;
-	}
+    {
+        if (is_null($this->modificator)) {
+            $this->modificator = afStudioModelCommandModificator::create()->setModelName($this->modelName)->setSchemaFile($this->schemaFile);
+        }
+        
+        return $this->modificator;
+    }
     
     /**
      * Pre-process method
@@ -45,7 +45,11 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function preProcess()
     {
         $this->modelName = $this->getParameter('model');
-        $this->schemaFile = $this->getParameter('schema');
+        
+        $schema = $this->getParameter('schema');
+        if (!empty($schema)) {
+            $this->schemaFile = $this->getParameter('schema');
+        }
     }
     
     /**
@@ -57,10 +61,10 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processHas()
     {
         if (!is_null($this->getModificator()->getSchemaByModel($this->modelName))) {
-		    return afResponseHelper::create()->success(true)->message("Model <b>{$this->modelName}</b> exists");
-		}
-		
-		return afResponseHelper::create()->success(false)->message("Model <b>{$this->modelName}</b> doesn't exists");
+            return afResponseHelper::create()->success(true)->message("Model <b>{$this->modelName}</b> exists");
+        }
+        
+        return afResponseHelper::create()->success(false)->message("Model <b>{$this->modelName}</b> doesn't exists");
     }
     
     /**
@@ -72,7 +76,7 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processGet()
     {
         $models = $this->getModificator()->getList();
-		
+        
         return afResponseHelper::create()->success(true)->data(array(), $models, 0);
     }
     
@@ -84,7 +88,7 @@ class afStudioModelCommand extends afBaseStudioCommand
      */
     protected function processAdd()
     {
-		return $this->getModificator()->addModel();
+        return $this->getModificator()->addModel();
     }
     
     /**
@@ -95,7 +99,7 @@ class afStudioModelCommand extends afBaseStudioCommand
      */
     protected function processDelete()
     {
-		return $this->getModificator()->deleteModel();
+        return $this->getModificator()->deleteModel();
     }
     
     /**
@@ -106,9 +110,7 @@ class afStudioModelCommand extends afBaseStudioCommand
      */
     protected function processRename()
     {
-        $renamedModelName = $this->getParameter('renamedModel');
-		
-		return $this->getModificator()->renameModel($renamedModelName);
+        return $this->getModificator()->renameModel($this->getParameter('renamedModel'));
     }
     
     /**
@@ -121,7 +123,7 @@ class afStudioModelCommand extends afBaseStudioCommand
     {
         $rows = $this->getModificator()->readModelFields();
         
-		return afResponseHelper::create()->success(true)->data(array(), $rows, count($rows));
+        return afResponseHelper::create()->success(true)->data(array(), $rows, count($rows));
     }
     
     /**
@@ -133,14 +135,14 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processAlterModel()
     {
         try {
-			$response = $this->getModificator()->alterModel(json_decode($this->getParameter('fields')));
-			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-				$response->message("{$this->modelName} structure was successfully updated");
-			}
-			
-			return $response;
+            $response = $this->getModificator()->alterModel(json_decode($this->getParameter('fields')));
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                $response->message("{$this->modelName} structure was successfully updated");
+            }
+            
+            return $response;
         } catch ( Exception $e ) {
-        	return afResponseHelper::create()->success(false)->message($e->getMessage());
+            return afResponseHelper::create()->success(false)->message($e->getMessage());
         }
     }
     
@@ -175,18 +177,18 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processAlterModelUpdateField()
     {
         try {
-			$field = $this->getParameter('field', null);
-			$fieldDef = json_decode($this->getParameter('fieldDef'));
-			
+            $field = $this->getParameter('field', null);
+            $fieldDef = json_decode($this->getParameter('fieldDef'));
+            
             $response = $this->getModificator()->changeModelField($fieldDef, $field);
             
-			if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-				$response->message("Field '{$fieldDef->name}' was successfully updated");
-			}
-			
-			return $response;
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                $response->message("Field '{$fieldDef->name}' was successfully updated");
+            }
+            
+            return $response;
         } catch ( Exception $e ) {
-        	return afResponseHelper::create()->success(false)->message($e->getMessage());
+            return afResponseHelper::create()->success(false)->message($e->getMessage());
         }
     }
     

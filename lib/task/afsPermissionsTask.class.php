@@ -19,6 +19,11 @@ class afsPermissionsTask extends sfBaseTask
     const DEFAULT_RECURSIVE = false;
     
     /**
+     * Default in places parameter
+     */
+    const DEFAULT_IN_PLACES = false;
+    
+    /**
      * Configuration file in studio environment
      */
     const CONFIGURATION = 'permissions.yml';
@@ -42,6 +47,11 @@ class afsPermissionsTask extends sfBaseTask
      * Config folder recursive identifacator
      */
     const CONFIG_FOLDER_RECURSIVE = 'recursive';
+    
+    /**
+     * Config folder in places mode
+     */
+    const CONFIG_FOLDER_IN_PLACES = 'in_places';
     
     /**
      * Config path type
@@ -112,32 +122,51 @@ EOF;
                 $this->setWebGroup($options);
             }
             
-            // Fix permissions for setted folders
             $command_log = array();
             
             $folders = $this->getFolders();
             foreach ($folders as $folder) {
-                $path = (!$this->isAbsolute($folder)) ? $root_dir : '';
-                $path .= $this->getFolderPath($folder);
-                
-                if (file_exists($path)) {
-                    $command = array();
-                    $command[] = "chmod";
-                    if ($this->isRecursive($folder)) $command[] = "-R";
-                    $command[] = $this->getFolderMode($folder);
-                    $command[] = $path;
+                if ($this->isInPlaces($folder)) {
+                    foreach (array('app', 'plugin') as $type) {
+                        foreach(afStudioUtil::getDirectories("{$root_dir}/{$type}s/", true) as $place) {
+                            $path = "{$root_dir}/{$type}s/{$place}" . $this->getFolderPath($folder);
+                            $this->processFolder($folder, $path);
+                        }
+                    }
                     
-                    $command = implode(' ', $command);
-                    
-                    $change_creds = $this->run_command($command);
-                    
-                    $command_log[] = $command;
-                    
-                    $this->logSection('path', sprintf('change permissions %s to %s', $path, $this->getFolderMode($folder)));
+                    continue;
                 }
+                
+                $this->processFolder($folder);
             }
             
             $this->log_it("Chmods:\n". implode("\n", $command_log));
+        }
+    }
+    
+    private function processFolder(Array $folder, $path = null)
+    {
+        $root_dir = sfConfig::get('sf_root_dir');
+        
+        if (is_null($path)) {
+            $path = (!$this->isAbsolute($folder) && !$this->isInPlaces($folder)) ? $root_dir : '';
+            $path .= $this->getFolderPath($folder);
+        }
+        
+        if (file_exists($path)) {
+            $command = array();
+            $command[] = "chmod";
+            if ($this->isRecursive($folder)) $command[] = "-R";
+            $command[] = $this->getFolderMode($folder);
+            $command[] = $path;
+            
+            $command = implode(' ', $command);
+            
+            $change_creds = $this->run_command($command);
+            
+            $command_log[] = $command;
+            
+            $this->logSection('path', sprintf('change permissions %s to %s', $path, $this->getFolderMode($folder)));
         }
     }
     
@@ -403,6 +432,22 @@ EOF;
     private function isRelated(Array $folder)
     {
         return $this->getPathType($folder) == self::PATH_TYPE_RELATED;
+    }
+    
+    /**
+     * Check should be changed permissions related to places
+     *
+     * @param Array $folder 
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    private function isInPlaces(Array $folder)
+    {
+        if (isset($folder[self::CONFIG_FOLDER_IN_PLACES])) {
+            return $folder[self::CONFIG_FOLDER_IN_PLACES];
+        }
+        
+        return self::DEFAULT_IN_PLACES;
     }
     
 }
