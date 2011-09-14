@@ -493,7 +493,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 			showNoteOnSuccess: false,
 			run: function(response, opt){
 				var w = response.data;
-			       
+				
 				afStudio.WD.showWidgetDesigner({
 					uri: w.widgetUri,
 					actionPath: w.actionPath,

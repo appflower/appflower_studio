@@ -107,6 +107,18 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
     },
     
     /**
+     * Loads view definition and execute {@link #initController}.
+     * @override
+     * @public
+     * @param {Object} (Optional) params The load parameters
+     */
+    loadViewDefinition : function(params) {
+    	params = Ext.copyTo(params || {}, this.widget, 'place, placeType');
+    	
+    	afStudio.controller.ViewController.superclass.loadViewDefinition.apply(this, [params]);
+    },
+    
+    /**
      * Saves view model.
      * @override
      * @public

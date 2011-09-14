@@ -289,16 +289,20 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Loads view definition and execute {@link #initController()}.
-     * @protected
+     * Loads view definition and execute {@link #initController}.
+     * @public
+     * @param {Object} (optional) params The load parameters
      */
-    loadViewDefinition : function() {
+    loadViewDefinition : function(params) {
     	var _me = this,
     		defUrl = this.getUrl('read');
     	
+		params = Ext.isObject(params) ? params : null;
+    		
     	if (this.fireEvent('beforeLoadViewDefinition')) {
     		afStudio.xhr.executeAction({
     			url: defUrl,
+    			params: params,
     			mask: {region: 'center'},
     			showNoteOnSuccess: false,
     			scope: _me,
@@ -316,7 +320,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     /**
      * Saves view model.
      * @public
-     * @param {Object} (Optional) params The save parameters
+     * @param {Object} (optional) params The save parameters
      */
     saveView : function(params) {
     	this.saveViewDefinition(params);
