@@ -54,20 +54,22 @@ class afsLayoutBuilderActions extends afsActions
      */
     public function executeGetWidget(sfWebRequest $request)
     {
-        /*
-            TODO separate 'uri' request to 2 params, module, and action.
-        */
+        $action = $request->getParameter('action_name');
+        $module = $request->getParameter('module_name');
+        
+        ($info = afsWidgetModelHelper::find($action, $module)) ? extract($info) : list($place, $placeType) = array('frontend', 'app');
+        
         $parameters = array(
-            'uri' => $request->getParameter('module_name') . "/" . $request->getParameter('action_name'),
-            'place' => $request->getParameter('place', 'frontend'),
-            'placeType' => 'app',
+            'uri'   => "{$module}/{$action}",
+            'place' => $request->getParameter('place', $place),
+            'type'  => $request->getParameter('place_type', $placeType),
         );
         
         return $this->renderJson(
             afStudioCommand::process('widget', 'getInfo', $parameters)->asArray()
         );
     }
-
+    
     /**
      * Get widget list
      *
