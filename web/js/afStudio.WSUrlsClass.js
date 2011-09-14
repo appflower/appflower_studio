@@ -37,6 +37,10 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
 	widgetPreviewUrl : '/appFlowerStudio/preview',
 	
+	widgetUrl : 'afsLayoutBuilder/getWidget',
+	
+	layoutSaveUrl : 'afsLayoutBuilder/save',
+	
     pluginListUrl : '/afsPluginManager/getList',
     
 	pluginAddUrl : '/afsPluginManager/add',

@@ -59,12 +59,12 @@ class afsLayoutBuilderActions extends afsActions
         */
         $parameters = array(
             'uri' => $request->getParameter('module_name') . "/" . $request->getParameter('action_name'),
-            'place' => 'frontend',
-            'placeType' => 'app'
+            'place' => $request->getParameter('place', 'frontend'),
+            'placeType' => 'app',
         );
         
         return $this->renderJson(
-            afStudioCommand::process('widget', 'get', $parameters)->asArray()
+            afStudioCommand::process('widget', 'getInfo', $parameters)->asArray()
         );
     }
 

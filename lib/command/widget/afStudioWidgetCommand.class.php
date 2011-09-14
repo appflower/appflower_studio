@@ -63,7 +63,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $place_type = $this->getParameter('placeType', 'app');
             $type = $this->getParameter('widgetType');
             
-            if (!is_array($data)) return $response->success(false)->message("Wrong data defined. Please check request.")->asArray();
+            if (!is_array($data)) return $response->success(false)->message("Wrong data defined. Please check request.");
             
             // retrieve widget object
             $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
@@ -93,66 +93,85 @@ class afStudioWidgetCommand extends afBaseStudioCommand
     }
     
     /**
-	 * Rename xml functionality
-	 * 
-	 * @return afResponse
-	 * @author Sergey Startsev
-	 */
-	protected function processRename()
-	{
+     * Rename xml functionality
+     * 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processRename()
+    {
         // getting parameters
-	    $oldValue   = $this->getParameter('oldValue');
-		$newValue   = $this->getParameter('newValue');
-		$place      = $this->getParameter('place');
-		$module     = $this->getParameter('module');
-		$type       = $this->getParameter('type', 'app');
-		
-		$action = pathinfo($oldValue, PATHINFO_FILENAME);
-		$new_action = pathinfo($newValue, PATHINFO_FILENAME);
-		
-		$widget = afsWidgetModelHelper::retrieve($action, $module, $place, $type);
-		
-		if (!$widget->isNew()) {
-		    $response = $widget->rename($new_action);
-		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
-		    }
-		    
-		    return $response;
-		}
-		
+        $oldValue   = $this->getParameter('oldValue');
+        $newValue   = $this->getParameter('newValue');
+        $place      = $this->getParameter('place');
+        $module     = $this->getParameter('module');
+        $type       = $this->getParameter('type', 'app');
+        
+        $action = pathinfo($oldValue, PATHINFO_FILENAME);
+        $new_action = pathinfo($newValue, PATHINFO_FILENAME);
+        
+        $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $type);
+        
+        if (!$widget->isNew()) {
+            $response = $widget->rename($new_action);
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                $response->console(afStudioConsole::getInstance()->execute('sf cc'));
+            }
+            
+            return $response;
+        }
+        
         return afResponseHelper::create()->success(false)->message("Can't retrieve widget");
-	}
-	
-	/**
-	 * Delete xml functionality
-	 * 
-	 * @return afResponse
-	 * @author Sergey Startsev
-	 */
-	protected function processDelete()
-	{
+    }
+    
+    /**
+     * Delete xml functionality
+     * 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processDelete()
+    {
         // init params 
         $name   = pathinfo($this->getParameter('name'), PATHINFO_FILENAME);
         $module = $this->getParameter('module');
-		$place  = $this->getParameter('place');
-		$place_type   = $this->getParameter('type', 'app');
-		
+        $place  = $this->getParameter('place');
+        $place_type   = $this->getParameter('type', 'app');
+        
         // retrieve widget 
-		$widget = afsWidgetModelHelper::retrieve($name, $module, $place, $place_type);
-		
-		if (!$widget->isNew()) {
-		    $response = $widget->delete();
-		    if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-		        $response->console(afStudioConsole::getInstance()->execute('sf cc'));
-		    }
-		    
-		    return $response;
-		}
-		
-		return afResponseHelper::create()->success(false)->message("Widget <b>{$name}</b> doesn't exists");
-	}
-	
+        $widget = afsWidgetModelHelper::retrieve($name, $module, $place, $place_type);
+        
+        if (!$widget->isNew()) {
+            $response = $widget->delete();
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                $response->console(afStudioConsole::getInstance()->execute('sf cc'));
+            }
+            
+            return $response;
+        }
+        
+        return afResponseHelper::create()->success(false)->message("Widget <b>{$name}</b> doesn't exists");
+    }
+    
+    /**
+     * Getting info about widget
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processGetInfo()
+    {
+        $this->parseUri($this->getParameter('uri'));
+        
+        $place  = $this->getParameter('place', 'frontend');
+        $type   = $this->getParameter('type', 'app');
+        
+        $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $type);
+        
+        if ($widget->isNew()) return afResponseHelper::create()->success(false)->message("This widget doesn't exists");
+        return afResponseHelper::create()->success(true)->data(array(), afsWidgetModelHelper::getInfo($widget), 0);
+    }
+    
     /**
      * Parse input uri
      *
@@ -166,7 +185,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         if (count($uriParts) != 2) {
             throw new afStudioWidgetCommandException("Given widget URI: '{$uri}' looks wrong");
         }
-
+        
         $this->module = $uriParts[0];
         $this->action = $uriParts[1];
     }

@@ -394,19 +394,6 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     	_me.on({
     		scope: _me,
 
-    		/**
-             * @bubbled
-             */
-    		modelNodeCreated : function(ctr, parent, node) {
-    			console.log('@controller modelNodeCreated');
-    			var canAdd = this.viewDefinition.canBeAdded(parent, node);
-    			if (!canAdd) {
-    				afStudio.Msg.warning('View Definition', 
-    					String.format('You have already added "{0}" but did not modified it. <br /> It should be modefied before you can add a new one.', node.tag));
-    			}
-    			
-    			return canAdd;
-    		},
             /**
              * @bubbled
              */
@@ -418,17 +405,17 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             /**
              * @bubbled
              */
-            modelNodeInsert: function(ctr, parent, node, refNode) {
+            modelNodeInsert: function(ctr, parent, node, refNode, refIndex) {
 				console.log('@controller modelNodeInsert', parent, node, refNode);
-            	this.viewDefinition.insertBeforeEntity(parent, node, refNode);
+            	this.viewDefinition.insertBeforeEntity(parent, node, refNode, refIndex);
             	console.log('definition', this.viewDefinition.getData());
             },
     		/**
     		 * @bubbled
     		 */
-            modelNodeRemove: function(ctr, parent, node) {
+            modelNodeRemove: function(ctr, parent, node, nodeIdx) {
             	console.log('@controller modelNodeRemove', parent, node);            	
-            	this.viewDefinition.removeEntity(node);
+            	this.viewDefinition.removeEntity(node, nodeIdx);
             	console.log('definition', this.viewDefinition.getData());
             },
     		/**

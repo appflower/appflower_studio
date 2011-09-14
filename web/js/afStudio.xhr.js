@@ -57,7 +57,7 @@ afStudio.xhr = {
 		var _this = this,
 			showNoteOnSuccess = action.showNoteOnSuccess === false ? false : true;
 
-		if (action.mask) {			
+		if (action.mask) {
 			afStudio.vp.mask(action.mask);
 		}
 		

@@ -24,14 +24,14 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 */
 	
 	/**
-	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
+	 * @cfg {String} widgetMetaUrl (defaults to {@link afStudioWSUrls.widgetUrl})
 	 */
-	widgetMetaUrl : 'afsLayoutBuilder/getWidget'
+	widgetMetaUrl : afStudioWSUrls.widgetUrl
 
 	/**
 	 * @cfg {String} saveLayoutUrl (defaults to 'afsLayoutBuilder/save')
 	 */
-	,saveLayoutUrl : 'afsLayoutBuilder/save'	
+	,saveLayoutUrl : afStudioWSUrls.layoutSaveUrl	
 	
 	/**
 	 * Auxiliary window dedicated to select a widget being added to the LD.
@@ -408,22 +408,8 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 * @param {Object} widgetParam
 	 */
 	,onAddWidget : function(widgetParam) {
-		var _this = this,
-				p = _this.layoutView;
-		
-		_this.executeAction({
-			url: _this.widgetMetaUrl,			  
-			params: {
-		       module_name: widgetParam.module,
-		       action_name: widgetParam.widget
-		    }, 
-		    run: function(response) {
-		       p.addWidgetComponentToContentView(
-		       	 Ext.apply(widgetParam, {meta: response.content})
-		       );
-		    },
-		    loadingMessage: 'Add Widget...'			
-		});		
+		var p = this.layoutView;
+		p.addWidgetComponentToContentView(widgetParam);
 	}//eo onAddWidget	
  
 	/**

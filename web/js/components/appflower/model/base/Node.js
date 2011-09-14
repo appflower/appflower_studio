@@ -180,6 +180,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              * @param {Tree} tree The owner tree
              * @param {Node} this This node
              * @param {Node} node The removed node
+             * @param {Number} index The removed node old index
              */
             "modelNodeRemove" : true,
             
@@ -221,7 +222,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              * @param {Tree} tree The owner tree
              * @param {Node} this This node
              * @param {Node} node The child node inserted
-             * @param {Node} refNode The child node the node was inserted before
+             * @param {Node} refNode The reference node, child node the node was inserted before
+             * @param {Number} refIdx The reference node index before insertion
              */
             "modelNodeInsert" : true,
             
@@ -636,7 +638,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
             this.setLastChild(node.previousSibling);
         }
 
-        this.fireEvent("modelNodeRemove", this.ownerTree, this, node);
+        this.fireEvent("modelNodeRemove", this.ownerTree, this, node, index);
         
         if (destroy) {
             node.destroy(true);
@@ -730,7 +732,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         node.nextSibling = refNode;
         refNode.previousSibling = node;
         node.setOwnerTree(this.getOwnerTree());
-        this.fireEvent("modelNodeInsert", this.ownerTree, this, node, refNode);
+        this.fireEvent("modelNodeInsert", this.ownerTree, this, node, refNode, refIndex);
         if (oldParent) {
             node.fireEvent("modelNodeMove", this.ownerTree, node, oldParent, this, refIndex, refNode);
         }

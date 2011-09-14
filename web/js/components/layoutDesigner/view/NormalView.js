@@ -12,7 +12,7 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 	/**
 	 * @cfg {String} widgetMetaUrl (defaults to 'afsLayoutBuilder/getWidget')
 	 */
-	widgetMetaUrl : 'afsLayoutBuilder/getWidget'
+	widgetMetaUrl : afStudioWSUrls.widgetUrl
 	
 	/**
 	 * @cfg {Object} viewMeta required
@@ -471,53 +471,41 @@ afStudio.layoutDesigner.view.NormalView = Ext.extend(Ext.ux.Portal, {
 		var widgetUri = cmpMeta.attributes.module + '/' + cmpMeta.attributes.name;
 		
 		afStudio.WD.previewWidget(widgetUri);
-	}//eo previewWidget
+	}
+	//eo previewWidget
 	
 	/**
 	 * Runs WD (Widget Designer) for specified view component.
 	 * 
-	 * //TODO should be fixed and adapted to new design
-	 * 
 	 * @param {String} name The widget action name
 	 * @param {String} module The widget module name
-	 * @param {} cmpMeta
+	 * @param {Object} cmpMeta
 	 */
-	,editWidget : function(name, module, cmpMeta) {		
-		afStudio.vp.mask({region: 'center'});
+	,editWidget : function(name, module, cmpMeta) {
 		
-		Ext.Ajax.request({
-		   url: this.widgetMetaUrl,
-		   params: {
+		afStudio.xhr.executeAction({
+			url: this.widgetMetaUrl,
+			params: {
 		       module_name: module,
 		       action_name: name
-		   },
-		   success: function(xhr, opt) {		   	
-			   afStudio.vp.unmask('center');
-			   
-			   var response = Ext.decode(xhr.responseText);
-			   
-			   if (response.success) {			   	
-			       var actionPath = response.meta.actionPath,
-			           securityPath = response.meta.securityPath,		
-				       widgetUri = String.format('{0}/{1}', module, name);
-				       
-					   afStudio.vp.addToWorkspace({
-							xtype: 'afStudio.wd.widgetPanel',
-							actionPath: actionPath,
-							securityPath: securityPath,
-					        widgetUri: widgetUri
-					   }, true);
-			   } else {
-			       afStudio.Msg.warning(response.content)
-			   }
-		   },
-		   failure: function(xhr, opt) {
-		   	   afStudio.vp.unmask('center');
-			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
-			   afStudio.Msg.error('Server side error', message);
-		   }
+			},
+			mask: {region: 'center'},
+			showNoteOnSuccess: false,
+			run: function(response, opt){
+				var w = response.data;
+			       
+				afStudio.WD.showWidgetDesigner({
+					uri: w.widgetUri,
+					actionPath: w.actionPath,
+					actionName: w.actionName,
+					securityPath: w.securityPath,
+					placeType: w.placeType,
+					place: w.place
+				});
+			}
 		});		
-	}//eo editWidget 
+	}
+	//eo editWidget 
 	
 	/**
 	 * Removes component from this view. 
