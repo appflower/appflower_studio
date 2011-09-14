@@ -56,6 +56,7 @@ folders:
     path: '/lib/studio'
     mode: 'go+rwX'
     recursive: true
+    
 # rules in places
   config_in_places:
     path: '/config'
@@ -81,6 +82,9 @@ folders:
     path: '/plugins'
     mode: 'g+rw'
     recursive: true
+  plugins_other:
+    path: '/plugins'
+    mode: 'o+rw'
   web:
     path: '/web'
     mode: 'g+rw'

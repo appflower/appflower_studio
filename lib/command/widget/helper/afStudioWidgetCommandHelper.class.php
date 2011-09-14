@@ -41,8 +41,6 @@ class afStudioWidgetCommandHelper extends afBaseStudioCommandHelper
             
             if (!file_exists($path)) {
                 $filesystem->mkdirs($path, 0774);
-            } else {
-                $filesystem->chmod($path, 0664, 0000, true);
             }
             
             $subpath = explode('/', self::PROJECT_LIB_PATH);
@@ -55,6 +53,8 @@ class afStudioWidgetCommandHelper extends afBaseStudioCommandHelper
         
         // synchronize directories
         $filesystem->mirror($source_path, $destination_path, sfFinder::type('any'));
+        
+        afStudioConsole::getInstance()->execute('sf afs:fix-perms');
     }
     
 }

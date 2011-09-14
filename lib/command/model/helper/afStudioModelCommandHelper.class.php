@@ -20,6 +20,7 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
             'sf appflower:validator-cache frontend cache yes',
             'sf propel:insert-sql-diff', 
             'sf propel:build-model',
+            'sf propel:build-forms',
         ));
         
         return $console;
@@ -38,6 +39,7 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
             'sf appflower:validator-cache frontend cache yes',
             'sf afs:update-schema',
             'sf propel:build-model',
+            'sf propel:build-forms',
         ));
         
         return $console;

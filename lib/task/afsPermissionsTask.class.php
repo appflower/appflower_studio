@@ -124,6 +124,8 @@ EOF;
             
             $command_log = array();
             
+            $this->createFolders();
+            
             $folders = $this->getFolders();
             foreach ($folders as $folder) {
                 if ($this->isInPlaces($folder)) {
@@ -448,6 +450,30 @@ EOF;
         }
         
         return self::DEFAULT_IN_PLACES;
+    }
+    
+    /**
+     * Create folders procedure
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function createFolders()
+    {
+        $root_dir = sfConfig::get('sf_root_dir');
+        
+        $folders = array(
+            '/lib/studio',
+            '/cache',
+            '/log',
+            '/data',
+        );
+        
+        foreach ($folders as $folder) {
+            $path = "{$root_dir}{$folder}";
+            if (!file_exists($path)) mkdir($path, 0777, true);
+        }
+        
     }
     
 }

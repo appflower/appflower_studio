@@ -212,6 +212,7 @@ class afStudioModelCommandModificator
         $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]['_attributes']['phpName'] = $name;
         
         if ($this->saveSchema()) {
+            afStudioConsole::getInstance()->execute('sf afs:fix-perms');
             return $response
                         ->success(true)
                         ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!")
@@ -245,14 +246,17 @@ class afStudioModelCommandModificator
             $console = afStudioConsole::getInstance();
             $consoleResult = afStudioModelCommandHelper::deploy();
             
-            if ($console->wasLastCommandSuccessfull()) $consoleResult .= $console->execute('sf propel:build-form');
-            if ($console->wasLastCommandSuccessfull()) {
+            if ($console->wasLastCommandSuccessfull()) $consoleResult .= $console->execute('sf propel:build-forms');
+            $last_command_status = $console->wasLastCommandSuccessfull();
+            
+            if ($last_command_status) {
                 $message = "Added model <b>{$this->getModelName()}</b>!";
+                afStudioConsole::getInstance()->execute('sf afs:fix-perms');
             } else {
                 $message = 'Model was propery defined but build-model and/or build-form tasks returned some errors.';
             }
             
-            return $response->success($console->wasLastCommandSuccessfull())->message($message)->console($consoleResult);
+            return $response->success($last_command_status)->message($message)->console($consoleResult);
         }
         
         return $response->success(false)->message("Can't add model <b>{$this->getModelName()}</b>! Please check schema file permissions.");
@@ -512,6 +516,12 @@ class afStudioModelCommandModificator
         
         $this->saveSchema();
         afStudioModelCommandHelper::deploy();
+        
+        
+        afStudioConsole::getInstance()->execute(array(
+            'sf propel:build-forms',
+            'sf afs:fix-perms',
+        ));
         
         return $response->success(true);
     }

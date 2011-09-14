@@ -77,7 +77,8 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             
             $console = afStudioConsole::getInstance()->execute(array(
                 "sf appflower:portal-state-cc {$idXml}",
-                "sf appflower:validator-cache frontend cache yes"
+                "sf appflower:validator-cache frontend cache yes",
+                'sf afs:fix-perms',
             ));
             
             return $response
