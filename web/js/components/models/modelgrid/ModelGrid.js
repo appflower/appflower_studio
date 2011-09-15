@@ -612,7 +612,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			dataIndex: 'c' + index,
 			uninit: true,
 			width: 80,
-			hidden: true,
+			hidden: index == 0 ? false : true,
 			//data type is not specified thus it is not possible to add field's data before it will be created
 			editor: afStudio.models.TypeBuilder.createEditor(),
 			fieldDefinition: {
@@ -634,21 +634,23 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			columns = [new Ext.grid.RowNumberer()];
 		
 		if (data.length > 0) {
-			for (var i = 0, len = data.length; i < len; i++) {
-				columns.push({
-					header: data[i].name,
+			
+			Ext.each(data, function(f, i) {
+				var clm = {
+					header: f.name,
 					dataIndex: 'c' + i,
 					width: 80,
 					hidden: false,
-					editor: afStudio.models.TypeBuilder.createEditor(data[i].type, data[i].size, data[i]['default']),
-					renderer: afStudio.models.TypeBuilder.createRenderer(data[i].type),
-					/**
-					 * custom property used with {@link afStudio.models.EditFieldWindow} field editor
-					 */
-					fieldDefinition: Ext.apply(data[i], {exists: true})
-				});
+					renderer: afStudio.models.TypeBuilder.createRenderer(f.type),
+					//custom property used with {@link afStudio.models.EditFieldWindow} field editor
+					fieldDefinition: Ext.apply(f, {exists: true})
+				};
+				if (!f.autoIncrement) {
+					clm.editor = afStudio.models.TypeBuilder.createEditor(f.type, f.size, f['default']);
+				}
+				columns.push(clm);
 				fields.push({name: 'c' + i});
-			}
+			});
 	 
 			for (var i = columns.length - 1; i <= this.maxColumns; i++) {
 				columns.push(this.createUninitColumn(i));
