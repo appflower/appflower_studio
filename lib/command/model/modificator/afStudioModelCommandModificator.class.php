@@ -228,7 +228,7 @@ class afStudioModelCommandModificator
      * @return afResponse
      * @author Sergey Startsev
      */
-    public function addModel()
+    public function addModel($with_primary = false)
     {
         $response = afResponseHelper::create();
         
@@ -241,6 +241,8 @@ class afStudioModelCommandModificator
         }
         
         $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]['_attributes']['phpName'] = $this->getModelName();
+        
+        if ($with_primary) $this->alterModel(array($this->getPrimaryDefinition()));
         
         if ($this->saveSchema()) {
             $console = afStudioConsole::getInstance();
@@ -690,6 +692,25 @@ class afStudioModelCommandModificator
     private function saveSchema()
     {
         return afStudioUtil::writeFile($this->getSchemaFile(), sfYaml::dump($this->originalSchemaArray[$this->getSchemaFile()], 3));
+    }
+    
+    /**
+     * Define default primary key field
+     *
+     * @return stdClass
+     * @author Sergey Startsev
+     */
+    private function getPrimaryDefinition()
+    {
+        $field = new stdClass;
+        $field->name = 'id';
+        $field->type = 'integer';
+        $field->required = true;
+        $field->key = 'primary';
+        $field->size = 11;
+        $field->autoIncrement = true;
+        
+        return $field;
     }
     
 }

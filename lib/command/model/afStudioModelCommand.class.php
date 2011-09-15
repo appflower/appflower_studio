@@ -88,7 +88,7 @@ class afStudioModelCommand extends afBaseStudioCommand
      */
     protected function processAdd()
     {
-        return $this->getModificator()->addModel();
+        return $this->getModificator()->addModel((bool) $this->getParameter('with_primary', false));
     }
     
     /**
