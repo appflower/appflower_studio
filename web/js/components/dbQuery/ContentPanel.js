@@ -153,7 +153,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 		       
 		       if (response.success) {
 			       resultCtn = new afStudio.dbQuery.TableModelTab({
-					   metaData: response.rows,
+					   metaData: response.data,
 					   modelName: m,
 					   schemaName: s
 			       });
