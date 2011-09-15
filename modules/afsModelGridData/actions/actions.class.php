@@ -78,10 +78,15 @@ class afsModelGridDataActions extends afsActions
         
         $rows = $this->fetchRows();
         $rowsIndexed = array();
-        foreach ($rows as $row) $rowsIndexed[$row['id']] = $row;
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                $rowsIndexed[$rows['id']] = $rows;
+                break;
+            }
+            $rowsIndexed[$row['id']] = $row;
+        }
         $ids = array_keys($rowsIndexed);
         $objects = $query->filterByPrimaryKeys($ids)->find();
-        
         $data = array();
         
         try {
@@ -118,7 +123,7 @@ class afsModelGridDataActions extends afsActions
         $rows = $this->fetchRows();
         $errors = array();
         $data = array();
-        
+
         foreach ($rows as $row) {
             $object = new $this->modelName;
             $peer = $object->getPeer();
@@ -141,6 +146,11 @@ class afsModelGridDataActions extends afsActions
         }
         
         if (count($errors) > 0) return $response->success(false)->message($errors)->asArray();
+        
+        //stupid fix when empty record was passed
+        if (empty($data)) {
+            $data[] = array();
+        }
         
         return $response->data(array(), $data, 0)->asArray();
     }
