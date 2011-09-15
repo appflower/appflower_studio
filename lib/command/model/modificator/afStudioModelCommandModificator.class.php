@@ -538,14 +538,21 @@ class afStudioModelCommandModificator
      */
     public function changeModelField($fieldData, $field = null)
     {
-        $response = $this->modelFieldVerification($fieldData->name);
-        if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
+        $response = afResponseHelper::create();
         
         $fieldDefinition = $this->buildFieldDefinition($fieldData);
         
         if (!is_null($field)) {
+            if ($field != $fieldData->name) {
+                $response = $this->modelFieldVerification($fieldData->name);
+                if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
+            }
+            
             $this->arraySetKeyValue($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()], $field, $fieldData->name, $fieldDefinition);
         } else {
+            $response = $this->modelFieldVerification($fieldData->name);
+            if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
+            
             $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$fieldData->name] = $fieldDefinition;
         }
         
