@@ -852,8 +852,6 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 
 afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
     realize: function(record, data) {
-    	console.log('realize', record, data);
-    	
     	var sr = afStudio.models.modelGridPanelReader.superclass;
     	
         if (Ext.isArray(record)) {
