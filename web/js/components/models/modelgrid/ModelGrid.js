@@ -380,7 +380,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView, {
 	showNextColumn : function(index) {
 		var cm = this.cm;
 		if (index <= this.grid.maxColumns) {
-			cm.setHidden(index + 1,false);
+			cm.setHidden(index + 1, false);
 			cm.config[index + 1].uninit = false;
 		}
 	},
@@ -667,17 +667,44 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 		
 		me.store = new Ext.data.Store({
             proxy: me.storeProxy,
-			reader: new afStudio.models.modelGridPanelReader({
+			reader: new Ext.data.JsonReader({
 				root: 'data',
 			    idProperty: 'id'
 			}, fields),
-            writer: new Ext.data.JsonWriter({listful: true}),          
+            writer: new Ext.data.JsonWriter({
+            	listful: true
+        	}),
             autoSave: false,
 			listeners: {
 				load : function(store, records) {
 					var rec = store.recordType;
 					store.add([new rec()]);
-				}
+				},
+				beforewrite: function(store, action, rs, opts) {
+ 					if (action == 'create') {
+ 						var empRec = [];
+ 						Ext.each(rs, function(r, idx) {
+ 							var emp = true;
+ 							for (var p in r.data) {
+ 								emp = false; 
+ 								break;
+ 							}
+ 							if (emp) {
+ 								empRec.push(idx);
+ 							}
+ 						});
+ 						
+ 						Ext.each(empRec, function(i){
+ 							rs.splice(i, 1);
+ 						})
+ 						
+// 						console.log('rs', rs);
+ 						
+ 						if (Ext.isEmpty(rs)) {
+ 							return false;	
+ 						}
+ 					}
+ 				}
 			}
 		});
 		
@@ -852,6 +879,9 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 });
 //eo afStudio.models.ModelGrid
 
+//this_primaty = true
+
+/*
 afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
     realize: function(record, data) {
     	var sr = afStudio.models.modelGridPanelReader.superclass;
@@ -875,5 +905,6 @@ afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
         }
     }
 });
+*/
 
 Ext.reg('afStudio.models.modelGrid', afStudio.models.ModelGrid);
