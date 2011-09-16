@@ -325,8 +325,26 @@ class afStudioModelCommandModificator
         
         $fields = array();
         
+        $columns = (array) $propelModel['columns'];
+        $has_primary = $this->hasPrimary($columns);
+        
         $k = 0;
-        foreach ((array)$propelModel['columns'] as $name => $column) {
+        
+        if (!$has_primary) {
+            $fields[$k] = array(
+                'id'        => $k,
+                'name'      => 'id',
+                'type'      => 'integer',
+                'required'  => true,
+                'key'       => 'primary',
+                'size'      => 11,
+                'autoIncrement' => true,
+            );
+            
+            $k++;
+        }
+        
+        foreach ($columns as $name => $column) {
             $fields[$k]['id'] = $k;
             $fields[$k]['name'] = $name;
             
@@ -718,6 +736,29 @@ class afStudioModelCommandModificator
         $field->autoIncrement = true;
         
         return $field;
+    }
+    
+    
+    /**
+     * Check has primary or not
+     *
+     * @param Array $columns 
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    private function hasPrimary(Array $columns)
+    {
+        foreach ($columns as $name => $column) {
+            if (is_array($column)) {
+                foreach ($column as $property => $value) {
+                    if ($property == 'primaryKey' && $value) return true;
+                }
+            }
+        }
+        
+        if (isset($columns['id'])) return true;
+        
+        return false;
     }
     
 }
