@@ -671,7 +671,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 				root: 'data',
 			    idProperty: 'id'
 			}, fields),
-            writer: new Ext.data.JsonWriter({encode: false, listful: true}),          
+            writer: new Ext.data.JsonWriter({listful: true}),          
             autoSave: false,
 			listeners: {
 				load : function(store, records) {
