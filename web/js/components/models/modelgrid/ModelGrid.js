@@ -665,49 +665,12 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 		}
 		//eo columns & fields building
 		
-		me.store = new Ext.data.Store({
-            proxy: me.storeProxy,
-			reader: new Ext.data.JsonReader({
-				root: 'data',
-			    idProperty: 'id'
-			}, fields),
-            writer: new Ext.data.JsonWriter({
-            	listful: true
-        	}),
-            autoSave: false,
-			listeners: {
-				load : function(store, records) {
-					var rec = store.recordType;
-					store.add([new rec()]);
-				},
-				beforewrite: function(store, action, rs, opts) {
- 					if (action == 'create') {
- 						var empRec = [];
- 						Ext.each(rs, function(r, idx) {
- 							var emp = true;
- 							for (var p in r.data) {
- 								emp = false; 
- 								break;
- 							}
- 							if (emp) {
- 								empRec.push(idx);
- 							}
- 						});
- 						
- 						Ext.each(empRec, function(i){
- 							rs.splice(i, 1);
- 						})
- 						
-// 						console.log('rs', rs);
- 						
- 						if (Ext.isEmpty(rs)) {
- 							return false;	
- 						}
- 					}
- 				}
+		me.store = new afStudio.models.ModelStore({
+			proxy: me.storeProxy,
+			readerCfg: {
+				fields: fields
 			}
 		});
-		
 		me.store.load({
 			params: {
 				start: 0, 
@@ -878,33 +841,5 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	}	
 });
 //eo afStudio.models.ModelGrid
-
-//this_primaty = true
-
-/*
-afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
-    realize: function(record, data) {
-    	var sr = afStudio.models.modelGridPanelReader.superclass;
-    	
-        if (Ext.isArray(record)) {
-            var newRecord = [];
-            var newData = [];
-
-            for (var i = 0; i < record.length; i++) {
-            	if (Ext.isDefined(data[i])) {
-	                if (data[i]['id'] != null) {
-	                    newRecord.push(record[i]);
-	                    newData.push(data[i]);
-	                }
-            	}
-            }
-
-			Ext.util.Functions.createDelegate(sr.realize, sr.prototype, [newRecord, newData]);
-        } else {
-        	Ext.util.Functions.createDelegate(sr.realize, sr.prototype, [record, data]);
-        }
-    }
-});
-*/
 
 Ext.reg('afStudio.models.modelGrid', afStudio.models.ModelGrid);

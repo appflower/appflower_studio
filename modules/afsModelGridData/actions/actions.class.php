@@ -144,11 +144,6 @@ class afsModelGridDataActions extends afsActions
         
         if (count($errors) > 0) return $response->success(false)->message($errors)->asArray();
         
-        //stupid fix when empty record was passed
-        if (empty($data)) {
-            $data[] = array();
-        }
-        
         return $response->data(array(), $data, 0)->asArray();
     }
     
