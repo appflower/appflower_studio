@@ -2,7 +2,7 @@ Ext.ns('afStudio.wd.edit.platform');
 
 
 afStudio.wd.edit.platform.Basement = Ext.extend(Ext.Panel, {
-//    layout : 'table',
+    layout : 'column',
 //    
 //    layoutConfig : {
 //    	tableAttrs: {
@@ -63,7 +63,7 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
         increment: 200
     },
 
-    createEvent : function(dd, e, data, col, c, pos){
+    createEvent : function(dd, e, data, col, c, pos) {
         return {
             portal: this.portal,
             panel: data.panel,
@@ -77,19 +77,23 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
         };
     },
 
-    notifyOver : function(dd, e, data){
+    /**
+     * @override 
+     */
+    notifyOver : function(dd, e, data) {
+    	console.log(dd, e, data);
         var xy = e.getXY(), portal = this.portal, px = dd.proxy;
 
         // case column widths
-        if(!this.grid){
+        if (!this.grid) {
             this.grid = this.getGrid();
         }
 
         // handle case scroll where scrollbars appear during drag
         var cw = portal.body.dom.clientWidth;
-        if(!this.lastCW){
+        if (!this.lastCW) {
             this.lastCW = cw;
-        }else if(this.lastCW != cw){
+        } else if (this.lastCW != cw) {
             this.lastCW = cw;
             portal.doLayout();
             this.grid = this.getGrid();
@@ -97,8 +101,8 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
 
         // determine column
         var col = 0, xs = this.grid.columnX, cmatch = false;
-        for(var len = xs.length; col < len; col++){
-            if(xy[0] < (xs[col].x + xs[col].w)){
+        for (var len = xs.length; col < len; col++) {
+            if (xy[0] < (xs[col].x + xs[col].w)) {
                 cmatch = true;
                 break;
             }
@@ -197,8 +201,12 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
         delete this.lastPos;
     },
 
-    // internal cache of body and column coords
-    getGrid : function(){
+    /**
+     * internal cache of body and column coords
+     * @protected
+     * @return {Object} box
+     */
+    getGrid : function() {
         var box = this.portal.bwrap.getBox();
         box.columnX = [];
         this.portal.items.each(function(c){
