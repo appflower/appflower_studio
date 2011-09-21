@@ -820,7 +820,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		//add model node mapping
 		action[mpr] = a[mpr];
 		
-		return action;		
+		return action;
 	},
 	
 	/**

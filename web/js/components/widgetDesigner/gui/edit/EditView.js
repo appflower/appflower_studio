@@ -11,6 +11,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.Panel, {
 
 			items: [
 			{
+				
+				xtype: 'fieldset',
+				title: 'AF',
+				collapsible: true,
+				items: [{
 				xtype: 'platform.basement',
 //				height: 800,
 				items: [
@@ -26,6 +31,9 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.Panel, {
 					width: 80,
 					style: 'padding: 10px'
 				}]
+
+				}]
+				
 			}],
 
 			plugins: new Ext.ux.WidgetFieldDragZone()
