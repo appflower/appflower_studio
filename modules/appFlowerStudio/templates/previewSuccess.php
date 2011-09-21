@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/css/my-extjs.css" />
 
-<script type="text/javascript" src="/appFlowerPlugin/js/custom/widgetJS.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/cache/af.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/notification/MessageBox.js"></script>
 
 <script type="text/javascript">

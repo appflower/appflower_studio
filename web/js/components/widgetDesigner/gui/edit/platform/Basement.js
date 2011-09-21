@@ -16,7 +16,7 @@ afStudio.wd.edit.platform.Basement = Ext.extend(Ext.Panel, {
     
     autoScroll : true,
     
-    cls : 'x-basement',
+    cls : 'x-portal',
     
     defaultType : 'portalcolumn',
     
@@ -81,8 +81,9 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
      * @override 
      */
     notifyOver : function(dd, e, data) {
-    	console.log(dd, e, data);
-        var xy = e.getXY(), portal = this.portal, px = dd.proxy;
+        var xy = e.getXY(), 
+        	portal = this.portal, 
+        	px = dd.proxy;
 
         // case column widths
         if (!this.grid) {
@@ -108,39 +109,56 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
             }
         }
         // no match, fix last index
-        if(!cmatch){
+        if (!cmatch) {
             col--;
         }
-
+        
         // find insert position
         var p, match = false, pos = 0,
             c = portal.items.itemAt(col),
             items = c.items.items, overSelf = false;
 
-        for(var len = items.length; pos < len; pos++){
+        for (var len = items.length; pos < len; pos++) {
             p = items[pos];
             var h = p.el.getHeight();
-            if(h === 0){
+            if (h === 0) {
                 overSelf = true;
-            }
-            else if((p.el.getY()+(h/2)) > xy[1]){
+            } else if ((p.el.getY() + (h / 2)) > xy[1]) {
                 match = true;
                 break;
             }
         }
-
+        
         pos = (match && p ? pos : c.items.getCount()) + (overSelf ? -1 : 0);
         var overEvent = this.createEvent(dd, e, data, col, c, pos);
 
-        if(portal.fireEvent('validatedrop', overEvent) !== false &&
-           portal.fireEvent('beforedragover', overEvent) !== false){
+        if (portal.fireEvent('validatedrop', overEvent) !== false 
+        	&& portal.fireEvent('beforedragover', overEvent) !== false) {
 
             // make sure proxy width is fluid
             px.getProxy().setWidth('auto');
 
-            if(p){
-                px.moveProxy(p.el.dom.parentNode, match ? p.el.dom : null);
-            }else{
+            if (p) {
+            	if (!match) {
+            		console.log('position', pos);
+            		c.insert(pos, {
+            			xtype:'container', 
+            			border: true, 
+            			html:'break', 
+            			height: px.getProxy().getHeight(), 
+            			style: 'border: 1px solid black;',
+            			cls : 'x-portlet break'
+            		});
+            		c.doLayout();
+            		px.moveProxy(p.el.dom.parentNode, null);
+            		console.log('-------------------');
+            	} else {
+                	px.moveProxy(p.el.dom.parentNode, match ? p.el.dom : null);
+            	}
+                //match = false
+                //first column items number >= current column items
+                //move down the proxy and create a tmp-placeholder
+            } else {
                 px.moveProxy(c.el.dom, null);
             }
 
@@ -150,21 +168,25 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
             portal.fireEvent('dragover', overEvent);
 
             return overEvent.status;
-        }else{
+        } else {
             return overEvent.status;
         }
-
     },
+    //eo notifyOver
 
     notifyOut : function(){
         delete this.grid;
     },
 
-    notifyDrop : function(dd, e, data){
+    notifyDrop : function(dd, e, data) {
+    	console.log('notifyDrop', dd, e, data);
+    	
         delete this.grid;
-        if(!this.lastPos){
+        
+        if (!this.lastPos) {
             return;
         }
+        
         var c = this.lastPos.c, 
             col = this.lastPos.col, 
             pos = this.lastPos.p,
@@ -172,15 +194,15 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
             dropEvent = this.createEvent(dd, e, data, col, c,
                 pos !== false ? pos : c.items.getCount());
 
-        if(this.portal.fireEvent('validatedrop', dropEvent) !== false &&
-           this.portal.fireEvent('beforedrop', dropEvent) !== false){
+        if (this.portal.fireEvent('validatedrop', dropEvent) !== false 
+        	&& this.portal.fireEvent('beforedrop', dropEvent) !== false) {
 
             dd.proxy.getProxy().remove();
             panel.el.dom.parentNode.removeChild(dd.panel.el.dom);
             
-            if(pos !== false){
+            if (pos !== false) {
                 c.insert(pos, panel);
-            }else{
+            } else {
                 c.add(panel);
             }
             
@@ -190,17 +212,19 @@ afStudio.wd.edit.platform.Basement.DropZone = Ext.extend(Ext.dd.DropTarget, {
 
             // scroll position is lost on drop, fix it
             var st = this.scrollPos.top;
-            if(st){
+            if (st) {
                 var d = this.portal.body.dom;
-                setTimeout(function(){
+                setTimeout(function() {
                     d.scrollTop = st;
                 }, 10);
             }
 
         }
+        
         delete this.lastPos;
     },
-
+	//eo notifyDrop
+    
     /**
      * internal cache of body and column coords
      * @protected

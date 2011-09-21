@@ -16,12 +16,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.Panel, {
 				items: [
 				{
 					columnWidth:.5,
-					style: 'padding:10px',
+					style: 'padding: 10px',
 					items: [{html: 'A'}, {html: 'B'}]
 				},{
 					columnWidth:.5,
-					style: 'padding:10px',
+					style: 'padding: 10px',
 					items: [{html: 'C'}]
+				},{
+					width: 80,
+					style: 'padding: 10px'
 				}]
 			}],
 
