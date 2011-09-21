@@ -3,44 +3,37 @@ Ext.ns('afStudio.wd.edit');
 
 afStudio.wd.edit.EditView = Ext.extend(Ext.Panel, {
 
+	/**
+	 * Initializes component
+	 * @private
+	 * @return {Object} The configuration object 
+	 */
+	_beforeInitComponent : function() {
+		
+	},
+	
+	/**
+	 * Template method
+	 * @override
+	 * @private
+	 */
 	initComponent : function() {
-
-		Ext.apply(this, {
-
-//			layout : 'fit',
-
-			items: [
-			{
-				
-				xtype: 'fieldset',
-				title: 'AF',
-				collapsible: true,
-				items: [{
-				xtype: 'platform.basement',
-//				height: 800,
-				items: [
-				{
-					columnWidth:.5,
-					style: 'padding: 10px',
-					items: [{html: 'A'}, {html: 'B'}]
-				},{
-					columnWidth:.5,
-					style: 'padding: 10px',
-					items: [{html: 'C'}]
-				},{
-					width: 80,
-					style: 'padding: 10px'
-				}]
-
-				}]
-				
-			}],
-
-			plugins: new Ext.ux.WidgetFieldDragZone()
-
-		});
-
-		afStudio.wd.edit.EditView.superclass.initComponent.apply(this, arguments);		
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, this._beforeInitComponent())
+		);
+		
+		afStudio.wd.edit.EditView.superclass.initComponent.apply(this, arguments);
+		
+		//this._afterInitComponent();
+	},	
+	
+	/**
+	 * Template method
+	 * @override
+	 * @private
+	 */
+	initEvents : function() {
+		afStudio.wd.edit.EditView.superclass.initEvents.call(this);
 	}
 	
 });
