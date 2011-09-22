@@ -1,6 +1,8 @@
 Ext.ns('afStudio.wd.list');
 
 /**
+ * ListView reflector.
+ * 
  * @mixin ModelReflector
  *  
  * @singleton

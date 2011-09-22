@@ -41,22 +41,24 @@ afStudio.wd.ModelInterface = (function() {
 		 * Returns model node based on its relative path from the root node.
 		 * Path is based on node's id or partial id (tag name without trailing "-xxx", where xxx are numbers).
 		 * Node searching first is based on exact id if failed is used id's partial version.
-		 * For example: <code>i:datasource/i:method/i:param</code> returns parameter model node.
-		 * @param {String} nodePath The node path
+		 * For example: <code>i:datasource/i:method/i:param</code> 
+		 * or <code>[i:datasource, i:method, i:param]</code> returns parameter model node.
+		 * @param {String|Array} nodePath The node path
 		 * @return {Node} node or null if searching failed
 		 */
 		getModelNodeByPath : function(nodePath) {
-			var c = this.controller,
-				m = this.controller.getRootNode(),
-				node;
+			var c = this.controller;
 			
-    		var path = nodePath.split(c.pathSeparator);
+    		var path = Ext.isArray(nodePath) ? nodePath : nodePath.split(c.pathSeparator),
+    			m = this.controller.getRootNode(),
+				node;
 	    	for (var i = 0, l = path.length; i < l; i++) {
-		    	var n = m.findChildById(path[i]);
-		    	node = !n ? m.findChildById(path[i], false, true) : n;
+		    	node = m.findChildById(path[i]);
+		    	node = !node ? m.findChildById(path[i], false, true) : node;
 		    	if (!node) {
 		    		break;
 		    	}
+		    	m = node;
 	    	}
 	    	
 	    	return node;
@@ -90,6 +92,18 @@ afStudio.wd.ModelInterface = (function() {
 		},
 	
 		/**
+		 * Returns model node property.
+		 * @param {String|Node} node
+		 * @param {String} property The property's name
+		 * @return {Mixed} property
+		 */
+		getModelNodeProperty : function(node, property) {
+			var ps = this.getModelNodeProperties(node);
+			
+			return ps[property];
+		},
+		
+		/**
 		 * Returns model node data-value(_content).
 		 * @param {String|Node} node
 		 * @return {Object} value + model node's id in modelNodeMapper property {@link #getModelNodeMapper} 
@@ -113,6 +127,7 @@ afStudio.wd.ModelInterface = (function() {
 		getPropertyEditor : function(node, property, edCfg) {
 			var edCfg = edCfg || {},
 				p = node.getProperty(property);
+				
 			return p.type.editor(edCfg);
 		},
 		
