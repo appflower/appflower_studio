@@ -145,6 +145,7 @@
 					<file>js/components/models/relationcombo/RelationCombo.js</file>
 					<file>js/components/models/relationcombo/ModelTree.js</file>
 					<file>js/components/models/editgrid/FieldsGrid.js</file>
+					<file>js/components/models/modelgrid/ModelStore.js</file>
 					<file>js/components/models/modelgrid/ModelGrid.js</file>
 					<file>js/components/models/modelgrid/EditFieldWindow.js</file>
 					<file>js/components/models/editgrid/DependencyCellEditorBuilder.js</file>

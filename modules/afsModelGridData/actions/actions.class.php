@@ -46,13 +46,13 @@ class afsModelGridDataActions extends afsActions
     {
         $offset = $request->getParameter('start', 0);
         $recordsPerPage = $request->getParameter('limit');
-		
+        
         $query = $this->getModelQuery();
         
         $totalRecordsNum = count($query->find());
         
         $query->offset($offset);
-        $query->limit($recordsPerPage);                
+        $query->limit($recordsPerPage);
         $data = $query->find();
         
         $modelData = array();
@@ -76,13 +76,9 @@ class afsModelGridDataActions extends afsActions
         
         $query = $this->getModelQuery();
         
-        $rows = $this->fetchRows();
+        $rows = json_decode($request->getParameter('data'), true);
         $rowsIndexed = array();
         foreach ($rows as $row) {
-            if (!is_array($row)) {
-                $rowsIndexed[$rows['id']] = $rows;
-                break;
-            }
             $rowsIndexed[$row['id']] = $row;
         }
         $ids = array_keys($rowsIndexed);
@@ -120,10 +116,11 @@ class afsModelGridDataActions extends afsActions
     {
         $response = afResponseHelper::create()->success(true);
         
-        $rows = $this->fetchRows();
+        $rows = json_decode($request->getParameter('data'), true);
+        
         $errors = array();
         $data = array();
-
+        
         foreach ($rows as $row) {
             $object = new $this->modelName;
             $peer = $object->getPeer();
@@ -147,11 +144,6 @@ class afsModelGridDataActions extends afsActions
         
         if (count($errors) > 0) return $response->success(false)->message($errors)->asArray();
         
-        //stupid fix when empty record was passed
-        if (empty($data)) {
-            $data[] = array();
-        }
-        
         return $response->data(array(), $data, 0)->asArray();
     }
     
@@ -163,7 +155,7 @@ class afsModelGridDataActions extends afsActions
      */
     public function executeDelete(sfWebRequest $request)
     {
-        $rows = $this->fetchRows();
+        $rows = json_decode($request->getParameter('data'), true);
         $query = $this->getModelQuery();
         $query->filterByPrimaryKeys($rows)->delete();
         
@@ -198,19 +190,6 @@ class afsModelGridDataActions extends afsActions
         $tmp['id'] = $object->getPrimaryKey();
         
         return $tmp;
-    }
-    
-    /**
-     * This method decodes rows data sended by ExtJS
-     *
-     * @return array
-     */
-    private function fetchRows()
-    {
-        $rawData = file_get_contents('php://input');
-        $data = json_decode($rawData, true);
-        
-        return $data['data'];
     }
     
 }
