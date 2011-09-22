@@ -12,20 +12,19 @@ afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
 	tag : afStudio.ModelNode.FIELDS,
 	
 	properties : [
-      	{name: "url", type: 'internalUriType', defaultValue: "n/a"},
-      	{name: "action", type: 'internalUriType', defaultValue: "n/a"},
       	{name: "classic", type: 'boolean', defaultValue: "false"},
       	{name: "bodyStyle", type: 'token'},
       	{name: "redirect", type: 'internalUriType'},
-      	{name: "expandButton",  type: 'boolean'},
       	{name: "remoteLoad", type: 'boolean'},
       	{name: "plugin", type: 'token'}
 	],
 	
 	listProperties : [
+		{name: "action", type: 'internalUriType', defaultValue: "n/a"},
       	{name: "tree", type: 'boolean', defaultValue: false},
       	{name: "selectable", type: 'boolean', defaultValue: true},
       	{name: "exportable", type: 'boolean', defaultValue: true},
+      	{name: "expandButton",  type: 'boolean'},
       	{name: "select", type: 'boolean', defaultValue: false},
       	{name: "pager", type: 'boolean', defaultValue: true},
       	{name: "remoteSort", type: 'boolean', defaultValue: false},
@@ -36,6 +35,7 @@ afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
 	],
 	
 	editProperties : [
+		{name: "url", type: 'internalUriType', required: true},
       	{name: "resetable", type: 'boolean', defaultValue: true},
       	{name: "resetlabel", type: 'token', defaultValue: "Reset"},
       	{name: "submitlabel", type: 'token', defaultValue: "Submit"},

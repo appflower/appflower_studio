@@ -1,7 +1,7 @@
 Ext.ns('afStudio.wd.edit');
 
 
-afStudio.wd.edit.EditView = Ext.extend(Ext.Panel, {
+afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 
 	/**
 	 * Initializes component
@@ -10,6 +10,9 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.Panel, {
 	 */
 	_beforeInitComponent : function() {
 		
+		return {
+			
+		}
 	},
 	
 	/**
