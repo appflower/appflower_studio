@@ -48,8 +48,7 @@ class afsModelGridDataActions extends afsActions
         $recordsPerPage = $request->getParameter('limit');
         
         $query = $this->getModelQuery();
-        
-        $totalRecordsNum = count($query->find());
+        $totalRecordsNum = $this->getModelQuery()->count();
         
         $query->offset($offset);
         $query->limit($recordsPerPage);
