@@ -42,7 +42,6 @@ afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
       	{name: "multipart", type: 'boolean', defaultValue: false},
       	{name: "submit", type: 'boolean', defaultValue: true},
       	{name: "border", type: 'boolean', defaultValue: true},
-//      wizard	{name: "label", type: 'token', defaultValue: "Save Selection"}, 
       	{name: "labelWidth", type: 'positiveInteger', defaultValue: 75}
 	],
 	

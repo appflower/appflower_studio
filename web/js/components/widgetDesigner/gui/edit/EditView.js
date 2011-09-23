@@ -272,13 +272,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		this.createResetSubmitButtons(buttons);
 		
 		var fldsBt = this.getFieldsButtons();
-		console.log('flds buttons', fldsBt);
-//		for (var l = fldsBt.length, i = l - 1; i >= 0; i--) {
-//			buttons.unshift(
-//				this.createButton(fldsBt[i])
-//			);
-//		}
+		for (var l = fldsBt.length, i = l - 1; i >= 0; i--) {
+			buttons.unshift(
+				this.createButton(fldsBt[i])
+			);
+		}
 		
+		Ext.each(this.getActions(), function(a){
+			buttons.push(this.createButton(a));
+		}, this);
 		
 		return buttons;
 	},
@@ -316,13 +318,41 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
+	 * Creates & registers a button.
 	 * @protected
 	 * @param {Object} btn The button definition object
+	 * @param {String} (optional) type The button definition object type = "button" | "action", default is "button"
 	 * @return {Ext.Button}
 	 */
-	createButton : function(btn) {
+	createButton : function(btn, type) {
+		var mpr = this.getModelNodeMapper(),
+			N = afStudio.ModelNode,
+			cfg = {}, button;
 		
+		type = !Ext.isDefined(type) ? 'button' : 'action';	
+		
+		Ext.copyTo(cfg, btn, 'name, iconCls, icon, style');
+		cfg[mpr] = btn[mpr];
+		
+		if (type == 'button') {
+			cfg.text = btn.label ? btn.label : btn.name;
+	        if (btn.state && btn.state == 'disabled') {
+	        	cfg.disabled = true;	
+	        }
+		} else {
+			Ext.apply(cfg, {
+				text: btn.text ? btn.text : btn.name,
+				tooltip: btn.tooltip
+			});
+		}
+		
+		button = new Ext.Button(cfg);
+
+		this.mapCmpToModel(btn[mpr], button);
+		
+		return button;
 	},
+	//eo createButton
 	
 	/**
 	 * @private
