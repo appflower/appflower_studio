@@ -29,13 +29,18 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		 */
 		this.modelMapper = {};
 			
+		var labelWidth = this.getModelNodeProperty(nodes.FIELDS, 'labelWidth');
+
 		var items = this.createFormCmp();
 		
-		var labelWidth = this.getModelNodeProperty(nodes.FIELDS, 'labelWidth');
+		var buttons = this.createButtons();
+		
+		this.dumpMapper();
 		
 		return {
 			labelWidth: labelWidth,
-			items: items
+			items: items,
+			buttons: buttons
 		}
 	},
 	
@@ -63,7 +68,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		afStudio.wd.edit.EditView.superclass.initEvents.call(this);
 	},
 	
-	
+	/**
+	 * Template method
+	 * @override
+	 * @private
+	 */
+    beforeDestroy : function() {
+    	this.modelMapper = null;
+        afStudio.wd.edit.EditView.superclass.beforeDestroy.call(this);
+    },
 	
 	/**
 	 * Returns grid's component by a model.
@@ -131,7 +144,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
+	 * Creates fields, field-sets and tabpanel. 
+	 * Returns an array of components being used as edit view items elements.
 	 * @protected
+	 * @return {Array} components
 	 */
 	createFormCmp : function() {
 		var N = afStudio.ModelNode,
@@ -142,9 +158,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		} else {
 
 			var fields = this.getFields();
-			
 			Ext.each(fields, function(f){
-				console.log('field', f);
 				cmp.push(this.createField(f));
 			}, this);
 		}
@@ -152,15 +166,24 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return cmp;
 	},
 	
-	
 	/**
+	 * Creates & registers a field component.
 	 * @protected
+	 * @return {Ext.form.Field} field
 	 */
 	createField : function(fld) {
 		var mpr = this.getModelNodeMapper(),
 			fldId = fld[mpr];
 		
-		var fn, cfg = {};
+		var fn, cfg = {}, f;
+		
+		Ext.copyTo(cfg, fld, 'name, value, style, width, height, disabled');
+		
+		cfg.fieldLabel = fld.label;
+		
+		if (Ext.isDefined(fld.content)) {
+			cfg.value = fld.content;
+		}
 		
 		switch (fld.type) {
 			case 'input':
@@ -213,16 +236,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			
 			default:
 				fn = Ext.form.DisplayField;
-				cfg.value = fld.type;
+				cfg.value = String.format('<b>type</b> = {0}', fld.type);
 			break;
-		}
-		
-		Ext.copyTo(cfg, fld, 'name, value, style, width, height, disabled');
-		
-		cfg.fieldLabel = fld.label;
-		
-		if (Ext.isDefined(fld.content)) {
-			cfg.value = fld.content;
 		}
 		
 		if (fld.state == 'readonly') {
@@ -235,13 +250,76 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		//add model node mapping
 		cfg[mpr] = fldId;
 		
-		var f = new fn(cfg);
+		f = new fn(cfg);
 		
 		this.mapCmpToModel(fldId, f);
 		
 		return f;
-	}
+	},
 	//eo createField
+	
+	/**
+	 * Creates buttons.
+	 * Returns an array of buttons.
+	 * @protected
+	 * @return {Array} buttons
+	 */
+	createButtons : function() {
+		var mpr = this.getModelNodeMapper(),
+			N = afStudio.ModelNode,
+			buttons = [];
+		
+		this.createResetSubmitButtons(buttons);
+		
+//		var fields = this.getFields();
+//		Ext.each(fields, function(f){
+//			cmp.push(this.createField(f));
+//		}, this);
+//		
+		return buttons;
+	},
+	
+	/**
+	 * Creates and adds to buttons array submit and reset buttons.  
+	 * @protected
+	 * @param {Array} buttons The buttons
+	 */
+	createResetSubmitButtons : function(buttons) {
+		var mpr = this.getModelNodeMapper(),
+			N = afStudio.ModelNode;
+
+		var fls = this.getModelNodeProperties(N.FIELDS);
+
+		var submitBt = new Ext.Button({
+			text: fls.submitlabel ? fls.submitlabel : 'Submit',
+			iconCls: 'icon-accept',
+			hidden: Ext.isDefined(fls.submit) ? !fls.submit : false 
+		});
+		submitBt[mpr] = N.FIELDS + '#submit';
+		this.mapCmpToModel(N.FIELDS + '#submit', submitBt);
+		this.mapCmpToModel(N.FIELDS + '#submitlabel', submitBt);
+		
+		var resetBt = new Ext.Button({
+			text: fls.resetlabel ? fls.resetlabel : 'Reset',
+			iconCls: 'icon-application-form',
+			hidden: Ext.isDefined(fls.resetable) ? !fls.resetable : false 
+		});
+		resetBt[mpr] = N.FIELDS + '#resetable';
+		this.mapCmpToModel(N.FIELDS + '#resetable', resetBt);
+		this.mapCmpToModel(N.FIELDS + '#resetlabel', submitBt);
+		
+		buttons.push(submitBt, resetBt);
+	},
+	
+	/**
+	 * @private
+	 */
+	dumpMapper : function() {
+		console.log('modelMapper', this.modelMapper);
+		Ext.iterate(this.modelMapper, function(k, v, o){
+			console.log(k, v);
+		});
+	}
 	
 });
 
@@ -249,7 +327,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 //@mixin EditModelInterface
 Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelInterface);
 
-//@mixin ModelReflectorS
+//@mixin ModelReflector
 Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.ModelReflector);
 
 /**
