@@ -2,11 +2,12 @@
 /**
  * afStudioUser
  *
- * @author startsev.sergey@gmail.com
+ * @package appFlowerStudio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afStudioUser
 {
-	/**
+    /**
      * Cookie user identificator
      */
     const   USER_IDENTIFICATOR = 'app_flower_studio_credentials';
@@ -33,10 +34,11 @@ class afStudioUser
     /**
      * Meta data area
      */
-    private $first_name,
-            $last_name,
-            $email,
-            $role;
+    private 
+        $first_name,
+        $last_name,
+        $email,
+        $role;
     
     /**
      * User authentication status
@@ -54,20 +56,216 @@ class afStudioUser
     
     /**
      * Retrieve the instance of this class.
+     * 
+     * @return afStudioUser
+     * @author Sergey Startsev
      */
-    public static function getInstance()
+    static public function getInstance()
     {
         if (!isset(self::$instance)) {
-          self::$instance = new afStudioUser;
+          self::$instance = new self;
         }
         
         return self::$instance;
     }
     
     /**
+     * Retrieve user via username from user collection
+     * 
+     * @param string Needle username
+     * @return mixed
+     * @author Sergey Startsev
+     */
+    static public function retrieve($username)
+    {
+        $users = self::getCollection();
+            
+        return (isset($users[$username]) && !empty($users[$username])) ? $users[$username] : false;
+    }
+    
+    /**
+     * Retrieve user by his mail
+     *
+     * @param string $email
+     * @return mixed
+     * @author Sergey Startsev
+     */
+    static public function retrieveByEmail($email)
+    {
+        $users = self::getCollection();
+        $aUser = array();
+        
+        foreach ($users as $username => $user) {
+            if ($user['email'] == $email) {
+                $aUser = $user;
+                $aUser['username'] = $username;
+                break;
+            }
+        }
+        
+        if (!empty($aUser)) return $aUser;
+        
+        return false;
+    }
+    
+    /**
+     * Updating user via username
+     *
+     * @param string $username
+     * @param array $info
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    static public function update($username, Array $info)
+    {
+        $users = self::getCollection();
+        
+        if (isset($users[$username])) {
+            
+            foreach ((array)$info as $name => $associate) {
+                if (isset($users[$username][$name])) {
+                    $users[$username][$name] = $associate;
+                }
+            }
+            
+            // Commit changes
+            self::setCollection($users);
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Creating new user
+     *
+     * @param string $username
+     * @param array $info
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    static public function create($username, Array $info, $filePath = false)
+    {
+        $users = self::getCollection(
+            (!$filePath) ? $filePath : sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/users.yml'
+        );
+        
+        $info[self::PASSWORD] = self::passwordRule($info[self::PASSWORD]);
+        
+        if ((!$filePath && !isset($users[$username])) || $filePath) {
+            $users[$username] = $info;
+            
+            self::setCollection($users, $filePath);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Deleting user functionality
+     *
+     * @param string $username
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    static public function delete($username)
+    {
+        $users = self::getCollection();
+        
+        if (isset($users[$username])) {
+            // deleting user from list
+            unset($users[$username]);
+            // commit changes
+            self::setCollection($users);
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Password rule for creating (encoding)
+     *
+     * @param srting $password
+     * @return string
+     * @author Sergey Startsev
+     */
+    static public function passwordRule($password)
+    {
+        return sha1($password);
+    }
+    
+    
+    /**
+     * Fix user to system using credentials
+     * 
+     * @param   string  $username
+     * @param   string  $password
+     * @param   boolean $remember
+     * @author Sergey Startsev
+     */
+    static public function set($username, $password, $remember = false)
+    {
+        sfContext::getInstance()->getResponse()->setCookie(
+            self::USER_IDENTIFICATOR, 
+            $username . ':' . sha1($username . sha1($password)), 
+            (($remember) ? time() + 60*60*24*15 : 0)
+        );
+    }
+    
+    
+    /**
+     * Validating associated array
+     *
+     * @param array $info - associated array
+     * @return mixed
+     * @author Sergey Startsev
+     */
+    static public function validate($info)
+    {
+        return afStudioUserValidator::process($info);
+    }
+    
+    /**
+     * Getting user collection path
+     * 
+     * @return string
+     * @author Sergey Startsev
+     */
+    static public function getCollectionPath($filePath = false)
+    {
+        return (!$filePath) ? sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/users.yml' : $filePath;
+    }
+    
+    /**
+     * Getting user collection 
+     * 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getCollection($filePath = false)
+    {
+        return sfYaml::load(self::getCollectionPath($filePath));
+    }
+    
+    /**
+     * Setting user collection
+     * 
+     * @param   array $definition 
+     * @author Sergey Startsev
+     */
+    static public function setCollection(Array $definition, $filePath = false)
+    {
+        afStudioUtil::writeFile(self::getCollectionPath($filePath), sfYaml::dump($definition));
+    }
+    
+    /**
      * Getting user status
      * 
      * @return boolean
+     * @author Sergey Startsev
      */
     public function isAuthenticated()
     {
@@ -77,12 +275,12 @@ class afStudioUser
     /**
      * Process authorization
      * 
-     * @return boolean Has been authorized user
+     * @return boolean - Has been authorized user
+     * @author Sergey Startsev
      */
     public function authorize()
     {
         if ($cookie = sfContext::getInstance()->getRequest()->getCookie(self::USER_IDENTIFICATOR)) {
-            
             $aInfo = explode(':', $cookie);
             
             $sUsername = $aInfo[0];
@@ -108,137 +306,6 @@ class afStudioUser
     }
     
     /**
-     * Retrieve user via username from user collection
-     * 
-     * @param string Needle username
-     * @return mixed
-     */
-    public static function retrieve($username)
-    {
-        $aUsers = self::getCollection();
-            
-        $user = (isset($aUsers[$username]) && !empty($aUsers[$username])) ? $aUsers[$username] : false;
-        
-        return $user;
-    }
-    
-    /**
-     * Retrieve user by his mail
-     *
-     * @param string $email
-     * @return mixed
-     */
-    public static function retrieveByEmail($email)
-    {
-        $aUsers = self::getCollection();
-        
-        $aUser = array();
-        
-        foreach ($aUsers as $username => $user) {
-            if ($user['email'] == $email) {
-                $aUser = $user;
-                $aUser['username'] = $username;
-                break;
-            }
-        }
-        
-        if (!empty($aUser)) {
-            return $aUser;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Updating user via username
-     *
-     * @param string $username
-     * @param array $info
-     * @return boolean
-     */
-    public static function update($username, $info)
-    {
-        $aUsers = self::getCollection();
-        
-        if (isset($aUsers[$username])) {
-            
-            foreach ((array)$info as $name => $associate) {
-                if (isset($aUsers[$username][$name])) {
-                    $aUsers[$username][$name] = $associate;
-                }
-            }
-            
-            // Commit changes
-            self::setCollection($aUsers);
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Creating new user
-     *
-     * @param string $username
-     * @param array $info
-     * @return boolean
-     */
-    public static function create($username, $info, $filePath = false)
-    {
-        if(!$filePath)
-        {
-          $aUsers = self::getCollection($filePath);
-        }
-        else {
-          $aUsers = self::getCollection(sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/users.yml');
-        }
-        
-        $info[self::PASSWORD] = self::passwordRule($info[self::PASSWORD]);
-        
-        if ((!$filePath && !isset($aUsers[$username]))||$filePath) {
-            $aUsers[$username] = $info;
-            
-            self::setCollection($aUsers, $filePath);
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Deleting user functionality
-     *
-     * @param string $username
-     * @return boolean
-     */
-    public static function delete($username)
-    {
-        $aUsers = self::getCollection();
-        
-        if (isset($aUsers[$username])) {
-            // deleting user from list
-            unset($aUsers[$username]);
-            // commit changes
-            self::setCollection($aUsers);
-            
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Password rule for creating (encoding)
-     *
-     * @param srting $password
-     * @return string
-     */
-    public static function passwordRule($password)
-    {
-        return sha1($password);
-    }
-    
-    /**
      * Sign out functionality
      */
     public function signOut()
@@ -247,47 +314,9 @@ class afStudioUser
     }
     
     /**
-     * Fix user to system using credentials
-     * 
-     * @param   string  $username
-     * @param   string  $password
-     * @param   boolean $remember
-     */
-    public static function set($username, $password, $remember = false)
-    {
-        sfContext::getInstance()->getResponse()->setCookie(
-            self::USER_IDENTIFICATOR, 
-            $username . ':' . sha1($username . sha1($password)), 
-            (($remember) ? time() + 60*60*24*15 : 0)
-        );
-    }
-    
-    /**
-     * Initialization user meta data
-     * 
-     * @param array
-     */
-    private function initialize($user)
-    {
-        if (isset($user['first_name'])) {
-            $this->first_name = $user['first_name'];
-        }
-        
-        if (isset($user['last_name'])) {
-            $this->last_name = $user['last_name'];
-        }
-        
-        if (isset($user['email'])) {
-            $this->email = $user['email'];
-        }
-        
-        if (isset($user['role'])) {
-            $this->role = $user['role'];
-        }
-    } 
-    
-    /**
      * Getting username
+     * 
+     * @author Sergey Startsev
      */
     public function getUsername()
     {
@@ -296,6 +325,8 @@ class afStudioUser
     
     /**
      * Getting meta First Name
+     * 
+     * @author Sergey Startsev
      */
     public function getFirstName()
     {
@@ -304,6 +335,8 @@ class afStudioUser
     
     /**
      * Getting meta Last Name
+     * 
+     * @author Sergey Startsev
      */
     public function getLastName()
     {
@@ -312,6 +345,8 @@ class afStudioUser
     
     /**
      * Getting meta Email
+     * 
+     * @author Sergey Startsev
      */
     public function getEmail()
     {
@@ -320,6 +355,8 @@ class afStudioUser
     
     /**
      * Getting meta Role
+     * 
+     * @author Sergey Startsev
      */
     public function getRole()
     {
@@ -330,6 +367,7 @@ class afStudioUser
      * Getting Name - Generate user name from meta-data
      *
      * @return string
+     * @author Sergey Startsev
      */
     public function getName()
     {
@@ -346,12 +384,12 @@ class afStudioUser
      * Getting Info about current user
      * 
      * @return mixed - If authenticated - array
+     * @author Sergey Startsev
      */
     public function getInfo()
     {
         if ($this->isAuthenticated()) {
-            
-            $aInfo = array(
+            return array(
                 'name' => $this->getName(),
                 'last_name' => $this->getLastName(),
                 'first_name' => $this->getFirstName(),
@@ -359,69 +397,34 @@ class afStudioUser
                 'username' => $this->getUsername(),
                 'is_admin' => $this->isAdmin(),
             );
-            
-            return $aInfo;
-        } else {
-            return false;
         }
-    }
-    
-    /**
-     * Validating associated array
-     *
-     * @param array $info - associated array
-     * @return mixed
-     */
-    public static function validate($info)
-    {
-        $result = afStudioUserValidator::process($info);
-//        if (is_array($result)) {
-//            $result = array_values($result);
-//        }
         
-        return $result;
+        return false;
     }
     
     /**
      * Checking - is current user admin
      *
      * @return boolean
+     * @author Sergey Startsev
      */
     public function isAdmin()
     {
         return ($this->getRole() == 'admin');
     }
     
-    
     /**
-     * Getting user collection path
+     * Initialization user meta data
      * 
-     * @return string
+     * @param array
+     * @author Sergey Startsev
      */
-    public static function getCollectionPath($filePath = false)
+    private function initialize(Array $user)
     {
-        return (!$filePath)?sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/users.yml':$filePath;
-    }
-    
-    /**
-     * Getting user collection 
-     * 
-     * @return array
-     */
-    public static function getCollection($filePath = false)
-    {
-        return sfYaml::load(self::getCollectionPath($filePath));
-    }
-    
-    /**
-     * Setting user collection
-     * 
-     * @param   array $definition 
-     */
-    public static function setCollection($definition, $filePath = false)
-    {
-        afStudioUtil::writeFile(self::getCollectionPath($filePath), sfYaml::dump($definition));
+        if (isset($user['first_name'])) $this->first_name = $user['first_name'];
+        if (isset($user['last_name'])) $this->last_name = $user['last_name'];
+        if (isset($user['email'])) $this->email = $user['email'];
+        if (isset($user['role'])) $this->role = $user['role'];
     }
     
 }
-

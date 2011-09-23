@@ -55,14 +55,13 @@ class afsUserManagerActions extends afsActions
         $i = 1;
         foreach ($aUsers as $username => $user) {
             $users[] = array(
-                'id' => $i,
+                'id' => $i++,
                 'username' => $username,
                 'email' => $user['email'],
                 'first_name' => $user['first_name'],
                 'last_name' => $user['last_name'],
                 'role' => $user['role']
             );
-            $i++;
         }
         
         return $this->renderJson(array('data' => $users));
@@ -84,16 +83,14 @@ class afsUserManagerActions extends afsActions
         $aErrors = array();
         
         // Retrieve user via username
-        $user = afStudioUser::getInstance()->retrieve($sUsername);
+        $user = afStudioUser::retrieve($sUsername);
         
         if ($user) {
-            
-            $aUserCheck = afStudioUser::getInstance()->retrieveByEmail($aUser['email']);
+            $aUserCheck = afStudioUser::retrieveByEmail($aUser['email']);
             
             if ($aUserCheck && $aUserCheck['username'] != $aUser['username']) {
                 $aErrors['email'] = "User with this `email` already exists";
             }
-            
             
             $aUpdate = array(
                 afStudioUser::FIRST_NAME => $aUser['first_name'],
@@ -120,6 +117,10 @@ class afsUserManagerActions extends afsActions
                 
                 // Update processing
                 afStudioUser::update($sUsername, $aUpdate);
+                
+                if (afStudioUser::getInstance()->getUsername() == $sUsername && !empty($aUser['password'])) {
+                    afStudioUser::set($sUsername, $aUser['password'], false);
+                }
                 
                 $aResult = $this->fetchSuccess('User has been successfully updated');
                 

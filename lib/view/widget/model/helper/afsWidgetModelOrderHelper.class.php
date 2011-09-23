@@ -11,9 +11,9 @@ class afsWidgetModelOrderHelper extends afsBaseModelHelper
      * Sequence for view list type
      */
     static protected $type_list = array(
-        'i:scripts',
         'i:title',
         'i:confirm',
+        'i:area',
         'i:params',
         'i:proxy',
         'i:datasource' => array(
@@ -25,9 +25,7 @@ class afsWidgetModelOrderHelper extends afsBaseModelHelper
         'i:rowactions',
         'i:actions',
         'i:moreactions',
-        'i:cache',
         'i:description',
-        'i:alternateDescriptions',
         'i:grouping',
     );
     
@@ -35,14 +33,17 @@ class afsWidgetModelOrderHelper extends afsBaseModelHelper
      * Sequence for view edit type
      */
     static protected $type_edit = array(
-        'i:scripts',
         'i:title',
         'i:confirm',
+        'i:area',
+        'i:params',
+        'i:proxy',
         'i:datasource' => array(
             'i:class',
             'i:method',
         ),
-		'i:fields' => array(
+        'i:display',
+        'i:fields' => array(
             'i:field' => array(
                 'i:value' => array(
                     'i:class',
@@ -59,25 +60,27 @@ class afsWidgetModelOrderHelper extends afsBaseModelHelper
             'i:link',
             'i:radiogroup',
         ),
-		'i:actions',
-		'i:description',
-		'i:alternateDescriptions',
-		'i:grouping',
+        'i:actions',
+        'i:moreactions',
+        'i:description',
+        'i:grouping',
     );
     
     /**
      * Sequence for view show type
      */
     static protected $type_show = array(
-        'i:scripts',
-		'i:title',
-		'i:confirm',
-		'i:datasource' => array(
+        'i:title',
+        'i:confirm',
+        'i:area',
+        'i:params',
+        'i:proxy',
+        'i:datasource' => array(
             'i:class',
             'i:method',
         ),
-		'i:display',
-		'i:fields' => array(
+        'i:display',
+        'i:fields' => array(
             'i:field' => array(
                 'i:value' => array(
                     'i:class',
@@ -93,11 +96,46 @@ class afsWidgetModelOrderHelper extends afsBaseModelHelper
             'i:button',
             'i:radiogroup',
         ),
-		'i:actions',
-		'i:cache',
-		'i:description',
-		'i:alternateDescriptions',
-		'i:grouping',
+        'i:actions',
+        'i:moreactions',
+        'i:description',
+        'i:grouping',
+    );
+    
+    /**
+     * Sequence for view layout type
+     */
+    static protected $type_layout = array(
+        'i:title',
+        'i:confirm',
+        'i:area',
+        'i:params',
+        'i:proxy',
+        'i:datasource' => array(
+            'i:class',
+            'i:method',
+        ),
+        'i:display',
+        'i:fields' => array(
+            'i:field' => array(
+                'i:value' => array(
+                    'i:class',
+                    'i:method',
+                ),
+                'i:tooltip',
+                'i:help',
+                'i:validator',
+                'i:handler',
+                'i:window',
+                'i:trigger',
+            ),
+            'i:button',
+            'i:radiogroup',
+        ),
+        'i:actions',
+        'i:moreactions',
+        'i:description',
+        'i:grouping',
     );
     
     /**
@@ -105,31 +143,41 @@ class afsWidgetModelOrderHelper extends afsBaseModelHelper
      */
     static protected $type_wizard = array(
         'i:title',
-		'i:confirm',
-		'i:datastore' => array(
-            'i:table',
-            'i:file',
-		),
-		'i:area',
-		'i:actions',
-		'i:grouping',
-		'i:widgetCategories',
-		'i:extrahelp',
+        'i:confirm',
+        'i:area',
+        'i:params',
+        'i:proxy',
+        'i:datasource' => array(
+            'i:class',
+            'i:method',
+        ),
+        'i:display',
+        'i:fields',
+        'i:actions',
+        'i:moreactions',
+        'i:description',
+        'i:grouping',
     );
     
     /**
      * Sequence for view html type
      */
     static protected $type_html = array(
-        'i:scripts',
-		'i:title',
-		'i:confirm',
-		'i:params',
-		'i:options',
-		'i:actions',
-		'i:moreactions',
-		'i:description',
-		'i:alternateDescriptions',
+        'i:title',
+        'i:confirm',
+        'i:area',
+        'i:params',
+        'i:proxy',
+        'i:datasource' => array(
+            'i:class',
+            'i:method',
+        ),
+        'i:display',
+        'i:fields',
+        'i:actions',
+        'i:moreactions',
+        'i:description',
+        'i:grouping',
     );
     
     /**
