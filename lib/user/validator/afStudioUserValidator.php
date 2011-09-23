@@ -2,7 +2,8 @@
 /**
  * afStudioUserValidator - Validate fields before saving/updating
  * 
- * @author startsev.sergey@gmail.com
+ * @package appFlowerStudio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afStudioUserValidator
 {
@@ -26,8 +27,9 @@ class afStudioUserValidator
      *
      * @param array $info
      * @return mixed - Array or boolean
+     * @author Sergey Startsev
      */
-    public static function process($info)
+    public static function process(Array $info)
     {
         $aErrors = array();
         
@@ -45,11 +47,9 @@ class afStudioUserValidator
             }
         }
         
-        if (!empty($aErrors)) {
-            return $aErrors;
-        } else {
-            return true;
-        }
+        if (!empty($aErrors)) return $aErrors;
+        
+        return true;
     }
     
     /**
@@ -57,16 +57,13 @@ class afStudioUserValidator
      *
      * @param srting $value
      * @return mixed
+     * @author Sergey Startsev
      */
     public static function validateUsername($value)
     {
-        if (empty($value)) {
-            return self::fetchError(self::templateEmpty('Username'));
-        } elseif (strlen($value) < 3) {
-            return self::fetchError(self::templateMoreThan('Username', 3));
-        } elseif (!preg_match('/^[a-zA-Z0-9_]{1,}$/i', $value)) {
-            return self::fetchError("Username has deprecated symbols. a-z, 0-9 and _ allowed");
-        }
+        if (empty($value)) return self::fetchError(self::templateEmpty('Username'));
+        if (strlen($value) < 3) return self::fetchError(self::templateMoreThan('Username', 3));
+        if (!preg_match('/^[a-zA-Z0-9_]{1,}$/i', $value)) return self::fetchError("Username has deprecated symbols. a-z, 0-9 and _ allowed");
         
         return true;
     }
@@ -76,6 +73,7 @@ class afStudioUserValidator
      *
      * @param string $value
      * @return mixed
+     * @author Sergey Startsev
      */
     public static function validateFirstName($value)
     {
@@ -91,6 +89,7 @@ class afStudioUserValidator
      *
      * @param string $value
      * @return mixed
+     * @author Sergey Startsev
      */
     public static function validateLastName($value)
     {
@@ -106,6 +105,7 @@ class afStudioUserValidator
      *
      * @param string $value
      * @return mixed
+     * @author Sergey Startsev
      */
     public static function validatePassword($value)
     {
@@ -124,6 +124,7 @@ class afStudioUserValidator
      *
      * @param string $value
      * @return mixed
+     * @author Sergey Startsev
      */
     public static function validateEmail($value)
     {
@@ -141,6 +142,7 @@ class afStudioUserValidator
      *
      * @param string $value
      * @return mixed
+     * @author Sergey Startsev
      */
     public static function validateRole($value)
     {
@@ -158,6 +160,7 @@ class afStudioUserValidator
      *
      * @param string $message
      * @return string
+     * @author Sergey Startsev
      */
     private static function fetchError($message)
     {
@@ -169,6 +172,7 @@ class afStudioUserValidator
      *
      * @param string $schemaName
      * @return string
+     * @author Sergey Startsev
      */
     private static function getPhpName($schemaName)
     {
@@ -186,6 +190,7 @@ class afStudioUserValidator
      *
      * @param string $field
      * @return string
+     * @author Sergey Startsev
      */
     private static function templateEmpty($field)
     {
@@ -198,6 +203,7 @@ class afStudioUserValidator
      * @param string $field
      * @param int $value
      * @return string
+     * @author Sergey Startsev
      */
     private static function templateMoreThan($field, $value)
     {
@@ -209,6 +215,7 @@ class afStudioUserValidator
      *
      * @param string $field
      * @return string
+     * @author Sergey Startsev
      */
     private static function templateDefault($field)
     {

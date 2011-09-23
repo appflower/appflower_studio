@@ -118,19 +118,27 @@ class afsUserManagerActions extends afsActions
                 // Update processing
                 afStudioUser::update($sUsername, $aUpdate);
                 
-                if (afStudioUser::getInstance()->getUsername() == $sUsername && !empty($aUser['password'])) {
-                    afStudioUser::set($sUsername, $aUser['password'], false);
+                afsNotificationPeer::log('User has been successfully updated', 'afStudioUser');
+                
+                // if changes applied for current user
+                if (afStudioUser::getInstance()->getUsername() == $sUsername) {
+                    if (!empty($aUser['password'])) afStudioUser::set($sUsername, $aUser['password'], false);
+                    
+                    // update role of current user - with redirect processing 
+                    if (afStudioUser::getInstance()->getRole() != $aUser['role']) {
+                        return $this->renderJson(
+                            afResponseHelper::create()->redirect('afsAuthorize/signout')->asArray()
+                        );
+                    }
                 }
                 
                 $aResult = $this->fetchSuccess('User has been successfully updated');
-                
-                afsNotificationPeer::log('User has been successfully updated', 'afStudioUser');
             } else {
                 if (is_array($validate)) {
-                    $aErrors = afUserManagerHelper::mergeErrors($aErrors, $validate);
+                    $aErrors = afsUserManagerHelper::mergeErrors($aErrors, $validate);
                 }
                 
-                $aErrors = afUserManagerHelper::prepareErrors($aErrors);
+                $aErrors = afsUserManagerHelper::prepareErrors($aErrors);
                 
                 $aResult = $this->fetchError($aErrors);
             }
@@ -147,9 +155,9 @@ class afsUserManagerActions extends afsActions
      */
     public function executeCreate(sfWebRequest $request)
     {
-        $aResult = afStudioUserHelper::createNewUser($request);
-        
-        return $this->renderJson($aResult);
+        return $this->renderJson(
+            afsUserManagerHelper::createNewUser($request)
+        );
     }
     
     /**

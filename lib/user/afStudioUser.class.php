@@ -155,11 +155,12 @@ class afStudioUser
         
         if ((!$filePath && !isset($users[$username])) || $filePath) {
             $users[$username] = $info;
-            
             self::setCollection($users, $filePath);
-        } else {
-            return false;
+            
+            return true;
         }
+        
+        return false;
     }
     
     /**
@@ -197,7 +198,6 @@ class afStudioUser
         return sha1($password);
     }
     
-    
     /**
      * Fix user to system using credentials
      * 
@@ -215,7 +215,6 @@ class afStudioUser
         );
     }
     
-    
     /**
      * Validating associated array
      *
@@ -223,7 +222,7 @@ class afStudioUser
      * @return mixed
      * @author Sergey Startsev
      */
-    static public function validate($info)
+    static public function validate(Array $info)
     {
         return afStudioUserValidator::process($info);
     }
@@ -316,6 +315,7 @@ class afStudioUser
     /**
      * Getting username
      * 
+     * @return string
      * @author Sergey Startsev
      */
     public function getUsername()
@@ -326,6 +326,7 @@ class afStudioUser
     /**
      * Getting meta First Name
      * 
+     * @return string
      * @author Sergey Startsev
      */
     public function getFirstName()
@@ -336,6 +337,7 @@ class afStudioUser
     /**
      * Getting meta Last Name
      * 
+     * @return string
      * @author Sergey Startsev
      */
     public function getLastName()
@@ -346,6 +348,7 @@ class afStudioUser
     /**
      * Getting meta Email
      * 
+     * @return string
      * @author Sergey Startsev
      */
     public function getEmail()
@@ -356,6 +359,7 @@ class afStudioUser
     /**
      * Getting meta Role
      * 
+     * @return string
      * @author Sergey Startsev
      */
     public function getRole()

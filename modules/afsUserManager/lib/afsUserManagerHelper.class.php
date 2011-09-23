@@ -1,24 +1,78 @@
 <?php
-class afStudioUserHelper
-{	
-	  public static function createNewUser(sfWebRequest $request)
+/**
+ * User manager helper class
+ *
+ * @package appFlowerStudio
+ * @author Sergey Startsev <startsev.sergey@gmail.com>
+ */
+class afsUserManagerHelper
+{
+    /**
+     * Merge errors delimiter
+     */
+    const MERGE_DELIMITER = '<br/>';
+    
+    /**
+     * Merge 2 error arrays 
+     *
+     * @param array $errors_first
+     * @param arrya $errors_second
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function mergeErrors(Array $errors_first, Array $errors_second)
     {
-    	afStudioUser::getInstance()->authorize();
-
+        foreach ($errors_second as $key => $error) {
+            if (isset($errors_first[$key]) && !empty($errors_first[$key])) {
+                $errors_first[$key] .= self::MERGE_DELIMITER . $error;
+            } else {
+                $errors_first[$key] = $error;
+            }
+        }
+        
+        return $errors_first;
+    }
+    
+    /**
+     * Prepare errors for output
+     *
+     * @param array $errors
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function prepareErrors(Array $errors)
+    {
+        $aErrors = array();
+        foreach ($errors as $fieldname => $error) {
+            $aErrors[] = array(
+                'fieldname' => $fieldname,
+                'message' => $error
+            );
+        }
+        
+        return $aErrors;
+    }
+    
+    /**
+     * Create new user 
+     *
+     * @param sfWebRequest $request 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function createNewUser(sfWebRequest $request)
+    {
+        afStudioUser::getInstance()->authorize();
+        
         $sUsername = $request->getParameter('username');
         $aUser = json_decode($request->getParameter('user'), true);
         
-        $user = afStudioUser::getInstance()->retrieve($sUsername);
+        $user = afStudioUser::retrieve($sUsername);
         
         $aErrors = array();
-
-        if ($user) {
-            $aErrors['username'] = 'User with this `username` already exists';
-        }
         
-        if (afStudioUser::getInstance()->retrieveByEmail($aUser['email'])) {
-            $aErrors['email'] = "User with this `email` already exists";
-        }
+        if ($user) $aErrors['username'] = 'User with this `username` already exists';
+        if (afStudioUser::retrieveByEmail($aUser['email'])) $aErrors['email'] = "User with this `email` already exists";
         
         if (!afStudioUser::getInstance()->isAdmin()) {
             if ($aUser['captcha'] != sfContext::getInstance()->getUser()->getFlash(afsCaptcha::SESSION_IDENTIFICATOR)) {
@@ -47,16 +101,11 @@ class afStudioUserHelper
             afStudioUser::create($sUsername, $aCreate);
             
             afsNotificationPeer::log('User has been successfully created', 'afStudioUser');
-
+            
             // Sending email part
             
             // getting current domain
-            $domain = '';
-            if (sfConfig::get('app_domain')) {
-                $domain = sfConfig::get('app_domain');
-            } else {
-                $domain = sfContext::getInstance()->getRequest()->getHost();
-            }
+            $domain = (sfConfig::get('app_domain')) ? sfConfig::get('app_domain') : sfContext::getInstance()->getRequest()->getHost();
             
             $aParameters = array(
                 'user' => $aUser,
@@ -74,16 +123,14 @@ class afStudioUserHelper
             ;
             
             // Sending mail 
-            if (!sfContext::getInstance()->getController()->getAction('afsUserManager', 'create')->getMailer()->send($message)) {
-                $aErrors = afUserManagerHelper::mergeErrors($aErrors, array('sent' => "User has been successfully created. Can't send mail."));
+            if (!@sfContext::getInstance()->getController()->getAction('afsUserManager', 'create')->getMailer()->send($message)) {
+                $aErrors = self::mergeErrors($aErrors, array('sent' => "User has been successfully created. Can't send mail."));
             }
         } else {
-            if (is_array($validate)) {
-                $aErrors = afUserManagerHelper::mergeErrors($aErrors, $validate);
-            }
+            if (is_array($validate)) $aErrors = self::mergeErrors($aErrors, $validate);
         }
         
-        $aErrors = afUserManagerHelper::prepareErrors($aErrors);
+        $aErrors = self::prepareErrors($aErrors);
         
         if (!empty($aErrors)) {
             $aResult = array('success' => false, 'message' => $aErrors);
@@ -94,26 +141,4 @@ class afStudioUserHelper
         return $aResult;
     }
     
-    /**
-     * User in Create Project Wizard
-     * 
-     * @param user - Object
-     * @author radu
-     */
-    public static function createNewUserForCPW($user, $path)
-    {
-        // Prepare data
-        $aCreate = array(
-            afStudioUser::FIRST_NAME => $user->first_name,
-            afStudioUser::LAST_NAME => $user->last_name,
-            afStudioUser::EMAIL => $user->email,
-            afStudioUser::PASSWORD => $user->password,
-            afStudioUser::ROLE => $user->role
-        );
-        
-        unset($aCreate[afStudioUser::USERNAME]);
-            
-        // Create new user
-        afStudioUser::create($user->username, $aCreate, $path);
-    }    
 }

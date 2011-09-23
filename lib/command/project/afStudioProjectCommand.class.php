@@ -179,7 +179,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $dcm->save();
         
         //create user configuration
-        afStudioUserHelper::createNewUserForCPW($userForm, '/tmp/users-'.$unique.'.yml');
+        afStudioProjectCommandHelper::createNewUser($userForm, '/tmp/users-'.$unique.'.yml');
         
         $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
         
