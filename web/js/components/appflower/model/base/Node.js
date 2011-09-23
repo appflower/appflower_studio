@@ -1005,6 +1005,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 
     /**
      * Finds the first child by tag and property value.
+     * @param {String} tag The node tag name
      * @param {String} property The property name
      * @param {Mixed} value The value to search for
      * @param {Boolean} deep (Optional) True to search through nodes deeper than the immediate children

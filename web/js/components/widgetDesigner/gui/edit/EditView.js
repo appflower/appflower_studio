@@ -154,11 +154,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			cmp = [];
 		
 		if (this.getModelNodeByPath([N.GROUPING, N.SET])) {
-			//exploring grouping and sets
+			
+			Ext.each(this.getPlainFieldSets(), function(s) {
+//				console.log('set', s);
+//				cmp.push(this.createFieldSet(s));
+			}, this);
+			
 		} else {
-
-			var fields = this.getFields();
-			Ext.each(fields, function(f){
+			//simple form without sets and tabpanel	
+			Ext.each(this.getFields(), function(f) {
 				cmp.push(this.createField(f));
 			}, this);
 		}

@@ -142,7 +142,7 @@ afStudio.wd.ModelInterface = (function() {
 			var c = this.controller,
 				m = c.getRootNode();
 			
-			node = !Ext.isString(node) ? node.id : node;	
+			node = !Ext.isString(node) ? node.id : node;
 				
 			return 	c.getNodeById(node) ? true 
 					: (notExact ? (m.findChildById(node, true, true) != null ? true : false) : false);
@@ -151,15 +151,55 @@ afStudio.wd.ModelInterface = (function() {
 		/**
 		 * Returns the child nodes properties of specified model node. 
 		 * Children nodes are filtered by tag name. 
-		 * @param {String|Node} parent The parent model node, ID or object
-		 * @param {String|Node} child The child node's tag name or node object
+		 * 
+		 * @param {String|Node} parent The parent model node's ID OR object
+		 * 
+		 * @param {String|Node} child The child node's tag name OR node object
+		 * 
+		 * @param {Array|Object} (optional) childProp Will be returned only children having properties 
+		 * equal to childProp (if it's an object) OR not "empty" {@link Ext.isEmpty} (if childProp is an array). 
+		 * By default all children are returned.
+		 * 
 		 * @return {Array} child nodes properties
 		 */
-		getModelChildrenProperties : function(parent, child) {
+		getModelChildrenProperties : function(parent, child, childProp) {
 			if (this.isModelNodeExists(parent)) {
 				var parent = this.getModelNode(parent),
-					childTag = Ext.isString(child) ? child : child.tag,				
+					childTag = Ext.isString(child) ? child : child.tag;
+				
+				var ns; 	
+				if (Ext.isDefined(childProp)) {
+					ns = parent.filterChildrenBy(function(n){
+						if (n.tag != childTag) {
+							return false
+						}
+						
+						var np = n.getPropertiesHash(true),
+							match = true;
+					
+						if (Ext.isArray(childProp)) {
+							
+							Ext.each(childProp, function(p){
+								return match = (Ext.isEmpty(np[p]) ? false : true);
+							});
+							
+						} else if (Ext.isObject(childProp)){
+							
+							Ext.iterate(childProp, function(k, v){
+								return match = (np[k] != v ? false : true); 
+							});
+							
+						} else if (Ext.isFunction(childProp)) {
+							if (childProp.apply(this, [np]) === false) {
+								match = false;
+							}
+						}
+						
+						return match;
+					});
+				} else {
 					ns = parent.filterChildren(childTag);
+				}
 				
 				var ps = [];	
 				for (var i = 0, len = ns.length; i < len; i++) {
@@ -171,6 +211,7 @@ afStudio.wd.ModelInterface = (function() {
 			
 			return [];
 		},
+		//eo getModelChildrenProperties
 		
 		/**
 		 * Checks model node existence and properties status.

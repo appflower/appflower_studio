@@ -22,12 +22,32 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 
 		/**
-		 * Returns array of fields->buttons properties.
+		 * Returns array of i:fields->i:button properties.
 		 * @return {Array} buttons
 		 */
 		getFieldsButtons : function() {
 			return this.getModelChildrenProperties(nodes.FIELDS, nodes.BUTTON);
+		},
+		
+		/**
+		 * Returns field-sets (i:grouping->i:set) properties.
+		 * @param {Array|Object} (optional) withProp Return field-sets having specific properties 
+		 * @return {Array} field-sets
+		 */
+		getFieldSets : function(withProp) {
+			return this.getModelChildrenProperties(nodes.GROUPING, nodes.SET, withProp);
+		},
+		
+		getTabbedFieldSets : function() {
+			return this.getFieldSets(['tabtitle']);
+		},
+		
+		getPlainFieldSets : function() {
+			return this.getFieldSets(function(prop){
+				return Ext.isEmpty(prop.tabtitle);
+			});				
 		}
+		
 	};
 })();
 
