@@ -250,9 +250,11 @@ afStudio.data.type.InputType = Ext.extend(afStudio.data.type.String, {
 	restrictions : {
 		enumeration: [
 			'input', 'textarea', 'checkbox', 'radio', 'password', 'hidden', 
-			'file', 'combo', 'extendedCombo', 'extendedDayTimeSelect', 'itemSelectorAutoSuggest', 
-			'remoteComboAutoSuggest', 'multicombo', 'doublemulticombo', 'static', 
-			'doubletree', 'datetime', 'color', 'date', 'include', 'superBoxSelect'
+			'file', 'combo', 
+			//'extendedCombo', 'extendedDayTimeSelect', 'itemSelectorAutoSuggest', 'remoteComboAutoSuggest' 
+			'multicombo', 'doublemulticombo', 'static', 
+			'doubletree', 'datetime', 'color', 'date', 'include' 
+			//'superBoxSelect'
 		]
 	}
 });

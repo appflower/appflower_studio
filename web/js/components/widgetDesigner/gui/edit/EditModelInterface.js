@@ -19,6 +19,14 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		 */
 		getFields : function() {
 			return this.getModelChildrenProperties(nodes.FIELDS, nodes.FIELD);
+		},
+
+		/**
+		 * Returns array of fields->buttons properties.
+		 * @return {Array} buttons
+		 */
+		getFieldsButtons : function() {
+			return this.getModelChildrenProperties(nodes.FIELDS, nodes.BUTTON);
 		}
 	};
 })();

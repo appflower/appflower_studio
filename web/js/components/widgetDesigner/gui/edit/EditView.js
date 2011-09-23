@@ -271,11 +271,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		this.createResetSubmitButtons(buttons);
 		
-//		var fields = this.getFields();
-//		Ext.each(fields, function(f){
-//			cmp.push(this.createField(f));
-//		}, this);
-//		
+		var fldsBt = this.getFieldsButtons();
+		console.log('flds buttons', fldsBt);
+//		for (var l = fldsBt.length, i = l - 1; i >= 0; i--) {
+//			buttons.unshift(
+//				this.createButton(fldsBt[i])
+//			);
+//		}
+		
+		
 		return buttons;
 	},
 	
@@ -309,6 +313,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		this.mapCmpToModel(N.FIELDS + '#resetlabel', submitBt);
 		
 		buttons.push(submitBt, resetBt);
+	},
+	
+	/**
+	 * @protected
+	 * @param {Object} btn The button definition object
+	 * @return {Ext.Button}
+	 */
+	createButton : function(btn) {
+		
 	},
 	
 	/**
