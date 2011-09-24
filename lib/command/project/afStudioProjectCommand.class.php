@@ -164,7 +164,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $project['name'] = $this->getParameter('name');    	
         $project['template'] = $this->getParameter('template');
         
-        $path = $params['path'];
+        $path = $this->getParameter('path');
         
         $project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $project);
         $unique = afStudioUtil::unique();
