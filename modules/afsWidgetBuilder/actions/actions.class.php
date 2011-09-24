@@ -2,81 +2,58 @@
 /**
  * This module provides backend functionality for WidgetBuilder component from JS code
  *
- * @package    appFlowerStudio
- * @subpackage plugin
- * @author     luwo@appflower.com
+ * @package     appFlowerStudio
+ * @subpackage  plugin
+ * @author      luwo@appflower.com
+ * @author      Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsWidgetBuilderActions extends sfActions
+class afsWidgetBuilderActions extends afsActions
 {
-
     /**
-     * Returns data encoded in json format,
-     * adds json content-type header to the response.
-     *  
-     * @param mixed $result
+     * Getting Widget action
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
      */
-    protected function renderJson($data)
+    public function executeGetWidget(sfWebRequest $request)
     {
-	    $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-		return $this->renderText(json_encode($data));
+        /*
+            TODO separate 'uri' request to 2 params, module, and action.
+        */
+        $parameters = array(
+            'uri'       => $request->getParameter('uri'),
+            'placeType' => $request->getParameter('placeType', 'app'),
+            'place'     => $request->getParameter('place', 'frontend'),
+        );
+        
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'get', $parameters)->asArray()
+        );
     }
     
-    function executeGetWidget(sfWebRequest $request)
+    /**
+     * Save widget action
+     *
+     * @param sfWebRequest $request 
+     * @author Sergey Startsev
+     */
+    public function executeSaveWidget(sfWebRequest $request)
     {
-        try {
-            $afsWBW = new afsWidgetBuilderWidget($request->getParameter('uri'));
-            $afsWBW->loadXml();
-
-            $response = array(
-                'success' => true,
-                'data' => $afsWBW->getDefinition()
-            );
-            
-        } catch( Exception $e ) {
-            $response = array(
-                'success' => false,
-                'message' => $e->getMessage()
-            );
-        }
+        /*
+            TODO separate 'uri' request to 2 params, module, and action.
+        */
+        $parameters = array(
+            'uri'               => $request->getParameter('uri'),
+            'data'              => json_decode($request->getParameter('data'), true),
+            'widgetType'        => $request->getParameter('widgetType'),
+            'createNewWidget'   => $request->getParameter('createNewWidget'),
+            'placeType'         => $request->getParameter('placeType', 'app'),
+            'place'             => $request->getParameter('place', 'frontend'),
+        );
         
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'save', $parameters)->asArray()
+        );
     }
-
-    function executeSaveWidget(sfWebRequest $request)
-    {
-        try {
-            $afsWBW = new afsWidgetBuilderWidget($request->getParameter('uri'));
-            $data = $request->getParameter('data');
-            $widgetType = $request->getParameter('widgetType');
-            $createNewWidget = ($request->getParameter('createNewWidget') == 'true' ? true : false);
-            
-            $afsWBW->setPlaceType($request->getParameter('placeType', 'app'));
-            $afsWBW->setPlace($request->getParameter('place', 'frontend'));
-
-            $afsWBW->setWidgetType($widgetType);
-            $afsWBW->setDefinitionFromJSON($data, $createNewWidget);
-            $validationStatusOrError = $afsWBW->save();
-
-            if ($validationStatusOrError === true) {
-                $response = array(
-                    'success' => true,
-                    'message' => $createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved',
-                    'data'    => $afsWBW->getInfo()
-                );
-            } else {
-                $response = array(
-                    'success' => false,
-                    'message' => $validationStatusOrError
-                );
-            }
-
-        } catch( Exception $e ) {
-            $response = array(
-                'success' => false,
-                'message' => $e->getMessage()
-            );
-        }
-        
-        return $this->renderJson($response);
-    }
+    
 }

@@ -1,5 +1,6 @@
 Ext.ns('afStudio.models');
 
+//TODO should get rid of overrides in almost all situations where extending can be used
 Ext.override(Ext.form.Field,{
     initEvents : function(){
         this.mon(this.el, Ext.EventManager.getKeyEvent(), this.fireKey,  this);
@@ -11,12 +12,21 @@ Ext.override(Ext.form.Field,{
     }
 });
 
+/**
+ * @class afStudio.models.modelGridView
+ * @extends Ext.grid.GridView
+ */
 afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView, {
 	
+	/**
+	 * @override
+	 */
     beforeColMenuShow : function() {
         var cm       = this.cm,  
         	colCount = cm.getColumnCount();
+        	
         this.colMenu.removeAll();
+        
         for (var i = 0; i < colCount; i++) {
             if (cm.config[i].fixed !== true && cm.config[i].hideable !== false && !cm.config[i].uninit) {
                 this.colMenu.add(new Ext.menu.CheckItem({
@@ -29,7 +39,11 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView, {
             }
         }
     },
+    //eo beforeColMenuShow
     
+	/**
+	 * @override
+	 */    
 	afterRenderUI : function() {
 		var grid = this.grid;
         this.initElements();
@@ -143,8 +157,9 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView, {
 
         this.updateHeaderSortState();
 	},
+	//eo afterRenderUI
 	
-	columnMenuClick : function(item){		
+	columnMenuClick : function(item) {		
 		var index = this.hdCtxIndex,
 			   cm = this.cm, 
 			   ds = this.ds;
@@ -356,17 +371,16 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView, {
 				}));
 				cm.config[index].editor = editor;
 				break;
-				
-			default:
-				//alert(item.itemId);
 		}
+		
 		return true;
 	},
+	//eo handleHdMenuClick
 
 	showNextColumn : function(index) {
 		var cm = this.cm;
 		if (index <= this.grid.maxColumns) {
-			cm.setHidden(index + 1,false);
+			cm.setHidden(index + 1, false);
 			cm.config[index + 1].uninit = false;
 		}
 	},
@@ -424,71 +438,76 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView, {
 			e.stopEvent();
 			Ext.fly(hd).addClass('x-grid3-hd-menu-open');
 			this.hdCtxIndex = index;
-			var ms = this.hmenu.items, cm = this.cm;
+			var ms = this.hmenu.items, 
+				cm = this.cm;
 			//ms.get("asc").setDisabled(!cm.isSortable(index));
 			//ms.get("desc").setDisabled(!cm.isSortable(index));
 			this.hmenu.on("hide", function(){
 				Ext.fly(hd).removeClass('x-grid3-hd-menu-open');
-			}, this, {single:true});
+			}, this, {single: true});
 			this.hmenu.show(t, "tl-bl?");
 		} else {
-			this.editHeadColumn(hd.firstChild,index);
+			this.editHeadColumn(hd.firstChild, index);
 		}
 	}
 	
 });
+//eo afStudio.models.modelGridView
 
-//Excel grid class define 
-var _modelEditerEnterFlag=0;
+/**
+ * Excel grid class define 
+ * @class afStudio.models.ExcelGridPanel
+ * @extends Ext.grid.EditorGridPanel
+ */
 afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
-	
+
+	/**
+	 * @cfg {Number} maxColumns The maximum number of fields a model can have (defaults to 20).
+	 */
 	maxColumns: 20,
-	
+	/**
+	 * @cfg {String} defautHeaderTitle The header title text (defaults to "NewField").
+	 */
 	defautHeaderTitle: 'NewField',
 	
-	createEditer : function(fd) {
-		var fmfield = fd ? fd : new Ext.form.TextField();
+    autoScroll: true,
+    
+	columnLines: true,
+	
+    clicksToEdit: 1,	        
+	
+	/**
+	 * Creates editor.
+	 * @private
+	 * @param {String|Ext.form.Field} fld The field being used to create editor. Accepts as xtype as well as field object. 
+	 * @return {Ext.grid.GridEditor} editor
+	 */
+	createEditer : function(fld) {
+		var f = fld ? fld : new Ext.form.TextField();
 		
-		return new Ext.grid.GridEditor(fmfield, {
-			completeOnEnter : false,
-			listeners: {
-				specialkey : function(field, e) {
-					if (e.getKey() == e.ENTER) {
-						_modelEditerEnterFlag = 1;
-						this.completeEdit();
-					}
-				}
-			}
-		});
+		return new Ext.grid.GridEditor(f);
 	},
 	
 	beforeInit : function() {
-		var columns = [new Ext.grid.RowNumberer()];
-		var fields  = [];
+		var columns = [new Ext.grid.RowNumberer()],
+			fields  = [];
 		
 		for (var i = 0; i < this.maxColumns; i++) {
 			var hidden = true;
+			
 			if (i == 0) {
 				hidden = false;
 			}
+			
 			columns.push({
 				header: this.defautHeaderTitle,
 				dataIndex: 'c' + i,
 				width: 80,
 				hidden: hidden,
 				uninit: hidden,
-				editor: new Ext.grid.GridEditor(new Ext.form.TextField(), {
-					completeOnEnter:false,
-					listeners: {
-						specialkey :function(field,e){
-							if (e.getKey() == e.ENTER) {
-								_modelEditerEnterFlag = 1;
-								this.completeEdit();
-							}
-						}
-					}
-				})
+				editor: this.createEditer()
 			});
+			
 			fields.push({name: 'c' + i});
 		}
 		
@@ -500,63 +519,66 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	 
 		if (this.store) {
 			var store = this.store;
+			//adds one empty record if we have no data
 			if (this.store.getCount() == 0) {
 				var rec = this.store.recordType;
 				this.store.add([new rec()]);		
 			}
 		} else {
 			var store = new Ext.data.SimpleStore({
-				fields: fields,data : [['']]
+				fields: fields,
+				data: [['']]
 			});
 		}
 		
 		var config = {		
-	        autoScroll: true,
 	        store: store,
 	        cm: cm,
-			columnLines: true,
-	        clicksToEdit: 1,	        
 	        view: new afStudio.models.modelGridView(),
 	        listeners: {
 				afteredit: function(e) {
-					//e.record.commit();
 					var row     = e.row + 1,
 						column  = e.column,
 						count   = this.store.getCount();
-						
+					
+					//adds empty record everytime when was updated the last record in the grid	
 					if (count == row) {
 						var rec = store.recordType;
 						store.add([new rec()]);
 					}
 					
+					//adds new column everytime when was updated the last column's record in the grid
 					if (this.getColumnModel().getColumnCount(true) == (column + 1) 
-					&& column < this.maxColumns) 
-					{
+						&& column < this.maxColumns) {
+							
 						this.getView().showNextColumn(column);
 					}
-					if (_modelEditerEnterFlag) {
-						var task = new Ext.util.DelayedTask(function(row, column) {
-						    this.startEditing(row, column);
-						    _modelEditerEnterFlag = 0;
-						}, this, [row, column]);
-						task.delay(100);
-					}
+					
+					var task = new Ext.util.DelayedTask(function(row, column) { 
+						this.startEditing(row, column);
+					}, this, [row, column]);
+					
+					task.delay(100);
 				}
 			}
 		};
 			
-		//apply config
-		Ext.apply(this, Ext.apply(this.initialConfig, config));
+		Ext.apply(this, 
+			Ext.apply(this.initialConfig, config)
+		);
 	},
 	
 	afterInit: Ext.emptyFn,
 	
 	initComponent : function() {
-		this.beforeInit();		
+		this.beforeInit();
+		
 		afStudio.models.ExcelGridPanel.superclass.initComponent.apply(this, arguments);
+		
 		this.afterInit();
-	}//eo initComponent	
+	}
 });
+//eo afStudio.models.ExcelGridPanel
 
 /**
  * ModelGrid
@@ -566,126 +588,112 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
 	/**
-	 * @cfg {String} (Required) model
-	 * This model name
+	 * @cfg {String} model (required) This model name.
 	 */
+	/**
+	 * @cfg {String} schema (required) This model's schema name.
+	 */
+	/**
+	 * @cfg {Number} recordsPerPage (required) The number of displaying records per page (defaults to 25).
+	 */
+	recordsPerPage : 25,
 	
 	/**
-	 * @cfg {String} (Required) schema
-	 * This model's schema name
+	 * Creates an uninitialised column.
+	 * @private
+	 * @param {Number} index The column index
+	 * @return {Object} column
 	 */
+	createUninitColumn : function(index) {
+		var defHeader = this.defautHeaderTitle;
+		
+		return {
+			header: defHeader,
+			dataIndex: 'c' + index,
+			uninit: true,
+			width: 80,
+			hidden: index == 0 ? false : true,
+			//data type is not specified thus it is not possible to add field's data before it will be created
+			editor: afStudio.models.TypeBuilder.createEditor(),
+			fieldDefinition: {
+				name: defHeader,
+				type: 'varchar',
+				exists: false
+			}
+		}		
+	},
 	
 	/**
-	 * @cfg {Number} recordsPerPage required (defaults to 25)
-	 * The number of displaying records per page
+	 * @private
 	 */
-	recordsPerPage : 25
-	
-	//private
-	,beforeInit : function() {
-		var _this   = this,
-			 data   = _this._data.rows,
-		   	fields  = ['id'],
+	beforeInit : function() {
+		var me = this,
+			data = me._data.data,
+		   	fields = ['id'],
 			modelStructureExists = !Ext.isEmpty(data),
 			columns = [new Ext.grid.RowNumberer()];
-			
+		
 		if (data.length > 0) {
 			
-			for (var i = 0; i < data.length; i++) {
-				columns.push({
-					header: data[i].name,
+			Ext.each(data, function(f, i) {
+				var clm = {
+					header: f.name,
 					dataIndex: 'c' + i,
 					width: 80,
 					hidden: false,
-					editor: afStudio.models.TypeBuilder.createEditor(data[i].type, data[i].size, data[i]['default']),
-					renderer: afStudio.models.TypeBuilder.createRenderer(data[i].type),
-					/**
-					 * custom property used with {@link afStudio.models.EditFieldWindow} field editor
-					 */
-					fieldDefinition: Ext.apply(data[i], {exists: true})
-				});
+					renderer: afStudio.models.TypeBuilder.createRenderer(f.type),
+					//custom property used with {@link afStudio.models.EditFieldWindow} field editor
+					fieldDefinition: Ext.apply(f, {exists: true})
+				};
+				if (!f.autoIncrement) {
+					clm.editor = afStudio.models.TypeBuilder.createEditor(f.type, f.size, f['default']);
+				}
+				columns.push(clm);
 				fields.push({name: 'c' + i});
-			}
+			});
 	 
 			for (var i = columns.length - 1; i <= this.maxColumns; i++) {
-				columns.push({
-					header: this.defautHeaderTitle,
-					dataIndex: 'c' + i,
-					uninit: true,
-					width: 80,
-					hidden: true,
-					//data type is not specified thus it is not possible to add field's data before it will be created
-					editor: afStudio.models.TypeBuilder.createEditor(),
-					fieldDefinition: {
-						name: _this.defautHeaderTitle,
-						type: 'varchar',
-						exists: false
-					}
-				});
+				columns.push(this.createUninitColumn(i));
 				fields.push({name: 'c' + i});
 			}
+			
 		} else {
 			for (var i = columns.length - 1; i <= this.maxColumns; i++) {
-				columns.push({
-					header: this.defautHeaderTitle,					
-					dataIndex: 'c' + i,
-					uninit: true,
-					width: 80,
-					hidden: i == 0 ? false : true,
-					//data type is not specified thus it is not possible to add field's data before it will be created
-					editor: afStudio.models.TypeBuilder.createEditor(),
-					fieldDefinition: {
-						name: _this.defautHeaderTitle,
-						type: 'varchar',
-						exists: false
-					}
-				});
+				columns.push(this.createUninitColumn(i));				
 				fields.push({name: 'c' + i});
 			}
-		}//eo columns building
+		}
+		//eo columns & fields building
 		
-		_this.store = new Ext.data.Store({
-			reader: new afStudio.models.modelGridPanelReader({
-				root: 'rows',
-			    idProperty: 'id'
-			}, fields),
-            proxy: _this.storeProxy,
-            writer: new Ext.data.JsonWriter({encode: false, listful: true}),          
-            autoSave: false,
-			listeners: {
-				load : function(store, records) {
-					//adds one line if the result set is empty
-					//if (Ext.isEmpty(records))
-					var rec = store.recordType;
-					store.add([new rec()]);
-				}
+		me.store = new afStudio.models.ModelStore({
+			proxy: me.storeProxy,
+			readerCfg: {
+				fields: fields
 			}
 		});
-		_this.store.load({
+		me.store.load({
 			params: {
 				start: 0, 
-				limit: _this.recordsPerPage
+				limit: me.recordsPerPage
 			}
 		});
 		
-		_this.columns = columns;		
+		me.columns = columns;		
 		
 		afStudio.models.ModelGrid.superclass.beforeInit.apply(this, arguments);
 		
 		var pagingBar = new Ext.PagingToolbar({
-	        store: _this.store,
+	        store: me.store,
 	        displayInfo: true,	        
 	        displayMsg: 'Displaying records {0} - {1} of {2}',
-	        pageSize: _this.recordsPerPage
+	        pageSize: me.recordsPerPage
     	});
 		
 		var config = {
 			iconCls: 'icon-database-table',			
 		    loadMask: true,
-		    clicksToEdit: 1,
-	        columnLines: true,	        
 	        viewConfig: {
-	            forceFit: true
+				forceFit: true
 	        },			
 	        //TODO Ext.ux.grid.DataDrop plugin affects on scolling inside the grid
 	        //the problem should be researched and corrected.
@@ -695,6 +703,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        {
 	            text: 'Save',
 	            iconCls: 'icon-save',
+	            scope: this,
 	            handler: function(btn, ev) {	            	
 	            	var cm    = this.getColumnModel(),
 	            	    clms  = [];
@@ -711,34 +720,24 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            		tbar.getComponent('delete').enable();
 	            	}
 	            	
-	            	afStudio.vp.mask({region:'center', msg: 'Saving ' + _this.model + ' model...'});
-					Ext.Ajax.request({
-						url: afStudioWSUrls.getModelsUrl(),
+	            	afStudio.xhr.executeAction({
+	            		url: afStudioWSUrls.modelListUrl,
 						params: {
 							xaction: 'alterModel',
-							model: _this.model, 
-							schema: _this.schema,
+							model: me.model,
+							schema: me.schema,
 							fields: Ext.encode(clms)
 						},
+	            		mask: {msg: String.format('Saving "{0}" model...', me.model), region:'center'},
+	            		showNoteOnSuccess: false,
+	            		logMessage: String.format('Model "{0}" was successfully saved.', me.model),
 						scope: this,
-						success: function(xhr, opt) {
-							afStudio.vp.unmask('center');							
-							var response = Ext.decode(xhr.responseText);
-							if (response.success) {
-								this.fireEvent('alterfield');
-				            	this.getStore().save();	            	
-	        			    	this.fireEvent("logmessage", this, String.format('Model "{0}" was successfully saved.', _this.model));
-							} else {
-								afStudio.Msg.warning(response.message);
-							}
-						},
-						failure: function(xhr, opt) {				
-							afStudio.vp.unmask('center');
-							afStudio.Msg.error('Status: ' + xhr.status);
+						run: function(response) {
+							this.fireEvent('alterfield');
+			            	this.getStore().save();
 						}
-					});
-	            },
-	            scope: this
+	            	});
+	            }
 	        },'-',{	        	
             	text: 'Insert',
             	itemId: 'insert',
@@ -748,10 +747,12 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            	items: [
 	            	{
 	            		text: 'Insert after',
-			            handler: Ext.util.Functions.createDelegate(_this.insertAfterField, _this) 
+	            		scope: me,
+			            handler: me.insertAfterField 
 	            	},{
 	            		text: 'Insert before',
-			            handler: Ext.util.Functions.createDelegate(_this.insertBeforeField, _this)
+	            		scope: me,
+			            handler: me.insertBeforeField
 	            	}]
 	            }	            
         	},'-',{
@@ -759,23 +760,26 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            itemId: 'delete',
 	            disabled: !modelStructureExists,
 	            iconCls: 'afs-icon-delete',
+	            scope: this,
 	            handler: function(btn, ev) {
 	            	var cell = this.getSelectionModel().getSelectedCell();			
 	        	    if (cell) {
 	        	    	var r = this.store.getAt(cell[0]);
 	        	    	this.store.remove(r);
 	        	    }
-	            },
-	            scope:this
+	            }
 	        }],
 	        bbar: pagingBar
 		};
 		
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-	}//eo beforeInit
+	},
+	//eo beforeInit
 	
-	//private
-	,afterInit : function() {
+	/**
+	 * @private
+	 */
+	afterInit : function() {
 		afStudio.models.ModelGrid.superclass.afterInit.apply(this, arguments);		
 		
 		this.addEvents(
@@ -801,88 +805,41 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			
 			'logmessage'
 		);		
-	}//eo afterInit
+	},
+	//eo afterInit
 	
-	,insertAfterField : function(b, e) {
-		var _this = this,		
-    		cell = _this.getSelectionModel().getSelectedCell(),
+	insertAfterField : function(b, e) {
+		var me = this,		
+    		cell = me.getSelectionModel().getSelectedCell(),
     		index = cell ? cell[0] + 1 : this.store.getCount(); 
     	
-    	var u = new _this.store.recordType({
+    	var u = new me.store.recordType({
             name: '',
             type: 'varchar',
             size: '11',
             required: false
         });
-        _this.stopEditing();
-        _this.store.insert(index, u);
-		_this.startEditing(index , cell ? cell[1] : 0);		
-	}
+        me.stopEditing();
+        me.store.insert(index, u);
+		me.startEditing(index , cell ? cell[1] : 0);		
+	},
 	
-	,insertBeforeField : function() {
-		var _this = this,
-    		cell = _this.getSelectionModel().getSelectedCell(),
+	insertBeforeField : function() {
+		var me = this,
+    		cell = me.getSelectionModel().getSelectedCell(),
     		index = cell ? cell[0] : 0; 
     	
-    	var u = new _this.store.recordType({
+    	var u = new me.store.recordType({
             name: '',
             type: 'varchar',
             size: '11',
             required: false
         });
-        _this.stopEditing();
-        _this.store.insert(index, u);
-        _this.startEditing(index , cell ? cell[1] : 0);	
-	},	
-
-	//private
-	onEditComplete : function (ed, value, startValue) {
-        this.editing = false;
-        this.lastActiveEditor = this.activeEditor;
-        this.activeEditor = null;
-
-        var r = ed.record,
-            field = this.colModel.getDataIndex(ed.col);
-        value = this.postEditValue(value, startValue, r, field);
-        if (this.forceValidation === true || String(value) !== String(startValue)) {
-            var e = {
-                grid: this,
-                record: r,
-                field: field,
-                originalValue: startValue,
-                value: value,
-                row: ed.row,
-                column: ed.col,
-                cancel:false
-            };
-            if (this.fireEvent("validateedit", e) !== false && !e.cancel && String(value) !== String(startValue)) {
-                r.set(field, e.value);
-                delete e.cancel;
-                this.fireEvent("afteredit", e);
-            }
-        }
-        this.view.focusCell(ed.row, ed.col);
-    }
+        me.stopEditing();
+        me.store.insert(index, u);
+        me.startEditing(index , cell ? cell[1] : 0);	
+	}	
 });
-
-afStudio.models.modelGridPanelReader = Ext.extend(Ext.data.JsonReader, {
-    realize: function(record, data) {
-        if (Ext.isArray(record)) {
-            var newRecord = [];
-            var newData = [];
-
-            for (var i = 0; i < record.length; i++) {
-                if (data[i]['id'] != null) {
-                    newRecord.push(record[i]);
-                    newData.push(data[i]);
-                }
-            }
-
-            return afStudio.models.modelGridPanelReader.superclass.realize.call(this, newRecord, newData);
-        } else {
-            return afStudio.models.modelGridPanelReader.superclass.realize.call(this, record, data);
-        }
-    }
-});
+//eo afStudio.models.ModelGrid
 
 Ext.reg('afStudio.models.modelGrid', afStudio.models.ModelGrid);

@@ -6,7 +6,7 @@
  * @subpackage  plugin
  * @author      startsev.sergey@gmail.com
  */
-class afsAuthorizeActions extends sfActions
+class afsAuthorizeActions extends afsActions
 {
     /**
      * Pre execute
@@ -19,15 +19,6 @@ class afsAuthorizeActions extends sfActions
             $this->redirect('appFlowerStudio/studio');
         }
     }
-    
-    /**
-     * Rendering json
-     */
-    protected function renderJson($result)
-    {
-        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        return $this->renderText(json_encode($result));
-    } 
     
     /**
      * Sign out controller

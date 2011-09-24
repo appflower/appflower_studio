@@ -138,7 +138,7 @@ afStudio.layoutDesigner.view.Page = Ext.extend(Ext.Container, {
 					module: widgetMeta.module
 				}
 			}, 
-			widgetMeta.meta['i:title']
+			widgetMeta.widgetUri
 		);
 		
 		this.doLayout();		

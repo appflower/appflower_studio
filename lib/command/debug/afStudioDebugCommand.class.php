@@ -184,7 +184,7 @@ class afStudioDebugCommand extends afBaseStudioCommand
             $aFiles = array();
             if ($dh = opendir($dir)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file != '.' && $file != '..' && $file != 'studio_sqlite.db' && $file != '.svn' && is_file($dir . $file)) {
+                    if ($file != '.' && $file != '..' && $file != '.svn' && is_file($dir . $file)) {
                         $modification = filemtime($dir . $file);
                         $aFiles[$modification] = $file;
                     }

@@ -27,7 +27,7 @@ afStudio.dbQuery.TableModelTab = Ext.extend(Ext.TabPanel, {
 	 * @cfg {String} modelUrl required (defaults to '/appFlowerStudio/models')
 	 * Base URL for models 
 	 */
-	modelUrl : afStudioWSUrls.getModelsUrl()
+	modelUrl : afStudioWSUrls.modelListUrl
 	
 	,createStructureGrid : function(metaData) {
 		

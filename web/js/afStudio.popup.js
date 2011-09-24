@@ -107,15 +107,12 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 	getHtmlData : function() {
 		var popupWindow = this;
 		
-		Ext.Ajax.request({
-		   url: afStudioWSUrls.buildUrlFor('/appFlowerStudio/Welcome'),
-		   failure: function (xhr, request) {
-			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText);
-			   afStudio.Msg.error('Server side error', message);
-		   },
-		   success: function (result, request) {
-			   var obj = Ext.decode(result.responseText);
-			   Ext.get('welcome-box').update(obj.message);
+		afStudio.xhr.executeAction({
+			url: afStudioWSUrls.welcomeWinUrl,
+			showNoteOnSuccess: false,
+			run: function(response) {
+			   var obj = response;
+			   Ext.get('welcome-box').update(obj.data);
 			   jQuery("a[rel^='prettyPhoto']").prettyPhoto();
 			   
 			   setTimeout(function() {jQuery('#studio_video_tours ul').jScrollPane()} , 500); // requred for firefox
@@ -128,9 +125,8 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 				   popupWindow.close();
 				   (new afStudio.LoadProject()).show(); 
 			   }, this);
-		   }
+			}
 		});
-
 	}
 	
 });

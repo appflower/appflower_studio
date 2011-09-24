@@ -3,7 +3,7 @@ Ext.ns('afStudio.models');
 /** 
  * @class afStudio.models.ModelTab
  * @extends Ext.TabPanel
- * @author Nikolay
+ * @author Nikolai
  */
 afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 
@@ -24,7 +24,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 * @cfg {String} modelUrl required (defaults to '/appFlowerStudio/models')
 	 * Base URL for models 
 	 */
-	modelUrl : window.afStudioWSUrls.getModelsUrl()
+	modelUrl : afStudioWSUrls.modelListUrl
 
 	/**
 	 * Runs altering process and updates model's grids

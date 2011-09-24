@@ -9,7 +9,7 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 	/**
 	 * @cfg {String} baseUrl
 	 */
-	baseUrl : afStudioWSUrls.getModelsUrl()	
+	baseUrl : afStudioWSUrls.modelListUrl
 	
     /**
      * @cfg {Object} leafNodeCfg

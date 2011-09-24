@@ -83,7 +83,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		
 		_self = this;
 		this.tree = new Ext.ux.FileTreePanel({
-			url:window.afStudioWSUrls.getProjectLoadTreeUrl(),
+			url: afStudioWSUrls.project,
 			rootPath:'root',
 			rootVisible:true,
 			rootText:afStudioHost.user+'@'+afStudioHost.name,
@@ -367,26 +367,26 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 			  
 				var _this = this;
 				Ext.Ajax.request({
-					url: window.afStudioWSUrls.getCreateProjectWizardCheckDatabaseUrl(),
+					url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'checkDatabase'})),
 					params: { 
 						form: Ext.encode(form5Values)
 					},
 					success: function(result,request){			   
 						var obj = Ext.decode(result.responseText);
 						if (!obj.success) {
-						  for(var i in obj.fields)
-						  {
-						    if(obj.fields[i].fieldName)
-						    {
-							    _this.form5.getForm().findField(obj.fields[i].fieldName).markInvalid(obj.fields[i].error);
-						    }
-						  }
+							var fields = obj.data.fields;
+						  	for (var i in fields) {
+						  		if (fields[i].fieldName) {
+							    	_this.form5.getForm().findField(fields[i].fieldName).markInvalid(fields[i].error);
+						    	}
+						  	}
+						  	
 							return;
 						}
 						else
 						{
 						  //contains boolean value
-						  _this.databaseExist = obj.databaseExist;
+						  _this.databaseExist = obj.data.databaseExist;
 						  
 						  switch(_this.databaseExist)
 						  {
@@ -459,7 +459,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
         var projectSlug = afStudio.createSlug(projectName);
         
 		Ext.Ajax.request({
-			url: window.afStudioWSUrls.getProjectCreateWizardUrl(),
+			url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'saveWizard'})),
 			params: { 
 				name: projectName,
                 slug: projectSlug,

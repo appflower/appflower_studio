@@ -14,20 +14,30 @@ var afStudio = function () {
 	 * Studio view port
 	 */
 	
-	return {		
+	return {
 		/**
-		 * Redirects browser to specified URL during ajax requests.
-		 * URL is specified in <u>redirect</u> response property.
-		 * {@link Ext.Ajax#requestcomplete} event listener.
+		 * Adds <u>requestcomplete</u> listener to global {@link Ext.Ajax} request class.
+		 * If XHR response is JSON and it contains <i>redirect</i> property - holding redirect URL 
+		 * then browser is redirected to specified URL.
 		 */
-		initAjaxRedirect : function() {
+		initAjaxRequestComplete : function() {
 			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
-				var response = Ext.decode(xhr.responseText);
+                var response;
+				try {
+					response = Ext.decode(xhr.responseText);
+				} catch(e) {
+					if (opt.jsonResponse) {
+						afStudio.Msg.error('Response cannot be decoded', 
+							String.format('<u>url</u>: <b>{0}</b> <br/>{1}', opt.url, xhr.responseText));
+					}
+					return;
+				}
 				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
 					location.href = response.redirect;
 				}
 			});
-		}//eo initAjaxRedirect
+		}
+		//eo initAjaxRequestComplete
 		
 		/**
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
@@ -41,11 +51,11 @@ var afStudio = function () {
 			Ext.data.DataProxy.on('exception', function(proxy, type, action, options, response, arg) {
 				var message,
 					title = String.format('Request Failed {0}', options.url);
-					
+				
 				if (type == 'response') {
+					var r = Ext.decode(response.responseText);
 					if (response.status == 200) {
-						var r = Ext.decode(response.responseText);
-						message = getMessage(r);
+						message = getMessage(r) || 'The remote-request succeeded but the reader could not read the response';
 					} else {
 						message = String.format('Server side error <br/> status code: {0}, message: {1}', r.status, r.statusText || '---');
 					}		
@@ -152,7 +162,7 @@ var afStudio = function () {
 			});
 			Ext.form.Field.prototype.msgTarget = 'side';
 			
-			this.initAjaxRedirect();
+			this.initAjaxRequestComplete();
 			this.initDataProxyErrorsHandling();
 			
 			//timeout 5 minutes

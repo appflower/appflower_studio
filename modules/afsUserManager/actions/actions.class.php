@@ -6,7 +6,7 @@
  * @subpackage  plugin
  * @author      startsev.sergey@gmail.com
  */
-class afsUserManagerActions extends sfActions
+class afsUserManagerActions extends afsActions
 {
     /**
      * Catching executing ajax queries from direct call
@@ -16,15 +16,6 @@ class afsUserManagerActions extends sfActions
         if (!$this->getRequest()->isXmlHttpRequest() && $this->getActionName() != 'captcha') {
             $this->forward404("This action should be used only for ajax requests");
         }
-    }
-    
-    /**
-     * Rendering json
-     */
-    protected function renderJson($result)
-    {
-        $this->getResponse()->setHttpHeader("Content-Type", 'application/json');
-        return $this->renderText(json_encode($result));
     }
     
     /**
@@ -64,14 +55,13 @@ class afsUserManagerActions extends sfActions
         $i = 1;
         foreach ($aUsers as $username => $user) {
             $users[] = array(
-                'id' => $i,
+                'id' => $i++,
                 'username' => $username,
                 'email' => $user['email'],
                 'first_name' => $user['first_name'],
                 'last_name' => $user['last_name'],
                 'role' => $user['role']
             );
-            $i++;
         }
         
         return $this->renderJson(array('data' => $users));
@@ -93,16 +83,14 @@ class afsUserManagerActions extends sfActions
         $aErrors = array();
         
         // Retrieve user via username
-        $user = afStudioUser::getInstance()->retrieve($sUsername);
+        $user = afStudioUser::retrieve($sUsername);
         
         if ($user) {
-            
-            $aUserCheck = afStudioUser::getInstance()->retrieveByEmail($aUser['email']);
+            $aUserCheck = afStudioUser::retrieveByEmail($aUser['email']);
             
             if ($aUserCheck && $aUserCheck['username'] != $aUser['username']) {
                 $aErrors['email'] = "User with this `email` already exists";
             }
-            
             
             $aUpdate = array(
                 afStudioUser::FIRST_NAME => $aUser['first_name'],
@@ -130,15 +118,27 @@ class afsUserManagerActions extends sfActions
                 // Update processing
                 afStudioUser::update($sUsername, $aUpdate);
                 
-                $aResult = $this->fetchSuccess('User has been successfully updated');
-                
                 afsNotificationPeer::log('User has been successfully updated', 'afStudioUser');
-            } else {
-                if (is_array($validate)) {
-                    $aErrors = afUserManagerHelper::mergeErrors($aErrors, $validate);
+                
+                // if changes applied for current user
+                if (afStudioUser::getInstance()->getUsername() == $sUsername) {
+                    if (!empty($aUser['password'])) afStudioUser::set($sUsername, $aUser['password'], false);
+                    
+                    // update role of current user - with redirect processing 
+                    if (afStudioUser::getInstance()->getRole() != $aUser['role']) {
+                        return $this->renderJson(
+                            afResponseHelper::create()->redirect('afsAuthorize/signout')->asArray()
+                        );
+                    }
                 }
                 
-                $aErrors = afUserManagerHelper::prepareErrors($aErrors);
+                $aResult = $this->fetchSuccess('User has been successfully updated');
+            } else {
+                if (is_array($validate)) {
+                    $aErrors = afsUserManagerHelper::mergeErrors($aErrors, $validate);
+                }
+                
+                $aErrors = afsUserManagerHelper::prepareErrors($aErrors);
                 
                 $aResult = $this->fetchError($aErrors);
             }
@@ -155,9 +155,9 @@ class afsUserManagerActions extends sfActions
      */
     public function executeCreate(sfWebRequest $request)
     {
-        $aResult = afStudioUserHelper::createNewUser($request);
-        
-        return $this->renderJson($aResult);
+        return $this->renderJson(
+            afsUserManagerHelper::createNewUser($request)
+        );
     }
     
     /**

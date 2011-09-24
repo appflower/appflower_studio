@@ -5,7 +5,7 @@ Ext.namespace('afStudio.layoutDesigner');
  * 
  * @class afStudio.layoutDesigner.WidgetSelectorTreeWindow
  * @extends Ext.Window
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 	
@@ -46,7 +46,8 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 		if (this.isNodeWidget(selectedNode)) {
 			var eventObj = {
 				module: this.getNodeAttribute(selectedNode, 'module'),
-				widget: this.getNodeAttribute(selectedNode, 'widget')
+				widget: this.getNodeAttribute(selectedNode, 'widget'),
+				widgetUri: this.getNodeAttribute(selectedNode, 'widgetUri')
 			};
 			
 			this.closeWidgetSelectorTreeWindow();
@@ -236,6 +237,5 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 			this.selectWidget();
 		}
 	}//eo onNodeDblClick
-	
 	
 });

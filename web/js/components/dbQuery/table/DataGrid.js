@@ -53,7 +53,7 @@ afStudio.dbQuery.DataGrid = Ext.extend(Ext.grid.GridPanel, {
 
 		store = new Ext.data.JsonStore({
 			url: _this.storeDataUrl,
-			root: 'rows',
+			root: 'data',
 			idProperty: 'id',
 			fields: storeFields            
 		});

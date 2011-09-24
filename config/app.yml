@@ -1,0 +1,5 @@
+# all:
+  # afStudio:
+    # console_cli: '/opt/local/bin/php'
+    # console_commands: ['mkdir', 'ls', 'll', ]
+    # console_aliases: {'ll': 'ls -l', }

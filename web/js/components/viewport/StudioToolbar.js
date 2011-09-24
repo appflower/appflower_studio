@@ -7,7 +7,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 * @private
 	 */
 	initComponent : function() {			
-		_self = this;
+		var _self = this;
 				
 		var config = {
 			items: [
@@ -159,7 +159,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 */
 	,setProjectMenu: function(menuItem) {
 		var recentProjects = afStudio.getRecentProjects();
-		_self = this;
+		var _self = this;
 		
 
 		if (menuItem.menu) {
@@ -183,6 +183,44 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			iconCls: 'icon-studio-load-project',
 			handler: function (b,e) {									
 				(new afStudio.LoadProject()).show();
+			}
+		});
+		
+		menuItem.menu.addMenuItem({
+			text: 'Export project',
+			iconCls: 'icon-studio-export-project',
+			menu: {
+				ignoreParentClicks: true,
+				items: [
+				{
+					text: 'Sources',
+					iconCls: 'icon-studio-export-project-source',
+					handler: function() {
+						var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({type: 'project'}));
+						window.open(url, 'export-win');
+					}
+				},{
+					text: 'DB',
+					iconCls: 'icon-studio-export-project-sql',
+					menu: {
+						items: [
+						{
+							text: 'structure',
+							iconCls: 'icon-studio-export-project-sql',
+							handler: function (b, e) {
+								var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({type: 'db'}));
+								window.open(url, 'export-win');
+							}
+						},{
+							text: 'structure + data (for mysql)',
+							iconCls: 'icon-studio-export-project-sql',
+							handler: function (b, e) {
+								var url = Ext.urlAppend(afStudioWSUrls.exportUrl, Ext.urlEncode({by_os: true, type: 'db'}));
+								window.open(url, 'export-win');
+							}
+						}]
+					}
+				}]
 			}
 		});
 				
@@ -217,34 +255,18 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	/**
 	 * Runs projects commands and opens project in a new browser's tab
 	 */
-	,runProject : function() {	
-		var runUrl = window.afStudioWSUrls.getProjectRunUrl();
+	,runProject : function() {
+		var runUrl = Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'run'}));
 		
-		afStudio.vp.mask({
-			msg: 'Run command...'
+		afStudio.xhr.executeAction({
+			url: runUrl,
+			mask: {msg: 'Run command...'},
+			showNoteOnSuccess: false,
+			run: function(response){
+				window.open(response.query, 'runProject');
+			}
 		});
-		
-		Ext.Ajax.request({
-		   url: runUrl,
-		   success: function(xhr, opt) {
-			   afStudio.vp.unmask();
-			   
-			   var response = Ext.decode(xhr.responseText);
-			   
-			   if (response.success) {			   	
-			   	   afStudio.updateConsole(response.content);
-			   	   window.open(response.homepage, 'runProject');
-			   } else {
-			   	   Ext.Msg.alert('Failure', response.content);
-			   }
-		   }, 
-		   failure: function(xhr, opt) {
-		   	   afStudio.vp.unmask();
-		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
-		   }
-		});
-	}//eo runProject
-	
+	}
 });
 
 /**

@@ -23,7 +23,6 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/grid/Ext.ux.Grid.GroupingStoreOverride.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/grid/RowExpander.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/js/custom/cheatJS.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/rowactionsImm/js/Ext.ux.GridRowActions.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/lovcombo-1.0/js/Ext.ux.form.LovCombo.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/treegrid/Ext.ux.CheckboxSelectionModel.js"></script>
 
@@ -56,8 +55,8 @@
 var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>';
 var afStudioUser = <?php echo html_entity_decode($afStudioUser);?>;
 var afStudioHost = { 
-	name: '<?php echo afStudioConsole::getInstance()->uname_short;?>',
-	user: '<?php echo afStudioConsole::getInstance()->whoami;?>' 
+	name: '<?php echo afStudioConsole::getInstance()->getUnameShort();?>',
+	user: '<?php echo afStudioConsole::getInstance()->getWhoami();?>' 
 };
 <?php $projectPath = sfConfig::get('sf_root_dir'); $projectInPath = explode('/',$projectPath); unset($projectInPath[count($projectInPath)-1]); $projectInPath = implode('/',$projectInPath);?>
 var afProjectInPath = '<?php echo $projectInPath; ?>';
@@ -65,14 +64,50 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 </script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.xhr.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
+
+<!-- custom ext ux -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/GroupingComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/grid/PagingRowNumberer.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tab/TabCloseMenu.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/codepress/Ext.ux.CodePress.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
+
+<!-- filetree -->
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/filetree/css/filetype.css" />
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/filetree/css/filetree.css" />
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/filetree/css/icons.css" />
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.FileTreePanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.FileTreeMenu.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.form.BrowseButton.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.FileUploader.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/filetree/js/Ext.ux.UploadPanel.js"></script>
+
+<!-- treegrid -->
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/tree/treegrid/treegrid.css" /> 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridSorter.js"></script> 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridColumnResizer.js"></script> 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridNodeUI.js"></script> 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridLoader.js"></script> 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGridColumns.js"></script> 
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGrid.js"></script>
+
+<!-- ace code-editor -->
+<script src="/appFlowerStudioPlugin/js/ace/src/ace.js" type="text/javascript" charset="utf-8"></script> 
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-textile.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-css.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-html.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-json.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-markdown.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-php.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-xml.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/ace/Ext.ux.AceComponent.js"></script>
+
+ 
+<!-- end of custom ext ux -->
 
 <!-- Error -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/error/ApsError.js"></script>
@@ -106,11 +141,13 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portlet.js"></script>
 
 <!-- models -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationPicker.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationCombo.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/ModelTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/FieldsGrid.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelStore.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/EditFieldWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/DependencyCellEditorBuilder.js"></script>
@@ -140,67 +177,111 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/TabNamePickerWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/layoutDesigner/WidgetSelectorTreeWindow.js"></script>
 
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreePanel.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileTreeMenu.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.form.BrowseButton.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.FileUploader.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/filetree/js/Ext.ux.UploadPanel.js"></script>
+<!-- appflower view model -->
+	<!-- data type -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/base/Type.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/base/Number.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/Auto.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/String.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/Integer.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/Float.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/Boolean.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/Date.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/TypeRestrictions.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/SchemaTypes.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/Types.js"></script>
+	<!-- model -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/ModelNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/BaseTemplate.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/Templates.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/Node.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/TypedNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/base/Property.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Root.js"></script>
+		<!-- model errors -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/NodeError.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/error/PropertyError.js"></script>
+		<!-- general -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Title.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Param.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Params.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/Description.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/AlternateDescriptions.js"></script>
+		<!-- widget -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Actions.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Action.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Column.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Confirm.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Datasource.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Class.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Fields.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Grouping.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Method.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Ref.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Set.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Handler.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Button.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Field.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Item.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Link.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Radiogroup.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Source.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Trigger.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Validator.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Value.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/widget/Window.js"></script>
+	<!-- definition -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/definition/error/DefinitionError.js"></script>	
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/definition/DataDefinition.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/definition/ViewDefinition.js"></script>
+	<!-- controller -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/BaseController.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/ViewController.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/error/ControllerError.js"></script>
+	<!-- view -->
+		<!-- inspector tree -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorLoader.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorSorter.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/error/LoaderError.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/base/TreeNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/base/ContainerNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/RootNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/ColumnNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/MethodNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/HandlerNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/RefNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/SetNode.js"></script>
+		<!-- property grid -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyStore.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyColumnModel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyGrid.js"></script>
+<!-- end of appflower view model -->
 
-<!-- widgetDesigner -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.TabMenu.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/base/BaseBehavior.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithIParamsBehavior.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithNamePropertyAsLabelBehavior.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeBehaviors/WithValueTypeBehavior.js"></script>
-	<!-- wi nodeTypes -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/BaseNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/ContainerNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/CollectionNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/FieldsNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/base/NodeBuilder.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ActionNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ColumnNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/DatasourceNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/FieldNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/FieldNodeValueSourceNodes.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ParamNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ValidatorNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/nodeTypes/ValidatorsNode.js"></script>
-	<!-- wi propertyType -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyGrid.js"></script>	
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyBaseType.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeBoolean.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeChoice.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/base/PropertyTypeString.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/FieldType.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/ValueSource.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/ValueType.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/propertyType/AlignType.js"></script>
-	<!-- wi rootNodeTypes -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/ObjectRootNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/EditNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/ListNode.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/rootNodeTypes/HtmlNode.js"></script>
-	<!-- wi components -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/WidgetInspectorTree.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPanel.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/inspector/InspectorPalette.js"></script>
-	<!-- wd gui -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/ListMetaProcessor.js"></script>	
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/ListGridView.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/Column.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/list/SimpleListView.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/GuiFactory.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/DesignerPanel.js"></script>
-	<!-- wd -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetFactory.js"></script>	
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDefinition.js"></script>
+<!-- widget designer -->
+	<!-- gui views -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelInterface.js"></script>
+		<!-- list -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListModelInterface.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ModelReflector.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListGridView.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ActionColumn.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListView.js"></script>
+		<!-- edit -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/edit/EditView.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/edit/platform/Basement.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/edit/platform/PortalColumn.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/edit/platform/Portlet.js"></script>	
+	<!-- containers -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WD.js"></script>	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/designer/DesignerPanel.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/DesignerTab.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/CodeEditorTab.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetTabPanel.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/InspectorPalette.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/DesignerPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/ModelErrorWindow.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/codeEditor/Editor.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/Designer.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/CodeEditor.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDesigner.js"></script>
 <!-- end of widgetDesigner -->
 
 <?php 
@@ -221,8 +302,6 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/css/my-extjs.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/rowactionsImm/css/Ext.ux.GridRowActions.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/rowactionsImm/css/icons.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/form/lovcombo-1.0/css/Ext.ux.form.LovCombo.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/grid-filtering/resources/style.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/portal/portal.css" />
@@ -231,10 +310,6 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/grid/Ext.ux.grid.RowEditor.css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/afStudio.css" />
-
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetype.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/filetree.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/js/filetree/css/icons.css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/form/groupingcombobox/Ext.ux.form.GroupingComboBox.css" />
 

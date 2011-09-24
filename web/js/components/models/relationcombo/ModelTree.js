@@ -22,7 +22,7 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	/**
 	 * @cfg {String} ModelTree URL (defaults to "/appFlowerStudio/models") 
 	 */
-	url: window.afStudioWSUrls.getModelsUrl()
+	url: afStudioWSUrls.modelListUrl
 	
 	/**
 	 * Masks ModelTree

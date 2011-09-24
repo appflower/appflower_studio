@@ -115,7 +115,7 @@ afStudio.models.TypeBuilder = (function() {
 					}
 					v = v ? v : defaultValue;
 					editor.setValue(v);
-				});				
+				});
 			}
 			
 			return editor ? editor : null;	

@@ -1,12 +1,13 @@
 <?php
-
 /**
- *
- * @package    appFlowerStudio
- * @subpackage plugin
- * @author     luwo@appflower.com
+ * Model grid data actions class
+ * 
+ * @package     appFlowerStudio
+ * @subpackage  plugin
+ * @author      luwo@appflower.com
+ * @author      Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsModelGridDataActions extends sfActions
+class afsModelGridDataActions extends afsActions
 {	
     /**
      * afsModelGridData actions are all executed in context of concrete model so
@@ -16,37 +17,25 @@ class afsModelGridDataActions extends sfActions
      */
     protected $modelName;
     
+    /**
+     * Model query class
+     *
+     * @var object
+     */
     protected $modelQueryClass;
-
-    function preExecute() {
-	    $modelName = $this->getRequest()->getParameter('model');
+    
+    public function preExecute() 
+    {
+        $modelName = $this->getRequest()->getParameter('model');
         $modelQueryClass = "{$modelName}Query";
         if (!class_exists($modelName)) {
-            throw new Exception("Model $modelName probably does not exist. Could not find class named $modelName");
+            throw new afsModelGridDataException("Model {$modelName} probably does not exist. Could not find class named {$modelName}");
         }
-
+        
         $this->modelName = $modelName;
         $this->modelQueryClass = $modelQueryClass;
     }
-
-    /**
-     * @return ModelCriteria
-     */
-    private function getModelQuery()
-    {
-        return new $this->modelQueryClass;
-    }
-
-    /**
-     * This method decodes rows data sended by ExtJS
-     */
-    private function fetchRows()
-    {
-        $rawData = file_get_contents('php://input');
-        $data = json_decode($rawData, true);
-        return $data['rows'];
-    }
-
+    
     /**
      * Returns all rows for given model in a format for ModelGrid view
      *
@@ -55,43 +44,25 @@ class afsModelGridDataActions extends sfActions
      */
     public function executeRead(sfWebRequest $request)
     {
-    	$offset = $request->getParameter('start', 0);
-    	$recordsPerPage = $request->getParameter('limit');
-    			
-        $query = $this->getModelQuery();
+        $offset = $request->getParameter('start', 0);
+        $recordsPerPage = $request->getParameter('limit');
         
-        $totalRecordsNum = count($query->find());
+        $query = $this->getModelQuery();
+        $totalRecordsNum = $this->getModelQuery()->count();
         
         $query->offset($offset);
-        $query->limit($recordsPerPage);                
-        $data = $query->find();        
-        $data2 = array();
-        foreach ($data as $row) {
-            $data2[] = $this->getModelObjectData($row);
+        $query->limit($recordsPerPage);
+        $data = $query->find();
+        
+        $modelData = array();
+        foreach ($data as &$row) {
+            $row = $this->getModelObjectData($row);
+            $modelData[] = $row;
         }
-        $result = array(
-            'rows' => $data2,
-            'total' => $totalRecordsNum,
-            'success' =>true
-        );
-
-        return $result;
+        
+        return afResponseHelper::create()->success(true)->data(array(), $modelData, $totalRecordsNum)->asArray();
     }
-
-
-    private function getModelObjectData($object)
-    {
-        $arrayWithKeys = $object->toArray();
-        $col = 0;
-        $tmp = array();
-        foreach ($arrayWithKeys as $value) {
-            $tmp["c{$col}"] = $value;
-            $col++;
-        }
-        $tmp['id'] = $object->getPrimaryKey();
-        return $tmp;
-    }
-
+    
     /**
      * Saves changes made to data in ModelGrid view
      *
@@ -100,44 +71,40 @@ class afsModelGridDataActions extends sfActions
      */
     public function executeUpdate(sfWebRequest $request)
     {
+        $response = afResponseHelper::create()->success(true);
+        
         $query = $this->getModelQuery();
-
-        $rows = $this->fetchRows();
+        
+        $rows = json_decode($request->getParameter('data'), true);
         $rowsIndexed = array();
         foreach ($rows as $row) {
             $rowsIndexed[$row['id']] = $row;
         }
         $ids = array_keys($rowsIndexed);
         $objects = $query->filterByPrimaryKeys($ids)->find();
-
-        $result = array(
-            'success' => true,
-            'rows' => array()
-        );
-
+        $data = array();
+        
         try {
             foreach ($objects as $object) {
-                    $peer = $object->getPeer();
-                    $objectData = $rowsIndexed[$object->getPrimaryKey()];
-                    unset($objectData['id']);
-                    foreach ($objectData as $col => $value) {
-                            $colNr = str_replace('c', '', $col);
-                            $colPhpName = $peer->translateFieldName($colNr, BasePeer::TYPE_NUM, BasePeer::TYPE_PHPNAME);
-                            $colSetterMethod = "set{$colPhpName}";
-                            $object->$colSetterMethod($value);
-                    }
-                    $object->save();
-                    $result['rows'][] = $this->getModelObjectData($object);
+                $peer = $object->getPeer();
+                $objectData = $rowsIndexed[$object->getPrimaryKey()];
+                unset($objectData['id']);
+                foreach ($objectData as $col => $value) {
+                    $colNr = str_replace('c', '', $col);
+                    $colPhpName = $peer->translateFieldName($colNr, BasePeer::TYPE_NUM, BasePeer::TYPE_PHPNAME);
+                    $colSetterMethod = "set{$colPhpName}";
+                    $object->$colSetterMethod($value);
+                }
+                $object->save();
+                $data[] = $this->getModelObjectData($object);
             }
         } catch (Exception $e) {
-            $result['success'] = false;
-            $result['error'] = $e->getMessage();
-            return $result;
+            return $response->success(false)->message($e->getMessage())->asArray();
         }
-
-        return $result;
+        
+        return $response->data(array(), $data, 0)->asArray();
     }
-
+    
     /**
      * Creates new records
      *
@@ -146,9 +113,13 @@ class afsModelGridDataActions extends sfActions
      */
     public function executeCreate(sfWebRequest $request)
     {
-        $rows = $this->fetchRows();
-        $result = array('success' => true, 'rows' => array());
+        $response = afResponseHelper::create()->success(true);
+        
+        $rows = json_decode($request->getParameter('data'), true);
+        
         $errors = array();
+        $data = array();
+        
         foreach ($rows as $row) {
             $object = new $this->modelName;
             $peer = $object->getPeer();
@@ -163,21 +134,18 @@ class afsModelGridDataActions extends sfActions
                     $errors[] = $e->getMessage() . ' for record: ' . print_r($row, true);
                 }
             }
+            
             if (!$object->isNew()) {
-                $result['rows'][] = $this->getModelObjectData($object);
-            } else {
-                $result['rows'][] = $row;
+                $data[] = $this->getModelObjectData($object);
             }
+//             $data[] = (!$object->isNew()) ? $this->getModelObjectData($object) : $rowl; //$rowl is not defined
         }
-
-        if (count($errors) > 0) {
-            $result['errors'] = $errors;
-            $result['success'] = false;
-        }
-
-        return $result;
+        
+        if (count($errors) > 0) return $response->success(false)->message($errors)->asArray();
+        
+        return $response->data(array(), $data, 0)->asArray();
     }
-
+    
     /**
      * Deletes records
      *
@@ -186,10 +154,41 @@ class afsModelGridDataActions extends sfActions
      */
     public function executeDelete(sfWebRequest $request)
     {
-        $rows = $this->fetchRows();
+        $rows = json_decode($request->getParameter('data'), true);
         $query = $this->getModelQuery();
-        $query->filterByPrimaryKeys($rows)
-            ->delete();
-        return array('success' => true,'message' => 'Rows deleted succesfully');
+        $query->filterByPrimaryKeys($rows)->delete();
+        
+        return afResponseHelper::create()->success(true)->message('Rows deleted succesfully')->asArray();
     }
+    
+    /**
+     * Getting model query class
+     * 
+     * @return ModelCriteria
+     */
+    private function getModelQuery()
+    {
+        return new $this->modelQueryClass;
+    }
+    
+    /**
+     * Getting object model data
+     *
+     * @param string $object 
+     * @return array
+     */
+    private function getModelObjectData($object)
+    {
+        $arrayWithKeys = $object->toArray();
+        $col = 0;
+        $tmp = array();
+        foreach ($arrayWithKeys as $value) {
+            $tmp["c{$col}"] = $value;
+            $col++;
+        }
+        $tmp['id'] = $object->getPrimaryKey();
+        
+        return $tmp;
+    }
+    
 }

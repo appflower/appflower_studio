@@ -196,7 +196,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		}
 		
 		var fieldsStore = new Ext.data.JsonStore({			
-			url: afStudioWSUrls.getModelsUrl(),
+			url: afStudioWSUrls.modelListUrl,
 			autoLoad: false,
 		    baseParams: {
 		    	xaction: 'read',
@@ -204,7 +204,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		    	schema: _this.schema
 		    },
 		    storeId: 'model-fields-st', 
-		    root: 'rows',
+		    root: 'data',
 		    idProperty: 'id',
 		    fields: [		    
 				{name: 'id'},
@@ -288,7 +288,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				sortable: true,
 				dataIndex: 'relation',
 				editor: new afStudio.models.RelationCombo({
-					relationUrl: window.afStudioWSUrls.getModelsUrl(),
+					relationUrl: afStudioWSUrls.modelListUrl,
 					fieldsGrid: _this
 				})
 			},{

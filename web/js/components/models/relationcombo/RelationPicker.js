@@ -128,7 +128,7 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 				baseParams: {
 					xaction: 'read'
 				},
-				root: 'rows',
+				root: 'data',
 				idProperty: 'id',    							
 				fields: [
 					'id', 'name', 'type', 'size', 'required'
