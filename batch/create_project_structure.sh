@@ -53,4 +53,4 @@ else
 fi
 
 echo Running insert-sql task
-$TARGET_DIR/symfony propel:insert-sql
+$TARGET_DIR/symfony propel:insert-sql --no-confirmation
