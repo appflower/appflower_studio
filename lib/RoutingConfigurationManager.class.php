@@ -12,12 +12,15 @@ class RoutingConfigurationManager {
 
     public function setHomepageUrlFromWidgetUri($widgetUri)
     {
-        $afsWBW = new afsWidgetBuilderWidget($widgetUri);
+        $uriParts = explode('/', $widgetUri);
+        if (count($uriParts) != 2) {
+            return false;
+        }
         $routingYml = $this->loadYaml($this->filePath);
         
         if (is_array(@$routingYml['homepage']['param'])) {
-            $routingYml['homepage']['param']['module'] = $afsWBW->getModule();
-            $routingYml['homepage']['param']['action'] = $afsWBW->getAction();
+            $routingYml['homepage']['param']['module'] = $uriParts[0];
+            $routingYml['homepage']['param']['action'] = $uriParts[1];
             
             $yaml = new sfYaml();
             
