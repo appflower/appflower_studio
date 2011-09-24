@@ -165,6 +165,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $project['template'] = $this->getParameter('template');
         
         $path = $this->getParameter('path');
+        $slug = $this->getParameter('slug');
         
         $project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $project);
         $unique = afStudioUtil::unique();
@@ -183,7 +184,30 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $response = afResponseHelper::create();
         if (is_readable($path.'/config/project.yml')) {
-            return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
+            
+            try {
+                $serverEnv = afStudioUtil::getServerEnvironment();
+                $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
+                if ($vhost) {
+                    $serverEnv->restartWebServer();
+                    $projectURL = 'http://'.$_SERVER['SERVER_ADDR'].':'.$vhost->getPort();
+                }
+                
+                $success = true;
+                $message = 'Project created in path <b>'.$path.'</b>.<br />';
+                $message .= "You can access it with this URL: <a href=\"$projectURL\">$projectURL</a>";
+                
+            } catch (ServerException $e) {
+                if (sfConfig::get('sf_environment') == 'dev') {
+                    throw $e;
+                } else {
+                    $success = false;
+                    $message = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!';
+                    $console .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
+                }
+            }
+            
+            return $response->success($success)->message($message)->console($console);
         }
         
         return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($console);
