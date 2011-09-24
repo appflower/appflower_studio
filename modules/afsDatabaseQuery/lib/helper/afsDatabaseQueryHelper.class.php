@@ -24,16 +24,10 @@ class afsDatabaseQueryHelper
             unset($aConfiguration['datasources']['default']);
         }
         
-        $aExcludedConnections = array('studio');
         $aDatabases = array();
         
         // Generating response 
         foreach ($aConfiguration['datasources'] as $db_connection => $db_connecttion_info) {
-
-            if (in_array($db_connection, $aExcludedConnections)) {
-                continue;
-            }
-
             $sDsn = $db_connecttion_info['connection']['dsn'];
             
             $aDsnInfo = afsDatabaseQuery::parseDSN($sDsn);
