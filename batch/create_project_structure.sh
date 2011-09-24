@@ -80,3 +80,6 @@ else
   echo Setting database $DB_NAME to UTF8 encoding
   echo "ALTER DATABASE $DB_NAME DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;" | mysql -u $DB_USER -p$DB_PASS $DB_NAME -h$DB_HOST -P$DB_PORT
 fi
+
+echo Running insert-sql task
+$TARGET_DIR/symfony propel:insert-sql
