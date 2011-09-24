@@ -52,6 +52,10 @@ folders:
     path: '/lib/form'
     mode: 'go+rw'
     recursive: true
+  lib_filter:
+    path: '/lib/filter'
+    mode: 'go+rw'
+    recursive: true
   lib_studio:
     path: '/lib/studio'
     mode: 'go+rwX'
@@ -70,6 +74,11 @@ folders:
     in_places: true
   lib_form_in_places:
     path: '/lib/form'
+    mode: 'go+rwX'
+    recursive: true
+    in_places: true
+  lib_filter_in_places:
+    path: '/lib/filter'
     mode: 'go+rwX'
     recursive: true
     in_places: true
