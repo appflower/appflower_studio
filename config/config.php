@@ -18,6 +18,7 @@ sfConfig::set( 'afs_debug', true );
  * setting the layout
  */
 sfConfig::set('symfony.view.appFlowerStudio_studio_layout', sfConfig::get('sf_plugins_dir').'/appFlowerStudioPlugin/templates/layout');
+sfConfig::set('symfony.view.appFlowerStudio_preview_layout', sfConfig::get('sf_plugins_dir').'/appFlowerStudioPlugin/templates/layout');
 
 
 //todo: automatic insertion of schema.yml tables into existing db
