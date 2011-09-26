@@ -35,7 +35,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		var buttons = this.createButtons();
 		
-		this.dumpMapper();
+		//this.dumpMapper();
 		
 		return {
 			autoScroll: true,
@@ -547,6 +547,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
+	 * TODO  auxilary method, should be deleted after view will be implemented
 	 * @private
 	 */
 	dumpMapper : function() {
