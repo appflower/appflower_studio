@@ -20,7 +20,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	_beforeInitComponent : function() {
 		var me = this,
-			nodes = afStudio.ModelNode;		
+			nodes = afStudio.ModelNode;
 		
 		/**
 		 * Model->Component associations holder.
@@ -154,11 +154,14 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			cmp = [];
 		
 		if (this.getModelNodeByPath([N.GROUPING, N.SET])) {
-			
+		
 			Ext.each(this.getPlainFieldSets(), function(s) {
-//				console.log('set', s);
-//				cmp.push(this.createFieldSet(s));
+				cmp.push(this.createFieldSet(s));
 			}, this);
+			
+			var flds = this.getFieldsFromDefaultSet();
+			var defSet = this.createDefaultFieldSet(flds);
+			cmp.push(defSet);
 			
 		} else {
 			//simple form without sets and tabpanel	
@@ -183,7 +186,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		Ext.copyTo(cfg, fld, 'name, value, style, width, height, disabled');
 		
-		cfg.fieldLabel = fld.label;
+		Ext.apply(cfg, {
+			fieldLabel: fld.label,
+			labelStyle: 'font-weight: bold;'
+		});
 		
 		if (Ext.isDefined(fld.content)) {
 			cfg.value = fld.content;
@@ -357,6 +363,159 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return button;
 	},
 	//eo createButton
+	
+	/**
+	 * Creates & registers a field-set.
+	 * @protected
+	 * @param {Object} fldSet The field-set definition
+	 * @return {Ext.form.FieldSet} field-set
+	 */
+	createFieldSet : function(fldSet) {
+		var mpr = this.getModelNodeMapper(),
+			N = afStudio.ModelNode,
+			cfg = {}, 
+			fieldSet;
+		
+		Ext.copyTo(cfg, fldSet, 'title, collapsed');
+		
+		Ext.apply(cfg, {
+			collapsible: true,
+			items: []
+		});
+		
+		cfg[mpr] = fldSet[mpr];
+		
+		fieldSet = new Ext.form.FieldSet(cfg);
+		
+		this.mapCmpToModel(fldSet[mpr], fieldSet);
+		
+		var fields = this.getFieldsFromSet(fldSet[mpr]),
+			fldSetFloat = fldSet['float'];
+		
+		console.log('fields', fields);
+		
+		var wr = this.createFieldWrapper(fldSetFloat),
+			clmW = this.getColumnWidth(fields, 0);
+		
+		fieldSet.add(wr);
+		
+		Ext.each(fields, function(item, idx) {
+			var ref = item.ref, 
+				fld = item.field,
+				f = this.createField(fld);
+			
+			if (idx != 0 && ref['break']) {
+				wr = this.createFieldWrapper(fldSetFloat);
+				clmW = this.getColumnWidth(fields, idx);
+				fieldSet.add(wr);
+			}
+			
+			this.wrapField(wr, f, clmW);
+		}, this);
+
+		return fieldSet;
+	},
+	//eo createFieldSet
+	
+	/**
+	 * Creates the default field-set.
+	 * @protected
+	 * @param {Array} fields The fields definition object
+	 * @return {Ext.form.FieldSet} field-set
+	 */
+	createDefaultFieldSet : function(fields) {
+		var mpr = this.getModelNodeMapper(),
+			N = afStudio.ModelNode,
+			cfg = {}, 
+			fieldSet;
+		
+		var grouping = this.getModelNodeProperties(N.GROUPING);	
+			
+		Ext.copyTo(cfg, grouping, 'title, collapsed');
+		
+		Ext.apply(cfg, {
+			collapsible: true,
+			items: []
+		});
+		
+		var hidden = true, flds = [];
+		Ext.each(fields, function(f) {
+			if (f.type != 'hidden') {
+				hidden = false;
+			}
+			flds.push(this.createField(f));
+		}, this);
+		
+		cfg.hidden = hidden;
+		fieldSet = new Ext.form.FieldSet(cfg);
+		fieldSet.add(flds);
+		
+		return fieldSet;
+	},
+	//eo createDefaultFieldSet
+	
+	/**
+	 * Creates field(s) wrapper.
+	 * @protected
+	 * @param {Boolean} isFloat The float flag
+	 * @return {Ext.Container}
+	 */
+	createFieldWrapper : function(isFloat) {
+		isFloat = !Ext.isDefined(isFloat) ? false : isFloat;
+		
+		var cfg = {
+			defaults: {
+				xtype: 'container',
+				layout: 'form',
+				labelAlign: isFloat ? 'top' : 'left'
+			},
+			items: []
+		};
+		if (isFloat) {
+			cfg.layout = 'column';
+		}
+		
+		return new Ext.Container(cfg);
+	},
+	
+	/**
+	 * Wrappes a field and adds it into the wrapper container.
+	 * @protected
+	 * @param {Ext.Container} wrapper The field(s) wrapper container
+	 * @param {Object} field The field being wrapped
+	 * @param {Number} (optional) clmW The column width, by default is 1
+	 */
+	wrapField : function(wrapper, field, clmW) {
+		clmW = Ext.isDefined(clmW) ? clmW : 1;
+
+		wrapper.add(
+		{
+			columnWidth: clmW,
+			items: field
+		});		
+	},
+
+	/**
+	 * Returns column width based on the count of floating fields.
+	 * @protected
+	 * @param {Array} items The i:grouping items
+	 * @param {Number} fromIdx The first field index 
+	 * @return {Number} column width
+	 */
+	getColumnWidth : function(items, fromIdx) {
+		var count = 0,
+			len = items.length;
+			
+		if (fromIdx < len) {
+			for (var i = fromIdx; i < len; i++) {
+				count++;
+				if (items[i].ref['break'] == true) break;
+			}
+		}
+		count = (count == 0) ? 1 : count; 
+		
+		return Ext.util.Format.round(1 / count, 2);
+	},
 	
 	/**
 	 * @private

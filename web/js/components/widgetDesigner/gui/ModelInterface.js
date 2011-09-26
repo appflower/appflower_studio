@@ -156,8 +156,12 @@ afStudio.wd.ModelInterface = (function() {
 		 * 
 		 * @param {String|Node} child The child node's tag name OR node object
 		 * 
-		 * @param {Array|Object} (optional) childProp Will be returned only children having properties 
-		 * equal to childProp (if it's an object) OR not "empty" {@link Ext.isEmpty} (if childProp is an array). 
+		 * @param {Array|Object|Function} (optional) childProp Will be returned only children:
+		 * <ul>
+		 * 	<li><b>Array</b>: If specified in array properties are not "empty" {@link Ext.isEmpty}</li>
+		 * 	<li><b>Object</b>: Having equal to specified in childProp object properties</li>
+		 * 	<li><b>Function</b>: When a function returns true</li>
+		 * </ul>
 		 * By default all children are returned.
 		 * 
 		 * @return {Array} child nodes properties
@@ -167,7 +171,7 @@ afStudio.wd.ModelInterface = (function() {
 				var parent = this.getModelNode(parent),
 					childTag = Ext.isString(child) ? child : child.tag;
 				
-				var ns; 	
+				var ns;
 				if (Ext.isDefined(childProp)) {
 					ns = parent.filterChildrenBy(function(n){
 						if (n.tag != childTag) {
@@ -183,7 +187,7 @@ afStudio.wd.ModelInterface = (function() {
 								return match = (Ext.isEmpty(np[p]) ? false : true);
 							});
 							
-						} else if (Ext.isObject(childProp)){
+						} else if (Ext.isObject(childProp)) {
 							
 							Ext.iterate(childProp, function(k, v){
 								return match = (np[k] != v ? false : true); 
