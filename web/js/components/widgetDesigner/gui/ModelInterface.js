@@ -41,22 +41,24 @@ afStudio.wd.ModelInterface = (function() {
 		 * Returns model node based on its relative path from the root node.
 		 * Path is based on node's id or partial id (tag name without trailing "-xxx", where xxx are numbers).
 		 * Node searching first is based on exact id if failed is used id's partial version.
-		 * For example: <code>i:datasource/i:method/i:param</code> returns parameter model node.
-		 * @param {String} nodePath The node path
+		 * For example: <code>i:datasource/i:method/i:param</code> 
+		 * or <code>[i:datasource, i:method, i:param]</code> returns parameter model node.
+		 * @param {String|Array} nodePath The node path
 		 * @return {Node} node or null if searching failed
 		 */
 		getModelNodeByPath : function(nodePath) {
-			var c = this.controller,
-				m = this.controller.getRootNode(),
-				node;
+			var c = this.controller;
 			
-    		var path = nodePath.split(c.pathSeparator);
+    		var path = Ext.isArray(nodePath) ? nodePath : nodePath.split(c.pathSeparator),
+    			m = this.controller.getRootNode(),
+				node;
 	    	for (var i = 0, l = path.length; i < l; i++) {
-		    	var n = m.findChildById(path[i]);
-		    	node = !n ? m.findChildById(path[i], false, true) : n;
+		    	node = m.findChildById(path[i]);
+		    	node = !node ? m.findChildById(path[i], false, true) : node;
 		    	if (!node) {
 		    		break;
 		    	}
+		    	m = node;
 	    	}
 	    	
 	    	return node;
@@ -90,6 +92,18 @@ afStudio.wd.ModelInterface = (function() {
 		},
 	
 		/**
+		 * Returns model node property.
+		 * @param {String|Node} node
+		 * @param {String} property The property's name
+		 * @return {Mixed} property
+		 */
+		getModelNodeProperty : function(node, property) {
+			var ps = this.getModelNodeProperties(node);
+			
+			return ps[property];
+		},
+		
+		/**
 		 * Returns model node data-value(_content).
 		 * @param {String|Node} node
 		 * @return {Object} value + model node's id in modelNodeMapper property {@link #getModelNodeMapper} 
@@ -113,6 +127,7 @@ afStudio.wd.ModelInterface = (function() {
 		getPropertyEditor : function(node, property, edCfg) {
 			var edCfg = edCfg || {},
 				p = node.getProperty(property);
+				
 			return p.type.editor(edCfg);
 		},
 		
@@ -127,7 +142,7 @@ afStudio.wd.ModelInterface = (function() {
 			var c = this.controller,
 				m = c.getRootNode();
 			
-			node = !Ext.isString(node) ? node.id : node;	
+			node = !Ext.isString(node) ? node.id : node;
 				
 			return 	c.getNodeById(node) ? true 
 					: (notExact ? (m.findChildById(node, true, true) != null ? true : false) : false);
@@ -136,15 +151,59 @@ afStudio.wd.ModelInterface = (function() {
 		/**
 		 * Returns the child nodes properties of specified model node. 
 		 * Children nodes are filtered by tag name. 
-		 * @param {String|Node} parent The parent model node, ID or object
-		 * @param {String|Node} child The child node's tag name or node object
+		 * 
+		 * @param {String|Node} parent The parent model node's ID OR object
+		 * 
+		 * @param {String|Node} child The child node's tag name OR node object
+		 * 
+		 * @param {Array|Object|Function} (optional) childProp Will be returned only children:
+		 * <ul>
+		 * 	<li><b>Array</b>: If specified in array properties are not "empty" {@link Ext.isEmpty}</li>
+		 * 	<li><b>Object</b>: Having equal to specified in childProp object properties</li>
+		 * 	<li><b>Function</b>: When a function returns true</li>
+		 * </ul>
+		 * By default all children are returned.
+		 * 
 		 * @return {Array} child nodes properties
 		 */
-		getModelChildrenProperties : function(parent, child) {
+		getModelChildrenProperties : function(parent, child, childProp) {
 			if (this.isModelNodeExists(parent)) {
 				var parent = this.getModelNode(parent),
-					childTag = Ext.isString(child) ? child : child.tag,				
+					childTag = Ext.isString(child) ? child : child.tag;
+				
+				var ns;
+				if (Ext.isDefined(childProp)) {
+					ns = parent.filterChildrenBy(function(n){
+						if (n.tag != childTag) {
+							return false
+						}
+						
+						var np = n.getPropertiesHash(true),
+							match = true;
+					
+						if (Ext.isArray(childProp)) {
+							
+							Ext.each(childProp, function(p){
+								return match = (Ext.isEmpty(np[p]) ? false : true);
+							});
+							
+						} else if (Ext.isObject(childProp)) {
+							
+							Ext.iterate(childProp, function(k, v){
+								return match = (np[k] != v ? false : true); 
+							});
+							
+						} else if (Ext.isFunction(childProp)) {
+							if (childProp.apply(this, [np]) === false) {
+								match = false;
+							}
+						}
+						
+						return match;
+					});
+				} else {
 					ns = parent.filterChildren(childTag);
+				}
 				
 				var ps = [];	
 				for (var i = 0, len = ns.length; i < len; i++) {
@@ -156,6 +215,7 @@ afStudio.wd.ModelInterface = (function() {
 			
 			return [];
 		},
+		//eo getModelChildrenProperties
 		
 		/**
 		 * Checks model node existence and properties status.
