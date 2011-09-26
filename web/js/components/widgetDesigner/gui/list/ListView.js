@@ -12,8 +12,8 @@ Ext.ns('afStudio.wd.list');
  */
 afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	/**
+	 * The associated with this view controller.
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
-	 * The associated with this tree controller.
 	 */
 	
 	EXEC_ADD : 'add',
@@ -820,7 +820,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		//add model node mapping
 		action[mpr] = a[mpr];
 		
-		return action;		
+		return action;
 	},
 	
 	/**

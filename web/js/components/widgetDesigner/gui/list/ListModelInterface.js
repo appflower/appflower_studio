@@ -32,6 +32,6 @@ afStudio.wd.list.ListModelInterface = (function() {
 })();
 
 /**
- * Extends base mixin {@link ModelProcessor} class.
+ * Extends base mixin {@link afStudio.wd.ModelInterface} class.
  */
 Ext.apply(afStudio.wd.list.ListModelInterface, afStudio.wd.ModelInterface);

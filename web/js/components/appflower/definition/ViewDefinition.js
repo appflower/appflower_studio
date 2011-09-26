@@ -49,8 +49,9 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	 */
 	setEntityAttribute : function(node, p, v) {
 		var entObj = this.getEntityObj(node),
-			ep = entObj.parent,
-			ek = entObj.key,
+			ep  = entObj.parent,
+			ek  = entObj.key,
+			ei  = entObj.idx,
 			ent = entObj.entity;
 			
 		var property = node.getProperty(p);
@@ -72,7 +73,11 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			if (Ext.isObject(ent)) {
 				ent._content = v;
 			} else {
-				ep[ek] = v;
+				if (ei != null) {
+					ep[ek][ei] = v;	
+				} else {
+					ep[ek] = v;
+				}
 			}
 		} else {
 			if (!ent.attributes) {
@@ -290,7 +295,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
    					if (!n) {
    						throw new Ext.Error(String.format('ViewDefinition. Model does not contain Node {0} with ID = "{1}"', node, nodeId));
    					}
-					idx = this.searchEntityIndex(nextEnt, n, (i == l - 1) ? nodeIdx : null);
+					idx = this.searchEntityIndex(ent, ek, n, (i == l - 1) ? nodeIdx : null);
 					if (idx == null) {
 						throw new Ext.Error(String.format('ViewDefinition. Cannot get model node\'s entity, node: {0}, path: {1}', node, path));
 					}
@@ -349,21 +354,35 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 	
 	/**
 	 * Searching an entity corresponding to model node.
-	 * Search is based on <i>attributes</i> and <i>_content</i> comparison.
+	 * Search is based on <i>attributes</i>, <i>_content</i> comparison and the position index.
 	 * @private
-	 * @param {Array} entArray The array of entities.
-	 * @param {afStudio.model.Node} node The model node.
+	 * @param {Array} parent The parent entity.
+	 * @param {String} key The property name which contains array of entities we are searching in.
+	 * @param {Node} node The model node.
 	 * @param {Number} (optional) idx The node index, if it is not specified is used index from parentNode 
 	 * @return {Number} entity's index inside entArray or null if entity was not found. 
 	 */
-	searchEntityIndex : function(entArray, node, idx) {
-		var parentNode = node.parentNode,
+	searchEntityIndex : function(parent, key, node, idx) {
+		var entArray = parent[key],
+			parentNode = node.parentNode,
 			nodeIdx = parentNode.indexOf(node);
 	
 		nodeIdx = Ext.isEmpty(idx) ? nodeIdx : idx;
-			
+		
 		if (nodeIdx == -1) {
 			return null;
+		}
+		
+		//index correction because of difference between definition structure and the model
+		if (nodeIdx > (entArray.length - 1)) {
+			var cldNum = 0;
+			Ext.iterate(parent, function(k, v, o){
+				if (['attributes', '_content', key].indexOf(k) == -1) {
+					cldNum += !Ext.isArray(v) ? 1 : v.length;  
+				}
+			});
+			
+			nodeIdx -= cldNum;
 		}
 			
 		var	entIdx;
