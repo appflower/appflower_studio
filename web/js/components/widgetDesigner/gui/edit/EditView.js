@@ -38,6 +38,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		this.dumpMapper();
 		
 		return {
+			autoScroll: true,
 			labelWidth: labelWidth,
 			items: items,
 			buttons: buttons
@@ -159,9 +160,14 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				cmp.push(this.createFieldSet(s));
 			}, this);
 			
-			var flds = this.getFieldsFromDefaultSet();
-			var defSet = this.createDefaultFieldSet(flds);
+			var flds = this.getFieldsFromDefaultSet(),
+				defSet = this.createDefaultFieldSet(flds);
 			cmp.push(defSet);
+			
+			var tabbedSets = this.getTabbedFieldSets();
+			if (!Ext.isEmpty(tabbedSets)) {
+				cmp.push(this.createTabPanel(tabbedSets));
+			}
 			
 		} else {
 			//simple form without sets and tabpanel	
@@ -392,8 +398,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		var fields = this.getFieldsFromSet(fldSet[mpr]),
 			fldSetFloat = fldSet['float'];
 		
-		console.log('fields', fields);
-		
 		var wr = this.createFieldWrapper(fldSetFloat),
 			clmW = this.getColumnWidth(fields, 0);
 		
@@ -404,13 +408,14 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				fld = item.field,
 				f = this.createField(fld);
 			
+			this.wrapField(wr, f, clmW);
+			
 			if (idx != 0 && ref['break']) {
 				wr = this.createFieldWrapper(fldSetFloat);
 				clmW = this.getColumnWidth(fields, idx);
 				fieldSet.add(wr);
 			}
 			
-			this.wrapField(wr, f, clmW);
 		}, this);
 
 		return fieldSet;
@@ -453,6 +458,30 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return fieldSet;
 	},
 	//eo createDefaultFieldSet
+	
+	/**
+	 * Creates tabbed field-sets.
+	 * @param {Array} tabbedSets The tabbed field-set(s)
+	 * @return {Ext.TabPanel} tab panel
+	 */
+	createTabPanel : function(tabbedSets) {
+		var tabPanel = new Ext.TabPanel({
+			activeTab: 0,
+			height: 300,
+			padding: 10,
+			items: []
+		});
+		
+		Ext.each(tabbedSets, function(fs){
+			var t = {
+				title: fs.tabtitle,
+				items: this.createFieldSet(fs) 
+			}
+			tabPanel.add(t);
+		}, this);
+		
+		return tabPanel;
+	},
 	
 	/**
 	 * Creates field(s) wrapper.
