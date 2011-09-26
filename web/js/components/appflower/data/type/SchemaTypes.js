@@ -190,7 +190,7 @@ afStudio.data.type.ArrayType = Ext.extend(afStudio.data.type.String, {
 	type : "arrayType",
 	
 	restrictions : {
-		pattern: /^\[\w+\s*:\s*["'\w]+?(\s*,\s*\w+\s*:\s*["'\w]+?)*\]$/
+		pattern: /^\[\w+\s*:\s*["'\.\w]+?(\s*,\s*\w+\s*:\s*["'\.\w]+?)*\]$/
 	}
 });
 
