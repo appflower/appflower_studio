@@ -8,9 +8,6 @@ Ext.ns('afStudio.wd.list');
  */
 afStudio.wd.list.ListModelInterface = (function() {
 	
-	//shortcut to nodes list
-	var nodes = afStudio.ModelNode;
-	
 	return {
 	
 		/**
@@ -18,7 +15,8 @@ afStudio.wd.list.ListModelInterface = (function() {
 		 * @return {Array} columns properties
 		 */
 		getColumns : function() {
-			return this.getModelChildrenProperties(nodes.FIELDS, nodes.COLUMN);
+			var N = this.NODES;
+			return this.getModelChildrenProperties(N.FIELDS, N.COLUMN);
 		},
 		
 		/**
@@ -26,7 +24,8 @@ afStudio.wd.list.ListModelInterface = (function() {
 		 * @return {Array} row actions properties
 		 */
 		getRowActions : function() {
-			return this.getModelChildrenProperties(nodes.ROW_ACTIONS, nodes.ACTION);
+			var N = this.NODES;
+			return this.getModelChildrenProperties(N.ROW_ACTIONS, N.ACTION);
 		}
 	};
 })();

@@ -261,6 +261,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <!-- widget designer -->
 	<!-- gui views -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelInterface.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelMapper.js"></script>
 		<!-- list -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ModelReflector.js"></script>

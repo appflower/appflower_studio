@@ -223,6 +223,7 @@
 					
 					<!-- gui views -->
 					<file>js/components/widgetDesigner/gui/ModelInterface.js</file>
+					<file>js/components/widgetDesigner/gui/ModelMapper.js</file>
 					
 					<!-- list -->
 					<file>js/components/widgetDesigner/gui/list/ListModelInterface.js</file>
