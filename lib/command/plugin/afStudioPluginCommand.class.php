@@ -18,7 +18,7 @@ class afStudioPluginCommand extends afBaseStudioCommand
         $root_dir = afStudioUtil::getRootDir();
         
         $data = array();
-        $pluginFolders = $this->getSubFolders("{$root_dir}/plugins", 'plugin');
+        $pluginFolders = afStudioPluginCommandHelper::getSubFolders("{$root_dir}/plugins", 'plugin');
         
         $deprecated = afStudioPluginCommandHelper::getDeprecatedList();
         
@@ -27,13 +27,12 @@ class afStudioPluginCommand extends afBaseStudioCommand
             
             if (in_array($plugin, $deprecated)) continue;
             
-            $moduleFolders = $this->getSubFolders("{$root_dir}/plugins/{$plugin}/modules/");
-            
+            $moduleFolders = afStudioPluginCommandHelper::getSubFolders("{$root_dir}/plugins/{$plugin}/modules/");
             $mod_datas = array();
             
             foreach ($moduleFolders as $moduleFolder) {
                 $modulename = $moduleFolder["text"];
-                $configfiles = $this->getFiles($plugin, $modulename, ".xml");
+                $configfiles = afStudioPluginCommandHelper::getFiles($plugin, $modulename, ".xml");
                 
                 $moduleFolder["children"] = $configfiles;
                 if (count($configfiles) == 0) {
@@ -79,21 +78,17 @@ class afStudioPluginCommand extends afBaseStudioCommand
         $oldDir = "{$root_dir}/plugins/{$oldValue}/";
         $newDir = "{$root_dir}/plugins/{$newValue}/";
         
-        if (!file_exists($newDir)) {
-            // $filesystem->rename($oldDir, $newDir);
-            $console .= $afConsole->execute("mv {$oldDir} {$newDir}");
-            
-            if (!file_exists($oldDir) && file_exists($newDir)) {
-                $console .= $afConsole->execute('sf cc');
-                $response->success(true)->message("Renamed plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!")->console($console);
-            } else {
-                $response->success(false)->message("Can't rename plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!");
-            }
-        } else {
-            $response->success(false)->message("Plugin '{$newValue}' already exists");
+        if (file_exists($newDir)) return $response->success(false)->message("Plugin '{$newValue}' already exists");
+        
+        // $filesystem->rename($oldDir, $newDir);
+        $console .= $afConsole->execute("mv {$oldDir} {$newDir}");
+        
+        if (!file_exists($oldDir) && file_exists($newDir)) {
+            $console .= $afConsole->execute('sf cc');
+            return $response->success(true)->message("Renamed plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!")->console($console);
         }
         
-        return $response;
+        return $response->success(false)->message("Can't rename plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!");
     }
     
     /**
@@ -115,12 +110,10 @@ class afStudioPluginCommand extends afBaseStudioCommand
         
         if (!file_exists($pluginDir)) {
             $console .= $afConsole->execute('sf cc');
-            $response->success(true)->message("Deleted plugin <b>{$name}</b>")->console($console);
-        } else {
-            $response->success(false)->message("Can't delete plugin <b>{$name}</b>!");
+            return $response->success(true)->message("Deleted plugin <b>{$name}</b>")->console($console);
         }
         
-        return $response;
+        return $response->success(false)->message("Can't delete plugin <b>{$name}</b>!");
     }
     
     /**
@@ -141,123 +134,32 @@ class afStudioPluginCommand extends afBaseStudioCommand
         
         $dir = "{$root}/plugins/{$name}";
         
-        if (!empty($name)) {
-            if (substr($name, -6) == 'Plugin') {
-                
-                if (!file_exists($dir)) {
-                    $dirs = array(
-                        $dir,
-                        "{$dir}/config",
-                        "{$dir}/modules",
-                        // "{$dir}/lib",
-                    );
-                    
-                    // Should be changed when security policy will be reviewed
-                    $dirs = implode(' ', $dirs);
-                    $console = $afConsole->execute("mkdir -m 775 {$dirs}");
-                    
-                    if (file_exists($dir)) {
-                        // create config file with auto enable all modules in current plugin
-                        $created = afStudioUtil::writeFile(
-                            "{$dir}/config/config.php", 
-                            afStudioPluginCommandTemplate::config($name) // Config file definition
-                        );
-                        
-                        $response->success(true)->message("Plugin '{$name}' successfully created")->console($console);
-                    } else {
-                        $response->success(false)->message("Some problems to create dirs via console")->console($console);
-                    }
-                } else {
-                    $response->success(false)->message("Plugin '{$name}' already exists");
-                }
-            } else {
-                $response->success(false)->message("Plugin '{$name}' should Contains 'Plugin in the end'");
-            }
-        } else {
-            $response->success(false)->message('Please enter plugin name');
-        }
+        if (empty($name)) return $response->success(false)->message('Please enter plugin name');
+        if (substr($name, -6) != 'Plugin') return $response->success(false)->message("Plugin '{$name}' should Contains 'Plugin in the end'");
+        if (file_exists($dir)) return $response->success(false)->message("Plugin '{$name}' already exists");
         
-        return $response;
-    }
-    
-    /**
-     * Getting sub-folders
-     *
-     * @param string $dir 
-     * @param string $type 
-     * @return Array
-     */
-    private function getSubFolders($dir, $type = 'module')
-    {
-        $folders = array();
+        $dirs = array(
+            $dir,
+            "{$dir}/config",
+            "{$dir}/modules",
+            // "{$dir}/lib",
+        );
         
-        if (is_dir($dir)) {
-            $handler = opendir($dir);
+        // Should be changed when security policy will be reviewed
+        $dirs = implode(' ', $dirs);
+        $console = $afConsole->execute("mkdir -m 775 {$dirs}");
+        
+        if (file_exists($dir)) {
+            // create config file with auto enable all modules in current plugin
+            $created = afStudioUtil::writeFile(
+                "{$dir}/config/config.php", 
+                afStudioPluginCommandTemplate::config($name) // Config file definition
+            );
             
-            while (($f = readdir($handler))!==false) {
-                if (($f != ".") && ($f != "..") && ($f != ".svn") && is_dir($dir . '/' . $f)) {
-                    $folders[] = array(
-                        'text' => $f,
-                        'type' => $type
-                    );
-                }
-            }
+            return $response->success(true)->message("Plugin '{$name}' successfully created")->console($console);
         }
         
-        return $folders;
-    }
-    
-    /**
-     * Getting files
-     *
-     * @param string $plugin 
-     * @param string $modulename 
-     * @param string $pro_name 
-     * @return Array
-     */
-    private function getFiles($plugin, $modulename, $pro_name)
-    {
-        $root_dir = afStudioUtil::getRootDir();
-        
-        $dir = "{$root_dir}/plugins/{$plugin}/modules/{$modulename}/config/";
-        
-        $base_mod_dir   = "{$root_dir}/plugins/{$plugin}/modules/{$modulename}";
-        $securityPath   = "{$base_mod_dir}/config/security.yml";
-        $defaultActionPath = "{$base_mod_dir}/actions/actions.class.php";
-        
-        $files = array();
-        
-        if (is_dir($dir)) {
-            $handler = opendir($dir);
-            
-            while (($f = readdir($handler)) !== false) {
-                if (!is_dir($dir . $f) && strpos($f, $pro_name) > 0) {
-                    
-                    $actionPath = $defaultActionPath;
-                    
-                    $widgetName = pathinfo($f, PATHINFO_FILENAME);
-                    $predictActions = "{$widgetName}Action.class.php";
-                    $predictActionsPath = "{$base_mod_dir}/actions/{$predictActions}";
-                    
-                    if (file_exists($predictActionsPath)) $actionPath = $predictActionsPath;
-                    
-                    $actionName = pathinfo($actionPath, PATHINFO_BASENAME);
-                    
-                    $files[] = array(
-                        'text'          => $f,
-                        'type'          => 'xml',
-                        'widgetUri'     => $modulename . '/' . str_replace('.xml', '', $f),
-                        'securityPath'  => $securityPath,
-                        'actionPath'    => $actionPath,
-                        'actionName'    => $actionName,
-                        'widgetName'    => $widgetName,
-                        'leaf'          => true
-                    );
-                }
-            }
-        }
-        
-        return $files;
+        return $response->success(false)->message("Some problems to create dirs via console")->console($console);
     }
     
 }
