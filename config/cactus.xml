@@ -224,10 +224,11 @@
 					<!-- gui views -->
 					<file>js/components/widgetDesigner/gui/ModelInterface.js</file>
 					<file>js/components/widgetDesigner/gui/ModelMapper.js</file>
+					<file>js/components/widgetDesigner/gui/ModelReflector.js</file>
 					
 					<!-- list -->
 					<file>js/components/widgetDesigner/gui/list/ListModelInterface.js</file>
-					<file>js/components/widgetDesigner/gui/list/ModelReflector.js</file>
+					<file>js/components/widgetDesigner/gui/list/ListModelReflector.js</file>
 					<file>js/components/widgetDesigner/gui/list/ListGridView.js</file>
 					<file>js/components/widgetDesigner/gui/list/ActionColumn.js</file>
 					<file>js/components/widgetDesigner/gui/list/ListView.js</file>

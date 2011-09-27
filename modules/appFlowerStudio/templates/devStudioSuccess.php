@@ -262,9 +262,10 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 	<!-- gui views -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelMapper.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelReflector.js"></script>
 		<!-- list -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListModelInterface.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ModelReflector.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListModelReflector.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListGridView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ActionColumn.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListView.js"></script>

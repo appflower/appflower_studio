@@ -37,7 +37,9 @@ afStudio.wd.ModelMapper = (function() {
 			
 			if (Ext.isDefined(property)) {
 				mapping = this.modelMapper[nodeId + '#' + property];
-			} else {
+			}
+			
+			if (Ext.isEmpty(mapping)) {
 				mapping = this.modelMapper[nodeId];
 			}
 				

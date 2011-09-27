@@ -65,8 +65,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		);
 		
 		afStudio.wd.edit.EditView.superclass.initComponent.apply(this, arguments);
-		
-		//this._afterInitComponent();
 	},	
 	
 	/**
@@ -76,7 +74,32 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	initEvents : function() {
 		afStudio.wd.edit.EditView.superclass.initEvents.call(this);
+		
+		
+		var me = this;
+		
+		this.on({
+			scope: me,
+			
+            /**
+             * @relayed controller
+             */
+            modelNodeAppend: me.onModelNodeAppend,
+            /**
+             * @relayed controller
+             */
+            modelNodeInsert: me.onModelNodeInsert,
+    		/**
+    		 * @relayed controller
+    		 */
+            modelNodeRemove: me.onModelNodeRemove,
+    		/**
+    		 * @relayed controller
+    		 */
+            modelPropertyChanged: me.onModelPropertyChanged
+		});		
 	},
+	//eo initEvents 
 	
 	/**
 	 * Template method
@@ -89,6 +112,71 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
     },
 	
 	/**
+	 * Relayed <u>modelNodeAppend</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
+	 * @protected
+	 * @interface
+	 */
+	onModelNodeAppend : function(ctr, parent, node, index) {
+		console.log('@view [EditView] modelNodeAppend');
+//		var executor = this.getExecutor(this.EXEC_ADD, node);
+//		if (executor) {
+//			executor(node, index);
+//		}
+	},
+	//eo onModelNodeAppend
+	
+	/**
+	 * Relayed <u>modelNodeInsert</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeInsert}.
+	 * @protected
+	 * @interface
+	 */
+	onModelNodeInsert : function(ctr, parent, node, refNode) {
+		console.log('@view [EditView] modelNodeInsert');
+		var refCmp = this.getCmpByModel(refNode);
+		console.log('vCmp', refCmp, node.id, refNode);		
+//			executor = this.getExecutor(this.EXEC_INSERT, node);
+//		if (executor) {
+//			executor(node, refNode, refCmp);
+//		}
+	},
+	//eo onModelNodeInsert
+	
+	/**
+	 * Relayed <u>modelNodeRemove</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeRemove}.
+	 * @protected
+	 * @interface
+	 */
+	onModelNodeRemove : function(ctr, parent, node) {
+    	console.log('@view [EditView] modelNodeRemove');
+		var vCmp = this.getCmpByModel(node);
+		console.log('vCmp', vCmp, node, node.id);		
+//			executor = this.getExecutor(this.EXEC_REMOVE, node);
+//		if (executor) {
+//			executor(node, vCmp);
+//		}
+	},
+	//eo onModelNodeRemove	
+	
+	/**
+	 * Relayed <u>modelPropertyChanged</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelPropertyChanged}.
+	 * @protected
+	 * @interface
+	 */
+	onModelPropertyChanged : function(node, p, v) {
+		console.log('@view [EditView] modelPropertyChanged');
+		var vCmp = this.getCmpByModel(node, p);
+		console.log('vCmp', vCmp, node.id, p);
+//			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
+//		if (executor) {
+//			executor(node, vCmp, p, v);
+//		}
+	},
+    
+	/**
 	 * Creates fields, field-sets and tabpanel. 
 	 * Returns an array of components being used as edit view items elements.
 	 * @protected
@@ -99,7 +187,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			cmp = [];
 		
 		if (this.getModelNodeByPath([N.GROUPING, N.SET])) {
-		
+			//form with sets and tabpanel
+			
 			Ext.each(this.getPlainFieldSets(), function(s) {
 				cmp.push(this.createFieldSet(s));
 			}, this);
@@ -112,7 +201,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			if (!Ext.isEmpty(tabbedSets)) {
 				cmp.push(this.createTabPanel(tabbedSets));
 			}
-			
 		} else {
 			//simple form without sets and tabpanel	
 			Ext.each(this.getFields(), function(f) {
@@ -501,7 +589,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 });
 
 //@mixin ModelMapper
-Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.ModelMapper);
+//important applyIf is used to have ability to use/override custom mapping/unmapping methods in the class 
+Ext.applyIf(afStudio.wd.edit.EditView.prototype, afStudio.wd.ModelMapper);
 
 //@mixin EditModelInterface
 Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelInterface);

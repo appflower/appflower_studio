@@ -18,14 +18,6 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
 	 */
 	
-	EXEC_ADD : 'add',
-	
-	EXEC_INSERT : 'insert',
-	
-	EXEC_REMOVE : 'remove',
-	
-	EXEC_UPDATE : 'update',
-	
 	/**
 	 * Rowaction width (defaults to 18).
 	 * @property rowActionWidth
@@ -247,29 +239,6 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		});
 	},
 	//eo initEvents
-	
-	/**
-	 * Returns executor method. Executors {@link afStudio.wd.list.ModelReflector}
-	 * @protected
-	 * @param {String} type The executor type
-	 * @param {Node} node The model node
-	 * @param {String} (Optional) property The node's property name
-	 * @return {Function} executor or null if executor is not exist
-	 */
-	getExecutor : function(type, node, property) {
-		//TODO centralize this code snippet
-		var line = node.tag.replace(/^i:(\w+)/i, '$1').ucfirst();
-		
-		if (Ext.isObject(node) && ['Action', 'Description'].indexOf(line) != -1) {
-			var pt = node.parentNode.tag.replace(/^i:(\w+)/i, '$1').ucfirst();
-			line = pt + line;
-		}
-		var exec = String.format('execute{0}{1}{2}', type.ucfirst(), line, property ? property.ucfirst() : '');
-			
-		console.log('@executor [ListView]', exec);
-			
-		return Ext.isFunction(this[exec]) ? this[exec].createDelegate(this) : null;
-	},
 	
 	/**
 	 * Relayed <u>modelNodeAppend</u> event listener.
@@ -834,13 +803,14 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 });
 
 //@mixin ModelMapper
-Ext.apply(afStudio.wd.list.ListView.prototype, afStudio.wd.ModelMapper);
+//important applyIf is used to have ability to use/override custom mapping/unmapping methods in the class
+Ext.applyIf(afStudio.wd.list.ListView.prototype, afStudio.wd.ModelMapper);
 
 //@mixin ListModelInterface
 Ext.apply(afStudio.wd.list.ListView.prototype, afStudio.wd.list.ListModelInterface);
 
-//@mixin ModelReflector
-Ext.apply(afStudio.wd.list.ListView.prototype, afStudio.wd.list.ModelReflector);
+//@mixin ListModelReflector
+Ext.apply(afStudio.wd.list.ListView.prototype, afStudio.wd.list.ListModelReflector);
 
 /**
  * @type 'wd.listView'

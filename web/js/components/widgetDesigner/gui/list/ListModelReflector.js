@@ -1,16 +1,26 @@
 Ext.ns('afStudio.wd.list');
 
 /**
- * ListView reflector.
- * 
- * @mixin ModelReflector
- *  
+ * @mixin ListModelReflector
  * @singleton
+ * 
  * @author Nikolai Babinski
  */
-afStudio.wd.list.ModelReflector = (function() {
+afStudio.wd.list.ListModelReflector = (function() {
 	
 	return {
+		
+		/**
+		 * @override
+		 */
+		correctExecutorLine : function(line, type, node, property) {
+			if (['Action', 'Description'].indexOf(line) != -1) {
+				var pt = this.getExecutorToken(node.parentNode.tag);
+				line = pt + line;
+			}
+			
+			return line;
+		},		
 		
 		executeAddTitle : function(node) {
 			this.setHeaderTitle(node);
@@ -464,3 +474,9 @@ afStudio.wd.list.ModelReflector = (function() {
 		}
 	};
 })();
+
+
+/**
+ * Extends base mixin {@link afStudio.wd.ModelReflector} class.
+ */
+Ext.applyIf(afStudio.wd.list.ListModelReflector, afStudio.wd.ModelReflector);
