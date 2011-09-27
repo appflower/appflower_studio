@@ -1,6 +1,12 @@
 Ext.ns('afStudio.wd.edit');
 
-
+/**
+ * EditView - represents the edit widget type. 
+ * 
+ * @class afStudio.wd.edit.EditView
+ * @extends Ext.FormPanel
+ * @author Nikolai Babinski
+ */
 afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 
 	/**
@@ -475,6 +481,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		Ext.each(tabbedSets, function(fs){
 			var t = {
 				title: fs.tabtitle,
+				layout: 'anchor',
 				items: this.createFieldSet(fs) 
 			}
 			tabPanel.add(t);
