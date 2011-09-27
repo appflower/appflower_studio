@@ -1,7 +1,10 @@
 Ext.ns('afStudio.wd');
 
 /**
- * ModelMapper mixin provides base mapping component <---> model functionality for any view. 
+ * ModelMapper mixin provides base mapping <u>component <---> model</u> functionality for any view. 
+ * Every view component should have <u>modelMapper</u> object property to be able to use model mapper mixin.
+ * 
+ * @dependency {afStudio.wd.ModelInterface} model interface mixin
  *  
  * @singleton
  * @author Nikolai Babinski
@@ -23,16 +26,21 @@ afStudio.wd.ModelMapper = (function() {
 		NODE_VALUE_MAPPER : 'value',
 		
 		/**
-		 * Returns grid's component by a model.
-		 * @public
-		 * @interface
-		 * @param {String|Node} node The model node or model node's id
-		 * @param {String} property The model node's property
-		 * @return {Ext.Component} node
+		 * Returns component by a model node and property associated with it.
+		 * @param {String|Node} node The node or node's id
+		 * @param {String} (optional) property The node's property if a component is mapped to a node and its specific property
+		 * @return {Object} component or null if component was not found
 		 */
 		getCmpByModel : function(node, property) {
-			var nId = Ext.isString(node) ? node : node.id;
-			var mapping = this.modelMapper[nId] || (property ? this.modelMapper[nId + '#' + property] : false);
+			var nodeId = Ext.isString(node) ? node : node.id,
+				mapping = null;
+			
+			if (Ext.isDefined(property)) {
+				mapping = this.modelMapper[nodeId + '#' + property];
+			} else {
+				mapping = this.modelMapper[nodeId];
+			}
+				
 			if (mapping) {
 				return  Ext.isFunction(mapping) ? mapping() : mapping;
 			}
@@ -42,11 +50,10 @@ afStudio.wd.ModelMapper = (function() {
 		//eo getCmpByModel	
 		
 		/**
-		 * Returns model node by component associated with it. If node was not found returns null/undefined.
-		 * @public
-		 * @interface
-		 * @param {Ext.Component} cmp The grid's component associated with a model node
-		 * @return {Node} model node
+		 * Returns model node by a component associated with it. 
+		 * If node was not found returns null/undefined.
+		 * @param {Ext.Component} cmp The component
+		 * @return {Node} node
 		 */
 		getModelByCmp : function(cmp) {
 			var nodeId = cmp[this.NODE_ID_MAPPER];
@@ -54,21 +61,20 @@ afStudio.wd.ModelMapper = (function() {
 			return this.getModelNode(nodeId);
 		},
 		
-		
 		/**
-		 * Maps this grid's component to a model node.
-		 * @protected
+		 * Creates association (mapping) between component and model node.
 		 * @param {String} node The model node ID
-		 * @param {Component/Function} cmp The component being mapped to the model node or a function returning a mapped component
+		 * @param {Object|Function} cmp The component or function returning it
 		 */
 		mapCmpToModel : function(node, cmp) {
-			this.modelMapper[node] = cmp;
+			var nodeId = Ext.isString(node) ? node : node.id;
+			
+			this.modelMapper[nodeId] = cmp;
 		},
 		
 		/**
-		 * Unmaps the grid's component from the model node.
-		 * @protected
-		 * @param {String/Node} node The model node's ID or model node
+		 * Removes association (unmapping) between component and model node.
+		 * @param {String|Node} node The node or its id
 		 */
 		unmapCmpFromModel : function(node) {
 			node = Ext.isString(node) ? node : node.id;
@@ -77,8 +83,7 @@ afStudio.wd.ModelMapper = (function() {
 		
 		/**
 		 * Creates the mapper function. All passed in parameters except the first one(mapper function) are added to the mapper.
-		 * @protected
-		 * @param {Function} fn The function mapper
+		 * @param {Function} fn The mapper function
 		 * @return {Funtion} mapper
 		 */
 		createMapper : function(fn) {
