@@ -2,7 +2,7 @@
 /**
  * Plugin command helper class
  *
- * @package appflower studio
+ * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afStudioPluginCommandHelper extends afBaseStudioCommandHelper
@@ -11,6 +11,20 @@ class afStudioPluginCommandHelper extends afBaseStudioCommandHelper
      * Task needed to generate plugins and modules in plugins
      */
     const PLUGIN_GENERATE_MODULES = 'sfTaskExtraPlugin';
+    
+    /**
+     * Deprecated plugins list
+     *
+     * @var array
+     */
+    static private $deprecated_plugins = array(
+        'appFlowerPlugin',
+        'appFlowerStudioPlugin',
+        'sfPropel15Plugin',
+        'sfPropelORMPlugin',
+        'sfPropelSqlDiffPlugin',
+        'sfTaskExtraPlugin',
+    );
     
     /**
      * Checking exists plugin or not
@@ -25,6 +39,17 @@ class afStudioPluginCommandHelper extends afBaseStudioCommandHelper
         $exists = is_dir($root) && count(sfFinder::type('any')->in($root)) > 0;
         
         return $exists;
+    }
+    
+    /**
+     * Getting deprecated plugins list 
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getDeprecatedList()
+    {
+        return self::$deprecated_plugins;
     }
     
 }
