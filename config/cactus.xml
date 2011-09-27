@@ -234,6 +234,9 @@
 					<file>js/components/widgetDesigner/gui/list/ListView.js</file>
 					
 					<!-- edit -->
+					<file>js/components/widgetDesigner/gui/edit/EditModelInterface.js</file>
+					<file>js/components/widgetDesigner/gui/edit/EditModelReflector.js</file>
+					<file>js/components/widgetDesigner/gui/edit/EditView.js</file>
 					
 					<!-- containers -->
 					<file>js/components/widgetDesigner/WD.js</file>

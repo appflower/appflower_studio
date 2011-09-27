@@ -42,7 +42,9 @@ afStudio.wd.ModelReflector = (function() {
 		},
 		
 		/**
+		 * This method should be overridden in descendant mixin classes to provide special functionality.
 		 * @abstract
+		 * @return {String} line
 		 */
 		correctExecutorLine : function(line, type, node, property) {
 			return line;

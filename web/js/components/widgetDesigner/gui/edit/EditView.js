@@ -119,10 +119,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	onModelNodeAppend : function(ctr, parent, node, index) {
 		console.log('@view [EditView] modelNodeAppend');
-//		var executor = this.getExecutor(this.EXEC_ADD, node);
-//		if (executor) {
-//			executor(node, index);
-//		}
+		var executor = this.getExecutor(this.EXEC_ADD, node);
+		if (executor) {
+			executor(node, index);
+		}
 	},
 	//eo onModelNodeAppend
 	
@@ -134,12 +134,12 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	onModelNodeInsert : function(ctr, parent, node, refNode) {
 		console.log('@view [EditView] modelNodeInsert');
-		var refCmp = this.getCmpByModel(refNode);
-		console.log('vCmp', refCmp, node.id, refNode);		
-//			executor = this.getExecutor(this.EXEC_INSERT, node);
-//		if (executor) {
-//			executor(node, refNode, refCmp);
-//		}
+		var refCmp = this.getCmpByModel(refNode),
+			executor = this.getExecutor(this.EXEC_INSERT, node);
+		if (executor) {
+			console.log('vCmp', refCmp, node.id, refNode);		
+			executor(node, refNode, refCmp);
+		}
 	},
 	//eo onModelNodeInsert
 	
@@ -151,12 +151,12 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	onModelNodeRemove : function(ctr, parent, node) {
     	console.log('@view [EditView] modelNodeRemove');
-		var vCmp = this.getCmpByModel(node);
-		console.log('vCmp', vCmp, node, node.id);		
-//			executor = this.getExecutor(this.EXEC_REMOVE, node);
-//		if (executor) {
-//			executor(node, vCmp);
-//		}
+		var vCmp = this.getCmpByModel(node),
+			executor = this.getExecutor(this.EXEC_REMOVE, node);
+		if (executor) {
+			console.log('vCmp', vCmp, node, node.id);		
+			executor(node, vCmp);
+		}
 	},
 	//eo onModelNodeRemove	
 	
@@ -168,12 +168,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	onModelPropertyChanged : function(node, p, v) {
 		console.log('@view [EditView] modelPropertyChanged');
-		var vCmp = this.getCmpByModel(node, p);
-		console.log('vCmp', vCmp, node.id, p);
-//			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
-//		if (executor) {
-//			executor(node, vCmp, p, v);
-//		}
+		var cmp = this.getCmpByModel(node, p),
+			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
+		if (executor) {
+			executor(node, cmp, p, v);
+		}
 	},
     
 	/**
@@ -342,23 +341,26 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 
 		var fls = this.getModelNodeProperties(N.FIELDS);
 
+		var submitProp =  Ext.isDefined(fls.submit) ? fls.submit : true;
+		
 		var submitBt = new Ext.Button({
 			text: fls.submitlabel ? fls.submitlabel : 'Submit',
 			iconCls: 'icon-accept',
-			hidden: Ext.isDefined(fls.submit) ? !fls.submit : false 
+			hidden: !submitProp 
 		});
 		submitBt[mpr] = N.FIELDS + '#submit';
-		this.mapCmpToModel(N.FIELDS + '#submit', submitBt);
 		this.mapCmpToModel(N.FIELDS + '#submitlabel', submitBt);
 		
 		var resetBt = new Ext.Button({
 			text: fls.resetlabel ? fls.resetlabel : 'Reset',
 			iconCls: 'icon-application-form',
-			hidden: Ext.isDefined(fls.resetable) ? !fls.resetable : false 
+			hidden: !submitProp ? true : (Ext.isDefined(fls.resetable) ? !fls.resetable : false) 
 		});
 		resetBt[mpr] = N.FIELDS + '#resetable';
 		this.mapCmpToModel(N.FIELDS + '#resetable', resetBt);
-		this.mapCmpToModel(N.FIELDS + '#resetlabel', submitBt);
+		this.mapCmpToModel(N.FIELDS + '#resetlabel', resetBt);
+
+		this.mapCmpToModel(N.FIELDS + '#submit', {sub: submitBt, res: resetBt});
 		
 		buttons.push(submitBt, resetBt);
 	},
@@ -596,7 +598,7 @@ Ext.applyIf(afStudio.wd.edit.EditView.prototype, afStudio.wd.ModelMapper);
 Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelInterface);
 
 //@mixin ModelReflector
-Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.ModelReflector);
+Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelReflector);
 
 /**
  * @type 'wd.editView'

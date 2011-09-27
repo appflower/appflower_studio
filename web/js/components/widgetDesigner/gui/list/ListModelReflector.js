@@ -11,6 +11,7 @@ afStudio.wd.list.ListModelReflector = (function() {
 	return {
 		
 		/**
+		 * Changes the line for action and description nodes. 
 		 * @override
 		 */
 		correctExecutorLine : function(line, type, node, property) {
@@ -474,7 +475,6 @@ afStudio.wd.list.ListModelReflector = (function() {
 		}
 	};
 })();
-
 
 /**
  * Extends base mixin {@link afStudio.wd.ModelReflector} class.

@@ -55,12 +55,25 @@ afStudio.wd.ModelMapper = (function() {
 		 * Returns model node by a component associated with it. 
 		 * If node was not found returns null/undefined.
 		 * @param {Ext.Component} cmp The component
-		 * @return {Node} node
+		 * @return {Node|Array} node or array [node, property's value]
 		 */
 		getModelByCmp : function(cmp) {
-			var nodeId = cmp[this.NODE_ID_MAPPER];
-				
-			return this.getModelNode(nodeId);
+			var nodeId = cmp[this.NODE_ID_MAPPER],
+				node, property;
+			
+			var hashPos = nodeId.indexOf('#');
+			if (hashPos != -1) {
+			    property = nodeId.substr(hashPos + 1);
+			    nodeId = nodeId.substring(0, hashPos);
+			}
+			
+			node = this.getModelNode(nodeId);
+			
+			if (property) {
+			    return [node, node.getPropertyValue(property)];
+			}
+			
+			return node;
 		},
 		
 		/**
