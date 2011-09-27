@@ -16,6 +16,7 @@ afStudio.wd.list.ListModelInterface = (function() {
 		 */
 		getColumns : function() {
 			var N = this.NODES;
+			
 			return this.getModelChildrenProperties(N.FIELDS, N.COLUMN);
 		},
 		
@@ -25,6 +26,7 @@ afStudio.wd.list.ListModelInterface = (function() {
 		 */
 		getRowActions : function() {
 			var N = this.NODES;
+			
 			return this.getModelChildrenProperties(N.ROW_ACTIONS, N.ACTION);
 		}
 	};

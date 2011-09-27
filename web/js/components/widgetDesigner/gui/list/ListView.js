@@ -1,7 +1,7 @@
 Ext.ns('afStudio.wd.list');
 
 /**
- * GUI List View.
+ * ListView - represents the list widget type.
  * 
  * @dependency {afStudio.data.Types} model types
  * @dependency {afStudio.wd.ModelMapper} ModelMapper mixin

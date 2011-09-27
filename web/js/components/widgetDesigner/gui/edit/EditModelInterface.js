@@ -8,9 +8,6 @@ Ext.ns('afStudio.wd.edit');
  */
 afStudio.wd.edit.EditModelInterface = (function() {
 	
-	//shortcut to nodes list
-	var nodes = afStudio.ModelNode;
-	
 	return {
 	
 		/**
@@ -19,7 +16,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		 * @return {Array} fields
 		 */
 		getFields : function(filter) {
-			return this.getModelChildrenProperties(nodes.FIELDS, nodes.FIELD, filter);
+			return this.getModelChildrenProperties(this.NODES.FIELDS, this.NODES.FIELD, filter);
 		},
 
 		/**
@@ -27,7 +24,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		 * @return {Array} buttons
 		 */
 		getFieldsButtons : function() {
-			return this.getModelChildrenProperties(nodes.FIELDS, nodes.BUTTON);
+			return this.getModelChildrenProperties(this.NODES.FIELDS, this.NODES.BUTTON);
 		},
 		
 		/**
@@ -36,7 +33,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		 * @return {Array} field-sets
 		 */
 		getFieldSets : function(filter) {
-			return this.getModelChildrenProperties(nodes.GROUPING, nodes.SET, filter);
+			return this.getModelChildrenProperties(this.NODES.GROUPING, this.NODES.SET, filter);
 		},
 		
 		/**
@@ -67,7 +64,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		 *  ]
 		 */
 		getFieldsFromSet : function(setNode) {
-			var refNodes = this.getModelChildrenProperties(setNode, nodes.REF),
+			var refNodes = this.getModelChildrenProperties(setNode, this.NODES.REF),
 				fields = [];
 			
 			Ext.each(refNodes, function(ref){
@@ -89,14 +86,14 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		 * @return {Array} fields in default set
 		 */
 		getFieldsFromDefaultSet : function() {
-			var mpr = this.getModelNodeMapper();
+			var nodeIdMpr = this.NODE_ID_MAPPER;
 			
 			var fldSets = this.getFieldSets(),
 				fieldsInSets = [],
 				defFields = [];
 			
 			Ext.each(fldSets, function(fs){
-				var refs = this.getFieldsFromSet(fs[mpr]);
+				var refs = this.getFieldsFromSet(fs[nodeIdMpr]);
 				Ext.each(refs, function(ref){
 					fieldsInSets.push(ref.field.name);
 				});

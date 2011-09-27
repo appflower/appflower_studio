@@ -3,6 +3,10 @@ Ext.ns('afStudio.wd.edit');
 /**
  * EditView - represents the edit widget type. 
  * 
+ * @dependency {afStudio.wd.ModelMapper} ModelMapper mixin
+ * @dependency {afStudio.wd.list.ListModelInterface} ListModelInterface mixin
+ * @dependency {afStudio.wd.list.ModelReflector} ModelReflector mixin
+ * 
  * @class afStudio.wd.edit.EditView
  * @extends Ext.FormPanel
  * @author Nikolai Babinski
@@ -25,8 +29,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Object} The configuration object 
 	 */
 	_beforeInitComponent : function() {
-		var me = this,
-			nodes = afStudio.ModelNode;
+		var me = this;
 		
 		/**
 		 * Model->Component associations holder.
@@ -35,7 +38,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		 */
 		this.modelMapper = {};
 			
-		var labelWidth = this.getModelNodeProperty(nodes.FIELDS, 'labelWidth');
+		var labelWidth = this.getModelNodeProperty(this.NODES.FIELDS, 'labelWidth');
 
 		var items = this.createFormCmp();
 		
@@ -92,7 +95,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Array} components
 	 */
 	createFormCmp : function() {
-		var N = afStudio.ModelNode,
+		var N = this.NODES,
 			cmp = [];
 		
 		if (this.getModelNodeByPath([N.GROUPING, N.SET])) {
@@ -126,7 +129,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.form.Field} field
 	 */
 	createField : function(fld) {
-		var mpr = this.getModelNodeMapper(),
+		var mpr = this.NODE_ID_MAPPER,
 			fldId = fld[mpr];
 		
 		var fn, cfg = {}, f;
@@ -222,9 +225,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Array} buttons
 	 */
 	createButtons : function() {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
-			buttons = [];
+		var buttons = [];
 		
 		this.createResetSubmitButtons(buttons);
 		
@@ -248,8 +249,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @param {Array} buttons The buttons
 	 */
 	createResetSubmitButtons : function(buttons) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode;
+		var mpr = this.NODE_ID_MAPPER,
+			N = this.NODES;
 
 		var fls = this.getModelNodeProperties(N.FIELDS);
 
@@ -282,8 +283,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.Button}
 	 */
 	createButton : function(btn, type) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
+		var mpr = this.NODE_ID_MAPPER,
 			cfg = {}, button;
 		
 		type = !Ext.isDefined(type) ? 'button' : 'action';	
@@ -318,8 +318,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.form.FieldSet} field-set
 	 */
 	createFieldSet : function(fldSet) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
+		var mpr = this.NODE_ID_MAPPER,
 			cfg = {}, 
 			fieldSet;
 		
@@ -370,8 +369,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.form.FieldSet} field-set
 	 */
 	createDefaultFieldSet : function(fields) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
+		var mpr = this.NODE_ID_MAPPER,
+			N = this.NODES,
 			cfg = {}, 
 			fieldSet;
 		
@@ -501,6 +500,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	
 });
 
+//@mixin ModelMapper
+Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.ModelMapper);
 
 //@mixin EditModelInterface
 Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelInterface);
