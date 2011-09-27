@@ -2,6 +2,7 @@
 /**
  * Studio Debug Command Class
  *
+ * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afStudioDebugCommand extends afBaseStudioCommand
@@ -109,7 +110,7 @@ class afStudioDebugCommand extends afBaseStudioCommand
      * @return string
      * @author Sergey Startsev
      */
-    public function getContent($file, $start = 0, $end = 0)
+    private function getContent($file, $start = 0, $end = 0)
     {
         $result = '';
         
@@ -176,7 +177,7 @@ class afStudioDebugCommand extends afBaseStudioCommand
      * @return array
      * @author Sergey Startsev
      */
-    public function getFiles()
+    private function getFiles()
     {
         $dir = sfConfig::get('sf_root_dir') . '/log/';
         
@@ -184,7 +185,7 @@ class afStudioDebugCommand extends afBaseStudioCommand
             $aFiles = array();
             if ($dh = opendir($dir)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file != '.' && $file != '..' && $file != '.svn' && is_file($dir . $file)) {
+                    if ($file != '.' && $file != '..' && $file != '.svn' && is_file($dir . $file) && $file != '.gitignore') {
                         $modification = filemtime($dir . $file);
                         $aFiles[$modification] = $file;
                     }
@@ -196,9 +197,9 @@ class afStudioDebugCommand extends afBaseStudioCommand
             $aFiles = array_values($aFiles);
             
             return $aFiles;
-        } else {
-            return false;
         }
+        
+        return false;
     }
     
     /**
@@ -208,9 +209,9 @@ class afStudioDebugCommand extends afBaseStudioCommand
      * @return int
      * @author Sergey Startsev
      */
-    public static function getFileLen($file_name)
+    private function getFileLen($file_name)
     {
-		return filesize( sfConfig::get('sf_root_dir') . '/log/' . $file_name );
+        return filesize( sfConfig::get('sf_root_dir') . '/log/' . $file_name );
     }
     
 }
