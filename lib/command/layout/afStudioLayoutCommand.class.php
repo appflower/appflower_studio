@@ -160,9 +160,13 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     {
         $root_dir = sfConfig::get('sf_root_dir');
         
+        $deprecated = afStudioPluginCommandHelper::getDeprecatedList();
+        
         $data = array();
         foreach (array('app', 'plugin') as $type) {
             foreach(afStudioUtil::getDirectories("{$root_dir}/{$type}s/", true) as $parent) {
+                if (in_array($parent, $deprecated)) continue;
+                
                 $widgets = $this->getWidgets($parent, $type);
                 if (!empty($widgets)) $data[] = $widgets;
             }

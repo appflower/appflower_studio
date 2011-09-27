@@ -10,7 +10,7 @@ abstract class afBaseStudioCommand
     /**
      * Result of executing command
      */
-	protected $result = null;
+    protected $result = null;
     
     /**
      * Command will be executed
@@ -22,12 +22,19 @@ abstract class afBaseStudioCommand
      */
     protected $params;
     
-	public function __construct($command = '', $params = array())
-	{		
-		$this->cmd = $command;
+    /**
+     * Contructor
+     *
+     * @param string $command 
+     * @param array $params 
+     * @author Sergey Startsev
+     */
+    public function __construct($command = '', array $params = array())
+    {
+        $this->cmd = $command;
         $this->params = $params;
-	}
-	
+    }
+    
     /**
      * Separate to different controllers part - delegate process methods
      * Result from processing can be getted via returned by method data or via property $result via $this->result = some data,
@@ -36,24 +43,20 @@ abstract class afBaseStudioCommand
      * @return mixed
      * @author Sergey Startsev
      */
-	public final function process()
-	{
-		if($this->getCommand() != null) {
-			$controller_name = 'process' . ucfirst($this->getCommand());
-            
-            $this->preProcess();
-            
-            if (method_exists($this, $controller_name)) {
-                $return = ($response = call_user_func(array($this, $controller_name))) ? $response : $this->result;
-            } else {
-                throw new afStudioCommandException("Controller: '{$controller_name}' not defined");
-            }
-            
-            return $return;
-		} else {
-		    return false;
-		}
-	}
+    public final function process()
+    {
+        if ($this->getCommand() == null) return false;
+        
+        $controller_name = 'process' . ucfirst($this->getCommand());
+        
+        $this->preProcess();
+        
+        if (!method_exists($this, $controller_name)) {
+            throw new afStudioCommandException("Controller: '{$controller_name}' not defined");
+        }
+        
+        return ($response = call_user_func(array($this, $controller_name))) ? $response : $this->result;
+    }
     
     /**
      * Setting command
