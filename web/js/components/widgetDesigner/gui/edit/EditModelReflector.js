@@ -22,6 +22,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		//buttons, responsible properties: i:fields, i:actions
+		//----------------------------------------------------
 		
 		/**
 		 * Updates submit button's label 
@@ -61,20 +62,41 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * Adds i:fields->i:button
 		 */
 		executeAddButton : function(node, idx) {
-			var btns = this.buttons,
+			var fb = this.getFooterToolbar(),
 				pBtn = this.getModelNodeProperties(node),
 				oBtn = this.createButton(pBtn);
 				
 			idx = this.getButtonIndex(node, idx);
-			btns.splice(idx, 0, oBtn);
+			fb.insertButton(idx, oBtn);
 			this.doLayout();
+
+//			for i:action			
 //			this.addButton(oBtn);
 //			this.doLayout();
 		},
-		
+		/**
+		 * Removes i:fields->i:button
+		 */
+		executeRemoveButton : function(node, cmp) {
+			cmp.destroy();
+			this.unmapCmpFromModel(node);
+		},
+		/**
+		 * Inserts i:fields->i:button
+		 */
+		executeInsertButton : function(parent, node, refNode, refCmp) {
+			var fb = this.getFooterToolbar(),
+				pBtn = this.getModelNodeProperties(node),
+				oBtn = this.createButton(pBtn);
+			
+			var idx = this.getButtonIndex(refNode, parent.indexOf(refNode)) - 1;
+//			var idx = btns.indexOf(refCmp);
+			fb.insertButton(idx, oBtn);			
+			this.doLayout();
+		},
 		/**
 		 * Sets button <u>name</u> property.
-		 * @protected
+		 * @private
 		 * @param {Object} btn The button whose name property being set
 		 * @param {String} v The name value
 		 */
@@ -85,14 +107,30 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				btn.setText(v);
 			}
 		},
-		
+		/**
+		 * label
+		 */
 		executeUpdateButtonLabel :function(node, cmp, p, v) {
 			cmp.setText(v ? v : cmp.name);
 		},
+		/**
+		 * name
+		 */
 		executeUpdateButtonName : function(node, cmp, p, v) {
 			this.setButtonName(cmp, v);
+		},
+		/**
+		 * iconCls
+		 */		
+		executeUpdateButtonIconCls : function(node, cmp, p, v) {
+			cmp.setIconClass(v);
+		},
+		/**
+		 * icon
+		 */		
+		executeUpdateButtonIcon : function(node, cmp, p, v) {
+			cmp.setIcon(v);
 		}
-		
 	}
 	
 })();
