@@ -577,6 +577,20 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return Ext.util.Format.round(1 / count, 2);
 	},
 	
+	getButtonIndex : function(node, idx, type) {
+		var vd = this.controller.getViewDefinition();
+		
+		type = !Ext.isDefined(type) ? 'button' : 'action';	
+		
+		var btnIdx = vd.getEntityObj(node, idx).idx;
+		
+		if (type == 'button') {
+			return btnIdx;
+		} else {
+			return btnIdx + (this.buttons.length - 1);
+		}
+	},
+	
 	/**
 	 * TODO  auxilary method, should be deleted after view will be implemented
 	 * @private
