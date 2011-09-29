@@ -69,10 +69,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			idx = this.getButtonIndex(node, idx);
 			fb.insertButton(idx, oBtn);
 			this.doLayout();
-
-//			for i:action			
-//			this.addButton(oBtn);
-//			this.doLayout();
 		},
 		/**
 		 * Removes i:fields->i:button
@@ -87,10 +83,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		executeInsertButton : function(parent, node, refNode, refCmp) {
 			var fb = this.getFooterToolbar(),
 				pBtn = this.getModelNodeProperties(node),
-				oBtn = this.createButton(pBtn);
+				oBtn = this.createButton(pBtn),
+				idx = fb.items.indexOf(refCmp);
 			
-			var idx = this.getButtonIndex(refNode, parent.indexOf(refNode)) - 1;
-//			var idx = btns.indexOf(refCmp);
 			fb.insertButton(idx, oBtn);			
 			this.doLayout();
 		},
@@ -130,6 +125,19 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 */		
 		executeUpdateButtonIcon : function(node, cmp, p, v) {
 			cmp.setIcon(v);
+		},
+		
+		/**
+		 * Adds i:action
+		 */
+		executeAddAction : function(node, idx) {
+			var fb = this.getFooterToolbar(),
+				pBtn = this.getModelNodeProperties(node),
+				oBtn = this.createButton(pBtn, 'action');
+				
+			idx = this.getButtonIndex(node, idx, 'action');
+			fb.insertButton(idx, oBtn);
+			this.doLayout();
 		}
 	}
 	

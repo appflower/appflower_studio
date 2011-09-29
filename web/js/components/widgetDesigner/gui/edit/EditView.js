@@ -576,17 +576,21 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	getButtonIndex : function(node, idx, type) {
-		var vd = this.controller.getViewDefinition();
+		var vd = this.controller.getViewDefinition(),
+			btnIdx = vd.getEntityObj(node, idx).idx;
+		
+		btnIdx = (btnIdx == null) ? 0 : btnIdx;
 		
 		type = !Ext.isDefined(type) ? 'button' : 'action';	
 		
-		var btnIdx = vd.getEntityObj(node, idx).idx;
-		
-		if (type == 'button') {
-			return btnIdx;
-		} else {
-			return btnIdx + (this.buttons.length - 1);
+		if (type == 'action') {
+			var btnLen = this.getFooterToolbar().items.getCount();
+			if (btnIdx < btnLen) {
+				btnIdx += btnLen - btnIdx;
+			}
 		}
+		
+		return btnIdx;
 	},
 	
 	/**
