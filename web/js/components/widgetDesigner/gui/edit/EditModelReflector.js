@@ -89,6 +89,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			this.unmapCmpFromModel(node);
 		},
 		
+		/**
+		 * @private
+		 */
 		insertButton : function(parent, node, refNode, refCmp, type) {
 			type = Ext.isDefined(type) ? type : 'button';
 			
@@ -114,6 +117,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				btn.setText(v);
 			}
 		},
+		
 		/**
 		 * Sets button <u>text</u> property
 		 * @private
@@ -205,9 +209,17 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 */
 		executeUpdateActionTooltip : function(node, cmp, p, v) {
 			cmp.setTooltip(v);	
+		},
+		
+		
+		//fields
+		//----------------------------------------------------
+		executeAddField : function(node, idx) {
+			if (this.isGrouped()) {
+				
+			}
 		}
 	}
-	
 })();
 
 /**

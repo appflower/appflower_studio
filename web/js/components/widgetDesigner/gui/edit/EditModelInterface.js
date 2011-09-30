@@ -11,6 +11,15 @@ afStudio.wd.edit.EditModelInterface = (function() {
 	return {
 	
 		/**
+		 * Checks if the view is grouped: has i:grouping node and at least one i:set node. 
+		 */
+		isGrouped : function() {
+			var setNode = this.getModelNodeByPath([this.NODES.GROUPING, this.NODES.SET]);
+			
+			return setNode ? true : false;
+		},
+		
+		/**
 		 * Returns array of field(s) (i:fields->i:field) properties.
 		 * @param {Array|Object|Function} (optional) filter The fields filter, details {@link afStudio.wd.ModelInterface#getModelChildrenProperties}
 		 * @return {Array} fields

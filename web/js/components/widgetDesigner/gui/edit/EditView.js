@@ -75,7 +75,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	initEvents : function() {
 		afStudio.wd.edit.EditView.superclass.initEvents.call(this);
 		
-		
 		var me = this;
 		
 		this.on({
@@ -183,7 +182,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		var N = this.NODES,
 			cmp = [];
 		
-		if (this.getModelNodeByPath([N.GROUPING, N.SET])) {
+		if (this.isGrouped()) {
 			//form with sets and tabpanel
 			
 			Ext.each(this.getPlainFieldSets(), function(s) {
