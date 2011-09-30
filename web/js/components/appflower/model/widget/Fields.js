@@ -35,7 +35,7 @@ afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
 	],
 	
 	editProperties : [
-		{name: "url", type: 'internalUriType', required: false},
+		{name: "url", type: 'internalUriType'},
       	{name: "resetable", type: 'boolean', defaultValue: true},
       	{name: "resetlabel", type: 'token', defaultValue: "Reset"},
       	{name: "submitlabel", type: 'token', defaultValue: "Submit"},
