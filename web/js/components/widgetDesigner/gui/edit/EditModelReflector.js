@@ -24,6 +24,8 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//buttons, responsible properties: i:fields, i:actions
 		//----------------------------------------------------
 		
+		//submit & reset buttons
+		
 		/**
 		 * Updates submit button's label 
 		 */
@@ -58,17 +60,45 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			v ? cmp.show() : cmp.hide();
 		},
 		
+		//general buttons
+		
+		/**
+		 * Adds a button.
+		 * @private
+		 * @param {Node} node The button related node
+		 * @param {Number} idx The node idx inside the parent model node
+		 * @param {String} type (optional) type The button type, can be "button" | "action", defaults to "button"
+		 */
+		addButton : function(node, idx, type) {
+			type = Ext.isDefined(type) ? type : 'button';	
+			
+			var fb = this.getFooterToolbar(),
+				pBtn = this.getModelNodeProperties(node),
+				oBtn = this.createButton(pBtn, type);
+				
+			idx = this.getButtonIndex(node, idx, type);
+			fb.insertButton(idx, oBtn);
+			this.doLayout();
+		},
+		
 		/**
 		 * @private
 		 */
-		addButton : function(node, idx, type) {
+		removeButton : function(node, cmp) {
+			cmp.destroy();
+			this.unmapCmpFromModel(node);
+		},
+		
+		insertButton : function(parent, node, refNode, refCmp, type) {
+			type = Ext.isDefined(type) ? type : 'button';
+			
 			var fb = this.getFooterToolbar(),
 				pBtn = this.getModelNodeProperties(node),
-				oBtn = this.createButton(pBtn);
-				
-			idx = this.getButtonIndex(node, idx);
-			fb.insertButton(idx, oBtn);
-			this.doLayout();
+				oBtn = this.createButton(pBtn, type),
+				idx = fb.items.indexOf(refCmp);
+			
+			fb.insertButton(idx, oBtn);			
+			this.doLayout();			
 		},
 		
 		/**
@@ -84,43 +114,37 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				btn.setText(v);
 			}
 		},
+		/**
+		 * Sets button <u>text</u> property
+		 * @private
+		 */
+		setButtonText : function(btn, v) {
+			btn.setText(v ? v : btn.name);
+		},
 		
 		/**
 		 * Adds i:fields->i:button
 		 */
 		executeAddButton : function(node, idx) {
-			var fb = this.getFooterToolbar(),
-				pBtn = this.getModelNodeProperties(node),
-				oBtn = this.createButton(pBtn);
-				
-			idx = this.getButtonIndex(node, idx);
-			fb.insertButton(idx, oBtn);
-			this.doLayout();
+			this.addButton(node, idx);
 		},
 		/**
 		 * Removes i:fields->i:button
 		 */
 		executeRemoveButton : function(node, cmp) {
-			cmp.destroy();
-			this.unmapCmpFromModel(node);
+			this.removeButton(node, cmp);
 		},
 		/**
 		 * Inserts i:fields->i:button
 		 */
 		executeInsertButton : function(parent, node, refNode, refCmp) {
-			var fb = this.getFooterToolbar(),
-				pBtn = this.getModelNodeProperties(node),
-				oBtn = this.createButton(pBtn),
-				idx = fb.items.indexOf(refCmp);
-			
-			fb.insertButton(idx, oBtn);			
-			this.doLayout();
+			this.insertButton(parent, node, refNode, refCmp);
 		},
 		/**
 		 * label
 		 */
-		executeUpdateButtonLabel :function(node, cmp, p, v) {
-			cmp.setText(v ? v : cmp.name);
+		executeUpdateButtonLabel : function(node, cmp, p, v) {
+			this.setButtonText(cmp, v);
 		},
 		/**
 		 * name
@@ -141,17 +165,46 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			cmp.setIcon(v);
 		},
 		
-		/**
-		 * Adds i:action
-		 */
+		//i:action buttons
+		
 		executeAddAction : function(node, idx) {
-			var fb = this.getFooterToolbar(),
-				pBtn = this.getModelNodeProperties(node),
-				oBtn = this.createButton(pBtn, 'action');
-				
-			idx = this.getButtonIndex(node, idx, 'action');
-			fb.insertButton(idx, oBtn);
-			this.doLayout();
+			this.addButton(node, idx, 'action');
+		},
+		executeRemoveAction : function(node, cmp) {
+			this.removeButton(node, cmp);
+		},
+		executeInsertAction : function(parent, node, refNode, refCmp) {
+			this.insertButton(parent, node, refNode, refCmp, 'action');
+		},
+		/**
+		 * name
+		 */
+		executeUpdateActionName : function(node, cmp, p, v) {
+			this.setButtonName(cmp, v);
+		},
+		/**
+		 * text
+		 */
+		executeUpdateActionText : function(node, cmp, p, v) {
+			this.setButtonText(cmp, v);
+		},
+		/**
+		 * iconCls
+		 */		
+		executeUpdateActionIconCls : function(node, cmp, p, v) {
+			cmp.setIconClass(v);
+		},
+		/**
+		 * icon
+		 */		
+		executeUpdateActionIcon : function(node, cmp, p, v) {
+			cmp.setIcon(v);
+		},
+		/**
+		 * tooltip
+		 */
+		executeUpdateActionTooltip : function(node, cmp, p, v) {
+			cmp.setTooltip(v);	
 		}
 	}
 	

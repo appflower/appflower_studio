@@ -322,7 +322,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}
 		
 		Ext.each(this.getActions(), function(a){
-			buttons.push(this.createButton(a));
+			buttons.push(this.createButton(a, 'action'));
 		}, this);
 		
 		return buttons;
@@ -374,7 +374,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		var mpr = this.NODE_ID_MAPPER,
 			cfg = {}, button;
 		
-		type = !Ext.isDefined(type) ? 'button' : 'action';	
+		type = Ext.isDefined(type) ? type : 'button';	
 		
 		Ext.copyTo(cfg, btn, 'name, iconCls, icon, style');
 		cfg[mpr] = btn[mpr];
@@ -384,7 +384,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	        if (btn.state && btn.state == 'disabled') {
 	        	cfg.disabled = true;	
 	        }
-		} else {
+		} else if (type == 'action') {
 			Ext.apply(cfg, {
 				text: btn.text ? btn.text : btn.name,
 				tooltip: btn.tooltip
@@ -575,13 +575,21 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return Ext.util.Format.round(1 / count, 2);
 	},
 	
+	/**
+	 * Returns "real" button's index based on view definition object associated with a model 
+	 * and widget buttons. 
+	 * @param {Node} node The button related node
+	 * @param {Number} idx The node idx inside the parent model node
+	 * @param {String} type (optional) type The button type, can be "button" | "action", defaults to "button"
+	 * @return {Number}
+	 */
 	getButtonIndex : function(node, idx, type) {
 		var vd = this.controller.getViewDefinition(),
 			btnIdx = vd.getEntityObj(node, idx).idx;
 		
 		btnIdx = (btnIdx == null) ? 0 : btnIdx;
 		
-		type = !Ext.isDefined(type) ? 'button' : 'action';	
+		type = Ext.isDefined(type) ? type : 'button';	
 		
 		if (type == 'action') {
 			var btnLen = this.getFooterToolbar().items.getCount();
