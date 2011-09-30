@@ -59,6 +59,33 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		/**
+		 * @private
+		 */
+		addButton : function(node, idx, type) {
+			var fb = this.getFooterToolbar(),
+				pBtn = this.getModelNodeProperties(node),
+				oBtn = this.createButton(pBtn);
+				
+			idx = this.getButtonIndex(node, idx);
+			fb.insertButton(idx, oBtn);
+			this.doLayout();
+		},
+		
+		/**
+		 * Sets button <u>name</u> property.
+		 * @private
+		 * @param {Object} btn The button whose name property being set
+		 * @param {String} v The name value
+		 */
+		setButtonName : function(btn, v) {
+			var oldValue = btn.name;
+			btn.name = v;
+			if (Ext.isEmpty(btn.text) || btn.text == oldValue) {
+				btn.setText(v);
+			}
+		},
+		
+		/**
 		 * Adds i:fields->i:button
 		 */
 		executeAddButton : function(node, idx) {
@@ -88,19 +115,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			
 			fb.insertButton(idx, oBtn);			
 			this.doLayout();
-		},
-		/**
-		 * Sets button <u>name</u> property.
-		 * @private
-		 * @param {Object} btn The button whose name property being set
-		 * @param {String} v The name value
-		 */
-		setButtonName : function(btn, v) {
-			var oldValue = btn.name;
-			btn.name = v;
-			if (Ext.isEmpty(btn.text) || btn.text == oldValue) {
-				btn.setText(v);
-			}
 		},
 		/**
 		 * label
