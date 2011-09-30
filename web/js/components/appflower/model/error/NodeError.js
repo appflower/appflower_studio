@@ -10,6 +10,7 @@ afStudio.model.error.NodeError = Ext.extend(Ext.Error, {
     name: 'afStudio.model.NodeError',
     
     lang: {
-        'node-undefined' : 'Model Node is not defined.'
+        'node-undefined' : 'Model Node is not defined.',
+        'nodeTypes type' : 'The "nodeTypes" cfg/property type is not correct. Must be an Array.'
     }
 });
