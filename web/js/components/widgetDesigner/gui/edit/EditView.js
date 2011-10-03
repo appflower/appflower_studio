@@ -600,6 +600,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return btnIdx;
 	},
 	
+	getFieldIndex : function(node, idx) {
+		var vd = this.controller.getViewDefinition(),
+			fldIdx = vd.getEntityObj(node, idx).idx;
+		
+		fldIdx = (fldIdx == null) ? 0 : fldIdx;
+		
+		return fldIdx;
+	},
+	
 	/**
 	 * TODO  auxilary method, should be deleted after view will be implemented
 	 * @private

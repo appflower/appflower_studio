@@ -215,10 +215,21 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//fields
 		//----------------------------------------------------
 		executeAddField : function(node, idx) {
+			
 			if (this.isGrouped()) {
 				
+				
+			} else {
+				var pField = this.getModelNodeProperties(node),				
+					oField = this.createField(pField),
+					fldIdx = this.getFieldIndex(node, idx);
+					
+				this.insert(fldIdx, oField);
+				this.doLayout();
 			}
 		}
+		
+		
 	}
 })();
 
