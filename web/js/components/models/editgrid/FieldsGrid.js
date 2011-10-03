@@ -24,49 +24,66 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * Saves Model structure
 	 */
 	saveModel : function() {
-		var _this = this,
-			    s = _this.getStore(),
-			  url = s.proxy.url,
-			   rs = s.getRange(),
-		 aRecords = [];
-				 
+		var _this   = this,
+			    s   = _this.getStore(),
+			  url   = s.proxy.url,
+			   rs   = s.getRange(),
+		 aRecords   = [],
+		 is_renamed = false;
+		
 		Ext.each(rs, function(i, idx) {
 			aRecords.push(i.data);
 		});
+        
+        if (!Ext.isEmpty(s.getModifiedRecords())) {
+            Ext.each(s.getModifiedRecords(), function(i, idx) {
+                if (!is_renamed && i.json && i.data.name != i.json.name) is_renamed = true;
+            });
+        }
+        
+        send_request = function(_this, records) {
+            afStudio.vp.mask({region:'center', msg: 'Altering ' + _this.model + ' model...'});
+            
+    		Ext.Ajax.request({
+    			url: url,
+    			params: {
+    				xaction: 'alterModel',
+    				model: _this.model, 
+    				schema: _this.schema,
+    				fields: Ext.encode(aRecords)
+    			},
+    			success: function(xhr, opt) {
+    				afStudio.vp.unmask('center');
+
+    				var response = Ext.decode(xhr.responseText);
+
+    				var message = String.format('"{0}" model structure was saved', _this.model);
+    				_this.fireEvent("logmessage", _this, message);
+
+    				if (response.success) {					
+    					afStudio.Msg.info(response.message);
+    					s.commitChanges();
+    					_this.fireEvent('altermodel');
+    				} else {
+    					_this.fireEvent('altermodelexception', xhr);
+    					afStudio.Msg.warning(response.message);
+    				}
+    			},
+    			failure: function(xhr, opt) {				
+    				afStudio.vp.unmask('center');
+    				_this.fireEvent('altermodelfailure', xhr);				
+    				afStudio.Msg.error('Status: ' + xhr.status);
+    			}
+    		});
+        };
 		
-		afStudio.vp.mask({region:'center', msg: 'Altering ' + _this.model + ' model...'});
-		
-		Ext.Ajax.request({
-			url: url,
-			params: {
-				xaction: 'alterModel',
-				model: _this.model, 
-				schema: _this.schema,
-				fields: Ext.encode(aRecords)
-			},
-			success: function(xhr, opt) {
-				afStudio.vp.unmask('center');
-				
-				var response = Ext.decode(xhr.responseText);
-				
-				var message = String.format('"{0}" model structure was saved', _this.model);
-				_this.fireEvent("logmessage", _this, message);
-				
-				if (response.success) {					
-					afStudio.Msg.info(response.message);
-					s.commitChanges();
-					_this.fireEvent('altermodel');
-				} else {
-					_this.fireEvent('altermodelexception', xhr);
-					afStudio.Msg.warning(response.message);
-				}
-			},
-			failure: function(xhr, opt) {				
-				afStudio.vp.unmask('center');
-				_this.fireEvent('altermodelfailure', xhr);				
-				afStudio.Msg.error('Status: ' + xhr.status);
-			}
-		});
+		if (is_renamed) {
+		    Ext.MessageBox.confirm('Confirm', 'Field name has been changed - all data for old field will be lost. Are you sure you want to do that?', function(btn) {
+                if (btn == 'yes') send_request(_this, aRecords);
+            })
+		} else {
+		    send_request(_this, aRecords);
+		}
 	}//eo saveModel
 	
 	/**
