@@ -218,7 +218,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		var fn, cfg = {}, f;
 		
-		Ext.copyTo(cfg, fld, 'name, value, style, width, height, disabled');
+		Ext.copyTo(cfg, fld, 'name, value, content, style, width, height, disabled');
 		
 		Ext.apply(cfg, {
 			fieldLabel: fld.label,

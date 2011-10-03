@@ -12,6 +12,20 @@ afStudio.wd.edit.EditModelReflector = (function() {
 	
 	return {
 	
+		/**
+		 * Changes the line of some executors. 
+		 * @override
+		 */
+		correctExecutorLine : function(line, type, node, property) {
+			if (['Field', 'Description'].indexOf(line) != -1) {
+				var pt = this.getExecutorToken(node.parentNode.tag);
+				line = pt + line;
+			}
+			
+			return line;
+		},
+		
+		
 		//TODO labelWidth property implementation
 		executeUpdateFieldsLabelWidth : function(node, cmp, p, v) {
 			/*
@@ -214,7 +228,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		
 		//fields
 		//----------------------------------------------------
-		executeAddField : function(node, idx) {
+		executeAddFieldsField : function(node, idx) {
 			
 			if (this.isGrouped()) {
 				
@@ -227,8 +241,60 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				this.insert(fldIdx, oField);
 				this.doLayout();
 			}
-		}
+		},
 		
+		/**
+		 * type
+		 */
+		executeUpdateFieldsFieldType : function() {
+			
+		},
+		/**
+		 * label
+		 */
+		executeUpdateFieldsFieldLabel : function(node, cmp, p, v) {
+			var lb = cmp.itemCt.child('label');
+			lb.update(v);			
+		},
+		/**
+		 * content
+		 */
+		executeUpdateFieldsFieldContent : function(node, cmp, p, v) {
+			cmp.setValue(v);
+			cmp.content = v;
+		},
+		/**
+		 * value
+		 */
+		executeUpdateFieldsFieldValue : function(node, cmp, p, v) {
+			if (Ext.isEmpty(cmp.content)) {
+				cmp.setValue(v);
+			}
+		},
+		/**
+		 * disabled
+		 */
+		executeUpdateFieldsFieldDisabled : function(node, cmp, p, v) {
+			
+		},
+		/**
+		 * height
+		 */
+		executeUpdateFieldsFieldHeight : function(node, cmp, p, v) {
+			
+		},
+		/**
+		 * width
+		 */
+		executeUpdateFieldsFieldWidth : function(node, cmp, p, v) {
+			
+		},
+		/**
+		 * style
+		 */
+		executeUpdateFieldsFieldStyle : function(node, cmp, p, v) {
+			
+		}
 		
 	}
 })();
