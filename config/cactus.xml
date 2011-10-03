@@ -58,7 +58,11 @@
 				<files>		
 					<file>js/afStudio.js</file>		
 					<file>js/afStudio.xhr.js</file>
-					<file>js/afStudio.WSUrlsClass.js</file>		
+					<file>js/afStudio.WSUrlsClass.js</file>
+					
+					<!-- logger -->
+					<file>js/components/log/Console.js</file>
+					<file>js/components/log/Logger.js</file>		
 					
 					<!-- custom ext ux -->
 					

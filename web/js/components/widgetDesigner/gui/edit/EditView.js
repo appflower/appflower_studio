@@ -117,7 +117,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @interface
 	 */
 	onModelNodeAppend : function(ctr, parent, node, index) {
-		console.log('@view [EditView] modelNodeAppend');
+		afStudio.Logger.info('@view [EditView] modelNodeAppend');
 		var executor = this.getExecutor(this.EXEC_ADD, node);
 		if (executor) {
 			executor(node, index);
@@ -132,7 +132,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @interface
 	 */
 	onModelNodeInsert : function(ctr, parent, node, refNode) {
-		console.log('@view [EditView] modelNodeInsert');
+		afStudio.Logger.info('@view [EditView] modelNodeInsert');
 		var refCmp = this.getCmpByModel(refNode),
 			executor = this.getExecutor(this.EXEC_INSERT, node);
 		if (executor) {
@@ -148,7 +148,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @interface
 	 */
 	onModelNodeRemove : function(ctr, parent, node) {
-    	console.log('@view [EditView] modelNodeRemove');
+    	afStudio.Logger.info('@view [EditView] modelNodeRemove');
 		var cmp = this.getCmpByModel(node),
 			executor = this.getExecutor(this.EXEC_REMOVE, node);
 		if (executor) {
@@ -164,7 +164,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @interface
 	 */
 	onModelPropertyChanged : function(node, p, v) {
-		console.log('@view [EditView] modelPropertyChanged');
+		afStudio.Logger.info('@view [EditView] modelPropertyChanged');
 		var cmp = this.getCmpByModel(node, p),
 			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
 		if (executor) {
@@ -605,9 +605,9 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @private
 	 */
 	dumpMapper : function() {
-		console.log('modelMapper', this.modelMapper);
+		afStudio.Logger.info('modelMapper', this.modelMapper);
 		Ext.iterate(this.modelMapper, function(k, v, o){
-			console.log(k, v);
+			afStudio.Logger.info(k, v);
 		});
 	}
 	

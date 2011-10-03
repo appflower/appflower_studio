@@ -170,7 +170,7 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * @interface
 	 */
 	onModelNodeRemove : function(ctr, parent, node) {
-    	console.log('@view [PropertyGrid] "modelNodeRemove"');
+    	afStudio.Logger.info('@view [PropertyGrid] "modelNodeRemove"');
     	if (this.modelNode == node) {
     		this.setSource({});
     	}
@@ -184,7 +184,7 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * @interface
 	 */
 	onModelNodeSelect : function(mn, trigger) {
-		console.log('@view [PropertyGrid] "modelNodeSelect"');
+		afStudio.Logger.info('@view [PropertyGrid] "modelNodeSelect"');
 		this.modelNode = mn;
 		this.setSource(mn.getPropertiesSource());
 	},
@@ -197,7 +197,7 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * @interface
 	 */
 	onModelPropertyChanged : function(node, p, v) {
-		console.log('@view [PropertyGrid] "modelPropertyChanged"');
+		afStudio.Logger.info('@view [PropertyGrid] "modelPropertyChanged"');
 		if (this.modelNode == node) {
 			this.setProperty(p, v);
 			this.onViewRefresh(this.view);

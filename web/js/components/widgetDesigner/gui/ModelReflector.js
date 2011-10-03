@@ -64,7 +64,7 @@ afStudio.wd.ModelReflector = (function() {
 			
 			var exec = String.format('execute{0}{1}{2}', type.ucfirst(), line, property ? property.ucfirst() : '');
 				
-			console.log('@executor', exec);
+			afStudio.Logger.info('@executor', exec);
 				
 			return Ext.isFunction(this[exec]) ? this[exec].createDelegate(this) : null;
 		}

@@ -204,7 +204,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	onModelNodeSelect : function(mn, trigger) {
 		if (trigger != this) {
-			console.log('@view [InspectorTree] onModelNodeSelect');
+			afStudio.Logger.info('@view [InspectorTree] onModelNodeSelect');
 			var viewNode = this.getCmpByModel(mn);
 			this.selectPath(viewNode.getPath());
 		}
@@ -218,7 +218,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelNodeAppend : function(ctr, parent, node, index) {
-		console.log('@view [InspectorTree] "modelNodeAppend"');
+		afStudio.Logger.info('@view [InspectorTree] "modelNodeAppend"');
 		var viewNode = this.getCmpByModel(parent);
 		viewNode.reload(function() {
 			var viewNode = this.getCmpByModel(node);
@@ -234,7 +234,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelNodeInsert : function(ctr, parent, node, refNode) {
-		console.log('@view [InspectorTree] "modelNodeInsert"');
+		afStudio.Logger.info('@view [InspectorTree] "modelNodeInsert"');
 		var viewNode = this.getCmpByModel(parent);
 		viewNode.reload(function() {
 			var viewNode = this.getCmpByModel(node);
@@ -250,7 +250,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelNodeRemove : function(ctr, parent, node) {
-    	console.log('@view [InspectorTree] "modelNodeRemove"');
+    	afStudio.Logger.info('@view [InspectorTree] "modelNodeRemove"');
     	var viewNode = this.getCmpByModel(node);
     	if (viewNode) {
     		viewNode.remove(true);
@@ -265,7 +265,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelPropertyChanged : function(node, p, v) {
-		console.log('@view [InspectorTree] "modelPropertyChanged"', node, p, v);
+		afStudio.Logger.info('@view [InspectorTree] "modelPropertyChanged"', node, p, v);
 		var viewNode = this.getCmpByModel(node);
 		if (viewNode.labelProperty == p) {
 			viewNode.setText(Ext.value(v, '(none)'));
@@ -279,7 +279,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 * @interface
 	 */
 	onModelNodeReconfigure : function(node) {
-		console.log('@view [InspectorTree] "reconfigure"', node);
+		afStudio.Logger.info('@view [InspectorTree] "reconfigure"', node);
 		var viewNode = this.getCmpByModel(node.parentNode ? node.parentNode : node);
 		viewNode.reload(function() {
 			var viewNode = this.getCmpByModel(node);
@@ -340,7 +340,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	onNodeSelectionChange : function(sm, node) {
 		if (node) {
-			console.log('@view [InspectorTree] "selectModelNode"', node.modelNode);
+			afStudio.Logger.info('@view [InspectorTree] "selectModelNode"', node.modelNode);
 			this.controller.selectModelNode(node.modelNode, this);
 		}
 	}

@@ -67,6 +67,10 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.xhr.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
 
+<!-- logger -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/log/Console.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/log/Logger.js"></script>
+
 <!-- custom ext ux -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
@@ -105,8 +109,6 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-xml.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/ace/Ext.ux.AceComponent.js"></script>
-
- 
 <!-- end of custom ext ux -->
 
 <!-- Error -->

@@ -247,7 +247,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @interface
 	 */
 	onModelNodeAppend : function(ctr, parent, node, index) {
-		console.log('@view [ListView] modelNodeAppend');
+		afStudio.Logger.info('@view [ListView] modelNodeAppend');
 		var executor = this.getExecutor(this.EXEC_ADD, node);
 		if (executor) {
 			executor(node, index);
@@ -262,7 +262,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @interface
 	 */
 	onModelNodeInsert : function(ctr, parent, node, refNode) {
-		console.log('@view [ListView] modelNodeInsert');
+		afStudio.Logger.info('@view [ListView] modelNodeInsert');
 		var refCmp = this.getCmpByModel(refNode),
 			executor = this.getExecutor(this.EXEC_INSERT, node);
 		if (executor) {
@@ -278,7 +278,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @interface
 	 */
 	onModelNodeRemove : function(ctr, parent, node) {
-    	console.log('@view [ListView] modelNodeRemove');
+    	afStudio.Logger.info('@view [ListView] modelNodeRemove');
 		var vCmp = this.getCmpByModel(node),
 			executor = this.getExecutor(this.EXEC_REMOVE, node);
 		if (executor) {
@@ -294,7 +294,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @interface
 	 */
 	onModelPropertyChanged : function(node, p, v) {
-		console.log('@view [ListView] modelPropertyChanged');
+		afStudio.Logger.info('@view [ListView] modelPropertyChanged');
 		var vCmp = this.getCmpByModel(node, p),
 			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
 		if (executor) {
