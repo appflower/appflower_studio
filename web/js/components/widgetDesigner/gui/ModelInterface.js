@@ -77,7 +77,7 @@ afStudio.wd.ModelInterface = (function() {
 		 * Returns model node property.
 		 * @param {String|Node} node
 		 * @param {String} property The property's name
-		 * @return {Mixed} property
+		 * @return {Mixed} property or undefined if property was not found
 		 */
 		getModelNodeProperty : function(node, property) {
 			var ps = this.getModelNodeProperties(node);

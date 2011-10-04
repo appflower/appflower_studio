@@ -228,6 +228,25 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		
 		//fields
 		//----------------------------------------------------
+		/**
+		 * Sets field's <u>content</u> property.
+		 * @private
+		 */
+		setFieldContent : function(node, fld, v) {
+			var fv = this.getModelNodeProperty(node, 'value');
+			fld.content = v;
+			fld.setValue(Ext.isEmpty(v) && !Ext.isEmpty(fv) ? fv : v);  
+		},
+		/**
+		 * Sets field's <u>value</u> property.
+		 * @private
+		 */
+		setFieldValue : function(fld, v) {
+			if (Ext.isEmpty(fld.content)) {
+				fld.setValue(v);
+			}
+		},
+		
 		executeAddFieldsField : function(node, idx) {
 			
 			if (this.isGrouped()) {
@@ -253,23 +272,19 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * label
 		 */
 		executeUpdateFieldsFieldLabel : function(node, cmp, p, v) {
-			var lb = cmp.itemCt.child('label');
-			lb.update(v);			
+			cmp.label.update(!Ext.isEmpty(v) ? (v + ':') : v);
 		},
 		/**
 		 * content
 		 */
 		executeUpdateFieldsFieldContent : function(node, cmp, p, v) {
-			cmp.setValue(v);
-			cmp.content = v;
+			this.setFieldContent(node, cmp, v);
 		},
 		/**
 		 * value
 		 */
 		executeUpdateFieldsFieldValue : function(node, cmp, p, v) {
-			if (Ext.isEmpty(cmp.content)) {
-				cmp.setValue(v);
-			}
+			this.setFieldValue(cmp, v);
 		},
 		/**
 		 * disabled
