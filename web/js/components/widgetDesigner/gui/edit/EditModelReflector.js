@@ -265,8 +265,14 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		/**
 		 * type
 		 */
-		executeUpdateFieldsFieldType : function() {
-			
+		executeUpdateFieldsFieldType : function(node, cmp, p, v) {
+			if (this.isGrouped()) {
+				
+			} else {
+				var fldIdx = this.items.indexOf(cmp);
+				this.remove(cmp, true);
+				this.executeAddFieldsField(node, fldIdx);
+			}
 		},
 		/**
 		 * label
