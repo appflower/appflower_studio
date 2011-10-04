@@ -226,7 +226,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		
-		//fields
+		//fields (i:fields->i:field)
 		//----------------------------------------------------
 		/**
 		 * Sets field's <u>content</u> property.
@@ -247,8 +247,10 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			}
 		},
 		
+		/**
+		 * Adds a field
+		 */
 		executeAddFieldsField : function(node, idx) {
-			
 			if (this.isGrouped()) {
 				
 				
@@ -317,6 +319,28 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			var stl = cmp.el.getStyles('width', 'height');
 			cmp.el.dom.removeAttribute('style', '');
 			cmp.el.applyStyles(stl).applyStyles(v);
+		},
+		/**
+		 * state
+		 */
+		executeUpdateFieldsFieldState : function(node, cmp, p, v) {
+			
+		},
+		/**
+		 * checked
+		 */
+		executeUpdateFieldsFieldChecked : function(node, cmp, p, v) {
+			if (['checkbox', 'radio'].indexOf(cmp.getXType()) != -1) {
+				cmp.setValue(v);
+			}
+		},
+		/**
+		 * rich
+		 */
+		executeUpdateFieldsFieldRich : function(node, cmp, p, v) {
+			if (cmp.getXType() == 'textarea') {
+				this.executeUpdateFieldsFieldType(node, cmp, p, v);
+			}
 		}
 		
 	}
