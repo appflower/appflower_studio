@@ -304,7 +304,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 					this.controller.selectModelNode(node, this);
 				}.createDelegate(this);
 				
-				fld.label.on('click', fn);
+				fld.label ? fld.label.on('click', fn) : null;
 				fld.on('focus', fn);
 				
 			}, this, {single: true});
@@ -405,6 +405,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}
 		
 		button = new Ext.Button(cfg);
+		
+		button.on('click', function(btn) {
+			var node = this.getModelByCmp(btn);
+			this.controller.selectModelNode(node, this);
+		}, this);
 
 		this.mapCmpToModel(btn[mpr], button);
 		
@@ -480,11 +485,13 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		Ext.copyTo(cfg, grouping, 'title, collapsed');
 		
 		Ext.apply(cfg, {
+			itemId: 'default-set',
 			collapsible: true,
 			items: []
 		});
 		
-		var hidden = true, flds = [];
+		var hidden = true, 
+			flds = [];
 		Ext.each(fields, function(f) {
 			if (f.type != 'hidden') {
 				hidden = false;

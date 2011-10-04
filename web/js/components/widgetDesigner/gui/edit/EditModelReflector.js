@@ -251,14 +251,22 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * Adds a field
 		 */
 		executeAddFieldsField : function(node, idx) {
+			var pField = this.getModelNodeProperties(node),				
+				oField = this.createField(pField);
+			
 			if (this.isGrouped()) {
+				var defSet = this.getComponent('default-set');
 				
+				if (Ext.isEmpty(defSet)) {
+					
+				} else {
+					var fldIdx = this.getFieldIndex(node, idx, 'default-set');
+					defSet.insert(fldIdx, oField);
+					defSet.doLayout();
+				}
 				
 			} else {
-				var pField = this.getModelNodeProperties(node),				
-					oField = this.createField(pField),
-					fldIdx = this.getFieldIndex(node, idx);
-					
+				var fldIdx = this.getFieldIndex(node, idx);
 				this.insert(fldIdx, oField);
 				this.doLayout();
 			}
