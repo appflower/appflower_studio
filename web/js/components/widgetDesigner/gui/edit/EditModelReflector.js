@@ -290,25 +290,27 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * disabled
 		 */
 		executeUpdateFieldsFieldDisabled : function(node, cmp, p, v) {
-			
+			v == true ? cmp.disable() : cmp.enable();
 		},
 		/**
 		 * height
 		 */
 		executeUpdateFieldsFieldHeight : function(node, cmp, p, v) {
-			
+			cmp.setHeight(v);
 		},
 		/**
 		 * width
 		 */
 		executeUpdateFieldsFieldWidth : function(node, cmp, p, v) {
-			
+			cmp.setWidth(v);
 		},
 		/**
 		 * style
 		 */
 		executeUpdateFieldsFieldStyle : function(node, cmp, p, v) {
-			
+			var stl = cmp.el.getStyles('width', 'height');
+			cmp.el.dom.removeAttribute('style', '');
+			cmp.el.applyStyles(stl).applyStyles(v);
 		}
 		
 	}
