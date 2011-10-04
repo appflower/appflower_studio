@@ -324,7 +324,19 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * state
 		 */
 		executeUpdateFieldsFieldState : function(node, cmp, p, v) {
-			
+			switch (v) {
+				case 'editable':
+					cmp.enable();
+					cmp.setReadOnly(false);
+					break;
+				case 'readonly':
+					cmp.enable();
+					cmp.setReadOnly(true);
+					break;
+				case 'disabled':
+					cmp.disable();
+					break;
+			}
 		},
 		/**
 		 * checked
