@@ -206,7 +206,10 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 		if (trigger != this) {
 			afStudio.Logger.info('@view [InspectorTree] onModelNodeSelect');
 			var viewNode = this.getCmpByModel(mn);
-			this.selectPath(viewNode.getPath());
+			
+			if (!viewNode.isSelected()) {
+				this.selectPath(viewNode.getPath());
+			}
 		}
 	},
 	//eo onModelNodeSelect

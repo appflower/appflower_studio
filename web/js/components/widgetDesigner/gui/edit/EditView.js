@@ -296,6 +296,20 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		f = new fn(cfg);
 		
+		if (!f.rendered) {
+			f.on('afterrender', function(fld) {
+				
+				var fn = function() {
+					var node = this.getModelByCmp(fld);
+					this.controller.selectModelNode(node, this);
+				}.createDelegate(this);
+				
+				fld.label.on('click', fn);
+				fld.on('focus', fn);
+				
+			}, this, {single: true});
+		}
+		
 		this.mapCmpToModel(fldId, f);
 		
 		return f;
