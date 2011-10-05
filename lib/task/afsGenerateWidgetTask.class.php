@@ -40,7 +40,10 @@ EOF;
     protected function execute($arguments = array(), $options = array())
     {
         // XmlParser uses sfContext that not defined by default - so we create instance here
-        sfContext::createInstance(ProjectConfiguration::getApplicationConfiguration('frontend', 'dev', true));
+        sfContext::createInstance(ProjectConfiguration::getApplicationConfiguration(
+            pathinfo(current(sfFinder::type('dir')->name('*')->maxdepth(0)->ignore_version_control()->in(sfConfig::get('sf_apps_dir'))), PATHINFO_BASENAME), 
+            'dev', true
+        ));
         
         // pushed params 
         $module = $options['module'];
