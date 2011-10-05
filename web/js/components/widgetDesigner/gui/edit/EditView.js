@@ -173,6 +173,26 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
     
 	/**
+	 * Returns default field-set.
+	 * @return {Object} default set or null if it's not exists
+	 */
+	getDefaultSet : function() {
+		var defSet = this.getComponent('default-set');
+		
+		return !Ext.isEmpty(defSet) ? defSet : null;
+	},
+	
+	/**
+	 * Returns the tabbed field-sets container {@link Ext.TabPanel}. 
+	 * @return {Object} tabpanel or null if it's not exists
+	 */
+	getTabbedSet : function() {
+		var tab = this.findByType('tabpanel');
+		
+		return tab.length ? tab[0] : null;		
+	},
+	
+	/**
 	 * Creates fields, field-sets and tabpanel. 
 	 * Returns an array of components being used as edit view items elements.
 	 * @protected
@@ -189,9 +209,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				cmp.push(this.createFieldSet(s));
 			}, this);
 			
-			var flds = this.getFieldsFromDefaultSet(),
+			var flds = this.getFieldsFromDefaultSet();
+			if (flds.length) {
 				defSet = this.createDefaultFieldSet(flds);
-			cmp.push(defSet);
+				cmp.push(defSet);
+			}
 			
 			var tabbedSets = this.getTabbedFieldSets();
 			if (!Ext.isEmpty(tabbedSets)) {

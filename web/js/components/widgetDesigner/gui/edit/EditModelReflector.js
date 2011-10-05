@@ -248,28 +248,50 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		/**
-		 * Adds a field
+		 * Adds field (i:fields->i:field).
 		 */
 		executeAddFieldsField : function(node, idx) {
-			var pField = this.getModelNodeProperties(node),				
-				oField = this.createField(pField);
+			var pField = this.getModelNodeProperties(node);				
 			
 			if (this.isGrouped()) {
-				var defSet = this.getComponent('default-set');
+				var defSet = this.getDefaultSet();
 				
-				if (Ext.isEmpty(defSet)) {
-					
-				} else {
-					var fldIdx = this.getFieldIndex(node, idx, 'default-set');
-					defSet.insert(fldIdx, oField);
+				if (defSet) {
+					var oField = this.createField(pField);
+					defSet.add(oField);
 					defSet.doLayout();
+				} else {
+					defSet = this.createDefaultFieldSet([pField]);
+					var tabPanel = this.getTabbedSet();
+					if (tabPanel) {
+						this.insert(this.items.indexOf(tabPanel), defSet);
+					} else {
+						this.add(defSet);
+					}
+					this.doLayout();
 				}
-				
 			} else {
-				var fldIdx = this.getFieldIndex(node, idx);
+				var oField = this.createField(pField),
+					fldIdx = this.getFieldIndex(node, idx);
 				this.insert(fldIdx, oField);
 				this.doLayout();
 			}
+		},
+
+		/**
+		 * Removes field (i:fields->i:field).
+		 */
+		executeRemoveFieldsField : function(node, cmp) {
+			var defSet = this.getDefaultSet();
+			
+			if (defSet && defSet.items.indexOf(cmp) != -1 
+				&& defSet.items.getCount() == 1) {
+				
+				defSet.destroy(true);
+			} else {
+				cmp.destroy(true);
+			}
+			this.unmapCmpFromModel(node);
 		},
 		
 		/**

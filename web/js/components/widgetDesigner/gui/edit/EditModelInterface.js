@@ -116,6 +116,21 @@ afStudio.wd.edit.EditModelInterface = (function() {
 			});
 			
 			return defFields;
+		},
+		
+		/**
+		 * Returns field index inside the default field-set or null if field doesn't exits in default field-set.
+		 * @return {Number} index or null 
+		 */
+		getDefaultSetFieldIndex : function(fld) {
+			var nodeIdMpr = this.NODE_ID_MAPPER,
+				fs = this.getFieldsFromDefaultSet();
+			
+			var pos = Ext.each(fs, function(f){
+				return f[nodeIdMpr] == fld[nodeIdMpr] ? false : true;
+			});
+			
+			return Ext.isDefined(pos) ? pos : null;
 		}
 		
 	};
