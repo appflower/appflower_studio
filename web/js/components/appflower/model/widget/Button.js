@@ -22,5 +22,12 @@ afStudio.model.widget.Button = Ext.extend(afStudio.model.Node, {
 	
 	nodeTypes : [
 		{name: afStudio.ModelNode.HANDLER, hasMany: true}
-	]
+	],
+	
+	defaultDefinition : {
+		attributes: {
+			label: 'Button'
+		}
+	}
+	
 });

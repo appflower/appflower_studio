@@ -402,33 +402,33 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
              * @bubbled
              */
             modelNodeAppend: function(ctr, parent, node, index) {
-				console.log('@controller modelNodeAppend', parent, node, index);
+				afStudio.Logger.info('@controller modelNodeAppend', parent, node, index);
             	this.viewDefinition.addEntity(parent, node);
-            	console.log('definition', this.viewDefinition.getData());
+            	afStudio.Logger.info('definition', this.viewDefinition.getData());
             },
             /**
              * @bubbled
              */
             modelNodeInsert: function(ctr, parent, node, refNode, refIndex) {
-				console.log('@controller modelNodeInsert', parent, node, refNode);
+				afStudio.Logger.info('@controller modelNodeInsert', parent, node, refNode);
             	this.viewDefinition.insertBeforeEntity(parent, node, refNode, refIndex);
-            	console.log('definition', this.viewDefinition.getData());
+            	afStudio.Logger.info('definition', this.viewDefinition.getData());
             },
     		/**
     		 * @bubbled
     		 */
             modelNodeRemove: function(ctr, parent, node, nodeIdx) {
-            	console.log('@controller modelNodeRemove', parent, node);            	
+            	afStudio.Logger.info('@controller modelNodeRemove', parent, node);
             	this.viewDefinition.removeEntity(node, nodeIdx);
-            	console.log('definition', this.viewDefinition.getData());
+            	afStudio.Logger.info('definition', this.viewDefinition.getData());
             },
     		/**
     		 * @bubbled
     		 */
             beforeModelPropertyChanged: function(node, p, v) {
-            	console.log('@controller beforeModelPropertyChanged', node, p, v);
+            	afStudio.Logger.info('@controller beforeModelPropertyChanged', node, p, v);
             	this.viewDefinition.setEntityAttribute(node, p, v);
-            	console.log('definition', this.viewDefinition.getData());
+            	afStudio.Logger.info('definition', this.viewDefinition.getData());
             }
     	});
     },
@@ -536,7 +536,7 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
      * @param {Ext.Component} (Optional) view The component which triggers selection
      */
     selectModelNode : function(node, view) {
-    	console.log('@controller selectModelNode', node);
+    	afStudio.Logger.info('@controller selectModelNode', node);
     	
     	node = Ext.isString(node) ? this.getNodeById(node) : node;
     	if (!node) {

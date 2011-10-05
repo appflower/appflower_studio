@@ -1,10 +1,12 @@
 Ext.ns('afStudio.wd.list');
 
 /**
- * GUI List View.
+ * ListView - represents the list widget type.
  * 
- * @dependency {@link afStudio.data.Types} model types
- * @dependency {@link afStudio.ModelNode} model nodes
+ * @dependency {afStudio.data.Types} model types
+ * @dependency {afStudio.wd.ModelMapper} ModelMapper mixin
+ * @dependency {afStudio.wd.list.ListModelInterface} ListModelInterface mixin
+ * @dependency {afStudio.wd.list.ModelReflector} ModelReflector mixin
  * 
  * @class afStudio.wd.list.ListView
  * @extends Ext.grid.GridPanel
@@ -15,14 +17,6 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * The associated with this view controller.
 	 * @cfg {afStudio.controller.BaseController} (Required) controller
 	 */
-	
-	EXEC_ADD : 'add',
-	
-	EXEC_INSERT : 'insert',
-	
-	EXEC_REMOVE : 'remove',
-	
-	EXEC_UPDATE : 'update',
 	
 	/**
 	 * Rowaction width (defaults to 18).
@@ -43,8 +37,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Object} The configuration object 
 	 */
 	_beforeInitComponent : function() {
-		var _me = this,
-			nodes = afStudio.ModelNode;
+		var _me = this;
 		
 		/**
 		 * Model->Component associations holder.
@@ -137,7 +130,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @param {Node} nTitle
 	 */
 	setHeaderTitle : function(nTitle) {
-		var v = this.getValueKey(),
+		var v = this.NODE_VALUE_MAPPER,
 			vTitle = this.getModelNodeValue(nTitle);
 		this.setTitle(vTitle[v] ?  vTitle[v] : '&#160;');
 		this.mapCmpToModel(nTitle.id, this);
@@ -158,9 +151,9 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @protected
 	 */
 	configureView : function() {
-		var nodes = afStudio.ModelNode,
-			mpr = this.getModelNodeMapper(),
-			v = this.getValueKey(),
+		var nodes = this.NODES,
+			nodeIdMpr = this.NODE_ID_MAPPER,
+				   v  = this.NODE_VALUE_MAPPER,
 		    a = this.getActionToolBar(),
 		    ma = a.getComponent('more').menu;
 		
@@ -182,13 +175,13 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		this.mapCmpToModel(nFields.id + '#selectable', this.createMapper(
 				function(){ return [selAll, deselAll]; }
 		));
-		selAll[mpr] = deselAll[mpr] = nFields.id + '#selectable';
+		selAll[nodeIdMpr] = deselAll[nodeIdMpr] = nFields.id + '#selectable';
 		
 		this.mapCmpToModel(nFields.id + '#exportable', exp);
-		exp[mpr] = nFields.id + '#exportable';
+		exp[nodeIdMpr] = nFields.id + '#exportable';
 		
 		this.mapCmpToModel(nFields.id + '#expandButton', expView);
-		expView[mpr] = nFields.id + '#expandButton';
+		expView[nodeIdMpr] = nFields.id + '#expandButton';
 		
 		var pFields = this.getModelNodeProperties(nodes.FIELDS);
 		pFields.selectable ? (selAll.enable(), deselAll.enable()) : (selAll.disable(), deselAll.disable());
@@ -248,69 +241,13 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	//eo initEvents
 	
 	/**
-	 * Returns executor method. Executors {@link afStudio.wd.list.ModelReflector}
-	 * @protected
-	 * @param {String} type The executor type
-	 * @param {Node} node The model node
-	 * @param {String} (Optional) property The node's property name
-	 * @return {Function} executor or null if executor is not exist
-	 */
-	getExecutor : function(type, node, property) {
-		//TODO centralize this code snippet
-		var line = node.tag.replace(/^i:(\w+)/i, '$1').ucfirst();
-		
-		if (Ext.isObject(node) && ['Action', 'Description'].indexOf(line) != -1) {
-			var pt = node.parentNode.tag.replace(/^i:(\w+)/i, '$1').ucfirst();
-			line = pt + line;
-		}
-		var exec = String.format('execute{0}{1}{2}', type.ucfirst(), line, property ? property.ucfirst() : '');
-			
-		console.log('@executor [ListView]', exec);
-			
-		return Ext.isFunction(this[exec]) ? this[exec].createDelegate(this) : null;
-	},
-	
-	/**
-	 * Returns grid's component by a model.
-	 * @public
-	 * @interface
-	 * @param {String|Node} node The model node or model node's id
-	 * @param {String} property The model node's property
-	 * @return {Ext.Component} node
-	 */
-	getCmpByModel : function(node, property) {
-		var nId = Ext.isString(node) ? node : node.id;
-		var mapping = this.modelMapper[nId] || (property ? this.modelMapper[nId + '#' + property] : false);
-		if (mapping) {
-			return  Ext.isFunction(mapping) ? mapping() : mapping;
-		}
-		
-    	return null;
-	},
-	//eo getCmpByModel	
-	
-	/**
-	 * Returns model node by component associated with it. If node was not found returns null/undefined.
-	 * @public
-	 * @interface
-	 * @param {Ext.Component} cmp The grid's component associated with a model node
-	 * @return {Node} model node
-	 */
-	getModelByCmp : function(cmp) {
-		var mpr = this.getModelNodeMapper(),
-			nodeId = cmp[mpr];
-			
-		return this.getModelNode(nodeId);
-	},
-	
-	/**
 	 * Relayed <u>modelNodeAppend</u> event listener.
 	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
 	 * @protected
 	 * @interface
 	 */
 	onModelNodeAppend : function(ctr, parent, node, index) {
-		console.log('@view [ListView] modelNodeAppend');
+		afStudio.Logger.info('@view [ListView] modelNodeAppend');
 		var executor = this.getExecutor(this.EXEC_ADD, node);
 		if (executor) {
 			executor(node, index);
@@ -325,7 +262,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @interface
 	 */
 	onModelNodeInsert : function(ctr, parent, node, refNode) {
-		console.log('@view [ListView] modelNodeInsert');
+		afStudio.Logger.info('@view [ListView] modelNodeInsert');
 		var refCmp = this.getCmpByModel(refNode),
 			executor = this.getExecutor(this.EXEC_INSERT, node);
 		if (executor) {
@@ -341,7 +278,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @interface
 	 */
 	onModelNodeRemove : function(ctr, parent, node) {
-    	console.log('@view [ListView] modelNodeRemove');
+    	afStudio.Logger.info('@view [ListView] modelNodeRemove');
 		var vCmp = this.getCmpByModel(node),
 			executor = this.getExecutor(this.EXEC_REMOVE, node);
 		if (executor) {
@@ -357,7 +294,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @interface
 	 */
 	onModelPropertyChanged : function(node, p, v) {
-		console.log('@view [ListView] modelPropertyChanged');
+		afStudio.Logger.info('@view [ListView] modelPropertyChanged');
 		var vCmp = this.getCmpByModel(node, p),
 			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
 		if (executor) {
@@ -457,37 +394,6 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	//eo updateMoreActionVisibilityState
 	
 	/**
-	 * Maps this grid's component to a model node.
-	 * @protected
-	 * @param {String} node The model node ID
-	 * @param {Component/Function} cmp The component being mapped to the model node or a function returning a mapped component
-	 */
-	mapCmpToModel : function(node, cmp) {
-		this.modelMapper[node] = cmp;
-	},
-	
-	/**
-	 * Unmaps the grid's component from the model node.
-	 * @protected
-	 * @param {String/Node} node The model node's ID or model node
-	 */
-	unmapCmpFromModel : function(node) {
-		node = Ext.isString(node) ? node : node.id;
-		delete this.modelMapper[node];
-	},
-	
-	/**
-	 * Creates the mapper function. All passed in parameters except the first one(mapper function) are added to the mapper.
-	 * @protected
-	 * @param {Function} fn The function mapper
-	 * @return {Funtion} mapper
-	 */
-	createMapper : function(fn) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		return fn.createDelegate(this, args);
-	},
-	
-	/**
 	 * Column mapper responsible for returning a column from column 
 	 * model {@link #colModel} by model node's ID associated with it.
 	 * @private
@@ -499,9 +405,11 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * </ul> 
 	 */
 	columnMapper : function(n) {
-		var mpr = this.getModelNodeMapper(),
+		var nodeIdMpr = this.NODE_ID_MAPPER,
 			cm = this.getColumnModel(),
-			idx = Ext.each(cm.config, function(c){return !(c[mpr] == n);});
+			idx = Ext.each(cm.config, function(c){
+					return !(c[nodeIdMpr] == n);
+				  });
 			
 		return [cm.config[idx], idx];
 	},
@@ -518,10 +426,12 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * </ul> 
 	 */
 	rowActionMapper : function(n) {
-		var mpr = this.getModelNodeMapper(),
+		var nodeIdMpr = this.NODE_ID_MAPPER,
 			cm = this.getColumnModel(),
 			aClm = cm.getColumnById('action-column'),
-			idx = Ext.each(aClm.items, function(a){return !(a[mpr] == n);});
+			idx = Ext.each(aClm.items, function(a){
+					return !(a[nodeIdMpr] == n);
+				  });
 			
 		return [aClm.items[idx], idx] ;
 	},
@@ -538,7 +448,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * </ul> 
 	 */
 	actionMapper : function(n) {
-		var mpr = this.getModelNodeMapper(),
+		var nodeIdMpr = this.NODE_ID_MAPPER,
 			ab = this.getActionToolBar(),
 			idx;
 			
@@ -546,7 +456,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 			if (i > l - 3) {
 				return false;
 			}
-			if (a[mpr] == n) {
+			if (a[nodeIdMpr] == n) {
 				idx = i;
 				return false;
 			}
@@ -567,13 +477,13 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * </ul> 
 	 */
 	moreActionMapper : function(n) {
-    	var mpr = this.getModelNodeMapper(),
+    	var nodeIdMpr = this.NODE_ID_MAPPER,
     		ab = this.getActionToolBar(),
     		more = ab.getComponent('more').menu,
     		idx;
     		
 		more.items.each(function(a, i) {
-			if (i > 2 && a[mpr] == n) {
+			if (i > 2 && a[nodeIdMpr] == n) {
 				idx = i;
 				return false;
 			}
@@ -588,7 +498,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Ext.grid.RowSelectionModel} selection model
 	 */
 	resolveSelectionModel : function() {
-		return this.isModelStatus(afStudio.ModelNode.FIELDS, {'select': true}) 
+		return this.isModelStatus(this.NODES.FIELDS, {'select': true}) 
 					? new Ext.grid.CheckboxSelectionModel() 
 					: new Ext.grid.RowSelectionModel();
 	},
@@ -600,7 +510,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	createColumns : function() {
 		var _me = this,
-			nodes = afStudio.ModelNode,
+			nodes = this.NODES,
 			columns = [];
 		
 		var sm = this.resolveSelectionModel(); 	
@@ -636,20 +546,18 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Object} column {@link Ext.grid.Column} init object
 	 */
 	createColumn : function(clm) {
-		var mpr = this.getModelNodeMapper(),
-			clmId = clm[mpr];
+		var clmId = clm[this.NODE_ID_MAPPER];
 		
-		this.mapCmpToModel(clm[mpr], this.createMapper(this.columnMapper, clmId));
+		this.mapCmpToModel(clmId, this.createMapper(this.columnMapper, clmId));
 		
 		var column = {
 			id: clmId,
-			header:   clm.label,
-			width:    clm.width,
-			hidden:   clm.hidden,
-			hideable: clm.hideable
+			header: clm.label
 		};
+		Ext.copyTo(column, clm, 'width, hidden, hideable');
+		
 		//add model node mapping
-		column[mpr] = clmId;
+		column[this.NODE_ID_MAPPER] = clmId;
 		
 		return column;
 	},
@@ -714,9 +622,9 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Object} row-action init object 
 	 */
 	createRowAction : function(action) {
-		var mpr = this.getModelNodeMapper();
+		var actNodeId = action[this.NODE_ID_MAPPER];
 
-		this.mapCmpToModel(action[mpr], this.createMapper(this.rowActionMapper, action[mpr]));
+		this.mapCmpToModel(actNodeId, this.createMapper(this.rowActionMapper, actNodeId));
 		
 		var rowAction = {
 			name: action.name,
@@ -727,7 +635,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 		};
 		
 		//add model node mapping
-		rowAction[mpr] = action[mpr];
+		rowAction[this.NODE_ID_MAPPER] = actNodeId;
 		
 		return rowAction;
 	},
@@ -808,7 +716,6 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Object}
 	 */
 	createActionObj : function(a) {
-		var mpr = this.getModelNodeMapper();
 		var action = {
 			name: a.name,
 			text: a.text ? a.text : a.name,
@@ -818,7 +725,7 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 			style: a.style
 		};			
 		//add model node mapping
-		action[mpr] = a[mpr];
+		action[this.NODE_ID_MAPPER] = a[this.NODE_ID_MAPPER];
 		
 		return action;
 	},
@@ -830,8 +737,8 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Object} action init object 
 	 */
 	createAction : function(act) {
-		var mpr = this.getModelNodeMapper();
-		this.mapCmpToModel(act[mpr], this.createMapper(this.actionMapper, act[mpr]));
+		var actNodeId = act[this.NODE_ID_MAPPER];
+		this.mapCmpToModel(actNodeId, this.createMapper(this.actionMapper, actNodeId));
 		
 		return this.createActionObj(act);		
 	},
@@ -844,8 +751,8 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {Object} action init object 
 	 */
 	createMoreAction : function(act) {
-		var mpr = this.getModelNodeMapper();
-		this.mapCmpToModel(act[mpr], this.createMapper(this.moreActionMapper, act[mpr]));
+		var actNodeId = act[this.NODE_ID_MAPPER];
+		this.mapCmpToModel(actNodeId, this.createMapper(this.moreActionMapper, actNodeId));
 		
 		return this.createActionObj(act);		
 	},
@@ -862,9 +769,9 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
         	}
 		};
 		
-		var v =	this.getValueKey(),
-			mpr = this.getModelNodeMapper(),
-			nodes = afStudio.ModelNode;
+		var v =	this.NODE_VALUE_MAPPER,
+			mpr = this.NODE_ID_MAPPER,
+			nodes = this.NODES;
 			
 		var dn = this.getModelNodeByPath(nodes.DESCRIPTION);
 		
@@ -893,14 +800,17 @@ afStudio.wd.list.ListView = Ext.extend(Ext.grid.GridPanel, {
         
 		this.modelMapper = null;        
     }	
-
 });
+
+//@mixin ModelMapper
+//important applyIf is used to have ability to use/override custom mapping/unmapping methods in the class
+Ext.applyIf(afStudio.wd.list.ListView.prototype, afStudio.wd.ModelMapper);
 
 //@mixin ListModelInterface
 Ext.apply(afStudio.wd.list.ListView.prototype, afStudio.wd.list.ListModelInterface);
 
-//@mixin ModelReflector
-Ext.apply(afStudio.wd.list.ListView.prototype, afStudio.wd.list.ModelReflector);
+//@mixin ListModelReflector
+Ext.apply(afStudio.wd.list.ListView.prototype, afStudio.wd.list.ListModelReflector);
 
 /**
  * @type 'wd.listView'

@@ -1,6 +1,16 @@
 Ext.ns('afStudio.wd.edit');
 
-
+/**
+ * EditView - represents the edit widget type. 
+ * 
+ * @dependency {afStudio.wd.ModelMapper} ModelMapper mixin
+ * @dependency {afStudio.wd.list.ListModelInterface} ListModelInterface mixin
+ * @dependency {afStudio.wd.list.ModelReflector} ModelReflector mixin
+ * 
+ * @class afStudio.wd.edit.EditView
+ * @extends Ext.FormPanel
+ * @author Nikolai Babinski
+ */
 afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 
 	/**
@@ -19,8 +29,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Object} The configuration object 
 	 */
 	_beforeInitComponent : function() {
-		var me = this,
-			nodes = afStudio.ModelNode;
+		var me = this;
 		
 		/**
 		 * Model->Component associations holder.
@@ -29,13 +38,13 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		 */
 		this.modelMapper = {};
 			
-		var labelWidth = this.getModelNodeProperty(nodes.FIELDS, 'labelWidth');
+		var labelWidth = this.getModelNodeProperty(this.NODES.FIELDS, 'labelWidth');
 
 		var items = this.createFormCmp();
 		
 		var buttons = this.createButtons();
 		
-		//this.dumpMapper();
+		this.dumpMapper();
 		
 		return {
 			autoScroll: true,
@@ -56,8 +65,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		);
 		
 		afStudio.wd.edit.EditView.superclass.initComponent.apply(this, arguments);
-		
-		//this._afterInitComponent();
 	},	
 	
 	/**
@@ -67,7 +74,31 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	initEvents : function() {
 		afStudio.wd.edit.EditView.superclass.initEvents.call(this);
+		
+		var me = this;
+		
+		this.on({
+			scope: me,
+			
+            /**
+             * @relayed controller
+             */
+            modelNodeAppend: me.onModelNodeAppend,
+            /**
+             * @relayed controller
+             */
+            modelNodeInsert: me.onModelNodeInsert,
+    		/**
+    		 * @relayed controller
+    		 */
+            modelNodeRemove: me.onModelNodeRemove,
+    		/**
+    		 * @relayed controller
+    		 */
+            modelPropertyChanged: me.onModelPropertyChanged
+		});		
 	},
+	//eo initEvents 
 	
 	/**
 	 * Template method
@@ -80,70 +111,67 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
     },
 	
 	/**
-	 * Returns grid's component by a model.
-	 * @public
+	 * Relayed <u>modelNodeAppend</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
+	 * @protected
 	 * @interface
-	 * @param {String|Node} node The model node or model node's id
-	 * @param {String} property The model node's property
-	 * @return {Ext.Component} node
 	 */
-	getCmpByModel : function(node, property) {
-		var nId = Ext.isString(node) ? node : node.id;
-		var mapping = this.modelMapper[nId] || (property ? this.modelMapper[nId + '#' + property] : false);
-		if (mapping) {
-			return  Ext.isFunction(mapping) ? mapping() : mapping;
+	onModelNodeAppend : function(ctr, parent, node, index) {
+		afStudio.Logger.info('@view [EditView] modelNodeAppend');
+		var executor = this.getExecutor(this.EXEC_ADD, node);
+		if (executor) {
+			executor(node, index);
 		}
-		
-    	return null;
 	},
-	//eo getCmpByModel	
+	//eo onModelNodeAppend
 	
 	/**
-	 * Returns model node by component associated with it. If node was not found returns null/undefined.
-	 * @public
+	 * Relayed <u>modelNodeInsert</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeInsert}.
+	 * @protected
 	 * @interface
-	 * @param {Ext.Component} cmp The grid's component associated with a model node
-	 * @return {Node} model node
 	 */
-	getModelByCmp : function(cmp) {
-		var mpr = this.getModelNodeMapper(),
-			nodeId = cmp[mpr];
-			
-		return this.getModelNode(nodeId);
+	onModelNodeInsert : function(ctr, parent, node, refNode) {
+		afStudio.Logger.info('@view [EditView] modelNodeInsert');
+		var refCmp = this.getCmpByModel(refNode),
+			executor = this.getExecutor(this.EXEC_INSERT, node);
+		if (executor) {
+			executor(parent, node, refNode, refCmp);
+		}
 	},
-	
+	//eo onModelNodeInsert
 	
 	/**
-	 * Maps this grid's component to a model node.
+	 * Relayed <u>modelNodeRemove</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelNodeRemove}.
 	 * @protected
-	 * @param {String} node The model node ID
-	 * @param {Component/Function} cmp The component being mapped to the model node or a function returning a mapped component
+	 * @interface
 	 */
-	mapCmpToModel : function(node, cmp) {
-		this.modelMapper[node] = cmp;
+	onModelNodeRemove : function(ctr, parent, node) {
+    	afStudio.Logger.info('@view [EditView] modelNodeRemove');
+		var cmp = this.getCmpByModel(node),
+			executor = this.getExecutor(this.EXEC_REMOVE, node);
+		if (executor) {
+			executor(node, cmp);
+		}
 	},
+	//eo onModelNodeRemove	
 	
 	/**
-	 * Unmaps the grid's component from the model node.
+	 * Relayed <u>modelPropertyChanged</u> event listener.
+	 * More details {@link afStudio.controller.BaseController#modelPropertyChanged}.
 	 * @protected
-	 * @param {String/Node} node The model node's ID or model node
+	 * @interface
 	 */
-	unmapCmpFromModel : function(node) {
-		node = Ext.isString(node) ? node : node.id;
-		delete this.modelMapper[node];
+	onModelPropertyChanged : function(node, p, v) {
+		afStudio.Logger.info('@view [EditView] modelPropertyChanged');
+		var cmp = this.getCmpByModel(node, p),
+			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
+		if (executor) {
+			executor(node, cmp, p, v);
+		}
 	},
-	
-	/**
-	 * Creates the mapper function. All passed in parameters except the first one(mapper function) are added to the mapper.
-	 * @protected
-	 * @param {Function} fn The function mapper
-	 * @return {Funtion} mapper
-	 */
-	createMapper : function(fn) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		return fn.createDelegate(this, args);
-	},
-	
+    
 	/**
 	 * Creates fields, field-sets and tabpanel. 
 	 * Returns an array of components being used as edit view items elements.
@@ -151,11 +179,12 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Array} components
 	 */
 	createFormCmp : function() {
-		var N = afStudio.ModelNode,
+		var N = this.NODES,
 			cmp = [];
 		
-		if (this.getModelNodeByPath([N.GROUPING, N.SET])) {
-		
+		if (this.isGrouped()) {
+			//form with sets and tabpanel
+			
 			Ext.each(this.getPlainFieldSets(), function(s) {
 				cmp.push(this.createFieldSet(s));
 			}, this);
@@ -168,7 +197,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			if (!Ext.isEmpty(tabbedSets)) {
 				cmp.push(this.createTabPanel(tabbedSets));
 			}
-			
 		} else {
 			//simple form without sets and tabpanel	
 			Ext.each(this.getFields(), function(f) {
@@ -185,7 +213,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.form.Field} field
 	 */
 	createField : function(fld) {
-		var mpr = this.getModelNodeMapper(),
+		var mpr = this.NODE_ID_MAPPER,
 			fldId = fld[mpr];
 		
 		var fn, cfg = {}, f;
@@ -281,9 +309,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Array} buttons
 	 */
 	createButtons : function() {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
-			buttons = [];
+		var buttons = [];
 		
 		this.createResetSubmitButtons(buttons);
 		
@@ -295,7 +321,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}
 		
 		Ext.each(this.getActions(), function(a){
-			buttons.push(this.createButton(a));
+			buttons.push(this.createButton(a, 'action'));
 		}, this);
 		
 		return buttons;
@@ -307,28 +333,31 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @param {Array} buttons The buttons
 	 */
 	createResetSubmitButtons : function(buttons) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode;
+		var mpr = this.NODE_ID_MAPPER,
+			N = this.NODES;
 
 		var fls = this.getModelNodeProperties(N.FIELDS);
 
+		var submitProp =  Ext.isDefined(fls.submit) ? fls.submit : true;
+		
 		var submitBt = new Ext.Button({
 			text: fls.submitlabel ? fls.submitlabel : 'Submit',
 			iconCls: 'icon-accept',
-			hidden: Ext.isDefined(fls.submit) ? !fls.submit : false 
+			hidden: !submitProp 
 		});
 		submitBt[mpr] = N.FIELDS + '#submit';
-		this.mapCmpToModel(N.FIELDS + '#submit', submitBt);
 		this.mapCmpToModel(N.FIELDS + '#submitlabel', submitBt);
 		
 		var resetBt = new Ext.Button({
 			text: fls.resetlabel ? fls.resetlabel : 'Reset',
 			iconCls: 'icon-application-form',
-			hidden: Ext.isDefined(fls.resetable) ? !fls.resetable : false 
+			hidden: !submitProp ? true : (Ext.isDefined(fls.resetable) ? !fls.resetable : false) 
 		});
 		resetBt[mpr] = N.FIELDS + '#resetable';
 		this.mapCmpToModel(N.FIELDS + '#resetable', resetBt);
-		this.mapCmpToModel(N.FIELDS + '#resetlabel', submitBt);
+		this.mapCmpToModel(N.FIELDS + '#resetlabel', resetBt);
+
+		this.mapCmpToModel(N.FIELDS + '#submit', {sub: submitBt, res: resetBt});
 		
 		buttons.push(submitBt, resetBt);
 	},
@@ -341,11 +370,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.Button}
 	 */
 	createButton : function(btn, type) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
+		var mpr = this.NODE_ID_MAPPER,
 			cfg = {}, button;
 		
-		type = !Ext.isDefined(type) ? 'button' : 'action';	
+		type = Ext.isDefined(type) ? type : 'button';	
 		
 		Ext.copyTo(cfg, btn, 'name, iconCls, icon, style');
 		cfg[mpr] = btn[mpr];
@@ -355,7 +383,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	        if (btn.state && btn.state == 'disabled') {
 	        	cfg.disabled = true;	
 	        }
-		} else {
+		} else if (type == 'action') {
 			Ext.apply(cfg, {
 				text: btn.text ? btn.text : btn.name,
 				tooltip: btn.tooltip
@@ -377,8 +405,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.form.FieldSet} field-set
 	 */
 	createFieldSet : function(fldSet) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
+		var mpr = this.NODE_ID_MAPPER,
 			cfg = {}, 
 			fieldSet;
 		
@@ -429,8 +456,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.form.FieldSet} field-set
 	 */
 	createDefaultFieldSet : function(fields) {
-		var mpr = this.getModelNodeMapper(),
-			N = afStudio.ModelNode,
+		var mpr = this.NODE_ID_MAPPER,
+			N = this.NODES,
 			cfg = {}, 
 			fieldSet;
 		
@@ -475,6 +502,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		Ext.each(tabbedSets, function(fs){
 			var t = {
 				title: fs.tabtitle,
+				layout: 'anchor',
 				items: this.createFieldSet(fs) 
 			}
 			tabPanel.add(t);
@@ -547,24 +575,53 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
+	 * Returns "real" button's index based on view definition object associated with a model 
+	 * and widget buttons. 
+	 * @param {Node} node The button related node
+	 * @param {Number} idx The node idx inside the parent model node
+	 * @param {String} type (optional) type The button type, can be "button" | "action", defaults to "button"
+	 * @return {Number}
+	 */
+	getButtonIndex : function(node, idx, type) {
+		var vd = this.controller.getViewDefinition(),
+			btnIdx = vd.getEntityObj(node, idx).idx;
+		
+		btnIdx = (btnIdx == null) ? 0 : btnIdx;
+		
+		type = Ext.isDefined(type) ? type : 'button';	
+		
+		if (type == 'action') {
+			var btnLen = this.getFooterToolbar().items.getCount();
+			if (btnIdx < btnLen) {
+				btnIdx += btnLen - btnIdx;
+			}
+		}
+		
+		return btnIdx;
+	},
+	
+	/**
 	 * TODO  auxilary method, should be deleted after view will be implemented
 	 * @private
 	 */
 	dumpMapper : function() {
-		console.log('modelMapper', this.modelMapper);
+		afStudio.Logger.info('modelMapper', this.modelMapper);
 		Ext.iterate(this.modelMapper, function(k, v, o){
-			console.log(k, v);
+			afStudio.Logger.info(k, v);
 		});
 	}
 	
 });
 
+//@mixin ModelMapper
+//important applyIf is used to have ability to use/override custom mapping/unmapping methods in the class 
+Ext.applyIf(afStudio.wd.edit.EditView.prototype, afStudio.wd.ModelMapper);
 
 //@mixin EditModelInterface
 Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelInterface);
 
 //@mixin ModelReflector
-Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.ModelReflector);
+Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelReflector);
 
 /**
  * @type 'wd.editView'

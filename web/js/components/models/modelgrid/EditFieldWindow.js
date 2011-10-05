@@ -83,8 +83,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			model = grid.model, 
 		   schema = grid.schema,
 		   url, xaction;
-	
-		   
+	    
 		url = afStudioWSUrls.modelListUrl;
 		xaction = 'alterModelUpdateField';
 
@@ -184,7 +183,13 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			
 			//update
 			if (fExists) {
-				_this.updateModelField(fd.name, fv);
+			    if (fd.name != fv.name) {
+                    Ext.MessageBox.confirm('Confirm', 'Field name has been changed - all data for old field will be lost. Are you sure you want to do that?', function(btn) {
+                        if (btn == 'yes') _this.updateModelField(fd.name, fv);
+                    });
+			    } else {
+			        _this.updateModelField(fd.name, fv);
+			    }
 			//add
 			} else {
 				_this.createModelField(fv);

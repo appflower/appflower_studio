@@ -42,11 +42,11 @@ afStudio.data.type.InternalUriType = Ext.extend(afStudio.data.type.String, {
 	invalidMessage : 'The value is not a valid internal URI',
 	
 	restrictions : {
-		// (/[\w\-.]+)*/? - path
+		// /?[\w]+?/[\w]+?/? - path (i.e. "[/]foo/boo[/]")
 		// (\?[\w\-.~%!$&'()*+,;=:@/?]*)? - query
 		// (\#[\w\-.~%!$&'()*+,;=:@/?]*)? - fragment
 		// ^(/[\w\-.]+)*/?(\?[\w\-.~%!$&'()*+,;=:@/?]*)?(\#[\w\-.~%!$&'()*+,;=:@/?]*)?$
-		pattern: new RegExp("^(/[\\w\\-.]+)*/?(\\?[\\w\\-.~%!$&'()*+,;=:@/?]*)?(\\#[\\w\\-.~%!$&'()*+,;=:@/?]*)?$")
+		pattern: new RegExp("^/?[\\w]+?/[\\w]+?/?(\\?[\\w\\-.~%!$&'()*+,;=:@/?]*)?(\\#[\\w\\-.~%!$&'()*+,;=:@/?]*)?$")
 	}
 });
 
@@ -190,7 +190,7 @@ afStudio.data.type.ArrayType = Ext.extend(afStudio.data.type.String, {
 	type : "arrayType",
 	
 	restrictions : {
-		pattern: /^\[\w+\s*:\s*["'\w]+?(\s*,\s*\w+\s*:\s*["'\w]+?)*\]$/
+		pattern: /^\[\w+\s*:\s*["'\.\w]+?(\s*,\s*\w+\s*:\s*["'\.\w]+?)*\]$/
 	}
 });
 

@@ -276,7 +276,7 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
     		};
     	}
     	
-    	var parent, 
+    	var parent,
     		ent, 
     		idx = null;
     	parent = ent = this.data;

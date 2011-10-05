@@ -17,8 +17,12 @@ class afsPluginManagerActions extends afsActions
     public function executeGetList(sfWebRequest $request)
     {
         $response = afStudioCommand::process('plugin', 'getList');
-
-        return $this->renderJson($response['data']);
+        
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+        }
+        
+        return $this->renderJson($response->asArray());
     }
     
     /**
@@ -34,9 +38,9 @@ class afsPluginManagerActions extends afsActions
             'newValue' => $request->getParameter('newValue')
         );
         
-        $response = afStudioCommand::process('plugin', 'rename', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('plugin', 'rename', $parameters)->asArray()
+        );
     }
     
     /**
@@ -51,9 +55,9 @@ class afsPluginManagerActions extends afsActions
             'name' => $request->getParameter('name'),
         );
         
-        $response = afStudioCommand::process('plugin', 'delete', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('plugin', 'delete', $parameters)->asArray()
+        );
     }
     
     /**
@@ -68,10 +72,9 @@ class afsPluginManagerActions extends afsActions
             'name' => $request->getParameter('name')
         );
         
-        $response = afStudioCommand::process('plugin', 'add', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('plugin', 'add', $parameters)->asArray()
+        );
     }
     
 }
-

@@ -58,7 +58,11 @@
 				<files>		
 					<file>js/afStudio.js</file>		
 					<file>js/afStudio.xhr.js</file>
-					<file>js/afStudio.WSUrlsClass.js</file>		
+					<file>js/afStudio.WSUrlsClass.js</file>
+					
+					<!-- logger -->
+					<file>js/components/log/Console.js</file>
+					<file>js/components/log/Logger.js</file>		
 					
 					<!-- custom ext ux -->
 					
@@ -223,15 +227,20 @@
 					
 					<!-- gui views -->
 					<file>js/components/widgetDesigner/gui/ModelInterface.js</file>
+					<file>js/components/widgetDesigner/gui/ModelMapper.js</file>
+					<file>js/components/widgetDesigner/gui/ModelReflector.js</file>
 					
 					<!-- list -->
 					<file>js/components/widgetDesigner/gui/list/ListModelInterface.js</file>
-					<file>js/components/widgetDesigner/gui/list/ModelReflector.js</file>
+					<file>js/components/widgetDesigner/gui/list/ListModelReflector.js</file>
 					<file>js/components/widgetDesigner/gui/list/ListGridView.js</file>
 					<file>js/components/widgetDesigner/gui/list/ActionColumn.js</file>
 					<file>js/components/widgetDesigner/gui/list/ListView.js</file>
 					
 					<!-- edit -->
+					<file>js/components/widgetDesigner/gui/edit/EditModelInterface.js</file>
+					<file>js/components/widgetDesigner/gui/edit/EditModelReflector.js</file>
+					<file>js/components/widgetDesigner/gui/edit/EditView.js</file>
 					
 					<!-- containers -->
 					<file>js/components/widgetDesigner/WD.js</file>

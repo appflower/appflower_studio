@@ -1,41 +1,23 @@
 Ext.ns('afStudio.wd');
 
 /**
- * Mixin.  
- *  
+ * ModelInterface mixin provides communication interface between a view and a model.
  * @singleton
+ * 
+ * @dependency {afStudio.wd.ModelMapper} mapper mixin The view which uses ModelInterface must use ModelMapper mixin
+ * @dependency {afStudio.ModelNode} model nodes
+ * 
  * @author Nikolai Babinski
  */
 afStudio.wd.ModelInterface = (function() {
 	
-	/**
-	 * Holds model's node key name.
-	 * @constant modelNodeMapper
-	 */
-	var modelNodeMapper = '_model_';
-	
-	/**
-	 * The key name of model node's data-value.
-	 * @constant modelNodeValue
-	 */
-	var modelNodeValue = 'value';
-	
 	return {
-
-		/**
-		 * Returns modelNodeMapper constant.
-		 * @return {string} mapper name
-		 */
-		getModelNodeMapper : function() {
-			return modelNodeMapper;
-		},
 		
 		/**
-		 * Returns modelNodeValue constant.
+		 * The reference to model nodes {@link afStudio.ModelNode}
+		 * @constant {Object} NODES
 		 */
-		getValueKey : function() {
-			return modelNodeValue;
-		},
+		NODES : afStudio.ModelNode,
 		
 		/**
 		 * Returns model node based on its relative path from the root node.
@@ -79,14 +61,14 @@ afStudio.wd.ModelInterface = (function() {
 		},
 		
 		/**
-		 * Returns model node properties + model node's id in modelNodeMapper property {@link #getModelNodeMapper}.
+		 * Returns model node properties + model node's id in {@link afStudio.wd.ModelMapper#NODE_ID_MAPPER} property.
 		 * @param {String|Node} node
 		 * @return {Object} properties
 		 */
 		getModelNodeProperties : function(node) {
 			var node = this.getModelNode(node),
 				ps = node.getPropertiesHash(true);
-			ps[modelNodeMapper] = node.id;
+			ps[this.NODE_ID_MAPPER] = node.id;
 			
 			return ps;
 		},
@@ -106,13 +88,13 @@ afStudio.wd.ModelInterface = (function() {
 		/**
 		 * Returns model node data-value(_content).
 		 * @param {String|Node} node
-		 * @return {Object} value + model node's id in modelNodeMapper property {@link #getModelNodeMapper} 
+		 * @return {Object} value + model node's id in {@link afStudio.wd.ModelMapper#NODE_ID_MAPPER} property 
 		 */
 		getModelNodeValue : function(node) {
 			var node = this.getModelNode(node),
 				nv = {};
-			nv[modelNodeValue] = node.getNodeDataValue();
-			nv[modelNodeMapper] = node.id;
+			nv[this.NODE_VALUE_MAPPER] = node.getNodeDataValue();
+			nv[this.NODE_ID_MAPPER] = node.id;
 			
 			return nv;
 		},
@@ -246,7 +228,7 @@ afStudio.wd.ModelInterface = (function() {
 		 * @return {Array} actions properties
 		 */
 		getActions : function() {
-			var n = afStudio.ModelNode;
+			var n = this.NODES;
 			return this.getModelChildrenProperties(n.ACTIONS, n.ACTION);
 		},
 		
@@ -255,7 +237,7 @@ afStudio.wd.ModelInterface = (function() {
 		 * @return {Array} actions properties
 		 */
 		getMoreActions : function() {
-			var n = afStudio.ModelNode;
+			var n = this.NODES;
 			return this.getModelChildrenProperties(n.MORE_ACTIONS, n.ACTION);
 		}
 		

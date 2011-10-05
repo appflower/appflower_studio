@@ -30,17 +30,17 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     pathSeparator: "/",
 	
 	/**
-	 * @cfg {Object} (Optional) definition 
-	 * The node's definition object 
+	 * @cfg {Object} (Optional) definition The node's definition object. 
 	 */
 	/**
-	 * @cfg {String} (Required) tag 
-	 * Node's tag name 
+	 * @cfg {String} (Required) tag The node's tag name.
 	 */
 	/**
-	 * @cfg {String} (Optional) modelType
-	 * The model type.
+	 * @cfg {String} (Optional) modelType The model type.
 	 */
+    /**
+     * @cfg {Array} nodeTypes The allowed node types 
+     */
     
 	/**
 	 * The node's tag name -> determines node type.
@@ -53,7 +53,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 */
 	/**
 	 * (Read-only) The model node properties.
-	 * @property properties 
+	 * @property properties
 	 * @type {Ext.util.MixedCollection}
 	 */	
 	/**
@@ -69,7 +69,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * 	<li><b>unique</b>{String} : (Optional) Defines node's property which should be unique across all 
 	 * 	children nodes with the same type. unique property has sense only if hasMany is true.</li>
 	 * </u>
-	 * Defaults is empty saying that a node should have no children.
+	 * By default is empty, saying that a node should have no children.
 	 * @property nodeTypes 
 	 * @type {Array}
 	 */
@@ -108,7 +108,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         }
         
         this.initProperties(config.properties);
-		
+        
+        this.initNodeTypes(config.nodeTypes);
+
         /**
          * The node's data. @type Mixed
          * Node can only containes the data or childNodes.
@@ -293,7 +295,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      */
     initProperties : function(properties) {
     	var _me = this,
-			   ps = properties || this.properties;
+			 ps = properties || this.properties;
 			   
     	this.properties = new Ext.util.MixedCollection(false, function(property) {
     		return property.name;
@@ -306,6 +308,27 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		});
     },
     //eo initProperties
+    
+    /**
+     * Instantiates <u>nodeTypes</u> property.
+     * Every node should have its own nodeTypes property.
+     * Template method.
+     * @protected
+     * @param {Array} (optional) nodeTypes
+     */
+    initNodeTypes : function(nodeTypes) {
+    	var ns = nodeTypes || this.nodeTypes;
+    	
+    	if (!Ext.isArray(ns)) {
+    		throw new afStudio.model.error.NodeError('nodeTypes type');
+    	}
+    	
+		this.nodeTypes = [];
+		
+    	Ext.each(ns, function(n){
+    		this.nodeTypes.push(n);
+    	}, this);
+    },
     
     /**
      * Init node's definition.
@@ -477,7 +500,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * Returns type data. Types are instances from {@link #nodeTypes} array. 
+     * Returns type data. Types are instances from {@link #nodeTypes} array.
+     * @protected 
      * @param {String|Object} type
      * @return {Object} type structure
      */
@@ -531,7 +555,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     
     /**
      * Returns true if the node contains child node of specified type. 
-     * @param {String} tag
+     * @param {String} tag The node tag name (node type)
      * @return {Boolean}
      */
     hasChildWithType : function(tag) {
@@ -1365,12 +1389,20 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	
 	    	if (this.fireEvent("modelNodeCreated", this.ownerTree, this, n)) {
 	    		n = this.appendChild(n);
+	    		n.onNodeCreate();
 	    	}
     	}
     	
     	return n;
     },
     //eo createNode
+    
+    /**
+     * Create node callback, is executed when a node was created {@link #createNode} and appended.
+     * This method can be used for internal settings in a node, so it should be overridden in descendants classes to provide specific functionality.
+     * @abstract
+     */
+    onNodeCreate : function() {},
     
     /**
      * Reconfigures node's structural data.
@@ -1395,27 +1427,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		this.fireEvent('modelReconfigure', this);
     	}
     },
-    
-    /**
-     * Returns node's string representation.
-     * @override
-     * @return {String} node
-     */
-    toString : function() {
-    	var _me = this;
-		var tpl = new Ext.XTemplate(
-			'[model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}]',
-			{
-        		compiled: true,
-        		disableFormats: true,
-        		getData: function() {
-        			return _me[_me.NODE_DATA] ? _me[_me.NODE_DATA].getValue() : null;
-        		}
-    		});
-    	
-        return tpl.apply(this);
-    },
-    //eo toString
     
     /**
      * Validates the node and all his children.
@@ -1521,6 +1532,27 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		}
 		
 		return canBeAdded;
-    }
+    },
     //eo onModelNodeCreated
+    
+    /**
+     * Returns node's string representation.
+     * @override
+     * @return {String} node
+     */
+    toString : function() {
+    	var _me = this;
+		var tpl = new Ext.XTemplate(
+			'[model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}]',
+			{
+        		compiled: true,
+        		disableFormats: true,
+        		getData: function() {
+        			return _me[_me.NODE_DATA] ? _me[_me.NODE_DATA].getValue() : null;
+        		}
+    		});
+    	
+        return tpl.apply(this);
+    }
+    //eo toString
 });
