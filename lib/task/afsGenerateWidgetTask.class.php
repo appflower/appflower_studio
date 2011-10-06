@@ -9,16 +9,37 @@
 class afsGenerateWidgetTask extends sfBaseTask
 {
     /**
+     * Widget types
+     *
+     * @var array
+     */
+    private $types = array(
+        'list',
+        'edit',
+        'show',
+    );
+    
+    /**
+     * Places types
+     *
+     * @var array
+     */
+    private $place_types = array(
+        'app',
+        'plugin',
+    );
+    
+    /**
      * @see sfTask
      */
     protected function configure()
     {
         $this->addOptions(array(
             new sfCommandOption('model', 'm', sfCommandOption::PARAMETER_REQUIRED, 'Model that should be processed'),
-            new sfCommandOption('module', 'l', sfCommandOption::PARAMETER_REQUIRED, 'Module where widgets should be placed'),
+            new sfCommandOption('module', 'l', sfCommandOption::PARAMETER_OPTIONAL, 'Module where widgets should be placed', ''),
             new sfCommandOption('type', 'k', sfCommandOption::PARAMETER_OPTIONAL, 'Type of widget', 'list,edit,show'),
             new sfCommandOption('fields', 'f', sfCommandOption::PARAMETER_OPTIONAL, 'Fields that should be processed from model(comma separated) - if empty all fields will be processed', ''),
-            new sfCommandOption('place-type', null, sfCommandOption::PARAMETER_OPTIONAL, 'Place type where should be saved widget', 'app'),
+            new sfCommandOption('place-type', 'a', sfCommandOption::PARAMETER_OPTIONAL, 'Place type where should be saved widget', 'app'),
             new sfCommandOption('place', 'p', sfCommandOption::PARAMETER_OPTIONAL, 'Place where should be saved widget', 'frontend'),
             new sfCommandOption('refresh', 'r', sfCommandOption::PARAMETER_OPTIONAL, 'Should be widget refreshed/rewritten if already exists', false),
         ));
@@ -40,22 +61,23 @@ EOF;
     protected function execute($arguments = array(), $options = array())
     {
         // XmlParser uses sfContext that not defined by default - so we create instance here
-        sfContext::createInstance(ProjectConfiguration::getApplicationConfiguration(
-            pathinfo(current(sfFinder::type('dir')->name('*')->maxdepth(0)->ignore_version_control()->in(sfConfig::get('sf_apps_dir'))), PATHINFO_BASENAME), 
-            'dev', true
-        ));
+        sfContext::createInstance(ProjectConfiguration::getApplicationConfiguration(current($this->getPlaces('app')), 'dev', true));
         
         // pushed params 
-        $module = $options['module'];
         $model = $options['model'];
+        $module = (!empty($options['module'])) ? $options['module'] : lcfirst(sfInflector::camelize($model));
         $types = $options['type'];
         $fields = $options['fields'];
         $placeType = $options['place-type'];
         $place = $options['place'];
-        $refresh = $options['refresh'];
+        $refresh = ($options['refresh'] == 'true' || $options['refresh'] === true) ? true : false;
         
         // required params
-        if (empty($module) || empty($model)) throw new sfCommandException("Both 'module' and 'model' should be defined");
+        if (empty($model)) throw new sfCommandException("Option 'model' should be defined");
+        
+        // place params validation
+        if (!in_array($placeType, $this->place_types)) throw new sfCommandException("Place type '{$placeType}' doesn't allowed");
+        if (!in_array($place, $this->getPlaces($placeType))) throw new sfCommandException("Place '{$place}' wasn't found in {$placeType}s area");
         
         if (!afStudioCommand::process('model', 'has', array('model' => $model))->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
             throw new sfCommandException("Model '{$model}' doesn't exists");
@@ -85,6 +107,8 @@ EOF;
         }
         
         foreach (explode(',', $types) as $type) {
+            if (!in_array($type, $this->types)) throw new sfCommandException("Type '{$type}' doesn't exists or not allowed");
+            
             $widget_name = lcfirst(sfInflector::camelize($model)) . ucfirst(strtolower($type));
             $widget_path = "{$placeType}s/{$place}/modules/{$module}/config/{$widget_name}.xml";
             
@@ -116,6 +140,10 @@ EOF;
             }
             $this->logSection(($is_created) ? 'created' : 'not created', $widget_path, null, ($is_created) ? 'INFO' : 'ERROR');
             $this->log_it((($is_created) ? 'created' : 'not created') . ' - ' . $widget_path);
+            
+            // execute fix permissions task
+            $task = new afsPermissionsTask(sfContext::getInstance()->getEventDispatcher(), new sfFormatter);
+            $task->run();
         }
     }
     
@@ -256,6 +284,23 @@ EOF;
                 'xmlns:i' => "http://www.appflower.com/schema/",
             )
         );
+    }
+    
+    /**
+     * Getting places by place type
+     *
+     * @param string $type 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getPlaces($type = 'app')
+    {
+        $places = array();
+        $paths = sfFinder::type('dir')->name('*')->maxdepth(0)->ignore_version_control()->in(sfConfig::get("sf_{$type}s_dir"));
+        
+        foreach ($paths as $path) $places[] = pathinfo($path, PATHINFO_BASENAME);
+        
+        return $places;
     }
     
     /**
