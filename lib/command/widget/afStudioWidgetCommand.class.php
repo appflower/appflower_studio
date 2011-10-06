@@ -208,13 +208,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $type = $this->getParameter('type', 'list,edit,show');
         $refresh = $this->getParameter('refresh', 'false');
         
-        $models = afStudioCommand::process('model', 'get')->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA);
-        
-        $console_output = '';
-        $console = afStudioConsole::getInstance();
-        foreach ($models as $model) {
-            $console_output .= $console->execute("sf afs:generate-widget --model={$model['text']} --type={$type} --refresh={$refresh}");
-        }
+        $console_output = afStudioConsole::getInstance()->execute("sf afs:generate-widget-all --type={$type} --refresh={$refresh}");
         
         return afResponseHelper::create()->success(true)->console($console_output);
     }

@@ -6,8 +6,15 @@
  * @subpackage  task
  * @author      Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsGenerateWidgetTask extends sfBaseTask
+class afsGenerateWidgetTask extends afsBaseGenerateTask
 {
+    /**
+     * Current task name
+     *
+     * @var string
+     */
+    protected $task_name = 'afsGenerateWidgetTask';
+    
     /**
      * Widget types
      *
@@ -61,7 +68,7 @@ EOF;
     protected function execute($arguments = array(), $options = array())
     {
         // XmlParser uses sfContext that not defined by default - so we create instance here
-        sfContext::createInstance(ProjectConfiguration::getApplicationConfiguration(current($this->getPlaces('app')), 'dev', true));
+        sfContext::createInstance(ProjectConfiguration::getApplicationConfiguration($this->getFirstApplication(), 'dev', true));
         
         // pushed params 
         $model = $options['model'];
@@ -301,19 +308,6 @@ EOF;
         foreach ($paths as $path) $places[] = pathinfo($path, PATHINFO_BASENAME);
         
         return $places;
-    }
-    
-    /**
-     * Log it functionality
-     *
-     * @param string $info 
-     * @author Sergey Startsev
-     */
-    private function log_it($info)
-    {
-        if (file_exists(sfConfig::get('sf_log_dir')) && is_writable(sfConfig::get('sf_log_dir'))) {
-            file_put_contents(sfConfig::get('sf_log_dir') . DIRECTORY_SEPARATOR . __CLASS__ . ".log", date("Y-m-d H:i:s") . " - {$info}\n", FILE_APPEND);
-        }
     }
     
 }

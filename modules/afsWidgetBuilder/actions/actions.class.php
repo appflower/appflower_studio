@@ -70,6 +70,13 @@ class afsWidgetBuilderActions extends afsActions
         );
     }
     
+    /**
+     * Generate all widgets action
+     *
+     * @param sfWebRequest $request 
+     * @return string - json
+     * @author Sergey Startsev
+     */
     public function executeGenerateAll(sfWebRequest $request)
     {
         return $this->renderJson(
