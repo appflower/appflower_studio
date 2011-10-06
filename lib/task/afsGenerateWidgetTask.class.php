@@ -123,7 +123,7 @@ EOF;
                 array(
                     'uri'               =>  "{$module}/{$widget_name}",
                     'data'              =>  $this->getDefinition($type, array(
-                                                'title' => "{$type} {$model}",
+                                                'title' => ucfirst(strtolower($type)) . ' ' . sfInflector::humanize($model),
                                                 'fields' => $widget_fields,
                                                 'model' => $model,
                                             )),
@@ -199,7 +199,7 @@ EOF;
                 $definition['i:fields']['i:column'][] = array(
                     'attributes' => array(
                         'name' => $field['name'],
-                        'label' => $field['name'],
+                        'label' => sfInflector::humanize($field['name']),
                     )
                 );
             }
@@ -244,7 +244,7 @@ EOF;
                 $definition['i:fields']['i:field'][] = array(
                     'attributes' => array(
                         'name' => $field['name'],
-                        'label' => $field['name'],
+                        'label' => sfInflector::humanize($field['name']),
                         'value' => '{' . $field['name'] . '}',
                     )
                 );
