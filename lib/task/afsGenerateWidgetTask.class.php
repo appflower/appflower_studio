@@ -21,6 +21,7 @@ class afsGenerateWidgetTask extends sfBaseTask
             new sfCommandOption('fields', 'f', sfCommandOption::PARAMETER_OPTIONAL, 'Fields that should be processed from model(comma separated) - if empty all fields will be processed', ''),
             new sfCommandOption('place-type', null, sfCommandOption::PARAMETER_OPTIONAL, 'Place type where should be saved widget', 'app'),
             new sfCommandOption('place', 'p', sfCommandOption::PARAMETER_OPTIONAL, 'Place where should be saved widget', 'frontend'),
+            new sfCommandOption('refresh', 'r', sfCommandOption::PARAMETER_OPTIONAL, 'Should be widget refreshed/rewritten if already exists ', false),
         ));
         
         $this->namespace = 'afs';
@@ -52,6 +53,7 @@ EOF;
         $fields = $options['fields'];
         $placeType = $options['place-type'];
         $place = $options['place'];
+        $refresh = $options['refresh'];
         
         // required params
         if (empty($module) || empty($model)) throw new sfCommandException("Both 'module' and 'model' should be defined");
@@ -84,11 +86,19 @@ EOF;
         }
         
         foreach (explode(',', $types) as $type) {
+            $widget_name = strtolower($model) . ucfirst(strtolower($type));
+            $widget_path = "{$placeType}s/{$place}/modules/{$module}/config/{$widget_name}.xml";
+            
+            if (file_exists(sfConfig::get('sf_root_dir') . "/{$widget_path}") && !$refresh) {
+                $this->logSection('exists', $widget_path, null, 'ERROR');
+                continue;
+            }
+            
             $create_response = afStudioCommand::process(
                 'widget', 
                 'save', 
                 array(
-                    'uri'               =>  $module . "/" . strtolower($model) . ucfirst(strtolower($type)),
+                    'uri'               =>  "{$module}/{$widget_name}",
                     'data'              =>  $this->getDefinition($type, array(
                                                 'title' => "{$type} {$model}",
                                                 'fields' => $widget_fields,
@@ -101,10 +111,12 @@ EOF;
                 )
             );
             
-            $this->logSection(
-                ($create_response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) ? 'created' : 'not created', 
-                "{$placeType}/{$place}/{$module}/" . strtolower($model) . ucfirst(strtolower($type))
-            );
+            $is_created = $create_response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR);
+            if (!$is_created) {
+                $this->log_it($create_response->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+            }
+            $this->logSection(($is_created) ? 'created' : 'not created', $widget_path, null, ($is_created) ? 'INFO' : 'ERROR');
+            $this->log_it(($is_created) ? 'created' : 'not created' . ' ' . $widget_path);
         }
     }
     
@@ -206,7 +218,7 @@ EOF;
                     'attributes' => array(
                         'name' => $field['name'],
                         'label' => $field['name'],
-                        'value' => '{' . $field['name'] . '}',
+                        // 'value' => '{' . $field['name'] . '}',
                     )
                 );
             }
@@ -245,6 +257,19 @@ EOF;
                 'xmlns:i' => "http://www.appflower.com/schema/",
             )
         );
+    }
+    
+    /**
+     * Log it functionality
+     *
+     * @param string $info 
+     * @author Sergey Startsev
+     */
+    private function log_it($info)
+    {
+        if (file_exists(sfConfig::get('sf_log_dir')) && is_writable(sfConfig::get('sf_log_dir'))) {
+            file_put_contents(sfConfig::get('sf_log_dir') . "/" . __CLASS__ . ".log", date("Y-m-d H:i:s") . " - {$info}\n", FILE_APPEND);
+        }
     }
     
 }
