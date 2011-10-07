@@ -756,7 +756,7 @@ class afStudioModelCommandModificator
             }
         }
         
-        if (isset($columns['id'])) return true;
+        if (array_key_exists('id', $columns)) return true;
         
         return false;
     }

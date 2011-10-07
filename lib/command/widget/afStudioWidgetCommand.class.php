@@ -173,6 +173,47 @@ class afStudioWidgetCommand extends afBaseStudioCommand
     }
     
     /**
+     * Generate widget functionality
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processGenerate()
+    {
+        $model      = $this->getParameter('model');
+        $module     = $this->getParameter('module_name', lcfirst(sfInflector::camelize($model)));
+        $type       = $this->getParameter('type', 'list,edit,show');
+        $fields     = $this->getParameter('fields', '');
+        $place_type = $this->getParameter('place_type', 'app');
+        $place      = $this->getParameter('place', 'frontend');
+        $refresh    = $this->getParameter('refresh', 'false');
+        
+        $console = afStudioConsole::getInstance();
+        $console_output = $console->execute(
+            "sf afs:generate-widget ".
+            "--model={$model} --module={$module} --type={$type} --fields={$fields} --place-type={$place_type} --place={$place} --refresh={$refresh}"
+        );
+        
+        return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->console($console_output);
+    }
+    
+    /**
+     * Generate all widgets for all models
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processGenerateAll()
+    {
+        $type = $this->getParameter('type', 'list,edit,show');
+        $refresh = $this->getParameter('refresh', 'false');
+        
+        $console_output = afStudioConsole::getInstance()->execute("sf afs:generate-widget-all --type={$type} --refresh={$refresh}");
+        
+        return afResponseHelper::create()->success(true)->console($console_output);
+    }
+    
+    /**
      * Parse input uri
      *
      * @param string $uri 

@@ -21,11 +21,15 @@ class ModelCriteriaFetcher
         /* @var $query ModelCriteria */
         $collection = $query->find();
         
-        return $collection->toKeyValue('Id');
+        if (method_exists($modelName, '__toString')) {
+            return $collection->toKeyValue('Id');
+        } else {
+            return $collection->toKeyValue('Id', 'Id');
+        }
     }
     
     /**
-     * Method just returns empty Criteria object so it cen be used in list widget to fetch data
+     * Method just returns empty Criteria object so it can be used in list widget to fetch data
      *
      * @author Łukasz Wojciechowski
      */
