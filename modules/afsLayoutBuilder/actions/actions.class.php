@@ -144,4 +144,19 @@ class afsLayoutBuilderActions extends afsActions
         );
     }
     
+    /**
+     * Set as homepage module action
+     *
+     * @param sfWebRequest $request 
+     * @author Radu Topala
+     */
+    public function executeSetAsHomepage(sfWebRequest $request)
+    {
+        $parameters = array(
+            'widgetUri'  => $request->getParameter('widgetUri'),
+        );
+        $response = afStudioCommand::process('layout', 'setAsHomepage', $parameters);
+        return $this->renderJson($response);
+    }
+    
 }

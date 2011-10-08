@@ -90,6 +90,10 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
        		itemId: 'delete-page',
             text: 'Delete Page',
             iconCls: 'icon-models-delete'
+        },{
+       		itemId: 'set_as_homepage',
+            text: 'Set Page as Homepage',
+            iconCls: 'icon-models-set_as_homepage'
         }],
         listeners: {
             itemclick: function(item) {            	
@@ -108,6 +112,10 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
                     case 'delete-page':
                     	tree.deletePage(node);
                 	break;
+                	
+                	case 'set_as_homepage':
+						tree.setPageAsHomepage(node);
+					break;
                 }
             }
         }
@@ -355,6 +363,22 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			}
 		});		
 	}//eo deletePage
+	
+	/**
+	 * Sets specified node as a homepage.
+	 * @private
+	 * @param {Ext.tree.TreeNode} node
+	 */
+    ,setPageAsHomepage : function(node) {
+		var actionUrl   = afStudioWSUrls.pageSetAsHomepage;
+		
+		this.executeAction({
+            url: actionUrl,
+            params: { widgetUri: node.attributes.widgetUri },
+            loadingMessage: String.format('Set {0} as homepage...', node.attributes.widgetUri),
+            logMessage: String.format('Widgets: {0} "{1}" was deleted', 'AHOJ', 'tam')
+        });     		
+	}
 });
 
 /**

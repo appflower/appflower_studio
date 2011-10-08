@@ -229,7 +229,8 @@ class afStudioLayoutCommand extends afBaseStudioCommand
                 foreach ($xmlNames as $xk => $page) {
                     $data[$app][] = array(
                         'text' => $page,
-                        'xmlPath' => $xmlPaths[$xk]
+                        'xmlPath' => $xmlPaths[$xk],
+                        'widgetUri' => 'pages/' . str_replace('.xml', '', $page)
                     );
                 }
             }
@@ -238,4 +239,25 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         return $data;
     }
     
+    /**
+	 * Set page as homepage functionality
+	 * 
+	 * @author Radu Topala
+	 */
+	protected function processSetAsHomepage()
+	{
+        $rm = new RoutingConfigurationManager();
+        $widgetUri = $this->getParameter('widgetUri');
+        $status = $rm->setHomepageUrlFromWidgetUri($widgetUri);
+        if ($status) {
+    			$this->result = afResponseHelper::create()
+                    ->success(true)
+                    ->message("Homepage for your project is now set to <b>{$widgetUri}</b>");
+        } else {
+    		    $this->result = afResponseHelper::create()
+                    ->success(false)
+                    ->message("Can't set <b>{$widgetUri}</b> as homepage. An error occured.");
+        }
+		$this->result = $this->result->asArray();
+	}
 }
