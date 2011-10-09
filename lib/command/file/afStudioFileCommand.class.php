@@ -15,7 +15,6 @@ class afStudioFileCommand extends afBaseStudioCommand
     protected function processGet()
     {
         $path = afStudioFileCommandHelper::getPath($this->getParameter('path'));
-        
         $files = sfFinder::type('any')->ignore_version_control()->maxdepth(0)->in($path);
         
         if (count($files) > 0) return afResponseHelper::create()->success(true)->data(array(), afStudioFileCommandHelper::prepareList($files), 0);
@@ -32,9 +31,15 @@ class afStudioFileCommand extends afBaseStudioCommand
     {
         $dir_path = $this->getParameter('dir');
         $dir = afStudioFileCommandHelper::getPath($dir_path);
+        $dir_name = pathinfo($dir, PATHINFO_BASENAME);
+        
+        if (file_exists($file)) return afResponseHelper::create()->success(false)->message("Directory '{$dir_name}' already exists. Please choose another one.");
         
         if (!Util::makeDirectory($dir)) {
-            return afResponseHelper::create()->success(false)->message("Cannot create directory {$dir_path}");
+            $message = afStudioFileCommandHelper::checkFolder($dir_path);
+            $message = (is_string($message)) ? $message : "Cannot create directory {$dir_path}";
+            
+            return afResponseHelper::create()->success(false)->message($message);
         }
         
         return afResponseHelper::create()->success(true);
@@ -49,9 +54,15 @@ class afStudioFileCommand extends afBaseStudioCommand
     {
         $file_path = $this->getParameter('file');
         $file = afStudioFileCommandHelper::getPath($file_path);
+        $file_name = pathinfo($file, PATHINFO_BASENAME);
+        
+        if (file_exists($file)) return afResponseHelper::create()->success(false)->message("File '{$file_name}' already exists. Please choose another one.");
         
         if (!Util::makeFile($file)) {
-            return afResponseHelper::create()->success(false)->message("Cannot create file {$file_path}");
+            $message = afStudioFileCommandHelper::checkFolder($file_path);
+            $message = (is_string($message)) ? $message : "Cannot create file {$file_path}";
+            
+            return afResponseHelper::create()->success(false)->message($message);
         }
         
         return afResponseHelper::create()->success(true);
@@ -68,7 +79,10 @@ class afStudioFileCommand extends afBaseStudioCommand
         $file = afStudioFileCommandHelper::getPath($file_path);
         
         if (!Util::removeResource($file)) {
-            return afResponseHelper::create()->success(false)->message('Cannot delete ' . (is_file($file) ? 'file' : 'directory') . ' ' . $file_path);
+            $message = afStudioFileCommandHelper::checkFolder($file_path);
+            $message = (is_string($message)) ? $message : 'Cannot delete '. (is_file($file) ? 'file' : 'directory') . ' ' . $file_path;
+            
+            return afResponseHelper::create()->success(false)->message($message);
         }
         
         return afResponseHelper::create()->success(true);
@@ -85,8 +99,15 @@ class afStudioFileCommand extends afBaseStudioCommand
         $new = afStudioFileCommandHelper::getPath($this->getParameter('newname'));
         $old = afStudioFileCommandHelper::getPath($oldname);
         
+        $new_name = pathinfo($new, PATHINFO_BASENAME);
+        
+        if (file_exists($new)) return afResponseHelper::create()->success(false)->message("Resource '{$new_name}' already exists. Please choose another one.");
+        
         if (!Util::renameResource($old, $new)) {
-            return afResponseHelper::create()->success(false)->message('Cannot rename ' . (is_file($old) ? 'file' : 'directory') . ' ' . $oldname);
+            $message = afStudioFileCommandHelper::checkFolder($new);
+            $message = (is_string($message)) ? $message : 'Cannot rename ' . (is_file($old) ? 'file' : 'directory') . ' ' . $oldname;
+            
+            return afResponseHelper::create()->success(false)->message($message);
         }
         
         return afResponseHelper::create()->success(true);
@@ -100,6 +121,9 @@ class afStudioFileCommand extends afBaseStudioCommand
     protected function processUpload()
     {
         $path = afStudioFileCommandHelper::getPath($this->getParameter('path'));
+        
+        $message = afStudioFileCommandHelper::checkFolder($path);
+        if (is_string($message)) return afResponseHelper::create()->success(false)->message($message);
         
         if (!empty($_FILES)) {
             foreach ($_FILES as $file => $params) {
