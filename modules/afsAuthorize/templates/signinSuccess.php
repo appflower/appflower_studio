@@ -20,7 +20,7 @@ $layout = new afExtjsSfGuardLayout();
  * EXTJS SIGN IN FORM
  */
 
-$form = new afExtjsForm(array('action' => '/afsAuthorize/signin', "columnWidth" => ".88"/*,'fileUpload'=>true*/));
+$form = new afExtjsForm(array('action' => '/afsAuthorize/signin', "columnWidth" => ".88"));
 
 $fieldset=$form->startFieldset(array('legend' => 'Login', 'collapsible' => 'false'));
 $columns = $fieldset->startColumns(array("columnWidth" => 1));
@@ -41,32 +41,19 @@ $form->endFieldset($fieldset);
 new afExtjsSubmitButton($form,array('action' => '/afsAuthorize/signin'));
 new afExtjsLinkButton($form,array('url' => url_for('/afsAuthorize/passwordRequest'), 'load' => 'page', 'label' => 'Forgot your password?', 'icon' => '/appFlowerStudioPlugin/images/email_go.png'));
 
-new afExtjsLinkButton(
-    $form,
-    array(
-        'url' => '#', 
-        'load' => 'page', 
-        'label' => 'Create User', 
-        'icon' => '/appFlowerStudioPlugin/images/add.png',
-        'handlerSource' => "(new afStudio.UserWindow({mode: 'add', isRoleFieldAvailable: false})).show()"
-));
-
 $form->end();
 
 $layout->addItem('center',
-	array(
-		"columnWidth" => ".12",
-		"frame" => false,
-		"height" => 167,
-		"html" => "<a href='http://www.appflower.com'><img src='/appFlowerPlugin/images/vertical_logo.png'></a>"
-	)
+    array(
+        "columnWidth" => ".12",
+        "frame" => false,
+        "height" => 167,
+        "html" => "<a href='http://www.appflower.com'><img src='/appFlowerPlugin/images/vertical_logo.png'></a>"
+    )
 );
 $layout->addItem('center', $form);
-//$layout->addItem('west',array('title'=>'xxxxx','width'=>'51'));
 
-$tools=new afExtjsTools();
-//$tools->addItem(array('id'=>'gear','handler'=>array('source'=>"Ext.Msg.alert('Message', 'The Settings tool was clicked.');")));
-//$tools->addItem(array('id'=>'close','handler'=>array('parameters'=>'e,target,panel','source'=>"panel.ownerCt.remove(panel, true);")));
+$tools = new afExtjsTools();
 
 $layout->addCenterComponent($tools, array('title' => 'STUDIO: LOG IN'));
 
