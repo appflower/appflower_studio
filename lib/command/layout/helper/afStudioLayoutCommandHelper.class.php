@@ -27,6 +27,7 @@ class afStudioLayoutCommandHelper
                         'text'      => $page['text'],
                         'iconCls'   => 'icon-layout',
                         'xmlPath'   => $page['xmlPath'],
+                        'widgetUri' => $page['widgetUri'],
                         'leaf'      => true,
                         'type'      => 'page'
                     );

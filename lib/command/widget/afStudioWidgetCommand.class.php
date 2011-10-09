@@ -65,6 +65,9 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             
             if (!is_array($data)) return $response->success(false)->message("Wrong data defined. Please check request.");
             
+            if (!preg_match('/^[a-zA-Z0-9_]+$/si', $this->module)) return $response->success(false)->message("Invalid module name.");
+            if (!preg_match('/^[a-zA-Z0-9_]+$/si', $this->action)) return $response->success(false)->message("Invalid widget name.");
+            
             // retrieve widget object
             $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
             

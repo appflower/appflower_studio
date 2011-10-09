@@ -507,6 +507,8 @@ class afStudioModelCommandModificator
         if (!empty($f->size)) $definition['size'] = intval($f->size);
         if (!empty($f->onDelete)) $definition['onDelete'] = $f->onDelete;
         
+        if (!empty($f->primaryString)) $definition['primaryString'] = $f->primaryString;
+        
         return $definition;
     }
     
@@ -734,6 +736,7 @@ class afStudioModelCommandModificator
         $field->key = 'primary';
         $field->size = 11;
         $field->autoIncrement = true;
+        $field->primaryString = true;
         
         return $field;
     }
