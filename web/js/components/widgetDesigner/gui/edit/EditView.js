@@ -211,7 +211,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			
 			var flds = this.getFieldsFromDefaultSet();
 			if (flds.length) {
-				defSet = this.createDefaultFieldSet(flds);
+				var defSet = this.createDefaultFieldSet(flds);
 				cmp.push(defSet);
 			}
 			
@@ -476,7 +476,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				fld = item.field,
 				f = this.createField(fld);
 			
-			this.wrapField(wr, f, clmW);
+			this.wrapField(wr, f, ref, clmW);
 			
 			if (idx != 0 && ref['break']) {
 				wr = this.createFieldWrapper(fldSetFloat);
@@ -524,6 +524,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		cfg.hidden = hidden;
 		fieldSet = new Ext.form.FieldSet(cfg);
 		fieldSet.add(flds);
+		
+		//TODO hidden status of default set should be examined after every insertion/addition 
 		
 		return fieldSet;
 	},
@@ -583,16 +585,28 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @protected
 	 * @param {Ext.Container} wrapper The field(s) wrapper container
 	 * @param {Object} field The field being wrapped
+	 * @param {Object} ref The i:ref definition object
 	 * @param {Number} (optional) clmW The column width, by default is 1
 	 */
-	wrapField : function(wrapper, field, clmW) {
+	wrapField : function(wrapper, field, ref, clmW) {
+		var nodeIdMpr = this.NODE_ID_MAPPER,
+			cfg = {};
+		
 		clmW = Ext.isDefined(clmW) ? clmW : 1;
 
-		wrapper.add(
-		{
+		Ext.apply(cfg, {
+			layout: 'form',
 			columnWidth: clmW,
 			items: field
-		});		
+		});
+		
+		cfg[nodeIdMpr] = ref[nodeIdMpr];
+		
+		var wr = new Ext.Container(cfg);
+		
+		this.mapCmpToModel(ref[nodeIdMpr], wr);
+		
+		wrapper.add(wr);		
 	},
 
 	/**
@@ -620,6 +634,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	/**
 	 * Returns "real" button's index based on view definition object associated with a model 
 	 * and widget buttons. 
+	 * @protected
 	 * @param {Node} node The button related node
 	 * @param {Number} idx The node idx inside the parent model node
 	 * @param {String} type (optional) type The button type, can be "button" | "action", defaults to "button"
@@ -643,6 +658,13 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return btnIdx;
 	},
 	
+	/**
+	 * Returns correct field index, correction is based on fields count and the other nodes of i:fields.
+	 * @protected
+	 * @param {Node} node The field node
+	 * @param {Number} idx The field node's index inside the model
+	 * @return {Number} index
+	 */
 	getFieldIndex : function(node, idx) {
 		var vd = this.controller.getViewDefinition(),
 			fldIdx = vd.getEntityObj(node, idx).idx;
@@ -650,6 +672,33 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		fldIdx = (fldIdx == null) ? 0 : fldIdx;
 		
 		return fldIdx;
+	},
+	
+	/**
+	 * Returns the index of being inserted field inside default fields-set.
+	 * @protected
+	 * @param {Node} flsNode The fields parent node (i:fields)
+	 * @param {Node} fldNode 
+	 * @return {Number} index
+	 */
+	getDefaultSetInsertFieldIndex : function(flsNode, fldNode) {
+		var defSet = this.getDefaultSet(),
+			fldIdx = flsNode.indexOf(fldNode),
+			realIdx = null;
+		
+		defSet.items.each(function(fld, idx){
+			var fi = flsNode.indexOf(this.getModelByCmp(fld));
+			if (fldIdx < fi) {
+				realIdx = idx;
+				return false;
+			}
+		}, this);
+		
+		if (realIdx == null) {
+			realIdx = defSet.items.getCount();
+		}
+
+		return realIdx;
 	},
 	
 	/**

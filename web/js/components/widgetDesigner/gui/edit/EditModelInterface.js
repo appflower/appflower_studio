@@ -64,6 +64,15 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 		
 		/**
+		 * Returns references properties from a field-set.
+		 * @param {String|Node} fldSet The field-set node or it's id
+		 * @return {Array} references
+		 */
+		getRefsFromSet : function(fldSet, filter) {
+			return  this.getModelChildrenProperties(fldSet, this.NODES.REF, filter);
+		},
+		
+		/**
 		 * Returns references and fields properties from a field-set.
 		 * @param {String|Node} setNode The field-set node or it's id
 		 * @return {Array} references & fields :
@@ -73,7 +82,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		 *  ]
 		 */
 		getFieldsFromSet : function(setNode) {
-			var refNodes = this.getModelChildrenProperties(setNode, this.NODES.REF),
+			var refNodes = this.getRefsFromSet(setNode),
 				fields = [];
 			
 			Ext.each(refNodes, function(ref){
@@ -120,6 +129,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		
 		/**
 		 * Returns field index inside the default field-set or null if field doesn't exits in default field-set.
+		 * @param {Node|Object} fld The field node or field node's properties object
 		 * @return {Number} index or null 
 		 */
 		getDefaultSetFieldIndex : function(fld) {
@@ -131,6 +141,36 @@ afStudio.wd.edit.EditModelInterface = (function() {
 			});
 			
 			return Ext.isDefined(pos) ? pos : null;
+		},
+		
+		/**
+		 * Returns i:ref node or its properties by field node.
+		 * If the reference node wasn't found by a field returns null.
+		 * @param {Node} fldNode The field node
+		 * @param {Boolean} (optional) asNode Flag if set to true returns i:ref node otherwise its properties, defaults to false
+		 * @return {Object} i:ref or null
+		 */
+		getRefByField : function(fldNode, asNode) {
+			var nodeIdMpr = this.NODE_ID_MAPPER,
+				fldName = fldNode.getPropertyValue('name'),
+				ref = null;
+			
+			if (Ext.isEmpty(fldName)) {
+				return null;
+			}
+			
+			var sets = this.getFieldSets();
+			
+			Ext.each(sets, function(s){
+				var r = this.getRefsFromSet(s[nodeIdMpr], {to: fldName});
+				
+				if (!Ext.isEmpty(r)) {
+					ref = (asNode === true) ? this.getModelNode(r[0][nodeIdMpr]) : r[0];
+					return false;
+				}
+			}, this);
+			
+			return ref;
 		}
 		
 	};

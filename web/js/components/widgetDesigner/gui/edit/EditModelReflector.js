@@ -25,6 +25,15 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			return line;
 		},
 		
+		/**
+		 * Removes component & unmapping it from the associated model node.
+		 * @param {Node} node
+		 * @param {Object} cmp
+		 */
+		removeComponent : function(node, cmp) {
+			cmp.destroy(true);
+			this.unmapCmpFromModel(node);
+		},
 		
 		//TODO labelWidth property implementation
 		executeUpdateFieldsLabelWidth : function(node, cmp, p, v) {
@@ -99,8 +108,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * @private
 		 */
 		removeButton : function(node, cmp) {
-			cmp.destroy();
-			this.unmapCmpFromModel(node);
+			this.removeComponent(node, cmp);
 		},
 		
 		/**
@@ -251,25 +259,37 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * Adds field (i:fields->i:field).
 		 */
 		executeAddFieldsField : function(node, idx) {
-			var pField = this.getModelNodeProperties(node);				
+			var pField = this.getModelNodeProperties(node);
 			
 			if (this.isGrouped()) {
-				var defSet = this.getDefaultSet();
 				
-				if (defSet) {
-					var oField = this.createField(pField);
-					defSet.add(oField);
-					defSet.doLayout();
+				var refNode = this.getRefByField(node, true);
+				
+				if (refNode) {
+					var refCmp = this.getCmpByModel(refNode),
+						oField = this.createField(pField);
+					refCmp.add(oField);
+					refCmp.doLayout();
 				} else {
-					defSet = this.createDefaultFieldSet([pField]);
-					var tabPanel = this.getTabbedSet();
-					if (tabPanel) {
-						this.insert(this.items.indexOf(tabPanel), defSet);
+					
+					var defSet = this.getDefaultSet();
+					
+					if (defSet) {
+						var oField = this.createField(pField);
+						defSet.add(oField);
+						defSet.doLayout();
 					} else {
-						this.add(defSet);
+						defSet = this.createDefaultFieldSet([pField]);
+						var tabPanel = this.getTabbedSet();
+						if (tabPanel) {
+							this.insert(this.items.indexOf(tabPanel), defSet);
+						} else {
+							this.add(defSet);
+						}
+						this.doLayout();
 					}
-					this.doLayout();
 				}
+				
 			} else {
 				var oField = this.createField(pField),
 					fldIdx = this.getFieldIndex(node, idx);
@@ -277,6 +297,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				this.doLayout();
 			}
 		},
+		//eo executeAddFieldsField
 
 		/**
 		 * Removes field (i:fields->i:field).
@@ -284,21 +305,91 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		executeRemoveFieldsField : function(node, cmp) {
 			var defSet = this.getDefaultSet();
 			
-			if (defSet && defSet.items.indexOf(cmp) != -1 
-				&& defSet.items.getCount() == 1) {
+			//field is located in the default fields-set
+			if (defSet && defSet.items.indexOf(cmp) != -1) {
+				this.removeComponent(node, cmp);
 				
-				defSet.destroy(true);
+				//if default fields-set is empty remove it
+				if (defSet.items.getCount() == 0) {
+					defSet.destroy(true);
+				}
+				
 			} else {
-				cmp.destroy(true);
+			//if a field is not inside the default fields-set simple remove it	
+				this.removeComponent(node, cmp);
 			}
-			this.unmapCmpFromModel(node);
 		},
+		
+		/**
+		 * Inserts field.
+		 */
+		executeInsertFieldsField : function(parent, node, refNode, refCmp) {
+			var pField = this.getModelNodeProperties(node);
+			
+			//widget has grouping sets 	
+			if (this.isGrouped()) {
+				var ref = this.getRefByField(node, true);
+				
+				//if the i:ref node exists, mapped to the field being inserted  
+				if (ref) {
+					var oField = this.createField(pField);
+					refCmp = this.getCmpByModel(ref);
+					refCmp.add(oField);
+					refCmp.doLayout();
+					
+				//field will be inserted in default fields-set
+				} else {
+					var defSet = this.getDefaultSet();
+					
+					if (defSet) {
+						var oField = this.createField(pField);
+						
+						if (!node.isSimilarNode(refNode)) {
+							defSet.add(oField);
+						} else {
+							var fldIdx = defSet.items.indexOf(refCmp);
+							if (fldIdx == -1) {
+								fldIdx = this.getDefaultSetInsertFieldIndex(parent, refNode);
+							}
+							defSet.insert(fldIdx, oField);
+						}
+						defSet.doLayout();
+						
+					//default fields-set is not exists and will be created	
+					} else {
+						defSet = this.createDefaultFieldSet([pField]);
+						var tabPanel = this.getTabbedSet();
+						if (tabPanel) {
+							this.insert(this.items.indexOf(tabPanel), defSet);
+						} else {
+							this.add(defSet);
+						}
+						this.doLayout();
+					}
+				}
+				
+			//simple edit widget
+			} else {
+				var oField = this.createField(pField);
+				
+				if (!node.isSimilarNode(refNode)) {
+					this.add(oField);
+				} else {
+					var fldIdx = this.items.indexOf(refCmp);
+					this.insert(fldIdx, oField);
+				}
+				this.doLayout();
+			}
+		},
+		//eo executeInsertFieldsField
 		
 		/**
 		 * type
 		 */
 		executeUpdateFieldsFieldType : function(node, cmp, p, v) {
 			if (this.isGrouped()) {
+				
+				//todo
 				
 			} else {
 				var fldIdx = this.items.indexOf(cmp);
