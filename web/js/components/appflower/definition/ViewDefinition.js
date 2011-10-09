@@ -158,11 +158,14 @@ afStudio.definition.ViewDefinition = Ext.extend(afStudio.definition.DataDefiniti
 			ei = entObj.idx;
 
 		//node should be added
-		if (node.tag != refNode.tag) {
+		if (!node.isSimilarNode(refNode)) {
 			this.addEntity(parent, node);
+			
+			return;
 		}
 		
 		var entity = this.createEntity(node);
+		
 		if (ei != null) {
 			ep[ek].splice(ei, 0, entity);
 		}
