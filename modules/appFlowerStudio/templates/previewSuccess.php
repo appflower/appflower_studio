@@ -31,9 +31,9 @@ Ext.onReady(function(){
 	});
 	
 	var path = Ext.urlDecode(location.search.substr(1));
-
+	
 	afApp.urlPrefix = '/';
 	GLOBAL_JS_VAR = GLOBAL_CSS_VAR = new Array();
-	afApp.widgetPopup(path.uri, path.uri, null, null, {});	
+	afApp.widgetPopup(path.uri, path.title ? path.title : path.uri, null, null, {});	
 });
 </script>
