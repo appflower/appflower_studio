@@ -33,7 +33,7 @@ class afStudioFileCommand extends afBaseStudioCommand
         $dir = afStudioFileCommandHelper::getPath($dir_path);
         $dir_name = pathinfo($dir, PATHINFO_BASENAME);
         
-        if (file_exists($file)) return afResponseHelper::create()->success(false)->message("Directory '{$dir_name}' already exists. Please choose another one.");
+        if (file_exists($dir)) return afResponseHelper::create()->success(false)->message("Directory '{$dir_name}' already exists. Please choose another one.");
         
         if (!Util::makeDirectory($dir)) {
             $message = afStudioFileCommandHelper::checkFolder($dir_path);
