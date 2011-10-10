@@ -98,7 +98,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     	var u = new me.store.recordType({
             name: '',
             type: 'integer',
-            required: false
+            required: false,
+            primaryString: false
         });
         me.stopEditing();
         me.store.insert(index, u);
@@ -116,7 +117,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     	var u = new me.store.recordType({
             name : '',
             type: 'integer',
-            required: false
+            required: false,
+            primaryString: false
         });
         me.stopEditing();
         me.store.insert(index, u);
