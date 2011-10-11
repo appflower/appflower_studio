@@ -388,9 +388,31 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 */
 		executeUpdateFieldsFieldType : function(node, cmp, p, v) {
 			if (this.isGrouped()) {
-				
-				//todo
-				
+				var defSet = this.getDefaultSet();
+
+				//field is inside the default fields-set
+				if (defSet.items.indexOf(cmp) != -1) {
+					defSet.remove(cmp, true);
+					
+					if (node.nextSibling) {
+						var parent = node.parentNode,
+							refNode = node.nextSibling,
+							refCmp = this.getCmpByModel(node.nextSibling);
+						this.executeInsertFieldsField(parent, node, refNode, refCmp);
+						
+					} else {
+						var fldIdx = defSet.items.indexOf(cmp);
+						this.executeAddFieldsField(node, fldIdx);
+					}
+					
+				//not default fields-set	
+				} else {
+					var fldCt = cmp.ownerCt;
+					fldCt.removeAll(true);
+					this.executeAddFieldsField(node);
+				}
+			
+			//simple(not grouped) edit widget
 			} else {
 				var fldIdx = this.items.indexOf(cmp);
 				this.remove(cmp, true);
