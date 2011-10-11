@@ -50,6 +50,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			autoScroll: true,
 			labelWidth: labelWidth,
 			items: items,
+			tbar: {
+				style: 'border-bottom: 2px solid #C00; margin-bottom: 4px; padding: 4px;',
+				items: []
+			},
 			buttons: buttons
 		}
 	},
@@ -65,6 +69,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		);
 		
 		afStudio.wd.edit.EditView.superclass.initComponent.apply(this, arguments);
+		
+		this._afterInitComponent();
 	},	
 	
 	/**
@@ -110,6 +116,33 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
         afStudio.wd.edit.EditView.superclass.beforeDestroy.call(this);
     },
 	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	_afterInitComponent : function() {
+		var _me = this;
+		
+		this.configureView();
+	},
+	//eo _afterInitComponent    
+    
+	
+	/**
+	 * After construction view configuration
+	 * @protected
+	 */
+	configureView : function() {
+		var tbar = this.getTopToolbar();
+
+		//i:description
+		var dscNode = this.getModelNodeByPath(this.NODES.DESCRIPTION),
+			dsc = this.createDescription();
+		
+		tbar.add(dsc);
+		dscNode == null ? tbar.hide() : tbar.show();
+	},
+    
 	/**
 	 * Relayed <u>modelNodeAppend</u> event listener.
 	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
@@ -174,6 +207,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
     
 	/**
 	 * Returns default field-set.
+	 * @protected
 	 * @return {Object} default set or null if it's not exists
 	 */
 	getDefaultSet : function() {
@@ -183,13 +217,36 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
-	 * Returns the tabbed field-sets container {@link Ext.TabPanel}. 
+	 * Returns the tabbed field-sets container {@link Ext.TabPanel}.
+	 * @protected 
 	 * @return {Object} tabpanel or null if it's not exists
 	 */
 	getTabbedSet : function() {
 		var tab = this.findByType('tabpanel');
 		
 		return tab.length ? tab[0] : null;		
+	},
+	
+	/**
+	 * Updates default fields-set visibility, based on inner fields with hidden type.
+	 * If default fields-set has at least one not hidden field - it should be displayed.
+	 * @protected
+	 */
+	updateDefaultSetVisibility : function() {
+		var defSet = this.getDefaultSet();
+		
+		if (defSet) {
+			var hidden = true;
+			
+			defSet.items.each(function(fld) {
+				if (fld.getXType() != 'hidden') {
+					hidden = false;
+					return false;
+				}
+			}, this);
+			
+			!hidden ? defSet.show() : defSet.hide();
+		}
 	},
 	
 	/**
@@ -525,8 +582,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		fieldSet = new Ext.form.FieldSet(cfg);
 		fieldSet.add(flds);
 		
-		//TODO hidden status of default set should be examined after every insertion/addition 
-		
 		return fieldSet;
 	},
 	//eo createDefaultFieldSet
@@ -554,6 +609,31 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}, this);
 		
 		return tabPanel;
+	},
+	
+	/**
+	 * Creates description item.
+	 * @protected
+	 * @return {Ext.Toolbar.TextItem} description item
+	 */
+	createDescription : function() {
+		var cfg = {
+        		itemId: 'description',
+        		style: 'white-space: normal;',
+        		text: '&#160;'
+			};
+		
+		var dsc = this.getModelNodeByPath(this.NODES.DESCRIPTION);
+		
+		if (dsc) {
+			var descData = this.getModelNodeValue(dsc);
+			
+			if (descData[this.NODE_VALUE_MAPPER]) {
+				cfg.text = descData[this.NODE_VALUE_MAPPER]; 			
+			}
+		}
+		
+		return new Ext.Toolbar.TextItem(cfg);
 	},
 	
 	/**
