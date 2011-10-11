@@ -35,14 +35,36 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			this.unmapCmpFromModel(node);
 		},
 		
-		//TODO labelWidth property implementation
-		executeUpdateFieldsLabelWidth : function(node, cmp, p, v) {
-			/*
-			console.log('label width', v);
-			this.labelWidth = v;
-			this.form.applyToFields({labelWidth: v});
-			*/
+		//i:description
+		//----------------------------------------------------
+		
+		/**
+		 * Adds description.
+		 */
+		executeAddRootDescription : function() {
+			var tbar = this.getTopToolbar();
+			tbar.show();		
 		},
+		/**
+		 * Removes description.
+		 */
+		executeRemoveRootDescription : function() {
+			var tbar = this.getTopToolbar(),
+				dsc = tbar.getComponent('description');
+			dsc.setText('&#160;');
+			tbar.hide();
+			this.doLayout();
+		},
+		/**
+		 * _content
+		 */
+		executeUpdateRootDescription_content : function(node, cmp, p, v) {
+			var tbar = this.getTopToolbar(),
+				dsc = tbar.getComponent('description');
+			
+			dsc.setText(v.trim() ? v : '&#160;');			
+		},
+		
 		
 		//buttons, responsible properties: i:fields, i:actions
 		//----------------------------------------------------
@@ -233,6 +255,17 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			cmp.setTooltip(v);	
 		},
 		
+		//i:fields
+		//----------------------------------------------------		
+		
+		//TODO labelWidth property implementation
+		executeUpdateFieldsLabelWidth : function(node, cmp, p, v) {
+			/*
+			console.log('label width', v);
+			this.labelWidth = v;
+			this.form.applyToFields({labelWidth: v});
+			*/
+		},
 		
 		//fields (i:fields->i:field)
 		//----------------------------------------------------
