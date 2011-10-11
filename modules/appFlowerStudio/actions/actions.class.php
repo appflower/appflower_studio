@@ -67,6 +67,8 @@ class appFlowerStudioActions extends afsActions
             }
         }
         
+        if ($request->getParameter('cmd') == 'upload') return $this->renderText($response->asJson());
+        
         return $this->renderJson($response->asArray());
     }
     

@@ -113,7 +113,11 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 		var c = this.controller,
 			widget = c.getWidget();
 			
-		afStudio.WD.previewWidget(widget.uri);	
+		var model = c.getRootNode(),
+			titleNode = model.getImmediateModelNode(afStudio.ModelNode.TITLE),		
+			title = titleNode ? titleNode.getNodeDataValue() : null;
+		
+		afStudio.WD.previewWidget(widget.uri, title);	
 	}
 });
 

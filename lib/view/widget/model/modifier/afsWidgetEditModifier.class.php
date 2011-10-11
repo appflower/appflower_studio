@@ -38,6 +38,10 @@ class afsWidgetEditModifier extends afsBaseModelModifier
         
         $this->datasource = $this->processGetDatasource($definition);
         
+        if ($model->isNew()) {
+            $definition = $this->checkAndCreateFieldsUrlAttribute($definition, $model);
+        }
+        
         $definition = $this->searchForAndModifyForeignTableFields($definition);
         $definition = $this->setFieldsDefaultValuePlaceholder($definition);
         
@@ -191,6 +195,29 @@ class afsWidgetEditModifier extends afsBaseModelModifier
         }
         
         return $fieldDefinition;
+    }
+    
+    
+    /**
+     * If i:fields url attribute is not set we are generating it with default id parameter
+     *
+     * @param array $definition 
+     * @param afsWidgetModel $widgetModel
+     * @return array
+     * @author Łukasz Wojciechowski 
+     */
+    private function checkAndCreateFieldsUrlAttribute(Array $definition, afsWidgetModel $widgetModel)
+    {
+        if (isset($definition['i:fields']) ) {
+            $fields = $definition['i:fields'];
+            if (!isset($fields['attributes']['url'])) {
+                $fields['attributes']['url']
+                    = $widgetModel->getModule() . '/' .$widgetModel->getAction() . '?id={id}';
+            }
+            $definition['i:fields'] = $fields;
+        }
+        
+        return $definition;
     }
     
     /**

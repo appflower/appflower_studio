@@ -433,6 +433,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
+     * Sets passed node as the {@link #firstChild} of this node.
      * @private
      * @borrows
      */
@@ -441,6 +442,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
+     * Sets passed node as the {@link #lastChild} of this node.
      * @private
      * @borrows
      */
@@ -474,6 +476,21 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     isDirectRootChild : function() {
     	var root = this.getRootNode();
     	return root == this.parentNode;
+    },
+    
+    /**
+     * Checks if the passed in node is a "similar" node to this one.
+     * Right now "similar" nodes are not the same(equal) nodes with equal {@link #tag} properties.
+     * @protected
+     * @param {Node} node The model node being examining with this one 
+     * @return {Boolean}
+     */
+    isSimilarNode : function(node) {
+    	if (this == node) {
+    		return false;
+    	}
+    	
+    	return (this.tag == node.tag); 
     },
     
     /**

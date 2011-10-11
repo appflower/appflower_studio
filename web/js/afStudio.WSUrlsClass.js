@@ -31,6 +31,8 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
 	widgetSetAsHomepage : '/afsModuleManager/setAsHomepage',
 	
+	pageSetAsHomepage : '/afsLayoutBuilder/setAsHomepage',
+	
     getModuleWidgetsUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/moduleWidgets');
     },    

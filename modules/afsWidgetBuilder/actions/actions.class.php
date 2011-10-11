@@ -56,4 +56,32 @@ class afsWidgetBuilderActions extends afsActions
         );
     }
     
+    /**
+     * Generate widget via model definition 
+     *
+     * @param sfWebRequest $request 
+     * @return string - json
+     * @author Sergey Startsev
+     */
+    public function executeGenerateWidget(sfWebRequest $request)
+    {
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'generate', $request->getParameterHolder()->getAll())->asArray()
+        );
+    }
+    
+    /**
+     * Generate all widgets action
+     *
+     * @param sfWebRequest $request 
+     * @return string - json
+     * @author Sergey Startsev
+     */
+    public function executeGenerateAll(sfWebRequest $request)
+    {
+        return $this->renderJson(
+            afStudioCommand::process('widget', 'generateAll', $request->getParameterHolder()->getAll())->asArray()
+        );
+    }
+    
 }

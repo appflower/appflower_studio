@@ -34,6 +34,13 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
  		{name: 'permissions', type: 'permissionType', defaultValue: '*'}        
 	],
 	
+	defaultDefinition : {
+		attributes: {
+			name: 'field',
+			label: 'field'
+		}
+	},
+	
 	nodeTypes : [
 	    {name: afStudio.ModelNode.VALUE}, 
 	    {name: afStudio.ModelNode.TOOLTIP}, 
