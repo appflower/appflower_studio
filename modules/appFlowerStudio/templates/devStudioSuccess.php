@@ -64,6 +64,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 </script>
 
 <!-- engine ux -->
+<!-- ========== -->
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js"></script>
 
 <!-- multiselect (multicombo) -->
@@ -72,9 +73,12 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/MultiSelect.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/ItemSelector.js"></script>
 
-<!-- doublemulticombo) -->
+<!-- doublemulticombo -->
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/Ext.ux.plugins.ItemSelectorAutoSuggest.js"></script>
 
+<!-- doubletree -->
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js"></script>
+<!-- ========== -->
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.xhr.js"></script>

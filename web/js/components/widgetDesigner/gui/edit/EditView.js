@@ -379,6 +379,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				});
 			break;
 			
+			case 'doubletree':
+				fn = Ext.ux.TreeItemSelector;
+				cfg.imagePath = '/appFlowerPlugin/extjs-3/plugins/multiselect/images';
+			break;
+			
 			default:
 				fn = Ext.form.DisplayField;
 				cfg.value = String.format('<b>type</b> = {0}', fld.type);
