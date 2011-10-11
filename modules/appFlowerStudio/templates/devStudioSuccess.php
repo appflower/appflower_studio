@@ -63,6 +63,10 @@ var afProjectInPath = '<?php echo $projectInPath; ?>';
 var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig()); ?>;
 </script>
 
+<!-- engine ux -->
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js"></script>
+
+
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.xhr.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>

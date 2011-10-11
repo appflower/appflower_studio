@@ -174,7 +174,7 @@ var afStudio = function () {
 			afStudio.Cli.init();
 			
 			//set up logger mode
-			afStudio.Logger.mode = afStudio.Logger.OFF;
+			afStudio.Logger.mode = afStudio.Logger.DEBUG;
 			
 			afApp.urlPrefix = '';
 			GLOBAL_JS_VAR = GLOBAL_CSS_VAR = new Array();

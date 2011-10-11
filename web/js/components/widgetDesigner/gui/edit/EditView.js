@@ -357,6 +357,14 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				cfg.format = fld.dateFormat ? fld.dateFormat : 'Y-m-d';
 			break;
 			
+			case 'datetime':
+				fn = Ext.ux.form.DateTime;
+				Ext.apply(cfg, {
+					dateFormat: fld.dateFormat ? fld.dateFormat : 'Y-m-d',
+					timeFormat: fld.timeFormat ? fld.timeFormat : 'H:i:s'
+				});
+			break;
+			
 			default:
 				fn = Ext.form.DisplayField;
 				cfg.value = String.format('<b>type</b> = {0}', fld.type);

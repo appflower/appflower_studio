@@ -533,6 +533,30 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			if (cmp.getXType() == 'textarea') {
 				this.executeUpdateFieldsFieldType(node, cmp, p, v);
 			}
+		},
+		/**
+		 * dateFormat
+		 */
+		executeUpdateFieldsFieldDateFormat : function(node, cmp, p, v) {
+			var type = cmp.getXType();
+			
+			if (['datefield', 'xdatetime'].indexOf(type) != -1) {
+				
+				if (type == 'xdatetime') {
+					cmp.df.format = v;	
+				} else {
+					cmp.format = v;
+				}
+			}
+		},
+		/**
+		 * timeFormat
+		 */
+		executeUpdateFieldsFieldTimeFormat : function(node, cmp, p, v) {
+			if (cmp.getXType() == 'xdatetime') {
+				//TODO implement
+				//cmp.tf.format = v;
+			}
 		}
 		
 	}
