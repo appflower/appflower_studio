@@ -224,22 +224,24 @@ EOF;
      */
     private function getDefinitionEdit(Array $params)
     {
+        $primary_key = $this->getPrimaryKeyName($params['model']);
+        
         $definition = array(
             'i:title' => $params['title'],
             'i:datasource' => array(
                 'attributes' => array(
                     'type' => 'orm',
                 ),
-                'i:class' => "{$params['model']}Peer",
+                'i:class' => $params['model']::PEER,
                 'i:method' => array(
                     'attributes' => array(
                         'name' => 'retrieveByPk',
                     ),
                     'i:param' => array(
                         'attributes' => array(
-                            'name' => 'id',
+                            'name' => $primary_key,
                         ),
-                        '_content' => '{id}',
+                        '_content' => '{' . $primary_key . '}',
                     ),
                 ),
             ),
@@ -247,7 +249,7 @@ EOF;
         
         if (isset($params['fields']) && !empty($params['fields'])) {
             foreach ($params['fields'] as $field) {
-                if ($field['name'] == 'id') continue;
+                if ($field['name'] == $primary_key) continue;
                 $definition['i:fields']['i:field'][] = array(
                     'attributes' => array(
                         'name' => $field['name'],
@@ -308,6 +310,25 @@ EOF;
         foreach ($paths as $path) $places[] = pathinfo($path, PATHINFO_BASENAME);
         
         return $places;
+    }
+    
+    /**
+     * Getting primary key field name
+     *
+     * @param string $model 
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getPrimaryKeyName($model)
+    {
+        $peer = $model::PEER;
+        
+        $table_map = call_user_func(array($peer, 'getTableMap'));
+        $pk = key($table_map->getPrimaryKeys());
+        
+        $pk = call_user_func(array($peer, 'translateFieldName'), $pk, BasePeer::TYPE_RAW_COLNAME, BasePeer::TYPE_FIELDNAME);
+        
+        return $pk;
     }
     
 }
