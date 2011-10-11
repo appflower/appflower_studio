@@ -44,8 +44,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		var buttons = this.createButtons();
 		
-		var description = this.createDescription();
-		
 		this.dumpMapper();
 		
 		return {
