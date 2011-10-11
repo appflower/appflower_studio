@@ -277,6 +277,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 					if (defSet) {
 						var oField = this.createField(pField);
 						defSet.add(oField);
+						this.updateDefaultSetVisibility();
 						defSet.doLayout();
 					} else {
 						defSet = this.createDefaultFieldSet([pField]);
@@ -312,6 +313,8 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				//if default fields-set is empty remove it
 				if (defSet.items.getCount() == 0) {
 					defSet.destroy(true);
+				} else {
+					this.updateDefaultSetVisibility();
 				}
 				
 			} else {
@@ -353,6 +356,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 							}
 							defSet.insert(fldIdx, oField);
 						}
+						this.updateDefaultSetVisibility();
 						defSet.doLayout();
 						
 					//default fields-set is not exists and will be created	

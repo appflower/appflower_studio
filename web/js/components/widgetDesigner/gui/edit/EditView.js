@@ -174,6 +174,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
     
 	/**
 	 * Returns default field-set.
+	 * @protected
 	 * @return {Object} default set or null if it's not exists
 	 */
 	getDefaultSet : function() {
@@ -183,13 +184,36 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
-	 * Returns the tabbed field-sets container {@link Ext.TabPanel}. 
+	 * Returns the tabbed field-sets container {@link Ext.TabPanel}.
+	 * @protected 
 	 * @return {Object} tabpanel or null if it's not exists
 	 */
 	getTabbedSet : function() {
 		var tab = this.findByType('tabpanel');
 		
 		return tab.length ? tab[0] : null;		
+	},
+	
+	/**
+	 * Updates default fields-set visibility, based on inner fields with hidden type.
+	 * If default fields-set has at least one not hidden field - it should be displayed.
+	 * @protected
+	 */
+	updateDefaultSetVisibility : function() {
+		var defSet = this.getDefaultSet();
+		
+		if (defSet) {
+			var hidden = true;
+			
+			defSet.items.each(function(fld) {
+				if (fld.getXType() != 'hidden') {
+					hidden = false;
+					return false;
+				}
+			}, this);
+			
+			!hidden ? defSet.show() : defSet.hide();
+		}
 	},
 	
 	/**
@@ -524,8 +548,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		cfg.hidden = hidden;
 		fieldSet = new Ext.form.FieldSet(cfg);
 		fieldSet.add(flds);
-		
-		//TODO hidden status of default set should be examined after every insertion/addition 
 		
 		return fieldSet;
 	},
