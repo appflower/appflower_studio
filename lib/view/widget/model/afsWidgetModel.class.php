@@ -238,6 +238,9 @@ class afsWidgetModel extends afsBaseModel
         if (!file_exists($this->getPlaceConfigPath())) afsFileSystem::create()->mkdirs($this->getPlaceConfigPath(), 0774);
         
         if ($definition->validate()) {
+            $model_validator = afsWidgetModelValidator::create($this)->execute();
+            if (!$model_validator->isValid()) return afResponseHelper::create()->success(false)->message($model_validator->getMessages(true));
+            
             afStudioUtil::writeFile($this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$this->getAction()}.xml", $definition->get());
             
             $this->ensureSecurityExists();
@@ -262,24 +265,24 @@ class afsWidgetModel extends afsBaseModel
         if ($this->isNew()) return $response->success(false)->message("Widget doesn't exists, create widget first");
         
         $old_name = $this->getAction();
-		$module = $this->getModule();
-		$place = $this->getPlace();
-		$type = $this->getPlaceType();
-		
-		$oldPath = $this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$old_name}.xml";
-		$newPath = $this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$new_name}.xml";
+        $module = $this->getModule();
+        $place = $this->getPlace();
+        $type = $this->getPlaceType();
         
-		if (file_exists($newPath)) return $response->success(false)->message("View {$new_name} already exists");
-		
-		$renamed = afsViewModelHelper::renameAction($old_name, $new_name, $module, $place, $type);
+        $oldPath = $this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$old_name}.xml";
+        $newPath = $this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$new_name}.xml";
+        
+        if (file_exists($newPath)) return $response->success(false)->message("View {$new_name} already exists");
+        
+        $renamed = afsViewModelHelper::renameAction($old_name, $new_name, $module, $place, $type);
         
         afsFileSystem::create()->rename($oldPath, $newPath);
         
-		if (!file_exists($oldPath) && file_exists($newPath)) {
+        if (!file_exists($oldPath) && file_exists($newPath)) {
             return $response->success(true)->message("Renamed page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
-		}
-		
-		return $response->success(false)->message("Can't rename page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
+        }
+        
+        return $response->success(false)->message("Can't rename page from <b>{$old_name}</b> to <b>{$new_name}</b>!");
     }
     
     /**
@@ -297,8 +300,8 @@ class afsWidgetModel extends afsBaseModel
         $action_name = $this->getAction();
         
         // init paths
-		$xml_dir = $this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$action_name}.xml";
-		$action_dir = $this->getPlaceActionsPath() . DIRECTORY_SEPARATOR . "{$action_name}Action.class.php";
+        $xml_dir = $this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$action_name}.xml";
+        $action_dir = $this->getPlaceActionsPath() . DIRECTORY_SEPARATOR . "{$action_name}Action.class.php";
         
         $filesystem = afsFileSystem::create();
         
@@ -306,10 +309,10 @@ class afsWidgetModel extends afsBaseModel
         if (file_exists($action_dir)) $filesystem->remove($action_dir);
         
         // init response object
-		$response = afResponseHelper::create();
+        $response = afResponseHelper::create();
         
-		if (!file_exists($xml_dir)) return $response->success(true)->message("Deleted page <b>{$action_name}</b>");
-		
+        if (!file_exists($xml_dir)) return $response->success(true)->message("Deleted page <b>{$action_name}</b>");
+        
         return $response->success(false)->message("Can't delete page <b>{$action_name}</b>!");
     }
     

@@ -135,7 +135,7 @@ class afStudioPluginCommand extends afBaseStudioCommand
         $dir = "{$root}/plugins/{$name}";
         
         if (empty($name)) return $response->success(false)->message('Please enter plugin name');
-        if (substr($name, -6) != 'Plugin') return $response->success(false)->message("Plugin '{$name}' should Contains 'Plugin in the end'");
+        if (substr($name, -6) != 'Plugin') return $response->success(false)->message("Plugin '{$name}' should Contains 'Plugin' in the end");
         if (file_exists($dir)) return $response->success(false)->message("Plugin '{$name}' already exists");
         
         $dirs = array(
