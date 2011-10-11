@@ -15,17 +15,17 @@ class afsWidgetModelValidator extends afsBaseModelValidator
     /**
      * Deprecated fields in edit view
      *
+     * @example 'i:fields' => array(
+     *              'i:field' => array(
+     *                  'attributes' => array(
+     *                      'name' => 'id',
+     *                  ),
+     *              ),
+     *          ),
+     * 
      * @var array
      */
-    private $edit_deprecated_fields = array(
-        'i:fields' => array(
-            'i:field' => array(
-                'attributes' => array(
-                    'name' => 'id',
-                ),
-            ),
-        ),
-    );
+    private $edit_deprecated_fields = array();
     
     /**
      * Params that should be unique
@@ -151,9 +151,12 @@ class afsWidgetModelValidator extends afsBaseModelValidator
     protected function validateDeprecated()
     {
         $errors = array();
+        $definition = $this->getDefinition();
         
         if ($this->getModel()->getType() == afsWidgetModelHelper::WIDGET_EDIT) {
-            $errors = $this->checkDeprecatedField($this->getDefinition(), $this->edit_deprecated_fields);
+            $primary_key_rule = $this->getPrimaryKeyRule($definition);
+            $errors = $this->checkDeprecatedField($definition, $primary_key_rule);
+            $errors = array_merge($errors, $this->checkDeprecatedField($definition, $this->edit_deprecated_fields));
         }
         
         if (empty($errors)) return true;
@@ -239,6 +242,59 @@ class afsWidgetModelValidator extends afsBaseModelValidator
         }
         
         return $errors;
+    }
+    
+    /**
+     * Process getting datasource class
+     *
+     * @param Array $definition 
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getDatasource(Array $definition)
+    {
+        if (isset($definition['i:datasource'])) {
+            if (isset($definition['i:datasource']['i:class'])) {
+                return $definition['i:datasource']['i:class'];
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Getting rule for primary key
+     *
+     * @param Array $definition 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getPrimaryKeyRule(Array $definition)
+    {
+        $datasource = $this->getDatasource($definition);
+        if (!$datasource) return null;
+        
+        $pk = 'id';
+        if (method_exists($datasource, 'getTableMap')) {
+            $table_map = call_user_func(array($datasource, 'getTableMap'));
+            $pk = key($table_map->getPrimaryKeys());
+            
+            if (method_exists($datasource, 'translateFieldName')) {
+                $pk = call_user_func(array($datasource, 'translateFieldName'), $pk, BasePeer::TYPE_RAW_COLNAME, BasePeer::TYPE_FIELDNAME);
+            }
+        }
+        
+        $primary_key_rule = array(
+            'i:fields' => array(
+                'i:field' => array(
+                    'attributes' => array(
+                        'name' => $pk,
+                    ),
+                ),
+            ),
+        );
+        
+        return $primary_key_rule;
     }
     
 }
