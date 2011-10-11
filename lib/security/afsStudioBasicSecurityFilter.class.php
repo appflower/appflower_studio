@@ -14,7 +14,6 @@ class afsStudioBasicSecurityFilter extends sfBasicSecurityFilter
         if ($this->isFirstCall()) {
         
             $context = $this->getContext();
-            $request = $context->getRequest();
             
             // Checking user authorization
             if (!afStudioUser::getInstance()->authorize()) {
