@@ -365,6 +365,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				});
 			break;
 			
+			case 'multicombo':
+				fn = Ext.ux.Multiselect;
+				cfg.tbar = [{text: 'clear'}];
+			break;
+			
 			default:
 				fn = Ext.form.DisplayField;
 				cfg.value = String.format('<b>type</b> = {0}', fld.type);

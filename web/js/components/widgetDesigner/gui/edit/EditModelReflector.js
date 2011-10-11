@@ -485,12 +485,22 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 */
 		executeUpdateFieldsFieldHeight : function(node, cmp, p, v) {
 			cmp.setHeight(v);
+
+			//Ext.ux.Multiselect fix
+			if (cmp.getXType() == 'multiselect') {
+				Ext.getCmp(cmp.el.child('fieldset').id).setHeight(v);
+			}
 		},
 		/**
 		 * width
 		 */
 		executeUpdateFieldsFieldWidth : function(node, cmp, p, v) {
 			cmp.setWidth(v);
+
+			//Ext.ux.Multiselect fix
+			if (cmp.getXType() == 'multiselect') {
+				Ext.getCmp(cmp.el.child('fieldset').id).setWidth(v);
+			}
 		},
 		/**
 		 * style
