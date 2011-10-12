@@ -1521,7 +1521,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @return {Boolean}
      */
     onModelNodeCreated : function(ctr, parent, node) {
-		console.log('@model "modelNodeCreated"', parent, node);
+		afStudio.Logger.info('@model "modelNodeCreated"', parent, node);
 		
 		var nodeTag = node.tag,
 			ns = node.getStructuralData(parent),
