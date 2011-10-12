@@ -283,12 +283,6 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/css/my-extjs.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/form/lovcombo-1.0/css/Ext.ux.form.LovCombo.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/grid-filtering/resources/style.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/plugins/portal/portal.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
-
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/afStudio.css" />
 
 <?php 
