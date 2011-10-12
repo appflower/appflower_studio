@@ -428,7 +428,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				var defSet = this.getDefaultSet();
 
 				//field is inside the default fields-set
-				if (defSet.items.indexOf(cmp) != -1) {
+				if (defSet && defSet.items.indexOf(cmp) != -1) {
 					defSet.remove(cmp, true);
 					
 					if (node.nextSibling) {
