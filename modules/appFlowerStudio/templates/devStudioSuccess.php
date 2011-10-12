@@ -226,6 +226,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/base/TreeNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/base/ContainerNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/RootNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/FieldNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/ColumnNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/MethodNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/node/HandlerNode.js"></script>
