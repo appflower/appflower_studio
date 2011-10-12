@@ -78,6 +78,13 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 
 <!-- doubletree -->
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js"></script>
+
+<!-- color -->
+<link rel="stylesheet" type="text/css" href="/appFlowerPlugin/extjs-3/plugins/form/colorfield/color-field.css" />
+<link rel="stylesheet" type="text/css" href="/appFlowerPlugin/extjs-3/plugins/form/adv-color-picker/code/color-picker.css" />
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/colorfield/color-field.js"></script>
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/adv-color-picker/code/Color.js"></script>
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/adv-color-picker/code/ColorPickerPanel.js"></script>
 <!-- ========== -->
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>

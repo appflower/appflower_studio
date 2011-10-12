@@ -384,6 +384,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				cfg.imagePath = '/appFlowerPlugin/extjs-3/plugins/multiselect/images';
 			break;
 			
+			case 'color':
+				fn = Ext.ux.ColorField;
+			break;
+			
 			default:
 				fn = Ext.form.DisplayField;
 				cfg.value = String.format('<b>type</b> = {0}', fld.type);
