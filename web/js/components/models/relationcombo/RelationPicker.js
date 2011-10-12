@@ -23,7 +23,7 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 	 * "ok" button handler
 	 */
 	,pickRelation : function() {
-		var _this = this,
+		var me = this,
 			   mn =	this.modelsTree.getSelectionModel().getSelectedNode(),
 			   fr = this.fieldsGrid.getSelectionModel().getSelected(),
 			    m = this.modelsTree.getModel(mn), 
@@ -37,28 +37,31 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 	 * @param {String} relation The model.field from relation field 
 	 */
 	,initialRelationPick : function(relation) {		
-		var _this = this,
-		      rel = relation.split('.');
+		var me = this,
+			rel = relation.split('.');
+		      
+		var root = me.modelsTree.getRootNode();
+		
 		(function() {
-			var node = _this.modelsTree.findModelByName(rel[0]);
+			var node = me.modelsTree.findModelByName(rel[0]);
 			if (node) {
-				_this.modelsTree.selectModel(node);
-				_this.fieldsGrid.show();
-				_this.loadModelFields(node, function(rs){
+				me.modelsTree.selectModel(node);
+				me.fieldsGrid.show();
+				me.loadModelFields(node, function(rs){
 					if (rel[1]) {
 						for (var i = 0, l = rs.length; i < l; i++) {
 							if (rs[i].get('name') == rel[1]) {
-								_this.fieldsGrid.getSelectionModel().selectRecords([rs[i]], false); 
+								me.fieldsGrid.getSelectionModel().selectRecords([rs[i]], false); 
 								break;
 							}
 						}
 					}
 				});
 			} else {
-				_this.fieldsGrid.getStore().removeAll();
-				_this.modelsTree.getSelectionModel().clearSelections();
+				me.fieldsGrid.getStore().removeAll();
+				me.modelsTree.getSelectionModel().clearSelections();
 			}
-		}).defer(300);
+		}).defer(500);
 	}
 	
 	/**
@@ -119,12 +122,12 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 	 * @private
 	 */
 	,_initCmp : function() {
-		var _this = this;
+		var me = this;
 		
 		var fieldsGrid = new Ext.grid.GridPanel({			
 			store: new Ext.data.JsonStore({
 				autoLoad: false,
-				url: _this.fieldsUrl,
+				url: me.fieldsUrl,
 				baseParams: {
 					xaction: 'read'
 				},
@@ -166,7 +169,7 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 				items: [{
 					id: 'models-picker',					
 					xtype: 'afStudio.models.modelTree',
-					url: _this.modelsUrl,
+					url: me.modelsUrl,
 					border: false,
 					ref: '../modelsTree'
 				}]
@@ -182,7 +185,7 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 				text: 'ok',
 				disabled: true,
 				iconCls: 'icon-accept',
-				handler: Ext.util.Functions.createDelegate(_this.pickRelation, _this)
+				handler: Ext.util.Functions.createDelegate(me.pickRelation, me)
 			}]
 		}		
 	}
@@ -192,12 +195,12 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 	 * @private
 	 */
 	,_initEvents : function() {
-		var _this      = this,
+		var me      = this,
 			modelTree  = this.modelsTree, 
 			fieldsGrid = this.fieldsGrid,
 			fgSm = fieldsGrid.getSelectionModel();
 		
-		_this.addEvents(
+		me.addEvents(
 			/**
 			 * @event relationpicked Fires after relation is picked
 			 * @param {String} relation The picked up relation in the format model_name:model_column 
@@ -206,12 +209,14 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 		);
 		
 		modelTree.on({
-			click : Ext.util.Functions.createDelegate(_this.onModelClick, _this),
-			modelsload : Ext.util.Functions.createDelegate(_this.onModelsLoad, _this)			
+			scope: this,
+			click: this.onModelClick,
+			modelsload: this.onModelsLoad			
 		});
 		
 		fgSm.on({
-			selectionchange : Ext.util.Functions.createDelegate(_this.onFieldsSelectionChange, _this)
+			scope: this,
+			selectionchange: this.onFieldsSelectionChange
 		});
 	}
 	

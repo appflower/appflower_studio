@@ -26,10 +26,10 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 	 * @return {Object} The configuration object
 	 */
 	_beforeInitComponent : function() {
-		var _this = this;
+		var me = this;
 		
 		var cbStore = new Ext.data.JsonStore({
-			url: _this.relationUrl,
+			url: me.relationUrl,
 			baseParams: {
 				xaction: 'readrelation'
 			},
@@ -99,24 +99,24 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 	
 	//private
 	,createRelationPicker : function() {
-		var _this = this;
+		var me = this;
 		
-		_this.relationPicker = new afStudio.models.RelationPicker({
+		me.relationPicker = new afStudio.models.RelationPicker({
 			modelsUrl: afStudioWSUrls.modelListUrl,
 			fieldsUrl: afStudioWSUrls.modelListUrl,
 			closable: true,
 			closeAction: 'hide',
 			listeners: {
 				relationpicked : function(relation) {					
-					if (_this.fieldsGrid) {						
-						var cell = _this.fieldsGrid.getSelectionModel().getSelectedCell();
-						_this.fieldsGrid.startEditing(cell[0], cell[1]);
+					if (me.fieldsGrid) {						
+						var cell = me.fieldsGrid.getSelectionModel().getSelectedCell();
+						me.fieldsGrid.startEditing(cell[0], cell[1]);
 						if (relation) {
-							_this.setValue(relation);
+							me.setValue(relation);
 						}
-						_this.fieldsGrid.stopEditing();
+						me.fieldsGrid.stopEditing();
 					} else {
-						_this.setValue(relation);
+						me.setValue(relation);
 					}
 				}
 			}
@@ -143,9 +143,9 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 		if (this.fieldsGrid) {
 			this.fieldsGrid.stopEditing();
 		}
-		var _this = this;
+		var me = this;
 		this.relationPicker.show(null, function() {
-			this.initialRelationPick(_this.getRawValue() || _this.getValue());
+			this.initialRelationPick(me.getRawValue() || me.getValue());
 		});
     }
 	
