@@ -3,8 +3,6 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base-debug.js"></script>
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all-debug.js"></script>
 
-
-
 <script type="text/javascript">
 var afStudioConsoleCommands='<?php echo afStudioConsole::getCommands(false); ?>';
 var afStudioUser = <?php echo html_entity_decode($afStudioUser);?>;
