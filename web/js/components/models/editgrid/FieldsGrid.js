@@ -93,8 +93,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	insertAfterField : function() {
 		var me = this,
     		cell = me.getSelectionModel().getSelectedCell(),
-    		index = cell ? cell[0] + 1 : 0;
-    	
+    		index = cell ? cell[0] + 1 : (me.store.getCount() > 0 ? 1 : 0);
+    		
     	var u = new me.store.recordType({
             name: '',
             type: 'integer',
