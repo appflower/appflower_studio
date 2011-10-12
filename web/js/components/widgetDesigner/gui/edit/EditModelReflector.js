@@ -567,6 +567,17 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				//TODO implement
 				//cmp.tf.format = v;
 			}
+		},
+		
+		//i:grouping, i:set, i:ref
+		//----------------------------------------------------		
+		
+		executeAddSet : function(node, idx) {
+			var pSet = this.getModelNodeProperties(node),
+				oSet = this.createFieldSet(pSet);
+			
+			this.insert(idx, oSet);
+			this.doLayout();
 		}
 		
 	}

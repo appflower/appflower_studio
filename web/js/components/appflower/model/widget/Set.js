@@ -18,6 +18,12 @@ afStudio.model.widget.Set = Ext.extend(afStudio.model.Node, {
 		{name: 'icon', type: 'absoluteUriType'}
 	],
 	
+	defaultDefinition : {
+		attributes: {
+			title: 'Field-Set'
+		}
+	},
+	
 	nodeTypes : [
 		{name: afStudio.ModelNode.REF, required: true, hasMany: true, unique: 'to'}
 	]
