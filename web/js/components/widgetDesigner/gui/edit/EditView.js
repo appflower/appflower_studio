@@ -357,6 +357,37 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				cfg.format = fld.dateFormat ? fld.dateFormat : 'Y-m-d';
 			break;
 			
+			case 'datetime':
+				fn = Ext.ux.form.DateTime;
+				Ext.apply(cfg, {
+					dateFormat: fld.dateFormat ? fld.dateFormat : 'Y-m-d',
+					timeFormat: fld.timeFormat ? fld.timeFormat : 'H:i:s'
+				});
+			break;
+			
+			case 'multicombo':
+				fn = Ext.ux.Multiselect;
+				cfg.tbar = [{text: 'clear'}];
+			break;
+			
+			case 'doublemulticombo':
+				fn = Ext.ux.ItemSelectorAutoSuggest;
+				Ext.apply(cfg, {
+					toStore: new Ext.data.ArrayStore(),
+					toTBar: [{text: 'clear'}],
+					imagePath: '/appFlowerPlugin/extjs-3/plugins/multiselect/images'
+				});
+			break;
+			
+			case 'doubletree':
+				fn = Ext.ux.TreeItemSelector;
+				cfg.imagePath = '/appFlowerPlugin/extjs-3/plugins/multiselect/images';
+			break;
+			
+			case 'color':
+				fn = Ext.ux.ColorField;
+			break;
+			
 			default:
 				fn = Ext.form.DisplayField;
 				cfg.value = String.format('<b>type</b> = {0}', fld.type);
@@ -603,6 +634,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			var t = {
 				title: fs.tabtitle,
 				layout: 'anchor',
+				autoScroll: true,
 				items: this.createFieldSet(fs) 
 			}
 			tabPanel.add(t);

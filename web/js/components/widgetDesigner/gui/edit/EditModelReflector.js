@@ -428,7 +428,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				var defSet = this.getDefaultSet();
 
 				//field is inside the default fields-set
-				if (defSet.items.indexOf(cmp) != -1) {
+				if (defSet && defSet.items.indexOf(cmp) != -1) {
 					defSet.remove(cmp, true);
 					
 					if (node.nextSibling) {
@@ -485,12 +485,22 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 */
 		executeUpdateFieldsFieldHeight : function(node, cmp, p, v) {
 			cmp.setHeight(v);
+
+			//Ext.ux.Multiselect fix
+			if (cmp.getXType() == 'multiselect') {
+				Ext.getCmp(cmp.el.child('fieldset').id).setHeight(v);
+			}
 		},
 		/**
 		 * width
 		 */
 		executeUpdateFieldsFieldWidth : function(node, cmp, p, v) {
 			cmp.setWidth(v);
+
+			//Ext.ux.Multiselect fix
+			if (cmp.getXType() == 'multiselect') {
+				Ext.getCmp(cmp.el.child('fieldset').id).setWidth(v);
+			}
 		},
 		/**
 		 * style
@@ -532,6 +542,30 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		executeUpdateFieldsFieldRich : function(node, cmp, p, v) {
 			if (cmp.getXType() == 'textarea') {
 				this.executeUpdateFieldsFieldType(node, cmp, p, v);
+			}
+		},
+		/**
+		 * dateFormat
+		 */
+		executeUpdateFieldsFieldDateFormat : function(node, cmp, p, v) {
+			var type = cmp.getXType();
+			
+			if (['datefield', 'xdatetime'].indexOf(type) != -1) {
+				
+				if (type == 'xdatetime') {
+					cmp.df.format = v;	
+				} else {
+					cmp.format = v;
+				}
+			}
+		},
+		/**
+		 * timeFormat
+		 */
+		executeUpdateFieldsFieldTimeFormat : function(node, cmp, p, v) {
+			if (cmp.getXType() == 'xdatetime') {
+				//TODO implement
+				//cmp.tf.format = v;
 			}
 		}
 		

@@ -174,14 +174,11 @@ var afStudio = function () {
 			afStudio.Cli.init();
 			
 			//set up logger mode
-			afStudio.Logger.mode = afStudio.Logger.OFF;
-			
-			afApp.urlPrefix = '';
-			GLOBAL_JS_VAR = GLOBAL_CSS_VAR = new Array();
+			afStudio.Logger.mode = afStudio.Logger.DEBUG;
 			
 			/**
-			* this will add current project's url to the recent projects cookie
-			*/
+			 * this will add current project's url to the recent projects cookie
+			 */
 			this.addCurrentProject();
 			
 			if (Ext.util.Cookies.get('appFlowerStudioDontShowWelcomePopup') != 'true') {

@@ -5,54 +5,32 @@
 	<js>	
 		<needles>
 			
-			<!-- AppFlower Engine  (40) --> 	
+			<!-- AppFlower Engine --> 	
 			<needle>
 				<output>af.js</output>
 				<files>
-					<file>../../appFlowerPlugin/web/js/custom/Ext.CrossDomain.js</file>
-					<file>../../appFlowerPlugin/web/js/custom/widgetJS.js</file>
-					<file>../../appFlowerPlugin/web/js/custom/BorderLayoutOverride.js</file>
-					<file>../../appFlowerPlugin/web/js/custom/gridUtil.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/overrides/Override.Ext.data.SortTypes.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/overrides/Override.Ext.form.Field.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/overrides/Override.Fixes.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/plugins/Ext.ux.Notification.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/layout/AccordionLayoutSetActiveItem.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/portal/Ext.ux.MaximizeTool.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/Ext.ux.form.Combo.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/plugins/Ext.ux.plugins.RealtimeWidgetUpdate.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/Ext.ux.GridColorView.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/Ext.ux.GroupingColorView.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/Ext.ux.Grid.GroupingStoreOverride.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/RowExpander.js</file>
-					<file>../../appFlowerPlugin/web/js/custom/cheatJS.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/lovcombo-1.0/js/Ext.ux.form.LovCombo.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/treegrid/Ext.ux.CheckboxSelectionModel.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/menu/EditableItem.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/menu/ComboMenu.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/menu/RangeMenu.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/GridFilters.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/DrillFilter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/RePositionFilters.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/SaveSearchState.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/FilterInfo.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/filter/Filter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/filter/BooleanFilter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/filter/ComboFilter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/filter/DateFilter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/filter/ListFilter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/filter/NumericFilter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/ux/grid/filter/StringFilter.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/portal/sample-grid.js</file>
-					<file>../../appFlowerPlugin/web/js/custom/portalsJS.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/Ext.ux.ClassicFormPanel.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/Ext.ux.grid.RowEditor.js</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/groupingcombobox/Ext.ux.form.GroupingComboBox.js</file>		
+					<!-- engine ux -->
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js</file>
+					
+					<!-- multiselect (multicombo) -->
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/DDView.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/MultiSelect.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/ItemSelector.js</file>
+					
+					<!-- doublemulticombo -->
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/Ext.ux.plugins.ItemSelectorAutoSuggest.js</file>
+					
+					<!-- doubletree -->
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js</file>
+					
+					<!-- color -->
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/colorfield/color-field.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/Color.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/ColorPickerPanel.js</file>
 				</files>
 			</needle>
 			
-			<!-- AppFlower Studio (84) -->		
+			<!-- AppFlower Studio -->		
 			<needle>
 				<output>afStudio.js</output>				
 				<files>		
@@ -271,17 +249,11 @@
 	<css>
 		<needles>
 			
-			<!--AppFlower Engine & Studio (15) -->
+			<!--AppFlower Studio -->
 			<needle>
 				<output>afStudio.css</output>
 				<files>					
 					<file>http://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise</file>
-					<file>../../appFlowerPlugin/web/css/my-extjs.css</file>					
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/groupingcombobox/Ext.ux.form.GroupingComboBox.css</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/lovcombo-1.0/css/Ext.ux.form.LovCombo.css</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid/Ext.ux.grid.RowEditor.css</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/portal/portal.css</file>
-					<file>../../appFlowerPlugin/web/extjs-3/plugins/grid-filtering/resources/style.css</file>					
 					<file>css/afStudio.css</file>
 					<file>css/afStudio.console.css</file>
 					<file>css/afStudio.tplSelector.css</file>
@@ -297,6 +269,23 @@
 					<file>js/custom/tree/treegrid/treegrid.css</file>
 				</files>
 			</needle>
+			
+			<!-- AppFlower Engine --> 	
+			<needle>
+				<output>af.css</output>
+				<files>
+					<file>../../appFlowerPlugin/web/css/my-extjs.css</file>
+					
+					<!-- engine ux -->
+					<!-- multiselect (multicombo) -->
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/multiselect.css</file>
+					
+					<!-- color -->
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/colorfield/color-field.css</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/color-picker.css</file>
+				</files>
+			</needle>
+			
 		</needles>
 	</css>	
 	
