@@ -572,14 +572,38 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//i:grouping, i:set, i:ref
 		//----------------------------------------------------		
 		
+		/**
+		 * Adds field-set.
+		 */
 		executeAddSet : function(node, idx) {
 			var pSet = this.getModelNodeProperties(node),
 				oSet = this.createFieldSet(pSet);
 			
 			this.insert(idx, oSet);
 			this.doLayout();
-		}
+		},
 		
+		/**
+		 * title
+		 */
+		executeUpdateSetTitle : function(node, cmp, p, v) {
+			cmp.setTitle(v ? v : '&#160;');
+		},
+		/**
+		 * collapsed
+		 */
+		executeUpdateSetCollapsed : function(node, cmp, p, v) {
+		},
+		/**
+		 * float
+		 */
+		executeUpdateSetFloat : function() {
+		},
+		/**
+		 * tabtitle
+		 */
+		executeUpdateSetTabtitle : function() {
+		}
 	}
 })();
 
