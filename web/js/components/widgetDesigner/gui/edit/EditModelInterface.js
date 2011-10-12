@@ -64,6 +64,17 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 		
 		/**
+		 * Checks if fields-set is tabbed ("tabtitle" property is not empty).
+		 * @param {String|Node} fldSet The fields-set model id or the model node object
+		 * @return {Boolean}
+		 */
+		isSetTabbed : function(fldSet) {
+			return this.isModelStatus(fldSet, function(n){
+				return Ext.isEmpty(n.getPropertyValue('tabtitle')) ? false : true;
+			});
+		},
+		
+		/**
 		 * Returns references properties from a field-set.
 		 * @param {String|Node} fldSet The field-set node or it's id
 		 * @return {Array} references

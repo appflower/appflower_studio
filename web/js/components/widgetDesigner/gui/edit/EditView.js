@@ -111,9 +111,9 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @override
 	 * @private
 	 */
-    beforeDestroy : function() {
+    onDestroy : function() {
     	this.modelMapper = null;
-        afStudio.wd.edit.EditView.superclass.beforeDestroy.call(this);
+        afStudio.wd.edit.EditView.superclass.onDestroy.call(this);
     },
 	
 	/**
@@ -407,19 +407,31 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		f = new fn(cfg);
 		
 		if (!f.rendered) {
-			f.on('afterrender', function(fld) {
+			f.on({
+				scope: this,
 				
-				var fn = function() {
-					var node = this.getModelByCmp(fld);
-					this.controller.selectModelNode(node, this);
-				}.createDelegate(this);
+				afterrender: {
+					fn: function(fld) {
+						var fn = function() {
+							var node = this.getModelByCmp(fld);
+							this.controller.selectModelNode(node, this);
+						}.createDelegate(this);
+						
+						//hidden fields does not have label element
+						fld.label ? fld.label.on('click', fn) : null;
+						fld.on('focus', fn);
+					},
+					single: true
+				},
 				
-				fld.label ? fld.label.on('click', fn) : null;
-				fld.on('focus', fn);
-				
-			}, this, {single: true});
+				beforedestroy: {
+					fn: function(wr) {
+						this.unmapCmpFromModel(wr[this.NODE_ID_MAPPER]);
+					}
+				}
+			});
 		}
-		
+
 		this.mapCmpToModel(fldId, f);
 		
 		return f;
@@ -549,6 +561,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		fieldSet = new Ext.form.FieldSet(cfg);
 		
+		fieldSet.on('beforedestroy', function(fldSet){
+			this.unmapCmpFromModel(fldSet[this.NODE_ID_MAPPER]);
+		}, this);
+		
 		this.mapCmpToModel(fldSet[mpr], fieldSet);
 		
 		var fields = this.getFieldsFromSet(fldSet[mpr]),
@@ -596,12 +612,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		Ext.apply(cfg, {
 			itemId: 'default-set',
-			collapsible: true,
-			items: []
+			collapsible: true
 		});
 		
-		var hidden = true, 
-			flds = [];
+		var hidden = true, flds = [];
 		Ext.each(fields, function(f) {
 			if (f.type != 'hidden') {
 				hidden = false;
@@ -609,9 +623,12 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			flds.push(this.createField(f));
 		}, this);
 		
-		cfg.hidden = hidden;
+		Ext.apply(cfg, {
+			hidden: hidden,
+			items: flds
+		});
+		
 		fieldSet = new Ext.form.FieldSet(cfg);
-		fieldSet.add(flds);
 		
 		return fieldSet;
 	},
@@ -641,6 +658,15 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}, this);
 		
 		return tabPanel;
+	},
+	
+	createTab : function(fldSet) {
+		return new Ext.Panel({
+			title: fldSet.tabtitle,
+			layout: 'anchor',
+			autoScroll: true,
+			items: this.createFieldSet(fldSet) 
+		});
 	},
 	
 	/**
@@ -715,6 +741,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		cfg[nodeIdMpr] = ref[nodeIdMpr];
 		
 		var wr = new Ext.Container(cfg);
+		
+		wr.on('beforedestroy', function(wr){
+			this.unmapCmpFromModel(wr[this.NODE_ID_MAPPER]);
+		}, this);
 		
 		this.mapCmpToModel(ref[nodeIdMpr], wr);
 		
