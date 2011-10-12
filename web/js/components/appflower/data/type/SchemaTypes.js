@@ -215,25 +215,26 @@ afStudio.data.type.StateType = Ext.extend(afStudio.data.type.String, {
 	}
 });
 
-/**
- * This is the data type for buttons. It determines what kind of button will be created.
- * <ul>
- * 	<li><b>normal</b>: A simple button, it will trigger some action or may execute JS.</li>
- * 	<li><b>submit</b>: A submit button, will POST list or edit view.</li>
- * 	<li><b>reset</b>: A reset button</li>
- * </ul>				
- * @class afStudio.data.type.ButtonType
- * @extends afStudio.data.type.String
- */
-afStudio.data.type.ButtonType = Ext.extend(afStudio.data.type.String, {
-	type : "buttonType",
-	
-	union : ['varType'],
-	
-	restrictions : {
-		enumeration: ['button', 'reset', 'submit']
-	}
-});
+//TODO should be removed #1159 ticket
+///**
+// * This is the data type for buttons. It determines what kind of button will be created.
+// * <ul>
+// * 	<li><b>normal</b>: A simple button, it will trigger some action or may execute JS.</li>
+// * 	<li><b>submit</b>: A submit button, will POST list or edit view.</li>
+// * 	<li><b>reset</b>: A reset button</li>
+// * </ul>				
+// * @class afStudio.data.type.ButtonType
+// * @extends afStudio.data.type.String
+// */
+//afStudio.data.type.ButtonType = Ext.extend(afStudio.data.type.String, {
+//	type : "buttonType",
+//	
+//	union : ['varType'],
+//	
+//	restrictions : {
+//		enumeration: ['button', 'reset', 'submit']
+//	}
+//});
 
 
 /**

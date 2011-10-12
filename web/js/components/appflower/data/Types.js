@@ -67,8 +67,8 @@ afStudio.data.Types = (function() {
 		ARRAYTYPE : new T.ArrayType,
 		
 		STATETYPE : new T.StateType,
-		
-		BUTTONTYPE : new T.ButtonType,
+//TODO should be removed after schema clearing #1159		
+//		BUTTONTYPE : new T.ButtonType,
 		
 		INPUTTYPE : new T.InputType
 	}
