@@ -388,8 +388,9 @@ class afStudioModelCommandModificator
      * @param string $fieldName
      * @return afResponse
      */
-    public function modelFieldVerification($fieldName) 
+    public function modelFieldVerification($field) 
     {
+        $fieldName = $field->name;
         $response = afResponseHelper::create();
         
         if (!afStudioModelCommandHelper::isValidName($fieldName)) {
@@ -399,6 +400,13 @@ class afStudioModelCommandModificator
         }
         
         if (!$this->isFieldNameUnique($fieldName)) return $response->success(false)->message("Field name '{$fieldName}' is duplicated");
+        
+        if (!empty($field->relation)) {
+            $ref = explode('.', $field->relation);
+            if (strtolower($field->name) == strtolower($this->getTableNameByModel($ref[0]))) {
+                return $response->success(false)->message("Field name shouldn't be same with model from foreign table. Please choose another name.");
+            }
+        }
         
         return $response->success(true);
     }
@@ -529,7 +537,7 @@ class afStudioModelCommandModificator
         
         //build new structure
         foreach ($fields as $f) {
-            $response = $this->modelFieldVerification($f->name);
+            $response = $this->modelFieldVerification($f);
             if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
             
             $definition = $this->buildFieldDefinition($f);
@@ -564,13 +572,13 @@ class afStudioModelCommandModificator
         
         if (!is_null($field)) {
             if ($field != $fieldData->name) {
-                $response = $this->modelFieldVerification($fieldData->name);
+                $response = $this->modelFieldVerification($fieldData);
                 if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
             }
             
             $this->arraySetKeyValue($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()], $field, $fieldData->name, $fieldDefinition);
         } else {
-            $response = $this->modelFieldVerification($fieldData->name);
+            $response = $this->modelFieldVerification($fieldData);
             if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response;
             
             $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()][$fieldData->name] = $fieldDefinition;
