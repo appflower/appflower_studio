@@ -401,9 +401,11 @@ class afStudioModelCommandModificator
         
         if (!$this->isFieldNameUnique($fieldName)) return $response->success(false)->message("Field name '{$fieldName}' is duplicated");
         
-        if (!empty($field->relation)) {
-            $ref = explode('.', $field->relation);
-            if (strtolower($field->name) == strtolower($this->getTableNameByModel($ref[0]))) {
+        if (!empty($field->relation) || (!empty($field->foreignTable))) {
+            $foreign_table = (!empty($field->relation)) ? current(explode('.', $field->relation)) : $field->foreignTable;
+            $foreign_model = $this->getTableNameByModel($foreign_table);
+            
+            if (strtolower($field->name) == strtolower($foreign_model)) {
                 return $response->success(false)->message("Field name shouldn't be same with model from foreign table. Please choose another name.");
             }
         }
@@ -510,6 +512,9 @@ class afStudioModelCommandModificator
             $ref = explode('.', $f->relation);
             $definition['foreignTable'] = $this->getTableNameByModel($ref[0]);
             $definition['foreignReference'] = $ref[1];
+        } elseif (!empty($f->foreignTable) && !empty($f->foreignReference)) {
+            $definition['foreignTable'] = $f->foreignTable;
+            $definition['foreignReference'] = $f->foreignReference;
         }
         
         if (!empty($f->size)) $definition['size'] = intval($f->size);
