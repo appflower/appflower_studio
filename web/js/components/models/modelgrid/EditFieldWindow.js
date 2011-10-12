@@ -4,7 +4,7 @@ Ext.ns('afStudio.models');
  * EditFieldWindow
  * @class afStudio.models.EditFieldWindow
  * @extends Ext.Window
- * @author Nikolay
+ * @author Nikolai Babinski
  */
 afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	
@@ -25,20 +25,20 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	
 	maskWindow : function(msg) {
 		this.bwrap.mask(msg ? msg : 'loading...');	
-	}
+	},
 	
-	,unmaskWindow : function() {
+	unmaskWindow : function() {
 		this.bwrap.unmask();
-	}
+	},
 	
 	/**
 	 * @private 
 	 * @param {Object} fDef
 	 */
-	,updateFieldDefinition : function(fDef) {
-		var _this = this,
-			  idx = _this.fieldIndex, 
-			   cm = _this.gridView.cm;
+	updateFieldDefinition : function(fDef) {
+		var me = this,
+			idx = me.fieldIndex, 
+			cm = me.gridView.cm;
 		//Column model changes			
 		//header
 		cm.setColumnHeader(idx, fDef.name);
@@ -51,7 +51,7 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		//renderer
 		cm.config[idx].renderer = afStudio.models.TypeBuilder.createRenderer(fDef.type);
 		
-		_this.gridView.refresh();
+		me.gridView.refresh();
 		
 		//reflect changes in fieldDefinition 
 		cm.config[idx].fieldDefinition.name = fDef['name'];			
@@ -63,7 +63,8 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		cm.config[idx].fieldDefinition.key = fDef['key'];
 		cm.config[idx].fieldDefinition.relation = fDef['relation'];
 		cm.config[idx].fieldDefinition.onDelete = fDef['onDelete'];		
-	}//eo updateFieldDefinition
+	},
+	//eo updateFieldDefinition
 	
 	/**
 	 * Runs Field's actions (update, create)
@@ -77,17 +78,17 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 	 * }
 	 * </ul>
 	 */
-	,doFieldAction : function(o) {		
-		var _this = this,
-			 grid = _this.gridView.grid,
+	doFieldAction : function(o) {		
+		var me = this,
+			grid = me.gridView.grid,
 			model = grid.model, 
-		   schema = grid.schema,
-		   url, xaction;
+			schema = grid.schema,
+			url, xaction;
 	    
 		url = afStudioWSUrls.modelListUrl;
 		xaction = 'alterModelUpdateField';
 
-		_this.maskWindow();
+		me.maskWindow();
 		
 		Ext.Ajax.request({
 			url: url,
@@ -100,9 +101,9 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			},
 			success: function(xhr, opt) {
 				var response = Ext.decode(xhr.responseText);
-				_this.unmaskWindow();
+				me.unmaskWindow();
 				if (response.success) {
-					_this.updateFieldDefinition(o.fieldData);
+					me.updateFieldDefinition(o.fieldData);
 					Ext.isFunction(o.callback) ? o.callback() : null;
 					grid.fireEvent('alterfield');
 				} else {
@@ -111,39 +112,40 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 				}
 			},
 			failure: function(xhr, opt) {
-				_this.unmaskWindow();
+				me.unmaskWindow();
 				grid.fireEvent('alterfieldfailure', xhr);				
 				afStudio.Msg.error('Status: ' + xhr.status);
 			}
 		});
 		
-	}//eo fieldAction
+	},
+	//eo fieldAction
 	
 	/**
 	 * Updates Field
 	 * @param {Object} field The field's definition object
 	 */
-	,updateModelField : function(field, fData) {
-		var _this = this;
+	updateModelField : function(field, fData) {
+		var me = this;
 		
 		this.doFieldAction({
 			field: field,
 			fieldData: fData,
 			callback: Ext.util.Functions.createDelegate((function() {
 				this.closeEditFieldWindow();
-			}), _this)
+			}), me)
 		});
-	}
+	},
 	
 	/**
 	 * Creates Field.
 	 * @param {Object} field The field's definition object
 	 */
-	,createModelField : function(field) {
-		var _this = this,
-			   fd = _this.fieldDefinition,
-			  idx = _this.fieldIndex, 
-			   cm = _this.gridView.cm;
+	createModelField : function(field) {
+		var me = this,
+			fd = me.fieldDefinition,
+			idx = me.fieldIndex, 
+			cm = me.gridView.cm;
 		
 		this.doFieldAction({
 			fieldData: field,
@@ -151,32 +153,32 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 				//field created
 				cm.config[idx].fieldDefinition.exists = true;		  		 				
 				this.closeEditFieldWindow();
-			}), _this)
+			}), me)
 		});
-	}
+	},
 	
 	/**
 	 * Closes this window.
 	 */
-	,closeEditFieldWindow : function() {
+	closeEditFieldWindow : function() {
 		if (this.closeAction == 'hide') {
 			this.hide();
 		} else {
 			this.close();
 		}
-	}
+	},
 
 	/**
 	 * "Save" button handler.
 	 * Saves field definition changes.
 	 */
-	,saveUpdates : function() {
-		var _this = this,
-			   fd = _this.fieldDefinition,
-			  idx = _this.fieldIndex, 
-			   cm = _this.gridView.cm,
-		  fExists = fd.exists,   
-			   fm = _this.fieldForm.getForm();		   
+	saveUpdates : function() {
+		var me = this,
+			fd = me.fieldDefinition,
+			idx = me.fieldIndex, 
+			cm = me.gridView.cm,
+			fExists = fd.exists,   
+			fm = me.fieldForm.getForm();		   
 		
 		if (fm.isValid()) {
 			var fv = fm.getFieldValues();
@@ -185,33 +187,34 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 			if (fExists) {
 			    if (fd.name != fv.name) {
                     Ext.MessageBox.confirm('Confirm', 'Field name has been changed - all data for old field will be lost. Are you sure you want to do that?', function(btn) {
-                        if (btn == 'yes') _this.updateModelField(fd.name, fv);
+                        if (btn == 'yes') me.updateModelField(fd.name, fv);
                     });
 			    } else {
-			        _this.updateModelField(fd.name, fv);
+			        me.updateModelField(fd.name, fv);
 			    }
 			//add
 			} else {
-				_this.createModelField(fv);
+				me.createModelField(fv);
 			}			
 		}		
-	}//eo saveUpdates
+	},
+	//eo saveUpdates
 
 	/**
 	 * "Cancel" button handler.
 	 */
-	,cancelEditing :  function() {
+	cancelEditing :  function() {
 		this.closeEditFieldWindow();
-	}
+	},
 
 	/**
 	 * Loads field definition in the "fieldForm" (ref=fieldForm)
 	 */
-	,loadFieldData : function() {
-		var _this = this,
-			   fd = _this.fieldDefinition,
-			   gv = _this.gridView,
-			   fm = _this.fieldForm.getForm();
+	loadFieldData : function() {
+		var me = this,
+		    fd = me.fieldDefinition,
+		    gv = me.gridView,
+		    fm = me.fieldForm.getForm();
 
 		//load general fields	   
 		fm.loadRecord(new Ext.data.Record(fd));
@@ -222,35 +225,43 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		}
 		
 		//key
-		var key = '';
+		var key;
 		if (fd.key) {
 			key = fd.key;
 		} else if (fd.primaryKey || fd.index || fd.index) {
 			key =  fd.primaryKey ? 'primary' : (fd.index == 'unique' ? 'unique' : (fd.index ? 'index' : ''));
 		}
 		fm.findField('key').setValue(key);
-	}//eo loadFieldData
+	},
+	//eo loadFieldData
 
 	/**
-	 * This <u>show</u> event listener
-	 * Sets first active tab and loads data
+	 * Resets the fields, sets first active tab and loads data.
+	 * <u>show</u> event listener
 	 */
-	,onShowEvent : function() {
-		var _this = this,
-			    f = this.fieldForm;
+	onShowEvent : function() {
+		var f = this.fieldForm,
+			tab = f.getComponent('fields-tab');
 			    
 		f.getForm().reset();
-		f.getComponent('fields-tab').setActiveTab(0);		
-		_this.loadFieldData();
-	}	
+		
+		var fields = tab.findByType('field');
+		Ext.each(fields, function(f){
+			f.setValue('');
+		});
+		
+		tab.setActiveTab(0);
+		
+		this.loadFieldData();
+	},	
 	
 	/**
 	 * Initializes component
-	 * @return {Object} The configuration object
 	 * @private
+	 * @return {Object} The configuration object
 	 */
-	,_beforeInitComponent : function() {
-		var _this = this;		
+	_beforeInitComponent : function() {
+		var me = this;		
 		
 		var fields = new Ext.FormPanel({
 			ref: 'fieldForm',				
@@ -284,7 +295,6 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 				fieldLabel: 'Size',
 				name: 'size'
 			},{
-			// TabPanel 
 				xtype: 'tabpanel',
 				itemId: 'fields-tab',
 				width: 336,
@@ -359,52 +369,63 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 						hiddenName: 'onDelete',
 						name: 'onDelete'
 					}]
-					
-				}]//eo tabs					
+				}]					
 			},{
 				xtype: 'spacer',
 				height: 10
 			}],
-			buttons: [{
+			buttons: [
+			{
 				text: 'Save',
 				iconCls: 'icon-accept',
-				handler: Ext.util.Functions.createDelegate(_this.saveUpdates, _this)
+				scope: this,
+				handler: this.saveUpdates
 			},{
 				text: 'Cancel',
 				iconCls: 'afs-icon-cancel',
-				handler: Ext.util.Functions.createDelegate(_this.cancelEditing, _this) 
+				scope: this,
+				handler: this.cancelEditing 
 			}]			
 		});
 		
 		return {
 			title: 'Edit Field',
-			closeAction: 'hide',
 			modal: true,
 			frame: true,
 			width: 360,			
 			autoHeight: true,
 			resizable: false,
+			closeAction: 'hide',
 			closable: false,
 			items: [fields]			
 		}
-	}//eo _beforeInitComponent
+	},
+	//eo _beforeInitComponent
 	
-	//private
-	,initComponent : function() {
-		Ext.apply(this, Ext.applyIf(this.initialConfig, this._beforeInitComponent()));
+	/**
+	 * Template method
+	 * @private
+	 */
+	initComponent : function() {
+		Ext.apply(this, 
+			Ext.applyIf(this.initialConfig, this._beforeInitComponent())
+		);
+		
 		afStudio.models.EditFieldWindow.superclass.initComponent.apply(this, arguments);
+		
 		this._afterInitComponent();
-	}
+	},
 	
 	/**
 	 * @private
 	 */
-	,_afterInitComponent : function() {
-		var _this = this;
+	_afterInitComponent : function() {
+		var me = this;
 		
-		_this.on({
-			'show': Ext.util.Functions.createDelegate(_this.onShowEvent, _this)
-		});		
-	}//eo _afterInitComponent	
-	
+		me.on({
+			scope: this,
+			
+			show: this.onShowEvent
+		});
+	}	
 });
