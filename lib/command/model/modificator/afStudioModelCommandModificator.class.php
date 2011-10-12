@@ -686,7 +686,12 @@ class afStudioModelCommandModificator
         $dirs = array_merge(array(sfConfig::get('sf_config_dir')), $this->configuration->getPluginSubPaths('/config'));
         
         foreach ($dirs as $k => $dir) {
-            if (substr_count($dir, 'appFlower') > 0 || substr_count($dir, 'sfPropelPlugin') > 0 || substr_count($dir, 'sfPropel15Plugin') > 0 || substr_count($dir, 'sfProtoculousPlugin') > 0) {
+            if (substr_count($dir, 'appFlower') > 0
+                    || substr_count($dir, 'sfPropelPlugin') > 0
+                    || substr_count($dir, 'sfPropel15Plugin') > 0
+                    || substr_count($dir, 'sfProtoculousPlugin') > 0
+                    || substr_count($dir, 'afGuardPlugin') > 0
+            ) {
                 unset($dirs[$k]);
             }
         }
