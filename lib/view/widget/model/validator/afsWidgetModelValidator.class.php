@@ -165,6 +165,60 @@ class afsWidgetModelValidator extends afsBaseModelValidator
     }
     
     /**
+     * Validate attributes dependencies
+     *
+     * @return mixed
+     * @author Sergey Startsev
+     */
+    protected function validateAttributesDependency()
+    {
+        $errors = array();
+        $definition = $this->getDefinition();
+        
+        if ($this->getModel()->getType() == afsWidgetModelHelper::WIDGET_EDIT) {
+            if (isset($definition['i:fields']) && is_array($definition['i:fields'])) {
+                
+                foreach ($definition['i:fields'] as $field) {
+                    if (key($field) === 0) {
+                        foreach ($field as $sub_field) {
+                            if ($message = $this->checkIncludeDependency($sub_field)) $errors[] = $message;
+                        }
+                        continue;
+                    }
+                    
+                    if ($message = $this->checkIncludeDependency($field)) $errors[] = $message;
+                }
+            }
+        }
+        
+        if (empty($errors)) return true;
+        
+        return implode(self::IMPLODE_ERRORS_SYMBOL, $errors);
+    }
+    
+    /**
+     * Check include attr dependencies
+     *
+     * @param Array $field 
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function checkIncludeDependency(Array $field)
+    {
+        $errors = null;
+        
+        if (array_key_exists('attributes', $field) && 
+            array_key_exists('type', $field['attributes']) && 
+            $field['attributes']['type'] == 'include' && 
+            !isset($field['attributes']['url'])
+        ) {
+            $errors = "If defined 'include' attribute than should be also defined 'url' attribute";
+        }
+        
+        return $errors;
+    }
+    
+    /**
      * Checking that all attr defined unique
      *
      * @param Array $definition 
