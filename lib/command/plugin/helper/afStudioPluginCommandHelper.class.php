@@ -24,7 +24,6 @@ class afStudioPluginCommandHelper extends afBaseStudioCommandHelper
         'sfPropelORMPlugin',
         'sfPropelSqlDiffPlugin',
         'sfTaskExtraPlugin',
-        'afGuardPlugin'
     );
     
     /**
