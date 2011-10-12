@@ -181,6 +181,7 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 			url: _this.baseUrl,
 			params: {
 				cmd: 'add',
+				with_primary: true,
 				model: model,
 				schema: schema
 		    },

@@ -16,8 +16,6 @@ N.ModelNode = {
 	
 	MENU : 'i:menu',
 	
-	SCRIPTS : 'i:scripts',
-	
 	CONFIRM : 'i:confirm',
 
 	FIELDS : 'i:fields',

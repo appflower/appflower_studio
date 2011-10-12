@@ -125,7 +125,7 @@ afStudio.models.modelGridView = Ext.extend(Ext.grid.GridView, {
 				{itemId: "addfa", text: 'Add Field After'},
 				'-',
 				{itemId: "dupb",    text: 'Duplicate Field'},
-				{itemId: "editb",   text: 'Edit Field ...'},
+				{itemId: "editb",   text: 'Edit Field'},
 				{itemId: "renameb", text: 'Rename Field'},				
 				{itemId: 'deletef', text: 'Delete Field'},
 				'-',

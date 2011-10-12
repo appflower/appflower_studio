@@ -11,12 +11,12 @@ Ext.ns('afStudio.models');
 afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	
 	/**
-	 * @cfg {String} (Required) model
+	 * @cfg {String} (required) model
 	 * This model name
 	 */
 	
 	/**
-	 * @cfg {String} (Required) schema
+	 * @cfg {String} (required) schema
 	 * This model's schema name
 	 */
 	
@@ -24,8 +24,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * Saves Model structure
 	 */
 	saveModel : function() {
-		var _this   = this,
-			    s   = _this.getStore(),
+		var me   = this,
+			    s   = me.getStore(),
 			  url   = s.proxy.url,
 			   rs   = s.getRange(),
 		 aRecords   = [],
@@ -41,15 +41,15 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             });
         }
         
-        send_request = function(_this, records) {
-            afStudio.vp.mask({region:'center', msg: 'Altering ' + _this.model + ' model...'});
+        var send_request = function(me, records) {
+            afStudio.vp.mask({region:'center', msg: 'Altering ' + me.model + ' model...'});
             
     		Ext.Ajax.request({
     			url: url,
     			params: {
     				xaction: 'alterModel',
-    				model: _this.model, 
-    				schema: _this.schema,
+    				model: me.model, 
+    				schema: me.schema,
     				fields: Ext.encode(aRecords)
     			},
     			success: function(xhr, opt) {
@@ -57,21 +57,21 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 
     				var response = Ext.decode(xhr.responseText);
 
-    				var message = String.format('"{0}" model structure was saved', _this.model);
-    				_this.fireEvent("logmessage", _this, message);
+    				var message = String.format('"{0}" model structure was saved', me.model);
+    				me.fireEvent("logmessage", me, message);
 
     				if (response.success) {					
     					afStudio.Msg.info(response.message);
     					s.commitChanges();
-    					_this.fireEvent('altermodel');
+    					me.fireEvent('altermodel');
     				} else {
-    					_this.fireEvent('altermodelexception', xhr);
+    					me.fireEvent('altermodelexception', xhr);
     					afStudio.Msg.warning(response.message);
     				}
     			},
     			failure: function(xhr, opt) {				
     				afStudio.vp.unmask('center');
-    				_this.fireEvent('altermodelfailure', xhr);				
+    				me.fireEvent('altermodelfailure', xhr);				
     				afStudio.Msg.error('Status: ' + xhr.status);
     			}
     		});
@@ -79,67 +79,70 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		
 		if (is_renamed) {
 		    Ext.MessageBox.confirm('Confirm', 'Field name has been changed - all data for old field will be lost. Are you sure you want to do that?', function(btn) {
-                if (btn == 'yes') send_request(_this, aRecords);
+                if (btn == 'yes') send_request(me, aRecords);
             })
 		} else {
-		    send_request(_this, aRecords);
+		    send_request(me, aRecords);
 		}
-	}//eo saveModel
+	},
+	//eo saveModel
 	
 	/**
 	 * Inserts row after the selection
 	 */
-	,insertAfterField : function() {
-		var _this = this,
-    		cell = _this.getSelectionModel().getSelectedCell(),
-    		index = cell ? cell[0] + 1 : 0;
-    	
-    	var u = new _this.store.recordType({
+	insertAfterField : function() {
+		var me = this,
+    		cell = me.getSelectionModel().getSelectedCell(),
+    		index = cell ? cell[0] + 1 : (me.store.getCount() > 0 ? 1 : 0);
+    		
+    	var u = new me.store.recordType({
             name: '',
             type: 'integer',
-            required: false
+            required: false,
+            primaryString: false
         });
-        _this.stopEditing();
-        _this.store.insert(index, u);
-		_this.startEditing(index , cell ? cell[1] : 0);		
-	}//eo insertAfterField
+        me.stopEditing();
+        me.store.insert(index, u);
+		me.startEditing(index , cell ? cell[1] : 0);		
+	},
 	
 	/**
 	 * Inserts row before the selection
 	 */
-	,insertBeforeField : function() {
-		var _this = this,
-    		cell = _this.getSelectionModel().getSelectedCell(),
+	insertBeforeField : function() {
+		var me = this,
+    		cell = me.getSelectionModel().getSelectedCell(),
     		index = cell ? cell[0] : 0; 
     	
-    	var u = new _this.store.recordType({
+    	var u = new me.store.recordType({
             name : '',
             type: 'integer',
-            required: false
+            required: false,
+            primaryString: false
         });
-        _this.stopEditing();
-        _this.store.insert(index, u);
-		_this.startEditing(index, cell ? cell[1] : 0);		
-	}//eo insertBeforeField
+        me.stopEditing();
+        me.store.insert(index, u);
+		me.startEditing(index, cell ? cell[1] : 0);		
+	},
 	
 	/**
 	 * Deletes field (row) from the grid
 	 */
-	,deleteField : function() {
-		var _this = this,
-			cell = _this.getSelectionModel().getSelectedCell();			
+	deleteField : function() {
+		var me = this,
+			cell = me.getSelectionModel().getSelectedCell();			
 	    if (cell) {
-	    	var r = _this.store.getAt(cell[0]);
-	    	_this.store.remove(r);	        
+	    	var r = me.store.getAt(cell[0]);
+	    	me.store.remove(r);	        
 	    }	    		
-	}//eo deleteField
+	},
 	
 	/**
 	 * Creates Boolean Editor
 	 * @private
 	 * @return {Ext.form.ComboBox} editor 
 	 */
-	,booleanEditorBuilder : function() {
+	booleanEditorBuilder : function() {
 		return {
 	    	editor: new Ext.form.ComboBox({
 				typeAhead: true,
@@ -153,30 +156,30 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	    	}),	    	
 			renderer: function(v, p, record) {
 			    p.css += ' x-grid3-check-col-td'; 
-			    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '"> </div>';
+			    return '<div class="x-grid3-check-col' + (v ? '-on' : '') + '" />';
 			}
 		}
-	}//eo booleanEditorBuilder
+	},
 	
 	/**
 	 * Creates TypeComboBox Editor
 	 * @private
 	 * @return {afStudio.models.TypeComboBox} editor
 	 */
-	,typeEditorBuilder : function() {
+	typeEditorBuilder : function() {
 		return {
 			editor: new afStudio.models.TypeComboBox({
 				lazyRender: true
 			})
 		}
-	}
+	},
 	
 	/**
 	 * @private
 	 * @return {}
 	 */
-	,nameEditorBuilder : function() {
-		var _this = this,
+	nameEditorBuilder : function() {
+		var me = this,
 			names = [];
 		return {						
 			editor: new Ext.form.TextField({
@@ -187,27 +190,28 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				}
 			})
 		}
-	}
+	},
 	
 	/**
 	 * Loads data inside grid
 	 * @param {Object} data
 	 */
-	,loadModelData : function(data) {
+	loadModelData : function(data) {
 		this.getStore().loadData(data);
-	}
+	},
 	
 	/**
 	 * Initializes component
-	 * @return {Object} The configuration object
 	 * @private
+	 * @return {Object} configuration object
 	 */
-	,_beforeInitComponent : function() {
-		var _this = this;
+	_beforeInitComponent : function() {
+		var me = this;
 		
 		function keyConverter(v, rec) {
 			return rec.primaryKey ? 'primary' : (rec.index == 'unique' ? 'unique' : (rec.index ? 'index' : null));
-		}		
+		}
+		
 		function relationConverter(v, rec) {
 			return (rec.foreignModel && rec.foreignReference) ? rec.foreignModel + '.' + rec.foreignReference : null;
 		}
@@ -217,13 +221,13 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			autoLoad: false,
 		    baseParams: {
 		    	xaction: 'read',
-		    	model: _this.model,
-		    	schema: _this.schema
+		    	model: me.model,
+		    	schema: me.schema
 		    },
 		    storeId: 'model-fields-st', 
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: [		    
+		    fields: [
 				{name: 'id'},
 				{name: 'key', mapping: 'id', convert: keyConverter}, //fake field
 				{name: 'relation', mapping: 'id', convert: relationConverter}, //fake field 
@@ -233,6 +237,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			    {name: 'name'},
 			    {name: 'type'},
 			    {name: 'size'},
+			    {name: 'primaryString', type: 'boolean', defaultValue: false},
 			    {name: 'required'},			    
 			    {name: 'default'},
 			    {name: 'foreignTable'},
@@ -261,7 +266,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 					displayField: 'field',
 					store: [['', 'None'], ['primary', 'Primary'], ['index', 'Index'], ['unique', 'Unique']]
 				}),
-				renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+				renderer : function(value) {
 					var html = '';
 					switch(value) {
 						case 'primary': html = '<div class="pk-cell">&#160;</div>';	    break;
@@ -274,12 +279,12 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				header: "Name",
 				width: 100,
 				dataIndex: 'name',
-				editor: _this.nameEditorBuilder().editor
+				editor: me.nameEditorBuilder().editor
 			},{
 				header: "Type",
 				width: 100,
 				dataIndex: 'type',
-				editor: _this.typeEditorBuilder().editor
+				editor: me.typeEditorBuilder().editor
 			},{
 				header: "Size",
 				width: 50,
@@ -292,8 +297,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				header: "Autoincrement",
 				width: 55,
 				dataIndex: 'autoIncrement',
-				editor: _this.booleanEditorBuilder().editor,
-				renderer: _this.booleanEditorBuilder().renderer
+				editor: me.booleanEditorBuilder().editor,
+				renderer: me.booleanEditorBuilder().renderer
 			},{
 				header: "Default value",
 				width: 100,
@@ -302,24 +307,21 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			},{
 				header: "Relation",
 				width: 150,
-				sortable: true,
 				dataIndex: 'relation',
 				editor: new afStudio.models.RelationCombo({
 					relationUrl: afStudioWSUrls.modelListUrl,
-					fieldsGrid: _this
+					fieldsGrid: me
 				})
 			},{
 				header: "Required",
 				width: 50,
-				sortable: true,
 				dataIndex: 'required',
 				align: 'center', 
-				editor: _this.booleanEditorBuilder().editor,
-				renderer: _this.booleanEditorBuilder().renderer
+				editor: me.booleanEditorBuilder().editor,
+				renderer: me.booleanEditorBuilder().renderer
 			},{
 				header: "On Delete",
 				width: 50,
-				sortable: true,
 				dataIndex: 'onDelete',
 				align: 'center', 
 				editor: new Ext.form.ComboBox({
@@ -333,6 +335,27 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 					value: 'none',
 					store : [['cascade', 'cascade'], ['setnull', 'setnull'], ['restrict', 'restrict'], ['none', 'none']]    
 	    		})
+			},{
+				header: "ObjectToString",
+				width: 60,
+				dataIndex: 'primaryString',
+				align: 'center',
+				xtype: 'templatecolumn',
+				tpl: '<input type="radio" name="primaryString" <tpl if="primaryString">checked="checked"</tpl> />',
+				listeners: {
+					click: function(clm, grid, rowIndex, e) {
+						if (Ext.get(e.target).is('input[type=radio]')) {
+							var st = grid.getStore(),
+								r = st.getAt(rowIndex);
+								
+							st.each(function(r){
+								r.set('primaryString', false);
+							});
+							r.set('primaryString', true);
+							st.commitChanges();
+						}
+					}
+				}
 			}]
 		});	
 		
@@ -341,7 +364,8 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	        {
 	            text: 'Save',
 	            iconCls: 'icon-save',
-	            handler: Ext.util.Functions.createDelegate(_this.saveModel, _this)
+	            scope: me,
+	            handler: me.saveModel
 	        },'-',{	        	
 	            text: 'Insert',
 	            iconCls: 'icon-add',
@@ -349,16 +373,19 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	            	items: [
 	            	{
 	            		text: 'Insert after',
-			            handler: Ext.util.Functions.createDelegate(_this.insertAfterField, _this) 
+	            		scope: me,
+			            handler: me.insertAfterField 
 	            	},{
 	            		text: 'Insert before',
-			            handler: Ext.util.Functions.createDelegate(_this.insertBeforeField, _this)
+	            		scope: me,
+			            handler: me.insertBeforeField
 	            	}]
 	            }	            
 	        },'-',{
 	            text: 'Delete',
 	            iconCls: 'afs-icon-delete',
-	            handler: Ext.util.Functions.createDelegate(_this.deleteField, _this)
+	            scope: me,
+	            handler: me.deleteField
 	        }]
 		});		
 		
@@ -377,55 +404,54 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	        },
 	        plugins: ['cellEditorBuilder']
 		}
-	}//eo _beforeInitComponent
+	},
+	//eo _beforeInitComponent
 	 
 	/**
 	 * Template method
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);				
 		afStudio.models.FieldsGrid.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}
+	},
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */
-	,_afterInitComponent : function() {
-		var _this = this,
-			store = _this.getStore(),
-			   cm = _this.getColumnModel();
+	_afterInitComponent : function() {
+		var me = this,
+			store = me.getStore(),
+			   cm = me.getColumnModel();
 
-		_this.addEvents(
+		me.addEvents(
 			/**
-			 * @event altermodel 
-			 * Fires after the model was successfully altered.
+			 * @event altermodel Fires after the model was successfully altered.
 			 */
 			'altermodel',
 			
 			/**
-			 * @event altermodelexception 
-			 * Fires if an error was happend during altering model.
+			 * @event altermodelexception Fires if an error was happend during altering model.
 			 * @param {Object} The XMLHttpRequest object containing the response data.
 			 */
 			'altermodelexception',
 			
 			/**
-			 * @event altermodelfailure
-			 * Fires if an error HTTP status was returned from the server during altering model.
+			 * @event altermodelfailure Fires if an error HTTP status was returned from the server during altering model.
 			 * @param {Object} The XMLHttpRequest object containing the response data.
 			 */
 			'altermodelfailure'
 		);
 		
 		//Load Model structure
-		_this.loadModelData(_this._data);
+		me.loadModelData(me._data);
 		
-	}//eo _afterInitComponent
+	}
+	//eo _afterInitComponent
 	
 }); 
 

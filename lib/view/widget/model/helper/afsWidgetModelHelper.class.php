@@ -28,13 +28,18 @@ class afsWidgetModelHelper extends afsBaseModelHelper
     const WIDGET_EDIT = 'edit';
     
     /**
+     * Widget show type
+     */
+    const WIDGET_SHOW = 'show';
+    
+    /**
      * Possible place types
      *
      * @var array
      */
     static public $place_types = array(
         self::PLACE_APPLICATION,
-        self::PLACE_PLUGIN
+        self::PLACE_PLUGIN,
     );
     
     /**
@@ -44,7 +49,8 @@ class afsWidgetModelHelper extends afsBaseModelHelper
      */
     static public $widget_types = array(
         self::WIDGET_EDIT,
-        self::WIDGET_LIST
+        self::WIDGET_LIST,
+        self::WIDGET_SHOW,
     );
     
     /**

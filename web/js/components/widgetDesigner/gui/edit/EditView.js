@@ -50,6 +50,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			autoScroll: true,
 			labelWidth: labelWidth,
 			items: items,
+			tbar: {
+				style: 'border-bottom: 2px solid #C00; margin-bottom: 4px; padding: 4px;',
+				items: []
+			},
 			buttons: buttons
 		}
 	},
@@ -65,6 +69,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		);
 		
 		afStudio.wd.edit.EditView.superclass.initComponent.apply(this, arguments);
+		
+		this._afterInitComponent();
 	},	
 	
 	/**
@@ -105,11 +111,38 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @override
 	 * @private
 	 */
-    beforeDestroy : function() {
+    onDestroy : function() {
     	this.modelMapper = null;
-        afStudio.wd.edit.EditView.superclass.beforeDestroy.call(this);
+        afStudio.wd.edit.EditView.superclass.onDestroy.call(this);
     },
 	
+	/**
+	 * Initializes events & does post configuration
+	 * @private
+	 */	
+	_afterInitComponent : function() {
+		var _me = this;
+		
+		this.configureView();
+	},
+	//eo _afterInitComponent    
+    
+	
+	/**
+	 * After construction view configuration
+	 * @protected
+	 */
+	configureView : function() {
+		var tbar = this.getTopToolbar();
+
+		//i:description
+		var dscNode = this.getModelNodeByPath(this.NODES.DESCRIPTION),
+			dsc = this.createDescription();
+		
+		tbar.add(dsc);
+		dscNode == null ? tbar.hide() : tbar.show();
+	},
+    
 	/**
 	 * Relayed <u>modelNodeAppend</u> event listener.
 	 * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
@@ -173,6 +206,50 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
     
 	/**
+	 * Returns default field-set.
+	 * @protected
+	 * @return {Object} default set or null if it's not exists
+	 */
+	getDefaultSet : function() {
+		var defSet = this.getComponent('default-set');
+		
+		return !Ext.isEmpty(defSet) ? defSet : null;
+	},
+	
+	/**
+	 * Returns the tabbed field-sets container {@link Ext.TabPanel}.
+	 * @protected 
+	 * @return {Object} tabpanel or null if it's not exists
+	 */
+	getTabbedSet : function() {
+		var tab = this.findByType('tabpanel');
+		
+		return tab.length ? tab[0] : null;		
+	},
+	
+	/**
+	 * Updates default fields-set visibility, based on inner fields with hidden type.
+	 * If default fields-set has at least one not hidden field - it should be displayed.
+	 * @protected
+	 */
+	updateDefaultSetVisibility : function() {
+		var defSet = this.getDefaultSet();
+		
+		if (defSet) {
+			var hidden = true;
+			
+			defSet.items.each(function(fld) {
+				if (fld.getXType() != 'hidden') {
+					hidden = false;
+					return false;
+				}
+			}, this);
+			
+			!hidden ? defSet.show() : defSet.hide();
+		}
+	},
+	
+	/**
 	 * Creates fields, field-sets and tabpanel. 
 	 * Returns an array of components being used as edit view items elements.
 	 * @protected
@@ -189,9 +266,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				cmp.push(this.createFieldSet(s));
 			}, this);
 			
-			var flds = this.getFieldsFromDefaultSet(),
-				defSet = this.createDefaultFieldSet(flds);
-			cmp.push(defSet);
+			var flds = this.getFieldsFromDefaultSet();
+			if (flds.length) {
+				var defSet = this.createDefaultFieldSet(flds);
+				cmp.push(defSet);
+			}
 			
 			var tabbedSets = this.getTabbedFieldSets();
 			if (!Ext.isEmpty(tabbedSets)) {
@@ -218,7 +297,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		var fn, cfg = {}, f;
 		
-		Ext.copyTo(cfg, fld, 'name, value, style, width, height, disabled');
+		Ext.copyTo(cfg, fld, 'name, value, content, style, width, height, disabled');
 		
 		Ext.apply(cfg, {
 			fieldLabel: fld.label,
@@ -278,6 +357,37 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				cfg.format = fld.dateFormat ? fld.dateFormat : 'Y-m-d';
 			break;
 			
+			case 'datetime':
+				fn = Ext.ux.form.DateTime;
+				Ext.apply(cfg, {
+					dateFormat: fld.dateFormat ? fld.dateFormat : 'Y-m-d',
+					timeFormat: fld.timeFormat ? fld.timeFormat : 'H:i:s'
+				});
+			break;
+			
+			case 'multicombo':
+				fn = Ext.ux.Multiselect;
+				cfg.tbar = [{text: 'clear'}];
+			break;
+			
+			case 'doublemulticombo':
+				fn = Ext.ux.ItemSelectorAutoSuggest;
+				Ext.apply(cfg, {
+					toStore: new Ext.data.ArrayStore(),
+					toTBar: [{text: 'clear'}],
+					imagePath: '/appFlowerPlugin/extjs-3/plugins/multiselect/images'
+				});
+			break;
+			
+			case 'doubletree':
+				fn = Ext.ux.TreeItemSelector;
+				cfg.imagePath = '/appFlowerPlugin/extjs-3/plugins/multiselect/images';
+			break;
+			
+			case 'color':
+				fn = Ext.ux.ColorField;
+			break;
+			
 			default:
 				fn = Ext.form.DisplayField;
 				cfg.value = String.format('<b>type</b> = {0}', fld.type);
@@ -296,6 +406,32 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		f = new fn(cfg);
 		
+		if (!f.rendered) {
+			f.on({
+				scope: this,
+				
+				afterrender: {
+					fn: function(fld) {
+						var fn = function() {
+							var node = this.getModelByCmp(fld);
+							this.controller.selectModelNode(node, this);
+						}.createDelegate(this);
+						
+						//hidden fields does not have label element
+						fld.label ? fld.label.on('click', fn) : null;
+						fld.on('focus', fn);
+					},
+					single: true
+				},
+				
+				beforedestroy: {
+					fn: function(wr) {
+						this.unmapCmpFromModel(wr[this.NODE_ID_MAPPER]);
+					}
+				}
+			});
+		}
+
 		this.mapCmpToModel(fldId, f);
 		
 		return f;
@@ -391,6 +527,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}
 		
 		button = new Ext.Button(cfg);
+		
+		button.on('click', function(btn) {
+			var node = this.getModelByCmp(btn);
+			this.controller.selectModelNode(node, this);
+		}, this);
 
 		this.mapCmpToModel(btn[mpr], button);
 		
@@ -420,6 +561,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		fieldSet = new Ext.form.FieldSet(cfg);
 		
+		fieldSet.on('beforedestroy', function(fldSet){
+			this.unmapCmpFromModel(fldSet[this.NODE_ID_MAPPER]);
+		}, this);
+		
 		this.mapCmpToModel(fldSet[mpr], fieldSet);
 		
 		var fields = this.getFieldsFromSet(fldSet[mpr]),
@@ -435,7 +580,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				fld = item.field,
 				f = this.createField(fld);
 			
-			this.wrapField(wr, f, clmW);
+			this.wrapField(wr, f, ref, clmW);
 			
 			if (idx != 0 && ref['break']) {
 				wr = this.createFieldWrapper(fldSetFloat);
@@ -466,8 +611,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		Ext.copyTo(cfg, grouping, 'title, collapsed');
 		
 		Ext.apply(cfg, {
-			collapsible: true,
-			items: []
+			itemId: 'default-set',
+			collapsible: true
 		});
 		
 		var hidden = true, flds = [];
@@ -478,9 +623,12 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			flds.push(this.createField(f));
 		}, this);
 		
-		cfg.hidden = hidden;
+		Ext.apply(cfg, {
+			hidden: hidden,
+			items: flds
+		});
+		
 		fieldSet = new Ext.form.FieldSet(cfg);
-		fieldSet.add(flds);
 		
 		return fieldSet;
 	},
@@ -503,12 +651,47 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			var t = {
 				title: fs.tabtitle,
 				layout: 'anchor',
+				autoScroll: true,
 				items: this.createFieldSet(fs) 
 			}
 			tabPanel.add(t);
 		}, this);
 		
 		return tabPanel;
+	},
+	
+	createTab : function(fldSet) {
+		return new Ext.Panel({
+			title: fldSet.tabtitle,
+			layout: 'anchor',
+			autoScroll: true,
+			items: this.createFieldSet(fldSet) 
+		});
+	},
+	
+	/**
+	 * Creates description item.
+	 * @protected
+	 * @return {Ext.Toolbar.TextItem} description item
+	 */
+	createDescription : function() {
+		var cfg = {
+        		itemId: 'description',
+        		style: 'white-space: normal;',
+        		text: '&#160;'
+			};
+		
+		var dsc = this.getModelNodeByPath(this.NODES.DESCRIPTION);
+		
+		if (dsc) {
+			var descData = this.getModelNodeValue(dsc);
+			
+			if (descData[this.NODE_VALUE_MAPPER]) {
+				cfg.text = descData[this.NODE_VALUE_MAPPER]; 			
+			}
+		}
+		
+		return new Ext.Toolbar.TextItem(cfg);
 	},
 	
 	/**
@@ -540,16 +723,32 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @protected
 	 * @param {Ext.Container} wrapper The field(s) wrapper container
 	 * @param {Object} field The field being wrapped
+	 * @param {Object} ref The i:ref definition object
 	 * @param {Number} (optional) clmW The column width, by default is 1
 	 */
-	wrapField : function(wrapper, field, clmW) {
+	wrapField : function(wrapper, field, ref, clmW) {
+		var nodeIdMpr = this.NODE_ID_MAPPER,
+			cfg = {};
+		
 		clmW = Ext.isDefined(clmW) ? clmW : 1;
 
-		wrapper.add(
-		{
+		Ext.apply(cfg, {
+			layout: 'form',
 			columnWidth: clmW,
 			items: field
-		});		
+		});
+		
+		cfg[nodeIdMpr] = ref[nodeIdMpr];
+		
+		var wr = new Ext.Container(cfg);
+		
+		wr.on('beforedestroy', function(wr){
+			this.unmapCmpFromModel(wr[this.NODE_ID_MAPPER]);
+		}, this);
+		
+		this.mapCmpToModel(ref[nodeIdMpr], wr);
+		
+		wrapper.add(wr);		
 	},
 
 	/**
@@ -577,6 +776,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	/**
 	 * Returns "real" button's index based on view definition object associated with a model 
 	 * and widget buttons. 
+	 * @protected
 	 * @param {Node} node The button related node
 	 * @param {Number} idx The node idx inside the parent model node
 	 * @param {String} type (optional) type The button type, can be "button" | "action", defaults to "button"
@@ -598,6 +798,49 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}
 		
 		return btnIdx;
+	},
+	
+	/**
+	 * Returns correct field index, correction is based on fields count and the other nodes of i:fields.
+	 * @protected
+	 * @param {Node} node The field node
+	 * @param {Number} idx The field node's index inside the model
+	 * @return {Number} index
+	 */
+	getFieldIndex : function(node, idx) {
+		var vd = this.controller.getViewDefinition(),
+			fldIdx = vd.getEntityObj(node, idx).idx;
+		
+		fldIdx = (fldIdx == null) ? 0 : fldIdx;
+		
+		return fldIdx;
+	},
+	
+	/**
+	 * Returns the index of being inserted field inside default fields-set.
+	 * @protected
+	 * @param {Node} flsNode The fields parent node (i:fields)
+	 * @param {Node} fldNode 
+	 * @return {Number} index
+	 */
+	getDefaultSetInsertFieldIndex : function(flsNode, fldNode) {
+		var defSet = this.getDefaultSet(),
+			fldIdx = flsNode.indexOf(fldNode),
+			realIdx = null;
+		
+		defSet.items.each(function(fld, idx){
+			var fi = flsNode.indexOf(this.getModelByCmp(fld));
+			if (fldIdx < fi) {
+				realIdx = idx;
+				return false;
+			}
+		}, this);
+		
+		if (realIdx == null) {
+			realIdx = defSet.items.getCount();
+		}
+
+		return realIdx;
 	},
 	
 	/**

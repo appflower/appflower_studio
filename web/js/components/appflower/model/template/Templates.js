@@ -30,8 +30,7 @@ N.WidgetViewTemplate = Ext.extend(N.WidgetTemplate, {
 		afStudio.model.template.WidgetViewTemplate.superclass.constructor.call(this);
 		
 		this.extendStructure([
-			afStudio.ModelNode.SCRIPTS,
-			{name: afStudio.ModelNode.DATA_SOURCE, required: true},
+			{name: afStudio.ModelNode.DATA_SOURCE},
 			{name: afStudio.ModelNode.FIELDS, required: true},
 			afStudio.ModelNode.DESCRIPTION,
 			afStudio.ModelNode.ALTERNATE_DESCRIPTIONS,

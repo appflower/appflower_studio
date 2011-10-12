@@ -1,0 +1,6 @@
+/**
+ * Generated action show class
+ */
+class <?php echo $name ?>Action extends simpleWidgetEditAction
+{
+}

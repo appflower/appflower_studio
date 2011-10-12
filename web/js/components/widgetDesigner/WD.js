@@ -12,9 +12,10 @@ afStudio.WD = function() {
 		/**
 		 * Opens widget for preview in new browser's window.
 		 * @param {String} uri The widget's uri being opened
+		 * @param {String} (optional) title The widget's title
 		 */
-		previewWidget : function(uri) {
-			var url = Ext.urlAppend(afStudioWSUrls.widgetPreviewUrl, Ext.urlEncode({uri: uri}));
+		previewWidget : function(uri, title) {
+			var url = Ext.urlAppend(afStudioWSUrls.widgetPreviewUrl, Ext.urlEncode({uri: uri, title: title}));
 			window.open(url, 'widget-preview');
 		},
 		

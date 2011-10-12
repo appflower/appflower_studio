@@ -54,4 +54,25 @@ class afStudioFileCommandHelper extends afBaseStudioCommandHelper
          return str_replace(self::PATH_ROOT_IDENTIFICATOR, afStudioUtil::getRootDir(), $file);
     }
     
+    /**
+     * Check folder for processing
+     *
+     * @param string $dir_path 
+     * @return mixed
+     * @author Sergey Startsev
+     */
+    static public function checkFolder($dir_path)
+    {
+        $path = self::getPath($dir_path);
+        $extension = pathinfo($dir_path, PATHINFO_EXTENSION);
+        $is_file = !empty($extension);
+        
+        if (!is_writable(dirname($path))) {
+            return  "Please check permissions on '" . dirname($dir_path) . "' folder. Folder is not writable. ".
+                    "Script can't create '" . pathinfo($dir_path, PATHINFO_BASENAME) . "' " . ($is_file ? 'file' : 'folder') . ".";
+        }
+        
+        return true;
+    }
+    
 }

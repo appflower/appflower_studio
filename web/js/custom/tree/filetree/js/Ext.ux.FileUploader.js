@@ -317,7 +317,11 @@ Ext.extend(Ext.ux.FileUploader, Ext.util.Observable, {
 	,processFailure:function(options, response, error) {
 		var record = options.record;
 		var records;
-
+		
+		//TODO uploader should be completely examined and rewritten
+		//hot fix, just to show error message
+		afStudio.Msg.error('Upload error', error.message);
+		
 		// singleUpload - all files uploaded in one form
 		if(this.singleUpload) {
 			// some files may have been successful

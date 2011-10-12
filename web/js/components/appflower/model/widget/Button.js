@@ -11,7 +11,8 @@ afStudio.model.widget.Button = Ext.extend(afStudio.model.Node, {
 		{name: 'name', type: 'token', required: true},
 		{name: 'label', type: 'token', required: true},
 	    {name: 'action', type: 'combinedUriType', required: true},
-	    {name: 'type', type: 'buttonType', defaultValue: 'button'},
+	    //TODO remove this from schema 
+	    //{name: 'type', type: 'buttonType', defaultValue: 'button'},
 		{name: 'icon', type: 'absoluteUriType'},
 		{name: 'iconCls', type: 'token'},
 	    {name: 'state', type: 'stateType', defaultValue: 'editable'},
