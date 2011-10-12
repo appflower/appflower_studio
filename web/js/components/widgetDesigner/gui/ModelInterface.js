@@ -202,22 +202,27 @@ afStudio.wd.ModelInterface = (function() {
 		/**
 		 * Checks model node existence and properties status.
 		 * @param {String|Node} node The model id or the model node object
-		 * @param {Object} st The model node status object, key/value pairs of properties
+		 * @param {Object|Function} st The model node status object, key/value pairs of properties
 		 * @return {Boolean} returns true if the node is present in the model with properties whose values equal to status object
 		 */
-		isModelStatus : function(node, st) {
+		isModelStatus : function(node, st, scope) {
 			if (this.isModelNodeExists(node)) {
 				node = this.getModelNode(node);
 				
-				var status = true;
-				for (var p in st) {
-					var pv = node.getPropertyValue(p);
-					if (pv != st[p]) {
-						status = false;
-						break;
+				if (Ext.isFunction(st)) {
+					return st.call(scope || this, node);
+				} else {
+					var status = true;
+					for (var p in st) {
+						var pv = node.getPropertyValue(p);
+						if (pv != st[p]) {
+							status = false;
+							break;
+						}
 					}
+					
+					return status;
 				}
-				return status;
 			}
 			
 			return false;

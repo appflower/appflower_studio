@@ -341,7 +341,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			
 			//field is located in the default fields-set
 			if (defSet && defSet.items.indexOf(cmp) != -1) {
-				this.removeComponent(node, cmp);
+				cmp.destroy();
 				
 				//if default fields-set is empty remove it
 				if (defSet.items.getCount() == 0) {
@@ -352,7 +352,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				
 			} else {
 			//if a field is not inside the default fields-set simple remove it	
-				this.removeComponent(node, cmp);
+				cmp.destroy();
 			}
 		},
 		
@@ -573,14 +573,51 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//----------------------------------------------------		
 		
 		/**
-		 * Adds field-set.
+		 * Adds fields-set.
 		 */
 		executeAddSet : function(node, idx) {
-			var pSet = this.getModelNodeProperties(node),
-				oSet = this.createFieldSet(pSet);
+			var pSet = this.getModelNodeProperties(node);
 			
-			this.insert(idx, oSet);
-			this.doLayout();
+			var tabPanel = this.getTabbedSet();
+			if (tabPanel) {
+				if (this.isSetTabbed(node)) {
+					var tab = this.createTab(pSet);
+					tabPanel.add(tab);
+					tabPanel.doLayout();
+				} else {
+					var oSet = this.createFieldSet(pSet),
+						tabPanelIdx = this.items.indexOf(tabPanel),
+						setIdx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
+					this.insert(setIdx, oSet);
+					this.doLayout();
+				}
+			} else {
+				var oSet = this.createFieldSet(pSet);
+				this.insert(idx, oSet);
+				this.doLayout();
+			}
+		},
+		/**
+		 * Removes fields-set.
+		 */
+		executeRemoveSet : function(node, cmp) {
+			if (this.isSetTabbed(node)) {
+				cmp.ownerCt.destroy();
+				
+				var tabPanel = this.getTabbedSet();
+				//if tab-sets are empty remove it
+				if (tabPanel.items.getCount() == 0) {
+					tabPanel.destroy();
+				}
+			} else {
+				cmp.destroy();
+			}
+		},
+		/**
+		 * Inserts fields-set.
+		 */
+		executeInsertSet : function(parent, node, refNode, refCmp) {
+			//TODO
 		},
 		
 		/**
