@@ -172,6 +172,7 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
 			success: function(response, opt) {
 				this.unmaskEditor();
 				var r = Ext.decode(response.responseText);
+				
 				if (r.success) {
 					//sets file property
 					this.file = file;
@@ -182,6 +183,13 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
 					}
 	    			this.setMode(this.getModeByFileExtension(file));
 	    			this.setCode(r.data);
+				} else {
+					this.setCode('');
+					
+					var message  = String.format('File "{0}" loading failure. <br/> {1}', file, r.message ? r.message : ''),
+						msgTitle = "Ace editor";
+						
+					Ext.Msg.alert(msgTitle, message);	
 				}
 			},	
 			failure: function(response, opt) {
