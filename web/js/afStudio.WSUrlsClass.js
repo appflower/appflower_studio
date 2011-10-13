@@ -9,6 +9,8 @@ afStudio.WSUrlsClass = function() {
 
 afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
+	helpUrl : 'http://appflower.com/cms/learningcenter',
+	
 	welcomeWinUrl : '/appFlowerStudio/welcome',
 	
     modelListUrl: '/appFlowerStudio/models',
