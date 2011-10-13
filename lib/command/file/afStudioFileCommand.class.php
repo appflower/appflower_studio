@@ -163,7 +163,7 @@ class afStudioFileCommand extends afBaseStudioCommand
             return $response->success(false);
         }
         
-        if ($file && $file_content = @file_get_contents($file)) return $response->success(true)->data(array(), $file_content, 0);
+        if ($file && is_string($file_content = @file_get_contents($file))) return $response->success(true)->data(array(), $file_content, 0);
         
         return $response->success(false);
     }
