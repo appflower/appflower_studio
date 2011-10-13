@@ -460,7 +460,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * label
 		 */
 		executeUpdateFieldsFieldLabel : function(node, cmp, p, v) {
-			cmp.label.update(!Ext.isEmpty(v) ? (v + ':') : v);
+			if (cmp.label) {
+				cmp.label.update(!Ext.isEmpty(v) ? (v + ':') : v);
+			}
 		},
 		/**
 		 * content

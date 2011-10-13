@@ -155,7 +155,9 @@ class afsWidgetModelValidator extends afsBaseModelValidator
         
         if ($this->getModel()->getType() == afsWidgetModelHelper::WIDGET_EDIT) {
             $primary_key_rule = $this->getPrimaryKeyRule($definition);
-            $errors = $this->checkDeprecatedField($definition, $primary_key_rule);
+            if ($primary_key_rule) {
+                $errors = $this->checkDeprecatedField($definition, $primary_key_rule);
+            }
             $errors = array_merge($errors, $this->checkDeprecatedField($definition, $this->edit_deprecated_fields));
         }
         

@@ -41,6 +41,12 @@
 /*                END of Top Menu               */
 /*----------------------------------------------*/
 
+/* Notification icons */
+.icon-notification-error  {background: url("/appFlowerStudioPlugin/images/error.png") no-repeat center left !important;}
+.icon-notification-info  {background: url("/appFlowerStudioPlugin/images/information.png") no-repeat center left !important;}
+.icon-notification-warning  {background: url("/appFlowerStudioPlugin/images/warning.png") no-repeat center left !important;}
+
+
 .icon-database-save{background:url('/appFlowerStudioPlugin/images/database_save.png') no-repeat center left !important;}
 .icon-application-split{background:url('/appFlowerStudioPlugin/images/application_split.png') no-repeat center left !important;}
 
