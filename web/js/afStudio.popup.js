@@ -28,15 +28,23 @@ afStudio.Help = Ext.extend(Ext.Window, {
 	form: null,
 	initComponent: function(){
 		var config = {
-			title: 'Help', width:720,height:600,
+			title: 'Help', 
+			width: 990,
+			height: 600,
 			closable: true,
-	        draggable: true, plain:true,
-	        modal: true, resizable: false,
-	        bodyBorder: false, border: false,
-	        html:'<iframe style="height:100%;width:100%;" frameborder=0 src="http://www.appflower.com/docs/index.html" id="help-iframe"></iframe>',
+	        draggable: true, 
+	        maximizable: true,
+	        plain: true,
+	        modal: true, 
+	        bodyBorder: false, 
+	        border: false,
+	        html: String.format('<iframe style="height: 100%; width: 100%;" frameborder=0 src="{0}" id="help-iframe" />', afStudioWSUrls.helpUrl),
 			buttons: [
-				{text: 'Cancel', handler: this.cancel, scope: this}
-			],
+			{
+				text: 'Cancel', 
+				scope: this,
+				handler: this.cancel 
+			}],
 			buttonAlign: 'center'
 		};
 				

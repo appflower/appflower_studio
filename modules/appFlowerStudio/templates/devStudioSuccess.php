@@ -17,8 +17,9 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 
 <!-- engine ux -->
 <!-- ========== -->
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js"></script>
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js"></script>
 
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js"></script>
 <!-- multiselect (multicombo) -->
 <link rel="stylesheet" type="text/css" href="/appFlowerPlugin/extjs-3/plugins/multiselect/multiselect.css" />
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/DDView.js"></script>
