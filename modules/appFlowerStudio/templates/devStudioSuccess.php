@@ -254,6 +254,9 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/edit/EditModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/edit/EditModelReflector.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/edit/EditView.js"></script>
+		<!-- show, html -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/show/ShowView.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/html/HtmlView.js"></script>
 	<!-- containers -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WD.js"></script>	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>

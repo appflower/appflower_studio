@@ -219,6 +219,9 @@
 					<file>js/components/widgetDesigner/gui/edit/EditModelReflector.js</file>
 					<file>js/components/widgetDesigner/gui/edit/EditView.js</file>
 					
+					<file>js/components/widgetDesigner/gui/show/ShowView.js</file>
+					<file>js/components/widgetDesigner/gui/html/HtmlView.js</file>
+					
 					<!-- containers -->
 					<file>js/components/widgetDesigner/WD.js</file>
 					<file>js/components/widgetDesigner/WidgetsBuilder.js</file>
