@@ -158,7 +158,7 @@ class afStudioFileCommand extends afBaseStudioCommand
         $response = afResponseHelper::create();
         
         if ($is_post) {
-            if ($file && $code && is_writable($file) && afStudioUtil::writeFile($file, $code)) return $response->success(true);
+            if ($file && is_string($code) && is_writable($file) && afStudioUtil::writeFile($file, $code)) return $response->success(true);
             
             return $response->success(false);
         }
