@@ -299,7 +299,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				var parent = fldNode.parentNode,
 					refNode = fldNode.nextSibling,
 					refCmp = this.getCmpByModel(refNode);
-					
 				this.executeInsertFieldsField(parent, fldNode, refNode, refCmp);
 			} else {
 				this.executeAddFieldsField(fldNode, fldPos);
@@ -627,14 +626,12 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				fields = []; //fields nodes from being removed fields-set
 				
 			//fetched fields-set's fields nodes and thier positions	
-			if (!Ext.isEmpty(fieldsCmp)) {
-				Ext.each(fieldsCmp, function(fld){
-					var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
-						fnPos = fsNode.indexOf(fn);
-						
-					fields.push({field: fn, pos: fnPos});
-				}, this);
-			}			
+			Ext.each(fieldsCmp, function(fld){
+				var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
+					fnPos = fsNode.indexOf(fn);
+					
+				fields.push({field: fn, pos: fnPos});
+			}, this);
 			
 			//removes fields-set
 			if (this.isSetTabbed(node)) {
@@ -657,18 +654,22 @@ afStudio.wd.edit.EditModelReflector = (function() {
 					this.relocateField(f.field, f.pos);	
 				}, this);
 				
-			//widget is not grouped anymore, fields from default-set must be relocated
-			//and default-set should be destroyed
+			//widget is not grouped anymore => fields must be relocated
 			} else {
-				var defFs = this.getFieldsFromDefaultSet();
+				var defFs = this.getFields();
 				
-				this.getDefaultSet().destroy();
+				this.removeAll(true);
 				
 				Ext.each(defFs, function(fld){
-					var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
-						fnPos = fsNode.indexOf(fn);
-					this.relocateField(fn, fnPos);
+					var oField = this.createField(fld),
+						fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
+						fnPos = fsNode.indexOf(fn),
+						fldIdx = this.getFieldIndex(fn, fnPos);
+						
+					this.insert(fldIdx, oField);
 				}, this);
+			
+				this.doLayout();
 			}
 			
 			this.dumpMapper();
