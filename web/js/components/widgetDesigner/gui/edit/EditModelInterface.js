@@ -84,9 +84,9 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 		
 		/**
-		 * Returns references and fields properties from a field-set.
+		 * Returns references and fields properties from a fields-set.
 		 * @param {String|Node} setNode The field-set node or it's id
-		 * @return {Array} references & fields :
+		 * @return {Array} references & fields definitions:
 		 *  [
 		 *    "ref" - i:ref definition object,
 		 *    "field" - i:field definition object mapped to i:ref->to property

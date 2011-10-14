@@ -12,7 +12,7 @@ sfConfig::set(  'sf_enabled_modules',
 /**
  * use this to set the production:false/development:true environment of Studio
  */
-sfConfig::set( 'afs_debug', false );
+sfConfig::set( 'afs_debug', true );
 
 /**
  * setting the layout

@@ -643,30 +643,33 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		var tabPanel = new Ext.TabPanel({
 			activeTab: 0,
 			height: 300,
-			padding: 10,
-			items: []
+			padding: 10
 		});
 		
+		var tabs = [];
 		Ext.each(tabbedSets, function(fs){
-			var t = {
-				title: fs.tabtitle,
-				layout: 'anchor',
-				autoScroll: true,
-				items: this.createFieldSet(fs) 
-			}
-			tabPanel.add(t);
+			tabs.push(this.createTab(fs));
 		}, this);
+
+		tabPanel.add(tabs);
 		
 		return tabPanel;
 	},
 	
+	/**
+	 * Creates tabbed fields-set.
+	 * @param {Object} fldSet The fields-set definition object
+	 * @return {Ext.Panel} tab
+	 */
 	createTab : function(fldSet) {
-		return new Ext.Panel({
+		var tab = new Ext.Panel({
 			title: fldSet.tabtitle,
 			layout: 'anchor',
 			autoScroll: true,
 			items: this.createFieldSet(fldSet) 
 		});
+		
+		return tab;
 	},
 	
 	/**

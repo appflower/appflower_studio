@@ -287,6 +287,24 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				fld.setValue(v);
 			}
 		},
+
+		/**
+		 * Relocates field component.
+		 * @private
+		 * @param {Node} fldNode The field model node
+		 * @param {Number} fldPos The field's position
+		 */
+		relocateField : function(fldNode, fldPos) {
+			if (fldNode.nextSibling) {
+				var parent = fldNode.parentNode,
+					refNode = fldNode.nextSibling,
+					refCmp = this.getCmpByModel(refNode);
+					
+				this.executeInsertFieldsField(parent, fldNode, refNode, refCmp);
+			} else {
+				this.executeAddFieldsField(fldNode, fldPos);
+			}
+		},
 		
 		/**
 		 * Adds field (i:fields->i:field).
@@ -429,18 +447,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 
 				//field is inside the default fields-set
 				if (defSet && defSet.items.indexOf(cmp) != -1) {
+					var fldIdx = defSet.items.indexOf(cmp);
 					defSet.remove(cmp, true);
-					
-					if (node.nextSibling) {
-						var parent = node.parentNode,
-							refNode = node.nextSibling,
-							refCmp = this.getCmpByModel(node.nextSibling);
-						this.executeInsertFieldsField(parent, node, refNode, refCmp);
-						
-					} else {
-						var fldIdx = defSet.items.indexOf(cmp);
-						this.executeAddFieldsField(node, fldIdx);
-					}
+					this.relocateField(node, fldIdx);
 					
 				//not default fields-set	
 				} else {
@@ -578,41 +587,75 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * Adds fields-set.
 		 */
 		executeAddSet : function(node, idx) {
-			var pSet = this.getModelNodeProperties(node);
+			var pSet = this.getModelNodeProperties(node),
+				tabPanel = this.getTabbedSet();
 			
-			var tabPanel = this.getTabbedSet();
+			//view has tabbed fields-set(s)
 			if (tabPanel) {
+				
+				//fields-set is tabbed
 				if (this.isSetTabbed(node)) {
 					var tab = this.createTab(pSet);
 					tabPanel.add(tab);
 					tabPanel.doLayout();
+				
+				//fields-set is not tabbed - inserted at the latest position before default set	
 				} else {
 					var oSet = this.createFieldSet(pSet),
 						tabPanelIdx = this.items.indexOf(tabPanel),
 						setIdx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
+						
 					this.insert(setIdx, oSet);
 					this.doLayout();
 				}
+			
+			//insert fields-set in specified position	
 			} else {
 				var oSet = this.createFieldSet(pSet);
 				this.insert(idx, oSet);
 				this.doLayout();
 			}
 		},
+		//eo executeAddSet
+		
 		/**
 		 * Removes fields-set.
 		 */
 		executeRemoveSet : function(node, cmp) {
+			var fieldsCmp = cmp.findByType('field'),
+				fsNode = this.getModelNode(this.NODES.FIELDS),
+				fields = []; //fields nodes from being removed fields-set
+				
+			//fetched fields nodes and thier positions	
+			if (!Ext.isEmpty(fieldsCmp)) {
+				Ext.each(fieldsCmp, function(fld){
+					var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
+						fnPos = fsNode.indexOf(fn);
+						
+					fields.push({field: fn, pos: fnPos});
+				}, this);
+			}			
+			
+			//removes fields-set
 			if (this.isSetTabbed(node)) {
+				var tabPanel = this.getTabbedSet();
+				
+				//remove tabbed fields-set
 				cmp.ownerCt.destroy();
 				
-				var tabPanel = this.getTabbedSet();
-				//if tab-sets are empty remove it
+				//there are no tabbed fields-set(s) - remove tabpanel
 				if (tabPanel.items.getCount() == 0) {
 					tabPanel.destroy();
 				}
 			} else {
 				cmp.destroy();
+			}
+			
+			//fields-set contains fields which must be relocated
+			if (!Ext.isEmpty(fields)) {
+				Ext.each(fields, function(f) {
+					this.relocateField(f.field, f.pos);	
+				}, this);
 			}
 		},
 		/**
