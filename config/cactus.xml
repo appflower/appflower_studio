@@ -259,6 +259,9 @@
 					<file>css/prettyPhoto.css</file>
 					<file>css/welcome.css</file>
 					
+					<!-- portal css -->
+					<file>js/custom/portal/portal.css</file>
+					
 					<!-- Filetree -->
 					<file>js/custom/tree/filetree/css/filetype.css</file>
 					<file>js/custom/tree/filetree/css/filetree.css</file>
@@ -278,7 +281,7 @@
 					<!-- engine ux -->
 					<!-- multiselect (multicombo) -->
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/multiselect.css</file>
-					
+
 					<!-- color -->
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/colorfield/color-field.css</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/color-picker.css</file>
