@@ -40,6 +40,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/adv-color-picker/code/ColorPickerPanel.js"></script>
 <!-- ========== -->
 
+<!-- AF Studio -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.xhr.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/afStudio.WSUrlsClass.js"></script>
@@ -49,6 +50,7 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/log/Logger.js"></script>
 
 <!-- custom ext ux -->
+<!-- ============= -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/Ext.ux.DataDrop.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/GroupingComboBox.js"></script>
@@ -86,7 +88,14 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-xml.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/ace/Ext.ux.AceComponent.js"></script>
+
+<!-- Portal -->
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/portal/portal.css" />
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portal.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/PortalColumn.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portlet.js"></script>
 <!-- end of custom ext ux -->
+<!-- ==================== -->
 
 <!-- Error -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/error/ApsError.js"></script>
@@ -113,11 +122,6 @@ var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig())
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/StudioViewport.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/WestPanel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/SouthPanel.js"></script>
-
-<!-- Portal -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portal.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/PortalColumn.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portlet.js"></script>
 
 <!-- models -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
