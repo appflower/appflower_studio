@@ -363,7 +363,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				
 				//if default fields-set is empty remove it
 				if (defSet.items.getCount() == 0) {
-					defSet.destroy(true);
+					defSet.destroy();
 				} else {
 					this.updateDefaultSetVisibility();
 				}
@@ -626,7 +626,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				fsNode = this.getModelNode(this.NODES.FIELDS),
 				fields = []; //fields nodes from being removed fields-set
 				
-			//fetched fields nodes and thier positions	
+			//fetched fields-set's fields nodes and thier positions	
 			if (!Ext.isEmpty(fieldsCmp)) {
 				Ext.each(fieldsCmp, function(fld){
 					var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
@@ -652,12 +652,29 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			}
 			
 			//fields-set contains fields which must be relocated
-			if (!Ext.isEmpty(fields)) {
+			if (this.isGrouped()) {
 				Ext.each(fields, function(f) {
 					this.relocateField(f.field, f.pos);	
 				}, this);
+				
+			//widget is not grouped anymore, fields from default-set must be relocated
+			//and default-set should be destroyed
+			} else {
+				var defFs = this.getFieldsFromDefaultSet();
+				
+				this.getDefaultSet().destroy();
+				
+				Ext.each(defFs, function(fld){
+					var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
+						fnPos = fsNode.indexOf(fn);
+					this.relocateField(fn, fnPos);
+				}, this);
 			}
+			
+			this.dumpMapper();
 		},
+		//eo executeRemoveSet
+		
 		/**
 		 * Inserts fields-set.
 		 */

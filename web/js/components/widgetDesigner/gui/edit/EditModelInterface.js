@@ -111,8 +111,8 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 		
 		/**
-		 * Returns fields from the default field-set.
-		 * @return {Array} fields in default set
+		 * Returns fields definition from the default field-set.
+		 * @return {Array} fields
 		 */
 		getFieldsFromDefaultSet : function() {
 			var nodeIdMpr = this.NODE_ID_MAPPER;
@@ -183,7 +183,6 @@ afStudio.wd.edit.EditModelInterface = (function() {
 			
 			return ref;
 		}
-		
 	};
 })();
 
