@@ -66,15 +66,25 @@ afStudio.view.inspector.InspectorSorter = Ext.extend(Ext.tree.TreeSorter, {
 		var sortType = this.sortType;
 		
 	    this.sortFn = function(n1, n2) {
-	        var v1 = sortType(n1.modelNode.tag),
-	            v2 = sortType(n2.modelNode.tag);
+	        var mn1 = n1.modelNode,
+	            mn2 = n2.modelNode;
+	            
+	        var v1 = sortType(mn1.tag),
+	            v2 = sortType(mn2.tag);
 	            
 	        if (v1 < v2) {
 	            return -1;
 	        } else if (v1 > v2) {
 	            return 1;
+	        } else {
+	        	//correct Array.prototype.sort - http://code.google.com/p/v8/issues/detail?id=324
+	        	//take in consideration the original position of monel node objects
+	        	var pmn = mn1.parentNode,
+	        		idx1 = pmn.indexOf(mn1),
+	        		idx2 = pmn.indexOf(mn2);
+	        	
+	        	return idx1 - idx2;	
 	        }
-	        return 0;
 	    };
 	},	
 	
