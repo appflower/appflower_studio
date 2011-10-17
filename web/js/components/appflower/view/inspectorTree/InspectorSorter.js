@@ -55,35 +55,38 @@ delete S;
  */
 afStudio.view.inspector.InspectorSorter = Ext.extend(Ext.tree.TreeSorter, {
 
+	/**
+	 * @constructor
+	 * @param {Ext.tree.TreePanel} tree
+	 * @param {Object} config
+	 */
 	constructor : function(tree, config) {
 		afStudio.view.inspector.InspectorSorter.superclass.constructor.apply(this, [tree, config]);
 		
-		var desc = this.dir && this.dir.toLowerCase() == 'desc',
-			sortType = this.sortType;
+		var sortType = this.sortType;
 		
 	    this.sortFn = function(n1, n2) {
-	        var m1 = n1.modelNode,
-	            m2 = n2.modelNode;
+	        var v1 = sortType(n1.modelNode.tag),
+	            v2 = sortType(n2.modelNode.tag);
 	            
-	        var v1 = sortType(m1.tag),
-	            v2 = sortType(m2.tag);
-	        
 	        if (v1 < v2) {
-	            return desc ? 1 : -1;
+	            return -1;
 	        } else if (v1 > v2) {
-	            return desc ? -1 : 1;
+	            return 1;
 	        }
 	        return 0;
 	    };
 	},	
 	
 	/**
+	 * Sorting method.
 	 * @protected
 	 * @param {String} node The model node's tag name
 	 * @return {Number}
 	 */
 	sortType : function(node) {
 		var nodeValue = afStudio.view.inspector.sorter[node];
+		
 		return Ext.isDefined(nodeValue) ? nodeValue : 500;
 	}
 });

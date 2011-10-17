@@ -671,8 +671,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			
 				this.doLayout();
 			}
-			
-			this.dumpMapper();
 		},
 		//eo executeRemoveSet
 		
