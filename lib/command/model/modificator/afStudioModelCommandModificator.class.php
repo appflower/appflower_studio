@@ -213,6 +213,7 @@ class afStudioModelCommandModificator
         
         if ($this->saveSchema()) {
             afStudioConsole::getInstance()->execute('sf afs:fix-perms');
+            
             return $response
                         ->success(true)
                         ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!")
@@ -281,6 +282,8 @@ class afStudioModelCommandModificator
         unset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]);
         
         if ($this->saveSchema()) {
+            afStudioModelCommandHelper::removeModelFiles($this->getModelName());
+            
             return $response->success(true)->message('Deleted model <b>'.$this->getModelName().'</b>!')->console(afStudioModelCommandHelper::deploy());
         } 
         
@@ -753,7 +756,6 @@ class afStudioModelCommandModificator
         
         return $field;
     }
-    
     
     /**
      * Check has primary or not
