@@ -580,7 +580,68 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		//i:grouping, i:set, i:ref
-		//----------------------------------------------------		
+		//----------------------------------------------------
+		
+		/**
+		 * Sets field-set title.
+		 * @private
+		 * @param {Ext.form.FieldSet} fs The field set which title being updated
+		 * @param {String} title The title
+		 */
+		changeFieldSetTitle : function(fs, title) {
+			fs.setTitle(title ? title : '&#160;');
+		},
+		
+		/**
+		 * Adds grouping (i:grouping node).
+		 */
+		executeAddGrouping : function(node, idx) {
+			this.removeAll(true);
+			
+			var flds = this.getFields(),
+				defSet = this.createDefaultFieldSet(flds);
+				
+			this.add(defSet);
+			this.doLayout();
+		},
+		/**
+		 * Removes grouping (i:grouping node).
+		 * Widget is not grouped anymore => fields must be relocated.
+		 */
+		executeRemoveGrouping : function(node, cmp) {
+			var fsNode = this.getModelNode(this.NODES.FIELDS),
+				fields = this.getFields();
+			
+			//clean widget
+			this.removeAll(true);
+			
+			Ext.each(fields, function(fld){
+				var oField = this.createField(fld),
+					fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
+					fnPos = fsNode.indexOf(fn),
+					fldIdx = this.getFieldIndex(fn, fnPos);
+					
+				this.insert(fldIdx, oField);
+			}, this);
+		
+			this.doLayout();
+		},
+		
+		/**
+		 * collapsed
+		 */
+		executeUpdateGroupingCollapsed : function(node, cmp, p, v) {
+			var ds = this.getDefaultSet();
+			
+			v == true ? ds.collapse() : ds.expand();
+		},
+		/**
+		 * title
+		 */
+		executeUpdateGroupingTitle : function(node, cmp, p, v) {
+			var ds = this.getDefaultSet();
+			this.changeFieldSetTitle(ds, v);
+		},
 		
 		/**
 		 * Adds fields-set.
@@ -629,7 +690,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			Ext.each(fieldsCmp, function(fld){
 				var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
 					fnPos = fsNode.indexOf(fn);
-					
 				fields.push({field: fn, pos: fnPos});
 			}, this);
 			
@@ -649,28 +709,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			}
 			
 			//fields-set contains fields which must be relocated
-			if (this.isGrouped()) {
-				Ext.each(fields, function(f) {
-					this.relocateField(f.field, f.pos);	
-				}, this);
-				
-			//widget is not grouped anymore => fields must be relocated
-			} else {
-				var defFs = this.getFields();
-				
-				this.removeAll(true);
-				
-				Ext.each(defFs, function(fld){
-					var oField = this.createField(fld),
-						fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
-						fnPos = fsNode.indexOf(fn),
-						fldIdx = this.getFieldIndex(fn, fnPos);
-						
-					this.insert(fldIdx, oField);
-				}, this);
-			
-				this.doLayout();
-			}
+			Ext.each(fields, function(f) {
+				this.relocateField(f.field, f.pos);	
+			}, this);
 		},
 		//eo executeRemoveSet
 		
@@ -685,7 +726,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * title
 		 */
 		executeUpdateSetTitle : function(node, cmp, p, v) {
-			cmp.setTitle(v ? v : '&#160;');
+			this.changeFieldSetTitle(cmp, v);
 		},
 		/**
 		 * collapsed

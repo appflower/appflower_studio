@@ -11,10 +11,10 @@ afStudio.wd.edit.EditModelInterface = (function() {
 	return {
 	
 		/**
-		 * Checks if the view is grouped: has i:grouping node and at least one i:set node. 
+		 * Checks if the view is grouped: has i:grouping node. 
 		 */
 		isGrouped : function() {
-			var setNode = this.getModelNodeByPath([this.NODES.GROUPING, this.NODES.SET]);
+			var setNode = this.getModelNodeByPath(this.NODES.GROUPING);
 			
 			return setNode ? true : false;
 		},
