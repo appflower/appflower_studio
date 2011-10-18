@@ -213,6 +213,7 @@ class afStudioModelCommandModificator
         
         if ($this->saveSchema()) {
             afStudioConsole::getInstance()->execute('sf afs:fix-perms');
+            afStudioModelCommandHelper::removeModelFiles($this->getModelName());
             
             return $response
                         ->success(true)
