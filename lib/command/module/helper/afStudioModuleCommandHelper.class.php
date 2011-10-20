@@ -14,15 +14,13 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
      * @param string $renamed 
      * @param string $place 
      * @param string $type 
-     * @return string - console result
+     * @return void
      * @author Sergey Startsev
      */
     static public function renameAction($name, $renamed, $place, $type)
     {
         $afConsole = afStudioConsole::getInstance();
         $root = afStudioUtil::getRootDir();
-        
-        $console = '';
         
         $dir = "{$root}/{$type}s/{$place}/modules/{$renamed}";
         $actionsPath = "{$dir}/actions/actions.class.php";
@@ -32,14 +30,10 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
         
         // generated lib actions class
         $actionsLibPath = "{$dir}/lib/Base{$name}Actions.class.php";
-        $actionsLibPathRenamed = "{$dir}/lib/Base{$renamed}Actions.class.php";
-        
         if (file_exists($actionsLibPath)) {
             self::renameActionContent($actionsLibPath, $name, $renamed);
-            $console = $afConsole->execute("mv {$actionsLibPath} {$actionsLibPathRenamed}");
+            afsFileSystem::create()->rename($actionsLibPath, "{$dir}/lib/Base{$renamed}Actions.class.php");
         }
-        
-        return $console;
     }
     
     /**

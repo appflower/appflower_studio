@@ -96,7 +96,8 @@ class afsFileSystem
     public function remove($files)
     {
         if (!is_array($files)) $files = array($files);
-
+        
+        $is_removed = true;
         $files = array_reverse($files);
         foreach ($files as $file) {
             if (!file_exists($file)) continue;
@@ -193,9 +194,9 @@ class afsFileSystem
             throw new sfException(sprintf('Cannot rename because the target "%s" already exist.', $target));
         }
         
-        return rename($origin, $target);
+        return @rename($origin, $target);
     }
-
+    
     /**
      * Creates a symbolic link or copy a directory.
      *

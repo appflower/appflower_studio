@@ -128,6 +128,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
     /**
      * Delete module functionality
      * 
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processDelete()
@@ -137,27 +138,17 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $name   = $this->getParameter('name');
         
         $response = afResponseHelper::create();
+        $console = afStudioConsole::getInstance();
         
-        if ($type && $place && $name) {
-            $afConsole = afStudioConsole::getInstance();
-            
-            $moduleDir = afStudioUtil::getRootDir() . "/{$type}s/{$place}/modules/{$name}/";
-            
-            $console = $afConsole->execute(array(
-                'afs fix-perms',
-                "rm -rf {$moduleDir}"
-            ));
-            
-            if (!file_exists($moduleDir)) {
-                $console .= $afConsole->execute('sf cc');
-                
-                return $response->success(true)->message("Deleted module <b>{$name}</b> inside <b>{$place}</b> {$type}!")->console($console);
-            }
-            
-            return $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
-        }
+        if (!$type || !$place || !$name) return $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
         
-        return $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
+        $moduleDir = afStudioUtil::getRootDir() . "/{$type}s/{$place}/modules/{$name}/";
+        
+        afsFileSystem::create()->remove($moduleDir);
+        
+        if (file_exists($moduleDir)) return $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
+        
+        return $response->success(true)->message("Deleted module <b>{$name}</b> inside <b>{$place}</b> {$type}!")->console($console->execute('sf cc'));
     }
     
     /**
@@ -174,27 +165,23 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $renamed = $this->getParameter('renamed');
         
         $response = afResponseHelper::create();
-        
-        $filesystem = new sfFileSystem;
         $root = afStudioUtil::getRootDir();
-        $afConsole = afStudioConsole::getInstance();
-        
-        // $console = $afConsole->execute('afs fix-perms');
         
         $oldDir = "{$root}/{$type}s/{$place}/modules/{$name}/";
         $newDir = "{$root}/{$type}s/{$place}/modules/{$renamed}/";
         
         if (file_exists($newDir)) return $response->success(false)->message("Module <b>{$renamed}</b> already exists inside <b>{$place}</b> {$type}!");
         
-        // $filesystem->rename($oldDir, $newDir);
-        $console = $afConsole->execute("mv {$oldDir} {$newDir}");
+        afsFileSystem::create()->rename($oldDir, $newDir);
         
         // Rename in actions class 
-        $console .= afStudioModuleCommandHelper::renameAction($name, $renamed, $place, $type);
+        afStudioModuleCommandHelper::renameAction($name, $renamed, $place, $type);
         
         if (!file_exists($oldDir) && file_exists($newDir)) {
-            $console .= $afConsole->execute('sf cc');
-            
+            $console = afStudioConsole::getInstance()->execute(array(
+                'afs fix-perms',
+                'sf cc',
+            ));
             return $response->success(true)->message("Renamed module from <b>{$name}</b> to <b>{$renamed}</b> inside <b>{$place}</b> {$type}!")->console($console);
         }
         
@@ -209,9 +196,10 @@ class afStudioModuleCommand extends afBaseStudioCommand
      */
     protected function processSetAsHomepage()
     {
-        $rm         = new RoutingConfigurationManager();
         $widgetUri  = $this->getParameter('widgetUri');
+        
         $response   = afResponseHelper::create();
+        $rm         = new RoutingConfigurationManager;
         
         if ($rm->setHomepageUrlFromWidgetUri($widgetUri)) {
             return $response->success(true)->message("Homepage for your project is now set to <b>{$widgetUri}</b>");
@@ -224,7 +212,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
      * Get grouped list for applications and plugins 
      * 
      * @example by request parameter 'type' separated to get list grouped modules:  type = app, or type = plugin
-     * @return array
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processGetGrouped()

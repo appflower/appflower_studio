@@ -64,28 +64,25 @@ class afStudioPluginCommand extends afBaseStudioCommand
     protected function processRename()
     {
         $response = afResponseHelper::create();
-        
-        $filesystem = new sfFileSystem();
-        $afConsole = afStudioConsole::getInstance();
-        
         $root_dir = afStudioUtil::getRootDir();
         
         $oldValue = $this->getParameter('oldValue');
         $newValue = $this->getParameter('newValue');
-        
-        $console = $afConsole->execute('afs fix-perms');
         
         $oldDir = "{$root_dir}/plugins/{$oldValue}/";
         $newDir = "{$root_dir}/plugins/{$newValue}/";
         
         if (file_exists($newDir)) return $response->success(false)->message("Plugin '{$newValue}' already exists");
         
-        // $filesystem->rename($oldDir, $newDir);
-        $console .= $afConsole->execute("mv {$oldDir} {$newDir}");
+        afsFileSystem::create()->rename($oldDir, $newDir);
         
         if (!file_exists($oldDir) && file_exists($newDir)) {
-            $console .= $afConsole->execute('sf cc');
-            return $response->success(true)->message("Renamed plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!")->console($console);
+            $console_result = afStudioConsole::getInstance()->execute(array(
+                'afs fix-perms',
+                'sf cc',
+            ));
+            
+            return $response->success(true)->message("Renamed plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!")->console($console_result);
         }
         
         return $response->success(false)->message("Can't rename plugin from <b>{$oldValue}</b> to <b>{$newValue}</b>!");
@@ -101,16 +98,15 @@ class afStudioPluginCommand extends afBaseStudioCommand
         $name = $this->getParameter('name');
         
         $pluginDir = afStudioUtil::getRootDir() . "/plugins/{$name}/";
-        
-        $afConsole = afStudioConsole::getInstance();
         $response = afResponseHelper::create();
         
-        $console = $afConsole->execute('afs fix-perms');
-        $console .= $afConsole->execute('rm -rf '.$pluginDir);
-        
+        afsFileSystem::create()->remove($pluginDir);
         if (!file_exists($pluginDir)) {
-            $console .= $afConsole->execute('sf cc');
-            return $response->success(true)->message("Deleted plugin <b>{$name}</b>")->console($console);
+            $console_result = afStudioConsole::getInstance()->execute(array(
+                'afs fix-perms',
+                'sf cc',
+            ));
+            return $response->success(true)->message("Deleted plugin <b>{$name}</b>")->console($console_result);
         }
         
         return $response->success(false)->message("Can't delete plugin <b>{$name}</b>!");
@@ -126,11 +122,10 @@ class afStudioPluginCommand extends afBaseStudioCommand
     {
         $name = $this->getParameter('name');
         
-        $filesystem = new sfFileSystem;
-        
-        $root = sfConfig::get('sf_root_dir');
-        $afConsole = afStudioConsole::getInstance();
-        $response = afResponseHelper::create();
+        $root       = sfConfig::get('sf_root_dir');
+        $console    = afStudioConsole::getInstance();
+        $response   = afResponseHelper::create();
+        $filesystem = afsFileSystem::create();
         
         $dir = "{$root}/plugins/{$name}";
         
@@ -142,24 +137,22 @@ class afStudioPluginCommand extends afBaseStudioCommand
             $dir,
             "{$dir}/config",
             "{$dir}/modules",
-            // "{$dir}/lib",
         );
-        
-        // Should be changed when security policy will be reviewed
-        $dirs = implode(' ', $dirs);
-        $console = $afConsole->execute("mkdir -m 775 {$dirs}");
+        foreach ($dirs as $dir) $filesystem->mkdirs($dir);
         
         if (file_exists($dir)) {
             // create config file with auto enable all modules in current plugin
-            $created = afStudioUtil::writeFile(
-                "{$dir}/config/config.php", 
-                afStudioPluginCommandTemplate::config($name) // Config file definition
-            );
+            $created = afStudioUtil::writeFile("{$dir}/config/config.php", afStudioPluginCommandTemplate::config($name));
             
-            return $response->success(true)->message("Plugin '{$name}' successfully created")->console($console);
+            $console_result = $console->execute(array(
+                'afs fix-perms',
+                'sf cc',
+            ));
+            
+            return $response->success(true)->message("Plugin '{$name}' successfully created")->console($console_result);
         }
         
-        return $response->success(false)->message("Some problems to create dirs via console")->console($console);
+        return $response->success(false)->message("Some problems to create dirs, please check permissions, and run fix-perms task");
     }
     
 }
