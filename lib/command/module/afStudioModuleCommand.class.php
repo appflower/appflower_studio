@@ -190,7 +190,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $console = $afConsole->execute("mv {$oldDir} {$newDir}");
         
         // Rename in actions class 
-        $console .= $this->renameModuleAction($name, $renamed, $place, $type);
+        $console .= afStudioModuleCommandHelper::renameAction($name, $renamed, $place, $type);
         
         if (!file_exists($oldDir) && file_exists($newDir)) {
             $console .= $afConsole->execute('sf cc');
@@ -317,54 +317,6 @@ class afStudioModuleCommand extends afBaseStudioCommand
         }
         
         return afResponseHelper::create()->success($isCreated)->message($message)->console($console);
-    }
-    
-    /**
-     * Rename module name inside actions
-     *
-     * @param string $name 
-     * @param string $renamed 
-     * @param string $place 
-     * @param string $type 
-     * @return string - console result
-     * @author Sergey Startsev
-     */
-    private function renameModuleAction($name, $renamed, $place, $type)
-    {
-        $afConsole = afStudioConsole::getInstance();
-        $root = afStudioUtil::getRootDir();
-        
-        $console = '';
-        
-        $dir = "{$root}/{$type}s/{$place}/modules/{$renamed}";
-        $actionsPath = "{$dir}/actions/actions.class.php";
-        
-        // rename actions class
-        if (file_exists($actionsPath)) {
-            $actions = file_get_contents($actionsPath);
-            $actions = str_ireplace("{$name}Actions", "{$renamed}Actions", $actions);
-            $actions = str_ireplace("@subpackage {$name}", "@subpackage {$renamed}", $actions);
-            $actions = str_ireplace("{$name} actions", "{$renamed} actions", $actions);
-            
-            afStudioUtil::writeFile($actionsPath, $actions);
-        }
-        
-        // generated lib actions class
-        $actionsLibPath = "{$dir}/lib/Base{$name}Actions.class.php";
-        $actionsLibPathRenamed = "{$dir}/lib/Base{$renamed}Actions.class.php";
-        
-        if (file_exists($actionsLibPath)) {
-            $actions = file_get_contents($actionsLibPath);
-            $actions = str_ireplace("{$name}Actions", "{$renamed}Actions", $actions);
-            $actions = str_ireplace("@subpackage  {$name}", "@subpackage  {$renamed}", $actions);
-            $actions = str_ireplace("{$name} module", "{$renamed} module", $actions);
-            
-            afStudioUtil::writeFile($actionsLibPath, $actions);
-            
-            $console = $afConsole->execute("mv {$actionsLibPath} {$actionsLibPathRenamed}");
-        }
-        
-        return $console;
     }
     
 }
