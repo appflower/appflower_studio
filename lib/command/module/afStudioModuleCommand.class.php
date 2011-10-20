@@ -116,18 +116,13 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $name   = $this->getParameter('name');
         
         if ($place && $name && $type) {
-            
             $method = 'addTo' . ucfirst($type);
-            if (method_exists($this, $method)) {
-                $afResponse = call_user_func(array($this, $method), $place, $name);
-            } else {
-                throw new afStudioModuleCommandException("You should create method for '{$type}' type in add processing");
-            }
-        } else {
-            $afResponse = afResponseHelper::create()->success(false)->message("Can't create new module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
+            if (!method_exists($this, $method)) throw new afStudioModuleCommandException("You should create method for '{$type}' type in add processing");
+            
+            return call_user_func(array($this, $method), $place, $name);
         }
         
-        return $afResponse;
+        return afResponseHelper::create()->success(false)->message("Can't create new module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
     }
     
     /**
@@ -156,20 +151,19 @@ class afStudioModuleCommand extends afBaseStudioCommand
             if (!file_exists($moduleDir)) {
                 $console .= $afConsole->execute('sf cc');
                 
-                $response->success(true)->message("Deleted module <b>{$name}</b> inside <b>{$place}</b> {$type}!")->console($console);
-            } else {
-                $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
+                return $response->success(true)->message("Deleted module <b>{$name}</b> inside <b>{$place}</b> {$type}!")->console($console);
             }
-        } else {
-            $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
+            
+            return $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
         }
         
-        return $response;
+        return $response->success(false)->message("Can't delete module <b>{$name}</b> inside <b>{$place}</b> {$type}!");
     }
     
     /**
      * Rename module functionality
      * 
+     * @return afResponse
      * @author Sergey Startsev
      */
     protected function processRename()
@@ -179,7 +173,9 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $name    = $this->getParameter('name');
         $renamed = $this->getParameter('renamed');
         
-        $filesystem = new sfFileSystem();
+        $response = afResponseHelper::create();
+        
+        $filesystem = new sfFileSystem;
         $root = afStudioUtil::getRootDir();
         $afConsole = afStudioConsole::getInstance();
         
@@ -188,54 +184,40 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $oldDir = "{$root}/{$type}s/{$place}/modules/{$name}/";
         $newDir = "{$root}/{$type}s/{$place}/modules/{$renamed}/";
         
-        if (!file_exists($newDir)) {
-            // $filesystem->rename($oldDir, $newDir);
-            $console .= $afConsole->execute("mv {$oldDir} {$newDir}");
+        if (file_exists($newDir)) return $response->success(false)->message("Module <b>{$renamed}</b> already exists inside <b>{$place}</b> {$type}!");
+        
+        // $filesystem->rename($oldDir, $newDir);
+        $console = $afConsole->execute("mv {$oldDir} {$newDir}");
+        
+        // Rename in actions class 
+        $console .= $this->renameModuleAction($name, $renamed, $place, $type);
+        
+        if (!file_exists($oldDir) && file_exists($newDir)) {
+            $console .= $afConsole->execute('sf cc');
             
-            // Rename in actions class 
-            $console .= $this->renameModuleAction($name, $renamed, $place, $type);
-            
-            if (!file_exists($oldDir) && file_exists($newDir)) {
-                $console .= $afConsole->execute('sf cc');
-                
-                $this->result = afResponseHelper::create()
-                                    ->success(true)
-                                    ->message("Renamed module from <b>{$name}</b> to <b>{$renamed}</b> inside <b>{$place}</b> {$type}!")
-                                    ->console($console);
-            } else {
-                $this->result = afResponseHelper::create()
-                                    ->success(false)
-                                    ->message("Can't rename module from <b>{$name}</b> to <b>{$renamed}</b> inside <b>{$place}</b> {$type}!");
-            }
-        } else {
-            $this->result = afResponseHelper::create()
-                                ->success(false)
-                                ->message("Module <b>{$renamed}</b> already exists inside <b>{$place}</b> {$type}!");
+            return $response->success(true)->message("Renamed module from <b>{$name}</b> to <b>{$renamed}</b> inside <b>{$place}</b> {$type}!")->console($console);
         }
         
-        $this->result = $this->result->asArray();
+        return $response->success(false)->message("Can't rename module from <b>{$name}</b> to <b>{$renamed}</b> inside <b>{$place}</b> {$type}!");
     }
     
     /**
      * Set wdiget as homepage functionality
      * 
+     * @return afResponse
      * @author Lukasz Wojciechowski
      */
     protected function processSetAsHomepage()
     {
-        $rm = new RoutingConfigurationManager();
-        $widgetUri = $this->getParameter('widgetUri');
-        $status = $rm->setHomepageUrlFromWidgetUri($widgetUri);
-        if ($status) {
-            $this->result = afResponseHelper::create()
-                                ->success(true)
-                                ->message("Homepage for your project is now set to <b>{$widgetUri}</b>");
-        } else {
-            $this->result = afResponseHelper::create()
-                                ->success(false)
-                                ->message("Can't set <b>{$widgetUri}</b> as homepage. An error occured.");
+        $rm         = new RoutingConfigurationManager();
+        $widgetUri  = $this->getParameter('widgetUri');
+        $response   = afResponseHelper::create();
+        
+        if ($rm->setHomepageUrlFromWidgetUri($widgetUri)) {
+            return $response->success(true)->message("Homepage for your project is now set to <b>{$widgetUri}</b>");
         }
-        $this->result = $this->result->asArray();
+        
+        return $response->success(false)->message("Can't set <b>{$widgetUri}</b> as homepage. An error occured.");
     }
     
     /**
@@ -268,7 +250,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $meta = (isset($data[0])) ? array_keys($data[0]) : array();
         $total = count($data);
         
-        return afResponseHelper::create()->success(true)->data($meta, $data, $total)->asArray();
+        return afResponseHelper::create()->success(true)->data($meta, $data, $total);
     }
     
     /**
@@ -282,38 +264,30 @@ class afStudioModuleCommand extends afBaseStudioCommand
     private function addToPlugin($plugin, $module)
     {
         afStudioModuleCommandHelper::load('plugin');
+        $response = afResponseHelper::create();
         
-        if (afStudioPluginCommandHelper::isExists(afStudioPluginCommandHelper::PLUGIN_GENERATE_MODULES)) {
-            $afConsole = afStudioConsole::getInstance();
-            
-            if ($plugin && $module) {
-                if (afStudioPluginCommandHelper::isExists($plugin)) {
-                    $console = $afConsole->execute("sf generate:plugin-module {$plugin} {$module}");
-                    $isCreated = $afConsole->wasLastCommandSuccessfull();
-                    
-                    if ($isCreated) {
-                        $path = sfConfig::get('sf_plugins_dir') . "/{$plugin}/modules/{$module}";
-                        afsFileSystem::create()->chmod($path, 0664, 0000, true);
-                        
-                        $console .= $afConsole->execute('sf cc');
-                        $message = "Created module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
-                    } else {
-                        $message = "Could not create module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
-                    }
-                    $afResponse = afResponseHelper::create()->success($isCreated)->message($message)->console($console);
-                } else {
-                    $afResponse = afResponseHelper::create()->success(false)->message("Plugin '{$plugin}' doesn't exists");
-                }
-            } else {
-                $afResponse = afResponseHelper::create()->success(false)->message("Can't create new module <b>{$module}</b> inside <b>{$application}</b> plugin!");
-            }
-        } else {
-            $afResponse = afResponseHelper::create()
-                            ->success(false)
-                            ->message("For creating modules in plugin you should install '" . afStudioPluginCommandHelper::PLUGIN_GENERATE_MODULES . "' plugin");
+        if (!afStudioPluginCommandHelper::isExists(afStudioPluginCommandHelper::PLUGIN_GENERATE_MODULES)) {
+            return $response->success(false)->message("For creating module in plugins should be installed '". afStudioPluginCommandHelper::PLUGIN_GENERATE_MODULES ."' plugin");
         }
         
-        return $afResponse;
+        $afConsole = afStudioConsole::getInstance();
+        
+        if (!$plugin || !$module) return $response->success(false)->message("Can't create new module <b>{$module}</b> inside <b>{$plugin}</b> plugin!");
+        if (!afStudioPluginCommandHelper::isExists($plugin)) return $response->success(false)->message("Plugin '{$plugin}' doesn't exists");
+        
+        $console = $afConsole->execute("sf generate:plugin-module {$plugin} {$module}");
+        $isCreated = $afConsole->wasLastCommandSuccessfull();
+        
+        if ($isCreated) {
+            afsFileSystem::create()->chmod(sfConfig::get('sf_plugins_dir') . "/{$plugin}/modules/{$module}", 0664, 0000, true);
+            
+            $console .= $afConsole->execute('sf cc');
+            $message = "Created module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
+        } else {
+            $message = "Could not create module <b>{$module}</b> inside <b>{$plugin}</b> plugin!";
+        }
+        
+        return $response->success($isCreated)->message($message)->console($console);
     }
     
     /**
@@ -328,23 +302,21 @@ class afStudioModuleCommand extends afBaseStudioCommand
     {
         $afConsole = afStudioConsole::getInstance();
         
-        if ($application && $module) {
-            $console = $afConsole->execute("sf generate:module {$application} {$module}");
-            $isCreated = $afConsole->wasLastCommandSuccessfull();
-            
-            if ($isCreated) {
-                $console .= $afConsole->execute('sf cc');
-                $message = "Created module <b>{$module}</b> inside <b>{$application}</b> application!";
-            } else {
-                $message = "Could not create module <b>{$module}</b> inside <b>{$application}</b> application!";
-            }
-            
-            $afResponse = afResponseHelper::create()->success($isCreated)->message($message)->console($console);
-        } else {
-            $afResponse = afResponseHelper::create()->success(false)->message("Can't create new module <b>{$module}</b> inside <b>{$application}</b> application!");
+        if (!$application || !$module) {
+            return afResponseHelper::create()->success(false)->message("Can't create new module <b>{$module}</b> inside <b>{$application}</b> application!");
         }
         
-        return $afResponse;
+        $console = $afConsole->execute("sf generate:module {$application} {$module}");
+        $isCreated = $afConsole->wasLastCommandSuccessfull();
+        
+        if ($isCreated) {
+            $console .= $afConsole->execute('sf cc');
+            $message = "Created module <b>{$module}</b> inside <b>{$application}</b> application!";
+        } else {
+            $message = "Could not create module <b>{$module}</b> inside <b>{$application}</b> application!";
+        }
+        
+        return afResponseHelper::create()->success($isCreated)->message($message)->console($console);
     }
     
     /**
