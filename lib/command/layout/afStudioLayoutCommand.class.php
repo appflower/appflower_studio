@@ -176,6 +176,24 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     }
     
     /**
+     * Set page as homepage functionality
+     * 
+     * @return afResponse
+     * @author Radu Topala
+     */
+    protected function processSetAsHomepage()
+    {
+        $widgetUri  = $this->getParameter('widgetUri');
+        $rm         = new RoutingConfigurationManager();
+        
+        if ($rm->setHomepageUrlFromWidgetUri($widgetUri)) {
+            return afResponseHelper::create()->success(true)->message("Homepage for your project is now set to <b>{$widgetUri}</b>");
+        }
+        
+        return afResponseHelper::create()->success(false)->message("Can't set <b>{$widgetUri}</b> as homepage. An error occured.");
+    }
+    
+    /**
      * Getting Widgets list 
      *
      * @param string $name
@@ -239,25 +257,4 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         return $data;
     }
     
-    /**
-	 * Set page as homepage functionality
-	 * 
-	 * @author Radu Topala
-	 */
-	protected function processSetAsHomepage()
-	{
-        $rm = new RoutingConfigurationManager();
-        $widgetUri = $this->getParameter('widgetUri');
-        $status = $rm->setHomepageUrlFromWidgetUri($widgetUri);
-        if ($status) {
-    			$this->result = afResponseHelper::create()
-                    ->success(true)
-                    ->message("Homepage for your project is now set to <b>{$widgetUri}</b>");
-        } else {
-    		    $this->result = afResponseHelper::create()
-                    ->success(false)
-                    ->message("Can't set <b>{$widgetUri}</b> as homepage. An error occured.");
-        }
-		$this->result = $this->result->asArray();
-	}
 }

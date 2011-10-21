@@ -56,4 +56,67 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
         return afStudioUtil::writeFile($path, $actions);
     }
     
+    /**
+     * Getting module info
+     *
+     * @param string $module_name 
+     * @param string $app 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getModuleInfo($module_name, $app)
+    {
+        $root = afStudioUtil::getRootDir();
+        
+        $module = array();
+        
+        $module['text'] = $module_name;
+        $module_dir = "{$root}/apps/{$app}/modules/{$module_name}";
+        
+        $xmlNames = afStudioUtil::getFiles("{$module_dir}/config/", true, "xml");
+        $xmlPaths = afStudioUtil::getFiles("{$module_dir}/config/", false, "xml");
+        
+        $securityPath = "{$module_dir}/config/security.yml";
+        $defaultActionPath = "{$module_dir}/actions/actions.class.php";
+        
+        $module['type'] = 'module';
+        $module['app'] = $app;
+        
+        if (count($xmlNames) > 0) {
+            $k = 0;
+            $module['leaf'] = false;
+            
+            foreach ($xmlNames as $xk => $xmlName) {
+                $actionPath = $defaultActionPath;
+                
+                $widgetName = pathinfo($xmlName, PATHINFO_FILENAME);
+                $predictActions = "{$widgetName}Action.class.php";
+                $predictActionsPath = "{$module_dir}/actions/{$predictActions}";
+                
+                if (file_exists($predictActionsPath)) $actionPath = $predictActionsPath;
+                
+                $module['children'][$k] = array(
+                    'app'           => $app,
+                    'module'        => $module_name,
+                    'widgetUri'     => $module_name . '/' . str_replace('.xml', '', $xmlName),
+                    'type'          => 'xml',
+                    'text'          => $xmlName,
+                    'securityPath'  => $securityPath,
+                    'xmlPath'       => $xmlPaths[$xk],
+                    'actionPath'    => $actionPath,
+                    'actionName'    => pathinfo($actionPath, PATHINFO_BASENAME),
+                    'name'          => $widgetName,
+                    'leaf'          => true
+                );
+                
+                $k++;
+            }
+        } else {
+            $module['leaf'] = true;
+            $module['iconCls'] = 'icon-folder';
+        }
+        
+        return $module;
+    }
+    
 }

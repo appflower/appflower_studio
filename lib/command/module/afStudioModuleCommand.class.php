@@ -30,70 +30,13 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $apps = afStudioUtil::getDirectories("{$root}/apps/", true);
         
         $i = 0;
-        
         foreach ($apps as $app) {
             $data[$i]['text'] = $app;
             $data[$i]['type'] = 'app';
             
-            $modules = afStudioUtil::getDirectories("{$root}/apps/{$app}/modules/", true);
-            
-            $j = 0;
-            
-            foreach ($modules as $module) {
-                $data[$i]['children'][$j]['text'] = $module;
-                $module_dir = "{$root}/apps/{$app}/modules/{$module}";
-                
-                $xmlNames = afStudioUtil::getFiles("{$module_dir}/config/", true, "xml");
-                $xmlPaths = afStudioUtil::getFiles("{$module_dir}/config/", false, "xml");
-                                            
-                $securityPath = "{$module_dir}/config/security.yml";
-                $defaultActionPath = "{$module_dir}/actions/actions.class.php";
-                
-                $k = 0;
-                
-                $data[$i]['children'][$j]['type'] = 'module';
-                $data[$i]['children'][$j]['app'] = $app;
-                
-                if (count($xmlNames) > 0) {
-                    $data[$i]['children'][$j]['leaf'] = false;
-                    
-                    foreach ($xmlNames as $xk => $xmlName) {
-                        $actionPath = $defaultActionPath;
-                        
-                        $widgetName = pathinfo($xmlName, PATHINFO_FILENAME);
-                        $predictActions = "{$widgetName}Action.class.php";
-                        $predictActionsPath = "{$module_dir}/actions/{$predictActions}";
-                        
-                        if (file_exists($predictActionsPath)) {
-                            $actionPath = $predictActionsPath;
-                        }
-                        
-                        $actionName = pathinfo($actionPath, PATHINFO_BASENAME);
-                        
-                        $data[$i]['children'][$j]['children'][$k] = array(
-                            'app'           => $app,
-                            'module'        => $module,
-                            'widgetUri'     => $module . '/' . str_replace('.xml', '', $xmlName),
-                            'type'          => 'xml',
-                            'text'          => $xmlName,
-                            'securityPath'  => $securityPath,
-                            'xmlPath'       => $xmlPaths[$xk],
-                            'actionPath'    => $actionPath,
-                            'actionName'    => $actionName,
-                            'name'          => $widgetName,
-                            'leaf'          => true
-                        );
-                        
-                        $k++;
-                    }
-                } else {
-                    $data[$i]['children'][$j]['leaf'] = true;
-                    $data[$i]['children'][$j]['iconCls'] = 'icon-folder';
-                }
-                
-                $j++;
+            foreach (afStudioUtil::getDirectories("{$root}/apps/{$app}/modules/", true) as $module) {
+                $data[$i]['children'][] = afStudioModuleCommandHelper::getModuleInfo($module, $app);
             }
-            
             $i++;
         }
         
