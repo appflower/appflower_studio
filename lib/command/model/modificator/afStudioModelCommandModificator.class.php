@@ -38,6 +38,37 @@ class afStudioModelCommandModificator
     private $originalSchemaArray = null;
     
     /**
+     * Deprecated table names
+     *
+     * @var array
+     */
+    private $deprecated_table_names = array(
+        'array',
+    );
+    
+    /**
+     * Deprecated field names 
+     *
+     * @var array
+     */
+    private $deprecated_field_names = array(
+        'table_name',
+        'database_name',
+        'om_class',
+        'class_default',
+        'num_columns',
+    );
+    
+    /**
+     * Deprecated indexes names
+     *
+     * @var array
+     */
+    private $deprecated_indexes_names = array(
+        'type',
+    );
+    
+    /**
      * Fabric method creator
      *
      * @return afStudioModelCommandModificator
@@ -674,6 +705,53 @@ class afStudioModelCommandModificator
         }
         
         return null;
+    }
+    
+    /**
+     * Validate current schema
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function validateSchema()
+    {
+        $errors = array();
+        foreach ($this->originalSchemaArray as $schema_file => $connections) {
+            foreach ($connections as $connection_name => $tables) {
+                foreach ($tables as $table_name => $fields) {
+                    $table_error_prefix = "in schema file {$schema_file}, in connection '{$connection_name}', ";
+                    
+                    // check table/model name
+                    if (array_key_exists('_attributes', $fields) && array_key_exists('phpName', $fields['_attributes'])) {
+                        if (in_array(strtolower($fields['_attributes']['phpName']), $this->deprecated_table_names)) {
+                            $errors[] = $table_error_prefix . "model name '{$fields['_attributes']['phpName']}' deprecated";
+                        }
+                    } elseif (in_array(strtolower($table_name), $this->deprecated_table_names)) {
+                        $errors[] = $table_error_prefix . "table name '{$table_name}' deprecated";
+                    }
+                    
+                    // check table indexes
+                    if (array_key_exists('_indexes', $fields)) {
+                        foreach ($fields['_indexes'] as $key_name => $keys) {
+                            if (in_array($key_name, $this->deprecated_indexes_names)) {
+                                $errors[] = $table_error_prefix . "in table name '{$table_name}', index name '{$key_name}' deprecated";
+                            }
+                        }
+                    }
+                    
+                    // check deprecated fields
+                    foreach ($fields as $field_name => $field_definition) {
+                        if (in_array($field_name, $this->deprecated_field_names)) {
+                            $errors[] = $table_error_prefix . "in table '{$table_name}', field '{$field_name}' deprecated";
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!empty($errors)) return afResponseHelper::create()->success(false)->message($errors);
+        
+        return afResponseHelper::create()->success(true);
     }
     
     /**
