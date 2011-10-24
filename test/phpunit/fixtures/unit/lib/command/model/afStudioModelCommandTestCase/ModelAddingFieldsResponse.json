@@ -1,1 +1,1 @@
-{"success":true,"meta":[],"data":[{"id":0,"name":"test_int","type":"integer"},{"id":1,"name":"test_varchar","type":"varchar","size":128}],"total":2}
+{"success":true,"meta":[],"data":[{"id":0,"name":"id","type":"integer","required":true,"key":"primary","size":11,"autoIncrement":true},{"id":1,"name":"test_int","type":"integer"},{"id":2,"name":"test_varchar","type":"varchar","size":128}],"total":3}
