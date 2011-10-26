@@ -84,7 +84,6 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $params = $this->getParameter('params');
         
         $params['autodeploy'] = !isset($params['autodeploy']) ? false : true;
-        $latest = !isset($params['latest']) ? false : true;
         $path = $params['path'];
         
         
@@ -94,7 +93,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         file_put_contents('/tmp/project-'.$unique.'.yml', sfYaml::dump(array('project' => $params), 4));
    	    
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml');
+        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml');
     	
         if (is_readable($path.'/config/project.yml')) {
             return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
@@ -165,8 +164,8 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $project['name'] = $this->getParameter('name');    	
         $project['template'] = $this->getParameter('template');
         
-        $latest = true;
         $path = $this->getParameter('path');
+        $slug = $this->getParameter('slug');
         
         $project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $project);
         $unique = afStudioUtil::unique();
@@ -181,11 +180,34 @@ class afStudioProjectCommand extends afBaseStudioCommand
         //create user configuration
         afStudioProjectCommandHelper::createNewUser($userForm, '/tmp/users-'.$unique.'.yml');
         
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
+        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
         
         $response = afResponseHelper::create();
         if (is_readable($path.'/config/project.yml')) {
-            return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
+            
+            try {
+                $serverEnv = afStudioUtil::getServerEnvironment();
+                $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
+                if ($vhost) {
+                    $serverEnv->restartWebServer();
+                    $projectURL = 'http://'.$_SERVER['HTTP_HOST'].':'.$vhost->getPort();
+                }
+                
+                $success = true;
+                $message = 'Project created in path <b>'.$path.'</b>.<br />';
+                $message .= "You can access it with this URL: <a href=\"$projectURL\">$projectURL</a>";
+                
+            } catch (ServerException $e) {
+                if (sfConfig::get('sf_environment') == 'dev') {
+                    throw $e;
+                } else {
+                    $success = false;
+                    $message = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!';
+                    $console .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
+                }
+            }
+            
+            return $response->success($success)->message($message)->console($console);
         }
         
         return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($console);
