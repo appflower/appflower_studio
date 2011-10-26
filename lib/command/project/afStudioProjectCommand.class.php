@@ -190,7 +190,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
                 $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
                 if ($vhost) {
                     $serverEnv->restartWebServer();
-                    $projectURL = 'http://'.$_SERVER['SERVER_ADDR'].':'.$vhost->getPort();
+                    $projectURL = 'http://'.$_SERVER['HTTP_HOST'].':'.$vhost->getPort();
                 }
                 
                 $success = true;
