@@ -242,6 +242,7 @@ abstract class simpleWidgetEditAction extends sfAction
         
         $fields_nodes = $this->dom_xml_xpath->query('//i:fields/i:field');
         foreach ($fields_nodes as $field) {
+            if ($field->getAttribute('type') == 'include') continue;
             $fields[] = $field->getAttribute('name');
         }
         
