@@ -179,7 +179,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
                     success: function(result){
 						var obj = Ext.decode(result.responseText);
 						if (obj.success) {
-                            (new afStudio.CreateProjectWizard()).show();
+                            (new afStudio.CreateProjectWizard(obj['dataset'])).show();
                         } else {
                             afStudio.Msg.error('Sorry but your local environment looks like not configured for "Create New Project" functionality to work');
                         }

@@ -124,11 +124,6 @@ class afStudioProjectCommand extends afBaseStudioCommand
             
             $response->success(true);
             $data['databaseExist']= true;
-            
-            // additionally we are adding here an information about auto vhost settings
-            // whenever it is enabled or not
-            $data['autoVhostCreationEnabled'] = $this->isAutoVhostCreationEnabled();
-            
         } catch (PDOException $e) {
             $error = $e->getMessage();
             
@@ -245,7 +240,14 @@ class afStudioProjectCommand extends afBaseStudioCommand
     protected function processCheckConfig()
     {
         $response = afResponseHelper::create();
-        return $response->success($this->isValidGitRepository());
+        if ($this->isValidGitRepository()) {
+            $response->success(true);
+            return $response->dataset(array(
+                'autoVhostCreationEnabled' => $this->isAutoVhostCreationEnabled()
+            ));
+        } else {
+            return $response->success(false);
+        }
     }
     
     /**

@@ -349,7 +349,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
   &lt;/Directory&gt;<br>\
 &lt;/VirtualHost&gt;\
 </code></pre>';
-            if (this.autoVhostCreationEnabled) {
+            if (this.initialConfig['autoVhostCreationEnabled'] === true) {
                 html+='<br /><i><b>Create Project Wizard</b> will try to set up Apache virtual host automatically for you.</i>';
             }
   			
@@ -389,7 +389,6 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 						{
 						  //contains boolean value
 						  _this.databaseExist = obj.data.databaseExist;
-                          _this.autoVhostCreationEnabled = obj.data.autoVhostCreationEnabled;
 						  
 						  switch(_this.databaseExist)
 						  {
