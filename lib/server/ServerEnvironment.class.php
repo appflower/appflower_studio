@@ -15,6 +15,9 @@
  *   the same directory must be passed to the constructor of this class
  * * There must be sudo installed and configured to allow www-data user use it without password
  *   This is needed to restart apache service
+ * * You have to configure properly three studio settings in your app.yml file:
+ afs_server_auto_vhost_creation_enabled, afs_server_env_studio_project_vhosts_dir, afs_server_env_apachectl_path
+  Check studio's config.php file for default values of those settings
  * 
  * This class throws ServerException when something goes wrong
  * 

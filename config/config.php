@@ -23,6 +23,7 @@ sfConfig::set('symfony.view.appFlowerStudio_preview_layout', sfConfig::get('sf_p
 /**
  * Configuration for ServerEnvironment class
  */
+sfConfig::set( 'afs_server_auto_vhost_creation_enabled', false);
 sfConfig::set( 'afs_server_env_studio_project_vhosts_dir', '/etc/httpd/studio_projects_vhosts');
 sfConfig::set( 'afs_server_env_apachectl_path', '/usr/sbin/apachectl');
 

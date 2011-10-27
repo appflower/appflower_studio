@@ -124,6 +124,11 @@ class afStudioProjectCommand extends afBaseStudioCommand
             
             $response->success(true);
             $data['databaseExist']= true;
+            
+            // additionally we are adding here an information about auto vhost settings
+            // whenever it is enabled or not
+            $data['autoVhostCreationEnabled'] = $this->isAutoVhostCreationEnabled();
+            
         } catch (PDOException $e) {
             $error = $e->getMessage();
             
@@ -184,27 +189,34 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $response = afResponseHelper::create();
         if (is_readable($path.'/config/project.yml')) {
-            
-            try {
-                $serverEnv = afStudioUtil::getServerEnvironment();
-                $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
-                if ($vhost) {
-                    $serverEnv->restartWebServer();
-                    $projectURL = 'http://'.$_SERVER['HTTP_HOST'].':'.$vhost->getPort();
+
+            $autoVhostCreationEnabled = $this->isAutoVhostCreationEnabled();
+        
+            if ($autoVhostCreationEnabled) {
+                try {
+                    $serverEnv = afStudioUtil::getServerEnvironment();
+                    $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
+                    if ($vhost) {
+                        $serverEnv->restartWebServer();
+                        $projectURL = 'http://'.$_SERVER['HTTP_HOST'].':'.$vhost->getPort();
+                    }
+
+                    $success = true;
+                    $message = 'Project created in path <b>'.$path.'</b>.<br />';
+                    $message .= "You can access it with this URL: <a href=\"$projectURL\">$projectURL</a>";
+
+                } catch (ServerException $e) {
+                    if (sfConfig::get('sf_environment') == 'dev') {
+                        throw $e;
+                    } else {
+                        $success = false;
+                        $message = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!<br />You should configure it manually.';
+                        $console .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
+                    }
                 }
-                
+            } else {
                 $success = true;
-                $message = 'Project created in path <b>'.$path.'</b>.<br />';
-                $message .= "You can access it with this URL: <a href=\"$projectURL\">$projectURL</a>";
-                
-            } catch (ServerException $e) {
-                if (sfConfig::get('sf_environment') == 'dev') {
-                    throw $e;
-                } else {
-                    $success = false;
-                    $message = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!';
-                    $console .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
-                }
+                $message = 'Project created in path <b>'.$path.'</b>.';
             }
             
             return $response->success($success)->message($message)->console($console);
@@ -248,6 +260,11 @@ class afStudioProjectCommand extends afBaseStudioCommand
         if (!file_exists("{$path}{$name}.{$postfix}")) return $response->success(false)->message('Please check permissions, and propel settings');
         
         return $response->success(true)->data(array(), array('name' => $name, 'file' => "{$name}.{$postfix}", 'path' => $path), 0)->console($console_result);
+    }
+    
+    private function isAutoVhostCreationEnabled()
+    {
+        return sfConfig::get('afs_server_auto_vhost_creation_enabled', false);
     }
     
 }
