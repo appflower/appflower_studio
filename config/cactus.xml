@@ -153,7 +153,14 @@
 					<!-- data type -->
 					<file>js/components/appflower/data/type/base/Type.js</file>
 					<file>js/components/appflower/data/type/base/Number.js</file>
-					<file>js/components/appflower/data/type/</file>
+					<file>js/components/appflower/data/type/Auto.js</file>
+					<file>js/components/appflower/data/type/Boolean.js</file>
+					<file>js/components/appflower/data/type/Date.js</file>
+					<file>js/components/appflower/data/type/Float.js</file>
+					<file>js/components/appflower/data/type/Integer.js</file>
+					<file>js/components/appflower/data/type/String.js</file>
+					<file>js/components/appflower/data/type/SchemaTypes.js</file>
+					<file>js/components/appflower/data/type/TypeRestrictions.js</file>
 					<file>js/components/appflower/data/Types.js</file>
 					
 					<!-- model -->
