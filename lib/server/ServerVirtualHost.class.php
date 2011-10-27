@@ -13,11 +13,12 @@ class ServerVirtualHost {
     private $port;
     private $slug;
     private $filename;
-    private $vhostDomain = 'local';
-    private $vhostDefinitionTemplate =
+    private $vhostDomain;
+    private $vhostDefinitionTemplatePart1 =
 'Listen *:__SERVER_PORT__
-NameVirtualHost *:__SERVER_PORT__
-<VirtualHost *:__SERVER_PORT__>
+NameVirtualHost *:__SERVER_PORT__';
+    private $vhostDefinitionTemplatePart2 =
+'<VirtualHost *:__SERVER_PORT__>
   ServerName __SERVER_NAME__
   DocumentRoot __DOCUMENT_ROOT__
 
@@ -50,10 +51,32 @@ NameVirtualHost *:__SERVER_PORT__
     
     /**
      * Creates Vhost object from provided $port and $slug
+     * If $vhostDomain is passed it replaces default from this class definition
      */
-    static function createFor($port, $slug)
+    static function createFor($port, $slug, $vhostDomain = null)
     {
-        return new ServerVirtualHost("{$port}_{$slug}");
+        $vhost = new ServerVirtualHost("{$port}_{$slug}");
+        if ($vhostDomain) {
+            $vhost->setVhostDomain($vhostDomain);
+        }
+        return $vhost;
+    }
+    
+    function setVhostDomain($vhostDomain)
+    {
+        $this->vhostDomain = $vhostDomain;
+    }
+    
+    function getURL()
+    {
+        if ($this->vhostDomain) {
+            $url = $this->slug.'.'.$this->vhostDomain;
+        } else {
+            $url = $_SERVER['HTTP_HOST'];
+        }
+        
+        $url .= ($this->port != 80 ? ':'.$this->port : '');
+        return $url;
     }
     
     function getFilename()
@@ -79,9 +102,13 @@ NameVirtualHost *:__SERVER_PORT__
      */
     function getVhostDefinition($documentRoot)
     {
-        $definition = $this->vhostDefinitionTemplate;
+        $definition = '';
+        if ($this->port != 80) {
+            $definition .= $this->vhostDefinitionTemplatePart1;
+        }
+        $definition .= "\n".$this->vhostDefinitionTemplatePart2;
         $definition = str_replace('__SERVER_PORT__', $this->port, $definition);
-        $definition = str_replace('__SERVER_NAME__', "{$this->slug}.{$this->vhostDomain}", $definition);
+        $definition = str_replace('__SERVER_NAME__', $this->getURL(), $definition);
         $definition = str_replace('__DOCUMENT_ROOT__', $documentRoot, $definition);
         return $definition;
     }

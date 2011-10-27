@@ -270,7 +270,8 @@ class afStudioUtil
     {
         return new ServerEnvironmentService(
             sfConfig::get('afs_server_env_studio_project_vhosts_dir'),
-            sfConfig::get('afs_server_env_apachectl_path')
+            sfConfig::get('afs_server_env_apachectl_path'),
+            sfConfig::get('afs_server_auto_vhost_domain_suffix')
         );
     }
 }

@@ -193,12 +193,12 @@ class afStudioProjectCommand extends afBaseStudioCommand
                     $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
                     if ($vhost) {
                         $serverEnv->restartWebServer();
-                        $projectURL = 'http://'.$_SERVER['HTTP_HOST'].':'.$vhost->getPort();
+                        $projectURL = $vhost->getURL();
                     }
 
                     $success = true;
                     $message = 'Project created in path <b>'.$path.'</b>.<br />';
-                    $message .= "You can access it with this URL: <a href=\"$projectURL\">$projectURL</a>";
+                    $message .= "You can access it with this URL: <a target=\"_blank\" href=\"http://$projectURL\">$projectURL</a>";
 
                 } catch (ServerException $e) {
                     if (sfConfig::get('sf_environment') == 'dev') {

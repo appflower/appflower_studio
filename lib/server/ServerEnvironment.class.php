@@ -28,6 +28,14 @@ class ServerEnvironmentService
     private $vhostsFilesDirectory;
     private $apachectlBinPath;
     /**
+     * If we got domain suffix passed from outside we are assuming that we will
+     * be using name based virtual hosts so all of them will be launched on 80 port
+     * Otherwise we'll use different port for each project
+     * 
+     * @var string
+     */
+    private $vhostsDomainSuffix;
+    /**
      * @var ServerVirtualHostCollection
      */
     private $existingVhostCollection;
@@ -37,7 +45,7 @@ class ServerEnvironmentService
      * Check correctness of passed directory and apachectl bin paths and 
      * permissions of current environment
      */
-    function __construct($vhostsFilesDirectory, $apachectlBinPath)
+    function __construct($vhostsFilesDirectory, $apachectlBinPath, $vhostsDomainSuffix)
     {
         if (!(
             file_exists($vhostsFilesDirectory)
@@ -58,6 +66,7 @@ class ServerEnvironmentService
         }
         
         $this->apachectlBinPath = $apachectlBinPath;
+        $this->vhostsDomainSuffix = $vhostsDomainSuffix;
         $this->fetchExistingVhosts();
     }
     
@@ -114,10 +123,13 @@ class ServerEnvironmentService
         if ($currentVhost) {
             throw new ServerException("Virtual host with slug '$projectNameSlug' already exists");
         }
+        if ($this->vhostsDomainSuffix == '') {
+            $newVhostPort = $this->existingVhostCollection->getPortForNewVirtualHost();
+        } else {
+            $newVhostPort = 80;
+        }
         
-        $newVhostPort = $this->existingVhostCollection->getPortForNewVirtualHost();
-        
-        $newVhost = ServerVirtualHost::createFor($newVhostPort, $projectNameSlug);
+        $newVhost = ServerVirtualHost::createFor($newVhostPort, $projectNameSlug, $this->vhostsDomainSuffix);
         $vhostDefinition = $newVhost->getVhostDefinition($documentRoot);
         $vhostDefinitionPath = $this->vhostsFilesDirectory.'/'.$newVhost->getFileName();
         

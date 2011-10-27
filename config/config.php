@@ -26,6 +26,11 @@ sfConfig::set('symfony.view.appFlowerStudio_preview_layout', sfConfig::get('sf_p
 sfConfig::set( 'afs_server_auto_vhost_creation_enabled', false);
 sfConfig::set( 'afs_server_env_studio_project_vhosts_dir', '/etc/httpd/studio_projects_vhosts');
 sfConfig::set( 'afs_server_env_apachectl_path', '/usr/sbin/apachectl');
+/**
+ * If domain suffix is not provided created vhosts will use different port numbers
+ * Otherwise it will be always 80 port with URL's like SLUG.DOMAIN_SUFFIX
+ */
+//sfConfig::set( 'afs_server_auto_vhost_domain_suffix', 'demo.appflower.com');
 
 
 //todo: automatic insertion of schema.yml tables into existing db
