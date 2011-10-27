@@ -237,6 +237,18 @@ class afStudioProjectCommand extends afBaseStudioCommand
     }
     
     /**
+     * Checks if current project environment is a valid git repository
+     * and if it is a studio playground repository
+     * 
+     * @return afResponse
+     */
+    protected function processCheckConfig()
+    {
+        $response = afResponseHelper::create();
+        return $response->success($this->isValidGitRepository());
+    }
+    
+    /**
      * Export project functionality
      *
      * @return afResponse
@@ -265,6 +277,22 @@ class afStudioProjectCommand extends afBaseStudioCommand
     private function isAutoVhostCreationEnabled()
     {
         return sfConfig::get('afs_server_auto_vhost_creation_enabled', false);
+    }
+
+    /**
+     * If .git directory exists and git binary is available - we are OK to create new project
+     * 
+     * @return bool
+     */
+    private function isValidGitRepository()
+    {
+        $gitDir = sfConfig::get('sf_root_dir').'/.git';
+        if (file_exists($gitDir) && is_dir($gitDir)) {
+            exec('git --version', $output, $return_var);
+            if ($return_var === 0) {
+                return true;
+            }
+        }
     }
     
 }
