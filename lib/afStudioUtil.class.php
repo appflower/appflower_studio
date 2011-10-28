@@ -195,8 +195,10 @@ class afStudioUtil
                 /**
                  * Skip RFC 1918 IP's 10.0.0.0/8, 172.16.0.0/12 and
                  * 192.168.0.0/16
+                 * @todo remove deprecated eregi call
+                 * @todo check of usage of this function - looks like a candidate for deletion
                  */
-                if (!eregi('^(10|172\.16|192\.168)\.', $ips[$i])) {
+                if (!@eregi('^(10|172\.16|192\.168)\.', $ips[$i])) {
                     $ip = $ips[$i];
                     break;
                 } // End if
