@@ -27,7 +27,7 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeStudio()
     {
-        $this->setTemplate(sfConfig::get('afs_debug') ? 'devStudio' : 'prodStudio');
+        $this->setTemplate(sfConfig::get('app_afs_debug') ? 'devStudio' : 'prodStudio');
     }
     
     /**
@@ -269,7 +269,7 @@ class appFlowerStudioActions extends afsActions
     {
         $command = $request->getParameter('cmd');
         
-        if (!sfConfig::get('afs_projects_management_enabled') && !in_array($command, array('run','export'))) {
+        if (!sfConfig::get('app_afs_projects_management_enabled') && !in_array($command, array('run','export'))) {
             //If projects management is disabled we allow only run and export commands
             throw new Exception('Projects management is disabled!');
         } 

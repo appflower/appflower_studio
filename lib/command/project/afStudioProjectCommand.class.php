@@ -278,7 +278,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
     
     private function isAutoVhostCreationEnabled()
     {
-        return sfConfig::get('afs_server_auto_vhost_creation_enabled', false);
+        return sfConfig::get('app_afs_server_auto_vhost_creation_enabled', false);
     }
 
     /**
