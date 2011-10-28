@@ -17,7 +17,7 @@ DB_PASS=${10}
 
 echo Cloning current project into target directory
 $PROJECT_DIR/plugins/appFlowerStudioPlugin/batch/cloneLocalGitRepository.php $PROJECT_DIR $TARGET_DIR || exit 1
-$PROJECT_DIR/plugins/appFlowerStudioPlugin/batch/switchLocalGitRepositoriesToPublic $TARGET_DIR || exit 1
+$PROJECT_DIR/plugins/appFlowerStudioPlugin/batch/switchLocalGitRepositoriesToPublic.php $TARGET_DIR || exit 1
 
 if [ -e $PROJECT_YML_FILE ]; then
 	cp $PROJECT_YML_FILE $TARGET_DIR/config/project.yml

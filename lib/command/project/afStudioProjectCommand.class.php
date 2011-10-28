@@ -180,10 +180,10 @@ class afStudioProjectCommand extends afBaseStudioCommand
         //create user configuration
         afStudioProjectCommandHelper::createNewUser($userForm, '/tmp/users-'.$unique.'.yml');
         
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
-        
+        $console = afStudioConsole::getInstance();
+        $consoleOutput = $console->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
         $response = afResponseHelper::create();
-        if (is_readable($path.'/config/project.yml')) {
+        if ($console->wasLastCommandSuccessfull() && is_readable($path.'/config/project.yml')) {
 
             $autoVhostCreationEnabled = $this->isAutoVhostCreationEnabled();
         
@@ -206,7 +206,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
                     } else {
                         $success = false;
                         $message = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!<br />You should configure it manually.';
-                        $console .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
+                        $consoleOutput .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
                     }
                 }
             } else {
@@ -214,10 +214,10 @@ class afStudioProjectCommand extends afBaseStudioCommand
                 $message = 'Project created in path <b>'.$path.'</b>.';
             }
             
-            return $response->success($success)->message($message)->console($console);
+            return $response->success($success)->message($message)->console($consoleOutput);
         }
         
-        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($console);
+        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($consoleOutput);
     }
     
     /**
