@@ -55,3 +55,5 @@ fi
 
 echo Running insert-sql task
 $TARGET_DIR/symfony propel:insert-sql --no-confirmation
+# clearing the cache is needed here because on PHP side we are manipulating app.yml file
+$TARGET_DIR/symfony cc

@@ -185,6 +185,16 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $response = afResponseHelper::create();
         if ($console->wasLastCommandSuccessfull() && is_readable($path.'/config/project.yml')) {
 
+            /**
+             * The code below modifies app.yml of created project and disabled project management
+             */
+            $appYml = new sfYaml();
+            $appYmlPath = "$path/apps/frontend/config/app.yml";
+            $fileData = $appYml->load($appYmlPath);
+            @$fileData['all']['afs']['projects_management_enabled'] = false;
+            afStudioUtil::writeFile($appYmlPath, $appYml->dump($fileData, 4));
+            
+            
             $autoVhostCreationEnabled = $this->isAutoVhostCreationEnabled();
         
             if ($autoVhostCreationEnabled) {
