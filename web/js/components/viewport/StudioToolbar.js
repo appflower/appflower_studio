@@ -158,7 +158,6 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 	 * creates the project menu dynamically
 	 */
 	,setProjectMenu: function(menuItem) {
-		var recentProjects = afStudio.getRecentProjects();
 		var _self = this;
 		
 
@@ -169,32 +168,33 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				ignoreParentClicks: true
 			});
 		}	
-		
-		menuItem.menu.addMenuItem({
-			text: 'Create new project',
-			iconCls: 'icon-studio-create-project',
-			handler: function (b, e) {
-                Ext.Ajax.request({
-                    url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'checkConfig'})),
-                    success: function(result){
-						var obj = Ext.decode(result.responseText);
-						if (obj.success) {
-                            (new afStudio.CreateProjectWizard(obj['dataset'])).show();
-                        } else {
-                            afStudio.Msg.error('Sorry but your local environment looks like not configured for "Create New Project" functionality to work');
+		if (afStudioProjectsManagementEnabled) {
+            menuItem.menu.addMenuItem({
+                text: 'Create new project',
+                iconCls: 'icon-studio-create-project',
+                handler: function (b, e) {
+                    Ext.Ajax.request({
+                        url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'checkConfig'})),
+                        success: function(result){
+                            var obj = Ext.decode(result.responseText);
+                            if (obj.success) {
+                                (new afStudio.CreateProjectWizard(obj['dataset'])).show();
+                            } else {
+                                afStudio.Msg.error('Sorry but your local environment looks like not configured for "Create New Project" functionality to work');
+                            }
                         }
-                    }
-                });
-			}
-		});
-							
-		menuItem.menu.addMenuItem({
-			text: 'Load project',
-			iconCls: 'icon-studio-load-project',
-			handler: function (b,e) {									
-				(new afStudio.LoadProject()).show();
-			}
-		});
+                    });
+                }
+            });
+
+            menuItem.menu.addMenuItem({
+                text: 'Load project',
+                iconCls: 'icon-studio-load-project',
+                handler: function (b,e) {									
+                    (new afStudio.LoadProject()).show();
+                }
+            });
+        }
 		
 		menuItem.menu.addMenuItem({
 			text: 'Export project',
@@ -233,15 +233,17 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				}]
 			}
 		});
-				
-		if (recentProjects.length > 0) {
-			menuItem.menu.addSeparator();			
-			menuItem.menu.addMenuItem({
-				text: 'Recent projects',
-				iconCls: 'icon-studio-recent-projects',
-				menu: _self.getRecentProjectsMenu(recentProjects)
-			});
-		}
+        if (afStudioProjectsManagementEnabled) {
+            var recentProjects = afStudio.getRecentProjects();
+            if (recentProjects.length > 0) {
+                menuItem.menu.addSeparator();			
+                menuItem.menu.addMenuItem({
+                    text: 'Recent projects',
+                    iconCls: 'icon-studio-recent-projects',
+                    menu: _self.getRecentProjectsMenu(recentProjects)
+                });
+            }
+        }
 		
 		menuItem.menu.doLayout();
 	}

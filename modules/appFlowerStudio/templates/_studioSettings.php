@@ -13,4 +13,5 @@ var afStudioHost = {
 ?>
 var afProjectInPath = '<?php echo $projectInPath; ?>';
 var afTemplateConfig = <?php echo json_encode(afStudioUtil::getTemplateConfig()); ?>;
+var afStudioProjectsManagementEnabled = <?php echo (sfConfig::get('afs_projects_management_enabled') ? 'true' : 'false'); ?>;
 </script>

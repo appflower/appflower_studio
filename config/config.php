@@ -20,6 +20,13 @@ sfConfig::set( 'afs_debug', false );
 sfConfig::set('symfony.view.appFlowerStudio_studio_layout', sfConfig::get('sf_plugins_dir').'/appFlowerStudioPlugin/templates/layout');
 sfConfig::set('symfony.view.appFlowerStudio_preview_layout', sfConfig::get('sf_plugins_dir').'/appFlowerStudioPlugin/templates/layout');
 
+
+/**
+ * When you disable projects management - create/load/recent project items 
+ * in studio toolbar will not be available
+ */
+sfConfig::set( 'afs_projects_management_enabled', true);
+
 /**
  * Configuration for ServerEnvironment class
  */

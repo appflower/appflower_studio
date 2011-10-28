@@ -268,6 +268,12 @@ class appFlowerStudioActions extends afsActions
     public function executeProject(sfWebRequest $request)
     {
         $command = $request->getParameter('cmd');
+        
+        if (!sfConfig::get('afs_projects_management_enabled') && !in_array($command, array('run','export'))) {
+            //If projects management is disabled we allow only run and export commands
+            throw new Exception('Projects management is disabled!');
+        } 
+        
         $response = afStudioCommand::process('project', $command, $request->getParameterHolder()->getAll());
         
         if ($command == 'run') {
