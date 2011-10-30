@@ -64,4 +64,34 @@ class ModelCriteriaFetcher
         return $query;
     }
     
+    /**
+     * Getting data for double combo box widget
+     *
+     * @param string $source_model 
+     * @param string $glue_field_name 
+     * @param string $glue_field_value 
+     * @param string $middle_model 
+     * @param string $middle_model_field 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getDataForDoubleComboWidget($source_model, $glue_field_name, $glue_field_value, $middle_model, $middle_model_field)
+    {
+        $options = $selected = array();
+        
+        $middleQuery = "{$middle_model}Query";
+        $objects = $middleQuery::create()->where("{$middle_model}.". sfInflector::camelize($glue_field_name) .'=?', $glue_field_value)->leftJoin($source_model)->find();
+        if ($objects != null) {
+            foreach ($objects as $object) {
+                $selected[$object->getByName($middle_model_field, BasePeer::TYPE_FIELDNAME)] = call_user_func(array($object, "get{$source_model}"))->__toString();
+            }
+        }
+        
+        $sourceQuery = "{$source_model}Query";
+        foreach ($sourceQuery::create()->find() as $object) $options[$object->getId()] = $object->__toString();
+        foreach ($options as $id => $label) if (isset($selected[$id])) unset($options[$id]);
+        
+        return array($options, $selected);
+    }
+    
 }
