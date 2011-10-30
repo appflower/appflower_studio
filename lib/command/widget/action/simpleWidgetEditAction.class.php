@@ -47,6 +47,17 @@ abstract class simpleWidgetEditAction extends sfAction
     protected $dom_xml_xpath;
     
     /**
+     * Deprecated fields list, that not native and shouldn't be processed via generated form class
+     *
+     * @var array
+     */
+    protected $deprecated_field_types = array(
+        'include',
+        'file',
+        'doublemulticombo',
+    );
+    
+    /**
      * Pre-execute action - before every action
      *
      * @author Sergey Startsev
@@ -178,6 +189,7 @@ abstract class simpleWidgetEditAction extends sfAction
         $formData = $formData[0];
         
         $formData = $this->changeKeysForForeignFields($formData);
+        $formData = $this->processMultipleRelations($formData);
         
         $this->form->bind($formData);
         return $this->form->save();
@@ -242,11 +254,67 @@ abstract class simpleWidgetEditAction extends sfAction
         
         $fields_nodes = $this->dom_xml_xpath->query('//i:fields/i:field');
         foreach ($fields_nodes as $field) {
-            if ($field->getAttribute('type') == 'include') continue;
+            if (in_array($field->getAttribute('type'), $this->deprecated_field_types)) continue;
             $fields[] = $field->getAttribute('name');
         }
         
         return $fields;
+    }
+    
+    /**
+     * Multiple relationships processing
+     *
+     * @param Array $formData 
+     * @return array
+     * @author Sergey Startsev
+     */
+    protected function processMultipleRelations(Array $formData)
+    {
+        $model_name = $this->object->getPeer()->getOMClass(false);
+        
+        $fields_nodes = $this->dom_xml_xpath->query('//i:fields/i:field[@type="doublemulticombo"]');
+        foreach ($fields_nodes as $field) {
+            $name = $field->getAttribute('name');
+            $value = $formData[$name];
+            
+            $params = array();
+            
+            $class = $field->getElementsByTagName('class');
+            $method = $field->getElementsByTagName('method');
+            
+            if (!($class) || !($method)) continue;
+            
+            $classNode = $class->item(0);
+            $methodNode = $method->item(0);
+            if ($classNode->nodeValue != 'ModelCriteriaFetcher' || $methodNode->getAttribute('name') != 'getDataForDoubleComboWidget') continue;
+            
+            foreach ($methodNode->getElementsByTagName('param') as $param) $params[$param->getAttribute('name')] = $param->nodeValue;
+            
+            $middle_model = $params['middle_model'];
+            $middle_query = "{$middle_model}Query";
+            $middle_model_field = $params['middle_model_field'];
+            
+            $query = $middle_query::create();
+            call_user_func(array($query, "filterBy{$model_name}"), $this->object);
+            $query->delete();
+            
+            $list = explode(",", $value);
+            
+            if ($list) {
+                foreach ($list as $id) {
+                    if ($id) {
+                        $relation = new $middle_model;
+                        call_user_func(array($relation, "set{$model_name}"), $this->object);
+                        $relation->setByName($middle_model_field, $id, BasePeer::TYPE_FIELDNAME);
+                        $relation->save();	
+                    }
+                }
+            }
+            
+            if (array_key_exists($name, $formData)) unset($formData[$name]);
+        }
+        
+        return $formData;
     }
     
 }
