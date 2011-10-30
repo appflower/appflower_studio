@@ -61,7 +61,8 @@ abstract class simpleWidgetEditAction extends sfAction
         $this->widgetUri = "{$module_name}/{$action_name}";
         
         // getting xml file path
-        $xml_path = "{$module_path}/config/{$action_name}.xml";
+        $xmlCU = new afConfigUtils($module_name);
+        $xml_path = $xmlCU->getConfigFilePath($action_name.'.xml', true);
         
         // initialize dom document
         $this->dom_xml = new DOMDocument();
