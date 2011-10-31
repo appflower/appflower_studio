@@ -64,7 +64,6 @@ abstract class simpleWidgetEditAction extends sfAction
      */
     public function preExecute()
     {
-        $module_path = $this->getContext()->getModuleDirectory();
         $module_name = $this->getModuleName();
         $action_name = $this->getActionName();
         
