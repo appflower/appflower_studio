@@ -427,7 +427,11 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
     		 */
             beforeModelPropertyChanged: function(node, p, v) {
             	afStudio.Logger.info('@controller beforeModelPropertyChanged', node, p, v);
-            	this.viewDefinition.setEntityAttribute(node, p, v);
+            	//TODO properties and reconfiguration must be more clear & extensible organized
+            	//reconfiguration properties should not be injected in definition object
+            	if (p != 'structure') {
+	            	this.viewDefinition.setEntityAttribute(node, p, v);
+            	}
             	afStudio.Logger.info('definition', this.viewDefinition.getData());
             }
     	});
