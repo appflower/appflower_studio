@@ -194,12 +194,12 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @protected
 	 * @interface
 	 */
-	onModelPropertyChanged : function(node, p, v) {
+	onModelPropertyChanged : function(node, p, v, oldValue) {
 		afStudio.Logger.info('@view [EditView] modelPropertyChanged');
 		var cmp = this.getCmpByModel(node, p),
 			executor = this.getExecutor(this.EXEC_UPDATE, node, p);
 		if (executor) {
-			executor(node, cmp, p, v);
+			executor(node, cmp, p, v, oldValue);
 		}
 	},
     

@@ -269,6 +269,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		
 		//fields (i:fields->i:field)
 		//----------------------------------------------------
+		
 		/**
 		 * Sets field's <u>content</u> property.
 		 * @private
@@ -579,7 +580,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			}
 		},
 		
-		//i:grouping, i:set, i:ref
+		//i:grouping, i:set
 		//----------------------------------------------------
 		
 		/**
@@ -753,13 +754,37 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		/**
 		 * float
 		 */
-		executeUpdateSetFloat : function() {
+		executeUpdateSetFloat : function(node, cmp, p, v) {
 		},
 		/**
 		 * tabtitle
 		 */
-		executeUpdateSetTabtitle : function() {
+		executeUpdateSetTabtitle : function(node, cmp, p, v) {
+		},
+		
+		//i:ref
+		//----------------------------------------------------
+		
+		executeAddRef : function(node, idx) {
+			
+		},
+		
+		executeRemoveRef : function(node, cmp) {
+			
+		},
+		
+		/**
+		 * to
+		 */
+		executeUpdateRefTo : function(node, cmp, p, v, oldValue) {
+			
+//			if (Ext.isEmpty(v)) {
+//				this.getDefaultSetInsertFieldIndex();
+//			}
+//			
+//			this.relocateField();
 		}
+		
 	}
 })();
 

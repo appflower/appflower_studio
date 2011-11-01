@@ -245,6 +245,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              * @param {Node} node This node
              * @param {String} property The property's ID which value was changed
              * @param {Mixed} value The new property's value
+             * @param {Mixed} oldValue The old/previous property's value
              */
             "modelPropertyChanged" : true,
             
@@ -1217,9 +1218,12 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	}
     	
     	if (property.validate(v) && this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
+    		
+    		var oldValue = property.getValue();
+    		
     		property.setValue(v);
     		
-	    	this.fireEvent("modelPropertyChanged", this, p, v);
+	    	this.fireEvent("modelPropertyChanged", this, p, v, oldValue);
 	    	
     		if (property.reconfigure) {
     			this.reconfigure(property, p, v);
@@ -1260,8 +1264,11 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	}
     	
     	if (this.fireEvent("beforeModelPropertyChanged", this, '_content', value)) {
+    		var oldValue = this[nodeValueProperty].getValue();
+    		
 	    	this[nodeValueProperty].setValue(value);
-	    	this.fireEvent("modelPropertyChanged", this, '_content', value);
+	    	
+	    	this.fireEvent("modelPropertyChanged", this, '_content', value, oldValue);
     	}
     },
     //eo setNodeData
