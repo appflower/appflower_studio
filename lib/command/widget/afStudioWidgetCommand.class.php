@@ -65,8 +65,8 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             
             if (!is_array($data)) return $response->success(false)->message("Wrong data defined. Please check request.");
             
-            if (!preg_match('/^[a-zA-Z0-9_]+$/si', $this->module)) return $response->success(false)->message("Invalid module name.");
-            if (!preg_match('/^[a-zA-Z0-9_]+$/si', $this->action)) return $response->success(false)->message("Invalid widget name.");
+            if (!preg_match('/^[a-zA-Z_]+$/si', $this->module)) return $response->success(false)->message("Invalid module name.");
+            if (!preg_match('/^[a-zA-Z_]+$/si', $this->action)) return $response->success(false)->message("Invalid widget name.");
             
             // retrieve widget object
             $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
@@ -112,6 +112,8 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         
         $action = pathinfo($oldValue, PATHINFO_FILENAME);
         $new_action = pathinfo($newValue, PATHINFO_FILENAME);
+        
+        if (!preg_match('/^[a-zA-Z_]+$/si', $new_action)) return afResponseHelper::create()->success(false)->message("Invalid widget name.");
         
         $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $type);
         
