@@ -260,9 +260,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		
 		//TODO labelWidth property implementation
 		executeUpdateFieldsLabelWidth : function(node, cmp, p, v) {
+			this.labelWidth = Ext.isEmpty(v) ? 100 : v;
 			/*
 			console.log('label width', v);
-			this.labelWidth = v;
 			this.form.applyToFields({labelWidth: v});
 			*/
 		},
@@ -615,7 +615,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			//clean widget
 			this.removeAll(true);
 			
-			Ext.each(fields, function(fld){
+			Ext.each(fields, function(fld) {
 				var oField = this.createField(fld),
 					fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
 					fnPos = fsNode.indexOf(fn),
@@ -686,7 +686,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				fsNode = this.getModelNode(this.NODES.FIELDS),
 				fields = []; //fields nodes from being removed fields-set
 				
-			//fetched fields-set's fields nodes and thier positions	
+			//fetched field-sets fields nodes and thier positions	
 			Ext.each(fieldsCmp, function(fld){
 				var fn = this.getModelNode(fld[this.NODE_ID_MAPPER]),
 					fnPos = fsNode.indexOf(fn);
@@ -708,7 +708,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				cmp.destroy();
 			}
 			
-			//fields-set contains fields which must be relocated
+			//field-set contains fields which must be relocated
 			Ext.each(fields, function(f) {
 				this.relocateField(f.field, f.pos);	
 			}, this);
@@ -719,7 +719,38 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * Inserts fields-set.
 		 */
 		executeInsertSet : function(parent, node, refNode, refCmp) {
-			//TODO
+			var pSet = this.getModelNodeProperties(node),
+				tabPanel = this.getTabbedSet();
+			
+			//view has tabbed fields-set(s)
+			if (tabPanel && this.isSetTabbed(node)) {
+				
+				//fields-set is tabbed
+				if (this.isSetTabbed(node)) {
+					var tab = this.createTab(pSet);
+					tabPanel.add(tab);
+					tabPanel.doLayout();
+				
+				//fields-set is not tabbed - inserted at the latest position before default set	
+				} else {
+					var oSet = this.createFieldSet(pSet),
+						tabPanelIdx = this.items.indexOf(tabPanel),
+						setIdx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
+						
+					this.insert(setIdx, oSet);
+					this.doLayout();
+				}
+			
+			//insert fields-set in specified position	
+			} else {
+				var oSet = this.createFieldSet(pSet),
+					idx = this.items.indexOf(refCmp);
+				
+				console.log('index', idx);	
+					
+				this.insert(idx, oSet);
+				this.doLayout();
+			}
 		},
 		
 		/**

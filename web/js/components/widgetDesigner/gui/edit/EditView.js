@@ -43,9 +43,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		var items = this.createFormCmp();
 		
 		var buttons = this.createButtons();
-		
-		this.dumpMapper();
-		
+
 		return {
 			autoScroll: true,
 			labelWidth: labelWidth,
@@ -625,6 +623,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		Ext.apply(cfg, {
 			hidden: hidden,
+			labelWidth: this.labelWidth,
 			items: flds
 		});
 		
@@ -738,6 +737,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		Ext.apply(cfg, {
 			layout: 'form',
 			columnWidth: clmW,
+			labelWidth: this.labelWidth,
 			items: field
 		});
 		
