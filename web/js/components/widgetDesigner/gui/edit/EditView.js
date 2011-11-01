@@ -854,9 +854,75 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return realIdx;
 	},
 	
-	getFieldSetInsertionIndex : function(grNode, fsNode) {
+	/**
+	 * Returns index for being inserted field-set.
+	 * @protected
+	 * @param {Node} grNode The i:grouping node
+	 * @param {Node} fsNode The field-set being inserted
+	 * @param {Node} refNode The reference node specifies insertion position
+	 * @param {Object} refCmp The reference node's field-set component 
+	 * @return {Number} index
+	 */
+	getFieldSetInsertionIndex : function(grNode, fsNode, refNode, refCmp) {
+		var fieldSetIdx = -1;
 		
+		//tabbed field-set
+		if (this.isSetTabbed(fsNode)) {
+			var tabPanel = this.getTabbedSet();
+			
+			if (this.isSetTabbed(refNode)) {
+				fieldSetIdx = tabPanel.items.indexOf(refCmp.ownerCt);
+			}
+			
+			//find real field-set index
+			if (fieldSetIdx == -1) {
+				var sets = this.getTabbedFieldSets(),
+					nodeIdx = grNode.indexOf(refNode);
+					
+				Ext.each(sets, function(s, idx){
+					var n = this.getModelNode(s[this.NODE_ID_MAPPER]),
+						ni = grNode.indexOf(n);
+						
+					if (nodeIdx < ni) {
+						var tab = this.getCmpByModel(n).ownerCt;
+						fieldSetIdx = tabPanel.items.indexOf(tab);
+						return false;
+					}
+				}, this);
+				
+				if (fieldSetIdx == -1) {
+					fieldSetIdx = sets.length - 1;
+				}
+			}
+		
+		//plain field-set	
+		} else {
+			fieldSetIdx = this.items.indexOf(refCmp);
+			
+			//find real field-set index
+			if (fieldSetIdx == -1) {
+				var sets = this.getPlainFieldSets(),
+					nodeIdx = grNode.indexOf(refNode);
+					
+				Ext.each(sets, function(s, idx){
+					var n = this.getModelNode(s[this.NODE_ID_MAPPER]),
+						ni = grNode.indexOf(n);
+						
+					if (nodeIdx < ni) {
+						fieldSetIdx = this.items.indexOf(this.getCmpByModel(n));
+						return false;
+					}
+				}, this);
+				
+				if (fieldSetIdx == -1) {
+					fieldSetIdx = sets.length - 1;
+				}
+			}
+		}
+		
+		return fieldSetIdx;
 	},
+	//eo getFieldSetInsertionIndex
 	
 	/**
 	 * TODO  auxilary method, should be deleted after view will be implemented

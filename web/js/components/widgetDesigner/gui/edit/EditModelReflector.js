@@ -719,39 +719,20 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * Inserts fields-set.
 		 */
 		executeInsertSet : function(parent, node, refNode, refCmp) {
-			var pSet = this.getModelNodeProperties(node),
-				tabPanel = this.getTabbedSet();
+			var tabPanel = this.getTabbedSet(),
+				pSet = this.getModelNodeProperties(node),
+				idx = this.getFieldSetInsertionIndex(parent, node, refNode, refCmp);
 			
-			//view has tabbed fields-set(s)
+			//fields-set is tabbed
 			if (tabPanel && this.isSetTabbed(node)) {
+				var oTab = this.createTab(pSet);
+				tabPanel.insert(idx, oTab);
+				tabPanel.doLayout();
 				
-				//fields-set is tabbed
-				if (this.isSetTabbed(node)) {
-					var tab = this.createTab(pSet);
-					tabPanel.add(tab);
-					tabPanel.doLayout();
-				
-				//fields-set is not tabbed - inserted at the latest position before default set	
-				} else {
-					var oSet = this.createFieldSet(pSet),
-						tabPanelIdx = this.items.indexOf(tabPanel),
-						setIdx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
-						
-					this.insert(setIdx, oSet);
-					this.doLayout();
-				}
-			
 			//insert fields-set in specified position	
 			} else {
 				var oSet = this.createFieldSet(pSet),
-					idx = this.items.indexOf(refCmp);
-				
-				if (idx == -1) {
-					//idx = this.getFieldSetInsertionIndex(parent, refNode);
-				}
-				
-				console.log('index', idx);	
-					
+					idx = this.getFieldSetInsertionIndex(parent, node, refNode, refCmp);
 				this.insert(idx, oSet);
 				this.doLayout();
 			}
