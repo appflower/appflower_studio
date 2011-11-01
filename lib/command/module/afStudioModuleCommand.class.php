@@ -58,6 +58,10 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $place  = $this->getParameter('place');
         $name   = $this->getParameter('name');
         
+        if (!afStudioModuleCommandHelper::isValidName($name)) {
+             return afResponseHelper::create()->success(false)->message("Module name not valid, should contains only upper and lower case alphabet characters");
+        }
+        
         if ($place && $name && $type) {
             $method = 'addTo' . ucfirst($type);
             if (!method_exists($this, $method)) throw new afStudioModuleCommandException("You should create method for '{$type}' type in add processing");
@@ -109,6 +113,10 @@ class afStudioModuleCommand extends afBaseStudioCommand
         
         $response = afResponseHelper::create();
         $root = afStudioUtil::getRootDir();
+        
+        if (!afStudioModuleCommandHelper::isValidName($renamed)) {
+             return afResponseHelper::create()->success(false)->message("Module name not valid, should contains only upper and lower case alphabet characters");
+        }
         
         $oldDir = "{$root}/{$type}s/{$place}/modules/{$name}/";
         $newDir = "{$root}/{$type}s/{$place}/modules/{$renamed}/";

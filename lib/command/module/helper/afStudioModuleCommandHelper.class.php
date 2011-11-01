@@ -119,4 +119,16 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
         return $module;
     }
     
+    /**
+     * Check is valid name or not
+     *
+     * @param string $name 
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    static public function isValidName($name)
+    {
+        return preg_match('/^[a-zA-Z]+$/si', $name);
+    }
+    
 }
