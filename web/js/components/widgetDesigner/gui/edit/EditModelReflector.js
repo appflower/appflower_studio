@@ -764,20 +764,34 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		
 		//i:ref
 		//----------------------------------------------------
-		
+
+		//TODO implement
 		executeAddRef : function(node, idx) {
-			
+			//TODO code responsible for creation i:ref should be refactored
 		},
 		
+		/**
+		 * Removes reference node.
+		 */
 		executeRemoveRef : function(node, cmp) {
-			
+			var fldName = this.getModelNodeProperty(node, 'to'),
+				fsNode = this.getModelNode(this.NODES.FIELDS);
+				
+			cmp.destroy();
+
+			if (!Ext.isEmpty(fldName)) {
+				var fldProp = this.getFields({name: fldName})[0];
+					fldNode = this.getModelNode(fldProp[this.NODE_ID_MAPPER]);
+					fldIdx = this.getDefaultSetInsertFieldIndex(fsNode, fldNode);
+					
+				this.relocateField(fldNode, fldIdx);
+			}
 		},
 		
 		/**
 		 * to
 		 */
 		executeUpdateRefTo : function(node, cmp, p, v, oldValue) {
-			
 //			if (Ext.isEmpty(v)) {
 //				this.getDefaultSetInsertFieldIndex();
 //			}
