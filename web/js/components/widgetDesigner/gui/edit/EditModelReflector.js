@@ -746,12 +746,17 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				var oSet = this.createFieldSet(pSet),
 					idx = this.items.indexOf(refCmp);
 				
+				if (idx == -1) {
+					//idx = this.getFieldSetInsertionIndex(parent, refNode);
+				}
+				
 				console.log('index', idx);	
 					
 				this.insert(idx, oSet);
 				this.doLayout();
 			}
 		},
+		//eo executeInsertSet
 		
 		/**
 		 * title

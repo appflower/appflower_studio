@@ -285,14 +285,22 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
-	 * Creates & registers a field component.
+	 * Creates & registers a field component based on its definition object.
+	 * If a field with passed-in definition object already exists then the field is removed and is created again.
 	 * @protected
+	 * @param {Object} field The field definition object
 	 * @return {Ext.form.Field} field
 	 */
 	createField : function(fld) {
 		var mpr = this.NODE_ID_MAPPER,
 			fldId = fld[mpr];
 		
+		//checks if the field exists and removes it on success
+		var fldExist = this.getCmpByModel(fldId);	
+		if (fldExist) {
+			fldExist.destroy();
+		}
+			
 		var fn, cfg = {}, f;
 		
 		Ext.copyTo(cfg, fld, 'name, value, content, style, width, height, disabled');
@@ -823,7 +831,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * Returns the index of being inserted field inside default fields-set.
 	 * @protected
 	 * @param {Node} flsNode The fields parent node (i:fields)
-	 * @param {Node} fldNode 
+	 * @param {Node} fldNode The field node, insertion index
 	 * @return {Number} index
 	 */
 	getDefaultSetInsertFieldIndex : function(flsNode, fldNode) {
@@ -844,6 +852,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}
 
 		return realIdx;
+	},
+	
+	getFieldSetInsertionIndex : function(grNode, fsNode) {
+		
 	},
 	
 	/**
