@@ -136,6 +136,9 @@ class afsPageModel extends afsBaseModel
         $status = $definition->validate();
         
         if (is_bool($status) && $status) {
+            $model_validator = afsPageModelValidator::create($this)->execute();
+            if (!$model_validator->isValid()) return afResponseHelper::create()->success(false)->message($model_validator->getMessages(true));
+            
             afStudioUtil::writeFile($this->getPagePath(), $definition->get());
             $this->setNew(false);
             
