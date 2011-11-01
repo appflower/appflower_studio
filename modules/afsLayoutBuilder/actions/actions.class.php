@@ -155,8 +155,10 @@ class afsLayoutBuilderActions extends afsActions
         $parameters = array(
             'widgetUri'  => $request->getParameter('widgetUri'),
         );
-        $response = afStudioCommand::process('layout', 'setAsHomepage', $parameters);
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('layout', 'setAsHomepage', $parameters)->asArray()
+        );
     }
     
 }

@@ -16,9 +16,9 @@ class afsModuleManagerActions extends afsActions
      */
     public function executeGetList(sfWebRequest $request)
     {
-        $response = afStudioCommand::process('module', 'getList');
-
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('module', 'getList')->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA)
+        );
     }
     
     /**
@@ -35,9 +35,9 @@ class afsModuleManagerActions extends afsActions
             'name'  => $request->getParameter('name')
         );
         
-        $response = afStudioCommand::process('module', 'add', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('module', 'add', $parameters)->asArray()
+        );
     }
     
     /**
@@ -54,9 +54,9 @@ class afsModuleManagerActions extends afsActions
             'name'  => $request->getParameter('name')
         );
         
-        $response = afStudioCommand::process('module', 'delete', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('module', 'delete', $parameters)->asArray()
+        );
     }
     
     /**
@@ -74,9 +74,9 @@ class afsModuleManagerActions extends afsActions
             'renamed'  => $request->getParameter('renamed')
         );
         
-        $response = afStudioCommand::process('module', 'rename', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('module', 'rename', $parameters)->asArray()
+        );
     }
     
     /**
@@ -90,8 +90,10 @@ class afsModuleManagerActions extends afsActions
         $parameters = array(
             'widgetUri'  => $request->getParameter('widgetUri'),
         );
-        $response = afStudioCommand::process('module', 'setAsHomepage', $parameters);
-        return $this->renderJson($response);
+        
+        return $this->renderJson(
+            afStudioCommand::process('module', 'setAsHomepage', $parameters)->asArray()
+        );
     }
     
     /**
@@ -106,9 +108,9 @@ class afsModuleManagerActions extends afsActions
             'type' => $request->getParameter('type')
         );
         
-        $response = afStudioCommand::process('module', 'getGrouped', $parameters);
-        
-        return $this->renderJson($response);
+        return $this->renderJson(
+            afStudioCommand::process('module', 'getGrouped', $parameters)->asArray()
+        );
     }
     
     /**

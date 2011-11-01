@@ -1,1 +1,1 @@
-{"success":true,"meta":[],"data":[],"total":0}
+{"success":true,"meta":[],"data":[{"id":0,"name":"id","type":"integer","autoIncrement":true,"primaryKey":true,"required":true,"size":11,"primaryString":true}],"total":1}

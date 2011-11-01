@@ -192,4 +192,15 @@ class afStudioModelCommand extends afBaseStudioCommand
         }
     }
     
+    /**
+     * Validate schema
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processValidateSchema()
+    {
+        return $this->getModificator()->validateSchema();
+    }
+    
 }

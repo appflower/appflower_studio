@@ -84,7 +84,6 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $params = $this->getParameter('params');
         
         $params['autodeploy'] = !isset($params['autodeploy']) ? false : true;
-        $latest = !isset($params['latest']) ? false : true;
         $path = $params['path'];
         
         
@@ -94,7 +93,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         file_put_contents('/tmp/project-'.$unique.'.yml', sfYaml::dump(array('project' => $params), 4));
    	    
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml');
+        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml');
     	
         if (is_readable($path.'/config/project.yml')) {
             return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
@@ -165,8 +164,8 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $project['name'] = $this->getParameter('name');    	
         $project['template'] = $this->getParameter('template');
         
-        $latest = true;
         $path = $this->getParameter('path');
+        $slug = $this->getParameter('slug');
         
         $project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $project);
         $unique = afStudioUtil::unique();
@@ -181,14 +180,54 @@ class afStudioProjectCommand extends afBaseStudioCommand
         //create user configuration
         afStudioProjectCommandHelper::createNewUser($userForm, '/tmp/users-'.$unique.'.yml');
         
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' '.$latest.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
-        
+        $console = afStudioConsole::getInstance();
+        $consoleOutput = $console->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
         $response = afResponseHelper::create();
-        if (is_readable($path.'/config/project.yml')) {
-            return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
+        if ($console->wasLastCommandSuccessfull() && is_readable($path.'/config/project.yml')) {
+
+            /**
+             * The code below modifies app.yml of created project and disabled project management
+             */
+            $appYml = new sfYaml();
+            $appYmlPath = "$path/apps/frontend/config/app.yml";
+            $fileData = $appYml->load($appYmlPath);
+            @$fileData['all']['afs']['projects_management_enabled'] = false;
+            afStudioUtil::writeFile($appYmlPath, $appYml->dump($fileData, 4));
+            
+            
+            $autoVhostCreationEnabled = $this->isAutoVhostCreationEnabled();
+        
+            if ($autoVhostCreationEnabled) {
+                try {
+                    $serverEnv = afStudioUtil::getServerEnvironment();
+                    $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
+                    if ($vhost) {
+                        $serverEnv->restartWebServer();
+                        $projectURL = $vhost->getURL();
+                    }
+
+                    $success = true;
+                    $message = 'Project created in path <b>'.$path.'</b>.<br />';
+                    $message .= "You can access it with this URL: <a target=\"_blank\" href=\"http://$projectURL\">$projectURL</a>";
+
+                } catch (ServerException $e) {
+                    if (sfConfig::get('sf_environment') == 'dev') {
+                        throw $e;
+                    } else {
+                        $success = false;
+                        $message = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!<br />You should configure it manually.';
+                        $consoleOutput .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
+                    }
+                }
+            } else {
+                $success = true;
+                $message = 'Project created in path <b>'.$path.'</b>.';
+            }
+            
+            return $response->success($success)->message($message)->console($consoleOutput);
         }
         
-        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($console);
+        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($consoleOutput);
     }
     
     /**
@@ -200,6 +239,25 @@ class afStudioProjectCommand extends afBaseStudioCommand
     protected function processRun()
     {
         return afResponseHelper::create()->success(true)->console(afStudioProjectCommandHelper::processRun());
+    }
+    
+    /**
+     * Checks if current project environment is a valid git repository
+     * and if it is a studio playground repository
+     * 
+     * @return afResponse
+     */
+    protected function processCheckConfig()
+    {
+        $response = afResponseHelper::create();
+        if ($this->isValidGitRepository()) {
+            $response->success(true);
+            return $response->dataset(array(
+                'autoVhostCreationEnabled' => $this->isAutoVhostCreationEnabled()
+            ));
+        } else {
+            return $response->success(false);
+        }
     }
     
     /**
@@ -226,6 +284,27 @@ class afStudioProjectCommand extends afBaseStudioCommand
         if (!file_exists("{$path}{$name}.{$postfix}")) return $response->success(false)->message('Please check permissions, and propel settings');
         
         return $response->success(true)->data(array(), array('name' => $name, 'file' => "{$name}.{$postfix}", 'path' => $path), 0)->console($console_result);
+    }
+    
+    private function isAutoVhostCreationEnabled()
+    {
+        return sfConfig::get('app_afs_server_auto_vhost_creation_enabled', false);
+    }
+
+    /**
+     * If .git directory exists and git binary is available - we are OK to create new project
+     * 
+     * @return bool
+     */
+    private function isValidGitRepository()
+    {
+        $gitDir = sfConfig::get('sf_root_dir').'/.git';
+        if (file_exists($gitDir) && is_dir($gitDir)) {
+            exec('git --version', $output, $return_var);
+            if ($return_var === 0) {
+                return true;
+            }
+        }
     }
     
 }

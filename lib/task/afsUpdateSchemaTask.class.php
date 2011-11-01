@@ -54,6 +54,8 @@ EOF;
             
             $this->reverseDatabase($databaseManager, $connection, $options);
         }
+        
+        $this->validateSchema();
     }
     
     /**
@@ -148,7 +150,7 @@ EOF;
     {
         $dbSchema = new sfPropelDatabaseSchema;
         $dbSchema->loadYAML($schema_path);
-    	
+        
         return array_keys($dbSchema->getTables());
     }
     
@@ -163,7 +165,7 @@ EOF;
     {
         $dbSchema = new sfPropelDatabaseSchema();
         $dbSchema->loadYAML($schema_path);
-    	
+        
         return $dbSchema->asArray();
     }
     
@@ -177,7 +179,7 @@ EOF;
     {
         $this->configuration = new ProjectConfiguration(null, new sfEventDispatcher());
         
-    	return sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->maxdepth(0)->in(array_values($this->configuration->getPluginSubPaths('/config')));
+        return sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->maxdepth(0)->in(array_values($this->configuration->getPluginSubPaths('/config')));
     }
     
     /**
@@ -188,20 +190,20 @@ EOF;
      */
     private function getPluginsTables()
     {
-    	$schemas = $this->getPluginsSchemas();
-    	
-    	$tables = array();
-    	foreach ($schemas as $schema) {
-    	    if ($schema_tables = $this->getSchemaStructure($schema)) {
+        $schemas = $this->getPluginsSchemas();
+        
+        $tables = array();
+        foreach ($schemas as $schema) {
+            if ($schema_tables = $this->getSchemaStructure($schema)) {
                 foreach ($schema_tables as $connection => $table) {
                     if (empty($table)) continue;
                     if (!isset($tables[$connection])) $tables[$connection] = array();
                     $tables[$connection] = array_merge($tables[$connection], array_keys($this->getChildren($table)));
                 }
-    	    } 
-    	}
+            } 
+        }
         
-    	return $tables;
+        return $tables;
     }
     
     /**
@@ -301,6 +303,22 @@ EOF;
         foreach ($hash as $key => $value) if ($key[0] == '_') unset($hash[$key]);
         
         return $hash;
+    }
+    
+    /**
+     * Execute validate schema command
+     *
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    private function validateSchema()
+    {
+        $response = afStudioCommand::process('model', 'validateSchema');
+        if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            throw new sfCommandException(implode("\n", $response->getParameter(afResponseMessageDecorator::IDENTIFICATOR)));
+        }
+        
+        return true;
     }
     
 }

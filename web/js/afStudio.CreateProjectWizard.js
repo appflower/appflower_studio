@@ -337,9 +337,21 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
   			var name = this.form1.getForm().findField('name').getValue();
   			var slug = afStudio.createSlug(name);
   			var path = this.form2.getForm().findField('path').getValue();
-  			var html = '<div  class="guide_header"> <div class="date_cover"> <div>06</div> </div> <h2>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</h2> </div> <br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'.mydomain.com</b> in your browser.<br><br>Here is an example:<br>';
+  			var html = '<div  class="guide_header"> <div class="date_cover"> <div>06</div> </div> <h2>To connect to your new project from your browser, you need to ensure your web server is configured to serve the new web project.</h2> </div> <br> In Apache, this is usually done with the usage of Virtual Hosts. This can be configured in your Apache Configuration file. This way, you\'ll have direct access to your new project, by accessing <b>'+slug+'</b> in your browser.<br><br>Here is an example:<br>';
   					
-  			html+='<pre><code>&lt;VirtualHost *:80&gt;<br>&nbsp;&nbsp;ServerName '+slug+'.mydomain.com<br>&nbsp;&nbsp;DocumentRoot '+path+'/web<br>&nbsp;&nbsp;DirectoryIndex index.php<br>&nbsp;&nbsp;Alias /sf "'+path+'/lib/vendor/symfony/data/web/sf"<br><br>&nbsp;&nbsp;&lt;Directory "'+path+'/web"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;AllowOverride All<br>&nbsp;&nbsp;&nbsp;&nbsp;Allow from All<br>&nbsp;&nbsp;&lt;/Directory&gt;<br>&lt;/VirtualHost&gt;</code></pre>';
+  			html+='\
+<pre><code>&lt;VirtualHost *:80&gt;<br>\
+  ServerName '+slug+'<br>\
+  DocumentRoot '+path+'/web<br>\
+<br>\
+  &lt;Directory "'+path+'/web"&gt;<br>\
+    AllowOverride All<br>\
+  &lt;/Directory&gt;<br>\
+&lt;/VirtualHost&gt;\
+</code></pre>';
+            if (this.initialConfig['autoVhostCreationEnabled'] === true) {
+                html+='<br /><i><b>Create Project Wizard</b> will try to set up Apache virtual host automatically for you.</i>';
+            }
   			
   			this.form6.getForm().findField('infor').update(html);
   			
@@ -443,12 +455,16 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 		var _this = this;
 		
 		var mask = new Ext.LoadMask(this.getEl(), {msg: "<b>Creating new project</b> <br>Please wait..",removeMask:true});
-    mask.show();
-		
+        mask.show();
+
+        var projectName = this.form1.getForm().findField('name').getValue();
+        var projectSlug = afStudio.createSlug(projectName);
+        
 		Ext.Ajax.request({
 			url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'saveWizard'})),
 			params: { 
-				name: this.form1.getForm().findField('name').getValue(),
+				name: projectName,
+                slug: projectSlug,
 				path: this.form2.getForm().findField('path').getValue(),
 				template: this.dataview.getSelectedRecords()[0].get('name').toLowerCase(),
 				

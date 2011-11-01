@@ -195,8 +195,10 @@ class afStudioUtil
                 /**
                  * Skip RFC 1918 IP's 10.0.0.0/8, 172.16.0.0/12 and
                  * 192.168.0.0/16
+                 * @todo remove deprecated eregi call
+                 * @todo check of usage of this function - looks like a candidate for deletion
                  */
-                if (!eregi('^(10|172\.16|192\.168)\.', $ips[$i])) {
+                if (!@eregi('^(10|172\.16|192\.168)\.', $ips[$i])) {
                     $ip = $ips[$i];
                     break;
                 } // End if
@@ -264,5 +266,14 @@ class afStudioUtil
     	$console->execute('afsbatch copy_file.sh /tmp/copy-file-'.$unique.'.txt '.$filePath);
     	
     	return $console->wasLastCommandSuccessfull();
+    }
+    
+    public static function getServerEnvironment()
+    {
+        return new ServerEnvironmentService(
+            sfConfig::get('app_afs_server_env_studio_project_vhosts_dir'),
+            sfConfig::get('app_afs_server_env_apachectl_path'),
+            sfConfig::get('app_afs_server_auto_vhost_domain_suffix')
+        );
     }
 }
