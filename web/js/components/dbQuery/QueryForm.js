@@ -13,7 +13,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
 	 * Query URL
 	 */
-	queryUrl : afStudioWSUrls.getDBQueryComplexQueryUrl()
+	queryUrl : afStudioWSUrls.dbQueryComplexQueryUrl
 	
 	/**
 	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryWindow

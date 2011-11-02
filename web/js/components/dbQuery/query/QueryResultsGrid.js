@@ -27,7 +27,7 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
 	 * Query URL
 	 */
-	,queryUrl : afStudioWSUrls.getDBQueryQueryUrl()	
+	,queryUrl : afStudioWSUrls.dbQueryQueryUrl	
 	
 	/**
 	 * Loads query result set data
