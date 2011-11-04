@@ -99,7 +99,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 						dataset: ds,
 						queryParam: data.queryParam
 					}
-		    	});			    	
+		    	});
 			} else {
 				if (ds[0].data.length && ds[0].meta.length) {
 			    	resultCtn = new afStudio.dbQuery.QueryResultsGrid({
@@ -133,11 +133,11 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 * @param {Object} modelData
 	 */
 	,showTableData : function(modelData) {
-		var _this = this,
+		var me = this,
 			    m = modelData.model,
 			    s = modelData.schema;
 
-		_this.maskContent('loading metadata...');	    
+		me.maskContent('loading metadata...');	    
 			    
 		Ext.Ajax.request({
 		   url: afStudioWSUrls.modelListUrl,
@@ -147,7 +147,7 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 			   schema: s
 		   },
 		   success: function(result, request) {
-		       _this.unmaskContent();		
+		       me.unmaskContent();		
 		       var response = Ext.decode(result.responseText),
 				   resultCtn = {};
 		       
@@ -161,9 +161,9 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 			       resultCtn.html = String.format('<div>Error: {0}</div>', response.message);
 		       }
 		       
-		       _this.clearPanel()
+		       me.clearPanel()
 		       		.add(resultCtn);
-		       _this.doLayout();
+		       me.doLayout();
 		   }
 		});
 	}//eo showTableData
@@ -213,12 +213,12 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	}//eo initComponent
 	
 	,_afterInitComponent : function() {
-		var _this = this;
+		var me = this;
 		
-		_this.on({
+		me.on({
 			render: function(cmp) {
 				(function() {
-					_this.maskContent('Please select table...');
+					me.maskContent('Please select table...');
 				}).defer(100);
 			}
 		});
