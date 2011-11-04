@@ -1,9 +1,7 @@
 Ext.ns('afStudio.wd.edit');
 
 /**
- * EditView reflector.
- * 
- * @mixin ModelReflector
+ * @mixin EditModelReflector
  *  
  * @singleton
  * @author Nikolai Babinski

@@ -24,15 +24,15 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	 * @param {String} nodeType The node's type - "table"/"database"
 	 */
 	,onDBNodeClick : function(node, e, nodeType) {
-		var _this = this;
+		var me = this;
 		
 		switch (nodeType) {
 			case 'table':
-				_this.centerPanel.showTableData(node.attributes);	
+				me.centerPanel.showTableData(node.attributes);	
 			break;
 			
 			case 'database':
-				_this.centerPanel.showDatabaseTables(node.childNodes);
+				me.centerPanel.showDatabaseTables(node.childNodes);
 			break;
 		}		
 	}//eo onDBNodeClick
@@ -62,19 +62,19 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	 * @return {Object} The configuration object 
 	 */
 	,_beforeInitComponent : function() {
-		var _this = this;
+		var me = this;
 		
-		_this.westPanel = new afStudio.dbQuery.DBStructureTree({
+		me.westPanel = new afStudio.dbQuery.DBStructureTree({
 			region: 'west',
 			split: true,
 			width: 250
 		});		
 		
-		_this.northPanel = new afStudio.dbQuery.QueryForm({
-			dbQueryWindow: _this
+		me.northPanel = new afStudio.dbQuery.QueryForm({
+			dbQueryWindow: me
 		});
 		
-		_this.centerPanel = new afStudio.dbQuery.ContentPanel();
+		me.centerPanel = new afStudio.dbQuery.ContentPanel();
 		
 		return {
 			title: 'Database Query', 
@@ -89,9 +89,9 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	        border: false,
 	        
 	        items: [
-	        	_this.northPanel,
-	        	_this.westPanel,
-	        	_this.centerPanel
+	        	me.northPanel,
+	        	me.westPanel,
+	        	me.centerPanel
 	        ],
 	        
 	        layout:'border'
@@ -109,15 +109,15 @@ afStudio.dbQuery.QueryWindow = Ext.extend(Ext.Window, {
 	}//eo initComponent
 	
 	,_afterInitComponent : function() {
-		var _this = this;
+		var me = this;
 		
-		_this.relayEvents(_this.westPanel, ['dbnodeclick']);
-		_this.relayEvents(_this.northPanel, ['executequery']);
+		me.relayEvents(me.westPanel, ['dbnodeclick']);
+		me.relayEvents(me.northPanel, ['executequery']);
 		
-		_this.on({
-			scope: _this,
-			dbnodeclick: _this.onDBNodeClick,
-			executequery: _this.onExecuteQuery
+		me.on({
+			scope: me,
+			dbnodeclick: me.onDBNodeClick,
+			executequery: me.onExecuteQuery
 		})
 	}//eo _afterInitComponent	
 });

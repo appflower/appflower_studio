@@ -83,17 +83,11 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/appFlowerStudio/loadDatabaseConnectionSettings');
     },
     
-    getDBQueryDatabaseListUrl: function() {
-        return this.buildUrlFor('/afsDatabaseQuery/databaseList');
-    },
+    dbQueryDatabaseListUrl : '/afsDatabaseQuery/databaseList',
     
-    getDBQueryQueryUrl: function() {
-        return this.buildUrlFor('/afsDatabaseQuery/query');
-    },
+    dbQueryQueryUrl : '/afsDatabaseQuery/query',
     
-    getDBQueryComplexQueryUrl: function() {
-        return this.buildUrlFor('/afsDatabaseQuery/complexQuery');
-    },
+    dbQueryComplexQueryUrl : '/afsDatabaseQuery/complexQuery',
     
     getModelGridDataReadUrl: function(modelName) {
         return this.buildUrlFor('/afsModelGridData/read?model=' + modelName);

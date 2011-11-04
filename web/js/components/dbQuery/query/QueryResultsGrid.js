@@ -9,37 +9,42 @@ Ext.ns('afStudio.dbQuery');
  */
 afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	/**
-	 * @cfg {Object} (Required) queryParam
-	 * The Query metaData object contains query's parameters
+	 * The Query metaData object contains query's parameters.
+	 * @cfg {Object} (required) queryParam 
 	 */
 	
 	/**
-	 * @cfg {Object} (Required) queryResult
-	 * Contains query's result data-set (first result set limited by "recordsPerPage") and meta data 
+	 * Contains query's result data-set (first result set limited by "recordsPerPage") and meta data. 
+	 * @cfg {Object} (required) queryResult
 	 */
 	
 	/**
-	 * @cfg {Number} recordsPerPage (defaults to 50)
+	 * The result grid's records per page number, defaults to 50.
+	 * @cfg {Number} (required) recordsPerPage 
 	 */
-	recordsPerPage : 50
+	recordsPerPage : 50,
 	
 	/**
-	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
-	 * Query URL
+	 * Query URL, defaults to "afsDatabaseQuery/query"
+	 * @cfg {String} (required) queryUrl
+	 * 
 	 */
-	,queryUrl : afStudioWSUrls.getDBQueryQueryUrl()	
+	queryUrl : afStudioWSUrls.dbQueryQueryUrl,
 	
 	/**
 	 * Loads query result set data
 	 * @param {Object} data The data set to be loaded
 	 */
-	,loadResultsData : function(data) {
+	loadResultsData : function(data) {
 		this.getStore().loadData(data);
-	}//eo loadResultsData
+	},
 	
-	//private
-	,_beforeInitComponent : function() {
-		var   _this = this,
+	/**
+	 * @private
+	 * @return {Object} configuration object
+	 */
+	_beforeInitComponent : function() {
+		var      me = this,
 	       metaData = this.queryResult.meta || [],
 	       	  title = this.title || 'Query Result',
 	          store,
@@ -60,21 +65,26 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 			}
 		}
 
+		//update "query" parameter, in not select clauses should be used right query after applying modifications
+		Ext.apply(me.queryParam, {
+			query: me.queryResult.query
+		});
+		
 		store = new Ext.data.JsonStore({
-			url: _this.queryUrl,
+			url: me.queryUrl,
 			root: 'data',
 			totalProperty: 'total',
-			baseParams: _this.queryParam,
-			fields: storeFields           
+			baseParams: me.queryParam,
+			fields: storeFields
 		});
 		
 		pagingBar = new Ext.PagingToolbar({
 	        store: store,
 	        displayInfo: true,	        
 	        displayMsg: 'Displaying records {0} - {1} of {2}',
-	        pageSize: _this.recordsPerPage
+	        pageSize: me.recordsPerPage
     	});
-		
+    	
 		return {
 			title: title,
 			iconCls: 'icon-database-table',
@@ -88,34 +98,37 @@ afStudio.dbQuery.QueryResultsGrid = Ext.extend(Ext.grid.GridPanel, {
 	        },
 	        bbar: pagingBar
 		};
-	}//eo beforeInit
+	},
+	//eo beforeInit
 	
 	/**
 	 * Template method
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
-		);				
+		);
+		
 		afStudio.dbQuery.DataGrid.superclass.initComponent.apply(this, arguments);
+		
 		this._afterInitComponent();
-	}//eo initComponent
+	},
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
-	,_afterInitComponent : function() {
-		var _this = this;
+	_afterInitComponent : function() {
+		var me = this;
 		
-		_this.on({
-			scope: _this,
+		me.on({
+			scope: me,
 			afterrender: function() { 
-				_this.loadResultsData(_this.queryResult ? _this.queryResult : []);
+				me.loadResultsData(me.queryResult ? me.queryResult : []);
 			}
 		});
-	}//eo _afterInitComponent	
+	}	
 });
 
 /**

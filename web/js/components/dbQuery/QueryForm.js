@@ -13,48 +13,47 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 	 * @cfg {String} queryUrl required (defaults to 'afsDatabaseQuery/query')
 	 * Query URL
 	 */
-	queryUrl : afStudioWSUrls.getDBQueryComplexQueryUrl()
+	queryUrl : afStudioWSUrls.dbQueryComplexQueryUrl,
 	
 	/**
-	 * @cfg {afStudio.dbQuery.QueryWindow} dbQueryWindow
-	 * Parent container window
+	 * @cfg {afStudio.dbQuery.QueryWindow} (required) dbQueryWindow Parent container window
 	 */
 	
 	/**
 	 * Executes Query
 	 */
-	,executeQuery : function() {
-		var _this   = this,
-				f   = _this.getForm(),
-			   qt   = _this.queryTypeCmp.getValue(),
-	    connection  = this.dbQueryWindow.westPanel.getCurrentConnection(),
-		queryParam  = Ext.apply(f.getFieldValues(), connection);	    
+	executeQuery : function() {
+		var me = this,
+			f = me.getForm(),
+			qt = me.queryTypeCmp.getValue(),
+	    	connection = this.dbQueryWindow.westPanel.getCurrentConnection(),
+			queryParam = Ext.apply(f.getFieldValues(), connection);	    
 		
 	    if (qt == 'sql' && !connection) {
 	    	afStudio.Msg.warning('Connection is not specified. <br /> Please select DataBase or DB\'s table.');
 	   		return;
 	    }
 	    
-		_this.dbQueryWindow.maskDbQuery();
+		me.dbQueryWindow.maskDbQuery();
 				
 		f.submit({
 		    clientValidation: true,
-		    url: _this.queryUrl,
+		    url: me.queryUrl,
 		    params: {
 		    	connection: connection,
 		    	start: 0,
 		    	limit: afStudio.dbQuery.QueryResultsGrid.prototype.recordsPerPage
 		    },
 		    success: function(form, action) {
-		    	_this.dbQueryWindow.unmaskDbQuery();		    	
-		    	_this.fireEvent('executequery', {
+		    	me.dbQueryWindow.unmaskDbQuery();		    	
+		    	me.fireEvent('executequery', {
 		    		result: action.result,
 		    		queryParam: queryParam
 	    		});
 		    },
 		    
 		    failure: function(form, action) {
-		    	_this.dbQueryWindow.unmaskDbQuery();
+		    	me.dbQueryWindow.unmaskDbQuery();
 		    	
 		        switch (action.failureType) {
 		            case Ext.form.Action.CLIENT_INVALID:
@@ -66,7 +65,7 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		            break;
 		            
 		            case Ext.form.Action.SERVER_INVALID:
-				    	_this.fireEvent('executequery', {
+				    	me.fireEvent('executequery', {
 				    		result: action.result,
 				    		queryParam: queryParam
 			    		});		            
@@ -74,15 +73,16 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 		       }
 		    }			
 		});
-	}//eo executeQuery
+	},
+	//eo executeQuery
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
-		var _this = this;
+	_beforeInitComponent : function() {
+		var me = this;
 		
 		return {
 			region: 'north',
@@ -120,7 +120,8 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 						xtype: 'button',
 						text: 'Query',
 						iconCls: 'icon-accept',
-						handler: Ext.util.Functions.createDelegate(_this.executeQuery, _this)
+						scope: me,
+						handler: me.executeQuery
 					}
 				}]
 			},{
@@ -136,27 +137,28 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 				anchor: '100% '
 			}]		
 		};		
-	}//eo _beforeInitComponent
+	},
+	//eo _beforeInitComponent
 	
 	/**
 	 * Ext Template method
 	 * @private
 	 */ 
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.applyIf(this.initialConfig, this._beforeInitComponent())
 		);				
 		afStudio.dbQuery.QueryForm.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}//eo initComponent
+	},
 	
 	/**
 	 * @private
 	 */
-	,_afterInitComponent : function() {
-		var _this = this;
+	_afterInitComponent : function() {
+		var me = this;
 		
-		_this.addEvents(
+		me.addEvents(
 			/**
 			 * @event executequery Fires after query was successufully executed
 			 * @param {Object} result The query result object:
@@ -175,18 +177,19 @@ afStudio.dbQuery.QueryForm = Ext.extend(Ext.FormPanel, {
 			scope: this,			
 			keydown: this.onQueryFieldKeyDown
 		});
-	}//eo _afterInitComponent
+	},
+	//eo _afterInitComponent
 	
 	/**
 	 * Query text field <u>keydown</u> event listener.
 	 * @param {Ext.form.TextField} f The query text field.
 	 * @param {Ext.EventObject} e The event object.
 	 */
-	,onQueryFieldKeyDown : function(f, e) {
+	onQueryFieldKeyDown : function(f, e) {
 		if (e.ctrlKey && e.getKey() == Ext.EventObject.ENTER) {
 			this.executeQuery();
 		}
-	}//eo onQueryFieldKeyDown
+	}
 });
 
 /**

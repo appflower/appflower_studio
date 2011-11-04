@@ -9,8 +9,7 @@ Ext.ns('afStudio.dbQuery');
  */
 afStudio.dbQuery.QueryResultsTab = Ext.extend(Ext.TabPanel, {
 	/**
-	 * @cfg {Object} (Required) metaData
-	 * The query result data-set object.
+	 * @cfg {Object} (required) metaData The query result data-set object.
 	 */
 		
 	/**
@@ -31,6 +30,7 @@ afStudio.dbQuery.QueryResultsTab = Ext.extend(Ext.TabPanel, {
 		if (r.success === false) {
 			var msg = Ext.isArray(r.message) ? r.message.join(', ') : r.message;
 			ctn.html = String.format('<div>Query: <i><b>{0}</b></i><br /><br />Error: {1}</div>', r.query, msg);
+			
 		//query successfully processed and we have data to show
 		} else if (r.data.length && r.meta.length) {
 			param.query = r.query;			
@@ -39,6 +39,7 @@ afStudio.dbQuery.QueryResultsTab = Ext.extend(Ext.TabPanel, {
 				queryParam: param,
 				queryResult: r
 			});
+			
 		//query successfully processed but without output data	
 		} else {
 			var msg = Ext.isArray(r.message) ? r.message.join(', ') : r.message;
@@ -46,47 +47,52 @@ afStudio.dbQuery.QueryResultsTab = Ext.extend(Ext.TabPanel, {
 		}
 		
 	   	return ctn;
-	}//eo createQueryResult
+	},
+	//eo createQueryResult
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */	
-	,_beforeInitComponent : function() {
-		var _this = this,
+	_beforeInitComponent : function() {
+		var me = this,
 			tabs  = [];				
 		
 		Ext.iterate(this.metaData.dataset, function(item, idx) {
-			var ctn = _this.createQueryResult(item, Ext.apply({}, _this.metaData.queryParam));
+			var ctn = me.createQueryResult(item, Ext.apply({}, me.metaData.queryParam));
 			tabs.push(ctn);
 		});
 		
-		return {			
+		return {
 			activeTab: 0,
 			enableTabScroll: true,
 			items: tabs
-		}		
-	}//eo _beforeInitComponent
+		};
+	},
+	//eo _beforeInitComponent
 	
 	/**
 	 * Template method
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
-		);				
+		);
+		
 		afStudio.dbQuery.QueryResultsTab.superclass.initComponent.apply(this, arguments);
+		
 		this._afterInitComponent();
-	}//eo initComponent
+	},
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
-	,_afterInitComponent : function() {
-	}//eo _afterInitComponent
+	_afterInitComponent : function() {
+		
+	}
 	
 });
 
