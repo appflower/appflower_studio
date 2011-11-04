@@ -20,7 +20,7 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
 	    
 	    Ext.grid.PropertyColumnModel.superclass.constructor.call(this, 
 	    [
-	        {header: this.nameText, width: 50, sortable: true, dataIndex:'name', id: 'name', menuDisabled: true},
+	        {header: this.nameText, width: 50, sortable: true, dataIndex:'name', id: 'name', menuDisabled: true}, 
 	        {header: this.valueText, width: 50, resizable: false, dataIndex: 'value', id: 'value', menuDisabled: true},
 	        {header: this.requiredText, resizable: false, dataIndex: 'required', id: 'required', menuDisabled: true, hidden: true}
 	    ]);
@@ -86,6 +86,16 @@ afStudio.view.property.PropertyColumnModel = Ext.extend(Ext.grid.PropertyColumnM
         }
     },
     //eo getCellEditor
+
+    /**
+     * @override
+     * @protected
+     */
+    renderProp : function(val, meta, rec) {
+    	var propName = afStudio.view.property.PropertyColumnModel.superclass.renderProp.apply(this, arguments);
+    	
+    	return rec.get('required') ? "<b>" + propName + "</b>" : propName; 
+    },
     
     /**
      * @override

@@ -223,7 +223,8 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 				});
 			}
 		}
-		this.hideMandatoryChecker();
+		//uncomment if "Mandatory" title must be hidden
+		//this.hideMandatoryChecker();
 	},
 	//eo onViewRefresh
     
@@ -233,7 +234,8 @@ afStudio.view.property.PropertyGrid = Ext.extend(Ext.grid.EditorGridPanel, {
      */
     setSource : function(source) {
         this.propStore.setSource(source);
-        this.hideMandatoryChecker();
+        //uncomment if "Mandatory" title must be hidden
+        //this.hideMandatoryChecker();
     },
     
 	/**
