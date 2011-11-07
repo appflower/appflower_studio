@@ -53,7 +53,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				items: []
 			},
 			buttons: buttons
-		}
+		};
 	},
 	
 	/**
@@ -119,8 +119,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @private
 	 */	
 	_afterInitComponent : function() {
-		var _me = this;
-		
+
 		this.configureView();
 	},
 	//eo _afterInitComponent    
@@ -254,8 +253,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Array} components
 	 */
 	createFormCmp : function() {
-		var N = this.NODES,
-			cmp = [];
+		var cmp = [];
 		
 		if (this.isGrouped()) {
 			//form with sets and tabpanel
@@ -553,7 +551,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	createFieldSet : function(fldSet) {
 		var mpr = this.NODE_ID_MAPPER,
-			cfg = {}, 
+			cfg = {},
 			fieldSet;
 		
 		Ext.copyTo(cfg, fldSet, 'title, collapsed');
@@ -607,8 +605,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @return {Ext.form.FieldSet} field-set
 	 */
 	createDefaultFieldSet : function(fields) {
-		var mpr = this.NODE_ID_MAPPER,
-			N = this.NODES,
+		var N = this.NODES,
 			cfg = {}, 
 			fieldSet;
 		
@@ -707,8 +704,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	/**
 	 * Creates field(s) wrapper.
 	 * @protected
-	 * @param {Boolean} isFloat The float flag
-	 * @return {Ext.Container}
+	 * @param {Boolean} (optional) isFloat The float flag, default is false
+	 * @return {Ext.Container} field's wrapper container
 	 */
 	createFieldWrapper : function(isFloat) {
 		isFloat = !Ext.isDefined(isFloat) ? false : isFloat;
@@ -721,6 +718,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			},
 			items: []
 		};
+		
 		if (isFloat) {
 			cfg.layout = 'column';
 		}

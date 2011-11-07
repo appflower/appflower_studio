@@ -651,7 +651,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			
 			//view has tabbed fields-set(s)
 			if (tabPanel) {
-				
 				//fields-set is tabbed
 				if (this.isSetTabbed(node)) {
 					var tab = this.createTab(pSet);
@@ -748,6 +747,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * collapsed
 		 */
 		executeUpdateSetCollapsed : function(node, cmp, p, v) {
+			v == true ? cmp.collapse() : cmp.expand();			
 		},
 		/**
 		 * float
@@ -763,7 +763,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//i:ref
 		//----------------------------------------------------
 
-		//TODO implement
 		executeAddRef : function(node, idx) {
 			//TODO code responsible for creation i:ref should be refactored
 		},
@@ -795,7 +794,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 //			}
 //			
 //			this.relocateField();
-		}
+		}		
 		
 	}
 })();
