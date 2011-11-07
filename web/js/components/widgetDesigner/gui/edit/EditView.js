@@ -580,18 +580,17 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		fieldSet.add(wr);
 		
 		Ext.each(fields, function(item, idx) {
-			var ref = item.ref, 
+			var ref = item.ref,
 				fld = item.field,
 				f = this.createField(fld);
 			
 			this.wrapField(wr, f, ref, clmW);
 			
-			if (idx != 0 && ref['break']) {
+			if (ref['break'] && idx != fields.length - 1) {
 				wr = this.createFieldWrapper(fldSetFloat);
-				clmW = this.getColumnWidth(fields, idx);
+				clmW = this.getColumnWidth(fields, idx + 1);
 				fieldSet.add(wr);
 			}
-			
 		}, this);
 
 		return fieldSet;

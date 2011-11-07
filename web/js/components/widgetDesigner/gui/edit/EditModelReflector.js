@@ -765,6 +765,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 
 		executeAddRef : function(node, idx) {
 			//TODO code responsible for creation i:ref should be refactored
+			
 		},
 		
 		/**
@@ -796,7 +797,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 //			this.relocateField();
 		}		
 		
-	}
+	};
 })();
 
 /**
