@@ -574,7 +574,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		var fields = this.getFieldsFromSet(fldSet[mpr]),
 			fldSetFloat = fldSet['float'];
 		
-		var wr = this.createFieldWrapper(fldSetFloat),
+		var wr = this.createRefWrapper(fldSetFloat),
 			clmW = this.getColumnWidth(fields, 0);
 		
 		fieldSet.add(wr);
@@ -587,7 +587,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			this.wrapField(wr, f, ref, clmW);
 			
 			if (ref['break'] && idx != fields.length - 1) {
-				wr = this.createFieldWrapper(fldSetFloat);
+				wr = this.createRefWrapper(fldSetFloat);
 				clmW = this.getColumnWidth(fields, idx + 1);
 				fieldSet.add(wr);
 			}
@@ -596,6 +596,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		return fieldSet;
 	},
 	//eo createFieldSet
+	
+	createFieldRef : function() {
+		
+	},
 	
 	/**
 	 * Creates the default field-set.
@@ -701,12 +705,12 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
-	 * Creates field(s) wrapper.
+	 * Creates field reference(s) (i:ref) wrapper.
 	 * @protected
 	 * @param {Boolean} (optional) isFloat The float flag, default is false
 	 * @return {Ext.Container} field's wrapper container
 	 */
-	createFieldWrapper : function(isFloat) {
+	createRefWrapper : function(isFloat) {
 		isFloat = !Ext.isDefined(isFloat) ? false : isFloat;
 		
 		var cfg = {
@@ -727,6 +731,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	
 	/**
 	 * Wrappes a field and adds it into the wrapper container.
+	 * Associates field wrapper with grouped reference (i:ref tag).
 	 * @protected
 	 * @param {Ext.Container} wrapper The field(s) wrapper container
 	 * @param {Object} field The field being wrapped

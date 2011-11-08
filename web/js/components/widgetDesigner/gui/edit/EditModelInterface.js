@@ -98,12 +98,6 @@ afStudio.wd.edit.EditModelInterface = (function() {
 			
 			Ext.each(refNodes, function(ref){
 				var fs = this.getFields({name: ref.to});
-				if (fs.length == 0) {
-					afStudio.Msg.warning('Widget Designer', String.format('Field with name "{0}" does not exists. <br />' + 
-					'Please correct "to" property value.', ref.to));
-					return;
-				}
-				
 				fields.push({ref: ref, field: fs[0]});
 			}, this);
 			

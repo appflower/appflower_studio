@@ -763,10 +763,63 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//i:ref
 		//----------------------------------------------------
 
+		/**
+		 * Adds reference node.
+		 */
 		executeAddRef : function(node, idx) {
-			//TODO code responsible for creation i:ref should be refactored
+			var setNode = node.parentNode,
+				setCmp = this.getCmpByModel(setNode),	
+				prevRefNode = node.previousSibling;
+				
+			var refProp = this.getModelNodeProperties(node),
+				setProp = this.getModelNodeProperties(setNode),
+				setFloat = setProp['float'];
 			
+			//create field associated with reference node	
+			var fld = null;
+			if (node.getPropertyValue('to')) {
+				fld = this.getFields({name: node.getPropertyValue('to')});
+				if (!Ext.isEmpty(fld)) {
+					fld = this.createField(fld[0]);
+				}
+			}
+			
+			//field-set is float and previous reference wasn't broken 
+			//being added ref. is going in the same row where previous ref is 
+			if (setProp['float'] && prevRefNode 
+				&& !prevRefNode.getPropertyValue('break')) {
+				
+				var fields = this.getFieldsFromSet(setNode),
+					i = fldLen = fields.length - 1;
+				for (; i > 0; i--) {
+					var r = fields[i].ref;
+					if (r['break'] == true && i != fldLen) {
+						break;
+					}
+				}
+				if (fields[i].ref['break'] == true) {
+					i++;
+				}
+				
+				var refWrapper = this.getCmpByModel(prevRefNode).ownerCt,
+					clmW = this.getColumnWidth(fields, i);
+					
+				this.wrapField(refWrapper, fld, refProp, clmW);
+				refWrapper.items.each(function(ref, idx){
+					ref.columnWidth = clmW;
+				});
+				refWrapper.doLayout();
+			
+			//added reference is added in newly created ref. wrapper	
+			} else {
+				var refWrapper = this.createRefWrapper(setFloat);
+				
+				this.wrapField(refWrapper, fld, refProp);
+				setCmp.add(refWrapper);
+				setCmp.doLayout();
+			}
 		},
+		//eo executeAddRef
 		
 		/**
 		 * Removes reference node.
@@ -774,9 +827,16 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		executeRemoveRef : function(node, cmp) {
 			var fldName = this.getModelNodeProperty(node, 'to'),
 				fsNode = this.getModelNode(this.NODES.FIELDS);
-				
-			cmp.destroy();
+			
+			//remove ref container
+			if (!cmp.nextSibling() && !cmp.previousSibling()) {
+				cmp.ownerCt.destroy();
+			//remove ref	
+			} else {
+				cmp.destroy();
+			}
 
+			//relocate reference's field
 			if (!Ext.isEmpty(fldName)) {
 				var fldProp = this.getFields({name: fldName})[0];
 					fldNode = this.getModelNode(fldProp[this.NODE_ID_MAPPER]);
@@ -785,6 +845,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				this.relocateField(fldNode, fldIdx);
 			}
 		},
+		//eo executeRemoveRef
 		
 		/**
 		 * to
@@ -795,7 +856,14 @@ afStudio.wd.edit.EditModelReflector = (function() {
 //			}
 //			
 //			this.relocateField();
-		}		
+		},
+		
+		/**
+		 * break
+		 */
+		executeUpdateRefBreak : function(node, cmp, p, v) {
+			
+		}
 		
 	};
 })();
