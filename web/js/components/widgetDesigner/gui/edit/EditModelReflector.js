@@ -790,23 +790,27 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				&& !prevRefNode.getPropertyValue('break')) {
 				
 				var fields = this.getFieldsFromSet(setNode),
-					i = fldLen = fields.length - 1;
+					i, fldLen;
+					
+				i = fldLen = fields.length - 1;
+				
 				for (; i > 0; i--) {
 					var r = fields[i].ref;
 					if (r['break'] == true && i != fldLen) {
 						break;
 					}
 				}
+				
 				if (fields[i].ref['break'] == true) {
 					i++;
 				}
 				
 				var refWrapper = this.getCmpByModel(prevRefNode).ownerCt,
-					clmW = this.getColumnWidth(fields, i);
+					clmWidth = this.getColumnWidth(fields, i);
 					
-				this.wrapField(refWrapper, fld, refProp, clmW);
+				this.wrapField(refWrapper, fld, refProp, clmWidth);
 				refWrapper.items.each(function(ref, idx){
-					ref.columnWidth = clmW;
+					ref.columnWidth = clmWidth;
 				});
 				refWrapper.doLayout();
 			
@@ -826,20 +830,31 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 */
 		executeRemoveRef : function(node, cmp) {
 			var fldName = this.getModelNodeProperty(node, 'to'),
-				fsNode = this.getModelNode(this.NODES.FIELDS);
+				fsNode = this.getModelNode(this.NODES.FIELDS),
+				refWrapper = cmp.ownerCt;
 			
-			//remove ref container
+			//remove reference wrapper
 			if (!cmp.nextSibling() && !cmp.previousSibling()) {
-				cmp.ownerCt.destroy();
-			//remove ref	
+				refWrapper.destroy();
+				
+			//remove reference
 			} else {
 				cmp.destroy();
+				
+				//update the column width of remained references inside wrapper
+				var count = refWrapper.items.getCount(),
+					clmWidth = Ext.util.Format.round(1 / count, 2);
+
+				refWrapper.items.each(function(ref, idx){
+					ref.columnWidth = clmWidth;
+				});
+				refWrapper.doLayout();
 			}
 
 			//relocate reference's field
 			if (!Ext.isEmpty(fldName)) {
-				var fldProp = this.getFields({name: fldName})[0];
-					fldNode = this.getModelNode(fldProp[this.NODE_ID_MAPPER]);
+				var fldProp = this.getFields({name: fldName})[0],
+					fldNode = this.getModelNode(fldProp[this.NODE_ID_MAPPER]),
 					fldIdx = this.getDefaultSetInsertFieldIndex(fsNode, fldNode);
 					
 				this.relocateField(fldNode, fldIdx);
