@@ -138,14 +138,14 @@ abstract class afsBaseModelTemplate
         
         ob_start();
         ob_implicit_flush(0);
-
+        
         try {
-          require_once($file);
+          require($file);
         } catch (Exception $e) {
           ob_end_clean();
           throw $e;
         }
-
+        
         $this->content = ob_get_clean();
         
         return $this;
