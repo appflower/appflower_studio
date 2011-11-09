@@ -63,6 +63,7 @@ EOF;
         
         $this->createTask('afs:fix-perms')->run();
         
+        $this->createTask('appflower:validator-cache')->run(array('frontend', 'cache', 'yes'));
         $this->createTask('cc')->run();
     }
     

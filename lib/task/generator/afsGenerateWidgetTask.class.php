@@ -147,11 +147,11 @@ EOF;
             }
             $this->logSection(($is_created) ? 'created' : 'not created', $widget_path, null, ($is_created) ? 'INFO' : 'ERROR');
             $this->log_it((($is_created) ? 'created' : 'not created') . ' - ' . $widget_path);
-            
-            // execute fix permissions task
-            $task = new afsPermissionsTask(sfContext::getInstance()->getEventDispatcher(), new sfFormatter);
-            $task->run();
         }
+        
+        // execute fix permissions task, ran in background
+        $task = new afsPermissionsTask(sfContext::getInstance()->getEventDispatcher(), new sfFormatter);
+        $task->run();
     }
     
     /**
