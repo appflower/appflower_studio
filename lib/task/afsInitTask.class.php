@@ -77,7 +77,6 @@ EOF;
      */
     private function executeDirect(Array $arguments, Array $options)
     {
-        $this->createTask('propel:build-schema')->run();
         $this->createTask('propel:insert-sql')->run();
     }
     
