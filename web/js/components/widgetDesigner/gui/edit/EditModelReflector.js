@@ -764,73 +764,180 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//----------------------------------------------------
 
 		/**
-		 * Adds reference node.
+		 * Creates reference's field component, the field node 
+		 * associated with reference via its "to" property.
+		 * @private
+		 * @param {Node} refNode The reference node, i:ref
+		 * @return {Ext.form.Field} field   
 		 */
-		executeAddRef : function(node, idx) {
-			var setNode = node.parentNode,
-				setCmp = this.getCmpByModel(setNode),	
-				prevRefNode = node.previousSibling;
-				
-			var refProp = this.getModelNodeProperties(node),
-				setProp = this.getModelNodeProperties(setNode),
-				setFloat = setProp['float'];
+		createRefField : function(refNode) {
+			var fld = null,
+				toValue = refNode.getPropertyValue('to'); 
 			
-			//create field associated with reference node	
-			var fld = null;
-			if (node.getPropertyValue('to')) {
-				fld = this.getFields({name: node.getPropertyValue('to')});
+			if (toValue) {
+				fld = this.getFields({name: toValue});
+				
 				if (!Ext.isEmpty(fld)) {
 					fld = this.createField(fld[0]);
 				}
 			}
+
+			return fld;
+		},
+		
+		/**
+		 * Updates the column width of floating references.
+		 * @private
+		 * @param {Ext.Container} refWrapper The floating reference container
+		 */
+		updateFloatingRefWidth : function(refWrapper) {
+			var count = refWrapper.items.getCount(),
+				clmWidth = Ext.util.Format.round(1 / count, 2);
+
+			refWrapper.items.each(function(ref, idx){
+				ref.columnWidth = clmWidth;
+			});
+		},
+		
+		/**
+		 * Inserts reference at specified position.
+		 * @private
+		 * @param {Node} refNode The reference node being inserted
+		 * @param {Number} refIdx The reference node's insertion position
+		 */
+		insertRefNode : function(refNode, refIdx) {
+			var setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
+				isSetFloat = setNode.getPropertyValue('float'),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling,
+				ref = this.getModelNodeProperties(refNode),
+				fld = this.createRefField(refNode);
 			
-			//field-set is float and previous reference wasn't broken 
-			//being added ref. is going in the same row where previous ref is 
-			if (setProp['float'] && prevRefNode 
-				&& !prevRefNode.getPropertyValue('break')) {
+			var me = this,
+			
+				insertRefWrapper = function(idx) {
+					var refWrapper = me.createRefWrapper(isSetFloat);
+					me.wrapField(refWrapper, fld, ref);
+					setCmp.insert(idx, refWrapper);
+					setCmp.doLayout();
+				},
 				
-				var fields = this.getFieldsFromSet(setNode),
-					i, fldLen;
+				insertRef = function(rn, pos, inc) {
+					var refCmp = me.getCmpByModel(rn),
+						refWrapper = refCmp.ownerCt;
 					
-				i = fldLen = fields.length - 1;
+					if (Ext.isEmpty(pos)) {
+						pos = refWrapper.items.indexOf(refCmp);
+						pos = Ext.isDefined(inc) ? pos + inc : pos;
+					}
+						
+					me.wrapField(refWrapper, fld, ref, null, pos);
+					me.updateFloatingRefWidth(refWrapper);
+					refWrapper.doLayout();
+				};
 				
-				for (; i > 0; i--) {
-					var r = fields[i].ref;
-					if (r['break'] == true && i != fldLen) {
-						break;
+			//field-set is float	
+			if (isSetFloat) {
+				
+				if (prevRefNode) {
+					
+					if (prevRefNode.getPropertyValue('break')) {
+						
+						if (ref['break'] || !nextRefNode) {
+							refIdx = setCmp.items.indexOf(this.getCmpByModel(prevRefNode).ownerCt) + 1;
+							insertRefWrapper(refIdx);
+								
+						} else {
+							insertRef(nextRefNode, 0);
+						}
+					
+					//previous reference is float
+					} else {
+					
+						if (ref['break']) {
+							insertRef(prevRefNode, null, 1);
+							
+							//relocate
+							if (nextRefNode) {
+								
+								var node = nextRefNode;
+								while (node) {
+									this.getCmpByModel(node).destroy();
+									if (node.getPropertyValue('break')) break;
+									node = node.nextSibling;
+								}
+								
+								var refWrapper = this.getCmpByModel(prevRefNode).ownerCt;
+								this.updateFloatingRefWidth(refWrapper);
+								
+								var wr = this.createRefWrapper(isSetFloat);
+								
+								while (nextRefNode) {
+									var f = this.createRefField(nextRefNode),
+										r = this.getModelNodeProperties(nextRefNode);
+										
+									this.wrapField(wr, f, r);
+									
+									if (nextRefNode.getPropertyValue('break')) break;
+									
+									nextRefNode = nextRefNode.nextSibling;
+								}
+								
+								this.updateFloatingRefWidth(wr);
+								
+								var wrPos = setCmp.items.indexOf(refWrapper) + 1;
+								
+								setCmp.insert(wrPos, wr);
+								setCmp.doLayout();
+							}
+							
+						} else {
+							insertRef(nextRefNode);
+						}
+					}
+					
+				} else {
+				
+					if (ref['break'] || !nextRefNode) {
+						insertRefWrapper(0);
+					} else {
+						insertRef(nextRefNode);
 					}
 				}
-				
-				if (fields[i].ref['break'] == true) {
-					i++;
-				}
-				
-				var refWrapper = this.getCmpByModel(prevRefNode).ownerCt,
-					clmWidth = this.getColumnWidth(fields, i);
-					
-				this.wrapField(refWrapper, fld, refProp, clmWidth);
-				refWrapper.items.each(function(ref, idx){
-					ref.columnWidth = clmWidth;
-				});
-				refWrapper.doLayout();
-			
-			//added reference is added in newly created ref. wrapper	
+
+			//field-set is not float	
 			} else {
-				var refWrapper = this.createRefWrapper(setFloat);
-				
-				this.wrapField(refWrapper, fld, refProp);
-				setCmp.add(refWrapper);
-				setCmp.doLayout();
+				insertRefWrapper(refIdx);
 			}
 		},
-		//eo executeAddRef
+		//eo insertRefNode
+		
+		/**
+		 * Adds reference node.
+		 */
+		executeAddRef : function(node, idx) {
+			this.insertRefNode(node, idx);
+		},
+
+		/**
+		 * Inserts reference node.
+		 */
+		executeInsertRef : function(setNode, node, refNode, refCmp) {
+			this.insertRefNode(node, setNode.indexOf(node));			
+		},
 		
 		/**
 		 * Removes reference node.
 		 */
-		executeRemoveRef : function(node, cmp) {
-			var fldName = this.getModelNodeProperty(node, 'to'),
+		executeRemoveRef : function(refNode, cmp) {
+			var	ref = this.getModelNodeProperties(refNode),
+				fldName = this.getModelNodeProperty(refNode, 'to'),
 				fsNode = this.getModelNode(this.NODES.FIELDS),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling,
+				setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
 				refWrapper = cmp.ownerCt;
 			
 			//remove reference wrapper
@@ -841,13 +948,31 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			} else {
 				cmp.destroy();
 				
-				//update the column width of remained references inside wrapper
-				var count = refWrapper.items.getCount(),
-					clmWidth = Ext.util.Format.round(1 / count, 2);
+				if (ref['break'] && nextRefNode && prevRefNode 
+					&& !prevRefNode.getPropertyValue('break')) {
 
-				refWrapper.items.each(function(ref, idx){
-					ref.columnWidth = clmWidth;
-				});
+					var wr = this.getCmpByModel(nextRefNode).ownerCt,
+						node = nextRefNode;
+					while (node) {
+						this.getCmpByModel(node).destroy();
+						if (node.getPropertyValue('break')) break;
+						node = node.nextSibling;
+					}
+					wr.destroy();
+
+					while (nextRefNode) {
+						var f = this.createRefField(nextRefNode),
+							r = this.getModelNodeProperties(nextRefNode);
+							
+						this.wrapField(refWrapper, f, r);
+						if (nextRefNode.getPropertyValue('break')) break;
+						nextRefNode = nextRefNode.nextSibling;
+					}
+					
+					setCmp.doLayout();
+				}
+				
+				this.updateFloatingRefWidth(refWrapper);
 				refWrapper.doLayout();
 			}
 

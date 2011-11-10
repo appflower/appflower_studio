@@ -574,32 +574,31 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		var fields = this.getFieldsFromSet(fldSet[mpr]),
 			fldSetFloat = fldSet['float'];
 		
-		var wr = this.createRefWrapper(fldSetFloat),
-			clmW = this.getColumnWidth(fields, 0);
-		
-		fieldSet.add(wr);
-		
-		Ext.each(fields, function(item, idx) {
-			var ref = item.ref,
-				fld = item.field,
-				f = this.createField(fld);
+		//field-set is not empty, contains reference tag(s)	
+		if (!Ext.isEmpty(fields)) {
+			var wr = this.createRefWrapper(fldSetFloat),
+				clmW = this.getColumnWidth(fields, 0);
 			
-			this.wrapField(wr, f, ref, clmW);
+			fieldSet.add(wr);
 			
-			if (ref['break'] && idx != fields.length - 1) {
-				wr = this.createRefWrapper(fldSetFloat);
-				clmW = this.getColumnWidth(fields, idx + 1);
-				fieldSet.add(wr);
-			}
-		}, this);
+			Ext.each(fields, function(item, idx) {
+				var ref = item.ref,
+					fld = item.field,
+					f = this.createField(fld);
+				
+				this.wrapField(wr, f, ref, clmW);
+				
+				if (ref['break'] && idx != fields.length - 1) {
+					wr = this.createRefWrapper(fldSetFloat);
+					clmW = this.getColumnWidth(fields, idx + 1);
+					fieldSet.add(wr);
+				}
+			}, this);
+		}
 
 		return fieldSet;
 	},
 	//eo createFieldSet
-	
-	createFieldRef : function() {
-		
-	},
 	
 	/**
 	 * Creates the default field-set.
@@ -731,14 +730,14 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	
 	/**
 	 * Wrappes a field and adds it into the wrapper container.
-	 * Associates field wrapper with grouped reference (i:ref tag).
+	 * Associates field wrapper with grouped reference (i:ref node).
 	 * @protected
 	 * @param {Ext.Container} wrapper The field(s) wrapper container
 	 * @param {Object} field The field being wrapped
-	 * @param {Object} ref The i:ref definition object
+	 * @param {Object} ref The i:ref node definition object
 	 * @param {Number} (optional) clmW The column width, by default is 1
 	 */
-	wrapField : function(wrapper, field, ref, clmW) {
+	wrapField : function(wrapper, field, ref, clmW, insertIdx) {
 		var nodeIdMpr = this.NODE_ID_MAPPER,
 			cfg = {};
 		
@@ -761,7 +760,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		this.mapCmpToModel(ref[nodeIdMpr], wr);
 		
-		wrapper.add(wr);		
+		Ext.isNumber(insertIdx) ? wrapper.insert(insertIdx, wr) : wrapper.add(wr);
 	},
 
 	/**
@@ -841,6 +840,11 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			fldIdx = flsNode.indexOf(fldNode),
 			realIdx = null;
 		
+		//default set is not exists 	
+		if (defSet == null) {
+			return 0;
+		}
+			
 		defSet.items.each(function(fld, idx){
 			var fi = flsNode.indexOf(this.getModelByCmp(fld));
 			if (fldIdx < fi) {
