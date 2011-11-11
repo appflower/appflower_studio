@@ -775,10 +775,10 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				toValue = refNode.getPropertyValue('to'); 
 			
 			if (toValue) {
-				fld = this.getFields({name: toValue});
+				fld = this.getField(toValue);
 				
 				if (!Ext.isEmpty(fld)) {
-					fld = this.createField(fld[0]);
+					fld = this.createField(fld);
 				}
 			}
 
@@ -869,6 +869,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 								}
 								
 								var refWrapper = this.getCmpByModel(prevRefNode).ownerCt;
+								
 								this.updateFloatingRefWidth(refWrapper);
 								
 								var wr = this.createRefWrapper(isSetFloat);
@@ -919,7 +920,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		executeAddRef : function(node, idx) {
 			this.insertRefNode(node, idx);
 		},
-
 		/**
 		 * Inserts reference node.
 		 */
@@ -948,6 +948,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			} else {
 				cmp.destroy();
 				
+				//relocate references
 				if (ref['break'] && nextRefNode && prevRefNode 
 					&& !prevRefNode.getPropertyValue('break')) {
 
@@ -978,7 +979,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 
 			//relocate reference's field
 			if (!Ext.isEmpty(fldName)) {
-				var fldProp = this.getFields({name: fldName})[0],
+				var fldProp = this.getField(fldName),
 					fldNode = this.getModelNode(fldProp[this.NODE_ID_MAPPER]),
 					fldIdx = this.getDefaultSetInsertFieldIndex(fsNode, fldNode);
 					
@@ -994,8 +995,17 @@ afStudio.wd.edit.EditModelReflector = (function() {
 //			if (Ext.isEmpty(v)) {
 //				this.getDefaultSetInsertFieldIndex();
 //			}
-//			
-//			this.relocateField();
+			
+			var fld = this.getField(v);
+			
+			if (fld == null) {
+				afStudio.Msg.warning('WD', String.format('Field with <u>name</u> = <b>{0}</b> does not exists.', v));
+				return;
+			}
+			
+			var fldNode = this.getModelNode(fld[this.NODE_ID_MAPPER]);
+			
+			this.relocateField(fldNode);
 		},
 		
 		/**

@@ -29,6 +29,17 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 
 		/**
+		 * Returns field properties.
+		 * @param {String} fldName The field unique name
+		 * @return {Object} field properties or null if field was not found
+		 */
+		getField : function(fldName) {
+			var fs = this.getFields({name: fldName});
+			
+			return !Ext.isEmpty(fs) ? fs[0] : null;
+		},
+		
+		/**
 		 * Returns array of i:fields->i:button properties.
 		 * @return {Array} buttons
 		 */
