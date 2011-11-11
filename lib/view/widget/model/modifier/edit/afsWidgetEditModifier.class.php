@@ -8,16 +8,6 @@
 class afsWidgetEditModifier extends afsBaseModelModifier 
 {
     /**
-     * Model criteria fetcher method
-     */
-    const MODEL_CRITERIA_FETCHER = 'ModelCriteriaFetcher';
-    
-    /**
-     * Fetcher method from model criteria
-     */
-    const FETCHER_METHOD = 'getDataForComboWidget';
-    
-    /**
      * Datasource class name
      *
      * @var string
@@ -36,10 +26,11 @@ class afsWidgetEditModifier extends afsBaseModelModifier
     {
         $definition = $model->getDefinition();
         
-        $this->datasource = $this->processGetDatasource($definition);
+        $this->datasource = afsWidgetEditModifierHelper::getDatasource($definition);
         
         if ($model->isNew()) {
             $definition = $this->checkAndCreateFieldsUrlAttribute($definition, $model);
+            $definition = afsWidgetEditPredictionModifier::create($definition)->fieldTypes()->getDefinition();
         }
         
         $definition = $this->searchForAndModifyForeignTableFields($definition);
@@ -117,9 +108,9 @@ class afsWidgetEditModifier extends afsBaseModelModifier
                     
                     $fieldDefinition['i:value'] = array(
                         'attributes' => array('type' => 'orm'),
-                        'i:class' => self::MODEL_CRITERIA_FETCHER,
+                        'i:class' => afsWidgetEditModifierHelper::MODEL_CRITERIA_FETCHER,
                         'i:method' => array(
-                            'attributes' => array('name' => self::FETCHER_METHOD),
+                            'attributes' => array('name' => afsWidgetEditModifierHelper::FETCHER_METHOD),
                             'i:param' => array(
                                 array(
                                     'attributes' => array('name' => 'does_not_matter'),
@@ -218,24 +209,6 @@ class afsWidgetEditModifier extends afsBaseModelModifier
         }
         
         return $definition;
-    }
-    
-    /**
-     * Process getting datasource class
-     *
-     * @param Array $definition 
-     * @return string
-     * @author Sergey Startsev
-     */
-    private function processGetDatasource(Array $definition)
-    {
-        if (isset($definition['i:datasource'])) {
-            if (isset($definition['i:datasource']['i:class'])) {
-                return $definition['i:datasource']['i:class'];
-            }
-        }
-
-        return null;
     }
     
 }
