@@ -29,14 +29,20 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 
 		/**
-		 * Returns field properties.
+		 * Returns field properties/field node.
 		 * @param {String} fldName The field unique name
-		 * @return {Object} field properties or null if field was not found
+		 * @param {Boolean} (optional) asNode Flag being true means field should be returned as node 
+		 * otherwise as properties object, by default is false 
+		 * @return {Object|Node} field properties|node or null if field was not found
 		 */
-		getField : function(fldName) {
-			var fs = this.getFields({name: fldName});
-			
-			return !Ext.isEmpty(fs) ? fs[0] : null;
+		getField : function(fldName, asNode) {
+			var fld = this.getFields({name: fldName})[0];
+		
+			if (!fld) {
+				return null;
+			}
+
+			return asNode === true ? this.getModelNode(fld[this.NODE_ID_MAPPER]) : fld;
 		},
 		
 		/**

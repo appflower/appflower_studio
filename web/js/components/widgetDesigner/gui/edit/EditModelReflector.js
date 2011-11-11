@@ -817,10 +817,16 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			var me = this,
 			
 				insertRefWrapper = function(idx) {
-					var refWrapper = me.createRefWrapper(isSetFloat);
-					me.wrapField(refWrapper, fld, ref);
-					setCmp.insert(idx, refWrapper);
-					setCmp.doLayout();
+					if (!isSetFloat && setCmp.items.getCount() != 0) {
+						var refWrapper = setCmp.items.itemAt(0);
+						me.wrapField(refWrapper, fld, ref, 1, idx);
+						refWrapper.doLayout();
+					} else {
+						var refWrapper = me.createRefWrapper(isSetFloat);
+						me.wrapField(refWrapper, fld, ref);
+						setCmp.insert(idx, refWrapper);
+						setCmp.doLayout();
+					}
 				},
 				
 				insertRef = function(rn, pos, inc) {
@@ -843,7 +849,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				if (prevRefNode) {
 					
 					if (prevRefNode.getPropertyValue('break')) {
-						
 						if (ref['break'] || !nextRefNode) {
 							refIdx = setCmp.items.indexOf(this.getCmpByModel(prevRefNode).ownerCt) + 1;
 							insertRefWrapper(refIdx);
@@ -854,7 +859,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 					
 					//previous reference is float
 					} else {
-					
 						if (ref['break']) {
 							insertRef(prevRefNode, null, 1);
 							
@@ -899,7 +903,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 					}
 					
 				} else {
-				
 					if (ref['break'] || !nextRefNode) {
 						insertRefWrapper(0);
 					} else {
@@ -996,14 +999,13 @@ afStudio.wd.edit.EditModelReflector = (function() {
 //				this.getDefaultSetInsertFieldIndex();
 //			}
 			
-			var fld = this.getField(v);
+			var fldNode = this.getField(v, true);
 			
-			if (fld == null) {
-				afStudio.Msg.warning('WD', String.format('Field with <u>name</u> = <b>{0}</b> does not exists.', v));
+			if (!fldNode) {
+				afStudio.Msg.warning('Widget Designer', 
+					String.format('Incorrect <u>to</u> property. <br/> Field with <u>name</u> = <b>{0}</b> does not exists.', v));
 				return;
 			}
-			
-			var fldNode = this.getModelNode(fld[this.NODE_ID_MAPPER]);
 			
 			this.relocateField(fldNode);
 		},
