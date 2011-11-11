@@ -94,15 +94,15 @@ class afsWidgetEditPredictionModifier
             foreach ($fields as &$field) {
                 $columnName = $field['attributes']['name'];
                 
-                if ($tableMap->hasColumn($columnName)) {
-                    $column = $tableMap->getColumn($columnName);
-                    $field['attributes']['type'] = $this->getType($column->getType());
-                    
-                    if ($with_validator) {
-                        $method_name = 'get' . ucfirst(strtolower($column->getType())) . 'Validator';
-                        if (method_exists($this, $method_name)) {
-                            $field['i:validator'] = call_user_func(array($this, $method_name), $column->getSize(), $column->isNotNull());
-                        }
+                if (!$tableMap->hasColumn($columnName)) continue;
+                
+                $column = $tableMap->getColumn($columnName);
+                $field['attributes']['type'] = $this->getType($column->getType());
+                
+                if ($with_validator) {
+                    $method_name = 'get' . ucfirst(strtolower($column->getType())) . 'Validator';
+                    if (method_exists($this, $method_name)) {
+                        $field['i:validator'] = call_user_func(array($this, $method_name), $column->getSize(), $column->isNotNull());
                     }
                 }
             }
@@ -128,7 +128,7 @@ class afsWidgetEditPredictionModifier
     /**
      * Getting varchar validator definition
      *
-     * @param string $max_size 
+     * @param int $max_size 
      * @param boolean $is_required 
      * @return array
      * @author Sergey Startsev
@@ -146,7 +146,30 @@ class afsWidgetEditPredictionModifier
                 ),
                 array(
                     'attributes' => array('name' => 'max_length'),
-                    '_content' => $max_size,
+                    '_content' => (($max_size) ? $max_size : 255),
+                ),
+            )
+        );
+    }
+    
+    /**
+     * Getting longvarchar validator definition
+     *
+     * @param int $max_size 
+     * @param boolean $is_required 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getLongvarcharValidator($max_size = 0, $is_required = false)
+    {
+        return array(
+            'attributes' => array(
+                'name' => 'sfValidatorString',
+            ),
+            'i:param' => array(
+                array(
+                    'attributes' => array('name' => 'required'),
+                    '_content' => (($is_required) ? 'true' : 'false'),
                 ),
             )
         );
@@ -155,7 +178,7 @@ class afsWidgetEditPredictionModifier
     /**
      * Getting timestamp validator definition
      *
-     * @param string $max_size 
+     * @param int $max_size 
      * @param boolean $is_required 
      * @return array
      * @author Sergey Startsev
@@ -179,7 +202,7 @@ class afsWidgetEditPredictionModifier
     /**
      * Getting date validator definition
      *
-     * @param string $max_size 
+     * @param int $max_size 
      * @param boolean $is_required 
      * @return array
      * @author Sergey Startsev
@@ -202,12 +225,35 @@ class afsWidgetEditPredictionModifier
     /**
      * Getting integer validator definition
      *
-     * @param string $max_size 
+     * @param int $max_size 
      * @param boolean $is_required 
      * @return array
      * @author Sergey Startsev
      */
     private function getIntegerValidator($max_size = 0, $is_required = false)
+    {
+        return array(
+            'attributes' => array(
+                'name' => 'sfValidatorInteger',
+            ),
+            'i:param' => array(
+                array(
+                    'attributes' => array('name' => 'required'),
+                    '_content' => (($is_required) ? 'true' : 'false'),
+                ),
+            )
+        );
+    }
+    
+    /**
+     * Getting numeric validator definition
+     *
+     * @param int $max_size 
+     * @param boolean $is_required 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getNumericValidator($max_size = 0, $is_required = false)
     {
         return array(
             'attributes' => array(
@@ -223,22 +269,9 @@ class afsWidgetEditPredictionModifier
     }
     
     /**
-     * Getting numeric validator definition
-     *
-     * @param string $max_size 
-     * @param boolean $is_required 
-     * @return array
-     * @author Sergey Startsev
-     */
-    private function getNumericValidator($max_size = 0, $is_required = false)
-    {
-        return $this->getIntegerValidator($max_size, $is_required);
-    }
-    
-    /**
      * Getting tinyint validator definition
      *
-     * @param string $max_size 
+     * @param int $max_size 
      * @param boolean $is_required 
      * @return array
      * @author Sergey Startsev
@@ -251,7 +284,7 @@ class afsWidgetEditPredictionModifier
     /**
      * getting bigint validator definition
      *
-     * @param string $max_size 
+     * @param int $max_size 
      * @param boolean $is_required 
      * @return array
      * @author Sergey Startsev
@@ -259,6 +292,58 @@ class afsWidgetEditPredictionModifier
     private function getBigintValidator($max_size = 0, $is_required = false)
     {
         return $this->getIntegerValidator($max_size, $is_required);
+    }
+    
+    /**
+     * Getting float validator definition
+     *
+     * @param int $max_size 
+     * @param boolean $is_required 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getFloatValidator($max_size = 0, $is_required = false)
+    {
+        return $this->getNumericValidator($max_size, $is_required);
+    }
+    
+    /**
+     * Getting real validator definition
+     *
+     * @param int $max_size 
+     * @param boolean $is_required 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getRealValidator($max_size = 0, $is_required = false)
+    {
+        return $this->getNumericValidator($max_size, $is_required);
+    }
+    
+    /**
+     * Getting double validator definition
+     *
+     * @param int $max_size 
+     * @param boolean $is_required 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getDoubleValidator($max_size = 0, $is_required = false)
+    {
+        return $this->getNumericValidator($max_size, $is_required);
+    }
+    
+    /**
+     * Getting decimal validator definition
+     *
+     * @param string $max_size 
+     * @param string $is_required 
+     * @return void
+     * @author Sergey Startsev
+     */
+    private function getDecimalValidator($max_size = 0, $is_required = false)
+    {
+        return $this->getNumericValidator($max_size, $is_required);
     }
     
     /**

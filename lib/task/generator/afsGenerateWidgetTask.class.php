@@ -119,9 +119,13 @@ EOF;
             $widget_name = lcfirst(sfInflector::camelize($model)) . ucfirst(strtolower($type));
             $widget_path = "{$placeType}s/{$place}/modules/{$module}/config/{$widget_name}.xml";
             
-            if (file_exists(sfConfig::get('sf_root_dir') . "/{$widget_path}") && !$refresh) {
-                $this->logSection('exists', $widget_path, null, 'ERROR');
-                continue;
+            if (file_exists(sfConfig::get('sf_root_dir') . "/{$widget_path}")) {
+                if (!$refresh) {
+                    $this->logSection('exists', $widget_path, null, 'ERROR');
+                    continue;
+                } else {
+                    afStudioCommand::process('widget', 'delete', array('type' => $placeType, 'place' => $place, 'module' => $module, 'name' => $widget_name));
+                }
             }
             
             $create_response = afStudioCommand::process(
