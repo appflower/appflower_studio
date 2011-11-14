@@ -295,7 +295,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Object} (Optional) properties
      */
     initProperties : function(properties) {
-    	var _me = this,
+    	var me = this,
 			 ps = properties || this.properties;
 			   
     	this.properties = new Ext.util.MixedCollection(false, function(property) {
@@ -303,7 +303,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		});
 		
 		Ext.iterate(ps, function(p) {
-			_me.properties.add(
+			me.properties.add(
 				new afStudio.model.Property(p)
 			);
 		});
@@ -349,7 +349,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @param {Boolean} silent If silent is true all node's events are suspended
      */
     applyNodeDefinition : function(definition, silent) {
-    	var _me = this;
+    	var me = this;
     	
      	if (!Ext.isDefined(definition)) {
     		return;
@@ -374,10 +374,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     				//collection of the same nodes
 					if (Ext.isArray(d)) {
 						Ext.iterate(d, function(nd) {
-			    			_me.createNode(n, nd);				
+			    			me.createNode(n, nd);				
 						});
 					} else {
-						_me.createNode(n, d);	
+						me.createNode(n, d);	
 					}
     			});
     		}
@@ -395,10 +395,12 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @protected
 	 */    
     initEvents : function() {
-    	var _me = this;
+    	var me = this;
     	
-		_me.on({
-			modelNodeCreated : _me.onModelNodeCreated
+		me.on({
+			modelNodeCreated : me.onModelNodeCreated,
+			
+			beforeModelPropertyChanged : me.onBeforeModelPropertyChanged
 		});
     },    
     
@@ -1525,6 +1527,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     /**
      * <u>modelNodeCreated</u> event listener.
      * Checks if can be added child node.
+     * @protected
      * @return {Boolean}
      */
     onModelNodeCreated : function(ctr, parent, node) {
@@ -1560,19 +1563,31 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     //eo onModelNodeCreated
     
     /**
+     * To add additional validation functionality 
+     * this method should be overriden. 
+     * <u>beforeModelPropertyChanged</u> event listener.
+     * @abstract
+     * @protected
+     * @return {Boolean}
+     */
+    onBeforeModelPropertyChanged : function(node, property, value) {
+    	return true;
+    },
+    
+    /**
      * Returns node's string representation.
      * @override
      * @return {String} node
      */
     toString : function() {
-    	var _me = this;
+    	var me = this;
 		var tpl = new Ext.XTemplate(
 			'[model.Node: "{tag}", ID: "{id}", {NODE_DATA}: {[this.getData()]}]',
 			{
         		compiled: true,
         		disableFormats: true,
         		getData: function() {
-        			return _me[_me.NODE_DATA] ? _me[_me.NODE_DATA].getValue() : null;
+        			return me[me.NODE_DATA] ? me[me.NODE_DATA].getValue() : null;
         		}
     		});
     	

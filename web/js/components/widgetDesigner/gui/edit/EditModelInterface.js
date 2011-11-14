@@ -193,7 +193,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 			}, this);
 			
 			return ref;
-		}
+		}		
 	};
 })();
 

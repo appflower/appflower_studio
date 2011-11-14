@@ -800,7 +800,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		/**
+		 * Relocates refs down.
 		 * @private
+		 * @param {Node} refNode 
 		 */
 		relocateRefsDown : function(refNode) {
 			var setNode = refNode.parentNode,
@@ -837,8 +839,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		/**
+		 * Relocates refs up.
 		 * @private
-		 * @param {Node} refNode
+		 * @param {Node} refNode The start point for relocation
 		 * @param {Ext.Container} refWrapper The reference container object 
 		 */
 		relocateRefsUp : function(refNode, refWrapper) {
@@ -857,6 +860,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			}
 			wr.destroy();
 
+			//refs relocation
 			while (nextRefNode) {
 				var f = this.createRefField(nextRefNode),
 					r = this.getModelNodeProperties(nextRefNode);
@@ -1014,18 +1018,26 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * to
 		 */
 		executeUpdateRefTo : function(node, cmp, p, v, oldValue) {
-//			if (Ext.isEmpty(v)) {
-//				this.getDefaultSetInsertFieldIndex();
-//			}
+			var fldNode;
 			
-			var fldNode = this.getField(v, true);
-			
-			if (!fldNode) {
-				afStudio.Msg.warning('Widget Designer', 
-					String.format('Incorrect <u>to</u> property. <br/> Field with <u>name</u> = <b>{0}</b> does not exists.', v));
+			if (Ext.isEmpty(v)) {
+				fldNode = this.getField(oldValue, true);
+				if (fldNode) {
+					this.relocateField(fldNode);
+				}
+				
 				return;
+				
+			}
+				
+			fldNode = this.getField(v, true);
+				
+			//relocating previous associated with reference field
+			if (this.getField(oldValue, true)) {
+				this.relocateField(this.getField(oldValue, true));
 			}
 			
+			//set up new reference field
 			this.relocateField(fldNode);
 		},
 		
@@ -1033,7 +1045,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * break
 		 */
 		executeUpdateRefBreak : function(node, cmp, p, v) {
-			
+		
 		}
 		
 	};
