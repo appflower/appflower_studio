@@ -36,17 +36,17 @@ var afStudio = function () {
 					location.href = response.redirect;
 				}
 			});
-		}
+		},
 		//eo initAjaxRequestComplete
 		
 		/**
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
 		 */
-		,initDataProxyErrorsHandling : function() {
+		initDataProxyErrorsHandling : function() {
 			var getMessage = function(obj) {
 				var m = obj.message || obj.content || obj.msg || obj.errors;				
 				return Ext.isArray(m) ? m.join('') : m;
-			}
+			};
 			
 			Ext.data.DataProxy.on('exception', function(proxy, type, action, options, response, arg) {
 				var message,
@@ -65,29 +65,30 @@ var afStudio = function () {
 				
 				afStudio.Msg.error(title, message);
 			});						
-		}//eo initDataProxyErrorsHandling
+		},
+		//eo initDataProxyErrorsHandling
 	
 		/**
 		 * Sets CLI console text.
 		 * @param {String} content The content being set, it can as plain as well as html content. 
 		 */
-		,setConsole : function(content) {
+		setConsole : function(content) {
 			afStudio.cli.CommandLineMgr.setConsole(content);
-		}
+		},
 		
 		/**
 		 * Appends content to the end of the console CLI.
 		 */
-		,updateConsole : function(content) {
+		updateConsole : function(content) {
 			afStudio.cli.CommandLineMgr.updateConsole(content);
-		}
+		},
  
 		/**
 		 * Logs messages.
 		 * @param {String} message The message being logged.
 		 * @param {String} messageType The message type
 		 */
-		,log : function(message, messageType) {
+		log : function(message, messageType) {
 			messageType = messageType || false;
 			
 			Ext.Ajax.request({
@@ -105,25 +106,25 @@ var afStudio = function () {
 					}
 				}
 			});		
-		}//eo log
+		},
 		
 		/**
 		 * Returns studio's viewport.
 		 * @return {@link afStudio.viewport.StudioViewport} viewport
 		 */
-		,getViewport : function() {
+		getViewport : function() {
 			return this.vp;
-		}
+		},
 		
-		,getRecentProjects : function() {
+		getRecentProjects : function() {
 			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
 			
 			recentProject = recentProjects.reverse();
 			
 			return recentProjects;
-		}
+		},
 		
-		,addCurrentProject : function() {
+		addCurrentProject : function() {
 			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
 			
 			Ext.Ajax.request({
@@ -149,13 +150,14 @@ var afStudio = function () {
 				  Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate,'/','');
 			   }
 			});
-		}//eo addCurrentProject	
+		},
+		//eo addCurrentProject	
 		
 		/**
 		 * Instantiates afStudio.
 		 * Main method.
 		 */
-		,init : function () {
+		init : function () {
 		    Ext.QuickTips.init();
 		    Ext.apply(Ext.QuickTips.getQuickTip(), {
 			    trackMouse: true
@@ -174,7 +176,7 @@ var afStudio = function () {
 			afStudio.Cli.init();
 			
 			//set up logger mode
-			afStudio.Logger.mode = afStudio.Logger.OFF;
+			afStudio.Logger.mode = afStudio.Logger.DEBUG;
 			
 			/**
 			 * this will add current project's url to the recent projects cookie
@@ -184,10 +186,11 @@ var afStudio = function () {
 			if (Ext.util.Cookies.get('appFlowerStudioDontShowWelcomePopup') != 'true') {
 				new afStudio.Welcome().show();
 			}			
-		}//eo init
+		},
+		//eo init
 		                
         //user to create a slug from some content
-        ,createSlug : function(slugcontent) {
+        createSlug : function(slugcontent) {
 		    // convert to lowercase (important: since on next step special chars are defined in lowercase only)
 		    slugcontent = slugcontent.toLowerCase();
 		    // convert special chars
@@ -201,7 +204,7 @@ var afStudio = function () {
 			finishedslug = finishedslug.replace(/(^-)|(-$)/g,'');
 		    return finishedslug;
         }
-	}
+	};
 }();
 
 
@@ -224,14 +227,14 @@ Ext.applyIf(Array.prototype, {
 			this[j] = this[j-1];
 		}
 		this[to] = draggedEl;
-	}//eo dragUp
+	},
 	
 	/**
 	 * Drags down array's element.
 	 * @param {Number} from The beginning position to drag from.
 	 * @param {Number} to The destination element position.
 	 */
-	,dragDown : function(from, to) {
+	dragDown : function(from, to) {
 		if (from > to) {
 			throw new RangeError('"dragDown": "from" index should be less than "to"');
 		}		
@@ -240,7 +243,7 @@ Ext.applyIf(Array.prototype, {
 			this[j] = this[j+1];
 		}
 		this[to] = draggedEl;
-	}//eo dragDown
+	}
 });
 
 /**
@@ -254,14 +257,14 @@ Ext.applyIf(String.prototype, {
 	 */
 	ucfirst : function() {
     	return this.substr(0, 1).toUpperCase() + this.substr(1);
-	}	
+	},
 	
 	/**
 	 * Checks if string value represents boolean <tt>true</tt> value.  
 	 * Case insensitive. 
 	 * @return {Boolean} true if string value equals to "true" otherwise false.
 	 */
-	,bool : function() {
+	bool : function() {
 		return (/^true$/i).test(this);
 	}	
 });

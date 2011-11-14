@@ -29,6 +29,23 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		},
 
 		/**
+		 * Returns field properties/field node.
+		 * @param {String} fldName The field unique name
+		 * @param {Boolean} (optional) asNode Flag being true means field should be returned as node 
+		 * otherwise as properties object, by default is false 
+		 * @return {Object|Node} field properties|node or null if field was not found
+		 */
+		getField : function(fldName, asNode) {
+			var fld = this.getFields({name: fldName})[0];
+		
+			if (!fld) {
+				return null;
+			}
+
+			return asNode === true ? this.getModelNode(fld[this.NODE_ID_MAPPER]) : fld;
+		},
+		
+		/**
 		 * Returns array of i:fields->i:button properties.
 		 * @return {Array} buttons
 		 */
@@ -98,12 +115,6 @@ afStudio.wd.edit.EditModelInterface = (function() {
 			
 			Ext.each(refNodes, function(ref){
 				var fs = this.getFields({name: ref.to});
-				if (fs.length == 0) {
-					afStudio.Msg.warning('Widget Designer', String.format('Field with name "{0}" does not exists. <br />' + 
-					'Please correct "to" property value.', ref.to));
-					return;
-				}
-				
 				fields.push({ref: ref, field: fs[0]});
 			}, this);
 			
@@ -182,7 +193,7 @@ afStudio.wd.edit.EditModelInterface = (function() {
 			}, this);
 			
 			return ref;
-		}
+		}		
 	};
 })();
 

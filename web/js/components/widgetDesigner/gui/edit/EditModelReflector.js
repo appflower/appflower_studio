@@ -651,7 +651,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			
 			//view has tabbed fields-set(s)
 			if (tabPanel) {
-				
 				//fields-set is tabbed
 				if (this.isSetTabbed(node)) {
 					var tab = this.createTab(pSet);
@@ -748,56 +747,337 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * collapsed
 		 */
 		executeUpdateSetCollapsed : function(node, cmp, p, v) {
+			v == true ? cmp.collapse() : cmp.expand();			
 		},
 		/**
 		 * float
 		 */
 		executeUpdateSetFloat : function(node, cmp, p, v) {
+			var grNode = node.parentNode,
+				refNode = node.nextSibling;
+			
+			//destroy fields-set component	
+			this.isSetTabbed(node) ? cmp.ownerCt.destroy() : cmp.destroy();
+			
+			//recreate fields-set and injected into the widget
+			if (refNode) {
+				var refCmp = this.getCmpByModel(refNode);
+				this.executeInsertSet(grNode, node, refNode, refCmp);
+			} else {
+				var idx = grNode.indexOf(node);
+				this.executeAddSet(node, idx);
+			}
 		},
 		/**
 		 * tabtitle
 		 */
-		executeUpdateSetTabtitle : function(node, cmp, p, v) {
+		executeUpdateSetTabtitle : function(node, cmp, p, v, oldValue) {
+			//TODO implement
 		},
 		
 		//i:ref
 		//----------------------------------------------------
 
-		//TODO implement
+		/**
+		 * Creates reference's field component, the field node 
+		 * associated with reference via its "to" property.
+		 * @private
+		 * @param {Node} refNode The reference node, i:ref
+		 * @return {Ext.form.Field} field   
+		 */
+		createRefField : function(refNode) {
+			var fld = null,
+				toValue = refNode.getPropertyValue('to'); 
+			
+			if (toValue) {
+				fld = this.getField(toValue);
+				
+				if (!Ext.isEmpty(fld)) {
+					fld = this.createField(fld);
+				}
+			}
+
+			return fld;
+		},
+		
+		/**
+		 * Updates the column width of floating references.
+		 * @private
+		 * @param {Ext.Container} refWrapper The floating reference container
+		 */
+		updateFloatingRefWidth : function(refWrapper) {
+			var count = refWrapper.items.getCount(),
+				clmWidth = Ext.util.Format.round(1 / count, 2);
+
+			refWrapper.items.each(function(ref, idx){
+				ref.columnWidth = clmWidth;
+			});
+		},
+		
+		/**
+		 * Relocates refs down.
+		 * @private
+		 * @param {Node} refNode 
+		 */
+		relocateRefsDown : function(refNode) {
+			var setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
+				isSetFloat = setNode.getPropertyValue('float'),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling;
+			
+			//remove refs being relocated	
+			var node = nextRefNode;
+			while (node) {
+				this.getCmpByModel(node).destroy();
+				if (node.getPropertyValue('break')) break;
+				node = node.nextSibling;
+			}
+			var refWrapper = this.getCmpByModel(prevRefNode).ownerCt;
+			this.updateFloatingRefWidth(refWrapper);
+			
+			//refs relocation
+			var wr = this.createRefWrapper(isSetFloat);
+			while (nextRefNode) {
+				var f = this.createRefField(nextRefNode),
+					r = this.getModelNodeProperties(nextRefNode);
+					
+				this.wrapField(wr, f, r);
+				if (nextRefNode.getPropertyValue('break')) break;
+				nextRefNode = nextRefNode.nextSibling;
+			}
+			this.updateFloatingRefWidth(wr);
+			
+			var wrPos = setCmp.items.indexOf(refWrapper) + 1;
+			setCmp.insert(wrPos, wr);
+			setCmp.doLayout();
+		},
+		
+		/**
+		 * Relocates refs up.
+		 * @private
+		 * @param {Node} refNode The start point for relocation
+		 * @param {Ext.Container} refWrapper The reference container object 
+		 */
+		relocateRefsUp : function(refNode, refWrapper) {
+			var	setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling;
+			
+			//remove refs being relocated
+			var wr = this.getCmpByModel(nextRefNode).ownerCt,
+				node = nextRefNode;
+			while (node) {
+				this.getCmpByModel(node).destroy();
+				if (node.getPropertyValue('break')) break;
+				node = node.nextSibling;
+			}
+			wr.destroy();
+
+			//refs relocation
+			while (nextRefNode) {
+				var f = this.createRefField(nextRefNode),
+					r = this.getModelNodeProperties(nextRefNode);
+					
+				this.wrapField(refWrapper, f, r);
+				if (nextRefNode.getPropertyValue('break')) break;
+				nextRefNode = nextRefNode.nextSibling;
+			}
+			
+			this.updateFloatingRefWidth(refWrapper);
+			
+			setCmp.doLayout();
+		},
+		
+		/**
+		 * Inserts reference at specified position.
+		 * @private
+		 * @param {Node} refNode The reference node being inserted
+		 * @param {Number} refIdx The reference node's insertion position
+		 */
+		insertRefNode : function(refNode, refIdx) {
+			var setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
+				isSetFloat = setNode.getPropertyValue('float'),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling,
+				ref = this.getModelNodeProperties(refNode),
+				fld = this.createRefField(refNode);
+			
+			var me = this,
+			
+				insertRefWrapper = function(idx) {
+					if (!isSetFloat && setCmp.items.getCount() != 0) {
+						var refWrapper = setCmp.items.itemAt(0);
+						me.wrapField(refWrapper, fld, ref, 1, idx);
+						refWrapper.doLayout();
+					} else {
+						var refWrapper = me.createRefWrapper(isSetFloat);
+						me.wrapField(refWrapper, fld, ref);
+						setCmp.insert(idx, refWrapper);
+						setCmp.doLayout();
+					}
+				},
+				
+				insertRef = function(rn, pos, inc) {
+					var refCmp = me.getCmpByModel(rn),
+						refWrapper = refCmp.ownerCt;
+					
+					if (Ext.isEmpty(pos)) {
+						pos = refWrapper.items.indexOf(refCmp);
+						pos = Ext.isDefined(inc) ? pos + inc : pos;
+					}
+						
+					me.wrapField(refWrapper, fld, ref, null, pos);
+					me.updateFloatingRefWidth(refWrapper);
+					refWrapper.doLayout();
+				};
+				
+			//field-set is float	
+			if (isSetFloat) {
+				
+				if (prevRefNode) {
+					
+					if (prevRefNode.getPropertyValue('break')) {
+						if (ref['break'] || !nextRefNode) {
+							refIdx = setCmp.items.indexOf(this.getCmpByModel(prevRefNode).ownerCt) + 1;
+							insertRefWrapper(refIdx);
+						} else {
+							insertRef(nextRefNode, 0);
+						}
+					
+					//previous reference is float
+					} else {
+						if (ref['break']) {
+							insertRef(prevRefNode, null, 1);
+							if (nextRefNode) {
+								this.relocateRefsDown(refNode);
+							}
+						} else {
+							insertRef(nextRefNode);
+						}
+					}
+				
+				//inserted node has no previous reference sibling	
+				} else {
+					if (ref['break'] || !nextRefNode) {
+						insertRefWrapper(0);
+					} else {
+						insertRef(nextRefNode);
+					}
+				}
+
+			//field-set is not float	
+			} else {
+				insertRefWrapper(refIdx);
+			}
+		},
+		//eo insertRefNode
+		
+		/**
+		 * Adds reference node.
+		 */
 		executeAddRef : function(node, idx) {
-			//TODO code responsible for creation i:ref should be refactored
+			this.insertRefNode(node, idx);
+		},
+		/**
+		 * Inserts reference node.
+		 */
+		executeInsertRef : function(setNode, node, refNode, refCmp) {
+			this.insertRefNode(node, setNode.indexOf(node));			
 		},
 		
 		/**
 		 * Removes reference node.
 		 */
-		executeRemoveRef : function(node, cmp) {
-			var fldName = this.getModelNodeProperty(node, 'to'),
-				fsNode = this.getModelNode(this.NODES.FIELDS);
+		executeRemoveRef : function(refNode, cmp) {
+			var	ref = this.getModelNodeProperties(refNode),
+				fldName = this.getModelNodeProperty(refNode, 'to'),
+				fsNode = this.getModelNode(this.NODES.FIELDS),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling,
+				setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
+				refWrapper = cmp.ownerCt;
+			
+			//remove reference wrapper
+			if (!cmp.nextSibling() && !cmp.previousSibling()) {
+				refWrapper.destroy();
 				
-			cmp.destroy();
+			//remove reference
+			} else {
+				cmp.destroy();
+				
+				//relocate references
+				if (ref['break'] && nextRefNode && prevRefNode 
+					&& !prevRefNode.getPropertyValue('break')) {
+						
+					this.relocateRefsUp(refNode, refWrapper);
+					
+				} else {
+				//updates reference wrapper after fields-set removal	
+					this.updateFloatingRefWidth(refWrapper);
+					refWrapper.doLayout();
+				}
+			}
 
-			if (!Ext.isEmpty(fldName)) {
-				var fldProp = this.getFields({name: fldName})[0];
-					fldNode = this.getModelNode(fldProp[this.NODE_ID_MAPPER]);
+			//if the field node (reference's field - "to" property) exists then relocate it 
+			if (!Ext.isEmpty(fldName) && this.getField(fldName)) {
+				var nodeId = this.getField(fldName)[this.NODE_ID_MAPPER],
+					fldNode = this.getModelNode(nodeId),
 					fldIdx = this.getDefaultSetInsertFieldIndex(fsNode, fldNode);
 					
 				this.relocateField(fldNode, fldIdx);
 			}
 		},
+		//eo executeRemoveRef
 		
 		/**
 		 * to
 		 */
 		executeUpdateRefTo : function(node, cmp, p, v, oldValue) {
-//			if (Ext.isEmpty(v)) {
-//				this.getDefaultSetInsertFieldIndex();
-//			}
-//			
-//			this.relocateField();
+			var fldNode;
+			
+			if (Ext.isEmpty(v)) {
+				fldNode = this.getField(oldValue, true);
+				if (fldNode) {
+					this.relocateField(fldNode);
+				}
+				
+				return;
+				
+			}
+				
+			fldNode = this.getField(v, true);
+				
+			//relocating previous associated with reference field
+			if (this.getField(oldValue, true)) {
+				this.relocateField(this.getField(oldValue, true));
+			}
+			
+			//set up new reference field
+			this.relocateField(fldNode);
+		},
+		
+		/**
+		 * break
+		 */
+		executeUpdateRefBreak : function(node, cmp, p, v) {
+			var gr = node.parentNode;
+			
+			if (gr.getPropertyValue('float') === true) {
+				
+				if (v === true) {
+					cmp.destroy();
+					this.insertRefNode(node, gr.indexOf(node));
+				} else {
+					this.relocateRefsUp(node, cmp.ownerCt);
+				}
+			}
 		}
 		
-	}
+	};
 })();
 
 /**

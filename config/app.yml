@@ -6,7 +6,7 @@
 all:
   afs:
     # use this to set the production:false/development:true environment of Studio
-    debug: false
+    debug: true
     # When you disable projects management - create/load/recent project items 
     # in studio toolbar will not be available
     projects_management_enabled: true

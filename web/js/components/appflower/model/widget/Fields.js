@@ -55,5 +55,5 @@ afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
 		{name: afStudio.ModelNode.LINK, hasMany: true, unique: 'name'},
 		{name: afStudio.ModelNode.RADIO_GROUP, hasMany: true, unique: 'name'},
 		{name: afStudio.ModelNode.IF}
-	]
+	]	
 });
