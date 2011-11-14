@@ -1517,7 +1517,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	if (err.length > 0 || errors.children.length > 0) {
     		errors.error = Ext.value(err, null);
     		
-    		return errors
+    		return errors;
     	}
     	
     	return true;

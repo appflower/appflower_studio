@@ -753,11 +753,26 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * float
 		 */
 		executeUpdateSetFloat : function(node, cmp, p, v) {
+			var grNode = node.parentNode,
+				refNode = node.nextSibling;
+				
+			//destroy fields-set component	
+			cmp.destroy();
+			
+			//recreate fields-set and injected into the widget
+			if (refNode) {
+				var refCmp = this.getCmpByModel(refNode);
+				this.executeInsertSet(grNode, node, refNode, refCmp);
+			} else {
+				var idx = grNode.indexOf(node);
+				this.executeAddSet(node, idx);
+			}
 		},
 		/**
 		 * tabtitle
 		 */
 		executeUpdateSetTabtitle : function(node, cmp, p, v) {
+			//TODO implement
 		},
 		
 		//i:ref
@@ -1045,7 +1060,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * break
 		 */
 		executeUpdateRefBreak : function(node, cmp, p, v) {
-		
+			
 		}
 		
 	};
