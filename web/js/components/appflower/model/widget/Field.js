@@ -31,6 +31,8 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
  		{name: 'disabled', type: 'boolean', defaultValue: false},
  		{name: 'plugin', type: 'token', defaultValue: '*'}, 
  		{name: 'url', type: 'internalUriType'},
+        {name: 'vtype', type: 'token'},
+        {name: 'minChars', type: 'positiveInteger'},
  		{name: 'permissions', type: 'permissionType', defaultValue: '*'}        
 	],
 	
