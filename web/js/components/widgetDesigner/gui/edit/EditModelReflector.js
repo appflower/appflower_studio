@@ -800,6 +800,76 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		/**
+		 * @private
+		 */
+		relocateRefsDown : function(refNode) {
+			var setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
+				isSetFloat = setNode.getPropertyValue('float'),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling;
+			
+			//remove refs being relocated	
+			var node = nextRefNode;
+			while (node) {
+				this.getCmpByModel(node).destroy();
+				if (node.getPropertyValue('break')) break;
+				node = node.nextSibling;
+			}
+			var refWrapper = this.getCmpByModel(prevRefNode).ownerCt;
+			this.updateFloatingRefWidth(refWrapper);
+			
+			//refs relocation
+			var wr = this.createRefWrapper(isSetFloat);
+			while (nextRefNode) {
+				var f = this.createRefField(nextRefNode),
+					r = this.getModelNodeProperties(nextRefNode);
+					
+				this.wrapField(wr, f, r);
+				if (nextRefNode.getPropertyValue('break')) break;
+				nextRefNode = nextRefNode.nextSibling;
+			}
+			this.updateFloatingRefWidth(wr);
+			
+			var wrPos = setCmp.items.indexOf(refWrapper) + 1;
+			setCmp.insert(wrPos, wr);
+			setCmp.doLayout();
+		},
+		
+		/**
+		 * @private
+		 * @param {Node} refNode
+		 * @param {Ext.Container} refWrapper The reference container object 
+		 */
+		relocateRefsUp : function(refNode, refWrapper) {
+			var	setNode = refNode.parentNode,
+				setCmp = this.getCmpByModel(setNode),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling;
+			
+			//remove refs being relocated
+			var wr = this.getCmpByModel(nextRefNode).ownerCt,
+				node = nextRefNode;
+			while (node) {
+				this.getCmpByModel(node).destroy();
+				if (node.getPropertyValue('break')) break;
+				node = node.nextSibling;
+			}
+			wr.destroy();
+
+			while (nextRefNode) {
+				var f = this.createRefField(nextRefNode),
+					r = this.getModelNodeProperties(nextRefNode);
+					
+				this.wrapField(refWrapper, f, r);
+				if (nextRefNode.getPropertyValue('break')) break;
+				nextRefNode = nextRefNode.nextSibling;
+			}
+			
+			setCmp.doLayout();
+		},
+		
+		/**
 		 * Inserts reference at specified position.
 		 * @private
 		 * @param {Node} refNode The reference node being inserted
@@ -852,7 +922,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 						if (ref['break'] || !nextRefNode) {
 							refIdx = setCmp.items.indexOf(this.getCmpByModel(prevRefNode).ownerCt) + 1;
 							insertRefWrapper(refIdx);
-								
 						} else {
 							insertRef(nextRefNode, 0);
 						}
@@ -861,47 +930,15 @@ afStudio.wd.edit.EditModelReflector = (function() {
 					} else {
 						if (ref['break']) {
 							insertRef(prevRefNode, null, 1);
-							
-							//relocate
 							if (nextRefNode) {
-								
-								var node = nextRefNode;
-								while (node) {
-									this.getCmpByModel(node).destroy();
-									if (node.getPropertyValue('break')) break;
-									node = node.nextSibling;
-								}
-								
-								var refWrapper = this.getCmpByModel(prevRefNode).ownerCt;
-								
-								this.updateFloatingRefWidth(refWrapper);
-								
-								var wr = this.createRefWrapper(isSetFloat);
-								
-								while (nextRefNode) {
-									var f = this.createRefField(nextRefNode),
-										r = this.getModelNodeProperties(nextRefNode);
-										
-									this.wrapField(wr, f, r);
-									
-									if (nextRefNode.getPropertyValue('break')) break;
-									
-									nextRefNode = nextRefNode.nextSibling;
-								}
-								
-								this.updateFloatingRefWidth(wr);
-								
-								var wrPos = setCmp.items.indexOf(refWrapper) + 1;
-								
-								setCmp.insert(wrPos, wr);
-								setCmp.doLayout();
+								this.relocateRefsDown(refNode);
 							}
-							
 						} else {
 							insertRef(nextRefNode);
 						}
 					}
-					
+				
+				//inserted node has no previous reference sibling	
 				} else {
 					if (ref['break'] || !nextRefNode) {
 						insertRefWrapper(0);
@@ -954,36 +991,18 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				//relocate references
 				if (ref['break'] && nextRefNode && prevRefNode 
 					&& !prevRefNode.getPropertyValue('break')) {
-
-					var wr = this.getCmpByModel(nextRefNode).ownerCt,
-						node = nextRefNode;
-					while (node) {
-						this.getCmpByModel(node).destroy();
-						if (node.getPropertyValue('break')) break;
-						node = node.nextSibling;
-					}
-					wr.destroy();
-
-					while (nextRefNode) {
-						var f = this.createRefField(nextRefNode),
-							r = this.getModelNodeProperties(nextRefNode);
-							
-						this.wrapField(refWrapper, f, r);
-						if (nextRefNode.getPropertyValue('break')) break;
-						nextRefNode = nextRefNode.nextSibling;
-					}
-					
-					setCmp.doLayout();
+						
+					this.relocateRefsUp(refNode, refWrapper);
 				}
 				
 				this.updateFloatingRefWidth(refWrapper);
 				refWrapper.doLayout();
 			}
 
-			//relocate reference's field
-			if (!Ext.isEmpty(fldName)) {
-				var fldProp = this.getField(fldName),
-					fldNode = this.getModelNode(fldProp[this.NODE_ID_MAPPER]),
+			//if the field node (reference's field - "to" property) exists then relocate it 
+			if (!Ext.isEmpty(fldName) && this.getField(fldName)) {
+				var nodeId = this.getField(fldName)[this.NODE_ID_MAPPER],
+					fldNode = this.getModelNode(nodeId),
 					fldIdx = this.getDefaultSetInsertFieldIndex(fsNode, fldNode);
 					
 				this.relocateField(fldNode, fldIdx);
