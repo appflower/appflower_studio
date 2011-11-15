@@ -955,7 +955,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 								this.relocateRefsDown(refNode);
 							}
 						} else {
-							insertRef(nextRefNode);
+							insertRef(prevRefNode, null, 1);
 						}
 					}
 				
@@ -1067,8 +1067,8 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			var gr = node.parentNode;
 			
 			if (gr.getPropertyValue('float') === true) {
-				
 				if (v === true) {
+					console.log('kuku !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 					cmp.destroy();
 					this.insertRefNode(node, gr.indexOf(node));
 				} else {
