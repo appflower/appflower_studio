@@ -39,11 +39,32 @@ class afsPageModelValidator extends afsBaseModelValidator
     {
         $definition = $this->getDefinition();
         
-        if (!$this->getModel()->isNew() && array_key_exists('i:area', $definition) && !array_key_exists('i:component', $definition['i:area'])) {
+        if (!$this->getModel()->isNew() && !$this->isKeyDefined('i:component', $definition)) {
             return "Page should contain one or more component";
         }
         
         return true;
+    }
+    
+    /**
+     * Recursive key search 
+     *
+     * @param string $needle 
+     * @param array $haystack 
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    private function isKeyDefined($needle, Array $haystack)
+    {
+        $result = array_key_exists($needle, $haystack);
+        if ($result) return $result;
+        
+        foreach ($haystack as $v) {
+            if (is_array($v)) $result = $this->isKeyDefined($needle, $v);
+            if ($result) return $result;
+        }
+        
+        return $result;
     }
     
 }
