@@ -58,7 +58,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         items: [
         {
             itemId: 'app-add-page',
-            text: 'Add Page',
+            text: 'Add Layout',
             iconCls: 'icon-models-add'
 		}],
         listeners: {
@@ -80,19 +80,19 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
         items: [
         {
             itemId: 'edit-page',
-            text: 'Edit Page',
+            text: 'Edit Layout',
             iconCls: 'icon-models-edit'
 		},{
             itemId: 'rename-page',
-            text: 'Rename Page',
+            text: 'Rename Layout',
             iconCls: 'icon-edit'
 		},{
        		itemId: 'delete-page',
-            text: 'Delete Page',
+            text: 'Delete Layout',
             iconCls: 'icon-models-delete'
         },{
        		itemId: 'set_as_homepage',
-            text: 'Set Page as Homepage',
+            text: 'Set Layout as Homepage',
             iconCls: 'icon-models-set_as_homepage'
         }],
         listeners: {
@@ -144,7 +144,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				items: [
 				'->',
 				{
-					text: 'Add Page',
+					text: 'Add Layout',
 					iconCls: 'icon-pages-add',
 					handler: _this.onAddPageClick,
 					scope: _this
