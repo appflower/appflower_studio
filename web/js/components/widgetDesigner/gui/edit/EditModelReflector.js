@@ -649,26 +649,26 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			var pSet = this.getModelNodeProperties(node),
 				tabPanel = this.getTabbedSet();
 			
-			//view has tabbed fields-set(s)
-			if (tabPanel) {
-				//fields-set is tabbed
-				if (this.isSetTabbed(node)) {
+			//fields-set is tabbed
+			if (this.isSetTabbed(node)) {
+				if (tabPanel) {
 					var tab = this.createTab(pSet);
 					tabPanel.add(tab);
 					tabPanel.doLayout();
-				
-				//fields-set is not tabbed - inserted at the latest position before default set	
+				//tab panel is not defined
 				} else {
-					var oSet = this.createFieldSet(pSet),
-						tabPanelIdx = this.items.indexOf(tabPanel),
-						setIdx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
-						
-					this.insert(setIdx, oSet);
+					tabPanel = this.createTabPanel([pSet]);
+					this.add(tabPanel);
 					this.doLayout();
 				}
-			
-			//insert fields-set in specified position	
+				
+			//plain fields-set	
 			} else {
+				//view has tabbed fields-set(s)
+				if (tabPanel) {
+					var tabPanelIdx = this.items.indexOf(tabPanel);
+					idx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
+				}
 				var oSet = this.createFieldSet(pSet);
 				this.insert(idx, oSet);
 				this.doLayout();
@@ -722,10 +722,17 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				idx = this.getFieldSetInsertionIndex(parent, node, refNode, refCmp);
 			
 			//fields-set is tabbed
-			if (tabPanel && this.isSetTabbed(node)) {
-				var oTab = this.createTab(pSet);
-				tabPanel.insert(idx, oTab);
-				tabPanel.doLayout();
+			if (this.isSetTabbed(node)) {
+				if (tabPanel) {
+					var oTab = this.createTab(pSet);
+					tabPanel.insert(idx, oTab);
+					tabPanel.doLayout();
+				//tab panel is not defined
+				} else {
+					tabPanel = this.createTabPanel([pSet]);
+					this.add(tabPanel);
+					this.doLayout();
+				}
 				
 			//insert fields-set in specified position	
 			} else {
@@ -736,6 +743,25 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			}
 		},
 		//eo executeInsertSet
+		
+		/**
+		 * Relocates fields-set component.
+		 * @private
+		 * @param {Node} node The fields-set (i:set) model node 
+		 */
+		relocateFieldSet : function(node) {
+			var grNode = node.parentNode,
+				refNode = node.nextSibling;
+			
+			//recreate fields-set and injected into the widget
+			if (refNode) {
+				var refCmp = this.getCmpByModel(refNode);
+				this.executeInsertSet(grNode, node, refNode, refCmp);
+			} else {
+				var idx = grNode.indexOf(node);
+				this.executeAddSet(node, idx);
+			}			
+		},
 		
 		/**
 		 * title
@@ -753,26 +779,32 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * float
 		 */
 		executeUpdateSetFloat : function(node, cmp, p, v) {
-			var grNode = node.parentNode,
-				refNode = node.nextSibling;
-			
-			//destroy fields-set component	
 			this.isSetTabbed(node) ? cmp.ownerCt.destroy() : cmp.destroy();
-			
-			//recreate fields-set and injected into the widget
-			if (refNode) {
-				var refCmp = this.getCmpByModel(refNode);
-				this.executeInsertSet(grNode, node, refNode, refCmp);
-			} else {
-				var idx = grNode.indexOf(node);
-				this.executeAddSet(node, idx);
-			}
+			this.relocateFieldSet(node);
 		},
 		/**
 		 * tabtitle
 		 */
 		executeUpdateSetTabtitle : function(node, cmp, p, v, oldValue) {
-			//TODO implement
+			//tabbed fields-set
+			if (!Ext.isEmpty(v)) {
+				if (!Ext.isEmpty(oldValue)) {
+					cmp.ownerCt.setTitle(v);
+				} else {
+					cmp.destroy();
+					this.relocateFieldSet(node);
+				}
+			} else {
+				//if there are no tabbed sets - remove tab panel
+				if (Ext.isEmpty(this.getTabbedFieldSets())) {
+					var tabPanel = this.getTabbedSet();
+					tabPanel.destroy();
+				} else {
+					cmp.ownerCt.destroy();
+				}
+				
+				this.relocateFieldSet(node);
+			}
 		},
 		
 		//i:ref
@@ -812,6 +844,35 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			refWrapper.items.each(function(ref, idx){
 				ref.columnWidth = clmWidth;
 			});
+		},
+		
+		/**
+		 * Removes reference component from widget and makes all needed updates.
+		 * Important - this method doesn't do anything for ref's field relocation.
+		 * @private
+		 * @param {Node} refNode The reference model node
+		 * @param {Ext.Container} cmp The reference contsiner component
+		 */
+		removeReferenceCmp : function(refNode, cmp) {
+			var	ref = this.getModelNodeProperties(refNode),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling,
+				cmp = cmp ? cmp : this.getCmpByModel(refNode),
+				refWrapper = cmp.ownerCt;
+			
+			cmp.destroy();
+			
+			//relocate references
+			if (ref['break'] && nextRefNode && prevRefNode 
+				&& !prevRefNode.getPropertyValue('break')) {
+					
+				this.relocateRefsUp(refNode, refWrapper);
+				
+			//updates reference wrapper after fields-set removal
+			} else {
+				this.updateFloatingRefWidth(refWrapper);
+				refWrapper.doLayout();
+			}
 		},
 		
 		/**
@@ -938,7 +999,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			if (isSetFloat) {
 				
 				if (prevRefNode) {
-					
 					if (prevRefNode.getPropertyValue('break')) {
 						if (ref['break'] || !nextRefNode) {
 							refIdx = setCmp.items.indexOf(this.getCmpByModel(prevRefNode).ownerCt) + 1;
@@ -955,7 +1015,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 								this.relocateRefsDown(refNode);
 							}
 						} else {
-							insertRef(nextRefNode);
+							insertRef(prevRefNode, null, 1);
 						}
 					}
 				
@@ -1004,22 +1064,8 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			//remove reference wrapper
 			if (!cmp.nextSibling() && !cmp.previousSibling()) {
 				refWrapper.destroy();
-				
-			//remove reference
 			} else {
-				cmp.destroy();
-				
-				//relocate references
-				if (ref['break'] && nextRefNode && prevRefNode 
-					&& !prevRefNode.getPropertyValue('break')) {
-						
-					this.relocateRefsUp(refNode, refWrapper);
-					
-				} else {
-				//updates reference wrapper after fields-set removal	
-					this.updateFloatingRefWidth(refWrapper);
-					refWrapper.doLayout();
-				}
+				this.removeReferenceCmp(refNode, cmp);
 			}
 
 			//if the field node (reference's field - "to" property) exists then relocate it 
@@ -1067,16 +1113,14 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			var gr = node.parentNode;
 			
 			if (gr.getPropertyValue('float') === true) {
-				
 				if (v === true) {
-					cmp.destroy();
+					this.removeReferenceCmp(node, cmp);
 					this.insertRefNode(node, gr.indexOf(node));
 				} else {
 					this.relocateRefsUp(node, cmp.ownerCt);
 				}
 			}
 		}
-		
 	};
 })();
 
