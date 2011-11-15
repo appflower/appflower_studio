@@ -649,26 +649,26 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			var pSet = this.getModelNodeProperties(node),
 				tabPanel = this.getTabbedSet();
 			
-			//view has tabbed fields-set(s)
-			if (tabPanel) {
-				//fields-set is tabbed
-				if (this.isSetTabbed(node)) {
+			//fields-set is tabbed
+			if (this.isSetTabbed(node)) {
+				if (tabPanel) {
 					var tab = this.createTab(pSet);
 					tabPanel.add(tab);
 					tabPanel.doLayout();
-				
-				//fields-set is not tabbed - inserted at the latest position before default set	
+				//tab panel is not defined
 				} else {
-					var oSet = this.createFieldSet(pSet),
-						tabPanelIdx = this.items.indexOf(tabPanel),
-						setIdx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
-						
-					this.insert(setIdx, oSet);
+					tabPanel = this.createTabPanel([pSet]);
+					this.add(tabPanel);
 					this.doLayout();
 				}
-			
-			//insert fields-set in specified position	
+				
+			//plain fields-set	
 			} else {
+				//view has tabbed fields-set(s)
+				if (tabPanel) {
+					var tabPanelIdx = this.items.indexOf(tabPanel);
+					idx = this.getDefaultSet() ? tabPanelIdx - 1 : tabPanelIdx; 
+				}
 				var oSet = this.createFieldSet(pSet);
 				this.insert(idx, oSet);
 				this.doLayout();
@@ -722,10 +722,17 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				idx = this.getFieldSetInsertionIndex(parent, node, refNode, refCmp);
 			
 			//fields-set is tabbed
-			if (tabPanel && this.isSetTabbed(node)) {
-				var oTab = this.createTab(pSet);
-				tabPanel.insert(idx, oTab);
-				tabPanel.doLayout();
+			if (this.isSetTabbed(node)) {
+				if (tabPanel) {
+					var oTab = this.createTab(pSet);
+					tabPanel.insert(idx, oTab);
+					tabPanel.doLayout();
+				//tab panel is not defined
+				} else {
+					tabPanel = this.createTabPanel([pSet]);
+					this.add(tabPanel);
+					this.doLayout();
+				}
 				
 			//insert fields-set in specified position	
 			} else {
@@ -736,6 +743,25 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			}
 		},
 		//eo executeInsertSet
+		
+		/**
+		 * Relocates fields-set component.
+		 * @private
+		 * @param {Node} node The fields-set (i:set) model node 
+		 */
+		relocateFieldSet : function(node) {
+			var grNode = node.parentNode,
+				refNode = node.nextSibling;
+			
+			//recreate fields-set and injected into the widget
+			if (refNode) {
+				var refCmp = this.getCmpByModel(refNode);
+				this.executeInsertSet(grNode, node, refNode, refCmp);
+			} else {
+				var idx = grNode.indexOf(node);
+				this.executeAddSet(node, idx);
+			}			
+		},
 		
 		/**
 		 * title
@@ -753,26 +779,32 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * float
 		 */
 		executeUpdateSetFloat : function(node, cmp, p, v) {
-			var grNode = node.parentNode,
-				refNode = node.nextSibling;
-			
-			//destroy fields-set component	
 			this.isSetTabbed(node) ? cmp.ownerCt.destroy() : cmp.destroy();
-			
-			//recreate fields-set and injected into the widget
-			if (refNode) {
-				var refCmp = this.getCmpByModel(refNode);
-				this.executeInsertSet(grNode, node, refNode, refCmp);
-			} else {
-				var idx = grNode.indexOf(node);
-				this.executeAddSet(node, idx);
-			}
+			this.relocateFieldSet(node);
 		},
 		/**
 		 * tabtitle
 		 */
 		executeUpdateSetTabtitle : function(node, cmp, p, v, oldValue) {
-			//TODO implement
+			//tabbed fields-set
+			if (!Ext.isEmpty(v)) {
+				if (!Ext.isEmpty(oldValue)) {
+					cmp.ownerCt.setTitle(v);
+				} else {
+					cmp.destroy();
+					this.relocateFieldSet(node);
+				}
+			} else {
+				//if there are no tabbed sets - remove tab panel
+				if (Ext.isEmpty(this.getTabbedFieldSets())) {
+					var tabPanel = this.getTabbedSet();
+					tabPanel.destroy();
+				} else {
+					cmp.ownerCt.destroy();
+				}
+				
+				this.relocateFieldSet(node);
+			}
 		},
 		
 		//i:ref
@@ -1089,7 +1121,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 				}
 			}
 		}
-		
 	};
 })();
 
