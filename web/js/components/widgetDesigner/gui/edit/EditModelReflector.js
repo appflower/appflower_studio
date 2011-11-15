@@ -815,6 +815,35 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		/**
+		 * Removes reference component from widget and makes all needed updates.
+		 * Important - this method doesn't do anything for ref's field relocation.
+		 * @private
+		 * @param {Node} refNode The reference model node
+		 * @param {Ext.Container} cmp The reference contsiner component
+		 */
+		removeReferenceCmp : function(refNode, cmp) {
+			var	ref = this.getModelNodeProperties(refNode),
+				prevRefNode = refNode.previousSibling,
+				nextRefNode = refNode.nextSibling,
+				cmp = cmp ? cmp : this.getCmpByModel(refNode),
+				refWrapper = cmp.ownerCt;
+			
+			cmp.destroy();
+			
+			//relocate references
+			if (ref['break'] && nextRefNode && prevRefNode 
+				&& !prevRefNode.getPropertyValue('break')) {
+					
+				this.relocateRefsUp(refNode, refWrapper);
+				
+			//updates reference wrapper after fields-set removal
+			} else {
+				this.updateFloatingRefWidth(refWrapper);
+				refWrapper.doLayout();
+			}
+		},
+		
+		/**
 		 * Relocates refs down.
 		 * @private
 		 * @param {Node} refNode 
@@ -938,7 +967,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			if (isSetFloat) {
 				
 				if (prevRefNode) {
-					
 					if (prevRefNode.getPropertyValue('break')) {
 						if (ref['break'] || !nextRefNode) {
 							refIdx = setCmp.items.indexOf(this.getCmpByModel(prevRefNode).ownerCt) + 1;
@@ -1004,22 +1032,8 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			//remove reference wrapper
 			if (!cmp.nextSibling() && !cmp.previousSibling()) {
 				refWrapper.destroy();
-				
-			//remove reference
 			} else {
-				cmp.destroy();
-				
-				//relocate references
-				if (ref['break'] && nextRefNode && prevRefNode 
-					&& !prevRefNode.getPropertyValue('break')) {
-						
-					this.relocateRefsUp(refNode, refWrapper);
-					
-				} else {
-				//updates reference wrapper after fields-set removal	
-					this.updateFloatingRefWidth(refWrapper);
-					refWrapper.doLayout();
-				}
+				this.removeReferenceCmp(refNode, cmp);
 			}
 
 			//if the field node (reference's field - "to" property) exists then relocate it 
@@ -1068,8 +1082,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			
 			if (gr.getPropertyValue('float') === true) {
 				if (v === true) {
-					console.log('kuku !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-					cmp.destroy();
+					this.removeReferenceCmp(node, cmp);
 					this.insertRefNode(node, gr.indexOf(node));
 				} else {
 					this.relocateRefsUp(node, cmp.ownerCt);
