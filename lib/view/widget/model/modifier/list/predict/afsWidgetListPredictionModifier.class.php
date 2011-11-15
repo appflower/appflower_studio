@@ -80,7 +80,13 @@ class afsWidgetListPredictionModifier extends afsBasePredictionModifier
                 $columnName = $field['attributes']['name'];
                 if (!$tableMap->hasColumn($columnName)) continue;
                 
-                $field['attributes']['filter'] = $this->getFilter($tableName, $columnName, $tableMap->getColumn($columnName)->getType());
+                $column = $tableMap->getColumn($columnName);
+                if ($column->isForeignKey()) {
+                    $field['attributes']['filter'] = $this->getForeignFilter($tableName, $columnName, $column->getRelation()->getForeignTable()->getPhpName());
+                    continue;
+                }
+                
+                $field['attributes']['filter'] = $this->getFilter($tableName, $columnName, $column->getType());
             }
         }
         
@@ -119,6 +125,20 @@ class afsWidgetListPredictionModifier extends afsBasePredictionModifier
         $type = (array_key_exists($column_type, $this->field_type_filter_map)) ? $this->field_type_filter_map[$column_type] : self::DEFAULT_FIELD_FILTER;
         
         return "[type:{$type},dataIndex:{$table_name}.{$column_name}]";
+    }
+    
+    /**
+     * Getting foreign filter definition
+     *
+     * @param string $table_name 
+     * @param string $column_name 
+     * @param string $foreign_table 
+     * @return string
+     * @author Sergey Startsev
+     */
+    private function getForeignFilter($table_name, $column_name, $foreign_table)
+    {
+        return "[class:ModelCriteriaFetcher,method:filterData,param:{$foreign_table},dataIndex:{$table_name}.{$column_name}]";
     }
     
     /**

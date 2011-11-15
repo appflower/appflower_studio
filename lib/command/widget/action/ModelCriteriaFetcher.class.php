@@ -94,4 +94,23 @@ class ModelCriteriaFetcher
         return array($options, $selected);
     }
     
+    /**
+     * Data needed for filters with foreign table
+     *
+     * @param string $model_name 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function filterData($model_name)
+    {
+        $query = "{$model_name}Query";
+        $objects = $query::create()->find();
+        
+        if ($objects != null) {
+            foreach ($objects as $object) $array[$object->getId()] = $object->__toString();
+            
+            return $array;
+        } else return array();
+    }
+    
 }
