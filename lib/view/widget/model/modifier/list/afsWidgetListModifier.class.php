@@ -8,14 +8,22 @@
 class afsWidgetListModifier extends afsBaseModelModifier 
 {
     /**
-     * no need for changes in list widget
+     * Overloaded modifier method caller
      *
      * @param afsBaseModel $model
      * @return afsBaseModel
-     * @author Łukasz Wojciechowski
+     * @author Sergey Startsev
      */
     public function modify(afsBaseModel $model) 
     {
+        $definition = $model->getDefinition();
+        
+        if ($model->isNew()) {
+            $definition = afsWidgetListPredictionModifier::create($definition)->filtering()->sorting()->getDefinition();
+        }
+        
+        $model->setDefinition($definition);
+        
         return $model;
     }
     

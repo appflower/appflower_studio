@@ -5,7 +5,7 @@
  * @package appFlowerStudio
  * @author Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsWidgetEditPredictionModifier
+class afsWidgetEditPredictionModifier extends afsBasePredictionModifier
 {
     /**
      * Default field type
@@ -25,13 +25,6 @@ class afsWidgetEditPredictionModifier
     );
     
     /**
-     * Definition
-     *
-     * @var array
-     */
-    private $definition;
-    
-    /**
      * Private constructor
      */
     private function __construct() {}
@@ -46,32 +39,9 @@ class afsWidgetEditPredictionModifier
     static public function create(array $definition = array())
     {
         $instance = new self;
-        $instance->definition = $definition;
+        $instance->setDefinition($definition);
         
         return $instance;
-    }
-    
-    /**
-     * Setting definition
-     *
-     * @param Array $definition 
-     * @return void
-     * @author Sergey Startsev
-     */
-    public function setDefinition(Array $definition)
-    {
-        $this->definition = $definition;
-    }
-    
-    /**
-     * Getting definition
-     *
-     * @return array
-     * @author Sergey Startsev
-     */
-    public function getDefinition()
-    {
-        return $this->definition;
     }
     
     /**
