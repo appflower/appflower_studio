@@ -61,7 +61,7 @@ afStudio.model.Property = Ext.extend(Object, {
      * @return {Boolean}
      */
     validate : function(v) {
-    	return (v == '' || this.type.validate(v) === true) ? true : false;
+    	return (!Ext.isEmpty(v) || this.type.validate(v) === true) ? true : false;
     },
     
     /**
@@ -70,7 +70,7 @@ afStudio.model.Property = Ext.extend(Object, {
      * @return {Boolean}
      */
     isValid : function() {
-    	return this.required ? (this.value != '' && this.type.validate(this.value) === true) : true;
+    	return this.required ? (!Ext.isEmpty(this.value) && this.type.validate(this.value) === true) : true;
     },
     
     getErrors : function() {
