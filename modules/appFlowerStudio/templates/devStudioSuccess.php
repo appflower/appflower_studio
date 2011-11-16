@@ -252,7 +252,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/show/ShowView.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/html/HtmlView.js"></script>
 	<!-- containers -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WD.js"></script>	
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WD.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WDContainer.js"></script>	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/InspectorPalette.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/DesignerPanel.js"></script>

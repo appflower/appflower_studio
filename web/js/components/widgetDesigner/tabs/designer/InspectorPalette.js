@@ -33,11 +33,9 @@ afStudio.wd.InspectorPalette = Ext.extend(Ext.Container, {
 	 * @return {Object} The configuration object 
 	 */
 	_beforeInitComponent : function() {
-   		var self = this,
-   			c = this.controller,
+   		var c = this.controller,
    			tr = c.getView('inspectorTree'),
-   			pg = c.getView('propertyGrid'),
-   			wd = this.findParentByType('widgetdesigner');
+   			pg = c.getView('propertyGrid');
    			
 		return {
 			items: [
@@ -60,38 +58,31 @@ afStudio.wd.InspectorPalette = Ext.extend(Ext.Container, {
                     collapseMode: 'mini',					
 			        items: pg
 				}]
-			},{
-				xtype: 'filetreepanel',
-	        	title: 'Code Browser',
-				url: afStudioWSUrls.getFiletreeUrl,
-	        	fileCt: wd,
-				rootText: 'Home',
-				maxFileSize: 524288 * 2 * 10,
-				autoScroll: true,
-				enableProgress: false
 			}]
 		};
-	}//eo _beforeInitComponent	
+	},
+	//eo _beforeInitComponent	
 	
 	/**
-	 * initComponent method
+	 * Template method
+	 * @override
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);
+		
 		afStudio.wd.InspectorPalette.superclass.initComponent.apply(this, arguments);
+		
 		this._afterInitComponent();
-	}//eo initComponent
+	},
 		
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */
-	,_afterInitComponent : function() {
-		var _this = this;
-		
+	_afterInitComponent : function() {
 		this.on({
 			scope: this,
 			

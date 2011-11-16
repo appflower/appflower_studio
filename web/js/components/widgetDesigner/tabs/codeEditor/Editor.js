@@ -43,7 +43,7 @@ afStudio.wd.Editor = Ext.extend(Ext.Container, {
 		
 		return {
 			items: this.ace
-		}
+		};
 	},
 	
 	/**

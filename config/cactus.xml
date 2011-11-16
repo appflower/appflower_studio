@@ -231,6 +231,7 @@
 					
 					<!-- containers -->
 					<file>js/components/widgetDesigner/WD.js</file>
+					<file>js/components/widgetDesigner/WDContainer.js</file>
 					<file>js/components/widgetDesigner/WidgetsBuilder.js</file>
 					<file>js/components/widgetDesigner/tabs/designer/</file>
 					<file>js/components/widgetDesigner/tabs/codeEditor/</file>

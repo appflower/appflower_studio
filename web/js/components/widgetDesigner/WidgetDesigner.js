@@ -10,8 +10,8 @@ Ext.namespace('afStudio.wd');
 afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 
 	/**
-	 * Required. WD controller
-	 * @cfg {ViewController} controller
+	 * WD controller
+	 * @cfg {ViewController} (required) controller
 	 */	
 	 
 	/**
@@ -24,9 +24,8 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 			w = c.getWidget();
 		
 		return {
-			border: false,			
 			activeTab: 0,
-			enableTabScroll : true,
+			enableTabScroll: true,
 			items: [
 			{
 				xtype: 'wd.designer',
@@ -46,7 +45,7 @@ afStudio.wd.WidgetDesigner = Ext.extend(Ext.TabPanel, {
 			TODO tabs context menu must be added and improved. Ext.ux.TabMenu is useless and should be removed 
 			plugins: new Ext.ux.TabMenu()
 			*/
-		}
+		};
 	},
 	//eo _beforeInitComponent
 	

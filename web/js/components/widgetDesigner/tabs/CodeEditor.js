@@ -9,15 +9,11 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 	/**
 	 * @cfg {String} layout
 	 */
-	layout : 'hbox',
+	layout : 'fit',
 	
 	/**
-	 * @cfg {Object} layoutConfig
+	 * @cfg {Boolean} closable
 	 */
-	layoutConfig : {
-	    align: 'stretch'
-	},
-	
     closable : true,
 
     /**
@@ -45,46 +41,24 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 			file: this.file
 		});
 		
-        me.codeBrowserTree = new Ext.ux.FileTreePanel({
-			title: 'Code Browser',
-			flex: 1,
-			url: afStudioWSUrls.getFiletreeUrl,
-			fileCt: wd,
-			rootText: 'Home',
-			maxFileSize: 524288 * 2 * 10,
-			autoScroll: true, 
-			enableProgress: false 
-		});
-		
 		return {
 			title: this.fileName,
 			iconCls: 'icon-script-edit',
-			defaults: {
-				style: 'padding: 5px;'
-			},
 			tbar: [
 			{
 				text: 'Save',
 				itemId: 'saveBtn',
 				iconCls: 'icon-save'
 			}],
-			items: [
-			{
-				title: 'Code Editor',
-				flex: 3,
-				layout: 'fit',
-				items: [
-				{
-					border: false,
-					layout: 'fit',
-					items: me.ace
-				}]					
+			defaults: {
+				style: 'padding: 5px;'
 			},
-				me.codeBrowserTree
-			]
+			items: {
+				layout: 'fit',
+				items: me.ace 
+			}
 		};
 	},
-	//eo _beforeInitComponent	
 	
 	/**
 	 * Template method
@@ -107,7 +81,6 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 		    saveBtn = this.getTopToolbar().getComponent('saveBtn');
 		    
 		saveBtn.on('click', me.onCodeSave, me);
-		
 	},
 	
     //TODO: add this handler to codeEditor tabs contextMenu "Save" item
@@ -128,10 +101,10 @@ afStudio.wd.CodeEditor = Ext.extend(Ext.Panel, {
 			logMessage: String.format('WD file "{0}" [{1}] was saved', this.fileName, this.file)
 		});
 	},
-	//eo onCodeSave
 	
 	/**
-	 * Sets {@link #file} property + undercover ace editor file property and title if needed.
+	 * Sets {@link #file} property, undercover ace editor file property and title if needed.
+	 * @protected
 	 * @param {String} name
 	 * @param {String} newpath
 	 * @param {String} oldpath

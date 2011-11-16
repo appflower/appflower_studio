@@ -311,7 +311,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			},
 
 			// create treeSorter
-			treeSorter: this.enableSort ? new Ext.tree.TreeSorter(this, {folderSort:this.folderSort}) : undefined,
+			treeSorter: this.enableSort ? new Ext.tree.TreeSorter(this, {folderSort: this.folderSort}) : undefined,
 
 			keys: [
 			{
@@ -1354,7 +1354,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		// remove reference to file container 
 		if (this.fileCt) {
-			this.fileCt = null
+			this.fileCt = null;
 		}
 		
 		// call parent

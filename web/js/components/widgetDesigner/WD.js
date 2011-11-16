@@ -58,7 +58,7 @@ afStudio.WD = function() {
 						}
 						
 						afStudio.vp.addToWorkspace({
-							xtype: 'widgetdesigner',
+							xtype: 'wd',
 							controller: controller
 						}, true);
 					}
@@ -83,7 +83,7 @@ afStudio.WD = function() {
 			        'xsi:schemaLocation': 'http:\/\/www.appflower.com\/schema\/appflower.xsd',
 			        'xmlns:i': 'http://www.appflower.com/schema/'
 			    }
-			}
+			};
 		}
 		//eo getViewCarcass
 		
