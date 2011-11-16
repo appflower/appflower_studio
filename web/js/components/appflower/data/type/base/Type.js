@@ -67,7 +67,7 @@ afStudio.data.type.Type = Ext.extend(Object, {
 		var tr = afStudio.data.type.TypeRestrictions,
 			rest = this.restrictions;
 		
-		if (this.union ) {
+		if (this.union) {
 			//if union is not valid and type itself doesn't has any restrictions then value is invalid	
 			if (!this.validateUnion(value) && !rest) {
 				return this.invalidMessage;

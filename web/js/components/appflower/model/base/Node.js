@@ -366,7 +366,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		    	delete def.attributes;
 	    	}
 	    	
-    		if (def._content) {
+    		if (Ext.isDefined(def._content)) {
     			this.setNodeData(def._content);
     			delete def._content;
     		} else {
