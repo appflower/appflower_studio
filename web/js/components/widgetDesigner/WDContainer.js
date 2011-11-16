@@ -39,6 +39,7 @@ afStudio.wd.WDContainer = Ext.extend(Ext.Container, {
 	            minWidth: 200,
 	            split: true,
 	            collapsible: true,
+	            collapsed: true,
 				cmargins: '5',
 	        	title: 'Code Browser',
 				url: afStudioWSUrls.getFiletreeUrl,
