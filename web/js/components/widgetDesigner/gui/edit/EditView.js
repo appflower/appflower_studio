@@ -247,6 +247,20 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	},
 	
 	/**
+	 * Updates default fields-set visibility & existence state.
+	 * @protected
+	 * @param {Ext.form.FieldSet} defSet The default fields-set
+	 */
+	updateDefaultSetExistence : function(defSet) {
+		//if default fields-set is empty remove it
+		if (defSet.items.getCount() == 0) {
+			defSet.destroy();
+		} else {
+			this.updateDefaultSetVisibility();
+		}
+	},
+	
+	/**
 	 * Creates fields, field-sets and tabpanel. 
 	 * Returns an array of components being used as edit view items elements.
 	 * @protected
@@ -608,7 +622,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 */
 	createDefaultFieldSet : function(fields) {
 		var N = this.NODES,
-			cfg = {}, 
+			cfg = {},
 			fieldSet;
 		
 		var grouping = this.getModelNodeProperties(N.GROUPING);	
@@ -635,6 +649,10 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		});
 		
 		fieldSet = new Ext.form.FieldSet(cfg);
+		
+		fieldSet.on('remove', function(fs, fld){
+			this.updateDefaultSetExistence(fs);
+		}, this);
 		
 		return fieldSet;
 	},

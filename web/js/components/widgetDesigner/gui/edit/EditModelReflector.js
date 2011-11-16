@@ -305,7 +305,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		},
 		
 		/**
-		 * Adds field (i:fields->i:field).
+		 * Adds field.
 		 */
 		executeAddFieldsField : function(node, idx) {
 			var pField = this.getModelNodeProperties(node);
@@ -350,26 +350,10 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		//eo executeAddFieldsField
 
 		/**
-		 * Removes field (i:fields->i:field).
+		 * Removes field.
 		 */
 		executeRemoveFieldsField : function(node, cmp) {
-			var defSet = this.getDefaultSet();
-			
-			//field is located in the default fields-set
-			if (defSet && defSet.items.indexOf(cmp) != -1) {
 				cmp.destroy();
-				
-				//if default fields-set is empty remove it
-				if (defSet.items.getCount() == 0) {
-					defSet.destroy();
-				} else {
-					this.updateDefaultSetVisibility();
-				}
-				
-			} else {
-			//if a field is not inside the default fields-set simple remove it	
-				cmp.destroy();
-			}
 		},
 		
 		/**
