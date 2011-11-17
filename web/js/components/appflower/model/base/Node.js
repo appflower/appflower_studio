@@ -235,7 +235,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
              * @param {Node} node This node
              * @param {String} property The property's ID
              * @param {Mixed} value The new property's value to be set
-             * 
+             * @param {Mixed} oldValue The old/previous property's value
              */
             "beforeModelPropertyChanged" : true,
             
@@ -398,9 +398,11 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	var me = this;
     	
 		me.on({
-			modelNodeCreated : me.onModelNodeCreated,
+			modelNodeCreated: me.onModelNodeCreated,
 			
-			beforeModelPropertyChanged : me.onBeforeModelPropertyChanged
+			beforeModelPropertyChanged: me.onBeforeModelPropertyChanged,
+			
+			modelPropertyChanged: me.onModelPropertyChanged
 		});
     },    
     
@@ -1219,9 +1221,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		return null;
     	}
     	
-    	if (property.validate(v) && this.fireEvent("beforeModelPropertyChanged", this, p, v)) {
-    		
-    		var oldValue = property.getValue();
+		var oldValue = property.getValue();
+    	
+    	if (property.validate(v) && this.fireEvent("beforeModelPropertyChanged", this, p, v, oldValue)) {
     		
     		property.setValue(v);
     		
@@ -1265,8 +1267,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		return;
     	}
     	
-    	if (this.fireEvent("beforeModelPropertyChanged", this, '_content', value)) {
-    		var oldValue = this[nodeValueProperty].getValue();
+		var oldValue = this[nodeValueProperty].getValue();
+		
+    	if (this.fireEvent("beforeModelPropertyChanged", this, '_content', value, oldValue)) {
     		
 	    	this[nodeValueProperty].setValue(value);
 	    	
@@ -1570,7 +1573,18 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      * @protected
      * @return {Boolean}
      */
-    onBeforeModelPropertyChanged : function(node, property, value) {
+    onBeforeModelPropertyChanged : function(node, property, value, oldValue) {
+    	return true;
+    },
+    
+    /**
+     * To add additional functionality this method should be overriden. 
+     * <u>modelPropertyChanged</u> event listener. 
+     * @abstract
+     * @protected
+     * @return {Boolean}
+     */
+    onModelPropertyChanged : function(node, property, value, oldValue) {
     	return true;
     },
     
