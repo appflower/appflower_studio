@@ -113,4 +113,12 @@ class ModelCriteriaFetcher
         } else return array();
     }
     
+    /**
+     * Configure file field method
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    static public function configureFileField() {}
+    
 }

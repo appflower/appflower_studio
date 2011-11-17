@@ -317,4 +317,87 @@ abstract class simpleWidgetEditAction extends sfAction
         return $formData;
     }
     
+    /**
+     * File fields processing
+     *
+     * @example <i:field label="File" name="file" type="file">
+     *              <i:value type="orm">
+     *                  <i:class>ModelCriteriaFetcher</i:class>
+     *                  <i:method name="configureFileField">
+     *                      <i:param name="fields">[path:file_path_field]</i:param>
+     *                  </i:method>
+     *              </i:value>
+     *          </i:field>
+     *          
+     *          if multiple files for table should be added <i:param name="glue_model">ForeignModelName</i:param>
+     *          
+     * @param BaseObject $model 
+     * @return void
+     * @author Sergey Startsev
+     */
+    protected function processFileFields(BaseObject $model)
+    {
+        $model_name = $this->object->getPeer()->getOMClass(false);
+        
+        $upload_dir = sfConfig::get('sf_upload_dir');
+        $web_upload_dir = str_replace(sfConfig::get('sf_web_dir'), '', $upload_dir);
+        
+        if (!file_exists($upload_dir)) mkdir($upload_dir);
+        
+        foreach ($this->dom_xml_xpath->query('//i:fields/i:field[@type="file"]') as $field) {
+            $name = $field->getAttribute('name');
+            $params = array();
+            
+            $class = $field->getElementsByTagName('class');
+            $method = $field->getElementsByTagName('method');
+            
+            if (!($class) || !($method)) continue;
+            
+            $classNode = $class->item(0);
+            $methodNode = $method->item(0);
+            if ($classNode->nodeValue != 'ModelCriteriaFetcher' || $methodNode->getAttribute('name') != 'configureFileField') continue;
+            
+            foreach ($methodNode->getElementsByTagName('param') as $param) $params[$param->getAttribute('name')] = $param->nodeValue;
+            
+            $is_foreign = false;
+            
+            $hashes = array();
+            if (!array_key_exists('fields', $params)) continue;
+            foreach (explode(',', str_replace(array('[', ']'), '', $params['fields'])) as $def) {
+                list($key, $value) = explode(':', $def);
+                $hashes[$key] = $value;
+            }
+            
+            if (array_key_exists('glue_model', $params)) {
+                $glue_model = $params['glue_model'];
+                $is_foreign = true;
+            }
+            
+            if (!isset($_FILES['edit']['name']['0'][$name]) || !$_FILES['edit']['size']['0'][$name]) continue;
+            
+            $file_native_name = $_FILES['edit']['name']['0'][$name];
+            $file_size = $_FILES['edit']['size']['0'][$name];
+            $file_name = Util::makeRandomKey() . '.' . pathinfo($file_native_name, PATHINFO_EXTENSION);
+            $file_path = sfConfig::get('sf_upload_dir') . '/' . $file_name;
+            
+            $tmp_name = $_FILES['edit']['tmp_name']['0'][$name];
+            
+            if (!move_uploaded_file($tmp_name, $file_path)) continue;
+            
+            if ($is_foreign) {
+                $glue = new $glue_model;
+                call_user_func(array($glue, "set" . get_class($model)), $model);
+            } else {
+                $glue = $model;
+            }
+            
+            if (array_key_exists('path', $hashes)) $glue->setByName($hashes['path'], "{$web_upload_dir}/{$file_name}", BasePeer::TYPE_FIELDNAME);
+            if (array_key_exists('original_name', $hashes)) $glue->setByName($hashes['original_name'], $file_native_name, BasePeer::TYPE_FIELDNAME);
+            if (array_key_exists('name', $hashes)) $glue->setByName($hashes['name'], $file_name, BasePeer::TYPE_FIELDNAME);
+            if (array_key_exists('size', $hashes)) $glue->setByName($hashes['size'], $file_size, BasePeer::TYPE_FIELDNAME);
+            
+            $glue->save();
+        }
+    }
+    
 }
