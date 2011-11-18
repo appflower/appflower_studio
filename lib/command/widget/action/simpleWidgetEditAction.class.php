@@ -373,12 +373,18 @@ abstract class simpleWidgetEditAction extends sfAction
                 $is_foreign = true;
             }
             
+            if (array_key_exists('upload_dir', $params)) {
+                $web_upload_dir = '/' . trim($params['upload_dir'], '/');
+                $upload_dir = sfConfig::get('sf_web_dir') . $web_upload_dir;
+                if (!file_exists($upload_dir)) @mkdir($upload_dir, 0775, true);
+            }
+            
             if (!isset($_FILES['edit']['name']['0'][$name]) || !$_FILES['edit']['size']['0'][$name]) continue;
             
             $file_native_name = $_FILES['edit']['name']['0'][$name];
             $file_size = $_FILES['edit']['size']['0'][$name];
             $file_name = Util::makeRandomKey() . '.' . pathinfo($file_native_name, PATHINFO_EXTENSION);
-            $file_path = sfConfig::get('sf_upload_dir') . '/' . $file_name;
+            $file_path = "{$upload_dir}/{$file_name}";
             
             $tmp_name = $_FILES['edit']['tmp_name']['0'][$name];
             
