@@ -7,14 +7,13 @@ all:
   afs:
     # use this to set the production:false/development:true environment of Studio
     debug: false
-    # When you disable projects management - create/load/recent project items 
-    # in studio toolbar will not be available
-    projects_management_enabled: true
+    # To have "Projects management" enabled you need to have access to properly configured
+    # appFlowerService project instance
+    # check that project README.md file for more details
+    projects_management_enabled: false
+    # if you enable projects management - provide url to api
+    # afServiceUrl: api.appflower.com
     
-    # Configuration for ServerEnvironment class
-    server_auto_vhost_creation_enabled: false
-    server_env_studio_project_vhosts_dir: /etc/httpd/studio_projects_vhosts
-    server_env_apachectl_path: /usr/sbin/apachectl
     # If domain suffix is not provided created vhosts will use different port numbers
     # Otherwise it will be always 80 port with URL's like SLUG.DOMAIN_SUFFIX
     # server_auto_vhost_domain_suffix: demo.appflower.com

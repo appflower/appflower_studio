@@ -8,145 +8,6 @@
 class afStudioProjectCommand extends afBaseStudioCommand
 {
     /**
-     * Getting tree list
-     * 
-     * @return afResponse
-     */
-    protected function processGet()
-    {
-        $path = $this->getParameter('path');
-        if ($path) {
-            $path = str_replace('root/', '/', $path);
-            $path = str_replace('root', '/', $path);
-        }
-        
-        $files = sfFinder::type('any')->ignore_version_control()->maxdepth(0)->in($path);
-        
-        $data = array();
-        
-        if (count($files) > 0) {
-            foreach ($files as $file) {
-                $data[] = array(
-                    'text' => basename($file), 
-                    'leaf' => (is_file($file) ? true : false)
-                );
-            }
-        }
-        
-        return afResponseHelper::create()->success(true)->data(array(), $data, 0);
-    }
-	
-	/**
-	 * Checking is valid path
-	 * 
-	 * @return afResponse
-	 */
-    protected function processIsPathValid()
-    {
-        $response = afResponseHelper::create();
-        
-        $path = $this->getParameter('path');
-        if ($path) {
-            $path = str_replace('root/', '/', $path);
-            $path = str_replace('root', '/', $path);
-        }
-        
-        $projectYmlPath = $path . '/config/project.yml';
-        $appFlowerPluginPath = $path . '/plugins/appFlowerPlugin/';
-        $appFlowerStudioPluginPath = $path . '/plugins/appFlowerStudioPlugin/';
-        
-        if (file_exists($appFlowerPluginPath) && file_exists($appFlowerStudioPluginPath)) {
-            $sfYaml = new sfYaml();
-            $projectYmlData = $sfYaml->load($projectYmlPath);
-            
-            if (file_exists($projectYmlPath) && !empty($projectYmlData['project']['url'])) {
-                return $response
-                    ->success(true)
-                    ->message('The selected path contains a valid project. <br>You will now be redirected to <b>'.$projectYmlData['project']['url'].'/studio</b>')
-                    ->query($projectYmlData['project']['url']);
-            }
-            
-            return $response->success(false)->message('The selected path contains an AppFlower project, but the URL for the project is not set!');
-        }
-        
-        return $response->success(false)->message("The selected path doesn't contain any valid AppFlower project!");
-    }
-    
-    /**
-     * Save project functionality
-     * 
-     * @return afResponse
-     * @author Radu Topala
-     * @author Sergey Startsev
-     */
-    protected function processSave()
-    {
-        $params = $this->getParameter('params');
-        
-        $params['autodeploy'] = !isset($params['autodeploy']) ? false : true;
-        $path = $params['path'];
-        
-        
-        $params = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $params);
-        
-        $unique = afStudioUtil::unique();
-        
-        file_put_contents('/tmp/project-'.$unique.'.yml', sfYaml::dump(array('project' => $params), 4));
-   	    
-        $console = afStudioConsole::getInstance()->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml');
-    	
-        if (is_readable($path.'/config/project.yml')) {
-            return $response->success(true)->message('Project created in path <b>'.$path.'</b> Please set up virtual host to connect to it!')->console($console);
-        }
-        
-        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($console);
-    }
-    
-    /**
-     * Check database functionality
-     */
-    protected function processCheckDatabase()
-    {
-        $response = afResponseHelper::create();
-        
-        $form = json_decode($this->getParameter('form'));
-        
-        //check database connection
-        $form->port = empty($form->port) ? '3306' : $form->port;
-        $dsn = "mysql:dbname={$form->database};host={$form->host};port={$form->port}";
-        
-        error_reporting(0);
-        
-        $data = array();
-        
-        try {
-            $conn = new PDO($dsn, $form->username, $form->password);
-            
-            $response->success(true);
-            $data['databaseExist']= true;
-        } catch (PDOException $e) {
-            $error = $e->getMessage();
-            
-            if (substr_count($error, 'Access denied for user') > 0) {
-                $response->success(false);
-                $data['fields'][] = array('fieldName' => 'infor', 'error' => 'Cannot connect to database server using the provided username and/or password');
-                $data['fields'][] = array('fieldName' => 'username', 'error' => 'Username and/or password does not match');
-                $data['fields'][] = array('fieldName' => 'password', 'error' => 'Username and/or password does not match');                
-            } elseif (substr_count($error, 'Unknown MySQL server host') > 0 || substr_count($error, "Can't connect to MySQL server") > 0 || substr_count($error, 'is not allowed to connect to this MySQL') > 0) {
-                $response->success(false);
-                $data['fields'][] = array('fieldName'=>'infor','error'=>'Cannot connect to database server using the provided host and/or port');
-                $data['fields'][] = array('fieldName'=>'host','error'=>'Host and/or port does not match');
-                $data['fields'][] = array('fieldName'=>'port','error'=>'Host and/or port does not match');
-            } elseif (substr_count($error, 'Unknown database') > 0) {
-                $response->success(true);
-                $data['databaseExist'] = false;
-            }
-        }
-        
-        return $response->data(array(), $data, 0);
-    }
-    
-    /**
      * Save wizard processing
      * 
      * @return afResponse
@@ -155,79 +16,31 @@ class afStudioProjectCommand extends afBaseStudioCommand
      */
     protected function processSaveWizard()
     {
-        $userForm = json_decode($this->getParameter('userForm'));
-        $databaseForm = json_decode($this->getParameter('databaseForm'));
-        
-        $databaseExist = $this->getParameter('databaseExist');
-        $databaseExist = $databaseExist ? 1 : 0;
-        
-        $project['name'] = $this->getParameter('name');    	
-        $project['template'] = $this->getParameter('template');
-        
-        $path = $this->getParameter('path');
-        $slug = $this->getParameter('slug');
-        
-        $project = array_merge(ProjectConfigurationManager::$defaultProjectTemplate['project'], $project);
-        $unique = afStudioUtil::unique();
-        
-        file_put_contents('/tmp/project-'.$unique.'.yml', sfYaml::dump(array('project'=>$project), 4));
-        
-        //create db configuration
-        $dcm = new DatabaseConfigurationManager('/tmp/databases-'.$unique.'.yml');
-        $dcm->setDatabaseConnectionParams(array('database'=>$databaseForm->database, 'host'=>$databaseForm->host, 'port'=>$databaseForm->port, 'username'=>$databaseForm->username, 'password'=>$databaseForm->password));
-        $dcm->save();
-        
-        //create user configuration
-        afStudioProjectCommandHelper::createNewUser($userForm, '/tmp/users-'.$unique.'.yml');
-        
-        $console = afStudioConsole::getInstance();
-        $consoleOutput = $console->execute('afsbatch create_project_structure.sh '.$path.' /tmp/project-'.$unique.'.yml /tmp/databases-'.$unique.'.yml /tmp/users-'.$unique.'.yml '.$databaseExist.' '.$databaseForm->database.' '.$databaseForm->host.' '.$databaseForm->port.' '.$databaseForm->username.' '.$databaseForm->password);
-        $response = afResponseHelper::create();
-        if ($console->wasLastCommandSuccessfull() && is_readable($path.'/config/project.yml')) {
+        $userForm = json_decode($this->getParameter('userForm'), true);
+        $databaseForm = json_decode($this->getParameter('databaseForm'), true);
 
-            /**
-             * The code below modifies app.yml of created project and disabled project management
-             */
-            $appYml = new sfYaml();
-            $appYmlPath = "$path/apps/frontend/config/app.yml";
-            $fileData = $appYml->load($appYmlPath);
-            @$fileData['all']['afs']['projects_management_enabled'] = false;
-            afStudioUtil::writeFile($appYmlPath, $appYml->dump($fileData, 4));
+        $afServiceClient = afStudioUtil::getAfServiceClient();
+        $response = $afServiceClient->CreateProject($this->getParameter('name'), $userForm['email'], "$userForm[first_name] $userForm[last_name]");
+
+        if ($response->isSuccess()) {
             
+            $message = 'Project created!.<br />';
+            $success = true;
             
-            $autoVhostCreationEnabled = $this->isAutoVhostCreationEnabled();
-        
-            if ($autoVhostCreationEnabled) {
-                try {
-                    $serverEnv = afStudioUtil::getServerEnvironment();
-                    $vhost = $serverEnv->createNewProjectVhost($slug, $path.'/web');
-                    if ($vhost) {
-                        $serverEnv->restartWebServer();
-                        $projectURL = $vhost->getURL();
-                    }
-
-                    $success = true;
-                    $message = 'Project created in path <b>'.$path.'</b>.<br />';
-                    $message .= "You can access it with this URL: <a target=\"_blank\" href=\"http://$projectURL\">$projectURL</a>";
-
-                } catch (ServerException $e) {
-                    if (sfConfig::get('sf_environment') == 'dev') {
-                        throw $e;
-                    } else {
-                        $success = false;
-                        $message = 'Project was created in path <b>'.$path.'</b> but some errors occured while trying to configure Apache virtual host!<br />You should configure it manually.';
-                        $consoleOutput .= '<li>ServerEnvironmentException: '.$e->getMessage().'</li>';
-                    }
-                }
+            $data = $response->getData();
+            $project = $data['project'];
+            if ($project['url']) {
+                $message .= "You can access it with this URL: <a target=\"_blank\" href=\"http://$project[url]\">$project[url]</a>";
             } else {
-                $success = true;
-                $message = 'Project created in path <b>'.$path.'</b>.';
+                $message .= "It looks like virtual host was not properly created. Path to your project is: $project[path]";
             }
-            
-            return $response->success($success)->message($message)->console($consoleOutput);
-        }
+        } else {
+            $success = false;
+            $message = 'Sorry but project was not created due to some errors.';
+        }        
         
-        return $response->success(false)->message('Project was not created in path <b>'.$path.'</b> due to some errors!')->console($consoleOutput);
+        return afResponseHelper::create()->success($success)->message($message);
+                
     }
     
     /**
@@ -250,11 +63,9 @@ class afStudioProjectCommand extends afBaseStudioCommand
     protected function processCheckConfig()
     {
         $response = afResponseHelper::create();
-        if ($this->isValidGitRepository()) {
-            $response->success(true);
-            return $response->dataset(array(
-                'autoVhostCreationEnabled' => $this->isAutoVhostCreationEnabled()
-            ));
+        $afServiceClient = afStudioUtil::getAfServiceClient();
+        if ($afServiceClient) {
+            return $response->success(true);
         } else {
             return $response->success(false);
         }
@@ -285,26 +96,4 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         return $response->success(true)->data(array(), array('name' => $name, 'file' => "{$name}.{$postfix}", 'path' => $path), 0)->console($console_result);
     }
-    
-    private function isAutoVhostCreationEnabled()
-    {
-        return sfConfig::get('app_afs_server_auto_vhost_creation_enabled', false);
-    }
-
-    /**
-     * If .git directory exists and git binary is available - we are OK to create new project
-     * 
-     * @return bool
-     */
-    private function isValidGitRepository()
-    {
-        $gitDir = sfConfig::get('sf_root_dir').'/.git';
-        if (file_exists($gitDir) && is_dir($gitDir)) {
-            exec('git --version', $output, $return_var);
-            if ($return_var === 0) {
-                return true;
-            }
-        }
-    }
-    
 }

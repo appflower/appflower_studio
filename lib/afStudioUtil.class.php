@@ -268,12 +268,9 @@ class afStudioUtil
     	return $console->wasLastCommandSuccessfull();
     }
     
-    public static function getServerEnvironment()
+    public static function getAfServiceClient()
     {
-        return new ServerEnvironmentService(
-            sfConfig::get('app_afs_server_env_studio_project_vhosts_dir'),
-            sfConfig::get('app_afs_server_env_apachectl_path'),
-            sfConfig::get('app_afs_server_auto_vhost_domain_suffix')
-        );
+        require_once sfConfig::get('sf_lib_dir').'/vendor/afServiceClient/src/lib/afServiceClient.php';
+        return afServiceClient::create(sfConfig::get('app_afs_afServiceUrl'));
     }
 }

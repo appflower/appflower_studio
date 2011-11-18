@@ -26,23 +26,6 @@ class afsProjectManagerActions extends afsActions
     }
     
     /**
-     * Checking is valid path
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
-    public function executeIsPathValid(sfWebRequest $request)
-    {
-        $parameters = array(
-            'path' => $request->getParameter('path')
-        );
-        
-        $response = afStudioCommand::process('project', 'isPathValid', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
      * Saving project
      *
      * @param sfWebRequest $request 
@@ -70,29 +53,10 @@ class afsProjectManagerActions extends afsActions
      * @param sfWebRequest $request 
      * @author Sergey Startsev
      */
-    public function executeCheckDatabase(sfWebRequest $request)
-    {
-        $parameters = array(
-            'form' => $request->getParameter('form'),
-        );
-        
-        $response = afStudioCommand::process('project', 'checkDatabase', $parameters);
-        
-        return $this->renderJson($response);
-    }
-    
-    /**
-     * Checking database functionality
-     *
-     * @param sfWebRequest $request 
-     * @author Sergey Startsev
-     */
     public function executeSaveWizard(sfWebRequest $request)
     {
         $parameters = array(
             'userForm' => $request->getParameter('userForm'),
-            'databaseForm' => $request->getParameter('databaseForm'),
-            'databaseExist' => $request->getParameter('databaseExist'),
             'name' => $request->getParameter('name'),
             'template' => $request->getParameter('template'),
             'path' => $request->getParameter('path'),

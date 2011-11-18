@@ -1,19 +1,7 @@
 Ext.apply(Ext.form.VTypes, {
     uniqueNode: function(value, field) {
-    	var tree = field.ownerCt.ownerCt.tree;
-    	var currentNode = tree.getSelectionModel().getSelectedNode();
-    	var slug = afStudio.createSlug(value);
-      if(currentNode.childNodes)
-  		{
-  			for(var i=0;i<currentNode.childNodes.length;i++)
-  			{
-  				if(!currentNode.childNodes[i].isLeaf()&&currentNode.childNodes[i].text == slug)
-  				{
-  					return false;
-  				}
-  			}
-  		}
-    	return true;
+        // check for project name correctness by contacting afService through backend action
+        return true;
     },
  
     uniqueNodeText : 'Path to Project already exist! Please choose another Project Name!',

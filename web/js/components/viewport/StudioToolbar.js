@@ -186,14 +186,6 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
                     });
                 }
             });
-
-            menuItem.menu.addMenuItem({
-                text: 'Load project',
-                iconCls: 'icon-studio-load-project',
-                handler: function (b,e) {									
-                    (new afStudio.LoadProject()).show();
-                }
-            });
         }
 		
 		menuItem.menu.addMenuItem({

@@ -23,28 +23,4 @@ class afStudioProjectCommandHelper extends afBaseStudioCommandHelper
         
         return afStudioConsole::getInstance()->execute($commands);
     }
-    
-    /**
-     * User in Create Project Wizard
-     * 
-     * @param user - Object
-     * @author Radu Topala
-     */
-    static public function createNewUser($user, $path)
-    {
-        // Prepare data
-        $aCreate = array(
-            afStudioUser::FIRST_NAME => $user->first_name,
-            afStudioUser::LAST_NAME => $user->last_name,
-            afStudioUser::EMAIL => $user->email,
-            afStudioUser::PASSWORD => $user->password,
-            afStudioUser::ROLE => $user->role
-        );
-        
-        unset($aCreate[afStudioUser::USERNAME]);
-            
-        // Create new user
-        afStudioUser::create($user->username, $aCreate, $path);
-    }
-    
 }
