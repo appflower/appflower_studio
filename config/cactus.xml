@@ -83,10 +83,8 @@
 	
 					<!-- end of custom ext ux -->
 					
-					<file>js/afStudio.CreateProject.js</file>
 					<file>js/afStudio.CreateProjectWizard.js</file>
 					<file>js/afStudio.databaseConnectionSettings.js</file>
-					<file>js/afStudio.LoadProject.js</file>
 					<file>js/afStudio.popup.js</file>
 					<file>js/afStudio.settings.js</file>
 					<file>js/afStudio.overrides.js</file>
