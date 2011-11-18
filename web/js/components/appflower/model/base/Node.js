@@ -402,7 +402,9 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 			
 			beforeModelPropertyChanged: me.onBeforeModelPropertyChanged,
 			
-			modelPropertyChanged: me.onModelPropertyChanged
+			modelPropertyChanged: me.onModelPropertyChanged,
+			
+			beforeModelNodeRemove: me.onBeforeModelNodeRemove
 		});
     },    
     
@@ -1565,11 +1567,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		
 		return canBeAdded;
     },
-    //eo onModelNodeCreated
     
     /**
      * To add additional validation functionality 
-     * this method should be overriden. 
+     * this method should be overridden. 
      * <u>beforeModelPropertyChanged</u> event listener.
      * @abstract
      * @protected
@@ -1580,7 +1581,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
-     * To add additional functionality this method should be overriden. 
+     * To add additional functionality this method should be overridden. 
      * <u>modelPropertyChanged</u> event listener. 
      * @abstract
      * @protected
@@ -1588,6 +1589,17 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      */
     onModelPropertyChanged : function(node, property, value, oldValue) {
     	return true;
+    },
+
+    /**
+     * To add additional functionality this method should be overridden. 
+     * <u>beforeModelNodeRemove</u> event listener. 
+     * @abstract
+     * @protected
+     * @return {Boolean}
+     */
+    onBeforeModelNodeRemove: function(tree, node, removeNode) {
+    	return true;    	
     },
     
     /**
@@ -1609,5 +1621,4 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
         return tpl.apply(this);
     }
-    //eo toString
 });

@@ -55,5 +55,36 @@ afStudio.model.widget.Fields = Ext.extend(afStudio.model.TypedNode, {
 		{name: afStudio.ModelNode.LINK, hasMany: true, unique: 'name'},
 		{name: afStudio.ModelNode.RADIO_GROUP, hasMany: true, unique: 'name'},
 		{name: afStudio.ModelNode.IF}
-	]	
+	],
+	
+	/**
+	 * @override 
+	 */
+	onBeforeModelNodeRemove : function(tree, fieldsNode, removeNode) {
+		var N = afStudio.ModelNode;
+		
+		//i:field node to be removed
+		if (tree && removeNode.tag == N.FIELD) {
+			var r = tree.root,
+				fieldName = removeNode.getPropertyValue('name'),
+				gr = r.getImmediateModelNode(N.GROUPING);
+			
+			//model has i:grouping node	
+			if (gr && !Ext.isEmpty(fieldName)) {
+
+				var ref = gr.findChild(N.REF, 'to', fieldName, true);
+
+				/**
+				 * Additional model consistency logic.
+				 * Being deleted field is "grouped" - associated with i:ref model node.
+				 * Before removal of a field the associated reference should be deleted. 
+				 */
+				if (ref) {
+					ref.remove(true);
+				}
+			}
+		}
+		
+		return true;		
+	}
 });
