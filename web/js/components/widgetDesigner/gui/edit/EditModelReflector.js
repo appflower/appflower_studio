@@ -847,8 +847,9 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			cmp.destroy();
 			
 			//relocate references
-			if (ref['break'] && nextRefNode && prevRefNode 
-				&& !prevRefNode.getPropertyValue('break')) {
+			if (ref['break'] 
+				&& nextRefNode && nextRefNode.getPropertyValue('break') 
+				&& prevRefNode && !prevRefNode.getPropertyValue('break')) {
 					
 				this.relocateRefsUp(refNode, refWrapper);
 				
