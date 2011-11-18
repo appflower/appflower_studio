@@ -176,7 +176,7 @@ var afStudio = function () {
 			afStudio.Cli.init();
 			
 			//set up logger mode
-			afStudio.Logger.mode = afStudio.Logger.OFF;
+			afStudio.Logger.mode = afStudio.Logger.DEBUG;
 			
 			/**
 			 * this will add current project's url to the recent projects cookie

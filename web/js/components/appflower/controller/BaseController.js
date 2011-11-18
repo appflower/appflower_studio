@@ -429,6 +429,10 @@ afStudio.controller.BaseController = Ext.extend(Ext.util.Observable, {
             	afStudio.Logger.info('@controller beforeModelPropertyChanged', node, p, v);
             	//TODO properties and reconfiguration must be more clear & extensible organized
             	//reconfiguration properties should not be injected in definition object
+            	
+            	//TODO view definition should be changed on firing "modelPropertyChanged" event instead of
+            	//"beforeModelPropertyChanged"
+            	
             	if (p != 'structure') {
 	            	this.viewDefinition.setEntityAttribute(node, p, v);
             	}

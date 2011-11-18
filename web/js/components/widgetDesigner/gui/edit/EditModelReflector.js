@@ -836,9 +836,11 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		 * @private
 		 * @param {Node} refNode The reference model node
 		 * @param {Ext.Container} cmp The reference contsiner component
+		 * @param {Boolean} (optional) refBreak The reference "break" property to use instead of reference node's real value,
+		 * by default it is undefined and the real "break" property of i:ref node is used 
 		 */
-		removeReferenceCmp : function(refNode, cmp) {
-			var	ref = this.getModelNodeProperties(refNode),
+		removeReferenceCmp : function(refNode, cmp, refBreak) {
+			var	refBreak = Ext.isDefined(refBreak) ? refBreak : refNode.getPropertyValue('break'),
 				prevRefNode = refNode.previousSibling,
 				nextRefNode = refNode.nextSibling,
 				cmp = cmp ? cmp : this.getCmpByModel(refNode),
@@ -847,7 +849,7 @@ afStudio.wd.edit.EditModelReflector = (function() {
 			cmp.destroy();
 			
 			//relocate references
-			if (ref['break'] && nextRefNode && prevRefNode 
+			if (refBreak && nextRefNode && prevRefNode 
 				&& !prevRefNode.getPropertyValue('break')) {
 					
 				this.relocateRefsUp(refNode, refWrapper);
@@ -1093,12 +1095,12 @@ afStudio.wd.edit.EditModelReflector = (function() {
 		/**
 		 * break
 		 */
-		executeUpdateRefBreak : function(node, cmp, p, v) {
+		executeUpdateRefBreak : function(node, cmp, p, v, oldValue) {
 			var gr = node.parentNode;
 			
 			if (gr.getPropertyValue('float') === true) {
 				if (v === true) {
-					this.removeReferenceCmp(node, cmp);
+					this.removeReferenceCmp(node, cmp, oldValue);
 					this.insertRefNode(node, gr.indexOf(node));
 				} else {
 					this.relocateRefsUp(node, cmp.ownerCt);

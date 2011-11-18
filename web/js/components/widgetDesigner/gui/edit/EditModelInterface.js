@@ -168,15 +168,20 @@ afStudio.wd.edit.EditModelInterface = (function() {
 		/**
 		 * Returns i:ref node or its properties by field node.
 		 * If the reference node wasn't found by a field returns null.
-		 * @param {Node} fldNode The field node
+		 * @param {String|Node} fld The field's name property or field node
 		 * @param {Boolean} (optional) asNode Flag if set to true returns i:ref node otherwise its properties, defaults to false
 		 * @return {Object} i:ref or null
 		 */
-		getRefByField : function(fldNode, asNode) {
-			var nodeIdMpr = this.NODE_ID_MAPPER,
-				fldName = fldNode.getPropertyValue('name'),
-				ref = null;
+		getRefByField : function(fld, asNode) {
+			if (!Ext.isString(fld) && !(fld instanceof afStudio.model.Node)) {
+				throw new Ext.Error('afStudio.wd.edit.EditModelInterface, getRefByField() parameter "fld" is not correct.' +
+					'Accepts "String" as field name and "afStudio.model.Node" as field node');
+			}
 			
+			var nodeIdMpr = this.NODE_ID_MAPPER,
+				fldName = Ext.isString(fld) ? fld : fld.getPropertyValue('name'),
+				ref = null;
+				
 			if (Ext.isEmpty(fldName)) {
 				return null;
 			}
