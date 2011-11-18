@@ -66,16 +66,20 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
 				r = tree.root,
 				gr = r.getImmediateModelNode(N.GROUPING);
 			
-			console.log('field name is being changed');	
-				
 			var ref = gr.findChild(N.REF, 'to', oldValue, true);
 			
+			//additional model consistency logic
+			//field is "grouped" - associated with i:ref model node
 			if (ref) {
 				if (Ext.isEmpty(v)) {
 					afStudio.Msg.warning(String.format('Widget Designer - {0} node', N.FIELD), 
-						String.format('Field is grouped! Incorrect <u>to</u> property. <br/> Field with <u>name</u> = <b>{0}</b> does not exists.', v));
+						String.format('Field "{0}" is grouped and must have <b>name</b> property.', oldValue));
+					
+					node.setProperty(p, oldValue);
 					
 					return false;
+					
+				//update i:field -> i:ref relation 	
 				} else {
 					ref.setProperty('to', v);
 				}
@@ -83,5 +87,5 @@ afStudio.model.widget.Field = Ext.extend(afStudio.model.Node, {
 		}
 		
 		return true;
-	}
+	}	
 });

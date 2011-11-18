@@ -1527,6 +1527,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     //eo validate 
     
+    //TODO validation & any additional actions should be organized as callbacks and not stands on events 
+    
     /**
      * <u>modelNodeCreated</u> event listener.
      * Checks if can be added child node.
