@@ -424,9 +424,8 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	,onNodeContextMenu : Ext.emptyFn	
 	
 	/**
-	 * This method has no default implementation and returns true, so you must provide an
-     * implementation that does something to validate the node's name(text attribute)
-     * and returns true if <tt>name</tt> is valid.
+	 * To provide more specific validation this method should be overridden.
+     * Validates the node's name (text attribute) and returns true if <tt>name</tt> is valid.
 	 * @protected
 	 * 
 	 * @param {Mixed} name The node's text attribute to validate

@@ -36,14 +36,14 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
      * Text message is shown when node editor's value is invalid. 
      * @cfg {String} editorFieldInvalid
      */
-    editorFieldInvalid : 'Page name is invalid! <br /> accepts only alphanumeric symbols and "_", begins from "_" or alpha and ends with <b>.xml</b>.',
+    editorFieldInvalid : 'Page name is invalid! <br /> accepts only alpha-numeric symbols and "_", begins from "_" or alpha.',
 	
     /**
      * Default leaf node configuration object.
      * @cfg {Object} leafNodeCfg
      */
     leafNodeCfg : {
-    	text: 'newPage.xml',
+    	text: 'NewPage',
     	iconCls: 'icon-layout',
     	type: 'page',    	
     	leaf: true
@@ -265,28 +265,19 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	},
 	
 	/**
-	 * @override 
-	 */
-	isValidNodeName : function(node, name) {
-		return /^[^\d]\w*\.xml$/im.test(name) ? true : false;
-	},
-	
-	/**
 	 * @override
 	 * @private
 	 */
 	addNodeController : function(node) {
 		var me = this,
  			appName = this.getParentNodeAttribute(node, 'text'),
- 			page = this.getNodeAttribute(node, 'text'),
- 			pageTitle = page.substring(0, page.lastIndexOf('.xml'));
+ 			page = this.getNodeAttribute(node, 'text');
 
 		this.executeAction({
 			url: me.addNewPageUrl,
 			params: {
 	            app: appName,
-	            page: page,
-	            title: pageTitle
+	            page: page
 		    },
 		    loadingMessage: String.format('"{0}" page creation...', page),
 		    logMessage: String.format('Layout "{0}" was created', page),
