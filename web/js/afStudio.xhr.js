@@ -37,11 +37,12 @@ afStudio.xhr = {
 	 * 
 	 * <li><b>mask</b>: {Mixed} (Optional) Masking action processing.
 	 *    By default masking is not activated. To activate masking the simplest way is to set it to <i>true</i>. Then the whole viewport will be masked.
-	 *    You can set up masking passing in a string - the masking message or more precisely using making object:
+	 *    You can set up masking passing in a string - the masking message or more precisely using masking object:
 	 *      <ul>
-	 *      	<li><i>msg</i>: (Optional) The masking message.</li>
-	 *      	<li><i>region</i>: The masking region. Mask will be applied to the specified region.
-	 *               Region can be one of the following: 'center', 'west', 'north', 'south'.          
+	 *      	<li><i>msg</i>: {String} The masking message.</li>
+	 *      	<li><i>region</i>: (Optional) {String} The masking region. Mask will be applied to the specified region.
+	 *               Region can be one of the following: 'center', 'west', 'north', 'south'. 
+	 *               By default the whole viewport is masked.       
 	 *          </li>
 	 *      </ul>
 	 * </li>

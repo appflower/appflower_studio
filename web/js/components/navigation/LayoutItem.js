@@ -3,58 +3,58 @@
  * 
  * @class afStudio.navigation.LayoutItem
  * @extends afStudio.navigation.BaseItemTreePanel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePanel, {
 	
 	/**
 	 * @cfg {String} baseUrl (defaults to '/appFlowerStudio/layout')
 	 */
-	baseUrl : '/appFlowerStudio/layout'
+	baseUrl : '/appFlowerStudio/layout',
 	
 	/**
 	 * @cfg {String} layoutMetaUrl (defaults to '/afsLayoutBuilder/get')
 	 */
-	,layoutMetaUrl : '/afsLayoutBuilder/get'
+	layoutMetaUrl : '/afsLayoutBuilder/get',
 
 	/**
 	 * @cfg {String} addNewPageUrl (defaults to '/afsLayoutBuilder/new')
 	 */
-	,addNewPageUrl : '/afsLayoutBuilder/new'
+	addNewPageUrl : '/afsLayoutBuilder/new',
 
 	/**
 	 * @cfg {String} renamePageUrl (defaults to '/afsLayoutBuilder/rename')
 	 */
-	,renamePageUrl : '/afsLayoutBuilder/rename'
+	renamePageUrl : '/afsLayoutBuilder/rename',
 
 	/**
 	 * @cfg {String} deletePageUrl (defaults to '/afsLayoutBuilder/delete')
 	 */
-	,deletePageUrl : '/afsLayoutBuilder/delete'	
+	deletePageUrl : '/afsLayoutBuilder/delete',	
 	
     /**
-     * @cfg {String} editorFieldInvalid
      * Text message is shown when node editor's value is invalid. 
+     * @cfg {String} editorFieldInvalid
      */
-    ,editorFieldInvalid : 'Page name is invalid! <br /> accepts only alphanumeric symbols and "_", begins from "_" or alpha and ends with <b>.xml</b>.'
+    editorFieldInvalid : 'Page name is invalid! <br /> accepts only alphanumeric symbols and "_", begins from "_" or alpha and ends with <b>.xml</b>.',
 	
     /**
-     * @cfg {Object} leafNodeCfg
      * Default leaf node configuration object.
+     * @cfg {Object} leafNodeCfg
      */
-    ,leafNodeCfg : {
+    leafNodeCfg : {
     	text: 'newPage.xml',
     	iconCls: 'icon-layout',
     	type: 'page',    	
     	leaf: true
-    }
+    },
     
 	/**
-	 * @property appContextMenu
 	 * "Application" node type context menu.
+	 * @property appContextMenu
 	 * @type {Ext.menu.Menu}  
 	 */
-	,appContextMenu : new Ext.menu.Menu({
+	appContextMenu : new Ext.menu.Menu({
         items: [
         {
             itemId: 'app-add-page',
@@ -67,16 +67,16 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
             		tree = node.getOwnerTree();
             		
             	tree.addLeafNode(node);
-            }//eo itemclick 
+            } 
         }
-	})//eo appContextMenu	
+	}),	
 	
 	/**
-	 * @property pageContextMenu
 	 * "Page" node type context menu
+	 * @property pageContextMenu
 	 * @type {Ext.menu.Menu}
 	 */
-	,pageContextMenu : new Ext.menu.Menu({		
+	pageContextMenu : new Ext.menu.Menu({		
         items: [
         {
             itemId: 'edit-page',
@@ -119,15 +119,16 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
                 }
             }
         }
-	})//eo pageContextMenu	
+	}),
+	//eo pageContextMenu	
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
-		var _this = this;
+	_beforeInitComponent : function() {
+		var me = this;
 		
 		var treeLoader = new Ext.tree.TreeLoader({
 			url: this.baseUrl,
@@ -146,30 +147,32 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				{
 					text: 'Add Layout',
 					iconCls: 'icon-pages-add',
-					handler: _this.onAddPageClick,
-					scope: _this
+					scope: me,
+					handler: me.onAddPageClick
 				}]
 			}
 		};		
-	}//eo _beforeInitComponent
+	},
 	
 	/**
 	 * Ext Template method
+	 * @override
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
-		);				
+		);
+		
 		afStudio.navigation.LayoutItem.superclass.initComponent.apply(this, arguments);
-	}//eo initComponent
+	},
 	
 	/**
 	 * Adds new page to <b>this</b> tree item.
 	 * "Add Page" <u>click</u> event listener.
 	 */
-	,onAddPageClick : function() {
-		var _this = this, 
+	onAddPageClick : function() {
+		var me = this, 
 			rootNode = this.getRootNode(),
 			selectedNode = this.getSelectionModel().getSelectedNode();
 			
@@ -187,7 +190,7 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				this.addLeafNode(rootNode.firstChild);
 			}
 		}
-	}//eo addPage	
+	},	
 	
 	/**
 	 * Loads a page associated with the node into Layout Designer.
@@ -195,75 +198,63 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 *  
 	 * @param {Ext.tree.TreeNode} layoutNode
 	 */
-	,runNode : function(layoutNode) {
-		var _this = this,
-			 page = _this.getNodeAttribute(layoutNode, 'text'),
-			  app = _this.getParentNodeAttribute(layoutNode, 'text');
+	runNode : function(layoutNode) {
+		var me = this,
+			page = me.getNodeAttribute(layoutNode, 'text'),
+			app = me.getParentNodeAttribute(layoutNode, 'text');
 		
-		afStudio.vp.mask(String.format('Loading {0} page metadata...', page));
-		
-		Ext.Ajax.request({
-		   url: _this.layoutMetaUrl,
+		afStudio.xhr.executeAction({
+		   url: me.layoutMetaUrl,
 		   params: {
 		       app: app,
 		       page: page
 		   },
-		   success: function(xhr, opt) {		   
-			   afStudio.vp.unmask();
-			   var response = Ext.decode(xhr.responseText);
-			   if (response.success) {
-				   afStudio.vp.addToWorkspace(
-				      new afStudio.layoutDesigner.DesignerPanel({
-				       		layoutMeta: response.content,
-				       		layoutApp: app,
-				       		layoutPage: page				   
-				      }), 
-				   	  true
-				   );			   	
-			   } else {
-			   	   afStudio.Msg.error(response.content);
-			   }
-		   },
-		   failure: function(xhr, opt) {
-		   	   afStudio.vp.unmask();
-		       Ext.Msg.alert('Error', String.format('Status code {0}, message {1}', xhr.status, xhr.statusText));
+		   mask: String.format('Loading layout "{0}" metadata...', page),
+		   showNoteOnSuccess: false,
+		   run: function(response) {
+			   afStudio.vp.addToWorkspace(
+			      new afStudio.layoutDesigner.DesignerPanel({
+			       		layoutMeta: response.content,
+			       		layoutApp: app,
+			       		layoutPage: page				   
+			      }), 
+			   	  true
+			   );			   	
 		   }
 		});
-	}//eo runNode
+	},
 	
 	/**
 	 * Fires when a node is double clicked.
 	 * @override
-	 * 
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */
-	,onNodeDblClick : function(node, e) {
+	onNodeDblClick : function(node, e) {
         if (this.getNodeAttribute(node, 'type') == 'page') {
         	this.runNode(node);        	
         }
-	}//eo onNodeDblClick
+	},
 	
 	/**
 	 * Fires when a node is right clicked.
 	 * @override
-	 * 
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */
-	,onNodeContextMenu : function(node, e) {		
-		var _this = this,
-			 menu;
+	onNodeContextMenu : function(node, e) {		
+		var me = this,
+			menu;
 		
         node.select();
         
         switch (node.attributes.type) {
         	case 'app' :
-        		menu = _this.appContextMenu;
+        		menu = me.appContextMenu;
         	break;
         	
         	case 'page' :
-        		menu = _this.pageContextMenu;
+        		menu = me.pageContextMenu;
         	break;
         }
         
@@ -271,33 +262,34 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
     		menu.contextNode = node;
         	menu.showAt(e.getXY());
 		}
-	}//eo onNodeContextMenu
+	},
 	
 	/**
 	 * @override 
 	 */
-	,isValidNodeName : function(node, name) {
+	isValidNodeName : function(node, name) {
 		return /^[^\d]\w*\.xml$/im.test(name) ? true : false;
-	}//eo isValidNodeName
+	},
 	
 	/**
 	 * @override
+	 * @private
 	 */
-	,addNodeController : function(node) {
-		var _this = this,
+	addNodeController : function(node) {
+		var me = this,
  			appName = this.getParentNodeAttribute(node, 'text'),
  			page = this.getNodeAttribute(node, 'text'),
  			pageTitle = page.substring(0, page.lastIndexOf('.xml'));
 
 		this.executeAction({
-			url: _this.addNewPageUrl,
+			url: me.addNewPageUrl,
 			params: {
 	            app: appName,
 	            page: page,
 	            title: pageTitle
 		    },
 		    loadingMessage: String.format('"{0}" page creation...', page),
-		    logMessage: String.format('Layout Designer: page "{0}" was created', page),
+		    logMessage: String.format('Layout "{0}" was created', page),
 		    run: function(response) {
 		    	this.refreshNode(appName, page, this.runNode);
 		    },
@@ -305,24 +297,25 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		    	node.remove();
 		    }
 		});
-	}//eo addNodeController
+	},
 	
 	/**
 	 * @override
+	 * @private
 	 */
-	,renameNodeController : function(node, value, startValue) {
-		var _this = this,
+	renameNodeController : function(node, value, startValue) {
+		var me = this,
  			appName = this.getParentNodeAttribute(node, 'text');
  			
 		this.executeAction({
-			url: _this.renamePageUrl,
+			url: me.renamePageUrl,
 			params: {
 	            app: appName,
 	            page: startValue,
 	            name: value
 		    },
 		    loadingMessage: String.format('Renaming page from "{0}" to {1} ...', startValue, value),		    
-		    logMessage: String.format('Layout Designer: page "{0}" was renamed to "{1}"', startValue, value),		    
+		    logMessage: String.format('Layout "{0}" was renamed to "{1}"', startValue, value),		    
 		    run: function(response) {
 		    	this.refreshNode(appName, value, this.runNode);
 		    },		    
@@ -330,14 +323,14 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		    	node.setText(startValue);
 		    }
 		});
-	}//eo renameNodeController
+	},
 	
 	/**
 	 * Deletes page.
 	 * @param {Ext.tree.TreeNode} node The page associated to this node being deleted
 	 */
-	,deletePage : function(node) {		
-		var _this = this,
+	deletePage : function(node) {		
+		var me = this,
 			rootNode = this.getRootNode(),
 			appName = this.getParentNodeAttribute(node, 'text'),
 			pageName = this.getNodeAttribute(node, 'text'),
@@ -345,14 +338,14 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		
 		Ext.Msg.confirm('Layout Designer', confirmText, function(buttonId) {
 			if (buttonId == 'yes') {
-				_this.executeAction({
-					url: _this.deletePageUrl,
+				me.executeAction({
+					url: me.deletePageUrl,
 					params: {
 			            app: appName,
 			            page: pageName
 				    },
 				    loadingMessage: String.format('"{0}" page deleting ...', pageName),
-				    logMessage: String.format('Layout Designer: page "{0}" was deleted', pageName),
+				    logMessage: String.format('Layout "{0}" was deleted', pageName),
 				    run: function(response) {
 				    	this.loadRootNode(function() {
 				    		this.selectChildNodeByText(rootNode, appName).expand();
@@ -362,21 +355,22 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 				});     		
 			}
 		});		
-	}//eo deletePage
+	},
 	
 	/**
 	 * Sets specified node as a homepage.
 	 * @private
 	 * @param {Ext.tree.TreeNode} node
 	 */
-    ,setPageAsHomepage : function(node) {
-		var actionUrl   = afStudioWSUrls.pageSetAsHomepage;
+    setPageAsHomepage : function(node) {
+		var actionUrl = afStudioWSUrls.pageSetAsHomepage,
+			widgetUri = this.getNodeAttribute(node, 'widgetUri');
 		
 		this.executeAction({
             url: actionUrl,
-            params: { widgetUri: node.attributes.widgetUri },
-            loadingMessage: String.format('Set {0} as homepage...', node.attributes.widgetUri),
-            logMessage: String.format('Widgets: {0} "{1}" was deleted', 'AHOJ', 'tam')
+            params: {widgetUri: widgetUri},
+            loadingMessage: String.format('Set {0} as homepage...', widgetUri),
+            logMessage: String.format('Layout "{0}" was set as homepage.', widgetUri)
         });     		
 	}
 });
