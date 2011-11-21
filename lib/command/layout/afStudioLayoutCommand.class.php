@@ -67,7 +67,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         
         $is_new = $page->isNew();
         
-        $page->setTitle($this->getParameter('title'));
+        $page->setTitle(sfInflector::humanize(sfInflector::underscore($page_name)));
         $page->setDefinition($definition);
         
         $saveResponse = $page->save();

@@ -98,7 +98,6 @@ class afsLayoutBuilderActions extends afsActions
         $parameters = array(
             'app' => $request->getParameter('app', 'frontend'),
             'page' => $request->getParameter('page'),
-            'title' => $request->getParameter('title', $request->getParameter('page')),
             'is_new' => true
         );
         

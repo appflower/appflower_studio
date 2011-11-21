@@ -98,9 +98,9 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
                 $module['children'][$k] = array(
                     'app'           => $app,
                     'module'        => $module_name,
-                    'widgetUri'     => $module_name . '/' . str_replace('.xml', '', $xmlName),
+                    'widgetUri'     => "{$module_name}/{$widgetName}",
                     'type'          => 'xml',
-                    'text'          => $xmlName,
+                    'text'          => $widgetName,
                     'securityPath'  => $securityPath,
                     'xmlPath'       => $xmlPaths[$xk],
                     'actionPath'    => $actionPath,

@@ -24,7 +24,7 @@ class afStudioLayoutCommandHelper
             if (count($aPage) > 0) {
                 foreach ($aPage as $page) {
                     $treeNode['children'][] = array(
-                        'text'      => $page['text'],
+                        'text'      => pathinfo($page['text'], PATHINFO_FILENAME),
                         'iconCls'   => 'icon-layout',
                         'xmlPath'   => $page['xmlPath'],
                         'widgetUri' => $page['widgetUri'],
@@ -67,12 +67,13 @@ class afStudioLayoutCommandHelper
                 );
                 
                 foreach ($params[$module]['xml_names'] as $xk => $xmlName) {
+                    $widgetName = pathinfo($xmlName, PATHINFO_FILENAME);
                     $children['children'][] = array(
                         'module'    => $module,
-                        'widget'    => str_replace('.xml', '', $xmlName),
-                        'widgetUri' => $module.'/'.str_replace('.xml', '', $xmlName),
+                        'widget'    => $widgetName,
+                        'widgetUri' => "{$module}/{$widgetName}",
                         'type'      => 'xml',
-                        'text'      => $xmlName,
+                        'text'      => $widgetName,
                         'leaf'      => true,
                     );
                 }
