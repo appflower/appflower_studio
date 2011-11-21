@@ -12,7 +12,7 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 	/**
 	 * @cfg {String} Url (defaults to '/afsLayoutBuilder/getWidgetList')
 	 */
-	widgetListUrl : '/afsLayoutBuilder/getWidgetList'
+	widgetListUrl : '/afsLayoutBuilder/getWidgetList',
 	
 	/**
 	 * @property {Ext.tree.TreePanel} selectorTree
@@ -25,20 +25,20 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 	 */
 	
 	/**
-	 * Closes/Hides this window
+	 * Closes/Hides this window.
 	 */
-	,closeWidgetSelectorTreeWindow : function() {
+	closeWidgetSelectorTreeWindow : function() {
 		if (this.closeAction == 'hide') {
 			this.hide();
 		} else {
 			this.close();
 		}
-	}//eo closeWidgetSelectorTreeWindow
+	},
 	
 	/**
 	 * Fires this window <u>widgetselect</u> event
 	 */
-	,selectWidget : function() {
+	selectWidget : function() {
 		var t = this.selectorTree,
 			treeSm = t.getSelectionModel(),
 			selectedNode = treeSm.getSelectedNode();
@@ -53,34 +53,35 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 			this.closeWidgetSelectorTreeWindow();
 			this.fireEvent('widgetselect', eventObj);
 		}
-	}//eo selectWidget
+	},
 	
 	/**
 	 * Loads widgets list
 	 */
-	,loadWidgetList : function() {
+	loadWidgetList : function() {
 		var treeLoader = this.selectorTree.getLoader(),
 			rootNode = this.selectorTree.root;
 			
-		treeLoader.load(rootNode);
-	}//eo loadModules
-	
+		treeLoader.load(rootNode, function(){
+			this.expandChildNodes();
+		});
+	},
 	
 	/**
-	 * This <u>show</u> event listener
-	 * Sets first active tab and loads data
+	 * Loads the application's widgets.
+	 * This <u>show</u> event listener.
 	 */
-	,onWidgetSelectorShow : function() {
+	onWidgetSelectorShow : function() {
 		this.addWidgetBtn.disable();
 		this.loadWidgetList();
-	}//eo onWidgetSelectorShow	
+	},
 	
 	/**
-	 * Initializes component
+	 * Initializes component.
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
+	_beforeInitComponent : function() {
 		var _this = this;
 		
 		var selectorTree = new Ext.tree.TreePanel({
@@ -97,7 +98,7 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 		        draggable: false,
 		        id: 'widget-list-root'
 		    },
-		    rootVisible: false				
+		    rootVisible: false
 		});
 		
 		return {
@@ -125,25 +126,28 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 				scope: _this
 			}]
 		}
-	}//eo _beforeInitComponent
+	},
+	//eo _beforeInitComponent
 	
 	/**
 	 * Template method
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
-		);				
+		);
+		
 		afStudio.layoutDesigner.WidgetSelectorTreeWindow.superclass.initComponent.apply(this, arguments);
+		
 		this._afterInitComponent();
-	}
+	},
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
-	,_afterInitComponent : function() {
+	_afterInitComponent : function() {
 		var _this = this,
 			tree = this.selectorTree,
 		    treeLoader = tree.getLoader();
@@ -180,27 +184,28 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 		_this.on({
 			'show': Ext.util.Functions.createDelegate(_this.onWidgetSelectorShow, _this)
 		});
-	}//eo _afterInitComponent
+	},
+	//eo _afterInitComponent
 	
     /**
      * Returns node's attribute
-     * @param {Ext.tree.TreeNode} node required
-     * @param {String} attribute required
-     * @param {Mixed} defaultValue optional
-     * @return attribute / defaultValue / null
+     * @param {Ext.tree.TreeNode} node The tree node
+     * @param {String} attribute The attribute name
+     * @param {Mixed} (optional) defaultValue
+     * @return {Mixed} attribute value | defaultValue | null if attribute is undefined and defaultValue is not specified
      */
-    ,getNodeAttribute : function(node, attribute, defaultValue) {
+    getNodeAttribute : function(node, attribute, defaultValue) {
     	return node.attributes[attribute]
     				? node.attributes[attribute] 
     				: (defaultValue ? defaultValue : null);
-    }//eo getNodeAttribute
+    },
 	
     /**
      * Checks if passed in node is a widget
      * @param {Ext.data.Node} node
      * @return {Boolean} true if node is a widget otherwise false
      */
-    ,isNodeWidget : function(node) {
+    isNodeWidget : function(node) {
 		var type = this.getNodeAttribute(node, 'type'),
 			isWidget = false;
 
@@ -209,7 +214,7 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 		}
 		
     	return isWidget;
-    }//eo isNodeWidget
+    },
     
 	/**
 	 * Tree <u>click</u> event listener.
@@ -217,13 +222,13 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 	 * @param {Ext.data.Node} node
 	 * @param {Ext.EventObject} e
 	 */
-	,onNodeClick : function(node, e) {
+	onNodeClick : function(node, e) {
 		if (this.isNodeWidget(node)) {
 			this.addWidgetBtn.enable();
 		} else {
 			this.addWidgetBtn.disable();
 		}
-	}//eo onNodeClick
+	},
 	
 	/**
 	 * Tree <u>dblclick</u> event listener. 
@@ -232,10 +237,9 @@ afStudio.layoutDesigner.WidgetSelectorTreeWindow = Ext.extend(Ext.Window, {
 	 * @param {Ext.data.Node} node The node
 	 * @param {Ext.EventObject} e
 	 */	
-	,onNodeDblClick : function(node, e) {
+	onNodeDblClick : function(node, e) {
 		if (this.isNodeWidget(node)) {
 			this.selectWidget();
 		}
-	}//eo onNodeDblClick
-	
+	}
 });
