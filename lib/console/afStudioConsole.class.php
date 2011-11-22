@@ -97,7 +97,7 @@ class afStudioConsole
     public function execute($commands)
     {
         if ($commands != 'start') {
-			$aCommands = (!is_array($commands)) ? (array) $commands : $commands;
+            $aCommands = (!is_array($commands)) ? (array) $commands : $commands;
             
             $result = array();
             if (!afsConsoleCommandHelper::create()->hasDeprecated($aCommands)) {
@@ -107,13 +107,13 @@ class afStudioConsole
                     foreach (afsConsoleCommandHelper::create()->getSubCommands($command) as $sub_command) {
                         $command_instance = afsConsoleCommand::create($sub_command)->setPrompt($this->getPrompt());
                         $result = array_merge($result, $command_instance->execute());
-
+                        
                         $this->lastExecReturnCode = $command_instance->getLastStatus();
                     }
                 }
             } else {
                 $result[] = afsRenderConsoleCommand::render("Some commands that you wanna execute has been deprecated");
-                $result[] = afsRenderConsoleCommand::render("Allowed commands: " . implode(', ', afsConsoleCommandHelper::create()->getCommands()));
+                $result[] = afsRenderConsoleCommand::render("Deprecated commands: " . implode(', ', afsConsoleCommandHelper::create()->getDeprecated()));
             }
         } else {
             $result = $this->getDescription();

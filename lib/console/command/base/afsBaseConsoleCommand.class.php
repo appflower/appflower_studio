@@ -153,7 +153,7 @@ abstract class afsBaseConsoleCommand
      */
     protected function getCli()
     {
-        return sfConfig::get(self::CONFIG_CLI, sfToolkit::getPhpCli());
+        return ($cli = sfConfig::get(self::CONFIG_CLI)) ? $cli : sfToolkit::getPhpCli();
     }
     
     /**

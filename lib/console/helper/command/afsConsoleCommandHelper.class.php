@@ -30,16 +30,14 @@ class afsConsoleCommandHelper
     {
         $helper = 'afs' . ucfirst(afsConsoleHelper::getOsType()) . 'ConsoleCommandHelper';
         
-        if (class_exists($helper)) {
-            $reflection = new ReflectionClass($helper);
-            $instance = $reflection->newInstance();
-            
-            if (!method_exists($instance, $method)) throw new afsConsoleCommandHelperException("Method '{$method}' doesn't exists in '{$helper}' helper");
-            
-            return call_user_func_array(array($instance, $method), $arguments);
-        } else {
-            throw new afsConsoleCommandHelperException("This '{$helper}' adaptee doesn't exists");
-        }
+        if (!class_exists($helper)) throw new afsConsoleCommandHelperException("This '{$helper}' adaptee doesn't exists");
+        
+        $reflection = new ReflectionClass($helper);
+        $instance = $reflection->newInstance();
+        
+        if (!method_exists($instance, $method)) throw new afsConsoleCommandHelperException("Method '{$method}' doesn't exists in '{$helper}' helper");
+        
+        return call_user_func_array(array($instance, $method), $arguments);
     }
     
 }

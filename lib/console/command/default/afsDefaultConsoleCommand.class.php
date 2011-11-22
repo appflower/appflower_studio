@@ -25,23 +25,7 @@ class afsDefaultConsoleCommand extends afsBaseConsoleCommand
      */
     protected function prepare()
     {
-        return (in_array(afsConsoleCommand::getCommandName($this->getCommand()), afsConsoleCommandHelper::create()->getCommands())) ? $this->getCommand() : '';
-    }
-    
-    /**
-     * Getting description if command empty
-     *
-     * @return string
-     * @author Sergey Startsev
-     */
-    protected function getDescription()
-    {
-        $result = sprintf(
-            "%s<li>This command is not available. You can do : <strong>%s</strong></li>",
-            $this->render($this->getPrefix() . $this->getCommand()), afStudioConsole::getCommands(false)
-        );
-        
-        return $result;
+        return $this->getCommand();
     }
     
 }
