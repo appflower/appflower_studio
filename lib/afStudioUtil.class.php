@@ -253,19 +253,17 @@ class afStudioUtil
     }
     
     /**
+     * Write file functionality
+     * 
      * @author radu
-     * @return boolean status of command runned by afStudioConsole
+     * @return boolean - status
      */
     public static function writeFile($filePath, $content)
     {
-      $unique = self::unique();
-    	
-    	file_put_contents('/tmp/copy-file-'.$unique.'.txt', $content);
-    	   	
-        $console = afStudioConsole::getInstance();
-    	$console->execute('afsbatch copy_file.sh /tmp/copy-file-'.$unique.'.txt '.$filePath);
-    	
-    	return $console->wasLastCommandSuccessfull();
+        if (file_exists($filePath) && !is_writable($filePath)) return false;
+        if (!file_exists($filePath) && !is_writable(dirname($filePath))) return false;
+        
+        return file_put_contents($filePath, $content);
     }
     
     public static function getAfServiceClient()
