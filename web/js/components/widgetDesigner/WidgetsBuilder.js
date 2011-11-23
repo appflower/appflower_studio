@@ -25,14 +25,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 */
 	
 	/**
-	 * @cfg {String} (Required) modelsUrl
-	 */
-	
-	/**
-	 * @cfg {String} (Required) fieldsUrl
-	 */
-	
-	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
@@ -54,6 +46,10 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			flex: 1, 
 			ddGroup: 'widgetsBuilderRel',
 			enableDragDrop: true,
+			loadMask: true,
+			border: true,
+			style: 'padding-bottom: 5px;',
+			autoScroll: true,
 			store: new Ext.data.ArrayStore({
 			    idIndex: 0,
 			    fields: ['id', 'model', 'name', 'field', 'type', 'size']
@@ -70,10 +66,19 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				width: 170, 
 				dataIndex: 'name'
 			}],
-			loadMask: true,
-			border: true,
-			style: 'padding-bottom: 5px;',
-			autoScroll: true
+			bbar: {
+				items: ['->',
+				{
+					text: 'Remove All',
+					ref: '../removeAllBtn',
+					iconCls: 'afs-icon-delete',
+					disabled: true,
+					handler: function() {
+						var fields = me.relationsGrid.store.getRange();
+						me.removeSelectedFields(fields);
+					}
+				}]
+			}
 		});
 		
 		this.basket = new Ext.Panel({
@@ -87,11 +92,10 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		
 		this.fieldsGrid = new Ext.grid.GridPanel({
 			id: 'fields-grid',
-			ref: '../fieldsGrid',
 			ddGroup: 'widgetsBuilder',
-			enableDragDrop: true,			
+			enableDragDrop: true,
 			store: new Ext.data.JsonStore({
-				url: me.fieldsUrl,
+				url: afStudioWSUrls.modelListUrl,
 				autoLoad: false,				
 				baseParams: {
 					xaction: 'read'
@@ -206,7 +210,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 					{
 						xtype: 'afStudio.models.modelTree', 
 						ref: '../../modelsTree',
-						url: me.modelsUrl, 
 						border: false
 					}]
 				},{	
@@ -345,6 +348,8 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		                me.relationsGrid.store.add(r);
 					});
 					
+					me.relationsGrid.removeAllBtn.enable();
+					
                     return true;
                     
 				} else {
@@ -382,31 +387,51 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 					this.dragging = false;
 					return false;
 				} else {
-					var selectedRecords = ddSource.dragData.selections;
-					ddSource.grid.store.remove(selectedRecords);
-					
-					var mn = me.modelsTree.getSelectionModel().getSelectedNode(),
-						m  = me.modelsTree.getModel(mn),
-						fs = me.fieldsGrid.store;
-					Ext.each(selectedRecords, function(r) {
-						if (r.get('model') == m && !fs.getById(r.get('id'))) {
-							var rec = new fs.recordType({
-								id: r.get('id'),
-								name: r.get('field'),
-								type: r.get('type'),
-								size: r.get('size'),
-								required: r.get('required')
-							});
-							fs.add(rec);
-						}
-					});
-					
+					me.removeSelectedFields(ddSource.dragData.selections);
 					return true;						
 				}
 			}
 		});
 	},
 	//eo onWndShow
+
+	/**
+	 * Removes selected records from relationsGrid.
+	 * @private
+	 * @param {Array} fields The array of field records
+	 */
+	removeSelectedFields : function(fields) {
+		if (Ext.isEmpty(fields)) {
+			return;
+		}
+
+		this.relationsGrid.store.remove(fields);
+		
+		if (this.relationsGrid.store.getCount() == 0) {
+			this.relationsGrid.removeAllBtn.disable();
+		}
+					
+		var mn = this.modelsTree.getSelectionModel().getSelectedNode(),
+			m  = mn ? this.modelsTree.getModel(mn) : null,
+			fs = this.fieldsGrid.store;
+		
+		if (m == null) {
+			return; 	
+		}
+			
+		Ext.each(fields, function(r) {
+			if (r.get('model') == m && !fs.getById(r.get('id'))) {
+				var rec = new fs.recordType({
+					id: r.get('id'),
+					name: r.get('field'),
+					type: r.get('type'),
+					size: r.get('size'),
+					required: r.get('required')
+				});
+				fs.add(rec);
+			}
+		});
+	},
 	
 	/**
 	 * Loads model's fields.
@@ -528,6 +553,11 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
                 items.push(rec.data);
             }
 		});
+		
+		if (Ext.isEmpty(items)) {
+			afStudio.Msg.warning('Widget Builder', 'Widget can be created - <u>no one field is selected</u>');
+			return;
+		}
 		
 		var module    = this.modulesCombo.getValue(),
 			moduleRec = this.modulesCombo.getStore().getById(module),
