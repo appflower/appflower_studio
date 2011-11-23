@@ -161,7 +161,7 @@ class afStudioModelCommandModificator
     public function getSchemaFile()
     {
         if (is_null($this->schemaFile)) {
-            $this->schemaFile = afStudioUtil::getRootDir() . '/config/schema.yml';
+            $this->schemaFile = afStudioUtil::getRootDir() . DIRECTORY_SEPARATOR .'config' . DIRECTORY_SEPARATOR . 'schema.yml';
         }
         
         return $this->schemaFile;
@@ -777,7 +777,8 @@ class afStudioModelCommandModificator
         
         $schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->in($dirs);
         
-        foreach ($schemas as $schema) {
+        foreach ($schemas as $schema_path) {
+            $schema = (DIRECTORY_SEPARATOR != '/') ? str_replace('/', DIRECTORY_SEPARATOR, $schema_path) : $schema_path;
             $this->originalSchemaArray[$schema] = sfYaml::load($schema);
             
             if (!is_array($this->originalSchemaArray[$schema])) continue;
