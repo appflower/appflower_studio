@@ -118,32 +118,10 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			hidden: true
 		});
 		
-		this.modulesCombo = new Ext.ux.form.GroupingComboBox({
-			mode: 'local',
-			groupField: 'group',
-			valueField: 'value',
-			displayField: 'text',
-			forceSelection: true,
-            fieldLabel: 'Module Location',
-			loadingText: 'Please wait...',
-			emptyText: 'Please select the module location...',
-			allowBlank: false,
-			blankText: 'Module is required',
-			msgTarget: 'qtip',
-            store: new Ext.data.JsonStore({
-	            url: afStudioWSUrls.moduleGroupedUrl,
-            	autoLoad: true,
-	            baseParams: {
-	            	type: me.placeType
-	            },
-	            totalProperty: 'total',
-	            root: 'data',
-	            idProperty: 'value',
-	            fields: ['value', 'text', 'group']       	
-            }),
-			anchor: '100%',
-            hiddenName: 'model'
-		});		
+		this.modulesCombo = new afStudio.common.WidgetLocation({
+			locationType: me.placeType,
+			anchor: '100%'
+		});
 		
 		this.actionInput = new Ext.form.TextField({
 			fieldLabel: 'Widget Name',
