@@ -25,27 +25,27 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
 	 */
 	autoLoad : true,
 	
-	valueField: 'value',
+	valueField : 'value',
 	
-	displayField: 'text',
+	displayField : 'text',
 	
-	groupField: 'group',
+	groupField : 'group',
 	
-	allowBlank: false,
+	allowBlank : false,
 	
-	emptyText: 'Please select widget location...',
+	emptyText : 'Please select widget location...',
 	
-	blankText: 'Widget location is required',
+	blankText : 'Widget location is required',
 	
-	msgTarget: 'qtip',
+	msgTarget : 'qtip',
 	
-	mode: 'local',
+	mode : 'local',
 	
-	forceSelection: true,
+	forceSelection : true,
 	
-    fieldLabel: 'Widget Location',
+    fieldLabel : 'Widget Location',
     
-	loadingText: 'Please wait...',
+	loadingText : 'Please wait...',
 
 	/**
 	 * Template method.
@@ -69,3 +69,5 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
         afStudio.common.WidgetLocation.superclass.initComponent.call(this);
 	}
 });
+
+Ext.reg('common.widgetlocation', afStudio.common.WidgetLocation);

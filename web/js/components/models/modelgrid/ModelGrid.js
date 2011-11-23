@@ -768,6 +768,14 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	    	this.store.remove(r);
 	        	    }
 	            }
+	        },'-',{
+	        	text: 'Create Widget',
+	        	iconCls: 'icon-widgets-add',
+	        	handler: function(btn, e) {
+					
+	        		console.log();
+	        		
+	        	}
 	        }],
 	        bbar: pagingBar
 		};

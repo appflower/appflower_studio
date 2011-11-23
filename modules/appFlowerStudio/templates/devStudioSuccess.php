@@ -96,6 +96,7 @@
 
 <!-- Common Studio components -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/WidgetLocation.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/ModelFieldsGrid.js"></script>
 
 <!-- CLI -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/CommandLine.js"></script>

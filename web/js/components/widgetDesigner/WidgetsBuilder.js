@@ -88,33 +88,15 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			html: '<center><br>Drop Item here,<br> to remove it</br></center>' 
 		});
 		
-		var fieldsSm = new Ext.grid.CheckboxSelectionModel();
+		var fieldsSm = new Ext.grid.CheckboxSelectionModel({
+			singleSelect: true
+		});
 		
-		this.fieldsGrid = new Ext.grid.GridPanel({
+		this.fieldsGrid = new afStudio.common.ModelFieldsGrid({
 			id: 'fields-grid',
 			ddGroup: 'widgetsBuilder',
 			enableDragDrop: true,
-			store: new Ext.data.JsonStore({
-				url: afStudioWSUrls.modelListUrl,
-				autoLoad: false,				
-				baseParams: {
-					xaction: 'read'
-				},
-				root: 'data',
-				idProperty: 'id',    							
-				fields: ['id', 'name', 'type', 'size', 'required']
-			}),
-			sm: fieldsSm, 
-			columns: [
-				fieldsSm,
-				{header: 'Name', dataIndex: 'name'},
-				{header: 'Type', width: 110, align: 'center', dataIndex: 'type'},
-				{header: 'Size', width: 44, align: 'right', dataIndex: 'size'}
-			],
-			autoExpandColumn: 1,
-			loadMask: true,
-			border: false,
-			autoScroll: true,
+			multiSelect: true,
 			hidden: true
 		});
 		
