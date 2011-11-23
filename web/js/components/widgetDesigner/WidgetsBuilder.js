@@ -318,6 +318,9 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	onWndShow : function() {
 		var me = this;
 	    
+		//focus the first field (modules) in wizard
+		me.widgetForm.items.itemAt(0).focus(true, 200);
+		
 	    /**
 	     * DZ for relations grid
 	     */
