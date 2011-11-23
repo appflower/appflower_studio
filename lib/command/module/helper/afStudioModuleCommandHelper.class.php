@@ -120,6 +120,34 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
     }
     
     /**
+     * Getting grouped module list 
+     *
+     * @param string $type 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getGroupedList($type)
+    {
+        $root = afStudioUtil::getRootDir();
+        
+        $data = array();
+        foreach(afStudioUtil::getDirectories("{$root}/{$type}s/", true) as $place) {
+            $modules = afStudioUtil::getDirectories("{$root}/{$type}s/{$place}/modules/", true);
+            
+            foreach($modules as $module) {
+                $data[] = array(
+                    'value' => $module,
+                    'text'  => $module,
+                    'group' => $place,
+                    'type'  => $type,
+                );
+            }
+        }
+        
+        return $data;
+    }
+    
+    /**
      * Check is valid name or not
      *
      * @param string $name 

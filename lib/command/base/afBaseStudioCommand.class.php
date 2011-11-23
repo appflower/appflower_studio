@@ -102,7 +102,7 @@ abstract class afBaseStudioCommand
      */
     protected function hasParameter($name)
     {
-        return array_key_exists($name, $this->params);
+        return (array_key_exists($name, $this->params) && !is_null($this->params[$name]));
     }
     
     /**
