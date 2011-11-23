@@ -620,7 +620,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				clm.push({
 					attributes: {
 						name: f.field,
-						label: f.field
+						label: f.field.ucfirst()
 					}
 				});				
 			});
@@ -628,7 +628,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			clm = {
 				attributes: {
 					name: fields[0].field,
-					label: fields[0].field
+					label: fields[0].field.ucfirst()
 				}
 			};
 		}
