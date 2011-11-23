@@ -8,16 +8,6 @@
 class afStudioModuleCommand extends afBaseStudioCommand
 {
     /**
-     * Application type
-     */
-    const TYPE_APPLICATION = 'app';
-    
-    /**
-     * Plugin type
-     */
-    const TYPE_PLUGIN = 'plugin';
-    
-    /**
      * Get module list
      * 
      * @return afResponse
@@ -168,7 +158,7 @@ class afStudioModuleCommand extends afBaseStudioCommand
      */
     protected function processGetGrouped()
     {
-        $type = $this->getParameter('type', array(self::TYPE_APPLICATION, self::TYPE_PLUGIN));
+        $type = $this->getParameter('type', array(afStudioModuleCommandHelper::TYPE_APPLICATION, afStudioModuleCommandHelper::TYPE_PLUGIN));
         
         $data = array();
         if (is_array($type)) {

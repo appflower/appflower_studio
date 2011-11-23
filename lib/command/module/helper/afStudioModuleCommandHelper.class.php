@@ -8,6 +8,16 @@
 class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
 {
     /**
+     * Application type
+     */
+    const TYPE_APPLICATION = 'app';
+    
+    /**
+     * Plugin type
+     */
+    const TYPE_PLUGIN = 'plugin';
+    
+    /**
      * Rename module name inside actions
      *
      * @param string $name 
@@ -129,12 +139,13 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
     static public function getGroupedList($type)
     {
         $root = afStudioUtil::getRootDir();
+        $deprecated = ($type == self::TYPE_PLUGIN) ? afStudioPluginCommandHelper::getDeprecatedList() : array();
         
         $data = array();
         foreach(afStudioUtil::getDirectories("{$root}/{$type}s/", true) as $place) {
-            $modules = afStudioUtil::getDirectories("{$root}/{$type}s/{$place}/modules/", true);
+            if (in_array($place, $deprecated)) continue;
             
-            foreach($modules as $module) {
+            foreach(afStudioUtil::getDirectories("{$root}/{$type}s/{$place}/modules/", true) as $module) {
                 $data[] = array(
                     'value' => $module,
                     'text'  => $module,
