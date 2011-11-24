@@ -7,9 +7,19 @@ all:
   afs:
     # use this to set the production:false/development:true environment of Studio
     debug: false
+    
     # To have "Projects management" enabled you need to have access to properly configured
-    # appFlowerService project instance
-    # check that project README.md file for more details
+    # appFlowerService project instance - https://github.com/appflower/appFlowerService
+    # check appFlowerService's README.md file for more details
+    # when you have appFlowerService up and running you need to configure studio for using it by installing
+    # two new libraries from AppFlower, installation instructions:
+    #   cd lib/vendor/
+    #   git clone git://github.com/appflower/afServiceClient.git
+    #   cd ../../plugins
+    #   git clone git://github.com/appflower/afRESTWebServicePlugin.git
+    #   cd ../..
+    #   ./symfony cc
+    
     projects_management_enabled: false
     # if you enable projects management - provide url to api
     # afServiceUrl: api.appflower.com
