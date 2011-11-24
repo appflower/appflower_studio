@@ -301,7 +301,9 @@ class appFlowerStudioActions extends afsActions
     {
         $response = afStudioCommand::process('project', 'export', $request->getParameterHolder()->getAll());
         
-        if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) return $response->getParameter(afResponseMessageDecorator::IDENTIFICATOR);
+        if (!$response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            return $this->renderText($response->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+        }
         
         $data = $response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA);
         $file_name = $data['file'];
