@@ -245,4 +245,22 @@ class afStudioFileCommand extends afBaseStudioCommand
         return afResponseHelper::create()->success($success)->message($message);
     }
     
+    /**
+     * Extract archive functionality
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processUnarchive()
+    {
+        $file = $this->getParameter('file');
+        $file = (substr($file, 0, 4) == 'root') ? str_replace('root', afStudioUtil::getRootDir(), substr($file, 0, 4)) . substr($file, 4) : $file;
+        
+        if (!file_exists($file)) return afResponseHelper::create()->success(false)->message("File that you try to extract doesn't exists"); 
+        
+        $arch = new Archive_Tar("{$file}", 'gz');
+        
+        return afResponseHelper::create()->success($arch->extract(dirname($file)));
+    }
+    
 }
