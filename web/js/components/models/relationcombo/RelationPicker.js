@@ -24,10 +24,10 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 	 */
 	,pickRelation : function() {
 		var me = this,
-			   mn =	this.modelsTree.getSelectionModel().getSelectedNode(),
-			   fr = this.fieldsGrid.getSelectionModel().getSelected(),
-			    m = this.modelsTree.getModel(mn), 
-			    f = fr.get('name');
+			mn = this.modelsTree.getSelectionModel().getSelectedNode(),
+			fr = this.fieldsGrid.getSelectionModel().getSelected(),
+			m = this.modelsTree.getModel(mn), 
+			f = fr.get('name');
 		this.closePicker();
 		this.fireEvent('relationpicked', m + '.' + f);
 	}
@@ -164,7 +164,7 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 				iconCls: 'icon-accept',
 				handler: Ext.util.Functions.createDelegate(me.pickRelation, me)
 			}]
-		}		
+		};		
 	}
 	
 	/**

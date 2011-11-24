@@ -15,9 +15,11 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
 	url : afStudioWSUrls.moduleGroupedUrl,
 	
 	/**
-	 * @cfg {String} locationType The location type, one of "app" or "plugin", defaults to "app"
+	 * @cfg {String} locationType The location type 
+	 * One of "app" or "plugin" to get applications or plugins modules correspondingly.
+	 * To fetch all locations - combined apps and plugins locationType should be <tt>undefined</tt>.
+	 * By default locationType is undefined.
 	 */
-	locationType : 'app',
 	
 	/**
 	 * @cfg {Boolean} autoLoad The autoload flag, <tt>true</tt> means load locations list 
@@ -25,11 +27,25 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
 	 */
 	autoLoad : true,
 	
+	/**
+	 * @cfg {String} groupField The grouping field, defaults to "group"
+	 */
+	groupField : 'group',
+	
+	/**
+	 * @cfg {String} typeField The location type field, defaults to "type"
+	 */
+	typeField : 'type',
+	
+	/**
+	 * @cfg {String} valueField
+	 */
 	valueField : 'value',
 	
+	/**
+	 * @cfg {String} displayField
+	 */
 	displayField : 'text',
-	
-	groupField : 'group',
 	
 	allowBlank : false,
 	
@@ -53,17 +69,27 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
 	 * @private
 	 */
 	initComponent : function() {
-		var storeFields = [this.valueField, this.displayField, this.groupField];
+		var storeFields = [
+			this.valueField, this.displayField, 
+			this.groupField, this.typeField
+		];
+		
+		var storeBaseParams = {};
+		if (Ext.isDefined(this.locationType)) {
+			storeBaseParams.type = this.locationType;
+		}
 		
         this.store = new Ext.data.JsonStore({
             url: this.url,
         	autoLoad: this.autoLoad,
-            baseParams: {
-            	type: this.locationType
-            },
+            baseParams: storeBaseParams,
             root: 'data',
             idProperty: this.valueField,
-            fields: storeFields       	
+            fields: storeFields,
+			sortInfo: {
+			    field: this.typeField ? this.typeField : this.groupField,
+			    direction: 'ASC'
+			}
         });
         
         afStudio.common.WidgetLocation.superclass.initComponent.call(this);

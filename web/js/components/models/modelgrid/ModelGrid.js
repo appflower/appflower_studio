@@ -620,7 +620,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 				type: 'varchar',
 				exists: false
 			}
-		}		
+		};	
 	},
 	
 	/**
@@ -772,9 +772,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	text: 'Create Widget',
 	        	iconCls: 'icon-widgets-add',
 	        	handler: function(btn, e) {
-					
-	        		console.log();
-	        		
+					var w = new afStudio.models.CreateWidgetWindow();
+					w.show();
 	        	}
 	        }],
 	        bbar: pagingBar
