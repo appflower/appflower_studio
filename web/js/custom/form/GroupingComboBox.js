@@ -8,6 +8,11 @@ Ext.ns('Ext.ux.form');
  */
 Ext.ux.form.GroupingComboBox = Ext.extend(Ext.form.ComboBox, {
 	
+	/**
+	 * Template method
+	 * @override
+	 * @private
+	 */
 	initComponent : function() {
 		if (this.transform) {
 			this.allowDomMove = false;
@@ -48,9 +53,13 @@ Ext.ux.form.GroupingComboBox = Ext.extend(Ext.form.ComboBox, {
 		}
 		delete this.transform;
 		Ext.ux.form.GroupingComboBox.superclass.initComponent.call(this);
-	}
+	},
 	
-	,initList : function() {
+	/**
+	 * @override
+	 * @private
+	 */
+	initList : function() {
 		if (!this.list && !this.tpl) {
 			this.tpl = 
 			[
@@ -64,6 +73,7 @@ Ext.ux.form.GroupingComboBox = Ext.extend(Ext.form.ComboBox, {
 				'</div>',
 			'</tpl>'].join('');
 		}
+		
 		Ext.ux.form.GroupingComboBox.superclass.initList.call(this);
 	}
 });

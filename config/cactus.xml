@@ -42,6 +42,7 @@
 					<file>js/components/log/Logger.js</file>		
 					
 					<!-- custom ext ux -->
+					<!-- ************* -->
 					
 					<file>js/custom</file>
 					<file>js/custom/form</file>
@@ -81,7 +82,11 @@
 					<file>js/ace/src/theme-twilight.js</file> 
 					<file>js/custom/ace/Ext.ux.AceComponent.js</file> 
 	
+					<!-- ******************** -->
 					<!-- end of custom ext ux -->
+					
+					<!-- Common studio components -->
+					<file>js/components/common/</file>
 					
 					<file>js/afStudio.CreateProjectWizard.js</file>
 					<file>js/afStudio.databaseConnectionSettings.js</file>
@@ -127,6 +132,7 @@
 					<file>js/components/models/modelgrid/ModelStore.js</file>
 					<file>js/components/models/modelgrid/ModelGrid.js</file>
 					<file>js/components/models/modelgrid/EditFieldWindow.js</file>
+					<file>js/components/models/modelgrid/CreateWidgetWindow.js</file>
 					<file>js/components/models/editgrid/DependencyCellEditorBuilder.js</file>
 					<file>js/components/models/ModelTab.js</file>
 					
@@ -200,7 +206,7 @@
 					<file>js/components/appflower/view/propertyGrid/PropertyColumnModel.js</file>
 					<file>js/components/appflower/view/propertyGrid/PropertyGrid.js</file>
 
-					<!-- ******************** -->
+					<!-- *************************** -->
 					<!-- end of AppFlower Schema MVC -->
 					
 					

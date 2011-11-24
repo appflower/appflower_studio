@@ -64,13 +64,13 @@ abstract class afsBaseConsoleCommandHelper
         
         return array_diff($commands, $this->getDeprecated());
     }
-	
-	/**
-	 * Getting aliases 
-	 *
-	 * @return array
-	 * @author Sergey Startsev
-	 */
+    
+    /**
+     * Getting aliases 
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
     public function getAliases()
     {
         return sfConfig::get(self::CONFIG_ALIASES, $this->default_aliases);
@@ -125,7 +125,7 @@ abstract class afsBaseConsoleCommandHelper
             foreach ($this->getSubCommands($command_element) as $sub_command) {
                 $command_name = afsConsoleCommand::getCommandName(trim($sub_command));
                 
-                if ($command_name && !in_array($command_name, $this->getCommands())) return true;
+                if ($command_name && in_array($command_name, $this->getDeprecated())) return true;
             }
         }
         

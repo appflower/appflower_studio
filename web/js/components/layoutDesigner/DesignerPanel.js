@@ -439,12 +439,10 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	/**
 	 * Shows the page opened inside layout designer
 	 */
-	,onPreviewPage : function() {		
-		var p = this.layoutPage,
-			pageName = p.substring(0, p.lastIndexOf('.xml'));
-		
-		this.pagePreviewWindow = window.open('/#/pages/' + pageName, 'layoutDesignerPagePreview');		
-	}//eo onPreviewPage
+	,onPreviewPage : function() {
+		var url = String.format('/#/pages/{0}', this.layoutPage);
+		this.pagePreviewWindow = window.open(url, 'layoutDesignerPagePreview');		
+	}
 	
 	/**
 	 * function resizeItems

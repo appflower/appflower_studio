@@ -15,6 +15,6 @@ class afsWindowsConsoleCommandHelper extends afsBaseConsoleCommandHelper
     /**
      * Deprecated commands list
      */
-    protected public $deprecated_commands = array('ping', 'trace',);
+    protected $deprecated_commands = array('ping', 'trace',);
     
 }

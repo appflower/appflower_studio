@@ -24,10 +24,10 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 	 */
 	,pickRelation : function() {
 		var me = this,
-			   mn =	this.modelsTree.getSelectionModel().getSelectedNode(),
-			   fr = this.fieldsGrid.getSelectionModel().getSelected(),
-			    m = this.modelsTree.getModel(mn), 
-			    f = fr.get('name');
+			mn = this.modelsTree.getSelectionModel().getSelectedNode(),
+			fr = this.fieldsGrid.getSelectionModel().getSelected(),
+			m = this.modelsTree.getModel(mn), 
+			f = fr.get('name');
 		this.closePicker();
 		this.fireEvent('relationpicked', m + '.' + f);
 	}
@@ -124,32 +124,9 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 	,_initCmp : function() {
 		var me = this;
 		
-		var fieldsGrid = new Ext.grid.GridPanel({			
-			store: new Ext.data.JsonStore({
-				autoLoad: false,
-				url: me.fieldsUrl,
-				baseParams: {
-					xaction: 'read'
-				},
-				root: 'data',
-				idProperty: 'id',    							
-				fields: [
-					'id', 'name', 'type', 'size', 'required'
-				]
-			}),
-			sm: new Ext.grid.RowSelectionModel({
-				singleSelect: true
-			}),
-			columns : [
-				{header: 'Name', sortable: true, width: 150, dataIndex: 'name'},
-				{header: 'Type', sortable: true, width: 110, dataIndex: 'type'},
-				{header: 'Size', sortable: true, width: 60, dataIndex: 'size'}
-			],
-			loadMask: true,
-			border: false,
-			autoScroll: true,
-			hidden: true,
-			ref: '../fieldsGrid'
+		var fieldsGrid = new afStudio.common.ModelFieldsGrid({
+			ref: '../fieldsGrid',
+			hidden: true
 		});
 		
 		return {
@@ -187,7 +164,7 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 				iconCls: 'icon-accept',
 				handler: Ext.util.Functions.createDelegate(me.pickRelation, me)
 			}]
-		}		
+		};		
 	}
 	
 	/**

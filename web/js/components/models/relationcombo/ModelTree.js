@@ -20,7 +20,7 @@ afStudio.models.TreeEditor = Ext.extend(Ext.tree.TreeEditor, {
 afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	
 	/**
-	 * @cfg {String} ModelTree URL (defaults to "/appFlowerStudio/models") 
+	 * @cfg {String} url ModelTree URL (defaults to "/appFlowerStudio/models") 
 	 */
 	url: afStudioWSUrls.modelListUrl
 	
@@ -57,7 +57,7 @@ afStudio.models.ModelTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,reloadModels : function(callback) {		
 		if (Ext.isFunction(callback)) {
-			 this.getRootNode().reload(callback)
+			 this.getRootNode().reload(callback);
 		} else {
 			this.getRootNode().reload();
 		}

@@ -353,12 +353,9 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * Add Widget button handler.
 	 */
 	,onAddWidget : function() {
-		var me = this,
-			url = afStudioWSUrls.modelListUrl;
+		var me = this;
 		
 		var wb = new afStudio.wd.WidgetsBuilder({
-			modelsUrl: url,
-			fieldsUrl: url,
 			placeType: 'app',
 			listeners: {
 				widgetcreated: function(response) {
@@ -574,14 +571,15 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Ext.tree.TreeNode} node
 	 */
     ,setWidgetAsHomepage : function(node) {
-		var actionUrl   = afStudioWSUrls.widgetSetAsHomepage;
+		var actionUrl = afStudioWSUrls.widgetSetAsHomepage,
+			widgetUri = this.getNodeAttribute(node, 'widgetUri');
 		
         this.executeAction({
             url: actionUrl,
-            params: { widgetUri: node.attributes.widgetUri },
-            loadingMessage: String.format('Set {0} as homepage...', node.attributes.widgetUri),
-            logMessage: String.format('Widgets: {0} "{1}" was deleted', 'AHOJ', 'tam')
-        });     		
+            params: {widgetUri: widgetUri},
+            loadingMessage: String.format('Set {0} as homepage...', widgetUri),
+            logMessage: String.format('Widget {0} was set as homepage.', widgetUri)
+        });
 	}
 }); 
 

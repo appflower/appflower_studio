@@ -10,6 +10,7 @@
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js"></script>
 
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js"></script>
+
 <!-- multiselect (multicombo) -->
 <link rel="stylesheet" type="text/css" href="/appFlowerPlugin/extjs-3/plugins/multiselect/multiselect.css" />
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/DDView.js"></script>
@@ -90,7 +91,12 @@
 <!-- Error -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/error/ApsError.js"></script>
 
+<!-- MessageBox -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/notification/MessageBox.js"></script>
+
+<!-- Common Studio components -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/WidgetLocation.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/ModelFieldsGrid.js"></script>
 
 <!-- CLI -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/CommandLine.js"></script>
@@ -123,6 +129,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelStore.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/EditFieldWindow.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/CreateWidgetWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/DependencyCellEditorBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/ModelTab.js"></script>
 

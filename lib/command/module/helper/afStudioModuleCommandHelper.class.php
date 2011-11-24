@@ -8,6 +8,16 @@
 class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
 {
     /**
+     * Application type
+     */
+    const TYPE_APPLICATION = 'app';
+    
+    /**
+     * Plugin type
+     */
+    const TYPE_PLUGIN = 'plugin';
+    
+    /**
      * Rename module name inside actions
      *
      * @param string $name 
@@ -98,9 +108,9 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
                 $module['children'][$k] = array(
                     'app'           => $app,
                     'module'        => $module_name,
-                    'widgetUri'     => $module_name . '/' . str_replace('.xml', '', $xmlName),
+                    'widgetUri'     => "{$module_name}/{$widgetName}",
                     'type'          => 'xml',
-                    'text'          => $xmlName,
+                    'text'          => $widgetName,
                     'securityPath'  => $securityPath,
                     'xmlPath'       => $xmlPaths[$xk],
                     'actionPath'    => $actionPath,
@@ -117,6 +127,35 @@ class afStudioModuleCommandHelper extends afBaseStudioCommandHelper
         }
         
         return $module;
+    }
+    
+    /**
+     * Getting grouped module list 
+     *
+     * @param string $type 
+     * @return array
+     * @author Sergey Startsev
+     */
+    static public function getGroupedList($type)
+    {
+        $root = afStudioUtil::getRootDir();
+        $deprecated = ($type == self::TYPE_PLUGIN) ? afStudioPluginCommandHelper::getDeprecatedList() : array();
+        
+        $data = array();
+        foreach(afStudioUtil::getDirectories("{$root}/{$type}s/", true) as $place) {
+            if (in_array($place, $deprecated)) continue;
+            
+            foreach(afStudioUtil::getDirectories("{$root}/{$type}s/{$place}/modules/", true) as $module) {
+                $data[] = array(
+                    'value' => $module,
+                    'text'  => $module,
+                    'group' => $place,
+                    'type'  => $type,
+                );
+            }
+        }
+        
+        return $data;
     }
     
     /**

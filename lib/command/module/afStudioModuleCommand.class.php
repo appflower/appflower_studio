@@ -8,16 +8,6 @@
 class afStudioModuleCommand extends afBaseStudioCommand
 {
     /**
-     * Application type
-     */
-    const TYPE_APPLICATION = 'app';
-    
-    /**
-     * Plugin type
-     */
-    const TYPE_PLUGIN = 'plugin';
-    
-    /**
      * Get module list
      * 
      * @return afResponse
@@ -168,28 +158,16 @@ class afStudioModuleCommand extends afBaseStudioCommand
      */
     protected function processGetGrouped()
     {
-        $type = $this->getParameter('type', self::TYPE_APPLICATION);
-        
-        $root = afStudioUtil::getRootDir();
-        $places = afStudioUtil::getDirectories("{$root}/{$type}s/", true);
+        $type = $this->getParameter('type', array(afStudioModuleCommandHelper::TYPE_APPLICATION, afStudioModuleCommandHelper::TYPE_PLUGIN));
         
         $data = array();
-        foreach($places as $place) {
-            $modules = afStudioUtil::getDirectories("{$root}/{$type}s/{$place}/modules/", true);
-            
-            foreach($modules as $module) {
-                $data[] = array(
-                    'value' => $module,
-                    'text'  => $module,
-                    'group' => $place
-                );
-            }
+        if (is_array($type)) {
+            foreach ($type as $type_value) $data = array_merge($data, afStudioModuleCommandHelper::getGroupedList($type_value));
+        } else {
+            $data = afStudioModuleCommandHelper::getGroupedList($type);
         }
         
-        $meta = (isset($data[0])) ? array_keys($data[0]) : array();
-        $total = count($data);
-        
-        return afResponseHelper::create()->success(true)->data($meta, $data, $total);
+        return afResponseHelper::create()->success(true)->data((isset($data[0])) ? array_keys($data[0]) : array(), $data, count($data));
     }
     
     /**

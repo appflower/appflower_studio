@@ -20,195 +20,17 @@ Ext.ns('afStudio.wd');
 afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	
 	/**
-	 * @cfg {String} (Required) placeType
+	 * @cfg {String} (required) placeType
 	 * Where will be placed created widget. ('app'/'plugin')
 	 */
-	
-	/**
-	 * @cfg {String} (Required) modelsUrl
-	 */
-	
-	/**
-	 * @cfg {String} (Required) fieldsUrl
-	 */
-	
-	/**
-	 * Function onWndShow
-	 * Creates Drag/DropZones for FieldsGrid and relataions grid
-	 */
-	onWndShow : function() {
-		var _this = this;
-	    
-	    /**
-	     * DZ for relations grid
-	     */
-	    var relGridDropTargetEl =  this.relationsGrid.getView().scroller.dom;
-	    
-	    new Ext.dd.DropTarget(relGridDropTargetEl, {
-            ddGroup: 'widgetsBuilder',
-            
-            notifyDrop: function(ddSource, e, data) {
-                var records = ddSource.dragData.selections,
-                	fr = _this.fieldsGrid.getSelectionModel().getSelected(),
-					mn = _this.modelsTree.getSelectionModel().getSelectedNode(),
-					m  = _this.modelsTree.getModel(mn);
-				
-				if (fr) {
-					ddSource.grid.store.remove(records);
-					var r = new _this.RelationRec({
-				        id: fr.get('id'),
-				        model: m ,
-				        name: m + '.' + fr.get('name'),
-				        field: fr.get('name'),
-				        type: fr.get('type'),
-				        size: fr.get('size'),
-						required: fr.get('required')
-					});
-                    _this.relationsGrid.store.add(r);
-                    
-                    return true;
-				} else {
-					this.dragging = false;    
-				}
-            }
-        });
-
-		/**
-		 * Create Basket drop zone
-		 */
-		var basket = _this.basket;
-		var basketDropTargetEl =  basket.body.dom;
-
-		new Ext.dd.DropTarget(basketDropTargetEl, {
-			ddGroup: 'widgetsBuilderRel',
-			
-			notifyEnter: function(ddSource, e, data) {
-		        basket.body.stopFx();
-		        var grid_id = data.grid.getId();
-		        if ('fields-grid' == grid_id) {
-			        return this.dropNotAllowed;
-		        } else {
-					//Add some flare to invite drop.
-					basket.body.highlight('#E56060');
-					return this.dropAllowed;
-		        }
-			},
-				
-			notifyDrop: function(ddSource, e, data) {
-				var grid_id = data.grid.getId();
-				
-				if ('fields-grid' == grid_id) {
-					Ext.fly(this.DDM.currentTarget).parent('TABLE').frame('#8db2e3', 1);
-					this.dragging = false;
-					return false;
-				} else {
-					var selectedRecords = ddSource.dragData.selections;
-					ddSource.grid.store.remove(selectedRecords);
-					
-					var mn = _this.modelsTree.getSelectionModel().getSelectedNode(),
-						m  = _this.modelsTree.getModel(mn),
-						fs = _this.fieldsGrid.store;
-					Ext.each(selectedRecords, function(r) {
-						if (r.get('model') == m && !fs.getById(r.get('id'))) {
-							var rec = new fs.recordType({
-								id: r.get('id'),
-								name: r.get('field'),
-								type: r.get('type'),
-								size: r.get('size'),
-								required: r.get('required')
-							});
-							fs.add(rec);
-						}
-					});
-					
-					return true;						
-				}
-			}
-		});
-	}
-	//eo onWndShow
-	
-	/**
-	 * Loads Model's Fields
-	 * @param {Ext.tree.TreeNode} modelNode
-	 * @param {Function} callback
-	 */
-	,loadModelFields : function(modelNode, callback) {
-		var s = this.modelsTree.getSchema(modelNode),
-			m = this.modelsTree.getModel(modelNode);
-			
-		this.fieldsGrid.getStore().load({
-			params: {schema: s, model: m},
-			callback: callback || Ext.emptyFn
-		});
-	}
-	
-	/**
-	 * ModelTree <u>click</u> event listener
-	 * @param {Ext.tree.TreeNode} node
-	 * @param {Ext.EventObject} e
-	 */
-	,onModelClick : function(node, e) {
-		this.fieldsGrid.show();
-		this.loadModelFields(node);
-	}
-	
-	/**
-	 * ModelTree <u>modelsload</u> event listener
-	 * @param {Ext.tree.Loader} loader
-	 * @param {XMLHttpRequest} response
-	 */
-	,onModelsLoad : function(loader, response) {
-		this.fieldsGrid.getStore().removeAll();
-		this.fieldsGrid.hide();
-	}
-	
-	/**
-	 * Function onRelGridRefresh
-	 * Function creates Tooltips with specification of selected field.
-	 *  
-	 * @param {Ext.grid.GridView} view The {@link #relationsGrid} view   
-	 */
-	,onRelGridRefresh : function(view) {
-		var grid = view.grid,
-   		      ds = grid.getStore();
-   		
-    	for (var i = 0, rcnt = ds.getCount(); i < rcnt; i++) {
-    		
-    		var rec = ds.getAt(i);
-    		
-    		var html = '<b>Field Specification</b><br>';
-    		html += '<br><b>Model: </b>' + rec.get('model');
-    		html += '<br><b>Field: </b>' + rec.get('field');
-
-    		var type = rec.get('type');
-			if (type) {
-	    		html += '<br><b>Type: </b>' + type;
-			}
-			var size = rec.get('size');
-			if (size) {
-	    		html += '<br><b>Size: </b>' + size;
-			}
-			
-        	var row = view.getRow(i);
-        	var els = Ext.get(row).select('.x-grid3-cell-inner');
-    		for (var j = 0, ccnt = els.getCount(); j < ccnt; j++) {
-          		Ext.QuickTips.register({
-            		target: els.item(j),
-            		text: html
-        		});
-    		}
-		}
-	}
-	//eo onRelGridRefresh
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */
-	,_beforeInitComponent : function() {
-		var _this = this;
+	_beforeInitComponent : function() {
+		var me = this;
 		
 		this.RelationRec = Ext.data.Record.create([
 		    'id',
@@ -222,14 +44,15 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		this.relationsGrid = new Ext.grid.GridPanel({
 			id: 'rel-grid',
 			flex: 1, 
-			width: 234,
 			ddGroup: 'widgetsBuilderRel',
 			enableDragDrop: true,
+			loadMask: true,
+			border: true,
+			style: 'padding-bottom: 5px;',
+			autoScroll: true,
 			store: new Ext.data.ArrayStore({
 			    idIndex: 0,
-			    fields: [
-			       'id', 'model', 'name', 'field', 'type', 'size'
-			    ]
+			    fields: ['id', 'model', 'name', 'field', 'type', 'size']
 			}),
 			viewConfig: {
 				scrollOffset: 19, 
@@ -243,75 +66,44 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				width: 170, 
 				dataIndex: 'name'
 			}],
-			loadMask: true,
-			border: true,
-			style: 'padding-bottom: 5px;',
-			autoScroll: true
-		});
-		
-		this.fieldsGrid = new Ext.grid.GridPanel({
-			id: 'fields-grid',
-			ref: '../fieldsGrid',
-			ddGroup: 'widgetsBuilder',
-			enableDragDrop: true,			
-			store: new Ext.data.JsonStore({
-				url: _this.fieldsUrl,
-				autoLoad: false,				
-				baseParams: {
-					xaction: 'read'
-				},
-				root: 'data',
-				idProperty: 'id',    							
-				fields: ['id', 'name', 'type', 'size', 'required']
-			}),
-			sm: new Ext.grid.RowSelectionModel({
-				singleSelect: true
-			}),
-			columns: [
-				{header: 'Name', sortable: true, width: 150, dataIndex: 'name'},
-				{header: 'Type', sortable: true, width: 110, dataIndex: 'type'},
-				{header: 'Size', sortable: true, width: 60, dataIndex: 'size'}
-			],
-			loadMask: true,
-			border: false,
-			autoScroll: true,
-			hidden: true
+			bbar: {
+				items: ['->',
+				{
+					text: 'Remove All',
+					ref: '../removeAllBtn',
+					iconCls: 'afs-icon-delete',
+					disabled: true,
+					handler: function() {
+						var fields = me.relationsGrid.store.getRange();
+						me.removeSelectedFields(fields);
+					}
+				}]
+			}
 		});
 		
 		this.basket = new Ext.Panel({
 			id: 'widgets-basket',
-			html: '<center><br>Drop Item here,<br> to remove it</br></center>', 
-			bodyStyle: 'padding: 5px;', 
-			height: 70, 
-			width: 234
+			height: 70,
+			bodyStyle: 'padding: 5px;',
+			html: '<center><br>Drop Item here,<br> to remove it</br></center>' 
 		});
 		
-		this.modulesCombo = new Ext.ux.form.GroupingComboBox({
-			mode: 'local',
-			groupField: 'group',
-			valueField: 'value',
-			displayField: 'text',
-			forceSelection: true,
-            fieldLabel: 'Module Location',
-			loadingText: 'Please wait...',
-			emptyText: 'Please select the module location...',
-			allowBlank: false,
-			blankText: 'Module is required',
-			msgTarget: 'qtip',
-            store: new Ext.data.JsonStore({
-	            url: afStudioWSUrls.moduleGroupedUrl,
-            	autoLoad: true,
-	            baseParams: {
-	            	type: _this.placeType
-	            },
-	            totalProperty: 'total',
-	            root: 'data',
-	            idProperty: 'value',
-	            fields: ['value', 'text', 'group']       	
-            }),
-			anchor: '100%',
-            hiddenName: 'model'
-		});		
+		var fieldsSm = new Ext.grid.CheckboxSelectionModel({
+			singleSelect: true
+		});
+		
+		this.fieldsGrid = new afStudio.common.ModelFieldsGrid({
+			id: 'fields-grid',
+			ddGroup: 'widgetsBuilder',
+			enableDragDrop: true,
+			multiSelect: true,
+			hidden: true
+		});
+		
+		this.modulesCombo = new afStudio.common.WidgetLocation({
+			locationType: me.placeType,
+			anchor: '100%'
+		});
 		
 		this.actionInput = new Ext.form.TextField({
 			fieldLabel: 'Widget Name',
@@ -365,7 +157,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			items: [
 			{
 				hideBorders: true,
-				items: _this.widgetForm 
+				items: me.widgetForm 
 			},{
 				layout: 'border',
 				items: [
@@ -378,7 +170,6 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 					{
 						xtype: 'afStudio.models.modelTree', 
 						ref: '../../modelsTree',
-						url: _this.modelsUrl, 
 						border: false
 					}]
 				},{	
@@ -390,6 +181,9 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 					region: 'east',
 					margins: '5 5 5 0', 
 					layout: 'vbox',
+					layoutConfig: {
+						align: 'stretch'
+					},
 					width: 235, 
 					border: false, bodyBorder: false,
 					bodyStyle: 'background-color: #DFE8F6',
@@ -409,11 +203,11 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				text: '&laquo; Back',
 				id: this.id + '-back-btn',
 				disabled: true,
-				handler: this.chStep.createDelegate(_this, [0]) 
+				handler: this.chStep.createDelegate(me, [0]) 
 			},{
 				text: 'Next &raquo;',
 				id: this.id + '-next-btn',
-				handler: this.chStep.createDelegate(_this, [1])
+				handler: this.chStep.createDelegate(me, [1])
 			},{
 				text: 'Save &raquo;',
 				id: this.id + '-save-btn',
@@ -422,26 +216,29 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				handler: this.create 
 			}]
 		};	
-	}
+	},
 	//eo _beforeInitComponent	
 	
 	/**
-	 * ExtJS template method
+	 * Template method
+	 * @override
 	 * @private
 	 */
-	,initComponent: function() {
+	initComponent: function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
-		);		
+		);
+		
 		afStudio.wd.WidgetsBuilder.superclass.initComponent.apply(this, arguments);
+		
 		this._afterInitComponent();
-	}
+	},
 
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
-	,_afterInitComponent : function() {
+	_afterInitComponent : function() {
 		
 		this.addEvents(
 			/**
@@ -467,32 +264,234 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		this.relationsGrid.getView().on('refresh', this.onRelGridRefresh);
 		
 		this.modelsTree.on({
-			'click' : Ext.util.Functions.createDelegate(this.onModelClick, this),
-			'modelsload' : Ext.util.Functions.createDelegate(this.onModelsLoad, this)			
+			scope: this,
+			click: this.onModelClick,
+			modelsload: this.onModelsLoad			
 		});
-	}//eo _afterInitComponent	
+	},
+	//eo _afterInitComponent
+	
+	/**
+	 * Function onWndShow
+	 * Creates Drag/DropZones for FieldsGrid and relataions grid
+	 */
+	onWndShow : function() {
+		var me = this;
+	    
+		//focus the first field (modules) in wizard
+		me.widgetForm.items.itemAt(0).focus(true, 200);
+		
+	    /**
+	     * DZ for relations grid
+	     */
+	    var relGridDropTargetEl =  this.relationsGrid.getView().scroller.dom;
+	    
+	    new Ext.dd.DropTarget(relGridDropTargetEl, {
+            ddGroup: 'widgetsBuilder',
+            
+            notifyDrop: function(ddSource, e, data) {
+                var records = ddSource.dragData.selections,
+					mn = me.modelsTree.getSelectionModel().getSelectedNode(),
+					m  = me.modelsTree.getModel(mn);
+				
+				if (!Ext.isEmpty(records)) {
+					
+					ddSource.grid.store.remove(records);
+					
+					Ext.each(records, function(r) {
+						var r = new me.RelationRec({
+					        id: r.get('id'),
+					        model: m,
+					        name: m + '.' + r.get('name'),
+					        field: r.get('name'),
+					        type: r.get('type'),
+					        size: r.get('size'),
+							required: r.get('required')
+						});
+		                me.relationsGrid.store.add(r);
+					});
+					
+					me.relationsGrid.removeAllBtn.enable();
+					
+                    return true;
+                    
+				} else {
+					this.dragging = false;
+				}
+            }
+        });
+
+		/**
+		 * Create Basket drop zone
+		 */
+		var basket = me.basket;
+		var basketDropTargetEl =  basket.body.dom;
+
+		new Ext.dd.DropTarget(basketDropTargetEl, {
+			ddGroup: 'widgetsBuilderRel',
+			
+			notifyEnter: function(ddSource, e, data) {
+		        basket.body.stopFx();
+		        var grid_id = data.grid.getId();
+		        if ('fields-grid' == grid_id) {
+			        return this.dropNotAllowed;
+		        } else {
+					//Add some flare to invite drop.
+					basket.body.highlight('#E56060');
+					return this.dropAllowed;
+		        }
+			},
+				
+			notifyDrop: function(ddSource, e, data) {
+				var grid_id = data.grid.getId();
+				
+				if ('fields-grid' == grid_id) {
+					Ext.fly(this.DDM.currentTarget).parent('TABLE').frame('#8db2e3', 1);
+					this.dragging = false;
+					return false;
+				} else {
+					me.removeSelectedFields(ddSource.dragData.selections);
+					return true;						
+				}
+			}
+		});
+	},
+	//eo onWndShow
+
+	/**
+	 * Removes selected records from relationsGrid.
+	 * @private
+	 * @param {Array} fields The array of field records
+	 */
+	removeSelectedFields : function(fields) {
+		if (Ext.isEmpty(fields)) {
+			return;
+		}
+
+		this.relationsGrid.store.remove(fields);
+		
+		if (this.relationsGrid.store.getCount() == 0) {
+			this.relationsGrid.removeAllBtn.disable();
+		}
+					
+		var mn = this.modelsTree.getSelectionModel().getSelectedNode(),
+			m  = mn ? this.modelsTree.getModel(mn) : null,
+			fs = this.fieldsGrid.store;
+		
+		if (m == null) {
+			return; 	
+		}
+			
+		Ext.each(fields, function(r) {
+			if (r.get('model') == m && !fs.getById(r.get('id'))) {
+				var rec = new fs.recordType({
+					id: r.get('id'),
+					name: r.get('field'),
+					type: r.get('type'),
+					size: r.get('size'),
+					required: r.get('required')
+				});
+				fs.add(rec);
+			}
+		});
+	},
+	
+	/**
+	 * Loads model's fields.
+	 * @private
+	 * @param {Ext.tree.TreeNode} modelNode The model to be loaded
+	 * @param {Function} (optional) callback The callback function 
+	 */
+	loadModelFields : function(modelNode, callback) {
+		var s = this.modelsTree.getSchema(modelNode),
+			m = this.modelsTree.getModel(modelNode);
+			
+		this.fieldsGrid.getStore().load({
+			params: {schema: s, model: m},
+			callback: callback || Ext.emptyFn
+		});
+	},
+	
+	/**
+	 * ModelTree <u>click</u> event listener.
+	 * @param {Ext.tree.TreeNode} node
+	 * @param {Ext.EventObject} e
+	 */
+	onModelClick : function(node, e) {
+		this.fieldsGrid.show();
+		this.loadModelFields(node);
+	},
+	
+	/**
+	 * ModelTree <u>modelsload</u> event listener.
+	 * @param {Ext.tree.Loader} loader
+	 * @param {XMLHttpRequest} response
+	 */
+	onModelsLoad : function(loader, response) {
+		this.fieldsGrid.getStore().removeAll();
+		this.fieldsGrid.hide();
+	},
+	
+	/**
+	 * Function onRelGridRefresh
+	 * Function creates Tooltips with specification of selected field.
+	 * @param {Ext.grid.GridView} view The {@link #relationsGrid} view   
+	 */
+	onRelGridRefresh : function(view) {
+		var grid = view.grid,
+   		      ds = grid.getStore();
+   		
+    	for(var i = 0, rcnt = ds.getCount(); i < rcnt; i++) {
+    		
+    		var rec = ds.getAt(i);
+    		
+    		var html = '<b>Field Specification</b><br>';
+    		html += '<br><b>Model: </b>' + rec.get('model');
+    		html += '<br><b>Field: </b>' + rec.get('field');
+
+    		var type = rec.get('type');
+			if (type) {
+	    		html += '<br><b>Type: </b>' + type;
+			}
+			var size = rec.get('size');
+			if (size) {
+	    		html += '<br><b>Size: </b>' + size;
+			}
+			
+        	var row = view.getRow(i);
+        	var els = Ext.get(row).select('.x-grid3-cell-inner');
+    		for (var j = 0, ccnt = els.getCount(); j < ccnt; j++) {
+          		Ext.QuickTips.register({
+            		target: els.item(j),
+            		text: html
+        		});
+    		}
+		}
+	},
+	//eo onRelGridRefresh
 	
 	/**
 	 * Function chStep
 	 * Changes wizard step and prepares page UI
 	 * @param {Number} stepNo The new step number
 	 */
-	,chStep : function(stepNo) {
-		var panel = Ext.getCmp(this.id);
-		
-		if (1 == stepNo) {
+	chStep : function(stepNo) {
+		var size;
+			
+		if (stepNo == 1) {
 			//small validation fix
 			var form = this.widgetForm;
 			if (!form.getForm().isValid()) {
 				return;
 			}
-			var size = {width: 840, height: 450};
+			size = {width: 840, height: 450};
 			Ext.getCmp(this.id + '-save-btn').show();
 			Ext.getCmp(this.id + '-next-btn').hide();
 			Ext.getCmp(this.id + '-back-btn').enable();
 			Ext.getCmp(this.id + 'help-toolbar').show();
+			
 		} else {
-			var size = {width: 450, height: 150};
+			size = {width: 450, height: 150};
 			Ext.getCmp(this.id + '-save-btn').hide();
 			Ext.getCmp(this.id + '-next-btn').show();
 			Ext.getCmp(this.id + '-back-btn').disable();
@@ -500,16 +499,15 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 		}
 		
 		this.setSize(size);
-		this.setPagePosition( (Ext.getBody().getWidth()-size.width)/2, 150);		
-		panel.getLayout().setActiveItem(stepNo);
-	}
-	//eo chStep
+		this.setPagePosition((Ext.getBody().getWidth() - size.width) / 2, 150);		
+		this.getLayout().setActiveItem(stepNo);
+	},
 	
 	/**
 	 * Function create
 	 * Handler for "Create Widget" operation
 	 */
-	,create : function() {
+	create : function() {
 		var items = [];
 		
 		//each item contains data.field, data.id, data.model, data.name, data.size, data.type
@@ -518,6 +516,11 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
                 items.push(rec.data);
             }
 		});
+		
+		if (Ext.isEmpty(items)) {
+			afStudio.Msg.warning('Widget Builder', 'Widget can be created - <u>no one field is selected</u>');
+			return;
+		}
 		
 		var module    = this.modulesCombo.getValue(),
 			moduleRec = this.modulesCombo.getStore().getById(module),
@@ -545,14 +548,14 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				this.close();
 			}
 		});
-	}
+	},
 	//eo create
 	
 	/**
 	 * Function cancel
 	 * Close window
 	 */
-	,cancel : function() {
+	cancel : function() {
 		this.close();
 	},
 	
@@ -580,7 +583,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 				clm.push({
 					attributes: {
 						name: f.field,
-						label: f.field
+						label: f.field.ucfirst()
 					}
 				});				
 			});
@@ -588,7 +591,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			clm = {
 				attributes: {
 					name: fields[0].field,
-					label: fields[0].field
+					label: fields[0].field.ucfirst()
 				}
 			};
 		}
