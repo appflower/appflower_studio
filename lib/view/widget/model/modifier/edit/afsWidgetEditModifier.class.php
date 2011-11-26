@@ -113,7 +113,7 @@ class afsWidgetEditModifier extends afsBaseModelModifier
                             'attributes' => array('name' => afsWidgetEditModifierHelper::FETCHER_METHOD),
                             'i:param' => array(
                                 array(
-                                    'attributes' => array('name' => 'does_not_matter'),
+                                    'attributes' => array('name' => 'modelName'),
                                     '_content' => $column->getRelation()->getForeignTable()->getPhpName()
                                 )
                             )
