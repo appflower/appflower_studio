@@ -13,20 +13,26 @@ class ModelCriteriaFetcher
      * Used in combo widgets as possible choices
      * 
      * @author Łukasz Wojciechowski
+     * @author Sergey Startsev
      */
-    static public function getDataForComboWidget($modelName)
+    static public function getDataForComboWidget($modelName, $params = '')
     {
         $queryClass = "{$modelName}Query";
         $query = new $queryClass('propel', $modelName);
         
+        if (!empty($params)) {
+            foreach ($params as $def) {
+                list($method, $value) = explode(':', $def);
+                call_user_func(array($query, $method), $value);
+            }
+        }
+        
         /* @var $query ModelCriteria */
         $collection = $query->find();
         
-        if (method_exists($modelName, '__toString')) {
-            return $collection->toKeyValue('Id');
-        } else {
-            return $collection->toKeyValue('Id', 'Id');
-        }
+        if (method_exists($modelName, '__toString')) return $collection->toKeyValue('Id');
+        
+        return $collection->toKeyValue('Id', 'Id');
     }
     
     /**
