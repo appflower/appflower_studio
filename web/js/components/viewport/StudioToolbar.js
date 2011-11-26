@@ -74,6 +74,12 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						handler: function (b, e) {
 							(new afStudio.dbQuery.QueryWindow()).show();
 						}
+					},{
+						text: 'Code Browser',
+						iconCls: 'icon-data',
+						handler: function (b, e) {
+							(new afStudio.CodeEditor()).show();
+						}
 					}
 					/*
 					For the future release.  

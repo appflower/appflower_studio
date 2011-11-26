@@ -253,6 +253,9 @@
 					<file>js/jquery/jquery-1.4.4.min.js</file>
 					<file>js/jquery/jquery.jscrollpane.min.js</file>
 					<file>js/jquery/jquery.prettyPhoto.js</file>	
+					
+					<!-- Code Editor -->
+					<file>js/components/codeEditor/afStudio.CodeEditor.js</file>
 				</files>
 			</needle>
 			
