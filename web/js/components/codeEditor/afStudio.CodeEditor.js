@@ -15,7 +15,7 @@ afStudio.CodeEditor = Ext.extend(Ext.Window, {
 		this.createRegions();
 		
 		var config = {
-			title: 'Code Editor', 
+			title: 'Code Browser', 
 	        layout: 'border',
 	        width: '100%',
 			height: Ext.getBody().getViewSize().height-25, 
