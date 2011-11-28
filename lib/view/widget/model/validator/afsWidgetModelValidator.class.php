@@ -71,6 +71,11 @@ class afsWidgetModelValidator extends afsBaseModelValidator
                     ),
                 ),
             ),
+            'i:column' => array(
+                'attributes' => array(
+                    'name',
+                ),
+            ),
             'i:button' => array(
                 'attributes' => array(
                     'name',
