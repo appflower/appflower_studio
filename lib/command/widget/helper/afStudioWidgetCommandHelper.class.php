@@ -39,20 +39,16 @@ class afStudioWidgetCommandHelper extends afBaseStudioCommandHelper
         if (!file_exists($destination_path)) {
             $path = sfConfig::get('sf_lib_dir') . '/' . self::PROJECT_LIB_PATH_ROOT;
             
-            if (!file_exists($path)) {
-                $filesystem->mkdirs($path, 0774);
-            }
+            if (!file_exists($path)) $filesystem->mkdirs($path, 0774);
             
-            $subpath = explode('/', self::PROJECT_LIB_PATH);
-            
-            foreach ($subpath as $subfolder) {
+            foreach (explode('/', self::PROJECT_LIB_PATH) as $subfolder) {
                 $path .= '/' . $subfolder;
                 $result = $filesystem->mkdirs($path);
             }
         }
         
         // synchronize directories
-        $filesystem->mirror($source_path, $destination_path, sfFinder::type('any'));
+        $filesystem->mirror($source_path, $destination_path, sfFinder::type('any'), array('override' => true));
         
         afStudioConsole::getInstance()->execute('sf afs:fix-perms');
     }
