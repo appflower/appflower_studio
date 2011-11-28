@@ -588,11 +588,17 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
 	/**
-	 * @cfg {String} model (required) This model name.
+	 * @cfg {String} (required) model The model name
 	 */
+	
 	/**
-	 * @cfg {String} schema (required) This model's schema name.
+	 * @cfg {String} (required) schema The schema path
 	 */
+	
+	/**
+	 * @cfg {Object} (required) _data The model's fields definition object
+	 */
+	
 	/**
 	 * @cfg {Number} recordsPerPage (required) The number of displaying records per page (defaults to 25).
 	 */
@@ -772,7 +778,11 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	text: 'Create Widget',
 	        	iconCls: 'icon-widgets-add',
 	        	handler: function(btn, e) {
-					var w = new afStudio.models.CreateWidgetWindow();
+					var w = new afStudio.models.CreateWidgetWindow({
+						model: me.model,
+						fields: me._data
+					});
+					
 					w.show();
 	        	}
 	        }],

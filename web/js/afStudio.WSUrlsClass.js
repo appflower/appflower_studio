@@ -9,7 +9,7 @@ afStudio.WSUrlsClass = function() {
 
 afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
-	helpUrl : 'http://appflower.com/cms/learningcenter',
+	helpUrl : 'http://www.appflower.com/cms/learningcenter',
 	
 	welcomeWinUrl : '/appFlowerStudio/welcome',
 	
@@ -31,6 +31,8 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
 	
 	widgetDeleteUrl : '/afsModuleManager/deleteView',   
     
+	widgetGenerateUrl : 'afsWidgetBuilder/generateWidget',
+	
 	widgetSetAsHomepage : '/afsModuleManager/setAsHomepage',
 	
 	pageSetAsHomepage : '/afsLayoutBuilder/setAsHomepage',

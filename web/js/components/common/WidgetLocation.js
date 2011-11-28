@@ -93,7 +93,28 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
         });
         
         afStudio.common.WidgetLocation.superclass.initComponent.call(this);
-	}
+	},
+	
+    /**
+     * Returns the currently selected widget location or null if no value is set.
+     * @override
+     * @return {Object} value The selected value
+     */
+    getValue : function() {
+    	var module = afStudio.common.WidgetLocation.superclass.getValue.call(this),
+    		value = null;
+    	
+    	if (!Ext.isEmpty(module)) {
+    		var valueRec = this.store.getById(module),
+    			place = valueRec.get(this.groupField),	
+    			placeType = valueRec.get(this.typeField);
+    		
+    		value = {'module': module, 'place': place, 'placeType': placeType};	
+    	}
+    	
+    	return value;
+    }
+	
 });
 
 Ext.reg('common.widgetlocation', afStudio.common.WidgetLocation);
