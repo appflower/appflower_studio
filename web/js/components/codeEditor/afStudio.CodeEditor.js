@@ -7,7 +7,7 @@
 afStudio.CodeEditor = Ext.extend(Ext.Window, { 
 
 	/**
-	 * Template method
+	 * Template method.
 	 * @override
 	 * @private
 	 */
@@ -18,12 +18,12 @@ afStudio.CodeEditor = Ext.extend(Ext.Window, {
 			title: 'Code Browser', 
 	        layout: 'border',
 	        width: '100%',
-			height: Ext.getBody().getViewSize().height-25, 
+			height: Ext.getBody().getViewSize().height - 25, 
 			y:25,
 	        closable: true,
 	        draggable: true, 
 	        resizable: false,
-	        bodyBorder: false, 
+	        bodyBorder: false,
 	        border: false,
 	        items: [
 	        	this.westPanel,
@@ -38,20 +38,36 @@ afStudio.CodeEditor = Ext.extend(Ext.Window, {
 			}]
 		};
 		
-		var callback = function() {
-			this.setHeight(Ext.getBody().getViewSize().height-25);
-		};
-				
-		Ext.EventManager.on(window, 'resize', callback, this);
-		
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		
-		afStudio.CodeEditor.superclass.initComponent.apply(this, arguments);	
+		afStudio.CodeEditor.superclass.initComponent.apply(this, arguments);
+		
+		Ext.EventManager.on(window, 'resize', this.updateCodeBrowserHeight, this);
+	},
+	
+	/**
+	 * Updates CodeEditor's height based on the window's height.
+	 * @protected
+	 */
+	updateCodeBrowserHeight : function() {
+		this.setHeight(Ext.getBody().getViewSize().height - 25);
+	},
+	
+	/**
+	 * Template method.
+	 * @private
+	 * @override
+	 */
+	onDestroy : function() {
+		Ext.EventManager.un(window, 'resize', this.updateCodeBrowserHeight, this);
+		
+		afStudio.CodeEditor.superclass.onDestroy.call(this);		
 	},
 	
 	/**
 	 * Function createRegions
 	 * This function creates west and center panels and needful components
+	 * @private
 	 */
 	createRegions : function() {
 		
