@@ -12,23 +12,23 @@ afStudio.models.ModelStore = Ext.extend(Ext.data.Store, {
 	 */
 	autoSave : false,
 	
-	/**
-	 * @cfg {Object} readerCfg.fields (required) The reader's fields.
-	 * 
+	/** 
 	 * @cfg {Object} readerCfg The {@link Ext.data.JsonReader} configuration object.
 	 */
-	
+	/**
+	 * @cfg {Object} readerCfg.fields (required) The reader's fields.
+	 */
 	/**
 	 * @cfg {Object} writerCfg The {@link Ext.data.JsonWriter} configuration object.
 	 */
-	
+	 
 	/**
 	 * @constructor
 	 * @param {Object} config The configuration object
 	 */
 	constructor : function(config) {
 		config = config || {};
-
+		
 		/**
 		 * @property proxy The store proxy 
 		 */
@@ -51,7 +51,7 @@ afStudio.models.ModelStore = Ext.extend(Ext.data.Store, {
 		this.writerCfg = Ext.applyIf(config.writerCfg || {}, {
         	listful: true
         });
-        delete config.readerCfg;
+        delete config.writerCfg;
 		
         this.writer = new Ext.data.JsonWriter(this.writerCfg),
         
@@ -64,7 +64,6 @@ afStudio.models.ModelStore = Ext.extend(Ext.data.Store, {
 	 * @protected
 	 */
 	initStoreEvents : function() {
-
 		this.on({
 			scope: this,
 			
@@ -105,9 +104,8 @@ afStudio.models.ModelStore = Ext.extend(Ext.data.Store, {
 			});
 			
 			if (Ext.isEmpty(records)) {
-				return false;	
+				return false;
 			}
 		}
 	}
-	//eo onBeforewrite
 });

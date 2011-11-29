@@ -14,7 +14,7 @@ afStudio.models.TypeBuilder = (function() {
 		/**
 		 * Invalid field name message
 		 */
-		invalidFieldName : 'Field name must contain only characters, digits or "_" and start from character or "_"'
+		invalidFieldName : 'Field name must contain only characters, digits or "_" and start from character or "_"',
 		
 		/**
 		 * Creates editor depends on data type
@@ -23,7 +23,7 @@ afStudio.models.TypeBuilder = (function() {
 		 * @param {Mixed} defaultValue (optional) field's default value
 		 * @return {Ext.Editor}
 		 */
-		,createEditor : function(dataType, size, defaultValue) {
+		createEditor : function(dataType, size, defaultValue) {
 			var editor = null;
 			
 			//if data type contains size - cut it (i.e. varchar(128) - varchar)
@@ -119,14 +119,15 @@ afStudio.models.TypeBuilder = (function() {
 			}
 			
 			return editor ? editor : null;	
-		}//eo createEditor
+		},
+		//eo createEditor
 		
 		/**
 		 * Creates renderer function for {@link Ext.grid.Column} column
 		 * @param {String} dataType (optional) field's data type
 		 * @return {Function} 
 		 */
-		,createRenderer : function(dataType) {
+		createRenderer : function(dataType) {
 			var renderer = null;
 			
 			switch (dataType) {
@@ -134,25 +135,26 @@ afStudio.models.TypeBuilder = (function() {
 					renderer = function(value, meta) {
 						meta.attr = 'style="text-align:right;"';
 						return Ext.util.Format.number(value, '0.0,/i');
-					}
+					};
 				break;
 				
 				case 'date':
 					renderer = function(value) {
 						var dStr = Date.parse(value);						 
 						return !isNaN(dStr) ? new Date(dStr).format('m/d/Y') : value;
-					}					
+					};				
 				break;
 				
 				default:
 					renderer = function(value) {
 						return value;
-					}
+					};
 				break;
 			}
 			
 			return renderer;
-		}//eo createRenderer
+		}
+		//eo createRenderer
 		
-	}
+	};
 })();
