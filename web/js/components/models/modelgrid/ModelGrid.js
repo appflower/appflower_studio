@@ -778,12 +778,14 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	text: 'Create Widget',
 	        	iconCls: 'icon-widgets-add',
 	        	handler: function(btn, e) {
-					var w = new afStudio.models.CreateWidgetWindow({
-						model: me.model,
-						fields: me._data
-					});
-					
-					w.show();
+	        		if (!me.createWidgetWindow) {
+						me.createWidgetWindow = new afStudio.models.CreateWidgetWindow({
+							model: me.model,
+							fields: me._data
+						});
+	        		}
+	        		me.createWidgetWindow.fields = me._data;
+					me.createWidgetWindow.show();
 	        	}
 	        }],
 	        bbar: pagingBar

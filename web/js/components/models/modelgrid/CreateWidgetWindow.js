@@ -33,24 +33,6 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 	 */
 	
 	/**
-	 * Closes this window.
-	 */
-	closeEditFieldWindow : function() {
-		if (this.closeAction == 'hide') {
-			this.hide();
-		} else {
-			this.close();
-		}
-	},
-
-	/**
-	 * "Cancel" button handler.
-	 */
-	cancelEditing :  function() {
-		this.closeEditFieldWindow();
-	},
-
-	/**
 	 * Initializes component.
 	 * @private
 	 * @return {Object} The configuration object
@@ -112,21 +94,20 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 			},{
 				text: 'Cancel',
 				iconCls: 'afs-icon-cancel',
-				scope: this,
-				handler: this.cancelEditing 
+				scope: me,
+				handler: this.cancelCreation
 			}]			
 		});		
 		
 		return {
 			title: 'Create Widgets',
 			iconCls: 'icon-widgets-add',
+			closeAction: 'hide',
 			modal: true,
 			frame: true,
 			width: 600,
 			autoHeight: true,
 			resizable: false,
-//			closeAction: 'hide',
-//			closable: false,
 			items: [form]			
 		}
 	},
@@ -161,8 +142,15 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 	},
 	
 	/**
-	 * Returns widget generation data.
-	 * @return {Object} data 
+	 * Closes this window.
+	 */
+	closeWindow : function() {
+		(this.closeAction == 'hide') ? this.hide() : this.close();
+	},
+	
+	/**
+	 * Returns widget generation data or null if client-side validation failed.
+	 * @return {Object} data
 	 */
 	getGenerateData : function() {
 		var data = {
@@ -170,10 +158,11 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 			},
 			f = this.fieldForm;
 
-		//'fields'
+		//[fields]
 		var fs = f.fieldsGrid.getSelectionModel().getSelections();
 		if (Ext.isEmpty(fs)) {
 			afStudio.Msg.warning('Create Widgets', 'Must be selected at least one field');
+			return null;
 		} else {
 			var fields = [];
 			Ext.each(fs, function(r, idx){
@@ -182,7 +171,7 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 			data.fields = fields.join(',');
 		}
 		
-		//'type'
+		//[type]
 		if (f.widgetTypes.getValue().length > 0) {
 			var wtype = [];
 			Ext.each(f.widgetTypes.getValue(), function(i, idx){
@@ -192,9 +181,9 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 		}
 		
 		
-		//'module_name'
-		//'place_type', default is 'app'
-		//'place', default is 'frontend'
+		//[module_name]
+		//[place_type] default is 'app'
+		//[place] default is 'frontend'
 		var l = f.widgetLocation.getValue();
 		if (l != null) {
 			data.module_name = l.module; 
@@ -202,7 +191,7 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 			data.place = l.place; 
 		}
 		
-		//'refresh', 'false'
+		//[refresh] default is 'false'
 		data.refresh = f.refresh.getValue();
 		
 		return data;
@@ -215,6 +204,8 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 	createWidgets : function() {
 		var data = this.getGenerateData();
 		
+		if (data == null) return;
+		
 		afStudio.xhr.executeAction({
 			url: afStudioWSUrls.widgetGenerateUrl,
 			params: data,
@@ -222,14 +213,22 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 			scope: this,
 			run: function(response, ops) {
 				//refresh navigation panel
+				var nav = afStudio.vp.viewRegions.west;
 				if (ops.params.place_type == 'plugins') {
-					afStudio.vp.viewRegions.west.get('plugins').onItemActivate();	
+					nav.get('plugins').onItemActivate();	
 				} else {
-					afStudio.vp.viewRegions.west.get('widgets').onItemActivate();
+					nav.get('widgets').onItemActivate();
 				}
 			}
 		});
 		
-		this.closeEditFieldWindow();
+		this.closeWindow();
+	},
+	
+	/**
+	 * "Cancel" button handler.
+	 */
+	cancelCreation : function() {
+		this.closeWindow();
 	}
 });

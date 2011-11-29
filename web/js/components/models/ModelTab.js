@@ -32,22 +32,20 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 * @param {Function} action
 	 */
 	,alterModelAction : function(action) {
-		var _this = this;
+		var me = this;
 		
-		afStudio.vp.mask({region:'center', msg:'Updating ' + _this.modelName + ' model...'});
-		
-		Ext.Ajax.request({
-		   url: _this.modelUrl,
-		   params: { 
+		afStudio.xhr.executeAction({
+			url: me.modelUrl,
+			params: {
 			   xaction: 'read',
-			   model: _this.modelName,
-			   schema: _this.schemaName
-		   },
-		   success: function(result, request) {
-		       afStudio.vp.unmask('center');
-		       var fData = Ext.decode(result.responseText);
-			   action(fData);		       
-		   }
+			   model: me.modelName,
+			   schema: me.schemaName
+			},
+			mask: {region: 'center', msg: 'Updating ' + me.modelName + ' model...'},
+			showNoteOnSuccess: false,
+			run: function(response, ops) {
+				action(response);
+			}
 		});
 	}//eo alterModelAction
 	
@@ -74,11 +72,12 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 * This event is relayed to the ModelTab. 
 	 */
 	,onAlterField : function() {
-		var _this = this,
-			   mc = _this._modelConfig;			
+		var mc = this._modelConfig,
+			md = this._modelData;
 			   
-		_this.alterModelAction(function(fData) {
+		this.alterModelAction(function(fData) {
 			mc.loadModelData(fData);
+			md._data = fData; //update _data property
 		});		
 	}//eo onAlterField
 	
