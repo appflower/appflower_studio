@@ -193,13 +193,35 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $place      = $this->getParameter('place', 'frontend');
         $refresh    = $this->getParameter('refresh', 'false');
         
+        $not_refreshed = array();
+        if ($refresh == 'false') {
+            foreach (explode(',', $type) as $type_generate) {
+                $action = lcfirst(sfInflector::camelize($model)) . ucfirst(strtolower($type_generate));
+                $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $place_type);
+                if (!$widget->isNew()) $not_refreshed[] = $action;
+            }
+        }
+        
         $console = afStudioConsole::getInstance();
         $console_output = $console->execute(
             "sf afs:generate-widget ".
             "--model={$model} --module={$module} --type={$type} --fields={$fields} --place-type={$place_type} --place={$place} --refresh={$refresh}"
         );
         
-        return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->console($console_output);
+        $created = array();
+        $not_created = array();
+        foreach (explode(',', $type) as $type_generate) {
+            $action = lcfirst(sfInflector::camelize($model)) . ucfirst(strtolower($type_generate));
+            $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $place_type);
+            (!$widget->isNew() && !in_array($action, $not_refreshed)) ? ($created[] = $action) : ($not_created[] = $action);
+        }
+        
+        $message = '';
+        if (!empty($created)) $message .= 'Created: <b>' . implode(', ', $created) . '</b>. <br/>';
+        if (!empty($not_created) && $not_created != $not_created) $message .= 'Not Created: <b>' . implode(', ', $not_created) . '</b>. <br/>';
+        if (!empty($not_refreshed)) $message .= 'Already Exists: <b>' . implode(', ', $not_refreshed) . '</b>.';
+        
+        return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->message($message)->console($console_output);
     }
     
     /**
