@@ -139,11 +139,11 @@ abstract class simpleWidgetEditAction extends sfAction
             unset($this->form['id']);
         }
         
-        $fieldNames = $this->getFieldNames();
-        $this->form->useFields($fieldNames);
+        $formFieldNames = $this->getFieldNamesOfForm($this->form);
+        $this->form->useFields($formFieldNames);
         
         // making form field default values available for widget XML config file placeholders
-        foreach ($fieldNames as $fieldName) {
+        foreach ($formFieldNames as $fieldName) {
             $this->$fieldName = $this->object->getByName($fieldName, BasePeer::TYPE_FIELDNAME);
         }
     }
@@ -187,11 +187,19 @@ abstract class simpleWidgetEditAction extends sfAction
     {
         $formData = $this->getRequest()->getParameter('edit');
         $formData = $formData[0];
-        
+
         $formData = $this->changeKeysForForeignFields($formData);
         $formData = $this->processMultipleRelations($formData);
+
+        // filtered means that we are leaving only values for fields that exists in the form
+        $formDataFiltered = array();
+        foreach ($this->getFieldNamesOfForm($this->form) as $fieldName) {
+            if (isset($formData[$fieldName])) {
+                $formDataFiltered[$fieldName] = $formData[$fieldName];
+            }
+        }
         
-        $this->form->bind($formData);
+        $this->form->bind($formDataFiltered);
         return $this->form->save();
     }
     
@@ -406,4 +414,19 @@ abstract class simpleWidgetEditAction extends sfAction
         }
     }
     
+    /**
+     * This method reuturn field names that are also present in the form
+     */
+    private function getFieldNamesOfForm(sfForm $form)
+    {
+        $fieldNames = $this->getFieldNames();
+        
+        $formFieldNames = array();
+        foreach ($form as $formFieldName => $formField) {
+            if (in_array($formFieldName, $fieldNames)) {
+                $formFieldNames[] = $formFieldName;
+            }
+        }
+        return $formFieldNames;
+    }
 }
