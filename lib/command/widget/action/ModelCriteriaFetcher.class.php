@@ -15,24 +15,45 @@ class ModelCriteriaFetcher
      * @author Łukasz Wojciechowski
      * @author Sergey Startsev
      */
-    static public function getDataForComboWidget($modelName, $params = '')
+    static public function getDataForComboWidget($modelName, $params = '', $like = '', $lookupIn = '')
     {
         $queryClass = "{$modelName}Query";
         $query = new $queryClass('propel', $modelName);
         
-        if (!empty($params)) {
+        if (is_array($params)) {
             foreach ($params as $def) {
                 list($method, $value) = explode(':', $def);
                 call_user_func(array($query, $method), $value);
             }
         }
         
+        if(!empty($like)&&!empty($lookupIn))
+        {
+            $query->where($modelName.'.'.$lookupIn.' like ?', $like.'%');
+        }
+        
         /* @var $query ModelCriteria */
-        $collection = $query->find();
+        $collection = $query->find();      
         
-        if (method_exists($modelName, '__toString')) return $collection->toKeyValue('Id');
+        if (method_exists($modelName, '__toString'))
+        {
+            $response = $collection->toKeyValue('Id');
+        }
+        else {         
+            $response = $collection->toKeyValue('Id', 'Id');   
+        }
         
-        return $collection->toKeyValue('Id', 'Id');
+        if(!empty($like))
+        {
+            $likeResponse = array();
+            foreach ($response as $key=>$value)
+            {
+                $likeResponse[] = array('key'=>$key,'value'=>$value);
+            }            
+            $response = $likeResponse;
+        }
+        
+        return $response;
     }
     
     /**
