@@ -672,7 +672,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 				type: 'varchar',
 				exists: false
 			}
-		};	
+		};
 	},
 	
 	/**

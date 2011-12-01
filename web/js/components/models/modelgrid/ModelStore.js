@@ -85,7 +85,7 @@ afStudio.models.ModelStore = Ext.extend(Ext.data.Store, {
 	 * Store <u>beforewrite</u> event listener. Details {@link Ext.data.Store#beforewrite}.
 	 */
 	onBeforewrite : function(store, action, records, opts) {
-		
+		//only for create
 		if (action == Ext.data.Api.actions.create) {
 			var empRec = [];
 			Ext.each(records, function(r, idx) {
@@ -107,5 +107,76 @@ afStudio.models.ModelStore = Ext.extend(Ext.data.Store, {
 				return false;
 			}
 		}
-	}
+	},
+	
+	/**
+	 * Details {@link Ext.data.Store#save}.
+	 * Override is needed to send create records in direct order - the order in which they were added.
+	 * @override
+	 */
+    save : function() {
+        if (!this.writer) {
+            throw new Ext.data.Store.Error('writer-undefined');
+        }
+
+        var queue = [],
+            len,
+            trans,
+            batch,
+            data = {},
+            i;
+        // DESTROY:  First check for removed records.  Records in this.removed are guaranteed non-phantoms.  @see Store#remove
+        if (this.removed.length) {
+            queue.push(['destroy', this.removed]);
+        }
+
+        // Check for modified records. Use a copy so Store#rejectChanges will work if server returns error.
+        var rs = [].concat(this.getModifiedRecords());
+        if (rs.length) {
+            // CREATE:  Next check for phantoms within rs.  splice-off and execute create.
+            var phantoms = [];
+            
+            for (i = 0; i < rs.length; i++) {
+                if (rs[i].phantom === true) {
+                    var rec = rs.splice(i, 1).shift();
+                    i--; //index correction after removal
+                    
+                    if (rec.isValid()) {
+                        phantoms.push(rec);
+                    }
+                } else if (!rs[i].isValid()) { // <-- while we're here, splice-off any !isValid real records
+                    rs.splice(i, 1);
+                    i--;
+                }
+            }
+            
+            // If we have valid phantoms, create them...
+            if(phantoms.length){
+                queue.push(['create', phantoms]);
+            }
+
+            // UPDATE:  And finally, if we're still here after splicing-off phantoms and !isValid real records, update the rest...
+            if(rs.length){
+                queue.push(['update', rs]);
+            }
+        }
+        
+        len = queue.length;
+        if (len) {
+            batch = ++this.batchCounter;
+            for (i = 0; i < len; ++i) {
+                trans = queue[i];
+                data[trans[0]] = trans[1];
+            }
+            if (this.fireEvent('beforesave', this, data) !== false) {
+                for (i = 0; i < len; ++i) {
+                    trans = queue[i];
+                    this.doTransaction(trans[0], trans[1], batch);
+                }
+                return batch;
+            }
+        }
+        
+        return -1;
+    }	
 });
