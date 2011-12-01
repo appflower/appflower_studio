@@ -80,9 +80,6 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $widget->modify();
             
             if ($widget->save()->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
-                // deploy libs to main project 
-                afStudioWidgetCommandHelper::deployLibs();
-                
                 return $response
                             ->success(true)
                             ->message($createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved')
