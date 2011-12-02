@@ -70,7 +70,8 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 				xtype: 'common.widgetlocation',
 				ref: 'widgetLocation',
 				autoLoad: false,
-				allowBlank: true			
+				forceSelection: false,
+				allowBlank: true
 			},{
 				xtype: 'common.mfieldsgrid',
 				ref: 'fieldsGrid',
@@ -180,15 +181,16 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 			data.type = wtype.join(',');
 		}
 		
-		
 		//[module_name]
 		//[place_type] default is 'app'
 		//[place] default is 'frontend'
 		var l = f.widgetLocation.getValue();
-		if (l != null) {
+		if (Ext.isObject(l)) {
 			data.module_name = l.module; 
 			data.place_type = l.placeType; 
 			data.place = l.place; 
+		} else if (l != null) {
+			data.module_name = l;
 		}
 		
 		//[refresh] default is 'false'

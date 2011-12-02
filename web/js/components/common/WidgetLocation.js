@@ -104,12 +104,17 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
     	var module = afStudio.common.WidgetLocation.superclass.getValue.call(this),
     		value = null;
     	
-    	if (!Ext.isEmpty(module)) {
+    	//value was selected from the list	
+    	if (!Ext.isEmpty(module) && this.store.getById(module)) {
     		var valueRec = this.store.getById(module),
     			place = valueRec.get(this.groupField),	
     			placeType = valueRec.get(this.typeField);
     		
-    		value = {'module': module, 'place': place, 'placeType': placeType};	
+    		value = {'module': module, 'place': place, 'placeType': placeType};
+    		
+    	//works only when forceSelection is false and value was filled manually
+    	} else if (!Ext.isEmpty(module)) {
+    		value = module;
     	}
     	
     	return value;
