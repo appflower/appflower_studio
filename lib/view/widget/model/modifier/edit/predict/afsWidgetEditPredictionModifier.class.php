@@ -70,6 +70,15 @@ class afsWidgetEditPredictionModifier extends afsBasePredictionModifier
                 $field['attributes']['type'] = $this->getType($column->getType());
                 
                 if ($with_validator) {
+                    if ($column->isForeignKey()) {
+                        $foreign_table = $column->getRelation()->getForeignTable();
+                        $foreign_model = $foreign_table->getPhpName();
+                        $foreign_field = strtolower($foreign_table->getColumn($column->getRelatedColumnName())->getName());
+                        
+                        $field['i:validator'] = $this->getForeignValidator($foreign_model, $foreign_field, $column->isNotNull());
+                        continue;
+                    }
+                    
                     $method_name = 'get' . ucfirst(strtolower($column->getType())) . 'Validator';
                     if (method_exists($this, $method_name)) {
                         $field['i:validator'] = call_user_func(array($this, $method_name), $column->getSize(), $column->isNotNull());
@@ -93,6 +102,38 @@ class afsWidgetEditPredictionModifier extends afsBasePredictionModifier
     private function getType($type)
     {
         return (array_key_exists($type, $this->field_type_map)) ? $this->field_type_map[$type] : self::DEFAULT_FIELD_TYPE;
+    }
+    
+    /**
+     * Getting validator for foreign data
+     *
+     * @param string $model_name 
+     * @param string $model_glue 
+     * @param boolean $is_required 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getForeignValidator($model_name, $model_glue, $is_required = false)
+    {
+        return array(
+            'attributes' => array(
+                'name' => 'sfValidatorPropelChoice',
+            ),
+            'i:param' => array(
+                array(
+                    'attributes' => array('name' => 'model'),
+                    '_content' => $model_name,
+                ),
+                array(
+                    'attributes' => array('name' => 'column'),
+                    '_content' => $model_glue,
+                ),
+                array(
+                    'attributes' => array('name' => 'required'),
+                    '_content' => (($is_required) ? 'true' : 'false'),
+                ),
+            )
+        );
     }
     
     /**
