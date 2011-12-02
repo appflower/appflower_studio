@@ -32,7 +32,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
      * @cfg {String} editorFieldInvalid (defaults to 'The value in this node is invalid')
      * Text message is shown when node editor's value is invalid. 
      */
-    ,editorFieldInvalid : 'The value in this node is invalid! <br /> accepts only alphanumeric symbols and "_", begins from "_" or alpha.'
+    ,editorFieldInvalid : 'The value in this node is invalid! <br /> accepts only alphanumeric symbols and "_", beginning from alphanumeric.'
     
     /**
      * @cfg {Object} leafNodeCfg (defaults to empty object)
@@ -432,7 +432,7 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @return {Boolean} true if name is valid otherwise false.
 	 */
 	,isValidNodeName : function(node, name) {
-		return /^[^\d]\w*$/im.test(name) ? true : false;
+		return /^[A-Za-z\d]\w*$/im.test(name) ? true : false;
 	}//eo isValidNodeName 
 	
 	/**

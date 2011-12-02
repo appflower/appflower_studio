@@ -260,6 +260,14 @@ Ext.applyIf(String.prototype, {
 	},
 	
 	/**
+	 * Makes a string's first character lowercase.
+	 * @return {String} string with first letter in lowercase
+	 */
+	lcfirst : function() {
+    	return this.substr(0, 1).toLowerCase() + this.substr(1);
+	},
+	
+	/**
 	 * Checks if string value represents boolean <tt>true</tt> value.  
 	 * Case insensitive. 
 	 * @return {Boolean} true if string value equals to "true" otherwise false.

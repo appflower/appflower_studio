@@ -205,7 +205,7 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 	 */
 	createWidgets : function() {
 		var data = this.getGenerateData();
-		
+
 		if (data == null) return;
 		
 		afStudio.xhr.executeAction({
@@ -214,13 +214,23 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 			mask: "Processing creation...",
 			scope: this,
 			run: function(response, ops) {
-				//refresh navigation panel
-				var nav = afStudio.vp.viewRegions.west;
-				if (ops.params.place_type == 'plugins') {
-					nav.get('plugins').onItemActivate();	
-				} else {
-					nav.get('widgets').onItemActivate();
-				}
+				//refresh navigation panel & open generated widget
+				var d = response.data,
+					nav = afStudio.vp.viewRegions.west,
+					navItem = d.place_type == 'plugin' ? nav.get('plugins') : nav.get('widgets');
+
+				var path = ['', navItem.root.text, d.place, d.module, d.widgets[0]].join('/');	
+				
+				nav.getLayout().setActiveItem(navItem.id);
+				
+				navItem.loadRootNode(function(){
+					var tree = this;
+					this.selectPath(path, 'text', function(sel, node){
+						if (sel) {
+							tree.runNode(node);
+						}
+					});
+				});
 			}
 		});
 		

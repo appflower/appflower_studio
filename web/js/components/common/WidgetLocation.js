@@ -63,6 +63,12 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
     
 	loadingText : 'Please wait...',
 
+	invalidText : 'Location module accepts only alphanumeric symbols and "_", beginning from alphanumeric.',
+	
+	validator : function(value) {
+		return /^([A-Za-z\d]\w*)?$/im.test(value) ? true : '';
+	},
+	
 	/**
 	 * Template method.
 	 * @override
