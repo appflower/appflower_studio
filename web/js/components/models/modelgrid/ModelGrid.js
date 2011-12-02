@@ -786,6 +786,13 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 						}
 	            	});
 	            }
+	        },'-',{
+	        	text: 'Create Widget',
+	        	iconCls: 'icon-widgets-add',
+	        	handler: function(btn, e) {
+	        		var w = me.ownerCt.getCreateWidgetWindow();
+	        		w.show();
+	        	}
 	        },'-',{	        	
             	text: 'Insert',
             	itemId: 'insert',
@@ -796,7 +803,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            	{
 	            		text: 'Insert after',
 	            		scope: me,
-			            handler: me.insertAfterField 
+			            handler: me.insertAfterField
 	            	},{
 	            		text: 'Insert before',
 	            		scope: me,
@@ -816,19 +823,6 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	    	this.store.remove(r);
 	        	    }
 	            }
-	        },'-',{
-	        	text: 'Create Widget',
-	        	iconCls: 'icon-widgets-add',
-	        	handler: function(btn, e) {
-	        		if (!me.createWidgetWindow) {
-						me.createWidgetWindow = new afStudio.models.CreateWidgetWindow({
-							model: me.model,
-							fields: me._data
-						});
-	        		}
-	        		me.createWidgetWindow.fields = me._data;
-					me.createWidgetWindow.show();
-	        	}
 	        }],
 	        bbar: pagingBar
 		};

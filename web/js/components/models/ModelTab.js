@@ -3,35 +3,40 @@ Ext.ns('afStudio.models');
 /** 
  * @class afStudio.models.ModelTab
  * @extends Ext.TabPanel
- * @author Nikolai
+ * @author Nikolai Babinski
  */
 afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 
 	/**
-	 * @cfg {Object} fieldsStructure required
-	 * The fieldsStructure object contains model's fields structure metadata
+	 * The fieldsStructure object contains model's fields structure metadata.
+	 * @cfg {Object} (required) fieldsStructure
 	 */
 	
 	/**
-	 * @cfg {String} modelName required
+	 * @cfg {String} (required) modelName
 	 */
 
 	/**
-	 * @cfg {String} schemaName required
+	 * @cfg {String} (required) schemaName
 	 */
 	
 	/**
-	 * @cfg {String} modelUrl required (defaults to '/appFlowerStudio/models')
-	 * Base URL for models 
+	 * @cfg {String} (required) modelUrl Base URL for models (defaults to '/appFlowerStudio/models')
 	 */
-	modelUrl : afStudioWSUrls.modelListUrl
+	modelUrl : afStudioWSUrls.modelListUrl,
 
+	/**
+	 * The create widgets window component.
+	 * @property createWidgetWindow
+	 * @type {afStudio.models.CreateWidgetWindow}
+	 */
+	
 	/**
 	 * Runs altering process and updates model's grids
 	 * @private
 	 * @param {Function} action
 	 */
-	,alterModelAction : function(action) {
+	alterModelAction : function(action) {
 		var me = this;
 		
 		afStudio.xhr.executeAction({
@@ -44,42 +49,43 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 			mask: {region: 'center', msg: 'Updating ' + me.modelName + ' model...'},
 			showNoteOnSuccess: false,
 			run: function(response, ops) {
+				//update fields structure
+				me.fieldsStructure = response;
 				action(response);
 			}
 		});
-	}//eo alterModelAction
+	},
 	
 	/**
-	 * {@link afStudio.models.FieldsGrid} modelConfig's <u>altermodel</u> event listener
 	 * Updates modelData grid.
+	 * {@link afStudio.models.FieldsGrid} modelConfig's <u>altermodel</u> event listener.
 	 * This event is relayed to the ModelTab.
 	 */
-	,onAlterModel : function() {
-		var _this = this,
-			   md = _this._modelData;
+	onAlterModel : function() {
+		var me = this,
+			   md = me._modelData;
 			   
-		_this.alterModelAction(function(fData) {
-	       _this.remove(md, true);		   		
-	       _this._modelData = _this.createModelDataGrid(fData);				
-	       _this.insert(0, _this._modelData);
-	       _this.doLayout();
+		me.alterModelAction(function(fData) {
+	       me.remove(md, true);		   		
+	       me._modelData = me.createModelDataGrid(fData);				
+	       me.insert(0, me._modelData);
+	       me.doLayout();
 		});
-	}//eo onAlterModel
+	},
 	
 	/**
 	 * {@link afStudio.models.ModelGrid} modelData's <u>alterfield</u> event listener
 	 * Updates modelConfig grid.
 	 * This event is relayed to the ModelTab. 
 	 */
-	,onAlterField : function() {
+	onAlterField : function() {
 		var mc = this._modelConfig,
 			md = this._modelData;
 			   
 		this.alterModelAction(function(fData) {
 			mc.loadModelData(fData);
-			md._data = fData; //update _data property
 		});		
-	}//eo onAlterField
+	},
 	
 	/**
 	 * Creates modelConfig grid
@@ -87,16 +93,16 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 * @param {Object} fData The fData object contains model's fields structure information
 	 * @return {afStudio.models.FieldsGrid} modelConfig grid
 	 */
-	,createModelConfigGrid : function(fData) {
-		var _this = this;
+	createModelConfigGrid : function(fData) {
+		var me = this;
 		
 		return new afStudio.models.FieldsGrid({	   		
 			itemId: 'model-fields',
 			_data: fData,
-			model: _this.modelName,
-			schema: _this.schemaName
+			model: me.modelName,
+			schema: me.schemaName
 		});		
-	}
+	},
 	
 	/**
 	 * Creates modelData grid
@@ -104,16 +110,16 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 * @param {Object} fData The fData object contains model's fields structure information
 	 * @return {afStudio.models.ModelGrid} modelData grid
 	 */
-	,createModelDataGrid : function(fData) {
-		var _this = this,
-			  mdl = _this.modelName;
+	createModelDataGrid : function(fData) {
+		var me = this,
+			mdl = me.modelName;
 			  
 	   	return new afStudio.models.ModelGrid({	   		
 			itemId: 'model-data',
 			title: mdl,
 			_data: fData,
-			model: _this.modelName,
-			schema: _this.schemaName,			
+			model: me.modelName,
+			schema: me.schemaName,			
             storeProxy: new Ext.data.HttpProxy({
                 api: {
                 	read:    afStudioWSUrls.getModelGridDataReadUrl(mdl),
@@ -123,61 +129,80 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
                 }
             })
 		});
-	}//eo createModelDataGrid
+	},
+	
+	/**
+	 * Returns {@link #createWidgetWindow}
+	 * @return {afStudio.models.CreateWidgetWindow}
+	 */
+	getCreateWidgetWindow : function() {
+		var me = this;
+		
+		if (!me.createWidgetWindow) {
+			me.createWidgetWindow = new afStudio.models.CreateWidgetWindow({
+				model: me.modelName,
+				fields: me.fieldsStructure
+			});
+		}
+		
+		me.createWidgetWindow.fields = me.fieldsStructure;
+		
+		return me.createWidgetWindow;
+	},
 	
 	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
 	 */	
-	,_beforeInitComponent : function() {
-		var _this = this,
-			fData = _this.fieldsStructure,
-			  mdl = _this.modelName,
-			  shm = _this.schemaName;
+	_beforeInitComponent : function() {
+		var me = this,
+			fData = me.fieldsStructure,
+			mdl = me.modelName,
+			shm = me.schemaName;
 		
-	   	this._modelConfig = _this.createModelConfigGrid(fData);
-	   	this._modelData   = _this.createModelDataGrid(fData); 
+	   	this._modelConfig = me.createModelConfigGrid(fData);
+	   	this._modelData   = me.createModelDataGrid(fData); 
 		
 		return {			
 			activeTab: 0,
 			items: [
-				_this._modelData,
-				_this._modelConfig
+				me._modelData,
+				me._modelConfig
 			]
-		}		
-	}//eo _beforeInitComponent
+		};	
+	},
 	
 	/**
 	 * Template method
 	 * @private
 	 */
-	,initComponent : function() {
+	initComponent : function() {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);				
 		afStudio.models.ModelTab.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
-	}//eo initComponent
+	},
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
-	,_afterInitComponent : function() {
-		var _this = this,
-		       mc = _this._modelConfig,
-		       md = _this._modelData;
+	_afterInitComponent : function() {
+		var me = this,
+			mc = me._modelConfig,
+			md = me._modelData;
 
 		this.relayEvents(mc, ['altermodel']);
 		this.relayEvents(md, ['alterfield']);
 		
-		_this.on({
-			scope: _this,
-			altermodel: _this.onAlterModel,
-			alterfield: _this.onAlterField
+		me.on({
+			scope: me,
+			altermodel: me.onAlterModel,
+			alterfield: me.onAlterField
 		});	
-	}//eo _afterInitComponent	
+	}	
 });
 
 /**

@@ -11,13 +11,15 @@ Ext.ns('afStudio.models');
 afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	
 	/**
-	 * @cfg {String} (required) model
-	 * This model name
+	 * @cfg {String} (required) model The model name
 	 */
 	
 	/**
-	 * @cfg {String} (required) schema
-	 * This model's schema name
+	 * @cfg {String} (required) schema The schema path
+	 */
+	
+	/**
+	 * @cfg {Object} (required) _data The model's fields definition object
 	 */
 	
 	/**
@@ -366,6 +368,13 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	            iconCls: 'icon-save',
 	            scope: me,
 	            handler: me.saveModel
+	        },'-',{
+	        	text: 'Create Widget',
+	        	iconCls: 'icon-widgets-add',
+	        	handler: function(btn, e) {
+	        		var w = me.ownerCt.getCreateWidgetWindow();
+	        		w.show();
+	        	}
 	        },'-',{	        	
 	            text: 'Insert',
 	            iconCls: 'icon-add',
@@ -449,7 +458,6 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		
 		//Load Model structure
 		me.loadModelData(me._data);
-		
 	}
 	//eo _afterInitComponent
 	
