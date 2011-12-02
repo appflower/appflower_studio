@@ -190,6 +190,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $place      = $this->getParameter('place', 'frontend');
         $refresh    = $this->getParameter('refresh', 'false');
         
+        $data = array();
         $not_refreshed = array();
         if ($refresh == 'false') {
             foreach (explode(',', $type) as $type_generate) {
@@ -213,12 +214,19 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             (!$widget->isNew() && !in_array($action, $not_refreshed)) ? ($created[] = $action) : ($not_created[] = $action);
         }
         
+        $data = array(
+            'place' => $place,
+            'place_type' => $place_type,
+            'module' => $module,
+            'widgets' => $created,
+        );
+        
         $message = '';
         if (!empty($created)) $message .= 'Created: <b>' . implode(', ', $created) . '</b>. <br/>';
         if (!empty($not_created) && $not_created != $not_created) $message .= 'Not Created: <b>' . implode(', ', $not_created) . '</b>. <br/>';
         if (!empty($not_refreshed)) $message .= 'Already Exists: <b>' . implode(', ', $not_refreshed) . '</b>.';
         
-        return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->message($message)->console($console_output);
+        return afResponseHelper::create()->success($console->wasLastCommandSuccessfull())->message($message)->data(array(), $data, 0)->console($console_output);
     }
     
     /**
