@@ -76,13 +76,14 @@ class afsModelGridDataActions extends afsActions
         $query = $this->getModelQuery();
         
         $rows = json_decode($request->getParameter('data'), true);
+        $data = array();
         $rowsIndexed = array();
         foreach ($rows as $row) {
             $rowsIndexed[$row['id']] = $row;
+            $data[$row['id']] = '';
         }
         $ids = array_keys($rowsIndexed);
         $objects = $query->filterByPrimaryKeys($ids)->find();
-        $data = array();
         
         try {
             foreach ($objects as $object) {
@@ -96,7 +97,8 @@ class afsModelGridDataActions extends afsActions
                     $object->$colSetterMethod($value);
                 }
                 $object->save();
-                $data[] = $this->getModelObjectData($object);
+                
+                $data[$object->getPrimaryKey()] = $this->getModelObjectData($object);
             }
         } catch (Exception $e) {
             return $response->success(false)->message($e->getMessage())->asArray();
