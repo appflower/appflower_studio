@@ -27,6 +27,7 @@
 .icon-tools-console{background:url('/appFlowerStudioPlugin/images/application_xp_terminal.png') no-repeat center left !important;}
 .icon-tools-git{background:url('/appFlowerStudioPlugin/images/git.png') no-repeat center left !important; width: 16px;}
 .icon-tools-snapshot{background:url('/appFlowerStudioPlugin/images/snapshot.png') no-repeat center left !important;}
+.icon-code-editor{background:url('/appFlowerStudioPlugin/images/application_side_tree.png') no-repeat center left !important;}
 
 /* "Debug" menu icons */
 .icon-debug{background:url('/appFlowerStudioPlugin/images/bug.png') no-repeat center left !important;}

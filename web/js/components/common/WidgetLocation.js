@@ -63,6 +63,12 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
     
 	loadingText : 'Please wait...',
 
+	invalidText : 'Location module accepts only alphanumeric symbols and "_", beginning from alphanumeric.',
+	
+	validator : function(value) {
+		return /^([A-Za-z\d]\w*)?$/im.test(value) ? true : '';
+	},
+	
 	/**
 	 * Template method.
 	 * @override
@@ -93,7 +99,33 @@ afStudio.common.WidgetLocation = Ext.extend(Ext.ux.form.GroupingComboBox, {
         });
         
         afStudio.common.WidgetLocation.superclass.initComponent.call(this);
-	}
+	},
+	
+    /**
+     * Returns the currently selected widget location or null if no value is set.
+     * @override
+     * @return {Object} value The selected value
+     */
+    getValue : function() {
+    	var module = afStudio.common.WidgetLocation.superclass.getValue.call(this),
+    		value = null;
+    	
+    	//value was selected from the list	
+    	if (!Ext.isEmpty(module) && this.store.getById(module)) {
+    		var valueRec = this.store.getById(module),
+    			place = valueRec.get(this.groupField),	
+    			placeType = valueRec.get(this.typeField);
+    		
+    		value = {'module': module, 'place': place, 'placeType': placeType};
+    		
+    	//works only when forceSelection is false and value was filled manually
+    	} else if (!Ext.isEmpty(module)) {
+    		value = module;
+    	}
+    	
+    	return value;
+    }
+	
 });
 
 Ext.reg('common.widgetlocation', afStudio.common.WidgetLocation);

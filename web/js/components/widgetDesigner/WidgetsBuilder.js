@@ -522,12 +522,11 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 			return;
 		}
 		
-		var module    = this.modulesCombo.getValue(),
-			moduleRec = this.modulesCombo.getStore().getById(module),
+		var widgetLocation = this.modulesCombo.getValue(),
 			action    = this.actionInput.getValue(),
-			widgetUri = module + '/' + action,			
+			widgetUri = widgetLocation.module + '/' + action,			
 			type      = this.typeCombo.getValue(),
-			place     = moduleRec.get('group');		
+			place     = widgetLocation.place;		
 		
 		var wDefinition = this.buildWidgetDefinition(action, type, items);
 		

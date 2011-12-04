@@ -488,6 +488,9 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		return new Ext.grid.GridEditor(f);
 	},
 	
+	/**
+	 * @protected
+	 */
 	beforeInit : function() {
 		var columns = [new Ext.grid.RowNumberer()],
 			fields  = [];
@@ -511,56 +514,68 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 			fields.push({name: 'c' + i});
 		}
 		
-		if (this.columns) {
-			var cm = new Ext.grid.ColumnModel(this.columns);
-		} else {
-			var cm = new Ext.grid.ColumnModel(columns);
-		}
+		var cm = this.columns ? new Ext.grid.ColumnModel(this.columns)
+							  : new Ext.grid.ColumnModel(columns);
 	 
+		var store;
 		if (this.store) {
-			var store = this.store;
+			store = this.store;
 			//adds one empty record if we have no data
 			if (this.store.getCount() == 0) {
 				var rec = this.store.recordType;
 				this.store.add([new rec()]);		
 			}
 		} else {
-			var store = new Ext.data.SimpleStore({
+			store = new Ext.data.SimpleStore({
 				fields: fields,
 				data: [['']]
 			});
 		}
 		
+		var sm = new Ext.grid.CellSelectionModel({
+			/**
+			 * @override
+			 */
+		    onEditorKey: function(field, e){
+		        if(e.getKey() == e.TAB){
+		            this.handleKeyDown(e);
+		        }
+		        
+		        if (e.getKey() == e.ENTER) {
+			        var g = this.grid, 
+			            last = g.lastEdit,
+			            ed = g.activeEditor,
+				        shift = e.shiftKey,
+				        newCell,
+			            ae, last, r, c;
+			            
+	                if (shift) {
+	                    newCell = g.walkCells(last.row - 1, last.col, -1, this.acceptsNav, this);
+	                } else {
+	                    newCell = g.walkCells(last.row + 1, last.col, 1, this.acceptsNav, this);
+	                }
+			            
+			        if (newCell) {
+			            r = newCell[0];
+			            c = newCell[1];
+			
+			            if (g.isEditor && g.editing) {
+			                ae = g.activeEditor;
+			                if (ae && ae.field.triggerBlur){
+			                    ae.field.triggerBlur();
+			                }
+			            }
+			            g.startEditing(r, c);
+			        }
+		        }
+		    }
+		});
+		
 		var config = {		
 	        store: store,
 	        cm: cm,
-	        view: new afStudio.models.modelGridView(),
-	        listeners: {
-				afteredit: function(e) {
-					var row     = e.row + 1,
-						column  = e.column,
-						count   = this.store.getCount();
-					
-					//adds empty record everytime when was updated the last record in the grid	
-					if (count == row) {
-						var rec = store.recordType;
-						store.add([new rec()]);
-					}
-					
-					//adds new column everytime when was updated the last column's record in the grid
-					if (this.getColumnModel().getColumnCount(true) == (column + 1) 
-						&& column < this.maxColumns) {
-							
-						this.getView().showNextColumn(column);
-					}
-					
-					var task = new Ext.util.DelayedTask(function(row, column) { 
-						this.startEditing(row, column);
-					}, this, [row, column]);
-					
-					task.delay(100);
-				}
-			}
+	        selModel: sm,
+	        view: new afStudio.models.modelGridView()
 		};
 			
 		Ext.apply(this, 
@@ -568,8 +583,39 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 		);
 	},
 	
-	afterInit: Ext.emptyFn,
+	/**
+	 * @protected
+	 */
+	afterInit: function() {
+		
+		this.on({
+			scope: this,
+			
+			afteredit: function(e) {
+				var row     = e.row + 1,
+					column  = e.column,
+					ds = this.store,
+					count   = ds.getCount();
+				
+				//adds empty record everytime when was updated the last record in the grid	
+				if (count == row) {
+					ds.add([new ds.recordType()]);
+				}
+				
+				//adds new column everytime when was updated the last column's record in the grid
+				if (this.getColumnModel().getColumnCount(true) == (column + 1) 
+					&& column < this.maxColumns) {
+					this.getView().showNextColumn(column);
+				}
+			}
+		});
+	},
 	
+	/**
+	 * Ext template method.
+	 * @override
+	 * @private
+	 */
 	initComponent : function() {
 		this.beforeInit();
 		
@@ -588,13 +634,19 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	
 	/**
-	 * @cfg {String} model (required) This model name.
+	 * @cfg {String} (required) model The model name
 	 */
+	
 	/**
-	 * @cfg {String} schema (required) This model's schema name.
+	 * @cfg {String} (required) schema The schema path
 	 */
+	
 	/**
-	 * @cfg {Number} recordsPerPage (required) The number of displaying records per page (defaults to 25).
+	 * @cfg {Object} (required) _data The model's fields definition object
+	 */
+	
+	/**
+	 * @cfg {Number} (required) recordsPerPage The number of displaying records per page (defaults to 25).
 	 */
 	recordsPerPage : 25,
 	
@@ -620,11 +672,11 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 				type: 'varchar',
 				exists: false
 			}
-		};	
+		};
 	},
 	
 	/**
-	 * @private
+	 * @protected
 	 */
 	beforeInit : function() {
 		var me = this,
@@ -633,8 +685,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			modelStructureExists = !Ext.isEmpty(data),
 			columns = [new Ext.grid.RowNumberer()];
 		
+		//real fields structure	
 		if (data.length > 0) {
-			
 			Ext.each(data, function(f, i) {
 				var clm = {
 					header: f.name,
@@ -651,24 +703,19 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 				columns.push(clm);
 				fields.push({name: 'c' + i});
 			});
-	 
-			for (var i = columns.length - 1; i <= this.maxColumns; i++) {
-				columns.push(this.createUninitColumn(i));
-				fields.push({name: 'c' + i});
-			}
-			
-		} else {
-			for (var i = columns.length - 1; i <= this.maxColumns; i++) {
-				columns.push(this.createUninitColumn(i));				
-				fields.push({name: 'c' + i});
-			}
+		}
+		
+		for (var i = columns.length - 1; i <= this.maxColumns; i++) {
+			columns.push(this.createUninitColumn(i));				
+			fields.push({name: 'c' + i});
 		}
 		//eo columns & fields building
 		
 		me.store = new afStudio.models.ModelStore({
 			proxy: me.storeProxy,
 			readerCfg: {
-				fields: fields
+				fields: fields,
+				idProperty: 'id'
 			}
 		});
 		me.store.load({
@@ -680,6 +727,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 		
 		me.columns = columns;		
 		
+		//call ancestor's method
 		afStudio.models.ModelGrid.superclass.beforeInit.apply(this, arguments);
 		
 		var pagingBar = new Ext.PagingToolbar({
@@ -738,6 +786,13 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 						}
 	            	});
 	            }
+	        },'-',{
+	        	text: 'Create Widget',
+	        	iconCls: 'icon-widgets-add',
+	        	handler: function(btn, e) {
+	        		var w = me.ownerCt.getCreateWidgetWindow();
+	        		w.show();
+	        	}
 	        },'-',{	        	
             	text: 'Insert',
             	itemId: 'insert',
@@ -748,7 +803,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            	{
 	            		text: 'Insert after',
 	            		scope: me,
-			            handler: me.insertAfterField 
+			            handler: me.insertAfterField
 	            	},{
 	            		text: 'Insert before',
 	            		scope: me,
@@ -768,13 +823,6 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	    	this.store.remove(r);
 	        	    }
 	            }
-	        },'-',{
-	        	text: 'Create Widget',
-	        	iconCls: 'icon-widgets-add',
-	        	handler: function(btn, e) {
-					var w = new afStudio.models.CreateWidgetWindow();
-					w.show();
-	        	}
 	        }],
 	        bbar: pagingBar
 		};
@@ -784,7 +832,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	//eo beforeInit
 	
 	/**
-	 * @private
+	 * @protected
 	 */
 	afterInit : function() {
 		afStudio.models.ModelGrid.superclass.afterInit.apply(this, arguments);		
@@ -813,7 +861,6 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			'logmessage'
 		);		
 	},
-	//eo afterInit
 	
 	insertAfterField : function(b, e) {
 		var me = this,		

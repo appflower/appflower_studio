@@ -79,6 +79,9 @@ class afStudioProjectCommand extends afBaseStudioCommand
      */
     protected function processExport()
     {
+        // ini set for windows
+        ini_set("max_execution_time", "300");
+        
         $response = afResponseHelper::create();
         
         $by_os = $this->getParameter('by_os', 'false');
@@ -96,4 +99,5 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         return $response->success(true)->data(array(), array('name' => $name, 'file' => "{$name}.{$postfix}", 'path' => $path), 0)->console($console_result);
     }
+    
 }

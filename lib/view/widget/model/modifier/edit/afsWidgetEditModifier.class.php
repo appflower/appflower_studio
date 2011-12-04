@@ -31,10 +31,9 @@ class afsWidgetEditModifier extends afsBaseModelModifier
         if ($model->isNew()) {
             $definition = $this->checkAndCreateFieldsUrlAttribute($definition, $model);
             $definition = afsWidgetEditPredictionModifier::create($definition)->fieldTypes()->getDefinition();
+            $definition = $this->searchForAndModifyForeignTableFields($definition);
+            $definition = $this->setFieldsDefaultValuePlaceholder($definition);
         }
-        
-        $definition = $this->searchForAndModifyForeignTableFields($definition);
-        $definition = $this->setFieldsDefaultValuePlaceholder($definition);
         
         $model->setDefinition($definition);
         
@@ -113,7 +112,7 @@ class afsWidgetEditModifier extends afsBaseModelModifier
                             'attributes' => array('name' => afsWidgetEditModifierHelper::FETCHER_METHOD),
                             'i:param' => array(
                                 array(
-                                    'attributes' => array('name' => 'does_not_matter'),
+                                    'attributes' => array('name' => 'modelName'),
                                     '_content' => $column->getRelation()->getForeignTable()->getPhpName()
                                 )
                             )

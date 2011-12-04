@@ -128,19 +128,20 @@ class afsDatabaseQuery
         
         $schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->in($dirs);
         
-        foreach ($schemas as $schema) {
+        foreach ($schemas as $schema_path) {
+            $schema = (DIRECTORY_SEPARATOR != '/') ? str_replace('/', DIRECTORY_SEPARATOR, $schema_path) : $schema_path;
             $aOriginalSchemaArray[$schema] = sfYaml::load($schema);
-
+            
             if (!is_array($aOriginalSchemaArray[$schema])) {
                 $aOriginalSchemaArray[$schema];
                 continue; // No defined schema here, skipping
             }
-    
+            
             if (!isset($aOriginalSchemaArray[$schema]['classes'])) {
                 // Old schema syntax: we convert it
                 $aPropelSchemaArray[$schema] = $db_schema->convertOldToNewYaml($aOriginalSchemaArray[$schema]);
             }
-    
+            
             $customSchemaFilename = str_replace(array(
                 str_replace(DIRECTORY_SEPARATOR, '/', sfConfig::get('sf_root_dir')).'/',
                 'plugins/',
@@ -149,7 +150,7 @@ class afsDatabaseQuery
                 'schema.yml'
             ), array('', '', '', '_', 'schema.custom.yml'), $schema);
             $customSchemas = sfFinder::type('file')->name($customSchemaFilename)->in($dirs);
-    
+            
             foreach ($customSchemas as $customSchema) {
                 $aOriginalSchemaArray[$customSchema] = sfYaml::load($customSchema);
                 if (!isset($aOriginalSchemaArray[$customSchema]['classes'])) {
