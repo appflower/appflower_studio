@@ -193,6 +193,87 @@ class afStudioModelCommand extends afBaseStudioCommand
     }
     
     /**
+     * 
+     * Imports various data files from fixtures (YAML) directory or via file upload (CSV,YAML,Spreadsheets).
+     * 
+     * @throws Exception
+     */
+    protected function processImportData() {
+    	
+    	$remote_files = $this->getParameter("remote_files",array());
+    	$formats = array
+    	(
+    	"yml" => "yml",
+    	"yaml" => "yml",
+    	"csv" => "csv",
+    	"xlsx" => "xls",
+    	"xls" => "xls",
+    	"ods" => "xls",
+    	);
+    	
+    	foreach(array("has_headers","append","model","name","tmp","code","delimeter","enclosure","raw","worksheet","worksheets_as_models") as $item) {
+    		$params[$item] = $this->getParameter($item);
+    	}
+    	
+    	$params["append"] = $params["append"] === "true" ? true : false;
+    	$params["delimeter"] = $params["delimeter"] ? $params["delimeter"] : ",";
+    	$params["enclosure"] = $params["enclosure"] ? $params["enclosure"] : '"';
+
+    	try {
+    		if(!$params["name"]) {
+	    		foreach($remote_files as $file) {
+	    			$files[] = afStudioUtil::getFixturesDir()."/".$file;
+	    		}	
+	    		$class = "YmlImporter";
+    		} else {
+    			$ext = afsFileSystem::create()->getExtension($params["name"]);
+    			if(!array_key_exists($ext, $formats)) {
+    				throw new Exception("Unsupported file: ".$params["name"]);
+    			}
+    			$class = ucfirst($formats[$ext]."Importer");
+    			if($params["code"] !== 0) {
+    				throw new Exception("Failed to upload file: ".$params["name"]);
+    			} 
+    			
+    			$uploaded_file = afStudioUtil::getUploadsDir()."/".$params["name"];
+    			
+    			if(!@move_uploaded_file($params["tmp"], $uploaded_file)) {
+    				throw new Exception("Couldn't process uploaded file: ".$params["name"]);
+    			}
+    			
+    			$files = array($uploaded_file);
+    		}
+    		
+    		$importer = new $class($params);
+    		
+    		foreach ($files as $k => &$file) {
+				
+    			$importer->setProperty("current",$file);
+	    		$importer->loadData($file);
+	    		if(!($importer instanceof CsvImporter)) {
+	    			$importer->insertData($file);	
+	    		}
+	    		
+	    		
+			}
+  
+	    	if($params["name"]) {
+	    		if(!@unlink($uploaded_file)) {
+	    			throw new Exception("Couldn't delete tmp file: ".$params["name"]);
+	    		}
+	    	}
+    		
+    		
+    	} catch(Exception $e) {
+    		return afResponseHelper::create()->success(false)->message($e->getMessage());	
+    	}
+    	
+    	return afResponseHelper::create()->success(true)->message("Data has been successfully inserted!");
+    	
+    }
+    
+    
+    /**
      * Validate schema
      *
      * @return afResponse

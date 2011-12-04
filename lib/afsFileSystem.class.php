@@ -320,6 +320,19 @@ class afsFileSystem
     }
     
     /**
+     * Gives back a file's extension.
+     * 
+     * @param string $file
+     * @return string
+     */
+    public function getExtension($file) {
+    	
+    	return strtolower(substr($file,strrpos($file,".")+1));
+    	
+    }
+    
+    
+    /**
      * Replaces tokens in an array of files.
      *
      * @param array  $files       An array of filenames

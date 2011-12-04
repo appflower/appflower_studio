@@ -81,8 +81,18 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeModels(sfWebRequest $request)
     {
+    	
         $command = $request->getParameter('cmd', $request->getParameter('xaction'));
-        $response = afStudioCommand::process('model', $command, $request->getParameterHolder()->getAll());
+        $params = $request->getParameterHolder()->getAll();
+        $files = $request->getFiles();
+        
+        if(!empty($files)) {
+        	$params["name"] = $files["file"]["name"];
+        	$params["tmp"] = $files["file"]["tmp_name"];
+        	$params["code"] = $files["file"]["error"];
+        } 
+        
+        $response = afStudioCommand::process('model', $command, $params);
         
         if ($command == 'get') {
             if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {

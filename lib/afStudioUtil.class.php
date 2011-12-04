@@ -11,6 +11,21 @@ class afStudioUtil
   {
     return sfConfig::get('sf_config_dir');
   }
+  
+  public static function getDataDir()
+  {
+    return sfConfig::get('sf_data_dir');
+  }
+  
+  public static function getFixturesDir()
+  {
+    return self::getDataDir()."/fixtures";
+  }
+  
+  public static function getUploadsDir()
+  {
+    return self::getRootDir()."/web/uploads";
+  }
 
   /*
    * remove sfConfig::get('sf_root_dir') from path
