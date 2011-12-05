@@ -72,11 +72,12 @@ afStudio.CodeEditor = Ext.extend(Ext.Window, {
 	createRegions : function() {
 		
 		this.westPanel = new Ext.ux.FileTreePanel({
+			url: afStudioWSUrls.getFiletreeUrl,
 			title: 'Files',  
 			iconCls: 'icon-models',
-			split: true,
         	region: 'west',
-			url: afStudioWSUrls.getFiletreeUrl,
+			split: true,
+			collapsible: true,
 			loadMask: true,
 			width: 220,
 			rootText: 'Project',

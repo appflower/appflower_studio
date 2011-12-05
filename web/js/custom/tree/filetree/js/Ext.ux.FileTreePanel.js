@@ -566,7 +566,19 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			 * @param {Ext.ux.FileTreePanel} this
 			 * @param {String} path creation of which failed
 			 */
-			'newfilefailure'
+			'newfilefailure',
+			/**
+			 * @event unarchive Fires when file was unarchived.
+			 * @param {Ext.ux.FileTreePanel} this
+			 * @param {Ext.tree.TreeNode} file that was unarchived
+			 */
+			'unarchive',
+			/**
+			 * @event unarchivefailure Fires if unarchivation of a file failed
+			 * @param {Ext.ux.FileTreePanel} this
+			 * @param {Ext.tree.TreeNode} file which unarchivation failed
+			 */
+			'unarchivefailure'
 		); 
 		// eo addEvents
 	}, 
@@ -661,10 +673,10 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {Object} response ajax call response object
 	 */
 	cmdCallback : function(options, success, response) {
-		var i, o, node;
-		var showMsg = true;
+		var showMsg = true, 
+			i, o, node;
 
-		// process Ajax success
+		//process Ajax success
 		if (true === success) {
 
 			// try to decode JSON response
@@ -674,7 +686,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 				this.showError(response.responseText);
 			}
 
-			// process command success
+			//process command success
 			if (true === o.success) {
 				switch (options.params.cmd) {
 					case 'delete':
@@ -712,12 +724,18 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 							this.fileCt.renameFile(fname, options.params.newname, options.params.oldname);
 						}
 					break;
+					
+					case 'unarchive':
+						if (true !== this.eventsSuspended) {
+							this.fireEvent('unarchive', this, options.node);
+						}
+						options.node.parentNode.reload();
+					break;
 				}
-			} // eo process command success
-			// process command failure
-			else {
+				
+			//process command failure	
+			} else {
 				switch (options.params.cmd) {
-
 					case 'rename':
 						// handle drag & drop rename error
 						if (options.oldParent) {
@@ -756,23 +774,28 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 						}
 						options.node.parentNode.reload.defer(1, options.node.parentNode);
 					break;
+					
+					case 'unarchive':
+						if (true !== this.eventsSuspended) {
+							this.fireEvent('unarchivefailure', this, options.node);
+						}
+					break;
 
 					default:
 						this.root.reload();
 					break;
 				}
 
-				// show default message box with server error
+				//show default message box with server error
 				this.showError(o.message || response.responseText);
-			} // eo process command failure
-		} // eo process Ajax success
-
-		// process Ajax failure
-		else {
+			}
+			
+		//process Ajax failure	
+		} else {
 			this.showError(response.responseText);
 		}
 	},
-	// eo function cmdCallback
+	//eo cmdCallback
 
 	/**
 	 * Displays overwrite confirm msg box and runs passed callback if response is yes
@@ -833,7 +856,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		// expand callback needs to run in this context
 		}.createDelegate(this));
 	}, 
-	// eo function creatingNewDir
+	//eo creatingNewDir
 	
 	/**
 	 * Creates new file (node)
@@ -854,10 +877,10 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		// create new file after the appendNode is expanded
 		appendNode.expand(false, false, function(n) {
-			// create new node
+			//create new node
 			newNode = n.appendChild(new Ext.tree.AsyncTreeNode({text:this.newfileText, leaf:true}));
 
-			// setup one-shot event handler for editing completed
+			//setup one-shot event handler for editing completed
 			treeEditor.on({
 				complete: {
 					scope: this,
@@ -866,7 +889,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 				}}
 			);
 
-			// creating new file flag
+			//creating new file flag
 			treeEditor.creatingNewFile = true;
 
 			// start editing after short delay
@@ -874,7 +897,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		// expand callback needs to run in this context
 		}.createDelegate(this));
 	}, 
-	// eo function creatingNewFile
+	//eo creatingNewFile
 
 	/**
 	 * Deletes the passed node
@@ -915,7 +938,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 		});
 	}, 
-	// eo function deleteNode
+	//eo deleteNode
 	
 	/**
 	 * Requests file download from server
@@ -974,6 +997,27 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		form.submit();
 	},
+	//eo downloadFile
+	
+	/**
+	 * Unarchives file.
+	 * @param {Ext.tree.TreeNode} node The file's node being unarchived
+	 * @author Nikolai Babinski
+	 */
+	unarchiveFile : function(node) {
+		var options = {
+			url: this.url,
+			method: this.method,
+			scope: this,
+			callback: this.cmdCallback,
+			node: node,
+			params: {
+				cmd: 'unarchive',
+				file: this.getPath(node)
+			}
+		};
+		Ext.Ajax.request(options);
+	},
 
 	/**
 	 * Opens the file inside container {@link #fileCt}.
@@ -1011,7 +1055,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @private
 	 */
 	getContextMenu : function() {
-		// lazy create context menu
+		//lazy create context menu
 		if (!this.contextmenu) {
 			var config = {
 				singleUpload: this.singleUpload,
@@ -1038,7 +1082,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		
 		return this.contextmenu;
 	}, 
-	// eo function getContextMenu
+	//eo getContextMenu
 	
 	/**
 	 * Returns file class based on name extension
@@ -1055,15 +1099,34 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	},
 
 	/**
-	 * Returns file name.
-	 * @param {String} path The file path
+	 * Returns file name by its path.
+	 * @param {String|Node} path The file path|node
 	 * @return {String} file name
 	 * @author Nikolai Babinski
 	 */
 	getFileName : function(path) {
+		path = Ext.isString(path) ? path : this.getPath(path);
 		var p = path.split('/');
 		
 		return p[p.length-1];
+	},
+	
+	/**
+	 * Returns file extension by file name or trying to get an extension by file node.
+	 * If file has no extension or file's node is not a file returns null. 
+	 * @protected
+	 * @param {String|Node} file The file name/node
+	 * @return {String} file extension
+	 * @author Nikolai Babinski
+	 */
+	getFileExtension : function(file) {
+		if (!Ext.isString(file) && !this.isFile(file)) {
+			return null;
+		}
+		file = this.isFile(file) ? this.getFileName(file) : file;
+ 		var ext = /\.(\w+)$/.exec(file);
+ 		
+ 		return ext ? ext[1] : null;
 	},
 	
 	/**
@@ -1073,7 +1136,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	getPath : function(node) {
 		var path, p, a;
 
-		// get path for non-root node
+		//get path for non-root node
 		if (node !== this.root) {
 			p = node.parentNode;
 			a = [node.text];
@@ -1083,19 +1146,47 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			}
 			a.unshift(this.root.attributes.path || '');
 			path = a.join(this.pathSeparator);
-		}
-		// path for root node is it's path attribute
-		else {
+		
+		//path for root node is it's path attribute	
+		} else {
 			path = node.attributes.path || '';
 		}
 
-		// a little bit of security: strip leading / or .
-		// full path security checking has to be implemented on server
+		//a little bit of security: strip leading / or .
+		//full path security checking has to be implemented on server
 		path = path.replace(/^[\/\.]*/, '');
 		
 		return path;
 	}, 
-	// eo function getPath
+	//eo getPath
+	
+	
+	/**
+	 * Checks if file-tree node is file.
+	 * @param {Ext.tree.TreeNode} node
+	 * @return {Boolean}
+	 * @author Nikolai Babinski
+	 */
+	isFile : function(node) {
+		return node instanceof Ext.tree.TreeNode && node.isLeaf();
+	},
+	
+	/**
+	 * Checks if a file is an archive.
+	 * Returns true if a file is an archive otherwise false.
+	 * @param {String|Node} file The file being checked
+	 * @return {Boolean}
+	 * @author Nikolai Babinski
+	 */
+	isArchive : function(file) {
+		var ext = this.getFileExtension(file);
+		
+		if (ext != null && ['tar', 'tgz', 'gz', 'rar', 'zip'].indexOf(ext) != -1) {
+			return true;
+		}
+		
+		return false;
+	},
 	
 	/**
 	 * returns true if node has child with the specified name (text)
@@ -1115,9 +1206,9 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		if (this.contextmenu && this.contextmenu.isVisible()) {
 			this.contextmenu.hide();
 		}
+		
 		return this;
 	},
-	// eo function hideContextMenu
 	
 	/**
 	 * Called before editing is completed - allows edit cancellation
@@ -1214,7 +1305,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		}
 		uploadPanel.setPath(path);
 	}, 
-	// eo function onBeforeUpload
 	
 	/**
 	 * Reloads tree node on upload finish
@@ -1224,7 +1314,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		var menu = this.getContextMenu();
 		(menu.node.isLeaf() ? menu.node.parentNode : menu.node).reload();
 	}, 
-	// eo function onAllFinished
 	
 	/**
 	 * Context menu click handler
@@ -1289,7 +1378,11 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 			case 'newfile':
 				this.createNewFile(node);
 			break;
-
+			
+			case 'unarchive':
+				this.unarchiveFile(node);
+			break;
+			
 			default:
 			break;
 		}
@@ -1308,7 +1401,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		return false;
 	}, 
-	// eo function onContextMenu
 	
 	/**
 	 * Dblclick handler
@@ -1316,7 +1408,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	onDblClick : function(node, e) {
 	},
-	// eo function onDblClick
 	
 	/**
 	 * Click handler
@@ -1474,15 +1565,14 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 * @param {String} mode Can be "container", "_self", "_blank", or "popup". Defaults to (this.openMode)
 	 */
 	openNode : function(node, mode) {
-
 		if (!this.enableOpen) {
 			return;
 		}
 
 		mode = mode || this.openMode;
 
-		var url;
-		var path;
+		var url, path;
+		
 		if (node.isLeaf()) {
 			path = this.getPath(node);
 						
@@ -1529,7 +1619,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	},
 	//eo function openNode
 	
-	
 	/**
 	 * Sets/Unsets delete of files/directories disabled/enabled
 	 * @param {Boolean} disabled
@@ -1543,7 +1632,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		this.hideContextMenu();
 		this.enableDelete = !disabled;
 	}, 
-	// eo function setDeleteDisabled
 	
 	/**
 	 * Sets/Unsets creation of new directory disabled/enabled
@@ -1575,7 +1663,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		return this;
 	},
-	// eo function setOpenDisabled
 
 	/**
 	 * Sets/Unsets this tree to/from readOnly state
@@ -1595,7 +1682,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		return this;
 	}, 
-	// eo function setReadOnly
 
 	/**
 	 * Sets/Unsets rename of files/directories disabled/enabled
@@ -1615,7 +1701,6 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		return this;
 	},
-	// eo function setRenameDisabled
 	
 	/**
 	 * Sets/Unsets uploading of files disabled/enabled
@@ -1632,17 +1717,16 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 		return this;
 	}, 
-	// of function setUploadDisabled
 	
 	/**
 	 * Adjusts context menu depending on many things and shows it
 	 * @private
-	 * @param {Ext.tree.AsyncTreeNode} node Node on which was right-clicked
+	 * @param {Ext.tree.TreeNode} node Node on which was right-clicked
 	 */
 	showContextMenu : function(node) {
 		// setup node alignment
-		var topAlign = false;
-		var alignEl = this.topMenu ? this.topMenu.getEl() : this.body;
+		var topAlign = false,
+			alignEl = this.topMenu ? this.topMenu.getEl() : this.body;
 
 		if (!node) {
 			node = this.getSelectionModel().getSelectedNode();
@@ -1682,6 +1766,7 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 		menu.getItemByCmd('upload-panel').setVisible(this.enableUpload);
 		menu.getItemByCmd('sep-upload').setVisible(this.enableUpload);
 		menu.getItemByCmd('sep-collapse').setVisible(this.enableNewDir || this.enableDelete || this.enableRename);
+		menu.getItemByCmd('unarchive').setVisible(this.isArchive(node));
 		
 		menu.render();
 

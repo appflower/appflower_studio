@@ -1,4 +1,3 @@
-// vim: ts=4:sw=4:nu:fdc=4:nospell
 /**
  * Ext.ux.FileTreeMenu
  *
@@ -14,8 +13,6 @@
  * License details: http://www.gnu.org/licenses/lgpl.html
  */
 
-/*global Ext */
-
 /**
  * @class Ext.ux.FileTreeMenu
  * @extends Ext.menu.Menu
@@ -27,37 +24,38 @@ Ext.ux.FileTreeMenu = function(config) {
 	config = config || {};
 
 	var uploadPanelConfig = {
-        hideOnClick: false
-        ,cmd:'upload-panel'
-        ,contextmenu:this
-        ,buttonsAt:config.buttonsAt || 'tbar'
-        ,singleUpload:config.singleUpload || false
-        ,maxFileSize:config.maxFileSize
-        ,enableProgress:config.enableProgress
+        hideOnClick: false,
+        cmd: 'upload-panel',
+        contextmenu: this,
+        buttonsAt: config.buttonsAt || 'tbar',
+        singleUpload: config.singleUpload || false,
+        maxFileSize: config.maxFileSize,
+        enableProgress: config.enableProgress
     };
-	if(config.baseParams) {
+    
+	if (config.baseParams) {
 		config.baseParams.cmd = config.baseParams.cmd || 'upload';
 		config.baseParams.dir = config.baseParams.dir || '.';
 		uploadPanelConfig.baseParams = config.baseParams;
 	}
-
-	// {{{
+	
 	Ext.apply(config, {
-		items:[{
-			 text:'&#160'
-			,cls:'ux-ftm-nodename'
-			,disabledClass:''
-			,disabled:true
-			,cmd:'nodename'
+		items: [{
+			text: '&#160',
+			cls: 'ux-ftm-nodename',
+			disabledClass: '',
+			disabled: true,
+			cmd: 'nodename'
 		},{
-			 text:this.openText + ' (Enter)'
-			,iconCls:this.openIconCls
-			,cmd:'open'
-			,menu:{
-				items:[{
-					 text:this.openSelfText
-					,iconCls:this.openSelfIconCls
-					,cmd:'open-self'
+			text: this.openText + ' (Enter)',
+			iconCls: this.openIconCls,
+			cmd: 'open',
+			menu: {
+				items: [
+				{
+					text: this.openSelfText,
+					iconCls: this.openSelfIconCls,
+					cmd: 'open-self'
 				}/*,{
 					 text:this.openPopupText
 					,iconCls:this.openPopupIconCls
@@ -72,208 +70,220 @@ Ext.ux.FileTreeMenu = function(config) {
 					,cmd:'open-dwnld'
 				}*/]
 			}
-		}
-		,new Ext.menu.Separator({cmd:'sep-open'})
-		,{
-			 text:this.reloadText + ' (Ctrl+E)'
-			,iconCls:this.reloadIconCls
-			,cmd:'reload'
+		},
+		new Ext.menu.Separator({cmd: 'sep-open'}),
+		{
+			text: this.reloadText + ' (Ctrl+E)',
+			iconCls: this.reloadIconCls,
+			cmd: 'reload'
 		},{
-			 text:this.expandText + ' (Ctrl+&nbsp;&rarr;)'
-			,iconCls:this.expandIconCls
-			,cmd:'expand'
+			text: this.expandText + ' (Ctrl+&nbsp;&rarr;)',
+			iconCls: this.expandIconCls,
+			cmd: 'expand'
 		},{
-			 text:this.collapseText + ' (Ctrl+&nbsp;&larr;)'
-			,iconCls:this.collapseIconCls
-			,cmd:'collapse'
-		}
-		,new Ext.menu.Separator({cmd:'sep-collapse'})
-		,{
-			 text:this.renameText + ' (F2)'
-			,iconCls:this.renameIconCls
-			,cmd:'rename'
+			text: this.collapseText + ' (Ctrl+&nbsp;&larr;)',
+			iconCls: this.collapseIconCls,
+			cmd: 'collapse'
+		},
+		new Ext.menu.Separator({cmd: 'sep-collapse'}),
+		{
+			text: this.renameText + ' (F2)',
+			iconCls: this.renameIconCls,
+			cmd: 'rename'
 		},{	
-			 text:this.deleteText + ' (' + this.deleteKeyName + ')'
-			,iconCls:this.deleteIconCls
-			,cmd:'delete'
+			text: this.deleteText + ' (' + this.deleteKeyName + ')',
+			iconCls: this.deleteIconCls,
+			cmd: 'delete'
+		},{
+			text: this.newdirText + '... (Ctrl+N)',
+			iconCls: this.newdirIconCls,
+			cmd: 'newdir'
 		},{	
-			 text:this.newdirText + '... (Ctrl+N)'
-			,iconCls:this.newdirIconCls
-			,cmd:'newdir'
-		},{	
-			 text:this.newfileText
-			,iconCls:this.newfileIconCls
-			,cmd:'newfile'
-		}
-		,new Ext.menu.Separator({cmd:'sep-upload'})
-		,{
-			 text:this.uploadFileText + ' (Ctrl+U)'
-			,iconCls:this.uploadIconCls
-			,hideOnClick:false
-			,cmd:'upload'
-		}
-		,new Ext.ux.UploadPanel(uploadPanelConfig)
-		]
-	}); // eo apply
-	// }}}
+			text: this.newfileText,
+			iconCls: this.newfileIconCls,
+			cmd: 'newfile'
+		},{
+			text: this.unarchiveText,
+			iconCls: this.unarchiveIconCls,
+			cmd: 'unarchive'
+		},
+		new Ext.menu.Separator({cmd: 'sep-upload'}),
+		{
+			text: this.uploadFileText + ' (Ctrl+U)',
+			iconCls: this.uploadIconCls,
+			hideOnClick: false,
+			cmd: 'upload'
+		},
+		new Ext.ux.UploadPanel(uploadPanelConfig)]
+	}); 
+	//eo apply
 
-	// call parent
+	//call parent
 	Ext.ux.FileTreeMenu.superclass.constructor.call(this, config);
 
-	// relay event from submenu
+	//relay event from submenu
 	this.relayEvents(this.getItemByCmd('open').menu, ['click', 'itemclick']);
 
-}; // eo constructor
+}; 
+//eo constructor
 
 Ext.extend(Ext.ux.FileTreeMenu, Ext.menu.Menu, {
-	// configuration options overridable from outside
 	/**
 	 * @cfg {String} collapseIconCls icon class for collapse all item
 	 */
-	 collapseIconCls:'icon-collapse-all'
+	collapseIconCls : 'icon-collapse-all',
 
 	 /**
 	  * @cfg {String} collapseText text for collapse all item
 	  */
-	,collapseText: 'Collapse all'
+	collapseText : 'Collapse all',
 
 	/**
 	 * @cfg {String} deleteIconCls icon class for delete item
 	 */
-	,deleteIconCls:'icon-cross'
+	deleteIconCls : 'icon-cross',
 
 	/**
 	 * @cfg {String} deleteKeyName text for delete item shortcut
 	 */
-	,deleteKeyName:'Delete Key'
+	deleteKeyName : 'Delete Key',
 
 	/**
 	 * @cfg {String} deleteText text for delete item
 	 */
-	,deleteText:'Delete'
+	deleteText : 'Delete',
 
 	/**
 	 * @cfg {String} expandIconCls icon class for expand all item
 	 */
-	,expandIconCls:'icon-expand-all'
+	expandIconCls : 'icon-expand-all',
 
 	/**
 	 * @cfg {String} expandText text for expand all item
 	 */
-	,expandText: 'Expand all'
+	expandText : 'Expand all',
 
 	/**
 	 * @cfg {String} newdirIconCls icon class for new directory item
 	 */
-	,newdirIconCls:'icon-folder-add'
+	newdirIconCls : 'icon-folder-add',
 
 	/**
 	 * @cfg {String} newdirText text for new directory item
 	 */
-	,newdirText:'New folder'
+	newdirText : 'New folder',
 	
 	/**
 	 * @cfg {String} newfileIconCls icon class for new file item
 	 */
-	,newfileIconCls:'icon-plus'
+	newfileIconCls : 'icon-plus',
 
 	/**
 	 * @cfg {String} newfileText text for new file item
 	 */
-	,newfileText:'New file'
+	newfileText : 'New file',
+	
+	/**
+	 * @cfg {String} unarchiveIconCls icon class for un-archive file item
+	 */
+	unarchiveIconCls : 'icon-unarchive',
 
+	/**
+	 * @cfg {String} unarchiveText text for un-archive file item
+	 */
+	unarchiveText : 'Unarchive',
+	
 	/**
 	 * @cfg {String} openBlankIconCls icon class for open in new window item
 	 */
-	,openBlankIconCls:'icon-open-blank'
+	openBlankIconCls : 'icon-open-blank',
 
 	/**
 	 * @cfg {String} openBlankText text for open in new window item
 	 */
-	,openBlankText:'Open in new window'
+	openBlankText : 'Open in new window',
 
 	/**
 	 * @cfg {String} openDwnldIconCls icon class for download item
 	 */
-	,openDwnldIconCls:'icon-open-download'
+	openDwnldIconCls : 'icon-open-download',
 
 	/**
 	 * @cfg {String} openDwnldText text for download item
 	 */
-	,openDwnldText:'Download'
+	openDwnldText : 'Download',
 
 	/**
 	 * @cfg {String} openIconCls icon class for open submenu
 	 */
-	,openIconCls:'icon-open'
+	openIconCls : 'icon-open',
 
 	/**
 	 * @cfg {String} openPopupIconCls icon class for open in popup item
 	 */
-	,openPopupIconCls:'icon-open-popup'
+	openPopupIconCls : 'icon-open-popup',
 
 	/**
 	 * @cfg {String} text for open in poput item
 	 */
-	,openPopupText:'Open in popup'
+	openPopupText : 'Open in popup',
 
 	/**
 	 * @cfg {String} openSelfIconCls icon class for open in this window item
 	 */
-	,openSelfIconCls:'icon-open-self'
+	openSelfIconCls : 'icon-open-self',
 
 	/**
 	 * @cfg {String} openSelfText text for open in this window item
 	 */
-	,openSelfText:'Open in this window'
+	openSelfText : 'Open in this window',
 
 	/**
 	 * @cfg {String} openText text for open submenu
 	 */
-	,openText:'Open'
+	openText : 'Open',
 
 	/**
 	 * @cfg {String} reloadIconCls icon class for reload item
 	 */
-	,reloadIconCls:'icon-refresh'
+	reloadIconCls : 'icon-refresh',
 
 	/**
 	 * @cfg {String} reloadText text for reload item
 	 */
-	,reloadText:'R<span style="text-decoration:underline">e</span>load'
+	reloadText : 'R<span style="text-decoration:underline">e</span>load',
 
 	/**
 	 * @cfg {String} icon class for rename item
 	 */
-	,renameIconCls:'icon-pencil'
+	renameIconCls : 'icon-pencil',
 
 	/**
 	 * @cfg {String} renameText text for rename item
 	 */
-	,renameText: 'Rename'
+	renameText : 'Rename',
 	
 	/**
 	 * @cfg {String} uploadFileText text for upload file item
 	 */
-	,uploadFileText:'<span style="text-decoration:underline">U</span>pload file'
+	uploadFileText : '<span style="text-decoration:underline">U</span>pload file',
 
 	/**
 	 * @cfg {String} uploadIconCls icon class for upload file item
 	 */
-	,uploadIconCls:'icon-upload'
+	uploadIconCls : 'icon-upload',
 
 	/**
 	 * @cfg {String} uploadText text for word 'Upload'
 	 */
-	,uploadText:'Upload'
+	uploadText : 'Upload',
 
 	/**
 	 * @cfg {Number} width Width of the menu. 
 	 * Cannot be empty as we have upload panel inside.
 	 */
-	,width:190
+	width : 190,
 
-	// {{{
 	/**
 	 * Returns menu item identified by cmd. Unique cmd is used to identify menu items.
 	 * I cannot use ids as they are applied to underlying DOM elements that would prevent
@@ -299,56 +309,52 @@ Ext.extend(Ext.ux.FileTreeMenu, Ext.menu.Menu, {
 	 *		- upload-panel (for upload panel)
 	 * @return {Ext.menu.Item} menu item
 	 */
-	,getItemByCmd:function(cmd) {
-		var open;
+	getItemByCmd : function(cmd) {
 		var item = this.items.find(function(i) {
 			return cmd === i.cmd;
 		});
-		if(!item) {
-			open = this.items.find(function(i) {
+		
+		if (!item) {
+			var open = this.items.find(function(i) {
 				return 'open' === i.cmd;
 			});
-			if(!open) {
+			if (!open) {
 				return null;
 			}
 			item = open.menu.items.find(function(i) {
 				return cmd === i.cmd;
 			});
 		}
+		
 		return item;
-	} // eo function getItemByCmd
-	// }}}
-	// {{{
+	}, 
+	
 	/**
 	 * Sets/Unsets item identified by cmd to disabled/enabled state
 	 * @param {String} cmd Item indentifier, see getItemByCmd for explanation
 	 * @param {Boolean} disabled true to disable the item
 	 */
-	,setItemDisabled:function(cmd, disabled) {
+	setItemDisabled : function(cmd, disabled) {
 		var item = this.getItemByCmd(cmd);
-		if(item) {
+		if (item) {
 			item.setDisabled(disabled);
 		}
-	} // eo function setItemDisabled
-	// }}}
-	// {{{
+	},
+	
 	/**
-	 * destroys uploadPanel if we have one
+	 * Destroys uploadPanel if we have one
 	 * @private
 	 */
-	,beforeDestroy:function() {
+	beforeDestroy : function() {
 		var uploadPanel = this.getItemByCmd('upload-panel');
-		if(uploadPanel && uploadPanel.component) {
+		
+		if (uploadPanel && uploadPanel.component) {
 			uploadPanel.component.purgeListeners();
 			uploadPanel.component.destroy();
 			uploadPanel.component = null;
 		}
-	} // eo function beforeDestroy
-	// }}}
-
-}); // eo extend
+	}
+});
 
 // register xtype
 Ext.reg('filetreemenu', Ext.ux.FileTreeMenu);
-
-// eof
