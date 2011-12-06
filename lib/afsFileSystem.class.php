@@ -73,6 +73,43 @@ class afsFileSystem
     }
     
     /**
+     * 
+     * Reads all entries of a directory or those allowed by $filter.
+     * Return null on error.
+     * 
+     * @param string $path Path to directory
+     * @param string $filter A comma separated list of extensions
+     * @return mixed
+     */
+    public function readDirectory($path, $filter = false) {
+    	
+    	if(!is_dir($path) || !file_exists($path)) {
+    		return null;
+    	} 
+    	
+    	if($filter) {
+    		$filter = explode(",", $filter);
+    	}
+    	
+    	if(($items = scandir($path)) === false) {
+    		return null;
+    	}
+    	
+    	$ret = array();
+    	
+    	foreach($items as $k => $file) {
+    		$ext = $this->getExtension($file);
+    		if(!$filter || in_array($ext,$filter)) {
+    			$ret[] = $file;
+    		}
+    	}
+    	
+    	return $ret;
+    }
+    
+    
+    
+    /**
      * Creates empty files.
      *
      * @param mixed $files  The filename, or an array of filenames
