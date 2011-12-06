@@ -1,6 +1,7 @@
 Ext.namespace('afStudio.wd');
 
 /**
+ * Widget Designer container.
  * 
  * @class afStudio.wd.WidgetContainer
  * @extends Ext.Container

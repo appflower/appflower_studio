@@ -317,6 +317,9 @@
 .icon-stat-cat {
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/icons/stat-cat_16.png) ! important;
 }
+.icon-unarchive {
+	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/package_go.png) !important;
+}
 .x-form-field-wrap .trigger-tag-add {
 	background-image: url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/trigger-tag-add.png);
 	cursor:pointer;

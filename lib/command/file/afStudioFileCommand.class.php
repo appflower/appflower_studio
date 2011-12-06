@@ -259,8 +259,9 @@ class afStudioFileCommand extends afBaseStudioCommand
         if (!file_exists($file)) return afResponseHelper::create()->success(false)->message("File that you try to extract doesn't exists"); 
         
         $arch = new Archive_Tar("{$file}", 'gz');
+        $status = $arch->extract(dirname($file));
         
-        return afResponseHelper::create()->success($arch->extract(dirname($file)));
+        return afResponseHelper::create()->success($status)->message(($status) ? "File has been successfully extracted" : "File can't be extracted");
     }
     
 }
