@@ -4,8 +4,11 @@
  */
 Ext.override(Ext.grid.GridDragZone, {
 	afterRepair : function() {
-		Ext.fly(this.DDM.currentTarget).parent('TABLE').frame('#FFA7A7', 1);
-	    this.dragging = false;    
+		var t = Ext.get(this.DDM.currentTarget), 
+			el = t.parent('table') || t;
+			
+		el.frame('#FFA7A7', 1);
+	    this.dragging = false;
 	}
 });
 		    
@@ -419,6 +422,10 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 	 */
 	onModelClick : function(node, e) {
 		this.fieldsGrid.show();
+		var fgSm = this.fieldsGrid.getSelectionModel();
+		if (fgSm.hasSelection()) {
+			fgSm.clearSelections(true);
+		}
 		this.loadModelFields(node);
 	},
 	
