@@ -129,6 +129,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
     protected function processSaveHelper()
     {
         $response = afResponseHelper::create();
+        $filesystem = afsFileSystem::create();
         
         $place = $this->getParameter('place', 'frontend');
         $place_type = $this->getParameter('place_type', 'app');
@@ -142,6 +143,9 @@ class afStudioProjectCommand extends afBaseStudioCommand
         } else {
             if (!is_writable(dirname($helper_path))) return $response->success(false)->message("Please check permissions on folder for helper file");
             $definition = array();
+            
+            $filesystem->touch($helper_path);
+            $filesystem->chmod($helper_path, 0777);
         }
         
         (!empty($key)) ? ($definition[$key] = $content) : ($definition = $content);
