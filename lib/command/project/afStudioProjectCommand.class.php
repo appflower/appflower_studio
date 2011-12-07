@@ -100,4 +100,55 @@ class afStudioProjectCommand extends afBaseStudioCommand
         return $response->success(true)->data(array(), array('name' => $name, 'file' => "{$name}.{$postfix}", 'path' => $path), 0)->console($console_result);
     }
     
+    /**
+     * Getting yml helper definition
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processGetHelper()
+    {
+        $response = afResponseHelper::create();
+        
+        $place = $this->getParameter('place', 'frontend');
+        $place_type = $this->getParameter('place_type', 'app');
+        $key = $this->getParameter('key', '');
+        
+        $helper_path = afExtjsBuilderParser::getHelperPath($place, $place_type);
+        if (!file_exists($helper_path)) return $response->success(false)->message("Helper for '{$place_type}s/{$place}' doesn't exists");
+        
+        return $response->success(true)->data(array(), afExtjsBuilderParser::create($helper_path)->parse()->get($key), 0);
+    }
+    
+    /**
+     * Saving yml helper definition
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processSaveHelper()
+    {
+        $response = afResponseHelper::create();
+        
+        $place = $this->getParameter('place', 'frontend');
+        $place_type = $this->getParameter('place_type', 'app');
+        $content = json_decode($this->getParameter('content'), true);
+        $key = $this->getParameter('key', '');
+        
+        $helper_path = afExtjsBuilderParser::getHelperPath($place, $place_type);
+        if (file_exists($helper_path)) {
+            if (!is_writable($helper_path)) return $response->success(false)->message("Please check permissions on helper file");
+            $definition = afExtjsBuilderParser::create($helper_path)->parse()->get();
+        } else {
+            if (!is_writable(dirname($helper_path))) return $response->success(false)->message("Please check permissions on folder for helper file");
+            $definition = array();
+        }
+        
+        (!empty($key)) ? ($definition[$key] = $content) : ($definition = $content);
+        
+        $status = file_put_contents($helper_path, sfYaml::dump($definition, 8));
+        
+        return $response->success($status)->message(($status) ? "Helper has been successfully saved" : "Some problems occured while save processing");
+    }
+    
 }
