@@ -166,8 +166,7 @@ afStudio.CreateProjectWizard = Ext.extend(Ext.Window, {
 						]
 					}
 				]
-			},
-			{name: 'role', inputType: 'hidden', value: 'admin'}
+			}
 		];
 		
 		this.form3 = new Ext.FormPanel({
