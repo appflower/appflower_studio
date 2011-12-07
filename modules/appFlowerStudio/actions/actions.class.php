@@ -227,20 +227,6 @@ class appFlowerStudioActions extends afsActions
     }
     
     /**
-     * Delegator saving helper file
-     *
-     * @param sfWebRequest $request 
-     * @return string - json
-     * @author Sergey Startsev
-     */
-    public function executeHelperFileSave(sfWebRequest $request)
-    {
-        return $this->renderJson(
-            afStudioCommand::process('file', 'saveHelper', $request->getParameterHolder()->getAll())->asArray()
-        );
-    }
-    
-    /**
      * Getting info for template selector
      * 
      * @param sfWebRequest $request

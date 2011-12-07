@@ -3,18 +3,24 @@
  * @author radu
  */
 afStudio.BaseEditor = Ext.extend(Ext.Window, { 
-	
+    /**
+     * @cfg {String} helper
+     */
+    
+    /**
+     * @cfg {String} title
+     */
+
 	/**
-	 * needed configs:
-	 * this.helper, this.title
-	 *
-	 * initComponent method
-	 * ExtJS template method
+	 * ExtJS template method.
+     * @override
 	 * @private
 	 */
-	initComponent: function(){
+	initComponent : function() {
 		this.checkHelperFileExist();
+        
 		this.createRegions();
+        
 		var config = {
 			width: 813,
 			height: 550, closable: true,
@@ -26,77 +32,92 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
 	        	this.centerPanel
 	        ],
 			buttons: [
-				{text: 'Cancel', handler: this.cancel, scope: this}
-			],
+            {
+                text: 'Cancel',
+                scope: this,
+                handler: this.cancel
+            }],
 			buttonAlign: 'center'
 		};
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
+        
 		afStudio.BaseEditor.superclass.initComponent.apply(this, arguments);	
 	},
 	
 	/**
-	 * Function createRegions
-	 * This function creates west and center panels and needful components
+	 * This function creates west and center panels and needful components.
+     * @private
 	 */
-	createRegions: function(){
+	createRegions : function() {
+        //FIXME hardcoded path
 		this.codeEditor = new Ext.ux.AceComponent({
-			file: 'root/apps/frontend/lib/helper/'+this.helper+'Helper.php' 
+			file: 'root/apps/frontend/lib/helper/' + this.helper + 'Helper.php' 
 		});
 		
 		this.centerPanel = new Ext.Panel({
 			layout: 'fit', 
 			region: 'center', 
-			items: [this.codeEditor],
+			items: this.codeEditor,
 			tbar: [
-				{text: 'Save', iconCls: 'icon-save', handler: this.save, scope: this},
-				'->',
-				{text: 'Theme', iconCls: 'icon-run-run', handler: this.tdshortcut, scope: this}
-			]
-		})
-		
+			{    
+                text: 'Save', 
+                iconCls: 'icon-save',
+                scope: this,
+                handler: this.save
+            },'->',{
+                text: 'Theme', 
+                iconCls: 'icon-run-run', 
+                scope: this,
+                handler: this.tdshortcut
+            }]
+		});
 	},
 	
-	save: function(){
-		Ext.Ajax.request({
-		   url: afStudioWSUrls.getHelperFileSaveUrl(),
-		   params: {
-		   	helper: this.helper
-		   },
-		   xmlData:this.codeEditor.getCode(),
-		   success: function(result,request){
-			   var obj = Ext.decode(result.responseText);
-			   afStudio.Msg.info(obj.message);
-		   }
-		});
+    /**
+     * Saves file.
+     * @author Nikolai Babinski
+     */
+	save : function() {
+        var me = this,
+            cp = this.codeEditor;
+        
+        afStudio.xhr.executeAction({
+            url: afStudioWSUrls.getFilecontentUrl,
+            params: {
+                file: cp.file,
+                code: cp.getCode()                      
+            },
+            scope: me,
+            logMessage: String.format('Helper file [{0}] was saved', cp.file)
+        });
+	},
 
-	},
-	
-	checkHelperFileExist: function(){
-		Ext.Ajax.request({
-		   url: afStudioWSUrls.getCheckHelperFileExistUrl(),
-		   params: {
-		   	 helper: this.helper
-		   },
-		   failure: function ( result, request) {
-				var obj = Ext.decode(result.responseText);
-				afStudio.Msg.error(result.responseText);
-		   }
-		});
+    /**
+     * @private
+     */
+	checkHelperFileExist : function() {
+        afStudio.xhr.executeAction({
+            url: afStudioWSUrls.checkHelperFileUrl,
+            params: {
+                helper: this.helper
+            },
+            showNoteOnSuccess: false
+        });
 	},
 	
 	/**
 	 * Function cancel
 	 * Close active wimdow
 	 */
-	cancel: function(){
+	cancel : function() {
 		this.close();
 	},
-	
-	/**
-	* Template Designer shortcut
-	*/
-	tdshortcut: function(){
+
+    /**
+     * Template Designer shortcut
+     */
+	tdshortcut : function() {
 		this.close();
 		(new afStudio.Theme()).show();
 	}

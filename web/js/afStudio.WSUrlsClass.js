@@ -109,13 +109,7 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
     templateSelectorUrl : '/appFlowerStudio/templateSelector',
     
-    getHelperFileSaveUrl: function() {
-        return this.buildUrlFor('/appFlowerStudio/helperFileSave');
-    },
-    
-    getCheckHelperFileExistUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/checkHelperFileExist');
-    },
+    checkHelperFileUrl : '/appFlowerStudio/checkHelperFileExist',
     
     getCheckUserExistUrl: function() {
     	return this.buildUrlFor('/afsUserManager/checkUserExist');

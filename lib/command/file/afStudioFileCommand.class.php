@@ -158,7 +158,7 @@ class afStudioFileCommand extends afBaseStudioCommand
         $response = afResponseHelper::create();
         
         if ($is_post) {
-            if ($file && is_string($code) && is_writable($file) && afStudioUtil::writeFile($file, $code)) return $response->success(true);
+            if ($file && is_string($code) && is_writable($file) && (afStudioUtil::writeFile($file, $code) !== false)) return $response->success(true);
             
             return $response->success(false);
         }
@@ -203,46 +203,6 @@ class afStudioFileCommand extends afBaseStudioCommand
         }
         
         return afResponseHelper::create()->success($result)->message($message);
-    }
-    
-    /**
-     * Saving helper file
-     *
-     * @return afResponse
-     * @author Sergey Startsev
-     */
-    protected function processSaveHelper()
-    {
-        $result = true;
-        $JDATA = file_get_contents("php://input");
-        
-        $helper = $this->getParameter('helper');
-        $place = $this->getParameter('place', 'frontend');
-        $place_type = $this->getParameter('place_type', 'app');
-        
-        $filePath = afStudioUtil::getRootDir() . "/{$place_type}s/{$place}/lib/helper/{$helper}Helper.php";
-        try {
-            $fp = fopen($filePath, "w");
-            if (!$fp) throw new Exception("file open error");
-            if (!fWrite($fp, $JDATA)) throw new Exception("file write error");
-            if (!fclose($fp)) throw new Exception("file close error");
-        } catch (Exception $e) {
-            $result = false;
-        }
-        
-        if ($result) {
-            $success = true;
-            $message = 'File saved successfully';
-            
-            afsNotificationPeer::log("File saved successfully [{$filePath}]", $helper);
-        } else {
-            $success = false;
-            $message =  'Error while saving file to disk!';
-            
-            afsNotificationPeer::log("Error while saving file to disk! [{$filePath}]", $helper);
-        }
-        
-        return afResponseHelper::create()->success($success)->message($message);
     }
     
     /**
