@@ -160,7 +160,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		return {			
 			title: 'Plugins',
 		    loader: treeLoader,
-			iconCls: 'icon-bricks',
+			iconCls: 'icon-af-plugin',
 			bbar: {
 				items: [
 				'->',
@@ -171,7 +171,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 					scope: _this
 				},{
 					text: 'Add plugin',
-					iconCls: 'icon-models-add',
+					iconCls: 'icon-plugin-add',
 					handler: _this.onAddPluginClick,
 					scope: _this
 				}]

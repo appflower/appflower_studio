@@ -102,7 +102,7 @@
 
 
 .icon-databases{background:url('/appFlowerStudioPlugin/images/databases.gif') no-repeat center left !important;}
-.icon-bricks{background:url('/appFlowerStudioPlugin/images/bricks.gif') no-repeat center left !important;}
+.icon-bricks{background:url('/appFlowerStudioPlugin/images/bricks.png') no-repeat center left !important;}
 .icon-layout{background:url('/appFlowerStudioPlugin/images/layout.gif') no-repeat center left !important;}
 .icon-layout_content{background:url('/appFlowerStudioPlugin/images/layout_content.gif') no-repeat center left !important;}
 
@@ -110,6 +110,9 @@
 .icon-database-table{background:url('/appFlowerStudioPlugin/images/database_table.png') no-repeat center left !important;}
 
 .icon-script-edit{background:url('/appFlowerStudioPlugin/images/script_edit.gif') no-repeat center left !important;}
+
+.icon-af-plugin{background:url('/appFlowerStudioPlugin/images/plugin.png') no-repeat center left !important;}
+.icon-plugin-add{background:url('/appFlowerStudioPlugin/images/plugin_add.png') no-repeat center left !important;}
 
 /* ModelDetailedEditing Grid */
 .model-pk-hd {

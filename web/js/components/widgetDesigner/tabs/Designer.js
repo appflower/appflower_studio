@@ -26,6 +26,7 @@ afStudio.wd.Designer = Ext.extend(Ext.Panel, {
 		
 		return {
 			title: 'Widget Designer',
+			iconCls: 'icon-bricks',
 			defaults: {
 				layout: 'fit',
 				border: false,
