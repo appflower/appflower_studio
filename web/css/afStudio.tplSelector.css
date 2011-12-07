@@ -1,23 +1,42 @@
-.thumb{
-	background: #dddddd;
-	padding:3px;
-}
-.thumb img{
-	border:1px solid white;
-}
-.thumb-wrap{
+.thumb-wrap-large, .thumb-wrap {
 	float: left;
-	margin: 4px;
-	margin-right: 0;
+	margin: 4px 0 4px 4px;
 	padding: 5px;
 }
-.thumb-wrap span{
+
+.thumb-wrap-large {
+	width: 208px;
+	height: 150px;
+}
+
+.thumb-wrap {
+	width: 104px;
+	height: 120px;
+}
+
+.thumb-wrap span, .thumb-wrap-large span{
 	display: block;
 	overflow: hidden;
 	text-align: center;
 	font-weight: bold;
 }
 
+.thumb {
+	background: #dddddd;
+	padding: 3px;
+}
+
+.thumb img {
+	border: 1px solid white;
+	width: 96px;
+	heigh: 96px;
+}
+
+.thumb-wrap-large .thumb img {
+	width: 200px;
+	heigh: 127px;
+}
+
 .x-view-selected .thumb{
-	background:#8db2e3;
+	background: #8db2e3;
 }

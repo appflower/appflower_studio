@@ -1,23 +1,39 @@
-afStudio.Theme = Ext.extend(Ext.Window, { 
-
+afStudio.Theme = Ext.extend(Ext.Window, {
+    /**
+     * @property tabPanel
+     * @type {Ext.TabPanel}
+     */
 	tabPanel : null,
+
+    /**
+     * @property dataviewThemeSelector
+     * @type {Ext.DataView}
+     */
+    dataviewThemeSelector : null,
+    
+    /**
+     * @property dataviewEditors
+     * @type {Ext.DataView}
+     */
+    dataviewEditors : null,
 	
+    /**
+     * Ext template method.
+     * @override
+     * @private
+     */
 	initComponent : function() {
-		this.initDataviewThemeSelector();
-		this.initDataviewEditors();
 		this.initTabPanel();
 		
 		var config = {
 			title: 'Theme Designer', 
-			width: 463,
-			height: 250, 
-			closable: true,
-	        draggable: true, 
+			width: 464,
+			height: 260, 
+	        modal: true,
 	        plain:true,
-	        modal: true, 
 	        resizable: false,
-	        bodyBorder: false, 
 	        border: false,
+	        bodyBorder: false, 
 	        layout: 'fit',
 	        items: this.tabPanel,
 	        buttons: [
@@ -36,169 +52,163 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 				handler: this.customizeEditors,
 				scope: this 
 			},{
-				text: 'Cancel', 
+				text: 'Cancel',
 				handler: this.cancel, 
 				scope: this
 			}],
-			buttonAlign: 'center',
-			listeners: {
-				show: function()
-				{
-					//select the current selected template from the project using afTemplateConfig.template.current
-					for (var item in this.dataviewThemeSelector.store.data.items)
-					{
-						if(this.dataviewThemeSelector.store.data.items[item].json&&afTemplateConfig.template.current==this.dataviewThemeSelector.store.data.items[item].json[1].toLowerCase()){
-							this.dataviewThemeSelector.selectRange(item,item);
-						}
-					}
-				}
-			}
+			buttonAlign: 'center'
 		};
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		
 		afStudio.Theme.superclass.initComponent.apply(this, arguments);	
 	},
+    
+    /**
+     * Initialises appearance.
+     * Method that is called immediately before the <code>show</code> event is fired.
+     * @override
+     * @protected
+     */    
+    onShow : function() {
+	    if (this.dataviewThemeSelector) {
+	        var recIdx = this.dataviewThemeSelector.store.find('name', afTemplateConfig.template.current);
+	        this.dataviewThemeSelector.select(recIdx);
+	    }
+    },
 	
+    /**
+     * Initialises tab panel {@link #tabPanel}.
+     * @private
+     */
+    initTabPanel: function() {
+        var me = this;
+        
+        this.initDataviewThemeSelector();
+        this.initDataviewEditors();
+        
+        this.tabPanel = new Ext.TabPanel({
+            activeTab: 0,
+            defaults: {
+                autoScroll: true
+            },
+            items: [
+            {
+                title: 'Theme Selector',
+                items: this.dataviewThemeSelector
+            },{
+                title: 'Editors',
+                items: this.dataviewEditors
+            }],
+            listeners: {
+                tabchange: function(tabpanel, tab) {
+                    switch (tab.items.keys[0]) {
+                        case "themeselector":
+                            me.buttons[0].show();
+                            me.buttons[1].hide();
+                        break;
+                        
+                        case "editors":
+                            me.buttons[1].show();
+                            me.buttons[0].hide();
+                        break;
+                    }
+                }
+            }
+        });
+    },
+    
+    /**
+     * Init theme selector {@link #dataviewThemeSelector}.
+     * @private
+     */
 	initDataviewThemeSelector : function() {
+		var me = this;
 		
-		var _self = this;
-		
-	    var myData = [
-	        ['desktoptemplate', 'Desktop', 'template_desktop.png'],
-	        ['viewporttemplate', 'Viewport', 'template_viewport.png']
-	    ];
 	    var store = new Ext.data.SimpleStore({
-	        fields: [
-	           {name: 'id'},
-	           {name: 'name'},
-	           {name: 'img'}
-	        ],
+	        fields: ['id', 'name', 'img'],
 	        sortInfo: {
 	            field: 'name', direction: 'ASC'
 	        },
-	        data: myData
+	        data: [
+	            ['desktoptemplate', 'Desktop', 'template_desktop.png'],
+	            ['viewporttemplate', 'Viewport', 'template_viewport.png']
+            ]
 	    });
 	    
 		this.dataviewThemeSelector = new Ext.DataView({
 		    id: 'themeselector',
-	        itemSelector: 'div.thumb-wrap',
-	        style: 'overflow: auto;',
-	        multiSelect: true,
+	        itemSelector: 'div.thumb-wrap-large',
+            singleSelect: true,
+	        store: store,
+	        tpl: new Ext.XTemplate(
+	            '<tpl for=".">',
+	            '<div class="thumb-wrap-large" id="{id}">',
+	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}"></div>',
+	            '<span>{name}</span></div>',
+	            '</tpl>'
+	        ),
 			listeners: {
+				scope: this,
 				selectionchange: function(dataview, selections) {
 					var btn = Ext.getCmp(this.id + '-customize-btn-ts');
-					if(selections.length){
-						btn.enable();
-					} else {
-						btn.disable();
-					}	
+					selections.length ? btn.enable() : btn.disable();
 				},
 				dblclick: function(dataview, index, node, e) {
-					_self.customizeThemeSelector(_self.close);
-				},
-				scope: this
-			},
-	        store: store,
-	        tpl: new Ext.XTemplate(
-	            '<tpl for=".">',
-	            '<div class="thumb-wrap" id="{id}">',
-	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}"></div>',
-	            '<span>{name}</span></div>',
-	            '</tpl>'
-	        )
-		});
-	},
-	
-	initDataviewEditors: function(){
-		
-		var _self = this;
-		
-    	var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];
-    	
-    	var store = new Ext.data.SimpleStore({
-	        fields: [
-	           {name: 'id'},
-	           {name: 'name'},
-	           {name: 'img'},
-	           {name: 'editor'}
-	        ],
-    		data: myData
-	    });	    
-	    	
-		this.dataviewEditors = new Ext.DataView({
-		    id: 'editors',
-	        itemSelector: 'div.thumb-wrap',
-	        style: 'overflow:auto',
-	        multiSelect: true,
-			listeners: {
-				selectionchange: function(dataview, selections){
-					var btn = Ext.getCmp(this.id + '-customize-btn-e');
-					if (selections.length) {
-						btn.enable();
-					} else {
-						btn.disable();
-					}					
-				},
-				dblclick: function(dataview,index,node,e){
-					_self.customizeEditors();
-					_self.close();
-				},
-				scope: this
-			},
-	        store: store,
-	        tpl: new Ext.XTemplate(
-	            '<tpl for=".">',
-	            '<div class="thumb-wrap" id="{id}">',
-	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}"></div>',
-	            '<span>{name}</span></div>',
-	            '</tpl>'
-	        )
-    	});
-	},
-	
-	updateDataviewEditors: function() {
-	    var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];	    
-	    this.dataviewEditors.store.loadData(myData);
-	},
-	
-	initTabPanel: function() {
-		
-	    var _self = this;
-	    
-	    this.tabPanel = new Ext.TabPanel({
-			activeTab: 0,
-			items: [
-			{
-				title: 'Theme Selector', 
-				items: this.dataviewThemeSelector
-			},{
-				title: 'Editors',
-				autoScroll: true,
-				items: this.dataviewEditors
-			}],
-			listeners: {
-			    tabchange: function(tabpanel, tab) {
-			        switch (tab.items.keys[0]) {
-			            case "themeselector":
-			            	_self.buttons[0].show();
-			            	_self.buttons[1].hide();
-			            break;
-			            
-			            case "editors":
-			            	_self.buttons[1].show();
-			            	_self.buttons[0].hide();
-			            break;
-			        }
-			    }
+					me.customizeThemeSelector(me.close);
+				}
 			}
 		});
 	},
 	
+    /**
+     * Init view editors {@link #dataviewEditors}.
+     * @private
+     */
+	initDataviewEditors : function() {
+		var me = this,
+            tplCfg = afTemplateConfig.template;
+        
+    	var store = new Ext.data.SimpleStore({
+	        fields: ['id', 'name', 'img', 'editor'],
+    		data: tplCfg.helpers[tplCfg.current]
+	    });
+	    	
+		this.dataviewEditors = new Ext.DataView({
+		    id: 'editors',
+	        itemSelector: 'div.thumb-wrap',
+	        singleSelect: true,
+	        store: store,
+	        tpl: new Ext.XTemplate(
+	            '<tpl for=".">',
+	            '<div class="thumb-wrap" id="{id}">',
+	            '<div class="thumb"><img src="appFlowerStudioPlugin/images/{img}"></div>',
+	            '<span>{name}</span></div>',
+	            '</tpl>'
+	        ),
+			listeners: {
+				scope: this,
+				selectionchange: function(dataview, selections){
+					var btn = Ext.getCmp(this.id + '-customize-btn-e');
+                    selections.length ? btn.enable() : btn.disable();
+                },
+				dblclick: function(dataview,index,node,e){
+					me.customizeEditors();
+					me.close();
+				}
+			}
+    	});
+	},
+	
+    updateDataviewEditors: function() {
+        var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];      
+        this.dataviewEditors.store.loadData(myData);
+    },
+    
 	customizeThemeSelector : function(callback) {		
-		var _self = this;
-		
-		if (this.dataviewThemeSelector.getSelectedIndexes()) {
+		var me = this;
+        
+		if (this.dataviewThemeSelector.getSelectionCount()) {
 			var templateName = this.dataviewThemeSelector.getSelectedRecords()[0].get('name');
 			
 			Ext.Ajax.request({
@@ -216,9 +226,9 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 					} else {
 						afTemplateConfig.template.current = templateName.toLowerCase();						
 						afStudio.Msg.info(response.message);						
-						_self.updateDataviewEditors();
+						me.updateDataviewEditors();
 						if (Ext.isFunction(callback)) {
-							Ext.util.Functions.createDelegate(callback, _self)();
+							Ext.util.Functions.createDelegate(callback, me)();
 						}
 					}
 				}				
@@ -227,8 +237,7 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 	},
 	
 	customizeEditors : function() {
-	    
-	    if (this.dataviewEditors.getSelectedIndexes()) {
+	    if (this.dataviewEditors.getSelectionCount()) {
 			var id     = this.dataviewEditors.getSelectedRecords()[0].get('id'),
 				name   = this.dataviewEditors.getSelectedRecords()[0].get('name'),
 				editor = this.dataviewEditors.getSelectedRecords()[0].get('editor');
@@ -243,7 +252,7 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 		}
 	},
 	
-	cancel: function() {
+	cancel : function() {
 		this.close();
 	}
 });
