@@ -188,66 +188,72 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 	        ),
 			listeners: {
 				scope: this,
-				selectionchange: function(dataview, selections){
+				selectionchange: function(dataview, selections) {
 					var btn = Ext.getCmp(this.id + '-customize-btn-e');
                     selections.length ? btn.enable() : btn.disable();
                 },
-				dblclick: function(dataview,index,node,e){
+				dblclick: function(dataview, index, node, e) {
 					me.customizeEditors();
-					me.close();
 				}
 			}
     	});
 	},
 	
+    /**
+     * @private
+     */
     updateDataviewEditors: function() {
-        var myData = afTemplateConfig.template.helpers[afTemplateConfig.template.current];      
-        this.dataviewEditors.store.loadData(myData);
+        var tplCfg = afTemplateConfig.template,
+            eData = tplCfg.helpers[tplCfg.current]; 
+            
+        this.dataviewEditors.store.loadData(eData);
     },
     
+    /**
+     * Sets up selected theme.
+     * @private
+     * @param {Function} (optional) callback
+     */
 	customizeThemeSelector : function(callback) {		
 		var me = this;
         
 		if (this.dataviewThemeSelector.getSelectionCount()) {
 			var templateName = this.dataviewThemeSelector.getSelectedRecords()[0].get('name');
 			
-			Ext.Ajax.request({
-				url:afStudioWSUrls.getTemplateSelectorUrl(),
-				method: 'post',
-				params: {
-					cmd: 'update',
-					template: templateName
-				},
-				callback: function(options, success, response) {				
-					response = Ext.decode(response.responseText);
-					
-					if (!response.success) {
-						afStudio.Msg.error(response.message);
-					} else {
-						afTemplateConfig.template.current = templateName.toLowerCase();						
-						afStudio.Msg.info(response.message);						
-						me.updateDataviewEditors();
-						if (Ext.isFunction(callback)) {
-							Ext.util.Functions.createDelegate(callback, me)();
-						}
-					}
-				}				
-			});
+            afStudio.xhr.executeAction({
+                url: afStudioWSUrls.templateSelectorUrl,
+                params: {
+                    cmd: 'update',
+                    template: templateName
+                },
+                run: function(response, options) {
+                    afTemplateConfig.template.current = templateName.toLowerCase();                     
+                    me.updateDataviewEditors();
+                    if (Ext.isFunction(callback)) {
+                        Ext.util.Functions.createDelegate(callback, me)();
+                    }
+                }
+            });
 		}
 	},
 	
+    /**
+     * Opens selected editor.
+     * @private
+     */
 	customizeEditors : function() {
 	    if (this.dataviewEditors.getSelectionCount()) {
-			var id     = this.dataviewEditors.getSelectedRecords()[0].get('id'),
-				name   = this.dataviewEditors.getSelectedRecords()[0].get('name'),
-				editor = this.dataviewEditors.getSelectedRecords()[0].get('editor');
+			var r = this.dataviewEditors.getSelectedRecords()[0],
+                id     = r.get('id'),
+				name   = r.get('name'),
+				editor = r.get('editor');
 			
 			if (editor != '') {
 				eval('new ' + editor + '({helper: \'' + id + '\',title:\'' + name + '\'}).show()');
 			} else {
 				afStudio.Msg.error('There is not javascript Editor set for this button.');
 			}
-			
+            
 			this.close();
 		}
 	},

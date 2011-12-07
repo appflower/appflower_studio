@@ -107,9 +107,7 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
         return this.buildUrlFor('/afsModelGridData/delete?model=' + modelName);
     },
     
-    getTemplateSelectorUrl: function() {
-    	return this.buildUrlFor('/appFlowerStudio/templateSelector');
-    },
+    templateSelectorUrl : '/appFlowerStudio/templateSelector',
     
     getHelperFileSaveUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/helperFileSave');
