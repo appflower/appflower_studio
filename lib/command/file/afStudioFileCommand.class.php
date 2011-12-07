@@ -153,7 +153,7 @@ class afStudioFileCommand extends afBaseStudioCommand
         $code = $this->getParameter('code', false);
         $is_post = $this->getParameter('is_post', false);
         
-        $file = (substr($file, 0, 4) == 'root') ? str_replace('root', afStudioUtil::getRootDir(), substr($file, 0, 4)) . substr($file, 4) : $file;
+        $file = (substr($file, 0, 4) == 'root') ? afStudioUtil::getRootDir() . substr($file, 4) : $file;
         
         $response = afResponseHelper::create();
         
