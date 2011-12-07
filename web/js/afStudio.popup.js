@@ -124,11 +124,6 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 			   jQuery("a[rel^='prettyPhoto']").prettyPhoto();
 			   
 			   setTimeout(function() {jQuery('#studio_video_tours ul').jScrollPane()} , 500); // requred for firefox
-			   
-			   Ext.get('create-project').on('click',  function(){  
-				   popupWindow.close();
-				   ( new afStudio.CreateProjectWizard ).show();
-			   }, this);
 			}
 		});
 	}
