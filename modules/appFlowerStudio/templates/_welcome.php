@@ -29,8 +29,6 @@
     <div id="quick_links">
       <h3>QUICK LINKS</h3>
       <ul>
-        <li><a href="#" onclick="return false;" id="create-project">Create new project</a></li>
-        <li><a href="#" onclick="return false;" id="open-project">Open existing project</a></li>
         <li><a href="http://www.appflower.com/forum" target="_blank">Open discussion forum</a></li>
         <li><a href="http://www.appflower.com/cms/learningcenter" target="_blank">Go to learning center</a></li>
       </ul>
