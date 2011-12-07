@@ -284,6 +284,11 @@ class afStudioUtil
     public static function getAfServiceClient()
     {
         require_once sfConfig::get('sf_lib_dir').'/vendor/afServiceClient/src/lib/afServiceClient.php';
-        return afServiceClient::create(sfConfig::get('app_afs_afServiceUrl'));
+        $afClientOptions = sfConfig::get('app_afs_afService');
+        return afServiceClient::create(
+            $afClientOptions['url'],
+            $afClientOptions['username'],
+            $afClientOptions['password']
+        );
     }
 }

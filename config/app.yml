@@ -21,8 +21,12 @@ all:
     #   ./symfony cc
     
     projects_management_enabled: false
-    # if you enable projects management - provide url to api
-    # afServiceUrl: api.appflower.com
+    # if you enable projects management - provide url, username and password to api
+    #afService:
+    #  url: apiappflowercom
+    #  username: root
+    #  password: hackMe!
+    
     
     # If domain suffix is not provided created vhosts will use different port numbers
     # Otherwise it will be always 80 port with URL's like SLUG.DOMAIN_SUFFIX

@@ -17,10 +17,15 @@ class afStudioProjectCommand extends afBaseStudioCommand
     protected function processSaveWizard()
     {
         $userForm = json_decode($this->getParameter('userForm'), true);
-        $databaseForm = json_decode($this->getParameter('databaseForm'), true);
-
         $afServiceClient = afStudioUtil::getAfServiceClient();
-        $response = $afServiceClient->CreateProject($this->getParameter('name'), $userForm['email'], "$userForm[first_name] $userForm[last_name]");
+        
+        $response = $afServiceClient->CreateProject(
+            $this->getParameter('name'),
+            $userForm['email'],
+            "$userForm[first_name] $userForm[last_name]",
+            $userForm['username'],
+            $userForm['password']
+        );
 
         if ($response->isSuccess()) {
             
