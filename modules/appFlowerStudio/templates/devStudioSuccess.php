@@ -122,6 +122,7 @@
 <!-- models -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeBuilder.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/CreateWidgetWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationPicker.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationCombo.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/ModelTree.js"></script>
@@ -129,7 +130,6 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelStore.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/EditFieldWindow.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/CreateWidgetWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/DependencyCellEditorBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/ModelTab.js"></script>
 

@@ -125,6 +125,7 @@
 					<!-- Models -->				
 					<file>js/components/models/TypeComboBox.js</file>
 					<file>js/components/models/TypeBuilder.js</file>
+					<file>js/components/models/CreateWidgetWindow.js</file>
 					<file>js/components/models/relationcombo/RelationPicker.js</file>
 					<file>js/components/models/relationcombo/RelationCombo.js</file>
 					<file>js/components/models/relationcombo/ModelTree.js</file>
@@ -132,7 +133,6 @@
 					<file>js/components/models/modelgrid/ModelStore.js</file>
 					<file>js/components/models/modelgrid/ModelGrid.js</file>
 					<file>js/components/models/modelgrid/EditFieldWindow.js</file>
-					<file>js/components/models/modelgrid/CreateWidgetWindow.js</file>
 					<file>js/components/models/editgrid/DependencyCellEditorBuilder.js</file>
 					<file>js/components/models/ModelTab.js</file>
 					
