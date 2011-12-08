@@ -178,12 +178,19 @@ class afStudioFileCommand extends afBaseStudioCommand
     {
         $result = true;
         $message = "";
+        $filesystem = afsFileSystem::create();
         
         $helper = $this->getParameter('helper');
         $place = $this->getParameter('place', 'frontend');
         $place_type = $this->getParameter('place_type', 'app');
         
-        $filePath = afStudioUtil::getRootDir() . "/{$place_type}s/{$place}/lib/helper/{$helper}Helper.php";
+        $helper_folder_path = afStudioUtil::getRootDir() . "/{$place_type}s/{$place}/lib/helper";
+        if (!file_exists($helper_folder_path)) {
+            $filesystem->mkdirs($helper_folder_path);
+            $filesystem->chmod($helper_folder_path, 0777);
+        }
+        
+        $filePath = "{$helper_folder_path}/{$helper}Helper.php";
         
         if (!file_exists($filePath)) {
             try{
@@ -194,6 +201,7 @@ class afStudioFileCommand extends afBaseStudioCommand
                 $fp = fopen($filePath,"w");
                 fWrite($fp, $_helper);
                 fclose($fp);
+                $filesystem->chmod($filePath, 0777);
             } catch (Exception $e) {
                 $result = false;
                 $message = 'Error while saving file to disk!';
