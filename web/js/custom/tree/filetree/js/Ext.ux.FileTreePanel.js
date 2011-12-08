@@ -1180,8 +1180,10 @@ Ext.ux.FileTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	isArchive : function(file) {
 		var ext = this.getFileExtension(file);
-		
-		if (ext != null && ['tar', 'tgz', 'gz', 'rar', 'zip'].indexOf(ext) != -1) {
+        
+        file = Ext.isString(file) ? file : this.getFileName(file);
+        
+		if (ext != null && (['tar', 'tgz'].indexOf(ext) != -1 || /\.tar\.gz$/ig.test(file))) {
 			return true;
 		}
 		
