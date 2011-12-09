@@ -46,7 +46,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 				if('yes' == btn){
 					//Send delete request
 					Ext.Ajax.request({
-						url: 'afsUserManager/delete',
+						url: afStudioWSUrls.userDeleteUrl,
 						params: {
 							username: username
 						},
@@ -114,7 +114,7 @@ afStudio.UsersList = Ext.extend(Ext.Window, {
 	
 		//Create DatStore
 		var ds = new Ext.data.Store({
-			proxy: new Ext.data.HttpProxy({url: '/afsUserManager/getList'}),
+			proxy: new Ext.data.HttpProxy({ url: afStudioWSUrls.userListUrl }),
 	        reader: new Ext.data.JsonReader(
 				{root: 'data', totalProperty: 'total', id: 'id', fields: r}
 			),

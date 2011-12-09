@@ -119,71 +119,71 @@ afStudio.UserWindow = Ext.extend(Ext.Window, {
 	closeForm: function(){
 		this.close();
 	},
-	
-	/**
-	 * Function saveForm
-	 * Saves information about user
-	 */
-	saveForm: function(){
-		var f = this.form.getForm();
-		if(f.isValid()){
-			var params = f.getValues();
-			Ext.Ajax.request({
-				url: ('edit' == this.mode)?'/afsUserManager/update':'/afsUserManager/create',
-				params: {
-					username: params['username'],
-					user: Ext.encode(params)
-				},
-				
-				success: function(response, options){
-					//decode response
-					response = Ext.decode(response.responseText);
-					//Check action response
-					if (!response.success) {
-						/**
-						//Build error message if needful
-						var msg = response.message;
-						if (Ext.isArray(msg)) {
-							if(response.message.length>1){
-								var msg = response.message.join('<br>');
-							}
-						}
-						//'Server-side failure with next message: ' + response.message
-						Ext.Msg.alert('Failure', msg);
-						**/ 
-
-						if (Ext.isArray(response.message)) {
-							for(var i=0, l=response.message.length; i<l; i++){
-
-								var msg = response.message[i]
-								this.form.find('name', msg.fieldname)[0].markInvalid(msg.message);
-							}
-						}
-						
-						//Update CAPTCHA element if it exists
-						if(false == this.isRoleFieldAvailable){
-							this.refreshCaptcha();
-						}
-					}else{
-						afStudio.Msg.info('System Message', response.message);
-						this.closeForm();
-						
-						//TODO: please provide this function in constructor
-						if(Ext.isFunction(this.onFormClose)){
-							this.onFormClose();
-						}
-					}
-				},
-				
-				failure: function(response, options){
-					//Create on failure handler
-				},
-				
-				scope: this
-			});				
-		}
-	},
-	
+    
+    /**
+     * Function saveForm
+     * Saves information about user
+     */
+     saveForm: function() {
+        var form_panel = this.form;
+        var f = form_panel.getForm();
+        
+        if (f.isValid()) {
+            var params = f.getValues();
+            form_panel.ownerCt.getEl().mask('Please wait...', 'x-mask-loading');
+            
+            Ext.Ajax.request({
+                url: ('edit' == this.mode) ? afStudioWSUrls.userUpdateUrl : afStudioWSUrls.userCreateUrl,
+                
+                params: {
+                    username: params['username'],
+                    user: Ext.encode(params)
+                },
+                
+                success: function(response, options){
+                    form_panel.ownerCt.getEl().unmask();
+                    response = Ext.decode(response.responseText);
+                    
+                    if (response.console) afStudio.updateConsole(response.console);
+                    
+                    if (!response.success) {
+                        if (Ext.isArray(response.message)) {
+                            for (var i=0, l=response.message.length; i<l; i++) {
+                                var msg = response.message[i]
+                                this.form.find('name', msg.fieldname)[0].markInvalid(msg.message);
+                            }
+                        }
+                        
+                        //Update CAPTCHA element if it exists
+                        if (false == this.isRoleFieldAvailable) {
+                            this.refreshCaptcha();
+                        }
+                    } else {
+                        afStudio.Msg.info('System Message', response.message);
+                        this.closeForm();
+                        
+                        //TODO: please provide this function in constructor
+                        if (Ext.isFunction(this.onFormClose)) {
+                            this.onFormClose();
+                        }
+                    }
+                },
+                
+                failure: function(response, options){
+                    if (Ext.isFunction(action.error)) {
+                        Ext.util.Functions.createDelegate(action.error, this, [xhr, opt], false)();
+                    }
+                    var message  = String.format('Status code: {0} <br /> Message: {1}', xhr.status, xhr.statusText || 'none'),
+                    msgTitle = "Server communication failure";
+                    
+                    afStudio.Msg.error(msgTitle, message);
+                },
+                
+                scope: this
+            });
+        }
+    },
+    
 	/**
 	 * Function refreshCaptcha
 	 * Refreshes current captcha

@@ -62,6 +62,7 @@ class afsUserManagerHelper
      */
     static public function createNewUser(sfWebRequest $request)
     {
+        $response = afResponseHelper::create();
         afStudioUser::getInstance()->authorize();
         
         $sUsername = $request->getParameter('username');
@@ -102,8 +103,6 @@ class afsUserManagerHelper
             
             afsNotificationPeer::log('User has been successfully created', 'afStudioUser');
             
-            // Sending email part
-            
             // getting current domain
             $domain = (sfConfig::get('app_domain')) ? sfConfig::get('app_domain') : sfContext::getInstance()->getRequest()->getHost();
             
@@ -122,9 +121,10 @@ class afsUserManagerHelper
                 ->setContentType('text/html')
             ;
             
-            // Sending mail 
-            if (!@sfContext::getInstance()->getController()->getAction('afsUserManager', 'create')->getMailer()->send($message)) {
-                $aErrors = self::mergeErrors($aErrors, array('sent' => "User has been successfully created. Can't send mail."));
+            try {
+                @sfContext::getInstance()->getController()->getAction('afsUserManager', 'create')->getMailer()->send($message);
+            } catch (Swift_TransportException $e) {
+                $response->console("Local server can't sent email for now. Please check mail server settings.");
             }
         } else {
             if (is_array($validate)) $aErrors = self::mergeErrors($aErrors, $validate);
@@ -132,13 +132,9 @@ class afsUserManagerHelper
         
         $aErrors = self::prepareErrors($aErrors);
         
-        if (!empty($aErrors)) {
-            $aResult = array('success' => false, 'message' => $aErrors);
-        } else {
-            $aResult = array('success' => true, 'message' => 'User has been successfully created');
-        }
+        if (!empty($aErrors)) return $response->success(false)->message($aErrors)->asArray();
         
-        return $aResult;
+        return $response->success(true)->message('User has been successfully created')->asArray();
     }
     
 }

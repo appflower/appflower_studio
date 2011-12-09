@@ -61,6 +61,14 @@ afStudio.WSUrlsClass = Ext.extend(afStudio.WSUrlsClass, {
     
     getFilecontentUrl : '/appFlowerStudio/filecontent',
     
+    userCreateUrl : '/afsUserManager/create',
+    
+    userUpdateUrl : '/afsUserManager/update',
+    
+    userDeleteUrl : '/afsUserManager/delete',
+    
+    userListUrl : '/afsUserManager/getList',
+    
     getDebugUrl: function() {
         return this.buildUrlFor('/appFlowerStudio/debug');
     },
