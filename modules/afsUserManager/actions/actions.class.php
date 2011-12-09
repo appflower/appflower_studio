@@ -4,12 +4,15 @@
  * 
  * @package     appFlowerStudio
  * @subpackage  plugin
- * @author      startsev.sergey@gmail.com
+ * @author      Sergey Startsev <startsev.sergey@gmail.com>
  */
 class afsUserManagerActions extends afsActions
 {
     /**
      * Catching executing ajax queries from direct call
+     * 
+     * @return void
+     * @author Sergey Startsev
      */
     public function preExecute()
     {
@@ -20,25 +23,32 @@ class afsUserManagerActions extends afsActions
     
     /**
      * Getting user information
+     * 
+     * @param sfWebRequest $request
+     * @return string - json
+     * @author Sergey Startsev
      */
     public function executeGet(sfWebRequest $request)
     {
-        $sUsername = $request->getParameter('username', afStudioUser::getInstance()->getUsername());
+        $username = $request->getParameter('username', afStudioUser::getInstance()->getUsername());
         
         // Catching if current user not admin
-        if (!afStudioUser::getInstance()->isAdmin() && afStudioUser::getInstance()->getUsername() != $sUsername) {
+        if (!afStudioUser::getInstance()->isAdmin() && afStudioUser::getInstance()->getUsername() != $username) {
             $this->forward404("You have no rights to execute this action");
         }
         
-        $aUser = afStudioUser::getInstance()->retrieve($sUsername);
+        $user = afStudioUser::getInstance()->retrieve($username);
+        $user['username'] = $username;
         
-        $aUser['username'] = $sUsername;
-        
-        return $this->renderJson($aUser);
+        return $this->renderJson(afResponseHelper::create()->success(true)->data(array(), $user, 0)->asArray());
     }
     
     /**
      * Getting users list
+     * 
+     * @param sfWebRequest $request
+     * @return string - json
+     * @author Sergey Startsev
      */
     public function executeGetList(sfWebRequest $request)
     {
@@ -47,14 +57,12 @@ class afsUserManagerActions extends afsActions
             $this->forward404("You have no rights to execute this action");
         }
         
-        $aUsers = afStudioUser::getCollection();
-        
-        // Preparing users for output
-        $users = array();
+        $users = afStudioUser::getCollection();
+        $aUsers = array();
         
         $i = 1;
-        foreach ($aUsers as $username => $user) {
-            $users[] = array(
+        foreach ($users as $username => $user) {
+            $aUsers[] = array(
                 'id' => $i++,
                 'username' => $username,
                 'email' => $user['email'],
@@ -64,14 +72,19 @@ class afsUserManagerActions extends afsActions
             );
         }
         
-        return $this->renderJson(array('data' => $users));
+        return $this->renderJson(afResponseHelper::create()->success(true)->data(array(), $aUsers, 0)->asArray());
     }
     
     /**
      * Updating user
+     * 
+     * @param sfWebRequest $request
+     * @return string - json
+     * @author Sergey Startsev
      */
     public function executeUpdate(sfWebRequest $request)
     {
+        $response = afResponseHelper::create();
         $sUsername = $request->getParameter('username');
         $aUser = json_decode($request->getParameter('user'), true);
         
@@ -80,78 +93,63 @@ class afsUserManagerActions extends afsActions
             $this->forward404("You have no rights to execute this action");
         }
         
-        $aErrors = array();
-        
         // Retrieve user via username
         $user = afStudioUser::retrieve($sUsername);
+        $errors = array();
         
-        if ($user) {
-            $aUserCheck = afStudioUser::retrieveByEmail($aUser['email']);
+        if (!$user) return $this->renderJson($response->success(false)->message("This user doesn't exists")->asArray());
+        
+        $aUserCheck = afStudioUser::retrieveByEmail($aUser['email']);
+        if ($aUserCheck && $aUserCheck['username'] != $aUser['username']) $aErrors['email'] = "User with this `email` already exists";
+        
+        $aUpdate = array(
+            afStudioUser::FIRST_NAME => $aUser['first_name'],
+            afStudioUser::LAST_NAME => $aUser['last_name'],
+            afStudioUser::EMAIL => $aUser['email'],
+        );
+        
+        if (isset($aUser['role'])) $aUpdate[afStudioUser::ROLE] = $aUser['role'];
+        if (!empty($aUser['password'])) $aUpdate[afStudioUser::PASSWORD] = $aUser['password'];
+        
+        // Validate user data 
+        $validate = afStudioUser::validate($aUpdate);
+        
+        if (is_bool($validate) && $validate === true && empty($aErrors)) {
+            // if password has been setted encoding using rule
+            if (!empty($aUser['password'])) $aUpdate[afStudioUser::PASSWORD] = afStudioUser::passwordRule($aUser['password']);
             
-            if ($aUserCheck && $aUserCheck['username'] != $aUser['username']) {
-                $aErrors['email'] = "User with this `email` already exists";
-            }
+            // Update processing
+            afStudioUser::update($sUsername, $aUpdate);
             
-            $aUpdate = array(
-                afStudioUser::FIRST_NAME => $aUser['first_name'],
-                afStudioUser::LAST_NAME => $aUser['last_name'],
-                afStudioUser::EMAIL => $aUser['email'],
-            );
+            afsNotificationPeer::log('User has been successfully updated', 'afStudioUser');
             
-            if (isset($aUser['role'])) {
-                $aUpdate[afStudioUser::ROLE] = $aUser['role'];
-            }
-            
-            if (!empty($aUser['password'])) {
-                $aUpdate[afStudioUser::PASSWORD] = $aUser['password'];
-            }
-            
-            // Validate user data 
-            $validate = afStudioUser::validate($aUpdate);
-            
-            if (is_bool($validate) && $validate === true && empty($aErrors)) {
-                // if password has been setted encoding using rule
-                if (!empty($aUser['password'])) {
-                    $aUpdate[afStudioUser::PASSWORD] = afStudioUser::passwordRule($aUser['password']);
+            // if changes applied for current user
+            if (afStudioUser::getInstance()->getUsername() == $sUsername) {
+                if (!empty($aUser['password'])) afStudioUser::set($sUsername, $aUser['password'], false);
+                
+                // update role of current user - with redirect processing 
+                if (afStudioUser::getInstance()->getRole() != $aUser['role']) {
+                    return $this->renderJson($response->redirect('afsAuthorize/signout')->asArray());
                 }
-                
-                // Update processing
-                afStudioUser::update($sUsername, $aUpdate);
-                
-                afsNotificationPeer::log('User has been successfully updated', 'afStudioUser');
-                
-                // if changes applied for current user
-                if (afStudioUser::getInstance()->getUsername() == $sUsername) {
-                    if (!empty($aUser['password'])) afStudioUser::set($sUsername, $aUser['password'], false);
-                    
-                    // update role of current user - with redirect processing 
-                    if (afStudioUser::getInstance()->getRole() != $aUser['role']) {
-                        return $this->renderJson(
-                            afResponseHelper::create()->redirect('afsAuthorize/signout')->asArray()
-                        );
-                    }
-                }
-                
-                $aResult = $this->fetchSuccess('User has been successfully updated');
-            } else {
-                if (is_array($validate)) {
-                    $aErrors = afsUserManagerHelper::mergeErrors($aErrors, $validate);
-                }
-                
-                $aErrors = afsUserManagerHelper::prepareErrors($aErrors);
-                
-                $aResult = $this->fetchError($aErrors);
             }
             
+            $response->success(true)->message('User has been successfully updated');
         } else {
-            $aResult = $this->fetchError("This user doesn't exists");
+            if (is_array($validate)) $aErrors = afsUserManagerHelper::mergeErrors($aErrors, $validate);
+            $aErrors = afsUserManagerHelper::prepareErrors($aErrors);
+            
+            $response->success(false)->message($aErrors);
         }
         
-        return $this->renderJson($aResult);
+        return $this->renderJson($response->asArray());
     }
     
     /**
      * Creating new user controller
+     * 
+     * @param sfWebRequest $request
+     * @return string - json
+     * @author Sergey Startsev
      */
     public function executeCreate(sfWebRequest $request)
     {
@@ -162,37 +160,39 @@ class afsUserManagerActions extends afsActions
     
     /**
      * Delete User functionality
+     * 
+     * @param sfWebRequest $request
+     * @return string - json
+     * @author Sergey Startsev
      */
     public function executeDelete(sfWebRequest $request)
     {
-        if (!afStudioUser::getInstance()->isAdmin()) {
-            $this->forward404("You have no rights to execute this action");
+        if (!afStudioUser::getInstance()->isAdmin()) $this->forward404("You have no rights to execute this action");
+        
+        $response = afResponseHelper::create();
+        $username = $request->getParameter('username');
+        
+        if (afStudioUser::getInstance()->getUsername() == $username) {
+            return $this->renderJson($response->success(false)->message("You can't delete youself")->asArray());
         }
         
-        $sUsername = $request->getParameter('username');
-        
-        if (afStudioUser::getInstance()->getUsername() == $sUsername) {
-            $aResult = $this->fetchError("You can't delete youself");
-        } else {
-            if (afStudioUser::getInstance()->retrieve($sUsername)) {
-                if (afStudioUser::delete($sUsername)) {
-                    $aResult = $this->fetchSuccess("User has been deleted");
-                    
-                    afsNotificationPeer::log('User has been deleted', 'afStudioUser');
-                    
-                } else {
-                    $aResult = $this->fetchError("Can't delete user");
-                }
-            } else {
-                $aResult = $this->fetchError("This doesn't exists");
-            }
+        if (!afStudioUser::getInstance()->retrieve($username)) {
+            return $this->renderJson($response->success(false)->message("This user doesn't exists")->asArray());
         }
         
-        return $this->renderJson($aResult);
+        if (!afStudioUser::delete($username)) return $this->renderJson($response->success(false)->message("Can't delete user")->asArray());
+        
+        afsNotificationPeer::log('User has been deleted', 'afStudioUser');
+        
+        return $this->renderJson($response->success(true)->message("User has been deleted")->asArray());
     }
     
     /**
      * Getting captcha image
+     * 
+     * @param sfWebRequest $request
+     * @return void
+     * @author Sergey Startsev
      */
     public function executeCaptcha(sfWebRequest $request)
     {
@@ -207,40 +207,34 @@ class afsUserManagerActions extends afsActions
     }
     
     /**
-     * Fetching success response
+     * Check is user exists
+     *
+     * todo remove if not used
+     * 
+     * @param sfWebRequest $request 
+     * @return array
+     * @author Milos Silni
      */
-    private function fetchSuccess($message)
+    public function executeCheckUserExist(sfWebRequest $request)
     {
-        return array('success' => true, 'message' => $message);
-    }
-    
-    /**
-     * Fetching error response
-     */
-    private function fetchError($message)
-    {
-        return array('success' => false, 'message' => $message);
-    }
-    
-    public function executeCheckUserExist($request)
-    {
-    	afStudioUser::getInstance()->authorize();
-
+        afStudioUser::getInstance()->authorize();
+        
         $sUsername = $request->getParameter('username');
         $aUser = json_decode($request->getParameter('user'), true);
         
         $user = afStudioUser::getInstance()->retrieve($sUsername);
         
         $aErrors = array();
-
+        
         if ($user) {
-        	return array('success' => false, 'message' => 'User with this `username` already exists', 'field'=>'username');
+            return array('success' => false, 'message' => 'User with this `username` already exists', 'field'=>'username');
         }
         
         if (afStudioUser::getInstance()->retrieveByEmail($aUser['email'])) {
-        	return array('success' => false, 'message' => 'User with this `email` already exists', 'field'=>'email');
+            return array('success' => false, 'message' => 'User with this `email` already exists', 'field'=>'email');
         }
         
         return array('success' => true, 'message' => 'User ok');
     }
+    
 }
