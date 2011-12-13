@@ -464,7 +464,7 @@ afStudio.models.ExcelGridPanel = Ext.extend(Ext.grid.EditorGridPanel, {
 	/**
 	 * @cfg {Number} maxColumns The maximum number of fields a model can have (defaults to 20).
 	 */
-	maxColumns: 20,
+	maxColumns: 50,
 	/**
 	 * @cfg {String} defautHeaderTitle The header title text (defaults to "NewField").
 	 */
