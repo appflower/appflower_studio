@@ -159,6 +159,8 @@
 					<file>js/components/appflower/data/type/Integer.js</file>
 					<file>js/components/appflower/data/type/String.js</file>
 					<file>js/components/appflower/data/type/SchemaTypes.js</file>
+					<file>js/components/appflower/data/type/ThemeTypes.js</file>
+                    
 					<file>js/components/appflower/data/type/TypeRestrictions.js</file>
 					<file>js/components/appflower/data/Types.js</file>
 					

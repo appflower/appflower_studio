@@ -169,6 +169,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/Date.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/TypeRestrictions.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/SchemaTypes.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/type/ThemeTypes.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/data/Types.js"></script>
 	<!-- model -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/model/template/ModelNode.js"></script>

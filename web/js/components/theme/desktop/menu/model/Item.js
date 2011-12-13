@@ -5,7 +5,7 @@ N.Item = Ext.extend(N.Node, {
     tag: 'item',
     
     properties : [
-        {name: 'type', required: true},
+        {name: 'type', type: 'menuItemType', required: true, defaultValue: 'item'},
         {name: 'label', type: 'string', required: true},
         {name: 'handler', type: 'string', required: true},
         {name: 'url', type: 'internalUriType', required: true},

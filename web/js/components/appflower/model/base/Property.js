@@ -44,6 +44,7 @@ afStudio.model.Property = Ext.extend(Object, {
     constructor : function(config) {
         Ext.apply(this, config);
 
+        //TODO should be possible to configure types namespace & object
         var types = afStudio.data.Types;
 
         if (this.type) {

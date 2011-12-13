@@ -70,7 +70,10 @@ afStudio.data.Types = (function() {
 //TODO should be removed after schema clearing #1159		
 //		BUTTONTYPE : new T.ButtonType,
 		
-		INPUTTYPE : new T.InputType
+		INPUTTYPE : new T.InputType,
+        
+        //theme types 
+        MENUITEMTYPE : new T.MenuItemType
 	}
 })();
 
