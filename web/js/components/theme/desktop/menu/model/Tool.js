@@ -10,6 +10,10 @@ N.Tool = Ext.extend(N.Node, {
         {name: 'iconCls', type: 'token'}
     ],
     
+    defaultDefinition : {
+        text: 'Tool'
+    },     
+    
     /**
      * @overrride
      * @protected

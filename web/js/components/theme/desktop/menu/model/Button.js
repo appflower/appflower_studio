@@ -12,6 +12,12 @@ N.Button = Ext.extend(N.Node, {
         {name: 'tooltip', type: 'string'}
     ],
     
+    defaultDefinition : {
+        attributes: {
+            label: 'Button'
+        }
+    },    
+    
     nodeTypes : [
         {name: N.Nodes.ITEM, hasMany: true}, 
         {name: N.Nodes.BUTTON, hasMany: true} 

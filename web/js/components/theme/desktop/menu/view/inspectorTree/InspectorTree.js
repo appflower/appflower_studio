@@ -33,7 +33,41 @@ afStudio.theme.desktop.menu.view.inspector.InspectorTree = Ext.extend(afStudio.v
             l = new ns.InspectorLoader(l);
         }
         this.loader = l;
-    }
+    },
+    
+    /**
+     * <u>nodedragover</u> event listener. 
+     * More details {@link Ext.tree.TreePanel#nodedragover}.
+     * @override
+     * @protected 
+     */
+    onNodeDragOver : function() {
+        return true;
+    },
+
+    /**
+     * <u>nodedrop</u> event listener.
+     * More details {@link Ext.tree.TreePanel#nodedrop}.
+     * @override
+     * @protected
+     */
+    onNodeDrop : function(de) {
+        var n = de.dropNode.modelNode, p = de.point, t = de.target.modelNode;
+
+        switch (p) {
+            case "above":
+                t.parentNode.insertBefore(n, t);
+            break;
+            
+            case "below":
+                t.parentNode.insertBefore(n, t.nextSibling);
+            break;
+            
+            case "append":
+                t.appendChild(n);
+            break;
+        }
+    }    
 });
 
 afStudio.theme.desktop.menu.view.inspector.nodeType = {}
