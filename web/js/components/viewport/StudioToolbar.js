@@ -54,7 +54,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 				text: 'Theme Designer',
 				iconCls: 'icon-theme',
 				handler: function(){
-					(new afStudio.Theme()).show();
+					(new afStudio.theme.ThemeDesigner()).show();
 			    }
 			},{
 				

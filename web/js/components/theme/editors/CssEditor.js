@@ -1,10 +1,12 @@
+Ext.ns('afStudio.theme');
+
 /**
  * Css Editor
  * @class afStudio.CssEditor
  * @extends Ext.Window
  * @author PavelK
  */
-afStudio.CssEditor = Ext.extend(Ext.Window, { 
+afStudio.theme.CssEditor = Ext.extend(Ext.Window, { 
 
 	/**
 	 * Template method
@@ -40,7 +42,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		
-		afStudio.CssEditor.superclass.initComponent.apply(this, arguments);	
+		afStudio.theme.CssEditor.superclass.initComponent.apply(this, arguments);	
 	},
 	
 	/**
@@ -120,7 +122,7 @@ afStudio.CssEditor = Ext.extend(Ext.Window, {
 	*/
 	tdshortcut : function() {
 		this.close();
-		(new afStudio.Theme()).show();
+		(new afStudio.theme.ThemeDesigner()).show();
 	},
 	
 	/**

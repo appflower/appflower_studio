@@ -308,7 +308,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 			);
 		});
     },
-    //eo initProperties
     
     /**
      * Instantiates <u>nodeTypes</u> property.
@@ -344,14 +343,14 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     /**
 	 * Applies node definition object.
 	 * Sets properties and instantiates children nodes.
-	 * @private
+	 * @protected
      * @param {Mixed} definition The node definition object
      * @param {Boolean} silent If silent is true all node's events are suspended
      */
     applyNodeDefinition : function(definition, silent) {
     	var me = this;
-    	
-     	if (!Ext.isDefined(definition)) {
+
+        if (!Ext.isDefined(definition)) {
     		return;
     	}
     	
@@ -428,7 +427,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         }
         return true;
     },
-    //eo fireEvent
 
     /**
      * Returns true if this node is a leaf
@@ -487,7 +485,8 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     
     /**
      * Checks if the passed in node is a "similar" node to this one.
-     * Right now "similar" nodes are not the same(equal) nodes with equal {@link #tag} properties.
+     * Nodes are "similar" if their tag {@link #tag} properties are equal, 
+     * but node is not "similar" to himself i.e. references should be different.
      * @protected
      * @param {Node} node The model node being examining with this one 
      * @return {Boolean}
@@ -575,7 +574,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	return null;
     },
-    //eo getStructuralData    
     
     /**
      * Returns true if the node contains child node of specified type. 
@@ -696,6 +694,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         
         return node;
     },
+    //eo removeChild
     
 	/**
 	 * @private
@@ -787,6 +786,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
         
         return node;
     },
+    //eo insertBefore
 
     /**
      * Removes this node from its parent
@@ -1238,7 +1238,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	return property;
     },
-    //eo setProperty
 
     /**
      * Returns {@link #NODE_DATA}.
@@ -1278,7 +1277,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	    	this.fireEvent("modelPropertyChanged", this, '_content', value, oldValue);
     	}
     },
-    //eo setNodeData
     
     /**
      * Applies node properties.
@@ -1301,7 +1299,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	silent ? this.resumeEvents() : null;
     },
-    //eo applyProperties
     
     /**
      * Returns a source properties object of this node. 
@@ -1322,7 +1319,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	return source;
     },
-    //eo getPropertiesSource
 
     /**
      * Node data {@link #NODE_DATA} property is used if node has no children and {@link #_content} is defined.
@@ -1348,7 +1344,6 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 						
     	return root;
     },
-    //eo getRootNode
     
     /**
 	 * Returns model's type.
@@ -1358,10 +1353,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	getModelType : function() {
 		return this.modelType;
 	},    
-	//eo getModelType
     
     /**
      * Returns node constructor function by node type.
+     * @protected
      * @param {String} nodeName
      * @return {Function} node class constructor or null if failed
      */
@@ -1567,6 +1562,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 		
 		return canBeAdded;
     },
+    //eo onModelNodeCreated
     
     /**
      * To add additional validation functionality 

@@ -1,4 +1,6 @@
-afStudio.Theme = Ext.extend(Ext.Window, {
+Ext.ns('afStudio.theme');
+
+afStudio.theme.ThemeDesigner = Ext.extend(Ext.Window, {
     /**
      * @property tabPanel
      * @type {Ext.TabPanel}
@@ -61,7 +63,7 @@ afStudio.Theme = Ext.extend(Ext.Window, {
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		
-		afStudio.Theme.superclass.initComponent.apply(this, arguments);	
+		afStudio.theme.ThemeDesigner.superclass.initComponent.apply(this, arguments);	
 	},
     
     /**

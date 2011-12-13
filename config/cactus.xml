@@ -146,11 +146,6 @@
 					<file>js/components/layoutDesigner/view</file>
 					<file>js/components/layoutDesigner</file>
 					
-					<!-- theme designer -->
-					<file>js/components/theme/editors/afStudio.BaseEditor.js</file>
-					<file>js/components/theme/editors/afStudio.CssEditor.js</file>
-					<file>js/components/theme/afStudio.Theme.js</file>
-					
 					<!-- AppFlower Schema MVC -->
 					<!-- ******************** -->
 					
@@ -205,6 +200,9 @@
 					<file>js/components/appflower/view/propertyGrid/PropertyStore.js</file>
 					<file>js/components/appflower/view/propertyGrid/PropertyColumnModel.js</file>
 					<file>js/components/appflower/view/propertyGrid/PropertyGrid.js</file>
+                    
+                    <!-- inspector palette -->
+                    <file>js/components/appflower/view/InspectorPalette.js</file>
 
 					<!-- *************************** -->
 					<!-- end of AppFlower Schema MVC -->
@@ -245,6 +243,25 @@
 					<!-- ******************** -->
 					<!-- end of widget designer -->
 					
+
+                    <!-- theme designer -->
+                    <file>js/components/theme/ThemeDesigner.js</file>
+                        <!-- common -->    
+                    <file>js/components/theme/editors/BaseEditor.js</file>
+                    <file>js/components/theme/editors/CssEditor.js</file>
+                        <!-- desktop -->
+                    <file>js/components/theme/desktop/menu/StartMenuEditor.js</file>
+                            <!-- model -->
+                    <file>js/components/theme/desktop/menu/model/template/Templates.js</file>
+                    <file>js/components/theme/desktop/menu/model/base/Node.js</file>
+                    <file>js/components/theme/desktop/menu/model/Root.js</file>
+                    <file>js/components/theme/desktop/menu/model/Item.js</file>
+                    <file>js/components/theme/desktop/menu/model/Tool.js</file>
+                    <file>js/components/theme/desktop/menu/controller/MenuController.js</file>
+                    
+                    <file>js/components/theme/desktop/menu/view/InspectorTree.js</file>
+                    <!-- end of theme designer -->
+                    
 					<!-- Users -->
 					<file>js/components/users/afStudio.UserWindow.js</file>
 					<file>js/components/users/afStudio.UsersList.js</file>

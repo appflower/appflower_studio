@@ -17,15 +17,6 @@ N.BaseTemplate = Ext.extend(Object, {
 	structure : [],
 	
 	/**
-	 * @constructor
-	 */
-	constructor : function() {
-		this.extendStructure([
-			{name: afStudio.ModelNode.TITLE, required: true}
-		]);
-	},
-	
-	/**
 	 * Goes over {@link #structure} property and examines model on existance of structural nodes.
 	 * If any required structural node is not exists in the model then it is created.
 	 * 

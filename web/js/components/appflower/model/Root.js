@@ -21,6 +21,7 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	 * @type {String}
 	 */
 	id : 'root',
+    
 	/**
 	 * Root node tag property, value = "root".
 	 * @property tag
@@ -37,8 +38,8 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 //      	{name: "tabbed", type: 'boolean'}
 //      	{name: "module", type: 'string'}
 	],
-	
-	/**
+
+    /**
 	 * Model Root node constructor.
 	 * @constructor
 	 * @param {Object} config
@@ -47,13 +48,12 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 		afStudio.model.Root.superclass.constructor.call(this, config);
 		
 		//set modelType property to have compatibility with base Node class
-		this.modelType = this.getPropertyValue('type');
+		this.modelType = this.getModelType();
 		
 		this.initStructure(config.structureTpl);
 		
 		this.processStructure();
 	},
-	//eo constructor
 	
 	/**
 	 * Initialized Model Root node {@link #strTpl}.
@@ -64,6 +64,7 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 	initStructure : function(strc) {
 		var mt = this.getModelType();
 		
+        //TODO add ability to configure templates namespace @nick
 		if (strc) {
 			//all structure templates should be located inside "afStudio.model.template" namespace.
 			strc = Ext.isFunction(strc) ? strc : afStudio.model.template[strc];
@@ -76,7 +77,6 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 		 */
 		this.strTpl = Ext.isFunction(strc) ? new strc() : undefined;
 	},
-	//eo initStructure
 	
 	/**
 	 * Processes node structure based on {@link #strTpl}.
@@ -95,7 +95,6 @@ afStudio.model.Root = Ext.extend(afStudio.model.Node, {
 		//update nodeTypes
 		this.nodeTypes = this.nodeTypes.concat(this.strTpl.structure);
 	},
-	//eo processStructure
 	
 	/**
 	 * Retruns this root node.

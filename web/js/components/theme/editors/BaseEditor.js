@@ -1,8 +1,10 @@
+Ext.ns('afStudio.theme');
+
 /**
  * BaseEditor for all other Editors
  * @author radu
  */
-afStudio.BaseEditor = Ext.extend(Ext.Window, { 
+afStudio.theme.BaseEditor = Ext.extend(Ext.Window, { 
     /**
      * @cfg {String} helper
      */
@@ -42,7 +44,7 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
 				
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
         
-		afStudio.BaseEditor.superclass.initComponent.apply(this, arguments);	
+		afStudio.theme.BaseEditor.superclass.initComponent.apply(this, arguments);	
 	},
 	
 	/**
@@ -119,6 +121,6 @@ afStudio.BaseEditor = Ext.extend(Ext.Window, {
      */
 	tdshortcut : function() {
 		this.close();
-		(new afStudio.Theme()).show();
+		(new afStudio.theme.ThemeDesigner()).show();
 	}
 });

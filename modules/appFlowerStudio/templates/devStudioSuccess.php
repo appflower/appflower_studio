@@ -238,6 +238,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyStore.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyColumnModel.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyGrid.js"></script>
+		<!-- inspector palette -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/InspectorPalette.js"></script>
 <!-- end of appflower view model -->
 
 <!-- widget designer -->
@@ -270,6 +272,25 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/CodeEditor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetDesigner.js"></script>
 <!-- end of widgetDesigner -->
+
+<!-- theme designer -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/ThemeDesigner.js"></script>
+	<!-- common -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/BaseEditor.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/CssEditor.js"></script>
+	<!-- desktop -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/StartMenuEditor.js"></script>
+
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Templates.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/base/Node.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Root.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Item.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Tool.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/controller/MenuController.js"></script>
+
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/InspectorTree.js"></script>
+
+<!-- end of theme designer -->
 
 <?php 
 $appFlowerStudioPluginJsPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/js/';

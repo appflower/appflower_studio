@@ -13,6 +13,7 @@ N.WidgetTemplate = Ext.extend(N.BaseTemplate, {
 		afStudio.model.template.WidgetTemplate.superclass.constructor.call(this);
 		
 		this.extendStructure([
+            {name: afStudio.ModelNode.TITLE, required: true},
 			afStudio.ModelNode.CONFIRM,
 			afStudio.ModelNode.ACTIONS
 		]);

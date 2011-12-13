@@ -18,7 +18,7 @@ afStudio.view.inspector.RootNode = Ext.extend(afStudio.view.inspector.ContainerN
 	initContextMenu : function() {
 		var I = afStudio.view.inspector;
 		
-		var _me = this,
+		var me = this,
 			model = this.modelNode,
 			nodes = model.nodeTypes,
 			addText = I.TreeNode.addNodeCxtText,
@@ -56,7 +56,7 @@ afStudio.view.inspector.RootNode = Ext.extend(afStudio.view.inspector.ContainerN
 						itemclick: function(item) {
 			            	switch (item.controll) {
 			            		case 'add':
-			            			_me.addModelNode(item.node);
+			            			me.addModelNode(item.node);
 			            		break;
 			            	}
 						}
@@ -76,7 +76,7 @@ afStudio.view.inspector.RootNode = Ext.extend(afStudio.view.inspector.ContainerN
 			items: mItems,
 			listeners: {
 				itemclick: function(item) {
-	            	var node = _me;
+	            	var node = me;
 	            	switch (item.itemId) {
 	            		case 'add':
         					node.addModelNode(item.node);
