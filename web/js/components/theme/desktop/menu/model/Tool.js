@@ -7,7 +7,7 @@ N.Tool = Ext.extend(N.Node, {
     properties : [
         {name: 'text', type: 'string', required: true},
         {name: 'url', type: 'internalUriType', required: true},
-        {name: 'iconCls', type: 'string'}
+        {name: 'iconCls', type: 'token'}
     ],
     
     /**

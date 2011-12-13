@@ -20,7 +20,7 @@ afStudio.theme.desktop.menu.model.Node = Ext.extend(afStudio.model.Node, {
     applyNodeDefinition : function(definition, silent) {
         var me = this,
             ns = afStudio.theme.desktop.menu.model;
-        
+
         if (!Ext.isDefined(definition)) {
             return;
         }
@@ -38,8 +38,9 @@ afStudio.theme.desktop.menu.model.Node = Ext.extend(afStudio.model.Node, {
             
             if (def.children) {
 	            Ext.iterate(def.children, function(n, d) {
-                    var nt = d.type;
-                    nt = Ext.isEmpty(nt) ? (modelType == 'main' ? 'item' : 'tool') : nt;
+                    var nt = Ext.isObject(d.attributes) ? d.attributes.type : null;
+                    
+                    nt = Ext.isEmpty(nt) ? (modelType == 'main' ? ns.Nodes.ITEM : ns.Nodes.TOOL) : nt;
                     me.createNode(nt, d);
 	            });
             }

@@ -88,7 +88,7 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 
                 mainCt.run();
                 
-                afStudio.Logger.info('@menu tools ctrl', mainCt);
+                afStudio.Logger.info('@menu main ctrl', mainCt);
                 
                 //-----------------
                 

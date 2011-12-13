@@ -30,7 +30,7 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			expanded: true,
 			modelNode: root,
 			properties: {
-				name: String.format("{0} ({1}-{2})", view.uri, view.place, view.placeType)
+				name: view ? String.format("{0} ({1}-{2})", view.uri, view.place, view.placeType) : ''
 			}
 		};
 		
@@ -54,18 +54,16 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 		afStudio.view.inspector.InspectorTree.superclass.initComponent.apply(this, arguments);
 		this._afterInitComponent();
 	},
-	//eo initComponent
 	
 	/**
 	 * Initializes events & does post configuration
 	 * @private
 	 */	
 	_afterInitComponent : function() {
-		var _me = this;
+		var me = this;
 		//activate treeSorter
 		this.treeSorter = new afStudio.view.inspector.InspectorSorter(this);		
 	},
-	//eo _afterInitComponent 
 	
 	/**
 	 * Expands a specified path in this tree based on tree-model association.
@@ -141,7 +139,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
     	
     	return cmp;
 	},
-	//eo getCmpByModel	
 	
 	/**
 	 * Ext Template method
@@ -151,47 +148,47 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	initEvents : function() {
 		afStudio.view.inspector.InspectorTree.superclass.initEvents.apply(this, arguments);
 		
-		var _me = this,
-			 sm = _me.getSelectionModel();
+		var me = this,
+			 sm = me.getSelectionModel();
 		
-		_me.on({
-			scope: _me,
+		me.on({
+			scope: me,
 			
 			/**
 			 * @relayed controller
 			 */
-			modelNodeInsert: _me.onModelNodeInsert, 
+			modelNodeInsert: me.onModelNodeInsert, 
 			/**
 			 * @relayed controller
 			 */
-			modelNodeAppend: _me.onModelNodeAppend,
+			modelNodeAppend: me.onModelNodeAppend,
 			/**
 			 * @relayed controller
 			 */
-			modelNodeRemove: _me.onModelNodeRemove,
+			modelNodeRemove: me.onModelNodeRemove,
 			/**
 			 * @relayed controller
 			 */
-			modelNodeSelect: _me.onModelNodeSelect,
+			modelNodeSelect: me.onModelNodeSelect,
 			/**
 			 * @relayed controller
 			 */
-			modelPropertyChanged: _me.onModelPropertyChanged,
+			modelPropertyChanged: me.onModelPropertyChanged,
 			/**
 			 * @relayed controller
 			 */
-			modelReconfigure: _me.onModelNodeReconfigure,
+			modelReconfigure: me.onModelNodeReconfigure,
 			
-			contextmenu:  _me.onNodeContextMenu,
+			contextmenu:  me.onNodeContextMenu,
 			
-			nodedragover: _me.onNodeDragOver,
+			nodedragover: me.onNodeDragOver,
 			
-			nodedrop: _me.onNodeDrop
+			nodedrop: me.onNodeDrop
 		});
 		
-		_me.mon(sm, {
-			selectionchange : _me.onNodeSelectionChange,
-			scope: _me
+		me.mon(sm, {
+			selectionchange : me.onNodeSelectionChange,
+			scope: me
 		});
 	},
 	//eo initEvents
@@ -212,7 +209,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			}
 		}
 	},
-	//eo onModelNodeSelect
 		
 	/**
 	 * Relayed <u>modelNodeAppend</u> event listener.
@@ -228,7 +224,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			viewNode.select();
 		}, this);
 	},
-	//eo onModelNodeAppend
 	
 	/**
 	 * Relayed <u>modelNodeInsert</u> event listener.
@@ -244,7 +239,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			viewNode.select();
 		}, this);
 	},
-	//eo onModelNodeInsert
 	
 	/**
 	 * Relayed <u>modelNodeRemove</u> event listener.
@@ -259,7 +253,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
     		viewNode.remove(true);
     	}
 	},
-	//eo onModelNodeRemove	
 	
 	/**
 	 * Relayed <u>modelPropertyChanged</u> event listener.
@@ -303,7 +296,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 		    menu.showAt(e.getXY());
 		}
 	},
-	//eo onNodeContextMenu
 	
 	/**
 	 * <u>nodedragover</u> event listener. 
@@ -318,7 +310,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			return false;
 		}
 	},
-	//eo onNodeDragOver
 	
 	/**
 	 * <u>nodedrop</u> event listener.
@@ -333,7 +324,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 	        t.parentNode.insertBefore(n, t.nextSibling);
 	    }
 	},
-	//eo onNodeDrop
 	
 	/**
 	 * This tree selection-model <u>selectionchange</u> event listener.
@@ -347,7 +337,6 @@ afStudio.view.inspector.InspectorTree = Ext.extend(Ext.tree.TreePanel, {
 			this.controller.selectModelNode(node.modelNode, this);
 		}
 	}
-	//eo onNodeClick
 });
 
 afStudio.view.inspector.nodeType = {}

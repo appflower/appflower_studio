@@ -2,20 +2,31 @@ Ext.ns('afStudio.theme.desktop.menu.model.template');
 
 afStudio.theme.desktop.menu.model.template.MainTemplate = Ext.extend(afStudio.model.template.BaseTemplate, {
     constructor : function() {
-        afStudio.theme.desktop.menu.model.template.MainTemplate.superclass.constructor.call(this);
+        var ns = afStudio.theme.desktop.menu.model;
+        
+        ns.template.MainTemplate.superclass.constructor.call(this);
         
         this.extendStructure([
-            {name: 'item', required: true, hasMany: true}
+            {name: ns.Nodes.ITEM, hasMany: true},
+            {name: ns.Nodes.BUTTON, hasMany: true}
         ]);
     }
 });
 
+/**
+ * Tools menu structural template.
+ * 
+ * @class afStudio.theme.desktop.menu.model.template.ToolsTemplate
+ * @extends afStudio.model.template.BaseTemplate
+ */
 afStudio.theme.desktop.menu.model.template.ToolsTemplate = Ext.extend(afStudio.model.template.BaseTemplate, {
     constructor : function() {
-        afStudio.theme.desktop.menu.model.template.ToolsTemplate.superclass.constructor.call(this);
+        var ns = afStudio.theme.desktop.menu.model;
+        
+        ns.template.ToolsTemplate.superclass.constructor.call(this);
         
         this.extendStructure([
-            {name: 'tool', hasMany: true}
+            {name: ns.Nodes.TOOL, hasMany: true}
         ]);
     }
 });

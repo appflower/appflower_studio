@@ -76,7 +76,6 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
         this.processData(node, callback, scope || node);
         this.runCallback(callback, scope || node, [node]);
     },
-    //eo load
 
     /**
      * Returns model node's properties. 
@@ -152,13 +151,14 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
                         new afStudio.view.inspector.ContainerNode(attr);
         }
     },
-    //eo createNode
 
     /**
      * Returns node's constructor function by its type.
      * @protected
      * @param {String} type The model node tag 
      * @return {Function} node constructor or null if it was not found
+     * 
+     * TODO the ability to configure node namespaces @nick
      */
     resolveNodeType : function(type) {
     	var nCls   = String(type).trim(),
@@ -177,7 +177,6 @@ afStudio.view.inspector.InspectorLoader = Ext.extend(Ext.util.Observable, {
     	
     	return Ext.isFunction(nCls) ? nCls : null;    	
     },
-    //eo resolveNodeType
     
 	/**
 	 * Runs callback function with specific arguments and context.

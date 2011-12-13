@@ -281,15 +281,22 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/CssEditor.js"></script>
 	<!-- desktop -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/StartMenuEditor.js"></script>
-
+		<!-- template -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Templates.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Nodes.js"></script>
+
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/base/Node.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Root.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Item.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Button.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Tool.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/controller/MenuController.js"></script>
-
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/InspectorTree.js"></script>
+		<!-- view -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorLoader.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js"></script>
 
 <!-- end of theme designer -->
 
