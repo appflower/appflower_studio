@@ -265,10 +265,10 @@ class appFlowerStudioActions extends afsActions
     {
         $command = $request->getParameter('cmd');
         
-        if (!sfConfig::get('app_afs_projects_management_enabled') && !in_array($command, array('run','export','getHelper','saveHelper'))) {
+        if (!sfConfig::get('app_afs_projects_management_enabled') && in_array($command, array('saveWizard', 'CheckConfig'))) {
             //If projects management is disabled we allow only run and export, and helper processing commands
             throw new Exception('Projects management is disabled!');
-        } 
+        }
         
         $response = afStudioCommand::process('project', $command, $request->getParameterHolder()->getAll());
         

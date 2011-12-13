@@ -160,4 +160,59 @@ class afStudioProjectCommand extends afBaseStudioCommand
         return $response->success($status)->message(($status) ? "Helper has been successfully saved" : "Some problems occured while save processing");
     }
     
+    /**
+     * Process getting wallpapers list
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processGetWallpapers()
+    {
+        $web_dir = sfConfig::get('sf_web_dir');
+        $files = array();
+        
+        $place = $this->getParameter('place', 'frontend');
+        $place_type = $this->getParameter('place_type', 'app');
+        
+        $default_prefix = "/appFlowerPlugin/extjs-3/plugins/desktop/wallpapers/";
+        $default_area = sfConfig::get('sf_plugins_dir') . "/appFlowerPlugin/web/extjs-3/plugins/desktop/wallpapers/";
+        foreach (sfFinder::type('file')->maxdepth(0)->in($default_area) as $file) $files[] = str_replace($default_area, $default_prefix, $file);
+        foreach (sfFinder::type('file')->maxdepth(0)->in("{$web_dir}/images/desktop/wallpapers/") as $file) $files[] = str_replace($web_dir, '', $file);
+        
+        $data = array(
+            'list' => $files,
+            'active' => ($path = afStudioProjectCommandHelper::getActiveBackground($place, $place_type)) ? $path : afStudioProjectCommandHelper::getActiveBackground('appFlowerPlugin', 'plugin'),
+        );
+        
+        return afResponseHelper::create()->success(true)->data(array(), $data, 0);
+    }
+    
+    /**
+     * Set wallpaper action
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processSetWallpaper()
+    {
+        $place = $this->getParameter('place', 'frontend');
+        $place_type = $this->getParameter('place_type', 'app');
+        $path = $this->getParameter('path');
+        
+        $response = afResponseHelper::create();
+        
+        if (empty($path)) return $response->success(false)->message("You should provide path for background wallpapers");
+        
+        $app_path = sfConfig::get("sf_{$place_type}s_dir") . "/{$place}/config/app.yml";
+        
+        $app_config = array();
+        if (file_exists($app_path)) $app_config = sfYaml::load($app_path);
+        
+        $app_config['all'][afStudioProjectCommandHelper::CONFIG_APP_APPFLOWER][afStudioProjectCommandHelper::CONFIG_DESKTOP_BACKGROUND_IMAGE] = $path;
+        
+        $is_saved = file_put_contents($app_path, sfYaml::dump($app_config, 3));
+        
+        return $response->success($is_saved);
+    }
+    
 }
