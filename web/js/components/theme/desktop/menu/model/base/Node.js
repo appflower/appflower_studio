@@ -70,5 +70,13 @@ afStudio.theme.desktop.menu.model.Node = Ext.extend(afStudio.model.Node, {
         });
 
         return Ext.isFunction(nCls) ? nCls : null;
+    },
+    
+    /**
+     * @override
+     * @return {Boolean}
+     */
+    validate : function() {
+        return afStudio.theme.desktop.menu.model.Node.superclass.validate.call(this);
     }
 });
