@@ -10,6 +10,15 @@ Ext.ns('afStudio.theme.desktop');
 afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, { 
 
     /**
+     * @property mainCt The main menu controller
+     * @type {MenuController}
+     */
+    /**
+     * @property toolsCt The tools menu controller
+     * @type {MenuController}
+     */
+    
+    /**
      * Template method
      * @override
      * @private
@@ -43,7 +52,7 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 
         Ext.apply(this, Ext.apply(this.initialConfig, config));
         
-        afStudio.theme.desktop.StartMenuEditor.superclass.initComponent.apply(this, arguments); 
+        afStudio.theme.desktop.StartMenuEditor.superclass.initComponent.apply(this, arguments);
     },
     
     /**
@@ -51,7 +60,6 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
      * @private
      */
     onShow : function() {
-        
         afStudio.xhr.executeAction({
             url: afStudioWSUrls.project,
             params: {
@@ -63,70 +71,15 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             run: function(response) {
                 console.log('response', response);
                 
-                var mm = {
-                    attributes: {
-                        type: 'main'
-                    }                        
-                };
-                mm.children = response.data.main;
-
-                var mainCt = new afStudio.theme.desktop.menu.controller.MenuController({
-                    viewDefinition: mm,
-                    listeners: {
-                        scope: this,
-                        
-                        ready: function(controller) {
-                            var ip = new afStudio.view.InspectorPalette({
-                                xtype: 'wd.inspectorPalette',
-                                controller: controller
-                            });
-                            this.eastPanel.mainMenu.add(ip);
-                            this.eastPanel.mainMenu.doLayout();    
-                        }
-                    }
-                });
-                
-                mainCt.run();
-                
-                afStudio.Logger.info('@menu main ctrl', mainCt);
-                
-                //-----------------
-                
-                var tm = {
-                    attributes: {
-                        type: 'tools'
-                    }                        
-                };
-                
-                tm.children = response.data.tools;
-                
-                var toolsCt = new afStudio.theme.desktop.menu.controller.MenuController({
-                    viewDefinition: tm,
-	                listeners: {
-                        scope: this,
-                        
-	                    ready: function(controller) {
-                            var ip = new afStudio.view.InspectorPalette({
-                                xtype: 'wd.inspectorPalette',
-                                controller: controller
-                            });
-                            this.eastPanel.toolMenu.add(ip);
-                            this.eastPanel.toolMenu.doLayout();    
-	                    }
-	                }
-                    
-                });
-                
-                toolsCt.run();
-                
-                afStudio.Logger.info('@menu tools ctrl', toolsCt);
+                this.initMainMenu(response.data.main);
+                this.initToolsMenu(response.data.tools);
             }
         });
-        
     },
     
     /**
      * Init editor's layout.
+     * @private
      */
     createRegions : function() {
         this.eastPanel = new Ext.TabPanel({
@@ -148,9 +101,9 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             }]
         });
         
+        
         this.centerPanel = new Ext.Panel({
             region: 'center',
-            layout: 'fit',  
             items: [],
             tbar: [
             {
@@ -164,13 +117,101 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 scope: this,
                 handler: this.tdshortcut
             }]
-        })
+        });
+        
+        this.messageBox = new afStudio.layoutDesigner.view.ViewMessageBox({
+            width: 300,
+            viewContainer: this.centerPanel,
+            viewMessage: '<p>Menu Live Preview</p> <span style="font-size:10px;">under development</span>'
+        });
+        this.centerPanel.add(this.messageBox);
+        
+        this.centerPanel.on('afterlayout', function(){
+            this.messageBox.onAfterRender();
+        }, this);
+    },
+    
+    /**
+     * Init main menu.
+     * @protected
+     * @param {Object} definition The main menu definition object
+     */
+    initMainMenu : function(definition) {
+        var mm = {
+            attributes: {
+                type: 'main'
+            }                        
+        };
+        mm.children = definition;
+
+        this.mainCt = new afStudio.theme.desktop.menu.controller.MenuController({
+            viewDefinition: mm,
+            listeners: {
+                scope: this,
+                
+                ready: function(controller) {
+                    var ip = new afStudio.view.InspectorPalette({
+                        xtype: 'wd.inspectorPalette',
+                        controller: controller
+                    });
+                    this.eastPanel.mainMenu.add(ip);
+                    this.eastPanel.mainMenu.doLayout();    
+                }
+            }
+        });
+        
+        this.mainCt.run();
+        
+        afStudio.Logger.info('@menu main controller', this.mainCt);
+    },
+    
+    /**
+     * Init tools menu.
+     * @protected
+     * @param {Object} definition The tools menu definition object
+     */
+    initToolsMenu : function(definition) {
+        var tm = {
+            attributes: {
+                type: 'tools'
+            }                        
+        };
+        
+        tm.children = definition;
+        
+        this.toolsCt = new afStudio.theme.desktop.menu.controller.MenuController({
+            viewDefinition: tm,
+            listeners: {
+                scope: this,
+                
+                ready: function(controller) {
+                    var ip = new afStudio.view.InspectorPalette({
+                        xtype: 'wd.inspectorPalette',
+                        controller: controller
+                    });
+                    this.eastPanel.toolMenu.add(ip);
+                    this.eastPanel.toolMenu.doLayout();    
+                }
+            }
+            
+        });
+        
+        this.toolsCt.run();
+        
+        afStudio.Logger.info('@menu tools controller', this.toolsCt);
     },
     
     /**
      * Saves menu.
      */
     save : function() {
+        console.log('SAVE--------------------------');
+        
+        var mainValid = this.mainCt.validateModel();
+        var toolsValid = this.toolsCt.validateModel();
+        
+        console.log('mainValid', mainValid, Ext.encode(mainValid));
+        console.log('toolsValid', toolsValid, Ext.encode(toolsValid));
     },
     
     /**
@@ -181,8 +222,8 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
     },
     
     /**
-    * Template Designer shortcut
-    */
+     * Template Designer shortcut 
+     */
     tdshortcut : function() {
         this.close();
         (new afStudio.theme.ThemeDesigner()).show();

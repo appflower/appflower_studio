@@ -97,7 +97,7 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	onSaveWidget : function() {
 		var c = this.controller,
 			valid = c.validateModel();
-		
+            
 		if (valid === true) {
 			c.saveView();
 		} else {
