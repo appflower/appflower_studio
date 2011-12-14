@@ -30,6 +30,7 @@ class afsInitTask extends sfBaseTask
     {
         $this->addOptions(array(
             new sfCommandOption('type', null, sfCommandOption::PARAMETER_OPTIONAL, 'In which direction should be processed initalization', 'direct'),
+            new sfCommandOption('db-recreate', null, sfCommandOption::PARAMETER_OPTIONAL, 'Should be recreated database from schema or not', true),
         ));
         
         $this->namespace = 'afs';
@@ -50,10 +51,9 @@ EOF;
     {
         $this->createFolders();
         
-        $type_method = 'execute' . sfInflector::camelize($options['type']);
-        
         $this->createTask('project:permissions')->run();
         
+        $type_method = 'execute' . sfInflector::camelize($options['type']);
         if (!method_exists($this, $type_method)) throw new sfCommandException("Type method '{$type_method}' not defined.");
         
         call_user_func(array($this, $type_method), $arguments, $options);
@@ -77,7 +77,9 @@ EOF;
      */
     private function executeDirect(Array $arguments, Array $options)
     {
-        $this->createTask('propel:insert-sql')->run();
+        if ($options['db-recreate'] === true || $options['db-recreate'] === 'true') {
+            $this->createTask('propel:insert-sql')->run();
+        }
     }
     
     /**
