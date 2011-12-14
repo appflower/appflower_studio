@@ -21,7 +21,34 @@ N.Button = Ext.extend(N.Node, {
     nodeTypes : [
         {name: N.Nodes.ITEM, hasMany: true}, 
         {name: N.Nodes.BUTTON, hasMany: true} 
-    ]
+    ],
+    
+    /**
+     * @override 
+     */
+    onModelPropertyChanged : function(node, p, v, oldValue) {
+        var tree = this.getOwnerTree(),
+            ns = afStudio.theme.desktop.menu.model;
+        
+        //"type" property
+        if (tree && p == "type") {
+            var newNode = null,
+                def = {attributes: node.getPropertiesHash()};
+            
+            if (v == ns.Nodes.ITEM) {
+                delete def.attributes.handler;
+                
+                newNode = new ns.Item({
+                    definition: def
+                });
+            }
+            
+            node.parentNode.replaceChildPreserveContent(newNode, node);
+            newNode.getOwnerTree().selectModelNode(newNode);
+        }
+        
+        return true;
+    }    
 });
 
 delete N;

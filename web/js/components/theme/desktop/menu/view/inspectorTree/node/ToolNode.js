@@ -1,7 +1,14 @@
 N = afStudio.theme.desktop.menu.view.inspector;
 
 N.ToolNode = Ext.extend(afStudio.view.inspector.TreeNode, {
-    labelProperty : 'text'
+    labelProperty : 'text',
+
+    /**
+     * @override
+     */
+    initNode : function(attr) {
+        attr.iconCls = 'icon-tb-menu-tool';
+    }    
 });
 
 /**

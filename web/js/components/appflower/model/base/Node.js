@@ -844,6 +844,21 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
 
     /**
+     * Replaces one child node in this node with another 
+     * and copying replaced node's children to new node - preserving content.
+     * @param {Node} newChild The replacement node
+     * @param {Node} oldChild The node to replace
+     * @return {Node} The replaced node
+     */
+    replaceChildPreserveContent : function(newChild, oldChild) {
+        var children = [].concat(oldChild.childNodes);
+        this.replaceChild(newChild, oldChild);
+        newChild.appendChild(children);
+        
+        return oldChild;
+    },
+    
+    /**
      * Returns the index of a child node
      * @borrows
      * @param {Node} node
