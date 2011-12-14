@@ -181,7 +181,8 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $data = array(
             'list' => $files,
-            'active' => ($path = afStudioProjectCommandHelper::getActiveBackground($place, $place_type)) ? $path : afStudioProjectCommandHelper::getActiveBackground('appFlowerPlugin', 'plugin'),
+            'active_image' => afStudioProjectCommandHelper::getActiveBackground($place, $place_type),
+            'active_color' => afStudioProjectCommandHelper::getActiveBackground($place, $place_type, afStudioProjectCommandHelper::BACKGROUND_TYPE_COLOR),
         );
         
         return afResponseHelper::create()->success(true)->data(array(), $data, 0);
@@ -198,6 +199,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $place = $this->getParameter('place', 'frontend');
         $place_type = $this->getParameter('place_type', 'app');
         $path = $this->getParameter('path');
+        $color = $this->getParameter('color');
         
         $response = afResponseHelper::create();
         
@@ -210,7 +212,11 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $app_config['all'][afStudioProjectCommandHelper::CONFIG_APP_APPFLOWER][afStudioProjectCommandHelper::CONFIG_DESKTOP_BACKGROUND_IMAGE] = $path;
         
-        $is_saved = file_put_contents($app_path, sfYaml::dump($app_config, 3));
+        if (!empty($color)) {
+            $app_config['all'][afStudioProjectCommandHelper::CONFIG_APP_APPFLOWER][afStudioProjectCommandHelper::CONFIG_DESKTOP_BACKGROUND_COLOR] = $color;
+        }
+        
+        $is_saved = file_put_contents($app_path, sfYaml::dump($app_config, 4));
         
         return $response->success($is_saved)->message(($is_saved) ? "Wallpaper has been successfully saved" : "Some problems occured while save processing");
     }

@@ -18,6 +18,32 @@ class afStudioProjectCommandHelper extends afBaseStudioCommandHelper
     const CONFIG_DESKTOP_BACKGROUND_IMAGE = 'desktopBackgroundImage';
     
     /**
+     * Config app desktop background color
+     */
+    const CONFIG_DESKTOP_BACKGROUND_COLOR= 'desktopBackgroundColor';
+    
+    /**
+     * Background type image
+     */
+    const BACKGROUND_TYPE_IMAGE = 'image';
+    
+    /**
+     * Background type color
+     */
+    const BACKGROUND_TYPE_COLOR = 'color';
+    
+    /**
+     * Default helper place
+     */
+    const DEFAULT_HELPER_PLACE = 'appFlowerPlugin';
+    
+    /**
+     * Default helper place type
+     */
+    const DEFAULT_HELPER_PLACE_TYPE = 'plugin';
+    
+    
+    /**
      * Returns Prepared commands results - for now just imploded values
      * 
      * @return string
@@ -35,14 +61,35 @@ class afStudioProjectCommandHelper extends afBaseStudioCommandHelper
     }
     
     /**
+     * Getting active background parameter
+     *
+     * @param string $place 
+     * @param string $place_type 
+     * @param string $type 
+     * @return string
+     * @author Sergey Startsev
+     */
+    static public function getActiveBackground($place = 'frontend', $place_type = 'app', $type = self::BACKGROUND_TYPE_IMAGE)
+    {
+        $method_name = "getActiveBackground" . ucfirst($type);
+        if (!method_exists(__CLASS__, $method_name)) throw new afStudioProjectCommandHelperException("Method '{$method_name}' not defined");
+        
+        if (!($value = call_user_func(array(__CLASS__, $method_name), $place, $place_type))) {
+            $value = call_user_func(array(__CLASS__, $method_name), self::DEFAULT_HELPER_PLACE, self::DEFAULT_HELPER_PLACE_TYPE);
+        }
+        
+        return $value;
+    }
+    
+    /**
      * Getting active background image path
      *
      * @param string $place 
      * @param string $place_type 
-     * @return void
+     * @return string
      * @author Sergey Startsev
      */
-    static public function getActiveBackground($place = 'frontend', $place_type = 'app')
+    static public function getActiveBackgroundImage($place = 'frontend', $place_type = 'app')
     {
         $app_path = sfConfig::get('sf_root_dir') . "/{$place_type}s/{$place}/config/app.yml";
         
@@ -50,6 +97,28 @@ class afStudioProjectCommandHelper extends afBaseStudioCommandHelper
             $app_config = sfYaml::load($app_path);
             if (array_key_exists(self::CONFIG_APP_APPFLOWER, $app_config['all']) && array_key_exists(self::CONFIG_DESKTOP_BACKGROUND_IMAGE, $app_config['all'][self::CONFIG_APP_APPFLOWER])) {
                 return $app_config['all'][self::CONFIG_APP_APPFLOWER][self::CONFIG_DESKTOP_BACKGROUND_IMAGE];
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Getting active background color
+     *
+     * @param string $place 
+     * @param string $place_type 
+     * @return string
+     * @author Sergey Startsev
+     */
+    static public function getActiveBackgroundColor($place = 'frontend', $place_type = 'app')
+    {
+        $app_path = sfConfig::get('sf_root_dir') . "/{$place_type}s/{$place}/config/app.yml";
+        
+        if (file_exists($app_path)) {
+            $app_config = sfYaml::load($app_path);
+            if (array_key_exists(self::CONFIG_APP_APPFLOWER, $app_config['all']) && array_key_exists(self::CONFIG_DESKTOP_BACKGROUND_COLOR, $app_config['all'][self::CONFIG_APP_APPFLOWER])) {
+                return $app_config['all'][self::CONFIG_APP_APPFLOWER][self::CONFIG_DESKTOP_BACKGROUND_COLOR];
             }
         }
         
