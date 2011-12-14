@@ -11,29 +11,29 @@ Ext.ns('afStudio.model');
  */
 afStudio.model.Property = Ext.extend(Object, {
     /**
-     * @cfg {String} (Required) name
+     * @cfg {String} name
      * The name by which the property is referenced within the Model Node.
      * For properties inside a model node <i>name</i> should be unique.
      */
     /**
-     * @cfg {Mixed} (Optional) value
+     * @cfg {Mixed} (optional) value
      * The property value.
      */
     /**
-     * @cfg {Mixed} (Optional) type (defaults to {@link afStudio.model.Types.AUTO}, if is not specified)
+     * @cfg {Mixed} (optional) type (defaults to {@link afStudio.model.Types.AUTO}, if is not specified)
      * The data type. Look at {@link afStudio.model.Types} class.
      */
 	/**
-	 * @cfg {Boolean} (Optional) required (defaults to false)
+	 * @cfg {Boolean} (optional) required (defaults to false)
 	 */
 	required : false,
 	/**
-	 * @cfg {Boolean} (Optional) readOnly (defaults to false)
+	 * @cfg {Boolean} (optional) readOnly (defaults to false)
 	 * The readOnly flag states that a property value should not be editable outside the model.
 	 */
 	readOnly : false,
     /**
-     * @cfg {Mixed} (Optional) defaultValue
+     * @cfg {Mixed} (optional) defaultValue
      * The default value.
      */
     
@@ -74,14 +74,18 @@ afStudio.model.Property = Ext.extend(Object, {
     	return this.required ? (!Ext.isEmpty(this.value) && this.type.validate(this.value) === true) : true;
     },
     
+    /**
+     * Returns property error message.
+     * @return {String} message
+     */
     getErrors : function() {
     	var errors = this.type.validate(this.value);
     	
-    	if (this.required && this.value == '') {
+    	if (this.required && Ext.isEmpty(this.value)) {
     		errors = 'This property is required.'; 
     	}
     	
-    	return errors === true ? [] : errors;
+    	return errors === true ? null : errors;
     },
     
     /**
