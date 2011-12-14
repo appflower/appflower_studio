@@ -23,8 +23,8 @@ class afStudioTemplateCommand extends afBaseStudioCommand
         $templateName = strtolower($this->getParameter('template'));
         
         $projectPath = sfConfig::get('sf_root_dir');
-        
-        $projectYmlPath = $projectPath . '/config/project.yml';
+        $projectYmlName = '/config/project.yml';
+        $projectYmlPath = $projectPath . $projectYmlName;
         $appFlowerPluginPath = $projectPath . '/plugins/appFlowerPlugin/';
         $appFlowerStudioPluginPath = $projectPath . '/plugins/appFlowerStudioPlugin/';
         
@@ -34,9 +34,13 @@ class afStudioTemplateCommand extends afBaseStudioCommand
         if (file_exists($appFlowerPluginPath) && file_exists($appFlowerStudioPluginPath)) {
             $projectYml['project']['template'] = in_array($templateName, $pluginTemplateYml['template']['types']) ? $templateName : $pluginTemplateYml['template']['default'];
             
-            afStudioUtil::writeFile($projectYmlPath,sfYaml::dump($projectYml,4));
-            
-            return $response->success(true)->message('Template was set to '.ucfirst($templateName));
+            if(afStudioUtil::writeFile($projectYmlPath,sfYaml::dump($projectYml,4)))
+            {
+                return $response->success(true)->message('Template was set to '.ucfirst($templateName));   
+            }
+            else {
+                return $response->success(false)->message('File '.$projectYmlName.' is not writable!');
+            }            
         }
         
         return $response->success(false)->message("The selected path doesn't contain any valid AppFlower project!");
