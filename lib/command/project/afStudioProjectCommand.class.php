@@ -120,7 +120,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $key = $this->getParameter('key', '');
         
         $helper_path = afExtjsBuilderParser::getHelperPath($place, $place_type);
-        if (!file_exists($helper_path)) return $response->success(false)->message("Helper for '{$place_type}s/{$place}' doesn't exists");
+        if (!file_exists($helper_path)) $helper_path = afExtjsBuilderParser::getHelperPath('appFlowerPlugin', 'plugin');
         
         return $response->success(true)->data(array(), afExtjsBuilderParser::create($helper_path)->parse()->get($key), 0);
     }
@@ -212,7 +212,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $is_saved = file_put_contents($app_path, sfYaml::dump($app_config, 3));
         
-        return $response->success($is_saved);
+        return $response->success($is_saved)->message(($is_saved) ? "Wallpaper has been successfully saved" : "Some problems occured while save processing");
     }
     
 }
