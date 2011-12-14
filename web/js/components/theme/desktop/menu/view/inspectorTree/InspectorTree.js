@@ -21,6 +21,7 @@ afStudio.theme.desktop.menu.view.inspector.InspectorTree = Ext.extend(afStudio.v
         this.root = {
             expanded: true,
             modelNode: root,
+            iconCls: 'icon-tb-menu',
             properties: {
                 name: 'Menu'
             }
