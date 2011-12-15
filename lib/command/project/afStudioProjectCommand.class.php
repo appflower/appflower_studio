@@ -176,8 +176,10 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $default_prefix = "/appFlowerPlugin/extjs-3/plugins/desktop/wallpapers/";
         $default_area = sfConfig::get('sf_plugins_dir') . "/appFlowerPlugin/web/extjs-3/plugins/desktop/wallpapers/";
-        foreach (sfFinder::type('file')->maxdepth(0)->in($default_area) as $file) $files[] = str_replace($default_area, $default_prefix, $file);
-        foreach (sfFinder::type('file')->maxdepth(0)->in("{$web_dir}/images/desktop/wallpapers/") as $file) $files[] = str_replace($web_dir, '', $file);
+        
+        $finder = sfFinder::type('file')->maxdepth(0)->name('*.jpg', '*.jpeg', '*.JPG', '*.JPEG', '*.png', '*.PNG');
+        foreach ($finder->in($default_area) as $file) $files[] = str_replace($default_area, $default_prefix, $file);
+        foreach ($finder->in("{$web_dir}/images/desktop/wallpapers/") as $file) $files[] = str_replace($web_dir, '', $file);
         
         $data = array(
             'list' => $files,
