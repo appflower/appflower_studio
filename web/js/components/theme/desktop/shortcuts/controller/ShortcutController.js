@@ -1,25 +1,25 @@
-Ext.ns('afStudio.theme.desktop.menu.controller');
+Ext.ns('afStudio.theme.desktop.shortcut.controller');
 
 /**
- * MenuController class serves desktop "start" menu editor. 
+ * ShortcutController class serves desktop shortcuts/links editor. 
  * 
  * @author Nikolai Babinski
  */
-afStudio.theme.desktop.menu.controller.MenuController = Ext.extend(afStudio.controller.BaseController, {
+afStudio.theme.desktop.shortcut.controller.ShortcutController = Ext.extend(afStudio.controller.BaseController, {
     
     /**
      * @cfg {Object} viewDefinition
      */
     
     /**
-     * MenuController
+     * ShortcutController
      * @constructor
      * @param {Object} config Controller configuration object
      */
     constructor : function(config) {
         config = config || {};
         
-        afStudio.theme.desktop.menu.controller.MenuController.superclass.constructor.call(this, config);
+        afStudio.theme.desktop.shortcut.controller.ShortcutController.superclass.constructor.call(this, config);
         
         this.setupViews();
     },
@@ -33,7 +33,7 @@ afStudio.theme.desktop.menu.controller.MenuController = Ext.extend(afStudio.cont
     setupViews : function() {
         Ext.apply(this.views, {
             inspectorTree: {
-                view: afStudio.theme.desktop.menu.view.inspector.InspectorTree,
+                view: afStudio.theme.desktop.shortcut.view.inspector.InspectorTree,
                 cfg: {
                     border: false
                 }
@@ -54,7 +54,7 @@ afStudio.theme.desktop.menu.controller.MenuController = Ext.extend(afStudio.cont
      * @return {Function|NULL} root-node constructor
      */
     resolveRootNode : function(viewDef) {
-        return afStudio.theme.desktop.menu.model.Root;
+        return afStudio.theme.desktop.shortcut.model.Root;
     },
     
     /**

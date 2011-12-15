@@ -3,7 +3,7 @@ Ext.ns('afStudio.theme.desktop');
 /**
  * Desktop layout start menu editor window.
  * 
- * @class afStudio.StartMenuEditor
+ * @class afStudio.theme.desktop.StartMenuEditor
  * @extends Ext.Window
  * @author Nikolai Babinski
  */
@@ -156,7 +156,6 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 
                 ready: function(controller) {
                     var ip = new afStudio.view.InspectorPalette({
-                        xtype: 'wd.inspectorPalette',
                         controller: controller
                     });
                     this.eastPanel.mainMenu.add(ip);
@@ -191,7 +190,6 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 
                 ready: function(controller) {
                     var ip = new afStudio.view.InspectorPalette({
-                        xtype: 'wd.inspectorPalette',
                         controller: controller
                     });
                     this.eastPanel.toolMenu.add(ip);

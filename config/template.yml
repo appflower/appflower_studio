@@ -4,8 +4,8 @@ template:
   helpers:
     desktop: 
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.theme.CssEditor]
-      - [afExtjsDesktopStartMenu, 'Start Menu Editor', template_editor_default.png, afStudio.theme.StartMenuEditor]
-      - [afExtjsDesktopLinks, 'Desktop Links Editor', template_editor_default.png, afStudio.theme.BaseEditor]
+      - [afExtjsDesktopStartMenu, 'StartMenu Editor', template_editor_default.png, afStudio.theme.StartMenuEditor]
+      - [afExtjsDesktopLinks, 'Shortcuts Editor', template_editor_default.png, afStudio.theme.ShortcutsEditor]
     viewport: 
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.theme.CssEditor]
       - [afExtjsToolbar, 'Menu Toolbar Editor', template_editor_default.png, afStudio.theme.BaseEditor]

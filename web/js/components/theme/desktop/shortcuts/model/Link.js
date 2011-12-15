@@ -1,19 +1,19 @@
-N = afStudio.theme.desktop.menu.model; 
+N = afStudio.theme.desktop.shortcut.model; 
 
-N.Tool = Ext.extend(N.Node, {
+N.Link = Ext.extend(N.Node, {
 
-    tag: 'tool',
+    tag: 'link',
     
     properties : [
         {name: 'name', type: 'dbNameType', required: true},
-        {name: 'text', type: 'string', required: true},
-        {name: 'url', type: 'internalUriType', required: true},
+        {name: 'title', type: 'string', required: true},
+        {name: 'url', type: 'anyURI', required: true},
         {name: 'iconCls', type: 'token'}
     ],
     
     defaultDefinition : {
-        name: 'tool',
-        text: 'Tool'
+        name: 'shortcut',
+        title: 'Shortcut'
     },     
     
     /**

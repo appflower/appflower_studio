@@ -280,8 +280,9 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/BaseEditor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/CssEditor.js"></script>
 	<!-- desktop -->
+		<!-- start menu -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/StartMenuEditor.js"></script>
-		<!-- template -->
+			<!-- template -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Templates.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Nodes.js"></script>
 
@@ -291,12 +292,26 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Button.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Tool.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/controller/MenuController.js"></script>
-		<!-- view -->
+			<!-- view -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorLoader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js"></script>
+		<!-- shortcuts -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/ShortcutsEditor.js"></script>
+			<!-- template -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/template/Templates.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/template/Nodes.js"></script>
+
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/base/Node.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/Root.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/Link.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/controller/ShortcutController.js"></script>
+			<!-- view -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorTree.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorLoader.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/node/LinkNode.js"></script>
 
 <!-- end of theme designer -->
 
