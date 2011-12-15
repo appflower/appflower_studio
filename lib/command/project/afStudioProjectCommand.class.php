@@ -182,8 +182,14 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $default_area = sfConfig::get('sf_plugins_dir') . "/appFlowerPlugin/web/extjs-3/plugins/desktop/wallpapers/";
         
         $finder = sfFinder::type('file')->maxdepth(0)->name('*.jpg', '*.jpeg', '*.JPG', '*.JPEG', '*.png', '*.PNG');
-        foreach ($finder->in($default_area) as $file) $files[] = str_replace($default_area, $default_prefix, $file);
-        foreach ($finder->in("{$web_dir}/images/desktop/wallpapers/") as $file) $files[] = str_replace($web_dir, '', $file);
+        
+        foreach ($finder->in($default_area, "{$web_dir}/images/desktop/wallpapers/") as $key => $file) {
+            $files[] = array(
+                'id' => $key,
+                'name' => pathinfo($file, PATHINFO_BASENAME),
+                'image' => (strpos($file, $default_area) !== false) ? str_replace($default_area, $default_prefix, $file) : str_replace($web_dir, '', $file),
+            );
+        }
         
         $data = array(
             'list' => $files,
@@ -202,21 +208,23 @@ class afStudioProjectCommand extends afBaseStudioCommand
      */
     protected function processSetWallpaper()
     {
+        $response = afResponseHelper::create();
+        
         $place = $this->getParameter('place', 'frontend');
         $place_type = $this->getParameter('place_type', 'app');
         $path = $this->getParameter('path');
         $color = $this->getParameter('color');
         
-        $response = afResponseHelper::create();
-        
-        if (empty($path)) return $response->success(false)->message("You should provide path for background wallpapers");
+        if (empty($path) && empty($color)) return $response->success(false)->message("You should provide path for background wallpaper or background color");
         
         $app_path = sfConfig::get("sf_{$place_type}s_dir") . "/{$place}/config/app.yml";
         
         $app_config = array();
         if (file_exists($app_path)) $app_config = sfYaml::load($app_path);
         
-        $app_config['all'][afStudioProjectCommandHelper::CONFIG_APP_APPFLOWER][afStudioProjectCommandHelper::CONFIG_DESKTOP_BACKGROUND_IMAGE] = $path;
+        if (!empty($path)) {
+            $app_config['all'][afStudioProjectCommandHelper::CONFIG_APP_APPFLOWER][afStudioProjectCommandHelper::CONFIG_DESKTOP_BACKGROUND_IMAGE] = $path;
+        }
         
         if (!empty($color)) {
             $app_config['all'][afStudioProjectCommandHelper::CONFIG_APP_APPFLOWER][afStudioProjectCommandHelper::CONFIG_DESKTOP_BACKGROUND_COLOR] = $color;
@@ -246,7 +254,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         if (!empty($_FILES) && array_key_exists('wallpaper', $_FILES) && ($params = $_FILES['wallpaper']) && ($params['size'] > 0) ) {
             $extension = pathinfo($params['name'], PATHINFO_EXTENSION);
-            $fileName = Util::stripText(pathinfo($params['name'], PATHINFO_BASENAME)) . ".{$extension}";
+            $fileName = Util::stripText(pathinfo($params['name'], PATHINFO_FILENAME)) . ".{$extension}";
             
             if (!move_uploaded_file($params["tmp_name"], "{$folder}/{$fileName}" )) return $response->success(false)->message("Can't upload wallpaper");
             
