@@ -119,6 +119,10 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $place_type = $this->getParameter('place_type', 'app');
         $key = $this->getParameter('key', '');
         
+        if (file_exists(afStudioProjectCommandHelper::getPhpHelperPath($key, $place, $place_type))) {
+            $response->message("You have redefined helper file in '{$place_type}/{$place}'. Changes that you will made here may not be available.");
+        }
+        
         $helper_path = afExtjsBuilderParser::getHelperPath($place, $place_type);
         if (!file_exists($helper_path)) $helper_path = afExtjsBuilderParser::getHelperPath('appFlowerPlugin', 'plugin');
         

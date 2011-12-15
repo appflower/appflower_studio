@@ -42,6 +42,15 @@ class afStudioProjectCommandHelper extends afBaseStudioCommandHelper
      */
     const DEFAULT_HELPER_PLACE_TYPE = 'plugin';
     
+    /**
+     * Name to helper name association
+     *
+     * @var array
+     */
+    static public $name_to_helper = array(
+        'menu' => 'desktop_start_menu',
+        'links' => 'desktop_links',
+    );
     
     /**
      * Returns Prepared commands results - for now just imploded values
@@ -123,6 +132,22 @@ class afStudioProjectCommandHelper extends afBaseStudioCommandHelper
         }
         
         return null;
+    }
+    
+    /**
+     * Getting php helper path
+     *
+     * @param string $name 
+     * @param string $place 
+     * @param string $place_type 
+     * @return string
+     * @author Sergey Startsev
+     */
+    static public function getPhpHelperPath($name, $place = 'frontend', $place_type = 'app')
+    {
+        if (!array_key_exists($name, self::$name_to_helper)) return false;
+        
+        return sfConfig::get("sf_{$place_type}s_dir") . "/{$place}/lib/helper/afExtjs" . sfInflector::camelize(self::$name_to_helper[$name]) . 'Helper.php';
     }
     
 }
