@@ -221,4 +221,37 @@ class afStudioProjectCommand extends afBaseStudioCommand
         return $response->success($is_saved)->message(($is_saved) ? "Wallpaper has been successfully saved" : "Some problems occured while save processing");
     }
     
+    /**
+     * Upload action
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processUploadWallpaper()
+    {
+        $response = afResponseHelper::create();
+        $wallpaper_folder = "/images/desktop/wallpapers";
+        $folder = sfConfig::get('sf_web_dir') . $wallpaper_folder;
+        
+        if (!file_exists($folder)) mkdir($folder, 0777, true);
+        
+        if (!file_exists($folder)) return $response->success(false)->message("Can't create folder '{$wallpaper_folder}' in web area. Please check permissions");
+        if (!is_writable($folder)) return $response->success(false)->message("Folder '{$wallpaper_folder}' is not writable. Please check permissions");
+        
+        if (!empty($_FILES) && array_key_exists('wallpaper', $_FILES) && ($params = $_FILES['wallpaper']) && ($params['size'] > 0) ) {
+            $extension = pathinfo($params['name'], PATHINFO_EXTENSION);
+            $fileName = Util::stripText(pathinfo($params['name'], PATHINFO_BASENAME)) . ".{$extension}";
+            
+            if (!move_uploaded_file($params["tmp_name"], "{$folder}/{$fileName}" )) return $response->success(false)->message("Can't upload wallpaper");
+            
+            $data = array(
+                'path' => "{$wallpaper_folder}/{$fileName}",
+            );
+            
+            return $response->success(true)->data(array(), $data, 0);
+        }
+        
+        return $response->success(false)->message("You haven't defined any wallpaper for upload");
+    }
+    
 }

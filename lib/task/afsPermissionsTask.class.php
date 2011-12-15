@@ -467,6 +467,7 @@ EOF;
             '/cache',
             '/log',
             '/data',
+            '/web/images/desktop'
         );
         
         foreach ($folders as $folder) {

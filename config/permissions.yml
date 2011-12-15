@@ -102,6 +102,10 @@ folders:
     path: '/web/css'
     mode: 'go+rw'
     recursive: true
+  web_images_desktop:
+    path: '/web/images/desktop'
+    mode: 'go+rw'
+    recursive: true
 # If setted server option it will be used instead of prediction server options, this will be prioriteted than prediction
 # server:
   # user:

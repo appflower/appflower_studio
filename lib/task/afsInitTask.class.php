@@ -21,6 +21,7 @@ class afsInitTask extends sfBaseTask
         '/cache',
         '/log',
         '/data',
+        '/web/images/desktop',
     );
     
     /**
