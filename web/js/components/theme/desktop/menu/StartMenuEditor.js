@@ -74,6 +74,7 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             scope: this,
             showNoteOnSuccess: false,
             run: function(response) {
+                this.menuAttr = response.data.attributes;
                 this.initMainMenu(response.data.main);
                 this.initToolsMenu(response.data.tools);
             }
@@ -252,9 +253,37 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
      * Saves menu.
      */
     save : function() {
-        if (this.validate() == true) {
-	        console.log('SAVE--------------------------');
+        if (this.validate() == false) {
+            return;
         }
+        
+        var data = {};
+        
+        var main = this.mainCt.root.fetchNodeDefinition(),
+            tools = this.toolsCt.root.fetchNodeDefinition();
+        
+        afStudio.Logger.info('@menu main definition', main, Ext.encode(main));            
+        afStudio.Logger.info('@menu tools definition', tools, Ext.encode(tools));
+        
+        if (this.menuAttr) {
+            data.attributes = this.menuAttr;
+        }
+        if (main.children) {
+            data.main = main.children; 
+        }
+        if (tools.children) {
+            data.tools = tools.children; 
+        }
+        afStudio.Logger.info('@menu', data, Ext.encode(data));
+        
+        afStudio.xhr.executeAction({
+            url: afStudioWSUrls.project,
+            params: {
+                cmd: 'saveHelper',
+                key: 'menu',
+                content: Ext.encode(data)
+            }
+        });
     },
     
     /**

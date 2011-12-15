@@ -5,6 +5,7 @@ N.Item = Ext.extend(N.Node, {
     tag: N.Nodes.ITEM,
     
     properties : [
+        {name: 'name', type: 'dbNameType', required: true},
         {name: 'type', type: 'menuItemType', required: true, defaultValue: 'item'},
         {name: 'label', type: 'string', required: true},
         {name: 'url', type: 'internalUriType', required: true},
@@ -14,13 +15,14 @@ N.Item = Ext.extend(N.Node, {
     
     defaultDefinition : {
         attributes: {
-            label: 'Item'
+            label: 'Item',
+            name: 'item'
         }
     },    
     
     nodeTypes : [
-        {name: N.Nodes.ITEM, hasMany: true}, 
-        {name: N.Nodes.BUTTON, hasMany: true} 
+        {name: N.Nodes.ITEM, hasMany: true, unique: 'name'}, 
+        {name: N.Nodes.BUTTON, hasMany: true, unique: 'name'} 
     ],
     
     /**

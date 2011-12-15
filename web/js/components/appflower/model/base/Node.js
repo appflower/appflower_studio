@@ -107,6 +107,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
             this.id = Ext.id(null, this.tag + '-');
         }
         
+        //TODO properties should be inherited in inheritance process
         this.initProperties(config.properties);
         
         this.initNodeTypes(config.nodeTypes);
@@ -296,7 +297,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
      */
     initProperties : function(properties) {
     	var me = this,
-			 ps = properties || this.properties;
+            ps = properties || this.properties;
 			   
     	this.properties = new Ext.util.MixedCollection(false, function(property) {
     		return property.name;

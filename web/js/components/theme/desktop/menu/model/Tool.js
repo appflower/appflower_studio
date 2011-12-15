@@ -5,6 +5,7 @@ N.Tool = Ext.extend(N.Node, {
     tag: 'tool',
     
     properties : [
+        {name: 'name', type: 'dbNameType', required: true},
         {name: 'text', type: 'string', required: true},
         {name: 'url', type: 'internalUriType', required: true},
         {name: 'iconCls', type: 'token'}
@@ -32,8 +33,19 @@ N.Tool = Ext.extend(N.Node, {
         }
         
         silent ? this.resumeEvents() : null;
-    }
+    },
     
+    /**
+     * @overrride
+     * @protected
+     */
+    fetchNodeDefinition : function() {
+        var def = this.getPropertiesHash(true);
+        //remove service property
+        delete def.name;
+        
+        return def;
+    }
 });
 
 delete N;
