@@ -67,7 +67,6 @@ EOF;
         if (!file_exists($destination)) afsFileSystem::create()->mkdirs($destination, 0775);
         if (substr($destination, -1, 1) != DIRECTORY_SEPARATOR) $destination .= DIRECTORY_SEPARATOR;
         
-        // $project_name = pathinfo($source, PATHINFO_BASENAME);
         $project_name = (!empty($options['project_name'])) ? $options['project_name'] : pathinfo($source, PATHINFO_BASENAME);
         
         $export_method = "export" . ucfirst($type);
@@ -241,6 +240,7 @@ EOF;
             '.gitmodules',
             '.svn',
             'data',
+            'cache/*',
             "{$project}.tar.gz",
         ));
         
@@ -262,7 +262,7 @@ EOF;
             $this->run_command(
                 "tar -czf {$destination}{$project}.tar.gz " .
                 "-C .. " .
-                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='data/' --exclude='{$project}.tar.gz' " .
+                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='data/' --exclude='cache/' --exclude='{$project}.tar.gz' " .
                 pathinfo($source, PATHINFO_BASENAME)
             );
         }
