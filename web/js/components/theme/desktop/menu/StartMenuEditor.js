@@ -65,6 +65,8 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
      * @protected
      */
     onShow : function() {
+        this.eastPanel.el.mask('loading...', 'x-mask-loading');
+        
         afStudio.xhr.executeAction({
             url: afStudioWSUrls.project,
             params: {
@@ -77,6 +79,11 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 this.menuAttr = response.data.attributes;
                 this.initMainMenu(response.data.main);
                 this.initToolsMenu(response.data.tools);
+                
+                this.eastPanel.el.unmask();
+            },
+            erro: function() {
+                this.eastPanel.el.unmask();
             }
         });
     },

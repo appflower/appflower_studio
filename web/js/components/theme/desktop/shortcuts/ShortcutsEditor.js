@@ -61,6 +61,8 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
      * @protected
      */
     onShow : function() {
+        this.eastPanel.el.mask('loading...', 'x-mask-loading');
+        
         afStudio.xhr.executeAction({
             url: afStudioWSUrls.project,
             params: {
@@ -71,6 +73,10 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
             showNoteOnSuccess: false,
             run: function(response) {
                 this.initShortCutsInspector(response.data);
+                this.eastPanel.el.unmask();
+            },
+            erro: function() {
+                this.eastPanel.el.unmask();
             }
         });
     },
