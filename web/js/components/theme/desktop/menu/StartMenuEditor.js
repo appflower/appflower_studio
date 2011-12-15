@@ -17,9 +17,13 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
      * @property toolsCt The tools menu controller
      * @type {MenuController}
      */
+    /**
+     * @property errorWin The error window reference
+     * @type {afStudio.view.ModelErrorWindow}
+     */
     
     /**
-     * Template method
+     * Ext template method.
      * @override
      * @private
      */
@@ -27,7 +31,7 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
         this.createRegions();
         
         var config = {
-            title: 'Start Menu Editor', 
+            title: 'StartMenu Editor', 
             layout: 'border',
             width: 813,
             height: 550, 
@@ -56,8 +60,9 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
     },
     
     /**
+     * Method that is called immediately before the <code>show</code> event is fired.
      * @override
-     * @private
+     * @protected
      */
     onShow : function() {
         afStudio.xhr.executeAction({
@@ -69,8 +74,6 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             scope: this,
             showNoteOnSuccess: false,
             run: function(response) {
-                console.log('response', response);
-                
                 this.initMainMenu(response.data.main);
                 this.initToolsMenu(response.data.tools);
             }
@@ -130,6 +133,7 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             this.messageBox.onAfterRender();
         }, this);
     },
+    //eo createRegions
     
     /**
      * Init main menu.
@@ -202,16 +206,55 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
     },
     
     /**
+     * Validates menu model and shows errors if any exists returning false otherwise returns true.
+     * @protected
+     * @return {Boolean}
+     */
+    validate : function() {
+        var mainValid = this.mainCt.validateModel(),
+            toolsValid = this.toolsCt.validateModel(),
+            errors = [];
+            
+        if (mainValid !== true) {
+            errors.push({
+                node: 'MAIN',
+                error: null,
+                children: mainValid.children
+            });
+        }
+        if (toolsValid !== true) {
+            errors.push({
+                node: 'TOOLS',
+                error: null,
+                children: toolsValid.children
+            });
+        }
+        
+        if (errors.length > 0) {
+            errors = {children: errors};
+            
+            if (!this.errorWin) {
+                this.errorWin = new afStudio.view.ModelErrorWindow({
+                    title: 'Desktop StartMenu'
+                });
+            }
+            this.errorWin.modelErrors = errors;
+            this.errorWin.show();
+            
+            return false;
+        }
+        
+        return true;
+    },
+    //eo validate
+    
+    /**
      * Saves menu.
      */
     save : function() {
-        console.log('SAVE--------------------------');
-        
-        var mainValid = this.mainCt.validateModel();
-        var toolsValid = this.toolsCt.validateModel();
-        
-        console.log('mainValid', mainValid, Ext.encode(mainValid));
-        console.log('toolsValid', toolsValid, Ext.encode(toolsValid));
+        if (this.validate() == true) {
+	        console.log('SAVE--------------------------');
+        }
     },
     
     /**

@@ -241,6 +241,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyGrid.js"></script>
 		<!-- inspector palette -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/InspectorPalette.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/ModelErrorWindow.js"></script>
 <!-- end of appflower view model -->
 
 <!-- widget designer -->
@@ -267,7 +268,6 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/WidgetsBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/InspectorPalette.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/DesignerPanel.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/designer/ModelErrorWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/codeEditor/Editor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/Designer.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/tabs/CodeEditor.js"></script>

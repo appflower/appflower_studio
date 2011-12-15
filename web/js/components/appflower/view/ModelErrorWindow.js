@@ -1,25 +1,40 @@
+Ext.ns('afStudio.view');
+
 /**
- * ModelErrorWindow - widget's errors lister.
- * 
- * @class afStudio.wd.ModelErrorWindow
+ * @class afStudio.view.ModelErrorWindow
  * @extends Ext.Window
  * @author Nikolai Babinski
  */
-afStudio.wd.ModelErrorWindow = Ext.extend(Ext.Window, {
+afStudio.view.ModelErrorWindow = Ext.extend(Ext.Window, {
 	
 	/**
-	 * Widget model's errors
-	 * @cfg {Object} (Required) modelErrors
+	 * @cfg {Object} (required) modelErrors The error object
 	 */
 	
-	layout : 'fit',
-	
 	/**
-	 * Widget's errors container tree.
-	 * @property tree
+     * The errors container tree.
+	 * @property tree 
 	 * @type {Ext.ux.tree.TreeGrid}
 	 */
 	
+    layout : 'fit',
+    
+    title : '&#160;',
+    
+    closeAction : 'hide',
+    
+    frame : true,
+    
+    width : 600,
+    
+    height : 320,
+    
+    iconCls : 'icon-notification-error',
+    
+    closable : false,
+    
+    resizable : true,
+    
 	/**
 	 * Initializes component
 	 * @private
@@ -28,7 +43,7 @@ afStudio.wd.ModelErrorWindow = Ext.extend(Ext.Window, {
 	_beforeInitComponent : function() {
 		var self = this;
 		
-	    var tree = new Ext.ux.tree.TreeGrid({
+	    this.tree = new Ext.ux.tree.TreeGrid({
 	        enableHdMenu: false,
 	        enableSort: false,
 	        root: new Ext.tree.AsyncTreeNode({
@@ -68,18 +83,8 @@ afStudio.wd.ModelErrorWindow = Ext.extend(Ext.Window, {
 	        }]
 	    });
 	    
-	    this.tree = tree;
-		
 		return {
-			title: 'Widget Designer',
-			closeAction: 'hide',
-			frame: true,
-			width: 600,
-			height: 320,
-			iconCls: 'icon-notification-error',
-			closable: false,
-            resizable: true,
-            items: tree,
+            items: this.tree,
             buttonAlign: 'center',
 			buttons: [
 			{
@@ -92,7 +97,7 @@ afStudio.wd.ModelErrorWindow = Ext.extend(Ext.Window, {
 	//eo _beforeInitComponent
 	
 	/**
-	 * Template method.
+	 * Ext template method.
 	 * @override
 	 * @private
 	 */
@@ -100,23 +105,27 @@ afStudio.wd.ModelErrorWindow = Ext.extend(Ext.Window, {
 		Ext.apply(this, 
 			Ext.apply(this.initialConfig, this._beforeInitComponent())
 		);				
-		afStudio.wd.ModelErrorWindow.superclass.initComponent.apply(this, arguments);
-	},
-	
-	/**
-	 * @private
-	 */
-	initEvents : function() {
-		afStudio.wd.ModelErrorWindow.superclass.initEvents.call(this);
-		
-		this.on({
-			scope: this,
-			show: this.onShowWindow
-		});		
+		afStudio.view.ModelErrorWindow.superclass.initComponent.apply(this, arguments);
 	},
 
+    /**
+     * Method that is called immediately before the <code>show</code> event is fired.
+     * @override
+     * @protected
+     */
+    onShow : function() {
+        var t = this.tree,
+            l = t.getLoader(),
+            r = t.getRootNode();
+        
+        r.attributes = this.modelErrors;    
+            
+        l.load(r);
+    },
+    
 	/**
-	 * Closes/Hides the window
+	 * Closes/hides this window.
+     * @protected
 	 */
 	closeWindow : function() {
 		if (this.closeAction == 'hide') {
@@ -124,18 +133,5 @@ afStudio.wd.ModelErrorWindow = Ext.extend(Ext.Window, {
 		} else {
 			this.close();
 		}
-	},
-	
-	/**
-	 * <u>show</u> event listener.
-	 */
-	onShowWindow : function() {
-		var t = this.tree,
-			l = t.getLoader(),
-			r = t.getRootNode();
-		
-		r.attributes = this.modelErrors;	
-			
-		l.load(r);
 	}
 });

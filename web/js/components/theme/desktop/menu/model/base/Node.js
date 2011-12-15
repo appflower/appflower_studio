@@ -1,6 +1,10 @@
 Ext.ns('afStudio.theme.desktop.menu.model');
 
 /**
+ * Menu base model node.
+ * 
+ * @class afStudio.theme.desktop.menu.model.Node
+ * @extends afStudio.model.Node
  * @author Nikolai Babinski <niba@appflower.com>
  */
 afStudio.theme.desktop.menu.model.Node = Ext.extend(afStudio.model.Node, {
@@ -73,10 +77,37 @@ afStudio.theme.desktop.menu.model.Node = Ext.extend(afStudio.model.Node, {
     },
     
     /**
+     * Returns node text presentation in validation process.
+     * @protected
      * @override
-     * @return {Boolean}
+     * @return {String} node 
      */
-    validate : function() {
-        return afStudio.theme.desktop.menu.model.Node.superclass.validate.call(this);
-    }
+    getNodeValidationName : function() {
+        return this.toString();  
+    },
+    
+    /**
+     * Returns node's string representation.
+     * @override
+     * @return {String} node
+     */
+    toString : function() {
+        var tpl = new Ext.XTemplate(
+            '[node: "{tag}", properties: {[this.toJson(values.properties.map)]} ]',
+            {
+                compiled: true,
+                disableFormats: true,
+                toJson: function(ps) {
+                    var prop = {};
+                    Ext.iterate(ps, function(k, v){
+                        if (v.required === true && !Ext.isEmpty(v.value)) {
+                            prop[k] = v.value;
+                        }
+                    });
+                    return Ext.encode(prop);
+                }
+            });
+        
+        return tpl.apply(this);
+    }    
 });

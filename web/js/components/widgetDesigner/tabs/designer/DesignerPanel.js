@@ -83,7 +83,9 @@ afStudio.wd.DesignerPanel = Ext.extend(Ext.Panel, {
 	 */
 	showWidgetErrors : function(errors) {
 		if (!this.errorWin) {
-			this.errorWin = new afStudio.wd.ModelErrorWindow();
+			this.errorWin = new afStudio.view.ModelErrorWindow({
+                title: 'Widget Designer'
+            });
 		}
 		this.errorWin.modelErrors = errors;
 		this.errorWin.show();

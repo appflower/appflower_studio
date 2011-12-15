@@ -1239,7 +1239,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	}
     	
 		var oldValue = property.getValue();
-    	
+        
     	if (property.validate(v) && this.fireEvent("beforeModelPropertyChanged", this, p, v, oldValue)) {
     		
     		property.setValue(v);
@@ -1470,6 +1470,15 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     },
     
     /**
+     * Returns node text presentation in validation process.
+     * @protected
+     * @return {String} node 
+     */
+    getNodeValidationName : function() {
+        return this.tag;  
+    },
+    
+    /**
      * Validates the node and all his children.
      * Returns true if the node is valid otherwise returns errors object:
      * <u>
@@ -1487,7 +1496,7 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     		nt = this.nodeTypes;
     	
     	var errors = {
-    		node : this.tag,
+    		node: this.getNodeValidationName(),
     		error: null,
     		children: []
     	};	
