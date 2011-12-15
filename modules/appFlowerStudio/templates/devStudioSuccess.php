@@ -285,7 +285,7 @@
 			<!-- template -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Templates.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Nodes.js"></script>
-
+			<!-- model -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/base/Node.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Root.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Item.js"></script>
@@ -303,7 +303,7 @@
 			<!-- template -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/template/Templates.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/template/Nodes.js"></script>
-
+			<!-- model -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/base/Node.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/Root.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/Link.js"></script>
@@ -312,7 +312,6 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorLoader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/node/LinkNode.js"></script>
-
 <!-- end of theme designer -->
 
 <?php 

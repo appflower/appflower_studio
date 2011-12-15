@@ -250,28 +250,47 @@
 					
 
                     <!-- theme designer -->
+                    <!-- ************** -->
+                    
                     <file>js/components/theme/ThemeDesigner.js</file>
                         <!-- common -->    
                     <file>js/components/theme/editors/BaseEditor.js</file>
                     <file>js/components/theme/editors/CssEditor.js</file>
                         <!-- desktop -->
+                            <!-- start menu -->
                     <file>js/components/theme/desktop/menu/StartMenuEditor.js</file>
-                            <!-- template -->
+                                <!-- template -->
                     <file>js/components/theme/desktop/menu/model/template/Templates.js</file>
                     <file>js/components/theme/desktop/menu/model/template/Nodes.js</file>
-                            <!-- model -->
+                                <!-- model -->
                     <file>js/components/theme/desktop/menu/model/base/Node.js</file>
                     <file>js/components/theme/desktop/menu/model/Root.js</file>
                     <file>js/components/theme/desktop/menu/model/Item.js</file>
                     <file>js/components/theme/desktop/menu/model/Button.js</file>
                     <file>js/components/theme/desktop/menu/model/Tool.js</file>
                     <file>js/components/theme/desktop/menu/controller/MenuController.js</file>
-                            <!-- view -->                    
+                                <!-- view -->                    
                     <file>js/components/theme/desktop/menu/view/inspectorTree/InspectorTree.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/InspectorLoader.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js</file>
+                            <!-- shortcuts -->
+					<file>js/components/theme/desktop/shortcuts/ShortcutsEditor.js</file>
+					            <!-- template -->
+					<file>js/components/theme/desktop/shortcuts/model/template/Templates.js</file>
+					<file>js/components/theme/desktop/shortcuts/model/template/Nodes.js</file>
+					            <!-- model -->
+					<file>js/components/theme/desktop/shortcuts/model/base/Node.js</file>
+					<file>js/components/theme/desktop/shortcuts/model/Root.js</file>
+					<file>js/components/theme/desktop/shortcuts/model/Link.js</file>
+					<file>js/components/theme/desktop/shortcuts/controller/ShortcutController.js</file>
+					            <!-- view -->
+					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorTree.js</file>
+					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorLoader.js</file>
+					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/node/LinkNode.js</file>
+
+                    <!-- ********************* -->
                     <!-- end of theme designer -->
                     
 					<!-- Users -->
