@@ -205,6 +205,9 @@
                     
                     <!-- inspector palette -->
                     <file>js/components/appflower/view/InspectorPalette.js</file>
+                    
+                    <!-- model error window -->
+                    <file>js/components/appflower/view/ModelErrorWindow.js</file>
 
 					<!-- *************************** -->
 					<!-- end of AppFlower Schema MVC -->
@@ -253,15 +256,22 @@
                     <file>js/components/theme/editors/CssEditor.js</file>
                         <!-- desktop -->
                     <file>js/components/theme/desktop/menu/StartMenuEditor.js</file>
-                            <!-- model -->
+                            <!-- template -->
                     <file>js/components/theme/desktop/menu/model/template/Templates.js</file>
+                    <file>js/components/theme/desktop/menu/model/template/Nodes.js</file>
+                            <!-- model -->
                     <file>js/components/theme/desktop/menu/model/base/Node.js</file>
                     <file>js/components/theme/desktop/menu/model/Root.js</file>
                     <file>js/components/theme/desktop/menu/model/Item.js</file>
+                    <file>js/components/theme/desktop/menu/model/Button.js</file>
                     <file>js/components/theme/desktop/menu/model/Tool.js</file>
                     <file>js/components/theme/desktop/menu/controller/MenuController.js</file>
-                    
-                    <file>js/components/theme/desktop/menu/view/InspectorTree.js</file>
+                            <!-- view -->                    
+                    <file>js/components/theme/desktop/menu/view/inspectorTree/InspectorTree.js</file>
+                    <file>js/components/theme/desktop/menu/view/inspectorTree/InspectorLoader.js</file>
+                    <file>js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js</file>
+                    <file>js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js</file>
+                    <file>js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js</file>
                     <!-- end of theme designer -->
                     
 					<!-- Users -->
