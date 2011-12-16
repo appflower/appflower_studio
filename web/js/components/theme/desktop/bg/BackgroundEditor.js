@@ -116,6 +116,12 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
             prepareData: function(data) {
                 data.shortName = Ext.util.Format.ellipsis(data.name, 15);
                 return data;
+            },
+            listeners: {
+                //prevent deselection 
+                containerclick : function(dv, e) {
+                    return false;
+                }
             }
         });
         
@@ -125,10 +131,29 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
             frame: true,
             items: [
             {
-                xtype: 'colorfield',
-                ref: 'bgcolor',
-                fieldLabel: 'Background color',
-                submitValue: false
+                xtype: 'container',
+                layout: 'column',
+                items: [
+                {
+                    layout: 'form',
+                    items: {
+		                xtype: 'colorfield',
+		                ref: '../../bgcolor',
+		                fieldLabel: 'Background color',
+		                submitValue: false
+                    }
+                },{
+                    xtype: 'checkbox',
+                    ref: '../onlycolor',
+                    boxLabel: 'only color',
+                    style: 'margin-left: 10px;',
+                    listeners: {
+                        scope: this,
+                        check: function(ch, checked) {
+                            checked ? this.wallpaper.disable() : this.wallpaper.enable(); 
+                        }
+                    }
+                }]
             },{
                 xtype: 'container',
                 layout: 'column',
@@ -242,11 +267,12 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
                 if (action.failureType === Ext.form.Action.SERVER_INVALID) {
                     var msg;
                     try {
-                        msg = Ext.decode(action.response).message;
+                        msg = Ext.decode(action.response.responseText).message;
+                        afStudio.Msg.warning('File Upload', msg);
                     } catch(e) {
                         msg = action.response.responseText;
+                        afStudio.Msg.error('File Upload', msg);
                     }
-                    afStudio.Msg.error('File Upload', msg);
                 }
             }
         });
@@ -260,10 +286,16 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
      */
     validate : function() {
 		var c = this.wallpaper.getSelectionCount(),
-		    v = this.bgtools.bgcolor.getValue();
+		    v = this.bgtools.bgcolor.getValue(),
+            onlyColor = this.bgtools.onlycolor.getValue();
+            
+        if (onlyColor && Ext.isEmpty(v)) {
+            afStudio.Msg.warning('Background Editor', 'Background color must be selected');
+            return false;
+        }
         
         if (c == 0 && Ext.isEmpty(v)) {
-            afStudio.Msg.warning('Background Editor', 'Background image or/and color must be selected');
+            afStudio.Msg.warning('Background Editor', 'Background image or color must be selected');
             return false;
         }
         
@@ -280,14 +312,15 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
 
         var sel = this.wallpaper.getSelectedRecords(),
             color = this.bgtools.bgcolor.getValue(),
+            onlyColor = this.bgtools.onlycolor.getValue(),
             params = {
                 cmd: 'setWallpaper'
             };
         
-        params.path = !Ext.isEmpty(sel) ? sel[0].get('image') : 'none';
+        params.path = !Ext.isEmpty(sel) && !onlyColor ? sel[0].get('image') : 'none';
         
         if (!Ext.isEmpty(color)) {
-            params.color = color;            
+            params.color = color;
         }
             
         afStudio.Logger.info('@params', params);            
