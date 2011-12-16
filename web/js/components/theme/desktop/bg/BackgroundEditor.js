@@ -283,10 +283,9 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
             params = {
                 cmd: 'setWallpaper'
             };
-            
-        if (!Ext.isEmpty(sel)) {
-            params.path = sel[0].get('image');            
-        }
+        
+        params.path = !Ext.isEmpty(sel) ? sel[0].get('image') : 'none';
+        
         if (!Ext.isEmpty(color)) {
             params.color = color;            
         }
