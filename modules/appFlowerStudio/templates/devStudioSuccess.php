@@ -80,11 +80,15 @@
 <script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/ace/Ext.ux.AceComponent.js"></script>
 
-<!-- Portal -->
+<!-- portal -->
 <link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/portal/portal.css" />
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portal.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/PortalColumn.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/portal/Portlet.js"></script>
+
+<!-- file-upload field -->
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/form/fileuploadfield/css/fileuploadfield.css" />
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/fileuploadfield/FileUploadField.js"></script>
 <!-- end of custom ext ux -->
 <!-- ==================== -->
 
@@ -312,6 +316,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorLoader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/node/LinkNode.js"></script>
+		<!-- bg -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/bg/BackgroundEditor.js"></script>		
 <!-- end of theme designer -->
 
 <?php 
@@ -333,6 +339,7 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/css/my-extjs.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/afStudio.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/backgroundEditor.css" />
 
 <?php 
 $appFlowerStudioPluginCssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';

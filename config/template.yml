@@ -6,6 +6,7 @@ template:
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.theme.CssEditor]
       - [afExtjsDesktopStartMenu, 'StartMenu Editor', template_editor_default.png, afStudio.theme.StartMenuEditor]
       - [afExtjsDesktopLinks, 'Shortcuts Editor', template_editor_default.png, afStudio.theme.ShortcutsEditor]
+      - [afExtjsDesktopBackground, 'Background Editor', template_editor_default.png, afStudio.theme.BackgroundEditor]
     viewport: 
       - [cssEditor, 'CSS Editor', template_editor_default.png, afStudio.theme.CssEditor]
       - [afExtjsToolbar, 'Menu Toolbar Editor', template_editor_default.png, afStudio.theme.BaseEditor]

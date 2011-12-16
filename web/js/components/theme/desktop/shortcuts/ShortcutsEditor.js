@@ -75,7 +75,7 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
                 this.initShortCutsInspector(response.data);
                 this.eastPanel.el.unmask();
             },
-            erro: function() {
+            error: function() {
                 this.eastPanel.el.unmask();
             }
         });

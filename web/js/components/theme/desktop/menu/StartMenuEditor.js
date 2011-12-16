@@ -82,7 +82,7 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 
                 this.eastPanel.el.unmask();
             },
-            erro: function() {
+            error: function() {
                 this.eastPanel.el.unmask();
             }
         });

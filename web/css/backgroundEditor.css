@@ -1,0 +1,40 @@
+.desktop-bg {
+	background: white;
+	font: 11px Arial, Helvetica, sans-serif;
+}
+.desktop-bg .thumb{
+	background: #dddddd;
+	padding: 3px;
+}
+.desktop-bg .thumb img{
+	height: 80px;
+	width: 100px;
+}
+.desktop-bg .thumb-wrap{
+	float: left;
+	margin: 4px;
+	margin-right: 0;
+	padding: 5px;
+	width: auto;
+	height: auto;
+}
+.desktop-bg .thumb-wrap span{
+	display: block;
+	overflow: hidden;
+	text-align: center;
+}
+
+.desktop-bg .x-view-over{
+    border: 1px solid #dddddd;
+    background: #efefef url(/appFlowerPlugin/extjs-3/resources/images/default/grid/row-over.gif) repeat-x left top;
+	padding: 4px;
+}
+
+.desktop-bg .x-view-selected{
+	background: #eff5fb url(/appFlowerPlugin/extjs-3/plugins/view/images/selected.gif) no-repeat right bottom;
+	border: 1px solid #99bbe8;
+	padding: 4px;
+}
+.desktop-bg .x-view-selected .thumb{
+	background: transparent;
+}
