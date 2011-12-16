@@ -82,6 +82,9 @@
 					<file>js/ace/src/theme-twilight.js</file> 
 					<file>js/custom/ace/Ext.ux.AceComponent.js</file> 
 	
+                    <!-- file-upload field -->
+                    <file>js/custom/form/fileuploadfield/FileUploadField.js</file>
+
 					<!-- ******************** -->
 					<!-- end of custom ext ux -->
 					
@@ -289,6 +292,8 @@
 					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorTree.js</file>
 					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorLoader.js</file>
 					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/node/LinkNode.js</file>
+                            <!-- bg -->
+                    <file>js/components/theme/desktop/bg/BackgroundEditor.js</file>        
 
                     <!-- ********************* -->
                     <!-- end of theme designer -->
@@ -322,6 +327,7 @@
 					<file>css/afStudio.css</file>
 					<file>css/afStudio.console.css</file>
 					<file>css/afStudio.tplSelector.css</file>
+                    <file>css/backgroundEditor.css</file>
 					<file>css/prettyPhoto.css</file>
 					<file>css/welcome.css</file>
 					
@@ -333,6 +339,9 @@
 					<file>js/custom/tree/filetree/css/filetree.css</file>
 					<file>js/custom/tree/filetree/css/icons.css</file>
 					
+                    <!-- file-upload field -->
+                    <file>js/custom/form/fileuploadfield/css/fileuploadfield.css</file>
+                    
 					<!-- Treegrid -->
 					<file>js/custom/tree/treegrid/treegrid.css</file>
 				</files>
