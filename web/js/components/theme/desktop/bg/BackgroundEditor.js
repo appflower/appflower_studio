@@ -10,6 +10,15 @@ Ext.ns('afStudio.theme.desktop');
 afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, { 
     
     /**
+     * @property wallpaper The background wallpapers container
+     * @type {Ext.DataView}
+     */
+    /**
+     * @property bgtools Background tools form panel
+     * @type {Ext.FormPanel}
+     */
+    
+    /**
      * Ext template method.
      * @override
      * @private
@@ -66,26 +75,12 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
      * @protected
      */
     onShow : function() {
-        this.bwrap.mask('loading...', 'x-mask-loading');
-        
-        afStudio.xhr.executeAction({
-            url: afStudioWSUrls.project,
-            params: {
-                cmd: 'getWallpapers'
-            },
-            scope: this,
-            showNoteOnSuccess: false,
-            run: function(response) {
-//                console.log('response', response);
-                
-                this.wallpaper.store.loadData(response.data.list);
-                
-//                this.initShortCutsInspector(response.data);
-                this.bwrap.unmask();
-            },
-            error: function() {
-                this.bwrap.unmask();
-            }
+        this.fetchBackgroundData(function(res){
+            var d = res.data;
+            
+            this.wallpaper.store.loadData(d.list);
+            this.selectWallpaper(d.active_image);
+            this.bgtools.bgcolor.setValue(d.active_color);
         });
     },
     
@@ -101,7 +96,7 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
         
         var tpl = new Ext.XTemplate(
 			'<tpl for=".">',
-			    '<div class="thumb-wrap" id="{name}">',
+			    '<div class="thumb-wrap" id="{image}">',
 			    '<div class="thumb"><img src="{image}" title="{name}"></div>',
 			    '<span class="x-editable">{shortName}</span></div>',
 			'</tpl>'
@@ -123,7 +118,6 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
                 return data;
             }
         });
-        
         
         this.bgtools = new Ext.FormPanel({
             fileUpload: true,
@@ -155,94 +149,121 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
                     text: 'Upload',
                     style: 'margin-left: 10px;',
                     scope: this,
-                    handler: function() {
-                        var f = this.bgtools.getForm();
-                        
-                        if (f.isValid()) {
-                            f.submit({
-	                            url: afStudioWSUrls.project,
-                                params: {
-                                    cms: 'uploadWallpaper'
-                                },
-	                            waitMsg: 'Uploading...',
-                                submitEmptyText: false,
-	                            success: function(form, action) {
-                                    console.log(action);
-	                            },
-				                failure: function(form, action) {
-				                    if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {
-                                        afStudio.Msg.error('File Upload', 
-                                            String.format('Status: {0}: {1}', action.response.status, action.response.statusText));
-				                    }
-				                    if (action.failureType === Ext.form.Action.SERVER_INVALID) {
-                                        var msg;
-                                        try {
-                                            msg = Ext.decode(action.response).message;
-                                        } catch(e) {
-                                            msg = action.response.responseText;
-                                        }
-                                        afStudio.Msg.error('File Upload', msg);
-				                    }
-				                }
-                            });
-                        }
-                    }                        
+                    handler: this.uploadWallpaper                
                 }]
             }]
         });
     },
     
     /**
-     * Init main menu.
-     * @protected
-     * @param {Object} definition The main menu definition object
+     * Selects wallpaper image inside {@link #wallpaper} container
+     * @param {String} img The image path bing selected
      */
-    initShortCutsInspector : function(definition) {
-        var def = {
-            attributes: {
-                type: 'shortcut'
-            }
-        };
-        def.children = definition;
-
-        this.controller = new afStudio.theme.desktop.shortcut.controller.ShortcutController({
-            viewDefinition: def,
-            listeners: {
-                scope: this,
-                
-                ready: function(ctr) {
-                    var ip = new afStudio.view.InspectorPalette({
-                        controller: ctr
-                    });
-                    this.eastPanel.add(ip);
-                    this.eastPanel.doLayout();
-                }
-            }
-        });
-        
-        this.controller.run();
-        
-        afStudio.Logger.info('@shortcut controller', this.controller);
+    selectWallpaper : function(img) {
+        this.wallpaper.select(img);
     },
     
     /**
-     * Validates menu model and shows errors if any exists returning false otherwise returns true.
+     * Fetches background data.
+     * @param {Function} clb The function being called when data was fetched 
+     */
+    fetchBackgroundData : function(clb) {
+        if (!Ext.isFunction(clb)) {
+            return;
+        }
+            
+        this.wallpaper.el.mask('loading...', 'x-mask-loading');
+        
+        afStudio.xhr.executeAction({
+            url: afStudioWSUrls.project,
+            params: {
+                cmd: 'getWallpapers'
+            },
+            scope: this,
+            showNoteOnSuccess: false,
+            run: function(response) {
+                Ext.util.Functions.createDelegate(clb, this, [response], false)();
+                this.wallpaper.el.unmask();
+            },
+            error: function() {
+                this.wallpaper.el.unmask();
+            }
+        });
+    },    
+    
+    /**
+     * Refreshes wallpapers {@link wallpaper}.
+     */
+    refreshWallpapers : function(clb) {
+        this.fetchBackgroundData(function(res){
+            var d = res.data;
+            this.wallpaper.store.loadData(d.list);
+            this.selectWallpaper(d.active_image);
+            
+            if (Ext.isFunction(clb)) {
+                Ext.util.Functions.createDelegate(clb, this, [d], false)();
+            }
+        });
+    },
+    
+    /**
+     * Uploads wallpaper image.
+     */
+    uploadWallpaper : function() {
+        var f = this.bgtools.getForm();
+        
+        if (!f.isValid()) {
+            return;
+        }
+        
+        f.submit({
+            url: afStudioWSUrls.project,
+            params: {
+                cmd: 'uploadWallpaper'
+            },
+            scope: this,
+            waitMsg: 'Uploading...',
+            submitEmptyText: false,
+            success: function(form, action) {
+                var res = action.result;
+                if (res.success) {
+                    var file = this.bgtools.findByType('fileuploadfield', true);
+                    //file.reset();
+                    this.refreshWallpapers(function(){
+                        this.selectWallpaper(res.data.path);
+                    });
+                }
+            },
+            failure: function(form, action) {
+                if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {
+                    afStudio.Msg.error('File Upload', 
+                        String.format('Status: {0}: {1}', action.response.status, action.response.statusText));
+                }
+                if (action.failureType === Ext.form.Action.SERVER_INVALID) {
+                    var msg;
+                    try {
+                        msg = Ext.decode(action.response).message;
+                    } catch(e) {
+                        msg = action.response.responseText;
+                    }
+                    afStudio.Msg.error('File Upload', msg);
+                }
+            }
+        });
+    },
+    //eo uploadWallpaper
+    
+    /**
+     * Validates background and shows errors if any exists returning false otherwise returns true.
      * @protected
      * @return {Boolean}
      */
     validate : function() {
-        var valid = this.controller.validateModel(),
-            errors = [];
+		var c = this.wallpaper.getSelectionCount(),
+		    v = this.bgtools.bgcolor.getValue();
         
-        if (valid !== true) {
-            if (!this.errorWin) {
-                this.errorWin = new afStudio.view.ModelErrorWindow({
-                    title: 'Desktop Shortcuts'
-                });
-            }
-            this.errorWin.modelErrors = {children: valid.children};
-            this.errorWin.show();
-            
+        if (c == 0 && Ext.isEmpty(v)) {
+            afStudio.Msg.warning('Background Editor', 'Background image or/and color must be selected');
             return false;
         }
         
@@ -250,24 +271,31 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
     },
     
     /**
-     * Saves menu.
+     * Saves background editor.
      */
     save : function() {
         if (this.validate() == false) {
             return;
         }
-        
-        var def = this.controller.root.fetchNodeDefinition();
-        
-        afStudio.Logger.info('@shortcut definition', def, Ext.encode(def.children));            
+
+        var sel = this.wallpaper.getSelectedRecords(),
+            color = this.bgtools.bgcolor.getValue(),
+            params = {
+                cmd: 'setWallpaper'
+            };
+            
+        if (!Ext.isEmpty(sel)) {
+            params.path = sel[0].get('image');            
+        }
+        if (!Ext.isEmpty(color)) {
+            params.color = color;            
+        }
+            
+        afStudio.Logger.info('@params', params);            
         
         afStudio.xhr.executeAction({
             url: afStudioWSUrls.project,
-            params: {
-                cmd: 'saveHelper',
-                key: 'links',
-                content: Ext.encode(def.children)
-            }
+            params: params
         });
     },
     
