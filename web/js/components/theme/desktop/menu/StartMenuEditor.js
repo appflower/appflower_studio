@@ -74,7 +74,6 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 key: 'menu'
             },
             scope: this,
-            showNoteOnSuccess: false,
             run: function(response) {
                 this.menuAttr = response.data.attributes;
                 this.initMainMenu(response.data.main);

@@ -70,7 +70,6 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
                 key: 'links'
             },
             scope: this,
-            showNoteOnSuccess: false,
             run: function(response) {
                 this.initShortCutsInspector(response.data);
                 this.eastPanel.el.unmask();
