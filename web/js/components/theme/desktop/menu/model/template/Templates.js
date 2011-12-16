@@ -7,8 +7,8 @@ afStudio.theme.desktop.menu.model.template.MainTemplate = Ext.extend(afStudio.mo
         ns.template.MainTemplate.superclass.constructor.call(this);
         
         this.extendStructure([
-            {name: ns.Nodes.ITEM, hasMany: true},
-            {name: ns.Nodes.BUTTON, hasMany: true}
+            {name: ns.Nodes.ITEM, hasMany: true, unique: 'name'},
+            {name: ns.Nodes.BUTTON, hasMany: true, unique: 'name'}
         ]);
     }
 });
@@ -26,7 +26,7 @@ afStudio.theme.desktop.menu.model.template.ToolsTemplate = Ext.extend(afStudio.m
         ns.template.ToolsTemplate.superclass.constructor.call(this);
         
         this.extendStructure([
-            {name: ns.Nodes.TOOL, hasMany: true}
+            {name: ns.Nodes.TOOL, hasMany: true, unique: 'name'}
         ]);
     }
 });

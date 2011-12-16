@@ -1,6 +1,5 @@
 Ext.ns('afStudio.theme.desktop.shortcut.model.template');
 
-
 /**
  * Shortcuts structural template.
  * 
@@ -14,7 +13,7 @@ afStudio.theme.desktop.shortcut.model.template.ShortcutTemplate = Ext.extend(afS
         ns.template.ShortcutTemplate.superclass.constructor.call(this);
         
         this.extendStructure([
-            {name: ns.Nodes.LINK, hasMany: true}
+            {name: ns.Nodes.LINK, hasMany: true, unique: 'name'}
         ]);
     }
 });
