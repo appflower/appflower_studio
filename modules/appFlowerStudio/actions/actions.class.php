@@ -283,6 +283,8 @@ class appFlowerStudioActions extends afsActions
             }
         }
         
+        if ($command == 'uploadWallpaper') return $this->renderText($response->asJson());
+        
         return $this->renderJson($response->asArray());
     }
     
