@@ -181,7 +181,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $default_prefix = "/appFlowerPlugin/extjs-3/plugins/desktop/wallpapers/";
         $default_area = sfConfig::get('sf_plugins_dir') . "/appFlowerPlugin/web/extjs-3/plugins/desktop/wallpapers/";
         
-        $finder = sfFinder::type('file')->maxdepth(0)->name('*.jpg', '*.jpeg', '*.JPG', '*.JPEG', '*.png', '*.PNG');
+        $finder = sfFinder::type('file')->maxdepth(0)->name('*.jpg', '*.jpeg', '*.JPG', '*.JPEG');
         
         foreach ($finder->in($default_area, "{$web_dir}/images/desktop/wallpapers/") as $key => $file) {
             $files[] = array(
@@ -247,7 +247,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $wallpaper_folder = "/images/desktop/wallpapers";
         $folder = sfConfig::get('sf_web_dir') . $wallpaper_folder;
         
-        if (!file_exists($folder)) mkdir($folder, 0777, true);
+        if (!file_exists($folder)) @mkdir($folder, 0777, true);
         
         if (!file_exists($folder)) return $response->success(false)->message("Can't create folder '{$wallpaper_folder}' in web area. Please check permissions");
         if (!is_writable($folder)) return $response->success(false)->message("Folder '{$wallpaper_folder}' is not writable. Please check permissions");
