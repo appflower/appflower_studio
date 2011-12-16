@@ -253,6 +253,9 @@ class afStudioProjectCommand extends afBaseStudioCommand
         if (!is_writable($folder)) return $response->success(false)->message("Folder '{$wallpaper_folder}' is not writable. Please check permissions");
         
         if (!empty($_FILES) && array_key_exists('wallpaper', $_FILES) && ($params = $_FILES['wallpaper']) && ($params['size'] > 0) ) {
+            if ($params['size'] > 2048000) return $response->success(false)->message("Wallpaper should be less than 2 megabytes");
+            if ($params['type'] != "image/jpeg") return $response->success(false)->message("Wallpaper should have jpeg format");
+            
             $extension = pathinfo($params['name'], PATHINFO_EXTENSION);
             $fileName = Util::stripText(pathinfo($params['name'], PATHINFO_FILENAME)) . ".{$extension}";
             
