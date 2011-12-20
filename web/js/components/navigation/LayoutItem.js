@@ -138,15 +138,15 @@ afStudio.navigation.LayoutItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 		});		
 		
 		return {			
-			title: 'Layout',
+			title: 'Layouts',
 		    loader: treeLoader,
-			iconCls: 'icon-layout_content',
+			iconCls: 'icon-layers',
 			bbar: {
 				items: [
 				'->',
 				{
 					text: 'Add Layout',
-					iconCls: 'icon-pages-add',
+					iconCls: 'icon-layout-add',
 					scope: me,
 					handler: me.onAddPageClick
 				}]

@@ -823,7 +823,15 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        	    	this.store.remove(r);
 	        	    }
 	            }
-	        }],
+	        },'->',{
+                text: 'Import',
+                itemId: 'import',
+                //iconCls: 'afs-icon-delete',
+                scope: this,
+                handler: function(btn, ev) {
+                    
+                }
+            }],
 	        bbar: pagingBar
 		};
 		
