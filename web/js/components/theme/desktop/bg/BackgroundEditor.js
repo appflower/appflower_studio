@@ -112,7 +112,6 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
             overClass: 'x-view-over',
             itemSelector: 'div.thumb-wrap',
             emptyText: 'No images to display',            
-            
             prepareData: function(data) {
                 data.shortName = Ext.util.Format.ellipsis(data.name, 15);
                 return data;

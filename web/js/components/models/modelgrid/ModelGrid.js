@@ -829,7 +829,8 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
                 iconCls: 'icon-model-import',
                 scope: this,
                 handler: function(btn, ev) {
-                    
+                    var w = new afStudio.models.ImportWindow();
+                    w.show();
                 }
             }],
 	        bbar: pagingBar
