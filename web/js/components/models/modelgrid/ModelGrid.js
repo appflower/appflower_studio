@@ -750,7 +750,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        tbar: [
 	        {
 	            text: 'Save',
-	            iconCls: 'icon-save',
+	            iconCls: 'icon-model-save',
 	            scope: this,
 	            handler: function(btn, ev) {	            	
 	            	var cm    = this.getColumnModel(),
@@ -797,7 +797,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
             	text: 'Insert',
             	itemId: 'insert',
             	disabled: !modelStructureExists,
-            	iconCls: 'icon-add',
+            	iconCls: 'icon-model-row-insert',
 	            menu: {
 	            	items: [
 	            	{
@@ -814,7 +814,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	            text: 'Delete',
 	            itemId: 'delete',
 	            disabled: !modelStructureExists,
-	            iconCls: 'afs-icon-delete',
+	            iconCls: 'icon-model-row-delete',
 	            scope: this,
 	            handler: function(btn, ev) {
 	            	var cell = this.getSelectionModel().getSelectedCell();			
@@ -826,7 +826,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 	        },'->',{
                 text: 'Import',
                 itemId: 'import',
-                //iconCls: 'afs-icon-delete',
+                iconCls: 'icon-model-import',
                 scope: this,
                 handler: function(btn, ev) {
                     

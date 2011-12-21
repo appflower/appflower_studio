@@ -365,7 +365,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			items: [
 	        {
 	            text: 'Save',
-	            iconCls: 'icon-save',
+	            iconCls: 'icon-model-save',
 	            scope: me,
 	            handler: me.saveModel
 	        },'-',{
@@ -377,7 +377,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	        	}
 	        },'-',{	        	
 	            text: 'Insert',
-	            iconCls: 'icon-add',
+	            iconCls: 'icon-model-row-insert',
 	            menu: {
 	            	items: [
 	            	{
@@ -392,7 +392,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	            }	            
 	        },'-',{
 	            text: 'Delete',
-	            iconCls: 'afs-icon-delete',
+	            iconCls: 'icon-model-row-delete',
 	            scope: me,
 	            handler: me.deleteField
 	        }]

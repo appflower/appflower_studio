@@ -52,23 +52,27 @@
 .icon-application-split{background:url('/appFlowerStudioPlugin/images/application_split.png') no-repeat center left !important;}
 
 .icon-models{background:url('/appFlowerStudioPlugin/images/application_view_tile.png') no-repeat center left !important;}
-.icon-model{background:url('/appFlowerStudioPlugin/images/table.png') no-repeat center left !important;}
-
 .icon-models-add{background:url('/appFlowerStudioPlugin/images/table_add.png') no-repeat center left !important;}
+.icon-models-delete{background:url('/appFlowerStudioPlugin/images/table_delete.png') no-repeat center left !important;}
+.icon-models-edit{background:url('/appFlowerStudioPlugin/images/table_edit.png') no-repeat center left !important;}
+.icon-model{background:url('/appFlowerStudioPlugin/images/table.png') no-repeat center left !important;}
+.icon-model-save{background:url('/appFlowerStudioPlugin/images/table_save.png') no-repeat center left !important;}
+.icon-model-row-insert{background:url('/appFlowerStudioPlugin/images/table_row_insert.png') no-repeat center left !important;}
+.icon-model-row-delete{background:url('/appFlowerStudioPlugin/images/table_row_delete.png') no-repeat center left !important;}
+.icon-model-import{background:url('/appFlowerStudioPlugin/images/table_go.png') no-repeat center left !important;}
+
 .icon-layout-add{background:url('/appFlowerStudioPlugin/images/layout_add.png') no-repeat center left !important;}
 .icon-widgets-add{background:url('/appFlowerStudioPlugin/images/brick_add.png') no-repeat center left !important;}
 
-.icon-models-delete{background:url('/appFlowerStudioPlugin/images/table_delete.png') no-repeat center left !important;}
-.icon-models-edit{background:url('/appFlowerStudioPlugin/images/table_edit.png') no-repeat center left !important;}
 .icon-console{background:url('/appFlowerStudioPlugin/images/application_xp_terminal.png') no-repeat center left !important;}
 
-.icon-models-set_as_homepage{background:url('/appFlowerStudioPlugin/images/application_home.gif') no-repeat center left !important;}
+.icon-models-set_as_homepage{background:url('/appFlowerStudioPlugin/images/application_home.png') no-repeat center left !important;}
 
 .icon-add{background:url('/appFlowerStudioPlugin/images/add.png') no-repeat center left !important;}
 .icon-edit{background:url('/appFlowerStudioPlugin/images/pencil.png') no-repeat center left !important;}
 .afs-icon-delete{background:url('/appFlowerStudioPlugin/images/delete.png') no-repeat center left !important;}
 .icon-folder{background: url('/appFlowerStudioPlugin/images/folder.gif') no-repeat 0 0 !important;}
-.icon-folder-open{background: url('/appFlowerStudioPlugin/images/folder-open.pgif') no-repeat 0 0 !important;}
+.icon-folder-open{background: url('/appFlowerStudioPlugin/images/folder-open.gif') no-repeat 0 0 !important;}
 .icon-obj{background: url('/appFlowerStudioPlugin/images/application.png') no-repeat 0 0 !important;}
 
 .icon-users{background: url('/appFlowerStudioPlugin/images/user_green.png') no-repeat 0 0 !important;}
@@ -108,12 +112,12 @@
 .icon-table-gear{background:url('/appFlowerStudioPlugin/images/table_gear.png') no-repeat center left !important;}
 .icon-database-table{background:url('/appFlowerStudioPlugin/images/database_table.png') no-repeat center left !important;}
 
-.icon-script-edit{background:url('/appFlowerStudioPlugin/images/script_edit.gif') no-repeat center left !important;}
+.icon-script-edit{background:url('/appFlowerStudioPlugin/images/script_edit.png') no-repeat center left !important;}
 
 .icon-af-plugin{background:url('/appFlowerStudioPlugin/images/plugin.png') no-repeat center left !important;}
 .icon-plugin-add{background:url('/appFlowerStudioPlugin/images/plugin_add.png') no-repeat center left !important;}
 
-/* ModelDetailedEditing Grid */
+/* ModelConfig */
 .model-pk-hd {
 	background:url('/appFlowerStudioPlugin/images/table_key.png') no-repeat !important;
 	padding:2px 0 4px 14px;
