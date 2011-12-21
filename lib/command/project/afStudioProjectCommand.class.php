@@ -157,7 +157,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
             $filesystem->chmod($helper_path, 0777);
         }
         
-        (!empty($key)) ? ($definition[$key] = $content) : ($definition = $content);
+        (!empty($key)) ? ($definition[$key] = (array) $content) : ($definition = (array) $content);
         
         $status = file_put_contents($helper_path, sfYaml::dump($definition, 8));
         
