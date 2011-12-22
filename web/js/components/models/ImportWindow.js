@@ -13,6 +13,20 @@ afStudio.models.ImportWindow = Ext.extend(Ext.Window, {
      * @cfg {String} model The model name
      */
 
+	layout : 'fit',
+    
+	closeAction : 'hide',
+    
+	modal : true,
+    
+	frame : true,
+    
+	width : 600,
+    
+	height : 400,
+    
+	resizable : false,
+    
     /**
      * Initializes component.
      * @private
@@ -25,15 +39,6 @@ afStudio.models.ImportWindow = Ext.extend(Ext.Window, {
         return {
             title: 'Import',
             iconCls: 'icon-model-import',
-            closeAction: 'hide',
-            modal: true,
-            frame: true,
-            width: 600,
-            height: 400,
-            resizable: false,
-            
-            layout: 'fit',
-            
             items: [
                 this.importTab
             ],
@@ -58,6 +63,24 @@ afStudio.models.ImportWindow = Ext.extend(Ext.Window, {
         );
         
         afStudio.models.ImportWindow.superclass.initComponent.apply(this, arguments);
+        
+        this._afterInitComponent();
+    },
+    
+    /**
+     * @private
+     */
+    _afterInitComponent : function() {
+        var me = this;
+        
+        this.importTab.fixtures.relayEvents(me, ['importfixtures']);
+        this.importTab.uplfile.relayEvents(me, ['importfile']);
+
+        me.on({
+            scope: me, 
+            importfixtures: me.closeWindow,
+            importfile: me.closeWindow
+        });
     },
     
     /**
@@ -76,7 +99,8 @@ afStudio.models.ImportWindow = Ext.extend(Ext.Window, {
      * @return {Object} this window inner components
      */
     createWindowItems : function() {
-      
+        var me = this;
+        
         var tp = new Ext.TabPanel({
             activeTab: 0,
             border: false,
@@ -98,6 +122,8 @@ afStudio.models.ImportWindow = Ext.extend(Ext.Window, {
                 items: [
                 {
                     xtype: 'import.uploadfile',
+                    ref: '../uplfile',
+                    model: me.model, 
                     border: false
                 }]
             }]

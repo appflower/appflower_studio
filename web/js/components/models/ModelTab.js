@@ -30,6 +30,11 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	 * @property createWidgetWindow
 	 * @type {afStudio.models.CreateWidgetWindow}
 	 */
+	/**
+	 * The import window component.
+	 * @property importWindow
+	 * @type {afStudio.models.ImportWindow}
+	 */
 	
 	/**
 	 * Runs altering process and updates model's grids
@@ -132,7 +137,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	},
 	
 	/**
-	 * Returns {@link #createWidgetWindow}
+	 * Returns {@link #createWidgetWindow}.
 	 * @return {afStudio.models.CreateWidgetWindow}
 	 */
 	getCreateWidgetWindow : function() {
@@ -148,6 +153,22 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 		me.createWidgetWindow.fields = me.fieldsStructure;
 		
 		return me.createWidgetWindow;
+	},
+    
+	/**
+	 * Returns {@link #importWindow}.
+	 * @return {afStudio.models.ImportWindow}
+	 */
+	getImportWindow : function() {
+		var me = this;
+		
+		if (!me.importWindow) {
+			me.importWindow = new afStudio.models.ImportWindow({
+				model: me.modelName
+			});
+		}
+		
+		return me.importWindow;
 	},
 	
 	/**

@@ -395,7 +395,15 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	            iconCls: 'icon-model-row-delete',
 	            scope: me,
 	            handler: me.deleteField
-	        }]
+            },'->',{
+                text: 'Import',
+                iconCls: 'icon-model-import',
+                scope: this,
+                handler: function(btn, ev) {
+                    var w = me.ownerCt.getImportWindow();
+                    w.show();
+                }
+            }]
 		});		
 		
 		return {			

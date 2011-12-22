@@ -160,6 +160,7 @@ afStudio.models.FixturesForm = Ext.extend(Ext.Panel, {
         
         return fgrid;
     },
+    //eo createFixtures
     
     /**
      * Imports fixtures files.
@@ -182,10 +183,8 @@ afStudio.models.FixturesForm = Ext.extend(Ext.Panel, {
                 remote_files: files,
                 append: append
             },
-            //mask: "Importing...",
             scope: this,
             run: function(response, opts) {
-                
                 this.fireEvent('importfixtures', opts.params.remote_files);
             }
         });
