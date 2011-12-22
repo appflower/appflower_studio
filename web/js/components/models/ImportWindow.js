@@ -81,39 +81,24 @@ afStudio.models.ImportWindow = Ext.extend(Ext.Window, {
             activeTab: 0,
             border: false,
             defaults: {
-                xtype: 'form',    
-                monitorValid: true,
-                anchor: '100%',
+                layout: 'fit',
                 padding: 5
             },
             items: [
             {
                 title: 'Load Fixtures',
-                layout: 'fit',
                 items: [
                 {
                     xtype: 'import.fixtures',
                     ref: '../fixtures',
-                    
                     border: false
                 }]
             },{
                 title: 'Upload File',
                 items: [
                 {
-                    xtype: 'fileuploadfield',
-                    fieldLabel: 'Import file',
-                    emptyText: 'select import file...',
-                    allowBlank: false,
-                    msgTarget: 'qtip',
-                    width: 400,
-                    name: 'file'
-                }],
-                buttons: [
-                {
-                    text: 'Import',
-                    iconCls: 'icon-accept',
-                    formBind: true
+                    xtype: 'import.uploadfile',
+                    border: false
                 }]
             }]
         });
