@@ -78,6 +78,10 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
                 submitValue: false,
                 html: 'Supported files: CSV, XLS, ODS, YML'
             },{
+                xtype: 'checkbox',
+                fieldLabel: 'Append',
+                name: 'append'
+            },{
                 xtype: 'container',
                 ref: 'extraFields',
                 anchor: '100% 90%',
