@@ -200,9 +200,12 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processGetFixtures() 
     {
         try {    
-            $files = afsFileSystem::create()->readDirectory(afStudioUtil::getFixturesDir(), "yml, yaml");
+            $files = array();
+            foreach ((array) afsFileSystem::create()->readDirectory(afStudioUtil::getFixturesDir(), "yml, yaml") as $key => $file_name) {
+                $files[] = array('id' => $key, 'file' => $file_name,);
+            }
             
-            return afResponseHelper::create()->success(true)->data(array(), (is_array($files)) ? $files : array(), 0);
+            return afResponseHelper::create()->success(true)->data(array(), $files, 0);
         } catch (Exception $e) {
             return afResponseHelper::create()->success(false)->message("Couldn't list fixtures, an error occured!");
         }
