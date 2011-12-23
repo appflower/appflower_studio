@@ -127,14 +127,13 @@ afStudio.models.FixturesForm = Ext.extend(Ext.Panel, {
     createFixtures : function() {
         var me = this;
         
-        var st = new Ext.data.ArrayStore({
+        var st = new Ext.data.JsonStore({
             url: me.url,
             baseParams: {
                 cmd: 'getFixtures'
             },
             root: 'data',
-            idProperty: 'id',
-            fields: ['file']
+            fields: ['id', 'file']
         });
         
         var sm = new Ext.grid.CheckboxSelectionModel({
@@ -147,13 +146,13 @@ afStudio.models.FixturesForm = Ext.extend(Ext.Panel, {
 	        sm: sm,
 	        columns: [
 	            sm,
-	            {header: 'File', sortable: true, id: 'fixture'}
+	            {header: 'File', sortable: true, dataIndex: 'file', id: 'fixture'}
 	        ],
             viewConfig: {
                 emptyText: 'There are no fixtures'  
             },
-            anchor: '100% 90%',
 	        autoExpandColumn: 'fixture',
+            anchor: '100% 90%',
 	        autoScroll: true
         });
         
@@ -179,7 +178,7 @@ afStudio.models.FixturesForm = Ext.extend(Ext.Panel, {
             url: this.url,
             params: {
                 cmd: 'importData',
-                remote_files: files,
+                remote_files: Ext.encode(files),
                 append: append
             },
             scope: this,
