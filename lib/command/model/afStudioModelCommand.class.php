@@ -221,6 +221,8 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processImportData() {
     	
     	$remote_files = json_decode($this->getParameter("remote_files", '{}'), true);
+    	sort($remote_files);
+    	
     	$formats = array
     	(
     	"yml" => "yml",

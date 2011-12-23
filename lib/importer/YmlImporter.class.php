@@ -15,6 +15,19 @@ class YmlImporter extends BaseImporter {
 	public function loadData($path) {}
 	
 	
+	protected function validateData() {
+		
+		$path = func_get_arg(0);
+		$yaml = sfYaml::load($path);
+
+		foreach($yaml as $class => $data) {
+			if($this->isInvalidModel(ucfirst($class))) {
+				throw new ImporterException("Model '".ucfirst($class)."' doesn't exist!");
+			}
+		}
+		
+	}
+	
 	/**
 	 * Overrides base method, uses the Symfony mechanism to rea, validate and insert data.
 	 * @see importer/BaseImporter::insertData()
@@ -24,17 +37,17 @@ class YmlImporter extends BaseImporter {
 		$path = func_get_arg(0);
 		
 		try {
+			
+			if($this->properties->verify) {
+				$this->validateData($path);
+			}
+			
 			$data = new sfPropelData();
     		$data->setDeleteCurrentData(!$this->properties->append);
     		$data->loadData($path);	
 		}
 		catch (Exception $e) {
-			if($e instanceof InvalidArgumentException) {
-				throw new ImporterException("Invalid YAML file: ".$e->getMessage());
-			} else {
-				throw new ImporterException("Couldn't insert data to DB from file: ".$path);	
-			}
-			
+			throw new ImporterException("Data import failed for:<br/><br/>File: ".$path."<br /><br />Error: ".$e->getMessage());	
 		}
 		
 		

@@ -24,7 +24,7 @@ abstract class BaseImporter {
 		
 		if(array_key_exists("model", $parameters) && $parameters["model"]) {
 			
-			if(!class_exists($parameters["model"]) || !($obj = new $parameters["model"]) instanceof BaseObject) {
+			if($this->isInvalidModel($parameters["model"])) {
 				throw new ImporterException("Model '".$parameters["model"]."' does not exist!");
 			}
 			
@@ -34,6 +34,16 @@ abstract class BaseImporter {
 		
 		$this->properties->has_header = array_key_exists("has_headers", $parameters) && $parameters["has_headers"];		
 		
+	}
+	
+	/**
+	 * 
+	 * Tells if $model is a valid model class
+	 * @param string $model
+	 * @return boolean 
+	 */
+	protected function isInvalidModel($model) {
+		return (!class_exists($model) || !($obj = new $model) instanceof BaseObject);
 	}
 	
 	
@@ -93,6 +103,10 @@ abstract class BaseImporter {
 		
 	}
 	
+	/**
+	 * Deletes all data from given model.
+	 * @throws ImporterException
+	 */
 	protected function deleteData() {
 		if(call_user_func(array($this->properties->model."Peer", "doDeleteAll")) === false) {
 			throw new ImporterException("Couldn't delete data!");
@@ -134,7 +148,7 @@ abstract class BaseImporter {
 		}
 		
 		try {
-
+			
 			if($this->properties->verify) {
 				$this->validateData();
 			}
