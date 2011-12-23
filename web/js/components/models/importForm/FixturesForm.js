@@ -132,8 +132,7 @@ afStudio.models.FixturesForm = Ext.extend(Ext.Panel, {
             baseParams: {
                 cmd: 'getFixtures'
             },
-            method: 'GET',
-            root: 'dataset',
+            root: 'data',
             idProperty: 'id',
             fields: ['file']
         });
