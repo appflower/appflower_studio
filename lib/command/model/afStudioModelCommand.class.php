@@ -194,22 +194,15 @@ class afStudioModelCommand extends afBaseStudioCommand
     
     /**
      * Lists the YML (*.yml, *.yaml) files in the project's fixture dir;
+     * 
      * @return afResponse
      */
     protected function processGetFixtures() 
     {
         try {    
-     	    $files = afsFileSystem::create()->readDirectory(afStudioUtil::getFixturesDir(), "yml, yaml");
-     	    
-     	    $response = afResponseHelper::create()->success(true);
-     	    
-     	    if (is_array($files)) {
-     	        $response->data($files);
-     	    } else {
-     	        $response->data(null, array(), 0);
-     	    }
-     	    
-     	    return $response;
+            $files = afsFileSystem::create()->readDirectory(afStudioUtil::getFixturesDir(), "yml, yaml");
+            
+            return afResponseHelper::create()->success(true)->data(array(), (is_array($files)) ? $files : array(), 0);
         } catch (Exception $e) {
             return afResponseHelper::create()->success(false)->message("Couldn't list fixtures, an error occured!");
         }
