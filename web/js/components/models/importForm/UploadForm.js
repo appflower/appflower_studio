@@ -110,12 +110,12 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
                         name: 'delimeter'
                     },{
                         xtype: 'combo',
-                        store: [[',', ','], ['', 'empty string ("")']],
+                        store: [["'", "'"], ['"', '"']],
                         mode: 'local',
                         triggerAction: 'all',
                         forceSelection: true,
                         fieldLabel: 'Enclosure',
-                        value: '',
+                        value: '"',
                         hiddenName: 'enclosure',
                         name: 'enclosure'
                     },{
