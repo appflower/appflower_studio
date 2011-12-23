@@ -212,14 +212,15 @@ class afStudioModelCommand extends afBaseStudioCommand
     }
     
     /**
-     * 
      * Imports various data files from fixtures (YAML) directory or via file upload (CSV,YAML,Spreadsheets).
      * 
      * @throws Exception
+     * @return afResponse
+     * @author Tamas Geshitz
      */
     protected function processImportData() {
     	
-    	$remote_files = $this->getParameter("remote_files",array());
+    	$remote_files = json_decode($this->getParameter("remote_files", '{}'), true);
     	$formats = array
     	(
     	"yml" => "yml",
