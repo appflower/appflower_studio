@@ -102,6 +102,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/WidgetLocation.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/ModelFieldsGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/ModelsComboBox.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/common/ModelsTree.js"></script>
 
 <!-- CLI -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/cli/CommandLine.js"></script>
@@ -133,7 +134,6 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/importForm/UploadForm.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationPicker.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/RelationCombo.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/relationcombo/ModelTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/FieldsGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelStore.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelGrid.js"></script>

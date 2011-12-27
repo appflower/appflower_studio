@@ -171,7 +171,7 @@ afStudio.wd.WidgetsBuilder = Ext.extend(Ext.Window, {
 					width: 220,
 					items: [
 					{
-						xtype: 'afStudio.models.modelTree', 
+						xtype: 'afStudio.common.modelsTree', 
 						ref: '../../modelsTree',
 						border: false
 					}]

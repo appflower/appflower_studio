@@ -145,7 +145,7 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 				width: 220,
 				items: [{
 					id: 'models-picker',					
-					xtype: 'afStudio.models.modelTree',
+					xtype: 'afStudio.common.modelsTree',
 					url: me.modelsUrl,
 					border: false,
 					ref: '../modelsTree'
