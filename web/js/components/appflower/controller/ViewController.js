@@ -28,7 +28,8 @@ afStudio.controller.ViewController = Ext.extend(afStudio.controller.BaseControll
 	 * 	<li><b>uri</b>: The view URI.</li>
 	 * 	<li><b>placeType</b>: The type of the place where a view is located i.e. <i>app</i>, <i>plugin</i>.</li>
 	 * 	<li><b>place</b>: The place's name.</li>
-	 * 	<li><b>actionPath</b>: The view actions class path</li>
+     *  <li><b>actionName</b>: The view actions file name</li>
+	 * 	<li><b>actionPath</b>: The view actions file path</li>
 	 * 	<li><b>securityPath</b>: The view security file path</li>
 	 * </ul>
 	 */

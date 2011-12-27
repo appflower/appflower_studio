@@ -220,7 +220,7 @@ afStudio.navigation.PluginItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 								me.showWidgetDesignerForNode(node);
 							} else {
 								me.initialItemState();
-								var cfg = Ext.copyTo({}, response.data, 'actionPath, securityPath, place, placeType');
+								var cfg = Ext.copyTo({}, response.data, 'actionName, actionPath, securityPath, place, placeType');
 								cfg.uri = response.data.widgetUri;
 								afStudio.WD.showWidgetDesigner(cfg);
 							}

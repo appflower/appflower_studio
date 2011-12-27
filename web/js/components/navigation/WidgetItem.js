@@ -359,15 +359,15 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 			placeType: 'app',
 			listeners: {
 				widgetcreated: function(response) {
-					var path = String.format('/{0}/{1}/{2}.xml', me.root.text, response.data.place, response.data.widgetUri);
-					 
+					var path = String.format('/{0}/{1}/{2}', me.root.text, response.data.place, response.data.widgetUri);
+					
 					me.loadRootNode(function() {
 						this.selectPath(path, 'text', function(success, node) {
 							if (success) {
 								me.showWidgetDesignerForNode(node);
 							} else {
 								me.initialItemState();
-								var cfg = Ext.copyTo({}, response.data, 'actionPath, securityPath, place, placeType');
+								var cfg = Ext.copyTo({}, response.data, 'actionName, actionPath, securityPath, place, placeType');
 								cfg.uri = response.data.widgetUri;
 								afStudio.WD.showWidgetDesigner(cfg);
 							}
@@ -554,7 +554,6 @@ afStudio.navigation.WidgetItem = Ext.extend(afStudio.navigation.BaseItemTreePane
 	 * @param {Ext.tree.TreeNode} node
 	 */
     ,showWidgetDesignerForNode : function(node) {
-        
         afStudio.WD.showWidgetDesigner({
 			uri: this.getNodeAttribute(node, 'widgetUri'),
 			actionPath: this.getNodeActionPath(node),
