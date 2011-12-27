@@ -1,6 +1,13 @@
 <?php
 ini_set("max_execution_time", "160");
 
+require_once dirname(__DIR__).'/lib/vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaceFallbacks(array(
+    dirname(__DIR__) . '/lib',
+)); 
+$loader->register();
+
 $this->dispatcher->connect('routing.load_configuration', array('afsRouting', 'listenToRoutingLoadConfigurationEvent'));
 
 $modules = afStudioUtil::getDirectories(sfConfig::get('sf_plugins_dir')."/appFlowerStudioPlugin/modules/",true);
