@@ -1,86 +1,84 @@
 Ext.ns('afStudio.models');
 
 /**
- * DependencyCellEditorBuilder plugin
+ * DependencyCellEditorBuilder plugin.
  * 
  * dependencies:
  *     afStudio.models.TypeBuilder
  * 
- * @class Ext.ux.grid.EditorPlugin
+ * @class afStudio.models.DependencyCellEditorBuilder
  * @extends Ext.util.Observable
- * @author Nikolay
+ * @author Nikolai Babinski
  */
 afStudio.models.DependencyCellEditorBuilder = Ext.extend(Ext.util.Observable, {
 
 	/**
-	 * @cfg grid
-	 * Applied grid 
+	 * @cfg {Field} defaultEditor The initial editor for a dependency column 
 	 */
-	grid : null
+	defaultEditor : null,
 	
 	/**
-	 * @cfg defaultEditor
-	 * Stores the initial editor for a dependency column 
+	 * @cfg {String} mainDataIndex The dataIndex of main "control" column
 	 */
-	,defaultEditor : null
+	mainDataIndex : 'type',
 	
 	/**
-	 * @cfg mainDataIndex 
-	 * dataIndex of main (control) column
+	 * @cfg {String} dependencyDataIndex The dependency dataIndex
 	 */
-	,mainDataIndex : 'type'
-	
-	/**
-	 * @cfg dependencyDataIndex
-	 * dependency dataIndex
-	 */
-	,dependencyDataIndex : 'default'	
+	dependencyDataIndex : 'default',	
 
 	/**
-	 * @cfg sizeDataIndex 
-	 * size dataIndex
+	 * @cfg {String} sizeDataIndex The size dataIndex
 	 */
-	,sizeDataIndex : 'size'
-	
+	sizeDataIndex : 'size',
+
+    /**
+     * @property grid The applied grid
+     * @type {Ext.grid.GridPanel}
+     */
+    grid : null,
+    
 	/**
-	 * <u>beforeedit</u> event listener
-	 * for more details look at {@link Ext.grid.EditorGridPanel#beforeedit}   
-	 * @param {Object} e
-	 */
-	,onGridBeforeEdit : function(e) {		
-		var   _this = this,			
-		columnIndex = e.column,
-		     record = e.grid.getStore().getAt(e.row),
-			     cm = e.grid.getColumnModel(),
-		  fieldName = cm.getDataIndex(columnIndex),
-			   type = record.get(_this.mainDataIndex),
-			   size = record.get(_this.sizeDataIndex),
-			 editor;
-		
-		if (fieldName == _this.dependencyDataIndex) {
-			//restore default editor
-			if (this.defaultEditor) {
-				cm.config[columnIndex].editor = this.defaultEditor;
-			}
-			
-			editor = afStudio.models.TypeBuilder.createEditor(type, size);
-			
-			this.defaultEditor = cm.config[columnIndex].editor;
-			cm.config[columnIndex].editor = editor ? editor : this.defaultEditor;
-		}
-	}//eo onGridCellClick
-	
-	/**
-	 * Plugin's entry point
+	 * Plugin's entry point.
 	 * @param {Ext.grid.EditorGridPanel} grid
 	 */
-	,init : function(grid) {
+	init : function(grid) {
 		this.grid = grid;
+        
 		this.grid.on({
-			beforeedit: Ext.util.Functions.createDelegate(this.onGridBeforeEdit, this)
+            scope: this,
+            
+			beforeedit: this.onGridBeforeEdit
 		});	
-	}//eo init	
-	
+	},
+    
+    /**
+     * <u>beforeedit</u> event listener.
+     * for more details look at {@link Ext.grid.EditorGridPanel#beforeedit}   
+     * @param {Object} e
+     */
+    onGridBeforeEdit : function(e) {        
+        var   me = this,         
+        columnIndex = e.column,
+             record = e.grid.getStore().getAt(e.row),
+                 cm = e.grid.getColumnModel(),
+          fieldName = cm.getDataIndex(columnIndex),
+               type = record.get(me.mainDataIndex),
+               size = record.get(me.sizeDataIndex),
+             editor;
+        
+        if (fieldName == me.dependencyDataIndex) {
+            //restore default editor
+            if (this.defaultEditor) {
+                cm.config[columnIndex].editor = this.defaultEditor;
+            }
+            
+            editor = afStudio.models.TypeBuilder.createEditor(type, size);
+            
+            this.defaultEditor = cm.config[columnIndex].editor;
+            cm.config[columnIndex].editor = editor ? editor : this.defaultEditor;
+        }
+    }
 });
 
 /**

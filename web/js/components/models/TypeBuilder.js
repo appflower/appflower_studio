@@ -113,7 +113,7 @@ afStudio.models.TypeBuilder = (function() {
 					if (dataType == 'boolean') {
 						defaultValue = defaultValue ? true : false;						
 					}
-					v = v ? v : defaultValue;
+					v = !Ext.isEmpty(v) ? v : defaultValue;
 					editor.setValue(v);
 				});
 			}
@@ -155,6 +155,5 @@ afStudio.models.TypeBuilder = (function() {
 			return renderer;
 		}
 		//eo createRenderer
-		
 	};
 })();
