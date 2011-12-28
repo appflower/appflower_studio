@@ -91,17 +91,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						iconCls: 'icon-tools-snapshot'
 					}*/]
 				}
-			},
-				/*{xtype: 'tbseparator'},
-				{
-					text:'Logs',
-					iconCls: 'icon-logs',
-					handler:function(b,e){
-						(new afStudio.Logs()).show();
-					}
-				},
-				*/
-			{
+			},{
 				text: 'Debug',
 				iconCls: 'icon-debug',
 				menu: {
