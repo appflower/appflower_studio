@@ -3,6 +3,9 @@ ini_set("max_execution_time", "160");
 
 require_once dirname(__DIR__).'/lib/vendor/autoload/UniversalClassLoader.class.php';
 $loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio'  => dirname(__DIR__) . '/lib/vendor',
+));
 $loader->registerNamespaceFallbacks(array(
     dirname(__DIR__) . '/lib',
 )); 
