@@ -95,7 +95,6 @@
 					<file>js/afStudio.databaseConnectionSettings.js</file>
 					<file>js/afStudio.popup.js</file>
 					<file>js/afStudio.settings.js</file>
-					<file>js/afStudio.overrides.js</file>
 					<file>js/afStudio.VTypes.js</file>
 					
 					<!-- Error -->
