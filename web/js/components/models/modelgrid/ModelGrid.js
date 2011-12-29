@@ -855,7 +855,7 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
 			/**
 			 * @event alterfieldexception 
 			 * Fires if an error was happend during altering field.
-			 * @param {Object} The XMLHttpRequest object containing the response data.
+			 * @param {Object} The response object containing the response data.
 			 */
 			'alterfieldexception',
 			

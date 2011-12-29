@@ -88,38 +88,27 @@ afStudio.models.EditFieldWindow = Ext.extend(Ext.Window, {
 		url = afStudioWSUrls.modelListUrl;
 		xaction = 'alterModelUpdateField';
 
-		me.maskWindow();
-		
-		Ext.Ajax.request({
-			url: url,
-			params: {
-				xaction: xaction,
-				model: model,
-				field: o.field,
-				schema: schema,
-				fieldDef: Ext.encode(o.fieldData)
-			},
-			success: function(xhr, opt) {
-				var response = Ext.decode(xhr.responseText);
-				me.unmaskWindow();
-				if (response.success) {
-					me.updateFieldDefinition(o.fieldData);
-					Ext.isFunction(o.callback) ? o.callback() : null;
-					grid.fireEvent('alterfield');
-				} else {
-					grid.fireEvent('alterfieldexception', xhr);
-					afStudio.Msg.warning(response.message);
-				}
-			},
-			failure: function(xhr, opt) {
-				me.unmaskWindow();
-				grid.fireEvent('alterfieldfailure', xhr);				
-				afStudio.Msg.error('Status: ' + xhr.status);
-			}
-		});
-		
+        afStudio.xhr.executeAction({
+            url: url,
+            params: {
+                xaction: xaction,
+                model: model,
+                field: o.field,
+                schema: schema,
+                fieldDef: Ext.encode(o.fieldData)
+            },
+            mask: {ctn: me},
+            run: function(response, opt) {
+                me.updateFieldDefinition(o.fieldData);
+                Ext.isFunction(o.callback) ? o.callback() : null;
+                grid.fireEvent('alterfield');
+            },
+            error: function(response, opt, failure) {
+                grid.fireEvent(failure ? 'alterfieldfailure' : 'alterfieldexception', response);
+            }
+        });            
 	},
-	//eo fieldAction
+	//eo doFieldAction
 	
 	/**
 	 * Updates Field

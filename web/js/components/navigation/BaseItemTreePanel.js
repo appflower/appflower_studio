@@ -581,95 +581,17 @@ afStudio.navigation.BaseItemTreePanel = Ext.extend(Ext.tree.TreePanel, {
 	}//eo addNode
 	
 	/**
-	 * Runs action 
+	 * Runs action.
+     * Details {@link afStudio.xhr.executeAction}
 	 * @protected
-	 * 
-	 * @param {Object} action:
-	 * <ul>
-	 * <li><b>url</b>: {String} (Required) The action URL.</li>
-	 *    
-	 * <li><b>params</b>: {Object} (Optional) ajax request parameters</li>
-	 * 
-	 * <li><b>showNoteOnSuccess</b>: {Boolean} (Optional) defaults all actions are notified.
-	 *    If it is false notification message will not be shown on success.
-	 * </li>
-	 *     
-	 * <li><b>run</b>: {Function} (Required) The action function to be run on success
-	 * 			     	accepts result (response) object. Function accepts response parameter.
-	 * </li>
-	 *   
-	 * <li><b>error</b>: {Function} (Optional) The error callback function</li>
-	 * 
-	 * <li><b>logMessage</b>: {String} (Optional) The log message, if specified action being logged.</li>
-	 *    
-	 * <li><b>loadingMessage</b>: {String} (Optional) mask loading message</li>
-	 *    
-	 * <li><b>scope</b>: {Object} (Optional) The {@link #run}/{@link #error} callback functions execution context.
-	 * 					 If it is not specified the default execution context is <tt>item's</tt> context. 
-	 * </li>
-	 * </ul>
+	 * @param {Object} action The action execution options 
 	 */
 	,executeAction : function(action) {
-		var _this = this,		
-			showNoteOnSuccess = true;
-		
-		afStudio.vp.mask({
-			msg: action.loadingMessage ? action.loadingMessage : 'Loading...', 
-			region: 'center'
-		});
-		
-		Ext.Ajax.request({
-		   url: action.url,
-		   
-		   params: action.params,
-		   
-		   scope: action.scope ? action.scope : _this,
-		   
-		   success: function(xhr, opt) {
-			   afStudio.vp.unmask('center');
-			   var response = Ext.decode(xhr.responseText);
-
-			   var message = response.content || response.message || (response.success ? 'Operation was successfully processed!' : 'Some error occured.'),
-			   	   msgTitle = this.title || '';
-			   
-			   if (response.success) {
-                   if (action.run) {
-                       Ext.util.Functions.createDelegate(action.run, this, [response], false)();
-                   }
-			   	   //update console if needed
-				   if (response.console) {	
-	      		       afStudio.updateConsole(response.console);
-			       }
-				   //log action if needed
-			       if (action.logMessage) {
-			           this.fireEvent("logmessage", this, action.logMessage);	
-			       }
-			       
-			       if (!Ext.isDefined(action.showNoteOnSuccess) && showNoteOnSuccess === true) {
-			           afStudio.Msg.info(msgTitle, message);
-			       } else if (action.showNoteOnSuccess === true) {
-			       	   afStudio.Msg.info(msgTitle, message);
-			       }
-			   } else {			   	   
-			   	   if (Ext.isFunction(action.error)) {
-				   	   Ext.util.Functions.createDelegate(action.error, this, [response], false)();
-			   	   }
-			   	   
-			   	   afStudio.Msg.error(msgTitle, message);
-			   }
-		   },
-		   
-		   failure: function(xhr, opt) {
-		   	   afStudio.vp.unmask('center');
-		   	   
-			   if (Ext.isFunction(action.error)) {
-			       Ext.util.Functions.createDelegate(action.error, this, [xhr], false)();
-			   }
-			   
-			   var message = String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText),
-			   	   msgTitle = String.format("Server Error {0}", this.title || '');
-		   	   afStudio.Msg.error(msgTitle, message);
-		   }		   
-		});
-	}//eo executeAction
+        Ext.apply(action, {
+            scope: action.scope ? action.scope : this,
+            mask: {msg: action.loadingMessage, region: 'center'}
+        });
+        
+        afStudio.xhr.executeAction(action);
+	}
 });

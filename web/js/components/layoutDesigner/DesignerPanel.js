@@ -69,35 +69,14 @@ afStudio.layoutDesigner.DesignerPanel = Ext.extend(Ext.Panel, {
 	 *   {Object} scope
 	 */
 	,executeAction : function(action) {
-		afStudio.vp.mask({
-			msg: action.loadingMessage 
-				 ? action.loadingMessage 
-				 : 'Loading...', 
-			region: 'center'
-		});
-		
-		Ext.Ajax.request({
-		   url: action.url,
-		   params: action.params,
-		   success: function(xhr, opt) {
-			   afStudio.vp.unmask('center');
-			   var response = Ext.decode(xhr.responseText);
-			   if (response.success) {
-			   	   Ext.util.Functions.createDelegate(
-		   			 action.run, 
-		   			 action.scope ? action.scope : this, 
-		   			 [response],
-		   			 false
-			   	   )();			       				   	
-			   } else {
-			   	   Ext.Msg.alert('Error', response.content);
-			   }
-		   }, 
-		   failure: function(xhr, opt) {
-		   	   afStudio.vp.unmask('center');
-		       Ext.Msg.alert('Error', String.format('Status code: {0}, message: {1}', xhr.status, xhr.statusText));
-		   }
-		});
+        afStudio.xhr.executeAction({
+            url: action.url,
+            params: action.params,
+            scope: action.scope ? action.scope : this,
+            mask: {msg: action.loadingMessage, region: 'center'},
+            showNoteOnSuccess: false,
+            run: action.run
+        });
 	}//eo executeAction
 	
 	/**

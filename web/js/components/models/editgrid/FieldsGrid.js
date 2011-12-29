@@ -26,12 +26,12 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	 * Saves Model structure
 	 */
 	saveModel : function() {
-		var me   = this,
-			    s   = me.getStore(),
-			  url   = s.proxy.url,
-			   rs   = s.getRange(),
-		 aRecords   = [],
-		 is_renamed = false;
+		var me = this,
+            s = me.getStore(),
+            url = s.proxy.url,
+            rs = s.getRange(),
+            aRecords = [],
+            is_renamed = false;
 		
 		Ext.each(rs, function(i, idx) {
 			aRecords.push(i.data);
@@ -44,39 +44,28 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         }
         
         var send_request = function(me, records) {
-            afStudio.vp.mask({region:'center', msg: 'Altering ' + me.model + ' model...'});
+            var requestMsg = String.format('Altering "{0}" model...', me.model),
+                logMsg = String.format('"{0}" model structure was saved', me.model);
             
-    		Ext.Ajax.request({
-    			url: url,
-    			params: {
-    				xaction: 'alterModel',
-    				model: me.model, 
-    				schema: me.schema,
-    				fields: Ext.encode(aRecords)
-    			},
-    			success: function(xhr, opt) {
-    				afStudio.vp.unmask('center');
-
-    				var response = Ext.decode(xhr.responseText);
-
-    				var message = String.format('"{0}" model structure was saved', me.model);
-    				me.fireEvent("logmessage", me, message);
-
-    				if (response.success) {					
-    					afStudio.Msg.info(response.message);
-    					s.commitChanges();
-    					me.fireEvent('altermodel');
-    				} else {
-    					me.fireEvent('altermodelexception', xhr);
-    					afStudio.Msg.warning(response.message);
-    				}
-    			},
-    			failure: function(xhr, opt) {				
-    				afStudio.vp.unmask('center');
-    				me.fireEvent('altermodelfailure', xhr);				
-    				afStudio.Msg.error('Status: ' + xhr.status);
-    			}
-    		});
+	        afStudio.xhr.executeAction({
+	            url: url,
+	            params: {
+                    xaction: 'alterModel',
+                    model: me.model, 
+                    schema: me.schema,
+                    fields: Ext.encode(aRecords)
+                },
+	            scope: me,
+	            mask: {msg: requestMsg, region: 'center'},
+	            logMessage: logMsg,
+	            run: function(response, opt) {
+                    s.commitChanges();
+                    this.fireEvent('altermodel');
+                },
+                error: function(response, opt, failure) {
+                    this.fireEvent(failure ? 'altermodelfailure' : 'altermodelexception', response);
+                }
+	        });            
         };
 		
 		if (is_renamed) {
@@ -453,7 +442,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 			
 			/**
 			 * @event altermodelexception Fires if an error was happend during altering model.
-			 * @param {Object} The XMLHttpRequest object containing the response data.
+			 * @param {Object} The response object.
 			 */
 			'altermodelexception',
 			

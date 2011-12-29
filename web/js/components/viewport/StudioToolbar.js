@@ -169,17 +169,12 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
                 text: 'Create new project',
                 iconCls: 'icon-studio-create-project',
                 handler: function (b, e) {
-                    Ext.Ajax.request({
-                        url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'checkConfig'})),
-                        success: function(result){
-                            var obj = Ext.decode(result.responseText);
-                            if (obj.success) {
-                                (new afStudio.CreateProjectWizard(obj['dataset'])).show();
-                            } else {
-                                afStudio.Msg.error('Sorry but your local environment looks like not configured for "Create New Project" functionality to work');
-                            }
-                        }
-                    });
+			        afStudio.xhr.executeAction({
+			            url: Ext.urlAppend(afStudioWSUrls.project, Ext.urlEncode({cmd: 'checkConfig'})),
+			            run: function(response, opt) {
+                            (new afStudio.CreateProjectWizard(response['dataset'])).show();
+			            }
+			        });            
                 }
             });
         }

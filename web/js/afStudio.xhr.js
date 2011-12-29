@@ -55,13 +55,25 @@ afStudio.xhr = {
     },
     
     /**
+     * Returns masking element.
      * @protected
-     * @param {String|HTMLElement|Ext.Component} el
+     * @param {String|HTMLElement|Ext.Element|Ext.Component} el
      * @return {Ext.Element} masking element or null if was not found
      */
     getMaskElement : function(el) {
-	   return (Ext.isString(el) || Ext.isElement(el)) ? ((Ext.isString(el) && Ext.getCmp(el)) ? Ext.getCmp(el).el : Ext.get(el)) 
-	                                                 : ((el instanceof Ext.Component) ? el.getEl() : null);  
+        if (el instanceof Ext.Element) {
+            return el;
+        }
+        
+        if (Ext.isString(el) || Ext.isElement(el)) {
+            return (Ext.isString(el) && Ext.getCmp(el)) ? Ext.getCmp(el).el : Ext.get(el);
+        }
+        
+        if (el instanceof Ext.Component) {
+            return el.getEl();
+        }
+        
+        return null; 
     },
     
 	/**
@@ -75,7 +87,9 @@ afStudio.xhr = {
 	 * <li><b>params</b>: {Object} (Optional) ajax request parameters</li>
 	 * 
      * <li><b>message</b>: {String|Boolean} (Optional) Using as string - success notification message 
-     *    more prioritized than response message, Boolean true means to show default notification if action.showNoteOnSuccess is true
+     *    more prioritized than server-side response message, 
+     *    boolean true means to show default notification message.
+     *    This property is used only if "showNoteOnSuccess" is true.
      * </li>
      * 
 	 * <li><b>showNoteOnSuccess</b>: {Boolean} (Optional) By default all actions are notified, 
@@ -98,8 +112,9 @@ afStudio.xhr = {
 	 * <li><b>error</b>: {Function} (Optional) The error callback function
 	 * 	  The callback is passed the following parameters:
 	 *    <ul>
-	 *      <li>response: Decoded json object</li> 
-	 *      <li>options: The parameter to the request call.</li>
+	 *      <li>response: {Object} The decoded json response object</li> 
+	 *      <li>options: {Object} The request options object</li>
+	 *      <li>failure: {Boolean} The communication failure flag, when it is true means that communication error occured</li>
 	 *    </ul> 
 	 * </li>
 	 * 
@@ -144,7 +159,8 @@ afStudio.xhr = {
                     return;
                 }
                 
-                var message = opt.message || response.message || response.content || null;
+                var message = (opt.message === true) ? (response.message || response.content || opt.message) 
+                                                     : (opt.message || response.message || response.content || null);
                     
                 message = (message === true) ? (response.success ? me.requestSucceed : me.requestFail) : message;
                 
@@ -161,7 +177,7 @@ afStudio.xhr = {
                     if (action.logMessage) {
                         this.fireEvent("logmessage", this, action.logMessage);  
                     }
-                    //show success message on demand
+                    //show success message on demand, message should not be empty
                     if (showNoteOnSuccess && !Ext.isEmpty(message)) {
                         afStudio.Msg.info(message);
                     }
@@ -180,7 +196,7 @@ afStudio.xhr = {
                 me.unmask(opt.mask);
                
                 if (Ext.isFunction(action.error)) {
-                    Ext.util.Functions.createDelegate(action.error, this, [xhr, opt], false)();
+                    Ext.util.Functions.createDelegate(action.error, this, [xhr, opt, true], false)();
                 }
                 var message  = String.format('Status code: {0} <br /> Message: {1}', xhr.status, xhr.statusText || 'none'),
                     msgTitle = "Server communication failure";

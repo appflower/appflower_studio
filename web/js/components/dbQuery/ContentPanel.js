@@ -134,38 +134,32 @@ afStudio.dbQuery.ContentPanel = Ext.extend(Ext.Panel, {
 	 */
 	,showTableData : function(modelData) {
 		var me = this,
-			    m = modelData.model,
-			    s = modelData.schema;
+            m = modelData.model,
+            s = modelData.schema;
 
-		me.maskContent('loading metadata...');	    
-			    
-		Ext.Ajax.request({
-		   url: afStudioWSUrls.modelListUrl,
-		   params: {
-			   xaction: 'read',
-			   model: m,
-			   schema: s
-		   },
-		   success: function(result, request) {
-		       me.unmaskContent();		
-		       var response = Ext.decode(result.responseText),
-				   resultCtn = {};
-		       
-		       if (response.success) {
-			       resultCtn = new afStudio.dbQuery.TableModelTab({
-					   metaData: response.data,
-					   modelName: m,
-					   schemaName: s
-			       });
-		       } else {
-			       resultCtn.html = String.format('<div>Error: {0}</div>', response.message);
-		       }
-		       
-		       me.clearPanel()
-		       		.add(resultCtn);
-		       me.doLayout();
-		   }
-		});
+        afStudio.xhr.executeAction({
+            url: afStudioWSUrls.modelListUrl,
+            params: {
+                xaction: 'read',
+                model: m,
+                schema: s
+            },
+            mask: {msg: 'loading metadata...', ctn: me.body},
+            run: function(response, opt) {
+               var ctn = new afStudio.dbQuery.TableModelTab({
+                   metaData: response.data,
+                   modelName: m,
+                   schemaName: s
+               });
+               me.clearPanel().add(ctn);
+               me.doLayout();
+            }, 
+            error: function(response, opt) {
+               var ctn = {html: String.format('<div>Error: {0}</div>', response.message)};
+               me.clearPanel().add(ctn);
+               me.doLayout();
+            }
+        });                
 	}//eo showTableData
 	
 	/**
