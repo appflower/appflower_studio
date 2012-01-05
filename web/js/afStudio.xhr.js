@@ -76,6 +76,14 @@ afStudio.xhr = {
         return null; 
     },
     
+    /**
+     * Sets timeout.
+     * @param {Number} time The timeout in milliseconds to be used for requests. (defaults to 30000 - 30 seconds)
+     */
+    setTimeout : function(time) {
+        Ext.Ajax.timeout = time;
+    },
+    
 	/**
 	 * Executes XMLHttpRequest action.
      * Details {@link Ext.Ajax.request}.
@@ -209,6 +217,38 @@ afStudio.xhr = {
         Ext.applyIf(requestObj, action);
         
 		Ext.Ajax.request(requestObj);
-	}
+	},
 	//eo executeAction
+    
+    /**
+     * Adds {@link #requestcomplete} event listener.
+     * Event handler checks response object, if it is defined like json:
+     * <ul> 
+     * <li>jsonResponse property is set up in request options</li>
+     * <li>response "Content-Type" header == "application/json"</li>
+     * </ul> 
+     * but cannot be decoded then the error message is shown.
+     * If response object contains <i>redirect</i> property with redirect URL 
+     * then browser is redirected to specified URL.
+     */
+    initAjaxRequestComplete : function() {
+        Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
+            var response;
+            
+            try {
+                response = Ext.decode(xhr.responseText);
+                
+            } catch(e) {
+                if (opt.jsonResponse || xhr.getResponseHeader('Content-Type') == 'application/json') {
+                    afStudio.Msg.error('Response decoding error', 
+                        String.format('<u>url</u>: <b>{0}</b> <br/>{1}', opt.url, xhr.responseText));
+                }
+                return;
+            }
+            
+            if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
+                location.href = response.redirect;
+            }
+        });
+    }
 };

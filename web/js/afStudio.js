@@ -16,30 +16,6 @@ var afStudio = function () {
 	
 	return {
 		/**
-		 * Adds <u>requestcomplete</u> listener to global {@link Ext.Ajax} request class.
-		 * If XHR response is JSON and it contains <i>redirect</i> property - holding redirect URL 
-		 * then browser is redirected to specified URL.
-		 */
-		initAjaxRequestComplete : function() {
-			Ext.Ajax.on('requestcomplete', function(conn, xhr, opt) {
-                var response;
-				try {
-					response = Ext.decode(xhr.responseText);
-				} catch(e) {
-					if (opt.jsonResponse) {
-						afStudio.Msg.error('Response cannot be decoded', 
-							String.format('<u>url</u>: <b>{0}</b> <br/>{1}', opt.url, xhr.responseText));
-					}
-					return;
-				}
-				if (!Ext.isEmpty(response) && !Ext.isEmpty(response.redirect)) {
-					location.href = response.redirect;
-				}
-			});
-		},
-		//eo initAjaxRequestComplete
-		
-		/**
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
 		 */
 		initDataProxyErrorsHandling : function() {
@@ -66,7 +42,6 @@ var afStudio = function () {
 				afStudio.Msg.error(title, message);
 			});						
 		},
-		//eo initDataProxyErrorsHandling
 	
 		/**
 		 * Sets CLI console text.
@@ -91,21 +66,15 @@ var afStudio = function () {
 		log : function(message, messageType) {
 			messageType = messageType || false;
 			
-			Ext.Ajax.request({
-				url: afStudioWSUrls.getNotificationsUrl(),
-				method: 'POST',
-				params: {
-					cmd: 'set',
-					message: message,
-					messageType: messageType
-				},
-				callback: function(options, success, response) {
-					response = Ext.decode(response.responseText);					
-					if (!success) {
-						afStudio.Msg.error('Failure', 'Server-side failure with status code: ' + response.status);
-					}
-				}
-			});		
+            afStudio.xhr.executeAction({
+                url: afStudioWSUrls.getNotificationsUrl(),
+                showNoteOnSuccess: false,
+                params: {
+                    cmd: 'set',
+                    message: message,
+                    messageType: messageType
+                }
+            });
 		},
 		
 		/**
@@ -164,11 +133,11 @@ var afStudio = function () {
 			});
 			Ext.form.Field.prototype.msgTarget = 'side';
 			
-			this.initAjaxRequestComplete();
 			this.initDataProxyErrorsHandling();
 			
-			//timeout 5 minutes
-			Ext.Ajax.timeout = 300000;
+            afStudio.xhr.initAjaxRequestComplete();
+            //5 minutes
+            afStudio.xhr.setTimeout(300000);
 			
 			this.tb = new afStudio.viewport.StudioToolbar();
 			this.vp = new afStudio.viewport.StudioViewport();						  
