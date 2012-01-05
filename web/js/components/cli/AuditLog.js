@@ -11,7 +11,7 @@ afStudio.cli.AuditLog = Ext.extend(afStudio.cli.CommandLine, {
 	 * @cfg {String} baseUrl
 	 * AuditLog base URL.
 	 */
-	 baseUrl : afStudioWSUrls.getNotificationsUrl()
+	 baseUrl : afStudioWSUrls.notificationUrl
 	
 	/**
 	 * @property notificationOffset 

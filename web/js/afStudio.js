@@ -67,7 +67,7 @@ var afStudio = function () {
 			messageType = messageType || false;
 			
             afStudio.xhr.executeAction({
-                url: afStudioWSUrls.getNotificationsUrl(),
+                url: afStudioWSUrls.notificationUrl,
                 showNoteOnSuccess: false,
                 params: {
                     cmd: 'set',
@@ -96,31 +96,28 @@ var afStudio = function () {
 		addCurrentProject : function() {
 			var recentProjects = Ext.decode(Ext.util.Cookies.get('appFlowerStudioRecentProjects')) || [];
 			
-			Ext.Ajax.request({
-			   url: window.afStudioWSUrls.getConfigureProjectUrl(),
-			   success: function(response, opts) {
-			      var response = Ext.decode(response.responseText);
-			      var project = {};
-			      project.text = response.data.name;
-			      project.url = response.data.url+'/studio';			      
-			      
-			      Ext.each(recentProjects, function(recentProject, index) {
-				  		if(recentProject.url == project.url)
-				  		{
-				  			delete recentProjects[index];
-				  		}
-			      });
-			      
-			      recentProjects[recentProjects.length] = project;
-					
-				  var expirationDate=new Date();
-				  expirationDate.setDate(expirationDate.getDate()+30);
-					
-				  Ext.util.Cookies.set('appFlowerStudioRecentProjects',Ext.encode(recentProjects),expirationDate,'/','');
-			   }
-			});
+            afStudio.xhr.executeAction({
+                url: afStudioWSUrls.configureProjectUrl,
+                run: function(response, opts) {
+                    var project = {};
+                    project.text = response.data.name;
+                    project.url = response.data.url + '/studio';                  
+                  
+                    Ext.each(recentProjects, function(recentProject, index) {
+					    if (recentProject.url == project.url) {
+                           delete recentProjects[index];
+                        }
+                    });
+                  
+                    recentProjects[recentProjects.length] = project;
+                    
+                    var expirationDate = new Date();
+                    expirationDate.setDate(expirationDate.getDate()+30);
+                    
+                    Ext.util.Cookies.set('appFlowerStudioRecentProjects', Ext.encode(recentProjects), expirationDate, '/', '');
+                }
+            });
 		},
-		//eo addCurrentProject	
 		
 		/**
 		 * Instantiates afStudio.

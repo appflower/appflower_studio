@@ -38,14 +38,14 @@ afStudio.Settings = Ext.extend(Ext.Window, {
 	
 	createTabsUI: function(){
 		this.projectForm = new Ext.FormPanel({
-			url: window.afStudioWSUrls.getConfigureProjectUrl()+'?type=save',
+			url: afStudioWSUrls.configureProjectUrl + '?type=save',
 			bodyStyle: 'padding: 5px;', labelWidth: 140, 
 			border: false,
 			bodyBorder: false,
 			listeners: {
 	        	'render': function(cmp){
 					cmp.getForm().load({
-			            url: window.afStudioWSUrls.getConfigureProjectUrl(),
+			            url: afStudioWSUrls.configureProjectUrl,
 			
 			            failure: function(form, action) {
 			                Ext.Msg.alert("Load failed", 'Error while getting data');
