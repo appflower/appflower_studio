@@ -368,6 +368,20 @@ class afsFileSystem
     	
     }
     
+
+    /**
+     * 
+     * Checks if file is of a certain type.
+     * @param string $file The path
+     * @param array $extensions The possible file extensions
+     * @return bool
+     */
+    public function isFileType($file,Array $extensions) {
+    	
+    	return in_array($this->getExtension($file), $extensions);
+    	
+    }
+    
     
     /**
      * Replaces tokens in an array of files.

@@ -47,58 +47,108 @@ class XlsImporter extends BaseImporter {
 				break;
 		}
 		
-		$method = $this->properties->raw ? "getValue" : "getCalculatedValue";
-		$objReader = PHPExcel_IOFactory::createReader($type);
+		$allowed_mimes = array
+		(
+		"application/zip; charset=binary",
+		"application/vnd.ms-office; charset=binary",
+		"application/octet-stream; charset=binary"
+		);
 		
-		if($this->properties->worksheet) {
-			$sheets = explode(",",$this->properties->worksheet);
-			$objReader->setLoadSheetsOnly($sheets);
+		try {
 			
-			if($this->properties->worksheets_as_models) {
-				foreach($sheets as $sheet) {
-					if(!class_exists($sheet)) {
-						throw new ImporterException("Error in file ".$path."<br><br>Model '".$sheet."' does not exist!");
-					}		
+			$finfo = finfo_open(FILEINFO_MIME);
+			
+			if(!in_array(finfo_file($finfo,$path),$allowed_mimes)) {
+				throw new ImporterException("Not a Spreadsheet document!");
+			}
+			
+			$method = $this->properties->raw ? "getValue" : "getCalculatedValue";
+			$objReader = PHPExcel_IOFactory::createReader($type);
+			$first_sheet = null;
+			
+			if($this->properties->worksheet) {
+				
+				$sheets = explode(",",str_replace(" ", "", $this->properties->worksheet));
+				
+				if($this->properties->has_header && !$this->properties->worksheets_as_models) {
+					$all_sheets = $objReader->listWorksheetNames($path);
+					$objReader->setLoadSheetsOnly(array((string) $all_sheets[0]));
+					$objPHPExcel = @$objReader->load($path);
+					$first_sheet = $objPHPExcel->getSheet(0);
+					foreach($first_sheet->getRowIterator() as $row) {
+						$cellIterator = $row->getCellIterator();
+						$cellIterator->setIterateOnlyExistingCells(true);
+						foreach ($cellIterator as $cell) {
+							$this->data[$first_sheet->getTitle()][$row->getRowIndex()-1][] = $cell->getValue();
+						}	
+						break;
+					}
+					
 				}
-			}
-		} else {
-			$objReader->setLoadAllSheets();
-		}
-		
-		$objPHPExcel = @$objReader->load($path);
-		$worksheets = $objPHPExcel->getAllSheets();
-		
-		foreach($worksheets as $k => $worksheet) {
-			if(is_null($worksheet->getCellByColumnAndRow(0,1)->getValue())) {
-				unset($worksheets[$k]);
-			}
-		}
-		
-		if(sizeof($worksheets) == 0) {
-			throw new ImporterException("There is no data to import in file: ".$path);
-		}
-		
-		foreach ($worksheets as $worksheet) {
-			$lineno = 1;
-			foreach ($worksheet->getRowIterator() as $row) {
-				$cellIterator = $row->getCellIterator();
-				$cellIterator->setIterateOnlyExistingCells(true);
-				$lineno++;
-				$this->properties->lines = $worksheet->getTitle().":".$lineno;
-				foreach ($cellIterator as $cell) {
-					if(!is_null($cell) && $cell->getValue()) {
-						if(PHPExcel_Shared_Date::isDateTime($cell)) {
-							$this->data[$worksheet->getTitle()][$row->getRowIndex()][] = date("Y-m-d H:i:s",PHPExcel_Shared_Date::ExcelToPHP($cell->getValue()));		
-						} else if($cell->hasHyperlink()) {
-							$this->data[$worksheet->getTitle()][$row->getRowIndex()][] = '<a href="'.$cell->getHyperlink()->getUrl().'" title="'.$cell->getHyperlink()->getTooltip().'">'.$cell->$method().'</a>';
-						} else {
-							$this->data[$worksheet->getTitle()][$row->getRowIndex()][] = $cell->$method();		
-						}
-						
+				
+				$objReader->setLoadSheetsOnly($sheets);
+				
+				if($this->properties->worksheets_as_models) {
+					foreach($sheets as $sheet) {
+						if(!class_exists($sheet)) {
+							throw new ImporterException("Model '".$sheet."' does not exist!");
+						}		
 					}
 				}
+			} else {
+				$objReader->setLoadAllSheets();
 			}
-		} 
+			
+			$objPHPExcel = @$objReader->load($path);
+			$worksheets = $objPHPExcel->getAllSheets();
+			
+			foreach($worksheets as $k => $worksheet) {
+				if(is_null($worksheet->getCellByColumnAndRow(0,1)->getValue())) {
+					unset($worksheets[$k]);
+				}
+				
+			}
+			
+			if(sizeof($worksheets) == 0) {
+				throw new ImporterException("There is no data to import in file! Did you type worksheet names correctly?");
+			}
+			
+			foreach ($worksheets as $worksheet) {
+				$lineno = 1;
+				foreach ($worksheet->getRowIterator() as $rk => $row) {
+					if($rk == 1 && $first_sheet && $worksheet->getTitle() == $first_sheet->getTitle()) {
+						continue;
+					}
+					$cellIterator = $row->getCellIterator();
+					$cellIterator->setIterateOnlyExistingCells(true);
+					$lineno++;
+					$this->properties->lines = $worksheet->getTitle().":".$lineno;
+					if($this->properties->worksheets_as_models && $this->isInvalidModel($worksheet->getTitle())) {
+						throw new ImporterException("Model '".$worksheet->getTitle()."' does not exist!");
+					}
+					foreach ($cellIterator as $cell) {
+						if(!is_null($cell) && $cell->getValue()) {
+							if(PHPExcel_Shared_Date::isDateTime($cell)) {
+								$value = $cell->getCalculatedValue();
+								if($value instanceof PHPExcel_RichText) {
+									$value = $value->getPlainText();
+								}
+								$this->data[$worksheet->getTitle()][$row->getRowIndex()-1][] = date("Y-m-d H:i:s",PHPExcel_Shared_Date::ExcelToPHP($value));		
+							} else if($cell->hasHyperlink()) {
+								$this->data[$worksheet->getTitle()][$row->getRowIndex()-1][] = '<a href="'.$cell->getHyperlink()->getUrl().'" title="'.$cell->getHyperlink()->getTooltip().'">'.$cell->$method().'</a>';
+							} else {
+								$this->data[$worksheet->getTitle()][$row->getRowIndex()-1][] = $cell->$method();		
+							}
+							
+						}
+					}
+				}
+			} 
+		}
+		catch (Exception $e) {
+			throw new ImporterException("<b>File</b>: ".$path."<br /><br /><b>Error</b>: ".$e->getMessage()."<br/>");
+		}
+		
 	}
 	
 	/**
@@ -127,7 +177,6 @@ class XlsImporter extends BaseImporter {
 			foreach($data as $sheetname => $sheetrows) {
 				$this->properties->model = $sheetname;
 				$this->data = $sheetrows;
-				sort($this->data);
 				$this->properties->columns = null;
 				parent::insertData();
 			}

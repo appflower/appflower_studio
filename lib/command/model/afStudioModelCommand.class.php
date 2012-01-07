@@ -237,7 +237,7 @@ class afStudioModelCommand extends afBaseStudioCommand
     		$params[$item] = $this->getParameter($item);
     	}
     	
-    	$params["append"] = $params["append"] === "true" ? true : false;
+    	$params["append"] = ($params["append"] === "true" || $params["append"] === "on") ? true : false;
     	$params["delimeter"] = $params["delimeter"] ? $params["delimeter"] : ",";
     	$params["enclosure"] = $params["enclosure"] ? $params["enclosure"] : '"';
 
@@ -267,6 +267,7 @@ class afStudioModelCommand extends afBaseStudioCommand
     		}
     		
     		$importer = new $class($params);
+    		$importer->setProperty("all",$files);
     		
     		foreach ($files as $k => &$file) {
 				
@@ -276,7 +277,6 @@ class afStudioModelCommand extends afBaseStudioCommand
 	    			$importer->insertData($file);	
 	    		}
 	    		
-	    		
 			}
   
 	    	if($params["name"]) {
@@ -285,9 +285,14 @@ class afStudioModelCommand extends afBaseStudioCommand
 	    		}
 	    	}
     		
-    		
     	} catch(Exception $e) {
-    		return afResponseHelper::create()->success(false)->message($e->getMessage());	
+    		return afResponseHelper::create()->success(false)->message("An error has been occured!<br/><br/>".$e->getMessage());	
+    	}
+    	
+    	$errors = $importer->getProperty("errors");
+    	
+    	if($class == "YmlImporter" && $errors) {
+    		return afResponseHelper::create()->success(false)->message("Error(s) have been occured:<br/><br/>".implode("<br />", $errors));	
     	}
     	
     	return afResponseHelper::create()->success(true)->message("Data has been successfully inserted!");

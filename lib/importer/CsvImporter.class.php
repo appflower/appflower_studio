@@ -37,15 +37,21 @@ class CsvImporter extends BaseImporter {
 		
 		try {
 			
+			$finfo = finfo_open(FILEINFO_MIME);
+			
+			if(substr(finfo_file($finfo,$path),0,4) != "text") {
+				throw new ImporterException("Not a CSV document!");
+			}
+			
 			$fp = fopen($path,"rt");
 			
 			if(!$fp) {
-				throw Exception("Couldn't read file: ".$path);
+				throw new ImporterException("Couldn't read file!");
 			}
 			
 			$first_row = 1;
 			
-			while(($row = fgetcsv($fp,1000,$this->properties->delimeter,$this->properties->enclosure)) !== false) {
+			while(($row = fgetcsv($fp,0,$this->properties->delimeter,$this->properties->enclosure)) !== false) {
 				if(count($row) == 1 && !$row[0]) {
 					continue;
 				}
@@ -69,10 +75,10 @@ class CsvImporter extends BaseImporter {
 			
 		}
 		catch (Exception $e) {
-			if($this->properties->lines > 1) {
+			/*if($this->properties->lines > 1) {
 				parent::deleteData();
-			}
-			throw new ImporterException($e->getMessage());
+			}*/
+			throw new ImporterException("<b>File</b>: ".$path."<br /><br /><b>Error</b>: ".$e->getMessage()."<br/>");
 		}
 
 	}

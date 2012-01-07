@@ -46,7 +46,6 @@ abstract class BaseImporter {
 		return (!class_exists($model) || !($obj = new $model) instanceof BaseObject);
 	}
 	
-	
 	/**
 	 * Loads the column and table names for the current model. It is called automatically by insertData() when needed.
 	 * 
@@ -84,7 +83,7 @@ abstract class BaseImporter {
 				 
 			 foreach($this->data as $k => $row) {
 			 	if(sizeof($row) != $mSize) {
-			 		throw new ImporterException("File is invalid:<br><br>Line ".($this->properties->lines).".: ".implode(",",$row)."<br><br>has ".sizeof($row)." columns but ".$mSize." is expected!");
+			 		throw new ImporterException("Invalid row detected.<br><br>Row: '".($this->properties->lines).".: ".implode(",",$row)."' has <b>".sizeof($row)."</b> columns but <b>".$mSize."</b> is expected!");
 			 	}
 			 }
 			 
@@ -189,7 +188,7 @@ abstract class BaseImporter {
 		}
 		catch (Exception $e) {
 			$this->properties->con->rollBack();
-			throw new ImporterException($this->properties->current."<br><br>Error:<br><br>".$e->getMessage());
+			throw new ImporterException($e->getMessage());
 		}
 		
 		
