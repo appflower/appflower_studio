@@ -89,6 +89,10 @@
 <!-- file-upload field -->
 <link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/form/fileuploadfield/css/fileuploadfield.css" />
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/form/fileuploadfield/FileUploadField.js"></script>
+
+<!-- desktop -->
+<link rel="stylesheet" type="text/css" href="/appFlowerStudioPlugin/js/custom/desktop/css/desktop.css" />
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/desktop/js/StartMenu.js"></script>
 <!-- end of custom ext ux -->
 <!-- ==================== -->
 

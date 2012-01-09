@@ -123,16 +123,23 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             }]
         });
         
-        this.messageBox = new afStudio.layoutDesigner.view.ViewMessageBox({
+        var menuView = new Ext.ux.StartMenu({
+            floating: false,
+            title: 'AppFlower',
+            height: 346,
             width: 300,
-            viewContainer: this.centerPanel,
-            viewMessage: '<p>Menu Live Preview</p> <span style="font-size:10px;">under development</span>'
+            items: [{
+                text: 'Test menu item',
+                iconCls: 'icon-grid',
+                handler: function(){afStudio.Msg.info('test item was clicked');}               
+            }]
         });
-        this.centerPanel.add(this.messageBox);
+
+        this.centerPanel.add(menuView);
         
-        this.centerPanel.on('afterlayout', function(){
-            this.messageBox.onAfterRender();
-        }, this);
+        this.centerPanel.on('render', function(ctn){
+            menuView.show.defer(10, menuView, [ctn.body, 'c-c?']);
+        });
     },
     //eo createRegions
     
