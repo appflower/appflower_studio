@@ -119,10 +119,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	 * @private
 	 */	
 	_afterInitComponent : function() {
-
 		this.configureView();
 	},
-	//eo _afterInitComponent    
     
 	
 	/**
@@ -153,7 +151,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			executor(node, index);
 		}
 	},
-	//eo onModelNodeAppend
 	
 	/**
 	 * Relayed <u>modelNodeInsert</u> event listener.
@@ -169,7 +166,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			executor(parent, node, refNode, refCmp);
 		}
 	},
-	//eo onModelNodeInsert
 	
 	/**
 	 * Relayed <u>modelNodeRemove</u> event listener.
@@ -185,7 +181,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 			executor(node, cmp);
 		}
 	},
-	//eo onModelNodeRemove	
 	
 	/**
 	 * Relayed <u>modelPropertyChanged</u> event listener.
@@ -515,6 +510,7 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		
 		buttons.push(submitBt, resetBt);
 	},
+    //eo createResetSubmitButtons
 	
 	/**
 	 * Creates & registers a button.

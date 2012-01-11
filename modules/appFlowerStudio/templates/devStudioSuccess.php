@@ -233,6 +233,9 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/ViewController.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/controller/error/ControllerError.js"></script>
 	<!-- view -->
+		<!-- interfaces -->	
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/interfaces/ModelInterface.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/interfaces/ModelMapper.js"></script>
 		<!-- inspector tree -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorLoader.js"></script>
@@ -253,6 +256,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/propertyGrid/PropertyGrid.js"></script>
 		<!-- inspector palette -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/InspectorPalette.js"></script>
+		<!-- error window -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/ModelErrorWindow.js"></script>
 <!-- end of appflower view model -->
 
@@ -310,6 +314,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js"></script>
+
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/StartMenuView.js"></script>
 		<!-- shortcuts -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/ShortcutsEditor.js"></script>
 			<!-- template -->

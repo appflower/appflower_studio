@@ -23,6 +23,11 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
      */
     
     /**
+     * @property menuAttr Menu meta-data attributes
+     * @type {Object}
+     */
+    
+    /**
      * Ext template method.
      * @override
      * @private
@@ -77,8 +82,25 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 this.menuAttr = response.data.attributes;
                 this.initMainMenu(response.data.main);
                 this.initToolsMenu(response.data.tools);
+                this.initView();
             }
         });
+    },
+
+    /**
+     * Cleanup resources. 
+     * Destroys main menu {@link #mainCt} and tools {@link #toolsCt} controllers, 
+     * error window {@link #errorWin} etc.
+     * @override
+     * @private
+     */
+    onDestroy : function() {
+        Ext.destroy(this.mainCt, this.toolsCt, this.errorWin);
+        this.mainCt = this.toolsCt = this.errorWin = null;
+        
+        this.eastPanel = this.centerPanel = this.menuAttr = null;
+        
+        afStudio.theme.desktop.StartMenuEditor.superclass.onDestroy.call(this);
     },
     
     /**
@@ -122,26 +144,25 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 handler: this.tdshortcut
             }]
         });
-        
-        var menuView = new Ext.ux.StartMenu({
-            floating: false,
-            title: 'AppFlower',
-            height: 346,
-            width: 300,
-            items: [{
-                text: 'Test menu item',
-                iconCls: 'icon-grid',
-                handler: function(){afStudio.Msg.info('test item was clicked');}               
-            }]
-        });
-
-        this.centerPanel.add(menuView);
-        
-        this.centerPanel.on('render', function(ctn){
-            menuView.show.defer(10, menuView, [ctn.body, 'c-c?']);
-        });
     },
     //eo createRegions
+    
+    /**
+     * @protected
+     */
+    initView : function() {
+        var view = new afStudio.theme.desktop.menu.view.StartMenuView({
+            title: 'AppFlower',
+            items: []
+        });
+        
+        this.mainCt.registerView('menu', view);
+        this.toolsCt.registerView('tools', view);
+
+        this.centerPanel.add(view);
+        this.centerPanel.doLayout();
+        view.show(this.centerPanel.body, 'c-c?');
+    },
     
     /**
      * Init main menu.
@@ -287,7 +308,8 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
                 cmd: 'saveHelper',
                 key: 'menu',
                 content: Ext.encode(data)
-            }
+            },
+            mask: {ctn: this, msg: 'saving...'}
         });
     },
     

@@ -58,6 +58,32 @@ afStudio.theme.desktop.menu.controller.MenuController = Ext.extend(afStudio.cont
     },
     
     /**
+     * Registers a view.
+     * @public
+     * @param {String} id The view's ID inside {@link #views} object
+     * @param {Function|Object} view The view / view constructor
+     * @param {Object} (optional) cfg The view configuration object
+     */
+    registerView : function(id, view, cfg) {
+        var me = this;
+        
+        cfg = Ext.apply(cfg || {}, {controller: me});
+        
+        if (Ext.isFunction(view)) {
+	        view = me.views[id] = new view(cfg);
+            
+        } else if (view instanceof Ext.BoxComponent) {
+            me.views[id] = view;
+            view.init(cfg);
+        }
+        
+        view.relayEvents(me, [
+            'modelNodeAppend', 'modelNodeInsert', 'modelNodeRemove', 'modelNodeMove',
+            'modelNodeSelect', 'modelPropertyChanged', 'modelReconfigure'
+        ]);
+    },
+    
+    /**
      * Init model events.
      * @override 
      * @protected
@@ -72,5 +98,15 @@ afStudio.theme.desktop.menu.controller.MenuController = Ext.extend(afStudio.cont
      * @param {Object} (Optional) params The parameters
      */
     saveViewDefinition : function(params) {
-    }
+    },
+    
+    /**
+     * Returns model type. This method should be used only when controller is ready, look at {@link #isReady}.
+     * @return {String} model type
+     */
+    getModelType : function() {
+        var model = this.getRootNode();
+        
+        return model.getModelType();
+    }    
 });
