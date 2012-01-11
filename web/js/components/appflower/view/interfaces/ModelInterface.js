@@ -4,6 +4,7 @@ Ext.ns('afStudio.view');
  * ModelInterface mixin provides communication interface between a view and a model.
  * @singleton
  * 
+ * @dependency {afStudio.controller.BaseController} controller The associated controller(s), look at {@link afStudio.view.ModelInterface#getController} method
  * @dependency {afStudio.view.ModelMapper} mapper mixin The view which uses ModelInterface must use ModelMapper mixin
  * 
  * @author Nikolai Babinski
@@ -11,6 +12,18 @@ Ext.ns('afStudio.view');
 afStudio.view.ModelInterface = (function() {
     
     return {
+        
+        /**
+         * Returns model's controller.
+         * If a view is registered into several controllers(associated with several models), 
+         * this method should be overridden in descendents mixines or inside a view class 
+         * returning the <u>current</u> controller view is working with.  
+         * @protected
+         * @return {BaseController} controller
+         */
+        getController : function() {
+            return this.controller;
+        },
         
         /**
          * Returns model node based on its relative path from the root node.
@@ -22,10 +35,10 @@ afStudio.view.ModelInterface = (function() {
          * @return {Node} node or null if searching failed
          */
         getModelNodeByPath : function(nodePath) {
-            var c = this.controller;
+            var c = this.getController();
             
             var path = Ext.isArray(nodePath) ? nodePath : nodePath.split(c.pathSeparator),
-                m = this.controller.getRootNode(),
+                m = c.getRootNode(),
                 node;
             for (var i = 0, l = path.length; i < l; i++) {
                 node = m.findChildById(path[i]);
@@ -45,7 +58,7 @@ afStudio.view.ModelInterface = (function() {
          * @return {Node} model node 
          */
         getModelNode : function(node) {
-            var c = this.controller;
+            var c = this.getController();
             if (Ext.isString(node)) {
                 node = (node.indexOf(c.pathSeparator) != -1) ? this.getModelNodeByPath(node) : c.getNodeById(node);
             }
@@ -114,7 +127,7 @@ afStudio.view.ModelInterface = (function() {
          * @return {Boolean}
          */
         isModelNodeExists : function(node, notExact) {
-            var c = this.controller,
+            var c = this.getController(),
                 m = c.getRootNode();
             
             node = !Ext.isString(node) ? node.id : node;
