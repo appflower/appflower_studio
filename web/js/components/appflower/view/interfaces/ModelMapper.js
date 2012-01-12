@@ -26,6 +26,11 @@ afStudio.view.ModelMapper = (function() {
         NODE_VALUE_MAPPER : 'value',
         
         /**
+         * @property modelMapper The store of view components -> model nodes relations
+         * @type {Object} 
+         */
+        
+        /**
          * Returns component by a model node and property associated with it.
          * @param {String|Node} node The node or node's id
          * @param {String} (optional) property The node's property if a component is mapped to a node and its specific property
@@ -96,13 +101,26 @@ afStudio.view.ModelMapper = (function() {
         },
         
         /**
-         * Creates the mapper function. All passed in parameters except the first one(mapper function) are added to the mapper.
+         * Creates the mapper function. 
+         * All passed in parameters except the first one(mapper function) are added to the mapper.
          * @param {Function} fn The mapper function
          * @return {Funtion} mapper
          */
         createMapper : function(fn) {
             var args = Array.prototype.slice.call(arguments, 1);
             return fn.createDelegate(this, args);
-        }       
+        },
+        
+		/**
+         * Dumps components & model nodes relations.
+		 */
+		dumpMapper : function() {
+		    afStudio.Logger.info('afStudio.view.ModelMapper', this.modelMapper);
+            afStudio.Logger.info('----------dump-----------');
+		    Ext.iterate(this.modelMapper, function(k, v, o){
+		        afStudio.Logger.info('\t', k, v);
+		    });
+            afStudio.Logger.info('-------------------------');
+		}
     };
 })();
