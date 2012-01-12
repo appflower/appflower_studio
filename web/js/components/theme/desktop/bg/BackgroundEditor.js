@@ -322,11 +322,10 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
             params.color = color;
         }
             
-        afStudio.Logger.info('@params', params);            
-        
         afStudio.xhr.executeAction({
             url: afStudioWSUrls.project,
-            params: params
+            params: params,
+            mask: {ctn: this, msg: 'saving...'}
         });
     },
     

@@ -941,20 +941,8 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 		}
 		
 		return fieldSetIdx;
-	},
-	//eo getFieldSetInsertionIndex
-	
-	/**
-	 * TODO  auxilary method, should be deleted after view will be implemented
-	 * @private
-	 */
-	dumpMapper : function() {
-		afStudio.Logger.info('modelMapper', this.modelMapper);
-		Ext.iterate(this.modelMapper, function(k, v, o){
-			afStudio.Logger.info(k, v);
-		});
 	}
-	
+	//eo getFieldSetInsertionIndex
 });
 
 //@mixin ModelMapper

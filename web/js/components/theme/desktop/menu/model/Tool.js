@@ -2,7 +2,7 @@ N = afStudio.theme.desktop.menu.model;
 
 N.Tool = Ext.extend(N.Node, {
 
-    tag: 'tool',
+    tag : N.Nodes.TOOL,
     
     properties : [
         {name: 'name', type: 'dbNameType', required: true},

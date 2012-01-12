@@ -14,30 +14,15 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
     controller : null,
 
     /**
+     * @property currentCtrl The current controller this view is working with
+     * @type {BaseController} 
+     */
+    currentCtrl : null,
+    
+    /**
      * @property modelMapper The Model->Component associations holder.
      * @type {Object}
      */
-    
-    /**
-     * Instantiates view during registration into controller.
-     * 
-     * @param {Object} cfg The configuration object, cfg.controller property 
-     * contains the controller this view is registered into.
-     */
-    init : function(cfg) {
-        afStudio.Logger.info('@startMenu view registered');
- 
-        var ctrType = cfg.controller.getModelType();
-        
-        if (!this.controller) {
-            this.controller = {}; 
-        }
-        this.controller[ctrType] = cfg.controller;
-        
-        delete cfg.controller;
-        
-        Ext.apply(this, cfg);
-    },
     
     /**
      * Ext template method.
@@ -85,6 +70,99 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
     },
     
     /**
+     * Instantiates view during registration into controller.
+     * 
+     * @param {Object} cfg The configuration object, cfg.controller property 
+     * contains the controller this view is registered into.
+     */
+    init : function(cfg) {
+        afStudio.Logger.info('@startMenu view registered');
+ 
+        var ctrType = cfg.controller.getModelType();
+        
+        if (!this.controller) {
+            this.controller = {}; 
+        }
+        this.controller[ctrType] = cfg.controller;
+        
+        delete cfg.controller;
+        
+        Ext.apply(this, cfg);
+        
+        this.initController(this.controller[ctrType]);
+    },
+    
+    /**
+     * Init registered controller.
+     * @protected
+     * @param {MenuController} ctr The controller
+     */
+    initController : function(ctr) {
+        var mt = ctr.root.getModelType(),
+            builder = String.format('build{0}Menu', mt.ucfirst());
+
+        if (Ext.isFunction(this[builder])) {
+	        this[builder](ctr);
+        }
+    },
+    
+    /**
+     * Returns current controller this view is working with.
+     * @override {@link afStudio.view.ModelInterface#getController}
+     * @protected
+     * @return {BaseController}
+     */
+    getController : function() {
+        if (!this.currentCtrl) {
+            throw new afStudio.error.ApsError('Current controller is not specified');    
+        }
+        
+        return this.currentCtrl;
+    },
+    
+    /**
+     * Creates/Inits main menu based on its model.
+     * @protected
+     * @param {MenuController} ctr The main menu controller
+     */
+    buildMainMenu : function(ctr) {
+        afStudio.Logger.info('@view [StartMenu] building "main" menu');
+        this.currentCtrl = ctr;
+        
+        var items = this.getMenuItems(ctr.root);
+        
+        if (!Ext.isEmpty(items)) {
+            Ext.each(items, function(itm){
+                var mit = this.createMainMenuItem(itm);
+                this.add(mit);
+            }, this);
+            
+            this.doLayout();
+        }
+    },
+    
+    /**
+     * Creates/Inits tools menu based on its model.
+     * @protected
+     * @param {MenuController} ctr The tools menu controller
+     */
+    buildToolsMenu : function(ctr) {
+        afStudio.Logger.info('@view [StartMenu] building "tools" menu');
+        this.currentCtrl = ctr;
+        
+        var items = this.getMenuItems(ctr.root);
+        
+        if (!Ext.isEmpty(items)) {
+            Ext.each(items, function(itm){
+                var mit = this.createToolsMenuItem(itm);
+                this.addTool(mit);
+            }, this);
+            
+            this.doLayout();
+        }
+    },
+    
+    /**
      * Relayed <u>modelNodeAppend</u> event listener.
      * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
      * @protected
@@ -92,9 +170,6 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      */
     onModelNodeAppend : function(ctr, parent, node, index) {
         afStudio.Logger.info('@view [StartMenu] modelNodeAppend');
-        
-//        ctr.root.getModelType();
-        
 //        var executor = this.getExecutor(this.EXEC_ADD, node);
 //        if (executor) {
 //            executor(node, index);
@@ -145,6 +220,85 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
 //        if (executor) {
 //            executor(node, cmp, p, v, oldValue);
 //        }
+    },
+    
+    /**
+     * Creates main menu item.
+     * @protected
+     * @param {Object} item The main menu item definition object
+     * @return {Ext.menu.Item}
+     */
+    createMainMenuItem : function(item) {
+        var mpr = this.NODE_ID_MAPPER,
+            itemId = item[mpr];
+
+        var cfg = {
+            text: item.label,
+            icon: item.icon
+        };
+        //add model node mapping
+        cfg[mpr] = itemId;
+            
+        if (item.children) {
+            var submenu = [];
+            Ext.each(item.children, function(itm, idx){
+	            submenu[idx] = this.createMainMenuItem(itm);
+            }, this);
+            
+            cfg.menu = {
+                ignoreParentClicks: true,
+                items: submenu
+            };
+        }
+        
+        return this.createItem(cfg);
+    },
+    
+    /**
+     * Creates tools menu item.
+     * @protected
+     * @param {Object} item The tools item definition object
+     * @return {Ext.menu.Item}
+     */
+    createToolsMenuItem : function(item) {
+        var mpr = this.NODE_ID_MAPPER,
+            itemId = item[mpr];
+
+        var cfg = Ext.copyTo({}, item, 'text, iconCls');
+        //add model node mapping
+        cfg[mpr] = itemId;
+        
+        return this.createItem(cfg);
+    },
+    
+    /**
+     * Creates menu item component.
+     * @protected
+     * @param {Object} cfg The menu item configuration object
+     * @return {Ext.menu.Item} item
+     */
+    createItem : function(cfg) {
+        var ctrl = this.getController(),
+            mit = new Ext.menu.Item(cfg);
+        
+        mit.on({
+            scope: this,
+            
+            activate: function(it) {
+                this.currentCtrl = ctrl;
+                var node = this.getModelByCmp(it);
+                ctrl.selectModelNode(node, this);
+            },
+            
+            beforedestroy: function(it) {
+                this.unmapCmpFromModel(it[this.NODE_ID_MAPPER]);
+            }
+        });
+        
+        //registers relation model node -> menu item component
+        this.mapCmpToModel(cfg[this.NODE_ID_MAPPER], mit);
+        
+        return mit;
     }
         
 });
@@ -154,7 +308,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
 Ext.applyIf(afStudio.theme.desktop.menu.view.StartMenuView.prototype, afStudio.view.ModelMapper);
 
 //@mixin ModelInterface
-Ext.apply(afStudio.theme.desktop.menu.view.StartMenuView.prototype, afStudio.view.ModelInterface);
+Ext.applyIf(afStudio.theme.desktop.menu.view.StartMenuView.prototype, afStudio.theme.desktop.menu.view.ModelInterface);
 
 ////@mixin ModelReflector
 //Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelReflector);

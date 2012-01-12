@@ -309,12 +309,14 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Tool.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/controller/MenuController.js"></script>
 			<!-- view -->
+				<!-- inspector tree -->			
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorLoader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js"></script>
-
+				<!-- start menu -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/ModelInterface.js"></script>				
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/StartMenuView.js"></script>
 		<!-- shortcuts -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/ShortcutsEditor.js"></script>
