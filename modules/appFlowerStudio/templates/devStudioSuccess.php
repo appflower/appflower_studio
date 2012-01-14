@@ -70,13 +70,14 @@
 <!-- ace code-editor -->
 <script src="/appFlowerStudioPlugin/js/ace/src/ace.js" type="text/javascript" charset="utf-8"></script> 
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-textile.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-php.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-xml.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-css.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-html.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-json.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/mode-markdown.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-php.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-xml.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-sql.js" type="text/javascript" charset="utf-8"></script>
 <script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/ace/Ext.ux.AceComponent.js"></script>
 
@@ -236,6 +237,7 @@
 		<!-- interfaces -->	
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/interfaces/ModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/interfaces/ModelMapper.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/interfaces/ModelReflector.js"></script>
 		<!-- inspector tree -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/appflower/view/inspectorTree/InspectorLoader.js"></script>
@@ -264,7 +266,6 @@
 	<!-- gui views -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelMapper.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/ModelReflector.js"></script>
 		<!-- list -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/widgetDesigner/gui/list/ListModelReflector.js"></script>
@@ -316,7 +317,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js"></script>
 				<!-- start menu -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/ModelInterface.js"></script>				
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/ModelInterface.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/ModelReflector.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/StartMenuView.js"></script>
 		<!-- shortcuts -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/ShortcutsEditor.js"></script>
@@ -350,6 +352,8 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery.jscrollpane.min.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/jquery/jquery.prettyPhoto.js"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/prettyPhoto.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/welcome.css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />

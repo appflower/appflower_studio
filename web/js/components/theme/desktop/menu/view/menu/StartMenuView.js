@@ -169,12 +169,11 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      * @interface
      */
     onModelNodeAppend : function(ctr, parent, node, index) {
-        afStudio.Logger.info('@view [StartMenu] modelNodeAppend');
-//        var executor = this.getExecutor(this.EXEC_ADD, node);
-//        if (executor) {
-//            executor(node, index);
-//        }
-//        console.log(ctr, ctr.root.getModelType());
+        afStudio.Logger.info('@view [StartMenu] modelNodeAppend', node);
+        var executor = this.getExecutor(this.EXEC_ADD, node);
+        if (executor) {
+            executor(node, index);
+        }
     },
     
     /**
@@ -200,8 +199,8 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      */
     onModelNodeRemove : function(ctr, parent, node) {
         afStudio.Logger.info('@view [StartMenu] modelNodeRemove');
-//        var cmp = this.getCmpByModel(node),
-//            executor = this.getExecutor(this.EXEC_REMOVE, node);
+        var cmp = this.getCmpByModel(node),
+            executor = this.getExecutor(this.EXEC_REMOVE, node);
 //        if (executor) {
 //            executor(node, cmp);
 //        }
@@ -215,8 +214,8 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      */
     onModelPropertyChanged : function(node, p, v, oldValue) {
         afStudio.Logger.info('@view [StartMenu] modelPropertyChanged');
-//        var cmp = this.getCmpByModel(node, p),
-//            executor = this.getExecutor(this.EXEC_UPDATE, node, p);
+        var cmp = this.getCmpByModel(node, p),
+            executor = this.getExecutor(this.EXEC_UPDATE, node, p);
 //        if (executor) {
 //            executor(node, cmp, p, v, oldValue);
 //        }
@@ -236,7 +235,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
             text: item.label,
             icon: item.icon
         };
-        //add model node mapping
+        //node mapping
         cfg[mpr] = itemId;
             
         if (item.children) {
@@ -265,7 +264,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
             itemId = item[mpr];
 
         var cfg = Ext.copyTo({}, item, 'text, iconCls');
-        //add model node mapping
+        //node mapping
         cfg[mpr] = itemId;
         
         return this.createItem(cfg);
@@ -300,7 +299,6 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
         
         return mit;
     }
-        
 });
 
 
@@ -310,5 +308,5 @@ Ext.applyIf(afStudio.theme.desktop.menu.view.StartMenuView.prototype, afStudio.v
 //@mixin ModelInterface
 Ext.applyIf(afStudio.theme.desktop.menu.view.StartMenuView.prototype, afStudio.theme.desktop.menu.view.ModelInterface);
 
-////@mixin ModelReflector
-//Ext.apply(afStudio.wd.edit.EditView.prototype, afStudio.wd.edit.EditModelReflector);
+//@mixin ModelReflector
+Ext.applyIf(afStudio.theme.desktop.menu.view.StartMenuView.prototype, afStudio.theme.desktop.menu.view.ModelReflector);

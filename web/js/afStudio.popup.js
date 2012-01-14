@@ -92,6 +92,7 @@ afStudio.Welcome = Ext.extend(Ext.Window, {
 		afStudio.xhr.executeAction({
 			url: afStudioWSUrls.welcomeWinUrl,
 			showNoteOnSuccess: false,
+            mask: {cnt: this},
 			run: function(response) {
 			   var obj = response;
 			   Ext.get('welcome-box').update(obj.data);

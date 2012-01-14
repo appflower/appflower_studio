@@ -102,7 +102,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
             modelPropertyChanged: me.onModelPropertyChanged
 		});		
 	},
-	//eo initEvents 
 	
 	/**
 	 * Template method
@@ -121,7 +120,6 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 	_afterInitComponent : function() {
 		this.configureView();
 	},
-    
 	
 	/**
 	 * After construction view configuration

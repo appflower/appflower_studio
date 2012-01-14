@@ -72,18 +72,22 @@
 					<!-- ace code-editor -->
 					<file>js/ace/src/ace.js</file> 
 					<file>js/ace/src/mode-textile.js</file> 
+					<file>js/ace/src/mode-php.js</file> 
 					<file>js/ace/src/mode-javascript.js</file> 
+					<file>js/ace/src/mode-xml.js</file> 
 					<file>js/ace/src/mode-css.js</file> 
 					<file>js/ace/src/mode-html.js</file> 
 					<file>js/ace/src/mode-json.js</file> 
+					<file>js/ace/src/mode-sql.js</file> 
 					<file>js/ace/src/mode-markdown.js</file> 
-					<file>js/ace/src/mode-php.js</file> 
-					<file>js/ace/src/mode-xml.js</file> 
 					<file>js/ace/src/theme-twilight.js</file> 
 					<file>js/custom/ace/Ext.ux.AceComponent.js</file> 
 	
                     <!-- file-upload field -->
                     <file>js/custom/form/fileuploadfield/FileUploadField.js</file>
+
+                    <!-- desktop -->
+                    <file>js/custom/desktop/js/StartMenu.js</file>
 
 					<!-- ******************** -->
 					<!-- end of custom ext ux -->
@@ -194,23 +198,25 @@
 					<file>js/components/appflower/controller/ViewController.js</file>
 					
 					<!-- view -->
+                        <!-- interfaces -->
+                    <file>js/components/appflower/view/interfaces</file>    
 					
-					<!-- inspector tree -->
+                        <!-- inspector tree -->
 					<file>js/components/appflower/view/inspectorTree/</file>
 					<file>js/components/appflower/view/inspectorTree/error/</file>
 					<file>js/components/appflower/view/inspectorTree/node/base/TreeNode.js</file>
 					<file>js/components/appflower/view/inspectorTree/node/base/ContainerNode.js</file>
 					<file>js/components/appflower/view/inspectorTree/node/</file>
 					
-					<!-- property grid -->
+                        <!-- property grid -->
 					<file>js/components/appflower/view/propertyGrid/PropertyStore.js</file>
 					<file>js/components/appflower/view/propertyGrid/PropertyColumnModel.js</file>
 					<file>js/components/appflower/view/propertyGrid/PropertyGrid.js</file>
                     
-                    <!-- inspector palette -->
+                        <!-- inspector palette -->
                     <file>js/components/appflower/view/InspectorPalette.js</file>
                     
-                    <!-- model error window -->
+                        <!-- model error window -->
                     <file>js/components/appflower/view/ModelErrorWindow.js</file>
 
 					<!-- *************************** -->
@@ -223,7 +229,6 @@
 					<!-- gui views -->
 					<file>js/components/widgetDesigner/gui/ModelInterface.js</file>
 					<file>js/components/widgetDesigner/gui/ModelMapper.js</file>
-					<file>js/components/widgetDesigner/gui/ModelReflector.js</file>
 					
 					<!-- list -->
 					<file>js/components/widgetDesigner/gui/list/ListModelInterface.js</file>
@@ -273,12 +278,17 @@
                     <file>js/components/theme/desktop/menu/model/Button.js</file>
                     <file>js/components/theme/desktop/menu/model/Tool.js</file>
                     <file>js/components/theme/desktop/menu/controller/MenuController.js</file>
-                                <!-- view -->                    
+                                <!-- view --> 
+                                    <!-- inspector tree -->
                     <file>js/components/theme/desktop/menu/view/inspectorTree/InspectorTree.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/InspectorLoader.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/node/ButtonNode.js</file>
                     <file>js/components/theme/desktop/menu/view/inspectorTree/node/ToolNode.js</file>
+                                    <!-- start menu -->
+                    <file>js/components/theme/desktop/menu/view/menu/ModelInterface.js</file>
+                    <file>js/components/theme/desktop/menu/view/menu/ModelReflector.js</file>
+                    <file>js/components/theme/desktop/menu/view/menu/StartMenuView.js</file>
                             <!-- shortcuts -->
 					<file>js/components/theme/desktop/shortcuts/ShortcutsEditor.js</file>
 					            <!-- template -->
@@ -335,7 +345,7 @@
 					<!-- portal css -->
 					<file>js/custom/portal/portal.css</file>
 					
-					<!-- Filetree -->
+					<!-- filetree -->
 					<file>js/custom/tree/filetree/css/filetype.css</file>
 					<file>js/custom/tree/filetree/css/filetree.css</file>
 					<file>js/custom/tree/filetree/css/icons.css</file>
@@ -343,8 +353,11 @@
                     <!-- file-upload field -->
                     <file>js/custom/form/fileuploadfield/css/fileuploadfield.css</file>
                     
-					<!-- Treegrid -->
+					<!-- treegrid -->
 					<file>js/custom/tree/treegrid/treegrid.css</file>
+                    
+                    <!-- desktop -->
+                    <file>js/custom/desktop/css/desktop.css</file>
 				</files>
 			</needle>
 			

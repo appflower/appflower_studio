@@ -1111,6 +1111,6 @@ afStudio.wd.edit.EditModelReflector = (function() {
 })();
 
 /**
- * Extends base mixin {@link afStudio.wd.ModelReflector} class.
+ * Extends base mixin {@link afStudio.view.ModelReflector}
  */
-Ext.applyIf(afStudio.wd.edit.EditModelReflector, afStudio.wd.ModelReflector);
+Ext.applyIf(afStudio.wd.edit.EditModelReflector, afStudio.view.ModelReflector);

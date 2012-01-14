@@ -112,15 +112,15 @@ afStudio.view.ModelMapper = (function() {
         },
         
 		/**
-         * Dumps components & model nodes relations.
+		 * Dumps components & model nodes relations.
 		 */
 		dumpMapper : function() {
-		    afStudio.Logger.info('afStudio.view.ModelMapper', this.modelMapper);
-            afStudio.Logger.info('----------dump-----------');
-		    Ext.iterate(this.modelMapper, function(k, v, o){
-		        afStudio.Logger.info('\t', k, v);
-		    });
-            afStudio.Logger.info('-------------------------');
+			afStudio.Logger.info('afStudio.view.ModelMapper', this.modelMapper);
+			afStudio.Logger.info('----------dump-----------');
+			Ext.iterate(this.modelMapper, function(k, v, o){
+			    afStudio.Logger.info('\t', k, v);
+			});
+			afStudio.Logger.info('-------------------------');
 		}
     };
 })();

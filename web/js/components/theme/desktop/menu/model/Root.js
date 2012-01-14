@@ -22,7 +22,6 @@ afStudio.theme.desktop.menu.model.Root = Ext.extend(afStudio.theme.desktop.menu.
      * @param {Object} config
      */
     constructor : function(config) {
-        
         afStudio.theme.desktop.menu.model.Root.superclass.constructor.call(this, config);
         
         //set modelType property to have compatibility with base Node class

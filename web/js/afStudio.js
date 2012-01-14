@@ -135,8 +135,8 @@ var afStudio = function () {
             afStudio.xhr.initAjaxRequestComplete();
             //5 minutes
             afStudio.xhr.setTimeout(300000);
-			
-			this.tb = new afStudio.viewport.StudioToolbar();
+
+            this.tb = new afStudio.viewport.StudioToolbar();
 			this.vp = new afStudio.viewport.StudioViewport();						  
 			
 			afStudio.Cli.init();

@@ -477,6 +477,6 @@ afStudio.wd.list.ListModelReflector = (function() {
 })();
 
 /**
- * Extends base mixin {@link afStudio.wd.ModelReflector} class.
+ * Extends base mixin {@link afStudio.view.ModelReflector}
  */
-Ext.applyIf(afStudio.wd.list.ListModelReflector, afStudio.wd.ModelReflector);
+Ext.applyIf(afStudio.wd.list.ListModelReflector, afStudio.view.ModelReflector);
