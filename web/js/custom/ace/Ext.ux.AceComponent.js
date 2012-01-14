@@ -1,7 +1,7 @@
 /**
  * Ace editor https://github.com/ajaxorg/ace extension.
  * 
- * ace editor's global name is <b>ace</b>, be aware to not override it! 
+ * ACE editor's global name is <b>ace</b>, be aware to not override it! 
  * 
  * @class Ext.ux.AceComponent
  * @extends Ext.BoxComponent
@@ -48,7 +48,6 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
 	 * @cfg {Object} loadingParams
 	 */
 	loadingParams : {},
-	
 	
 	/**
 	 * @override
@@ -273,6 +272,10 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
 	  		case 'xml':
 	  			mode = 'xml';
   			break;
+            
+	  		case 'sql':
+	  			mode = 'sql';
+  			break;
 	  	}		
 		
 		return mode;
@@ -284,7 +287,7 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
  * Available modes.
  * @type Array 
  */
-Ext.ux.AceComponent.modes = ['textile', 'javascript', 'css', 'html', 'json', 'markdown', 'php', 'xml'];
+Ext.ux.AceComponent.modes = ['textile', 'php', 'javascript', 'xml', 'css', 'html', 'json', 'markdown', 'sql'];
 
 /**
  * Available themes.

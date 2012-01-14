@@ -131,6 +131,12 @@ To package Ace we use the dryice build tool developed by the Mozilla Skywriter t
     git submodule update --init --recursive
 ```
 
+Make sure you at least version 0.3.0 of dryice
+
+```bash
+    npm install dryice
+```
+
 Afterwards Ace can be built by calling
 
 ```bash
@@ -165,6 +171,12 @@ You can also run the tests in your browser by serving:
     http://localhost:8888/lib/ace/test/tests.html
 
 This makes debugging failing tests way more easier.
+
+Continuous Integration status
+-----------------------------
+
+This project is tested with [Travis CI](http://travis-ci.org)
+[![Build Status](https://secure.travis-ci.org/ajaxorg/ace.png)](http://travis-ci.org/ajaxorg/ace)
 
 Contributing
 ------------
