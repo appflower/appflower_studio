@@ -9,7 +9,6 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/cache/af.js"></script>
 <?php include_partial('studioSettings', array('afStudioUser' => $afStudioUser)); ?>
 <script type="text/javascript" src="/appFlowerStudioPlugin/cache/afStudio.js"></script>
-<script src="/appFlowerStudioPlugin/js/ace/require.js" data-ace-base="/appFlowerStudioPlugin/js/ace/src" type="text/javascript" charset="utf-8"></script> 
 
 <script type="text/javascript">
 	Ext.onReady(afStudio.init, afStudio);

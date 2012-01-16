@@ -70,17 +70,17 @@
 					<file>js/custom/tree/treegrid/TreeGrid.js</file>
 	
 					<!-- ace code-editor -->
-					<file>js/ace/src/ace.js</file> 
-					<file>js/ace/src/mode-textile.js</file> 
-					<file>js/ace/src/mode-php.js</file> 
-					<file>js/ace/src/mode-javascript.js</file> 
-					<file>js/ace/src/mode-xml.js</file> 
-					<file>js/ace/src/mode-css.js</file> 
-					<file>js/ace/src/mode-html.js</file> 
-					<file>js/ace/src/mode-json.js</file> 
-					<file>js/ace/src/mode-sql.js</file> 
-					<file>js/ace/src/mode-markdown.js</file> 
-					<file>js/ace/src/theme-twilight.js</file> 
+					<file>js/ace/src/ace-noconflict.js</file> 
+					<file>js/ace/src/mode-textile-noconflict.js</file> 
+					<file>js/ace/src/mode-php-noconflict.js</file> 
+					<file>js/ace/src/mode-javascript-noconflict.js</file> 
+					<file>js/ace/src/mode-xml-noconflict.js</file> 
+					<file>js/ace/src/mode-css-noconflict.js</file> 
+					<file>js/ace/src/mode-html-noconflict.js</file> 
+					<file>js/ace/src/mode-json-noconflict.js</file> 
+					<file>js/ace/src/mode-sql-noconflict.js</file> 
+					<file>js/ace/src/mode-markdown-noconflict.js</file> 
+					<file>js/ace/src/theme-twilight-noconflict.js</file> 
 					<file>js/custom/ace/Ext.ux.AceComponent.js</file> 
 	
                     <!-- file-upload field -->

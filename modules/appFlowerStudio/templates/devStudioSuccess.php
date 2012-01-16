@@ -68,17 +68,17 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/tree/treegrid/TreeGrid.js"></script>
 
 <!-- ace code-editor -->
-<script src="/appFlowerStudioPlugin/js/ace/src/ace.js" type="text/javascript" charset="utf-8"></script> 
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-textile.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-php.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-xml.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-css.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-html.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-json.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-markdown.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/mode-sql.js" type="text/javascript" charset="utf-8"></script>
-<script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/ace-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-textile-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-php-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-javascript-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-xml-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-css-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-html-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-json-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-markdown-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/mode-sql-noconflict.js" type="text/javascript" charset="utf-8"></script>
+<script src="/appFlowerStudioPlugin/js/ace/src/theme-twilight-noconflict.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/custom/ace/Ext.ux.AceComponent.js"></script>
 
 <!-- portal -->

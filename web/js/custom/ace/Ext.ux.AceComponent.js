@@ -118,8 +118,8 @@ Ext.ux.AceComponent = Ext.extend(Ext.BoxComponent, {
      */
     setMode : function(mode) {
     	var aceMode = (Ext.ux.AceComponent.modes.indexOf(mode) != -1) 
-    					? require("ace/mode/" + mode).Mode
-    					: require("ace/mode/textile").Mode;
+    					? ace.require("ace/mode/" + mode).Mode
+    					: ace.require("ace/mode/textile").Mode;
 	    
 	    this.editor.getSession().setMode(new aceMode());
     },
