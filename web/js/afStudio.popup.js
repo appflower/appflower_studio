@@ -53,54 +53,71 @@ afStudio.Help = Ext.extend(Ext.Window, {
 	}
 });
 
+/**
+ * AF Studio Welcome window.
+ * 
+ * @class afStudio.Welcome
+ * @extends Ext.Window
+ */
 afStudio.Welcome = Ext.extend(Ext.Window, { 
-	form: null,
-	initComponent: function(){
-		
+    
+    /**
+     * Ext template method.
+     * @override
+     * @private
+     */
+	initComponent : function() {
 		var config = {
-			title: 'Welcome to AppFlower Studio Beta', width:810,height:520,
+			title: 'Welcome to AppFlower Studio Beta', 
+            width: 810,
+            height: 520,
 			closable: true,
-	        draggable: true, plain:true,
-	        modal: true, resizable: false,
-	        bodyBorder: false, border: false,
-	        html: '<div id="welcome-box"> </div>',
+	        draggable: true, 
+            plain:true,
+	        modal: true, 
+            resizable: false,
+	        bodyBorder: false, 
+            border: false,
+	        html: '<div id="welcome-box" />',
 	        buttonAlign: 'left',
-	        buttons: [{ xtype:'checkbox',
-	    	            boxLabel:'Show this window when Studio opens',
-	    	            checked: true,
-	    	            handler:  function(f,c){
-	        				if (c) {
-	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "");
-	        				} else {
-	        					Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "true", new Date('12/22/2099'));
-	        				}
-	        			}
+	        buttons: [
+            { 
+                xtype: 'checkbox',
+				boxLabel: 'Show this window when Studio opens',
+				checked: true,
+				handler: function(f, c) {
+					if (c) {
+					   Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "");
+					} else {
+					   Ext.util.Cookies.set("appFlowerStudioDontShowWelcomePopup", "true", new Date('12/22/2099'));
+					}
+				}
 	        }]
-	    	         
 		};
 				
-		// apply config
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
+        
 		afStudio.Welcome.superclass.initComponent.apply(this, arguments);
 		
-		this.getHtmlData();
+		this.updateWelcomeData();
 	},
 	
-	getHtmlData : function() {
-		var popupWindow = this;
-		
+    /**
+     * Fetches welcome window data and updates it.
+     */
+	updateWelcomeData : function() {
 		afStudio.xhr.executeAction({
 			url: afStudioWSUrls.welcomeWinUrl,
 			showNoteOnSuccess: false,
             mask: {cnt: this},
+            scope: this,
 			run: function(response) {
-			   var obj = response;
-			   Ext.get('welcome-box').update(obj.data);
-			   jQuery("a[rel^='prettyPhoto']").prettyPhoto();
-			   
-			   setTimeout(function() {jQuery('#studio_video_tours ul').jScrollPane()} , 500); // requred for firefox
+                if (this.isVisible()) {
+	               Ext.get('welcome-box').update(response.data);
+	               jQuery("a[rel^='prettyPhoto']").prettyPhoto();
+	               setTimeout(function() {jQuery('#studio_video_tours ul').jScrollPane()} , 500); // requred for firefox
+                }
 			}
 		});
 	}
-	
 });

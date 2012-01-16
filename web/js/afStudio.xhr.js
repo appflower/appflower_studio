@@ -141,6 +141,7 @@ afStudio.xhr = {
 	 * 
 	 * <li><b>logMessage</b>: {String} (Optional) The log message, if specified then an action will be logged with this message.</li>
 	 * </ul>
+     * @return {Number} transactionId The id of the server transaction. This may be used to cancel the request.
 	 */
 	executeAction : function(action) {
 		var me = this,
@@ -216,7 +217,7 @@ afStudio.xhr = {
         
         Ext.applyIf(requestObj, action);
         
-		Ext.Ajax.request(requestObj);
+		return Ext.Ajax.request(requestObj);
 	},
 	//eo executeAction
     
