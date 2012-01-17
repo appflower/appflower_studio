@@ -45,7 +45,7 @@
  */
 abstract class BaseafsNotificationQuery extends ModelCriteria
 {
-
+	
 	/**
 	 * Initializes internal state of BaseafsNotificationQuery object.
 	 *
@@ -82,11 +82,14 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 	}
 
 	/**
-	 * Find object by primary key
-	 * Use instance pooling to avoid a database query if the object exists
+	 * Find object by primary key.
+	 * Propel uses the instance pool to skip the database if the object exists.
+	 * Go fast if the query is untouched.
+	 *
 	 * <code>
 	 * $obj  = $c->findPk(12, $con);
 	 * </code>
+	 *
 	 * @param     mixed $key Primary key to use for the query
 	 * @param     PropelPDO $con an optional connection object
 	 *
@@ -94,17 +97,73 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 	 */
 	public function findPk($key, $con = null)
 	{
-		if ((null !== ($obj = afsNotificationPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+		if ($key === null) {
+			return null;
+		}
+		if ((null !== ($obj = afsNotificationPeer::getInstanceFromPool((string) $key))) && !$this->formatter) {
 			// the object is alredy in the instance pool
 			return $obj;
-		} else {
-			// the object has not been requested yet, or the formatter is not an object formatter
-			$criteria = $this->isKeepQuery() ? clone $this : $this;
-			$stmt = $criteria
-				->filterByPrimaryKey($key)
-				->getSelectStatement($con);
-			return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
 		}
+		if ($con === null) {
+			$con = Propel::getConnection(afsNotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+		$this->basePreSelect($con);
+		if ($this->formatter || $this->modelAlias || $this->with || $this->select
+		 || $this->selectColumns || $this->asColumns || $this->selectModifiers
+		 || $this->map || $this->having || $this->joins) {
+			return $this->findPkComplex($key, $con);
+		} else {
+			return $this->findPkSimple($key, $con);
+		}
+	}
+
+	/**
+	 * Find object by primary key using raw SQL to go fast.
+	 * Bypass doSelect() and the object formatter by using generated code.
+	 *
+	 * @param     mixed $key Primary key to use for the query
+	 * @param     PropelPDO $con A connection object
+	 *
+	 * @return    afsNotification A model object, or null if the key is not found
+	 */
+	protected function findPkSimple($key, $con)
+	{
+		$sql = 'SELECT `MESSAGE`, `MESSAGE_TYPE`, `USER`, `IP`, `CREATED_AT`, `ID` FROM `afs_notification` WHERE `ID` = :p0';
+		try {
+			$stmt = $con->prepare($sql);
+			$stmt->bindValue(':p0', $key, PDO::PARAM_INT);
+			$stmt->execute();
+		} catch (Exception $e) {
+			Propel::log($e->getMessage(), Propel::LOG_ERR);
+			throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
+		}
+		$obj = null;
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$obj = new afsNotification();
+			$obj->hydrate($row);
+			afsNotificationPeer::addInstanceToPool($obj, (string) $row[0]);
+		}
+		$stmt->closeCursor();
+
+		return $obj;
+	}
+
+	/**
+	 * Find object by primary key.
+	 *
+	 * @param     mixed $key Primary key to use for the query
+	 * @param     PropelPDO $con A connection object
+	 *
+	 * @return    afsNotification|array|mixed the result, formatted by the current formatter
+	 */
+	protected function findPkComplex($key, $con)
+	{
+		// As the query uses a PK condition, no limit(1) is necessary.
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
+		$stmt = $criteria
+			->filterByPrimaryKey($key)
+			->doSelect($con);
+		return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
 	}
 
 	/**
@@ -118,11 +177,16 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 	 * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
 	 */
 	public function findPks($keys, $con = null)
-	{	
+	{
+		if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		$this->basePreSelect($con);
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
-		return $this
+		$stmt = $criteria
 			->filterByPrimaryKeys($keys)
-			->find($con);
+			->doSelect($con);
+		return $criteria->getFormatter()->init($criteria)->format($stmt);
 	}
 
 	/**
@@ -151,9 +215,15 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 
 	/**
 	 * Filter the query on the message column
-	 * 
+	 *
+	 * Example usage:
+	 * <code>
+	 * $query->filterByMessage('fooValue');   // WHERE message = 'fooValue'
+	 * $query->filterByMessage('%fooValue%'); // WHERE message LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $message The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
@@ -173,9 +243,15 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 
 	/**
 	 * Filter the query on the message_type column
-	 * 
+	 *
+	 * Example usage:
+	 * <code>
+	 * $query->filterByMessageType('fooValue');   // WHERE message_type = 'fooValue'
+	 * $query->filterByMessageType('%fooValue%'); // WHERE message_type LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $messageType The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
@@ -195,9 +271,15 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 
 	/**
 	 * Filter the query on the user column
-	 * 
+	 *
+	 * Example usage:
+	 * <code>
+	 * $query->filterByUser('fooValue');   // WHERE user = 'fooValue'
+	 * $query->filterByUser('%fooValue%'); // WHERE user LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $user The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
@@ -217,9 +299,15 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 
 	/**
 	 * Filter the query on the ip column
-	 * 
+	 *
+	 * Example usage:
+	 * <code>
+	 * $query->filterByIp('fooValue');   // WHERE ip = 'fooValue'
+	 * $query->filterByIp('%fooValue%'); // WHERE ip LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $ip The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
@@ -239,9 +327,20 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 
 	/**
 	 * Filter the query on the created_at column
-	 * 
-	 * @param     string|array $createdAt The value to use as filter.
-	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 *
+	 * Example usage:
+	 * <code>
+	 * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+	 * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+	 * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+	 * </code>
+	 *
+	 * @param     mixed $createdAt The value to use as filter.
+	 *              Values can be integers (unix timestamps), DateTime objects, or strings.
+	 *              Empty strings are treated as NULL.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
@@ -270,9 +369,18 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 
 	/**
 	 * Filter the query on the id column
-	 * 
-	 * @param     int|array $id The value to use as filter.
-	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 *
+	 * Example usage:
+	 * <code>
+	 * $query->filterById(1234); // WHERE id = 1234
+	 * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+	 * $query->filterById(array('min' => 12)); // WHERE id > 12
+	 * </code>
+	 *
+	 * @param     mixed $id The value to use as filter.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    afsNotificationQuery The current query, for fluid interface
@@ -296,8 +404,8 @@ abstract class BaseafsNotificationQuery extends ModelCriteria
 	{
 		if ($afsNotification) {
 			$this->addUsingAlias(afsNotificationPeer::ID, $afsNotification->getId(), Criteria::NOT_EQUAL);
-	  }
-	  
+		}
+
 		return $this;
 	}
 

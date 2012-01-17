@@ -24,12 +24,15 @@ abstract class BaseafsNotificationPeer {
 
 	/** the related TableMap class for this table */
 	const TM_CLASS = 'afsNotificationTableMap';
-	
+
 	/** The total number of columns. */
 	const NUM_COLUMNS = 6;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
+
+	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+	const NUM_HYDRATE_COLUMNS = 6;
 
 	/** the column name for the MESSAGE field */
 	const MESSAGE = 'afs_notification.MESSAGE';
@@ -49,6 +52,9 @@ abstract class BaseafsNotificationPeer {
 	/** the column name for the ID field */
 	const ID = 'afs_notification.ID';
 
+	/** The default string format for model objects of the related table **/
+	const DEFAULT_STRING_FORMAT = 'YAML';
+
 	/**
 	 * An identiy map to hold any loaded instances of afsNotification objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -58,20 +64,13 @@ abstract class BaseafsNotificationPeer {
 	public static $instances = array();
 
 
-	// symfony behavior
-	
-	/**
-	 * Indicates whether the current model includes I18N.
-	 */
-	const IS_I18N = false;
-
 	/**
 	 * holds an array of fieldnames
 	 *
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
-	private static $fieldNames = array (
+	protected static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('Message', 'MessageType', 'User', 'Ip', 'CreatedAt', 'Id', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('message', 'messageType', 'user', 'ip', 'createdAt', 'id', ),
 		BasePeer::TYPE_COLNAME => array (self::MESSAGE, self::MESSAGE_TYPE, self::USER, self::IP, self::CREATED_AT, self::ID, ),
@@ -86,7 +85,7 @@ abstract class BaseafsNotificationPeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
-	private static $fieldKeys = array (
+	protected static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('Message' => 0, 'MessageType' => 1, 'User' => 2, 'Ip' => 3, 'CreatedAt' => 4, 'Id' => 5, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('message' => 0, 'messageType' => 1, 'user' => 2, 'ip' => 3, 'createdAt' => 4, 'id' => 5, ),
 		BasePeer::TYPE_COLNAME => array (self::MESSAGE => 0, self::MESSAGE_TYPE => 1, self::USER => 2, self::IP => 3, self::CREATED_AT => 4, self::ID => 5, ),
@@ -230,7 +229,7 @@ abstract class BaseafsNotificationPeer {
 		return $count;
 	}
 	/**
-	 * Method to select one object from the DB.
+	 * Selects one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      PropelPDO $con
@@ -249,7 +248,7 @@ abstract class BaseafsNotificationPeer {
 		return null;
 	}
 	/**
-	 * Method to do selects.
+	 * Selects several row from the DB.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      PropelPDO $con
@@ -309,7 +308,7 @@ abstract class BaseafsNotificationPeer {
 	 * @param      afsNotification $value A afsNotification object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool(afsNotification $obj, $key = null)
+	public static function addInstanceToPool($obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
@@ -404,7 +403,7 @@ abstract class BaseafsNotificationPeer {
 	}
 
 	/**
-	 * Retrieves the primary key from the DB resultset row 
+	 * Retrieves the primary key from the DB resultset row
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
 	 * a multi-column primary key, an array of the primary key columns will be returned.
 	 *
@@ -464,7 +463,7 @@ abstract class BaseafsNotificationPeer {
 			// We no longer rehydrate the object, since this can cause data loss.
 			// See http://www.propelorm.org/ticket/509
 			// $obj->hydrate($row, $startcol, true); // rehydrate
-			$col = $startcol + afsNotificationPeer::NUM_COLUMNS;
+			$col = $startcol + afsNotificationPeer::NUM_HYDRATE_COLUMNS;
 		} else {
 			$cls = afsNotificationPeer::OM_CLASS;
 			$obj = new $cls();
@@ -473,6 +472,7 @@ abstract class BaseafsNotificationPeer {
 		}
 		return array($obj, $col);
 	}
+
 	/**
 	 * Returns the TableMap related to this peer.
 	 * This method is not needed for general use but a specific application could have a need.
@@ -514,7 +514,7 @@ abstract class BaseafsNotificationPeer {
 	}
 
 	/**
-	 * Method perform an INSERT on the database, given a afsNotification or Criteria object.
+	 * Performs an INSERT on the database, given a afsNotification or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or afsNotification object containing data that is used to create the INSERT statement.
 	 * @param      PropelPDO $con the PropelPDO connection to use
@@ -557,7 +557,7 @@ abstract class BaseafsNotificationPeer {
 	}
 
 	/**
-	 * Method perform an UPDATE on the database, given a afsNotification or Criteria object.
+	 * Performs an UPDATE on the database, given a afsNotification or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or afsNotification object containing data that is used to create the UPDATE statement.
 	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -596,11 +596,12 @@ abstract class BaseafsNotificationPeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the afs_notification table.
+	 * Deletes all rows from the afs_notification table.
 	 *
+	 * @param      PropelPDO $con the connection to use
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
-	public static function doDeleteAll($con = null)
+	public static function doDeleteAll(PropelPDO $con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(afsNotificationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -625,7 +626,7 @@ abstract class BaseafsNotificationPeer {
 	}
 
 	/**
-	 * Method perform a DELETE on the database, given a afsNotification or Criteria object OR a primary key value.
+	 * Performs a DELETE on the database, given a afsNotification or Criteria object OR a primary key value.
 	 *
 	 * @param      mixed $values Criteria or afsNotification object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
@@ -694,7 +695,7 @@ abstract class BaseafsNotificationPeer {
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(afsNotification $obj, $cols = null)
+	public static function doValidate($obj, $cols = null)
 	{
 		$columns = array();
 

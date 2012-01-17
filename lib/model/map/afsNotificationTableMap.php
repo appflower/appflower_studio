@@ -14,7 +14,8 @@
  *
  * @package    propel.generator.plugins.appFlowerStudioPlugin.lib.model.map
  */
-class afsNotificationTableMap extends TableMap {
+class afsNotificationTableMap extends TableMap
+{
 
 	/**
 	 * The (dot-path) name of this class
@@ -30,7 +31,7 @@ class afsNotificationTableMap extends TableMap {
 	 */
 	public function initialize()
 	{
-	  // attributes
+		// attributes
 		$this->setName('afs_notification');
 		$this->setPhpName('afsNotification');
 		$this->setClassname('afsNotification');
@@ -54,9 +55,9 @@ class afsNotificationTableMap extends TableMap {
 	} // buildRelations()
 
 	/**
-	 * 
+	 *
 	 * Gets the list of behaviors registered for this table
-	 * 
+	 *
 	 * @return array Associative array (name => parameters) of behaviors
 	 */
 	public function getBehaviors()
