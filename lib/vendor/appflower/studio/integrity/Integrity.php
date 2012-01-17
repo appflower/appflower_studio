@@ -11,9 +11,18 @@ namespace AppFlower\Studio\Integrity;
 class Integrity
 {
     /**
-     * Rule path
+     * Is integrity of system impaired or not
+     *
+     * @var boolean
      */
-    const RULE_PATH = 'rule';
+    private $is_impaired = false;
+    
+    /**
+     * Messages where impaired integrity
+     *
+     * @var array
+     */
+    private $messages = array();
     
     /**
      * Fabric method creator
@@ -35,31 +44,51 @@ class Integrity
     
     /**
      * Check integrity functionality
+     * 
+     * @example Integrity::create()->check();
+     *          Integrity::create()->check('Model', 'Widget');
      *
-     * @return afResponse
+     * @return Integrity
      * @author Sergey Startsev
      */
     public function check()
     {
-        foreach ($this->getRules() as $rule) {
+        $message = array();
+        $rules = call_user_func_array('AppFlower\Studio\Integrity\Helper::getRules', func_get_args());
+        
+        foreach ($rules as $rule) {
             $reflection = new \ReflectionClass("AppFlower\Studio\Integrity\Rule\\$rule\\$rule");
+            $instance = $reflection->newInstance();
+            $messages = $instance->execute()->getMessages();
+            
+            if (!empty($messages)) $this->messages[$rule] = $messages;
         }
+        
+        if (!empty($this->messages)) $this->is_impaired = true;
+        
+        return $this;
     }
     
     /**
-     * Getting Rules list
+     * Get messages 
      *
      * @return array
      * @author Sergey Startsev
      */
-    protected function getRules()
+    public function getMessages()
     {
-        $rules = array();
-        $dirs = \sfFinder::type('file')->not_name('*Base*')->maxdepth(1)->ignore_version_control()->in(__DIR__ . DIRECTORY_SEPARATOR . self::RULE_PATH);
-        
-        foreach ($dirs as $dir) $rules[] = pathinfo($dir, PATHINFO_FILENAME);
-        
-        return (array)$rules;
+        return $this->messages;
+    }
+    
+    /**
+     * Checking is impaired integrity
+     *
+     * @return boolean
+     * @author Sergey Startsev
+     */
+    public function isImpaired()
+    {
+        return (bool)$this->is_impaired;
     }
     
 }
