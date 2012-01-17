@@ -2,7 +2,7 @@
 /**
  * Extend Propel base task
  */
-require_once(sfConfig::get('sf_plugins_dir') . '/sfPropel15Plugin/lib/task/sfPropelBaseTask.class.php');
+require_once(sfConfig::get('sf_plugins_dir') . '/sfPropelORMPlugin/lib/task/sfPropelBaseTask.class.php');
 
 /**
  * Updates schemas in plugins.
