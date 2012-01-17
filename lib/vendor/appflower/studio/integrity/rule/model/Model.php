@@ -1,6 +1,6 @@
 <?php
 
-namespace AppFLower\Studio\Integrity\Rule\Model;
+namespace AppFlower\Studio\Integrity\Rule\Model;
 
 use AppFlower\Studio\Integrity\Rule\Base as Base;
 
@@ -12,5 +12,10 @@ use AppFlower\Studio\Integrity\Rule\Base as Base;
  */
 class Model extends Base
 {
+    
+    protected function executeFieldsExisting()
+    {
+        $this->addMessage($this->getMethodName(__METHOD__, true) . ': asd');
+    }
     
 }
