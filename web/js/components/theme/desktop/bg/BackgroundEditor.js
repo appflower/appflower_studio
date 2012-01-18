@@ -138,6 +138,7 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
                     items: {
 		                xtype: 'colorfield',
 		                ref: '../../bgcolor',
+                        msgTarget: 'qtip',
 		                fieldLabel: 'Background color',
 		                submitValue: false
                     }

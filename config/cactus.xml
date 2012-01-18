@@ -14,14 +14,18 @@
 					
 					<!-- datetime -->
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js</file>
+                    
 					<!-- multiselect (multicombo) -->
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/DDView.js</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/MultiSelect.js</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/ItemSelector.js</file>
+                    
 					<!-- doublemulticombo -->
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/Ext.ux.plugins.ItemSelectorAutoSuggest.js</file>
+                    
 					<!-- doubletree -->
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js</file>
+                    
 					<!-- color -->
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/colorfield/color-field.js</file>
 					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/Color.js</file>
