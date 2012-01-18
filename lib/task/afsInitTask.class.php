@@ -57,7 +57,12 @@ EOF;
         $type_method = 'execute' . sfInflector::camelize($options['type']);
         if (!method_exists($this, $type_method)) throw new sfCommandException("Type method '{$type_method}' not defined.");
         
+        $this->createTask('propel:build-sql')->run();
+        
         call_user_func(array($this, $type_method), $arguments, $options);
+        
+        $this->createTask('propel:diff')->run();
+        $this->createTask('propel:migrate')->run();
         
         $this->createTask('propel:build-model')->run();
         $this->createTask('propel:build-forms')->run();
@@ -94,7 +99,6 @@ EOF;
     private function executeReverse(Array $arguments, Array $options)
     {
         $this->createTask('afs:update-schema')->run();
-        $this->createTask('propel:insert-sql-diff')->run();
     }
     
     /**

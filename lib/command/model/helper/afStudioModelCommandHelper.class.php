@@ -13,28 +13,29 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
      * @return string - Console results
      * @author Sergey Startsev
      */
-	static public function deploy()
-	{
+    static public function deploy()
+    {
         $console = afStudioConsole::getInstance()->execute(array(
             'sf cc',
             'sf appflower:validator-cache frontend cache yes',
-            'sf propel:insert-sql-diff', 
+            'sf propel:diff',
+            'sf propel:migrate',
             'sf propel:build-model',
             'sf propel:build-forms',
         ));
         
         return $console;
-	}
-	
-	/**
-	 * Update existed schemas from database
-	 *
-	 * @return string - Console results
-	 * @author Sergey Startsev
-	 */
-	static public function updateSchemas()
-	{
-	    $console = afStudioConsole::getInstance()->execute(array(
+    }
+    
+    /**
+     * Update existed schemas from database
+     *
+     * @return string - Console results
+     * @author Sergey Startsev
+     */
+    static public function updateSchemas()
+    {
+        $console = afStudioConsole::getInstance()->execute(array(
             'sf cc',
             'sf appflower:validator-cache frontend cache yes',
             'sf afs:update-schema',
