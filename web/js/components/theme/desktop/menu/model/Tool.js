@@ -13,7 +13,8 @@ N.Tool = Ext.extend(N.Node, {
     
     defaultDefinition : {
         name: 'tool',
-        text: 'Tool'
+        text: 'Tool',
+        url: '#'
     },     
     
     /**

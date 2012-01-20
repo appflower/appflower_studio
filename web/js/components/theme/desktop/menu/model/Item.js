@@ -16,7 +16,8 @@ N.Item = Ext.extend(N.Node, {
     defaultDefinition : {
         attributes: {
             label: 'Item',
-            name: 'item'
+            name: 'item',
+            url: '#'
         }
     },    
     
