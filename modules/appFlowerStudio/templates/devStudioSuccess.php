@@ -5,6 +5,12 @@
 
 <?php include_partial('studioSettings', array('afStudioUser' => $afStudioUser)); ?>
 
+<style type="text/css">
+ .ace_content: {
+ 	height: 100% !important;
+ }
+</style>
+
 <!-- engine ux -->
 <!-- ========== -->
 <script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js"></script>
