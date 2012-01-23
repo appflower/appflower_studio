@@ -185,6 +185,9 @@ class afsFileSystem
      */
     public function chmod($files, $mode, $umask = 0000, $recursive = false)
     {
+        if (!sfConfig::get('app_afs_chmod_enabled', true)) {
+            return;
+        }
         $currentUmask = umask();
         umask($umask);
         

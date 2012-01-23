@@ -1,6 +1,10 @@
 <?php
 /**
  * Fixes afStudio permissions. Set server group to user groups
+ * 
+ * This task uses configuration from permissions.yml file.
+ * It is first expected in PROJECT/config/permissions.yml path.
+ * Then we fall back to PROJECT/plugins/appFlowerStudioPlugin/config/permissions.yml path
  *
  * @package     appFlowerStudio
  * @subpackage  task
@@ -257,17 +261,6 @@ EOF;
     }
     
     /**
-     * Get config path 
-     *
-     * @return string
-     * @author Sergey Startsev
-     */
-    private function getConfigPath()
-    {
-        return sfConfig::get('sf_plugins_dir') . '/appFlowerStudioPlugin/config/' . self::CONFIGURATION;
-    }
-    
-    /**
      * Getting config, parse config
      *
      * @return Array
@@ -275,8 +268,20 @@ EOF;
      */
     private function getConfig()
     {
-        if (!file_exists($this->getConfigPath())) throw new Exception("Please, define " . self::CONFIGURATION . " config");
-        if (is_null($this->config)) $this->config = sfYaml::load($this->getConfigPath());
+        if (!is_null($this->config)) {
+            return $this->config;
+        }
+        
+        $configFilePath = sfConfig::get('sf_root_dir').'/config/'.self::CONFIGURATION;
+        if (!is_readable($configFilePath)) {
+            $configFilePath = sfConfig::get('sf_plugins_dir').'/appFlowerStudioPlugin/config/'.self::CONFIGURATION;
+            
+            if (!is_readable($configFilePath)) {
+                throw new Exception("Please, define " . self::CONFIGURATION . " config ");
+            }
+        }
+        
+        $this->config = sfYaml::load($configFilePath);
         
         return $this->config;
     }

@@ -7,6 +7,8 @@ all:
   afs:
     # use this to set the production:false/development:true environment of Studio
     debug: false
+    # if you need you can disable all calls to chmod here - by default they are enabled
+    #chmod_enabled: true
     
     # To have "Projects management" enabled you need to have access to properly configured
     # appFlowerService project instance - https://github.com/appflower/appFlowerService
