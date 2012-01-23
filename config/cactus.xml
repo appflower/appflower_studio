@@ -74,7 +74,7 @@
 					<file>js/custom/tree/treegrid/TreeGrid.js</file>
 	
 					<!-- ace code-editor -->
-					<file>js/ace/src/ace-noconflict.js</file> 
+					<file>js/ace/src/ace-uncompressed-noconflict.js</file> 
 					<file>js/ace/src/mode-textile-noconflict.js</file> 
 					<file>js/ace/src/mode-php-noconflict.js</file> 
 					<file>js/ace/src/mode-javascript-noconflict.js</file> 

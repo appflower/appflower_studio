@@ -8,7 +8,7 @@ N.Item = Ext.extend(N.Node, {
         {name: 'name', type: 'dbNameType', required: true},
         {name: 'type', type: 'menuItemType', required: true, defaultValue: 'item'},
         {name: 'label', type: 'string', required: true},
-        {name: 'url', type: 'internalUriType', required: true},
+        {name: 'url', type: 'anyURI', required: true},
         {name: 'icon', type: "absoluteUriType"},
         {name: 'tooltip', type: 'string'}
     ],
@@ -16,7 +16,8 @@ N.Item = Ext.extend(N.Node, {
     defaultDefinition : {
         attributes: {
             label: 'Item',
-            name: 'item'
+            name: 'item',
+            url: '#'
         }
     },    
     
