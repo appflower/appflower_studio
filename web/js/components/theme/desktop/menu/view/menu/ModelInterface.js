@@ -35,6 +35,23 @@ afStudio.theme.desktop.menu.view.ModelInterface = (function() {
             }
 
             return items;
+        },
+        
+        /**
+         * Returns menu item's definition.
+         * If an item has children items(subitems) then they are set to its "children" {Array} property.
+         * @param {Node} node The menu node
+         * @return {Object} menu node's definition
+         */
+        getNodeDef : function(node) {
+            var nDef = this.getModelNodeProperties(node),
+                chs = this.getMenuItems(node);
+                
+            if (chs.length > 0) {
+                nDef.children = chs;
+            }
+                                
+            return nDef;
         }
     };
 })();

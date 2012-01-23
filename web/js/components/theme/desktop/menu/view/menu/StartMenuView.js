@@ -76,9 +76,9 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      * contains the controller this view is registered into.
      */
     init : function(cfg) {
-        afStudio.Logger.info('@startMenu view registered');
- 
         var ctrType = cfg.controller.getModelType();
+        
+        afStudio.Logger.info('@startMenu view registered', ctrType);
         
         if (!this.controller) {
             this.controller = {}; 
@@ -169,10 +169,14 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      * @interface
      */
     onModelNodeAppend : function(ctr, parent, node, index) {
-        afStudio.Logger.info('@view [StartMenu] modelNodeAppend', node);
+        afStudio.Logger.info('@view [StartMenu] modelNodeAppend', parent, node);
+        
+        this.currentCtrl = ctr;
+        
         var executor = this.getExecutor(this.EXEC_ADD, node);
+        
         if (executor) {
-            executor(node, index);
+            executor(parent, node, index);
         }
     },
     
@@ -183,12 +187,16 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      * @interface
      */
     onModelNodeInsert : function(ctr, parent, node, refNode) {
-        afStudio.Logger.info('@view [StartMenu] modelNodeInsert');
-//        var refCmp = this.getCmpByModel(refNode),
-//            executor = this.getExecutor(this.EXEC_INSERT, node);
-//        if (executor) {
-//            executor(parent, node, refNode, refCmp);
-//        }
+        afStudio.Logger.info('@view [StartMenu] modelNodeInsert', parent, node);
+        
+        this.currentCtrl = ctr;
+        
+        var refCmp = this.getCmpByModel(refNode),
+            executor = this.getExecutor(this.EXEC_INSERT, node);
+            
+        if (executor) {
+            executor(parent, node, refNode, refCmp);
+        }
     },
     
     /**
@@ -198,12 +206,16 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      * @interface
      */
     onModelNodeRemove : function(ctr, parent, node) {
-        afStudio.Logger.info('@view [StartMenu] modelNodeRemove');
+        afStudio.Logger.info('@view [StartMenu] modelNodeRemove', parent, node);
+        
+        this.currentCtrl = ctr;
+        
         var cmp = this.getCmpByModel(node),
             executor = this.getExecutor(this.EXEC_REMOVE, node);
-//        if (executor) {
-//            executor(node, cmp);
-//        }
+            
+        if (executor) {
+            executor(parent, node, cmp);
+        }
     },
     
     /**
@@ -214,11 +226,15 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      */
     onModelPropertyChanged : function(node, p, v, oldValue) {
         afStudio.Logger.info('@view [StartMenu] modelPropertyChanged');
+        
+        this.currentCtrl = ctr;
+        
         var cmp = this.getCmpByModel(node, p),
             executor = this.getExecutor(this.EXEC_UPDATE, node, p);
-//        if (executor) {
-//            executor(node, cmp, p, v, oldValue);
-//        }
+
+        if (executor) {
+            executor(node, cmp, p, v, oldValue);
+        }
     },
     
     /**

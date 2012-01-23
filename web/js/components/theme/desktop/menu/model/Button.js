@@ -9,13 +9,15 @@ N.Button = Ext.extend(N.Node, {
         {name: 'type', type: 'menuItemType', required: true, defaultValue: 'button'},
         {name: 'label', type: 'string', required: true},
         {name: 'handler', type: 'string', required: true},
+        {name: 'iconCls', type: 'token'},
         {name: 'icon', type: "absoluteUriType"},
         {name: 'tooltip', type: 'string'}
     ],
     
     defaultDefinition : {
         attributes: {
-            label: 'Button'
+            label: 'Button',
+            name: 'button'
         }
     },    
     

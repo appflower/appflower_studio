@@ -47,6 +47,10 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
 	 * @property tag 
 	 * @type {String}
 	 */
+    /**
+     * @property isRoot The root node (model) flag.
+     * @type {Boolean}
+     */
 	/**
 	 * @property leaf
 	 * @type {Boolean}   

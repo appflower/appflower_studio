@@ -9,6 +9,7 @@ N.Item = Ext.extend(N.Node, {
         {name: 'type', type: 'menuItemType', required: true, defaultValue: 'item'},
         {name: 'label', type: 'string', required: true},
         {name: 'url', type: 'anyURI', required: true},
+        {name: 'iconCls', type: 'token'},
         {name: 'icon', type: "absoluteUriType"},
         {name: 'tooltip', type: 'string'}
     ],

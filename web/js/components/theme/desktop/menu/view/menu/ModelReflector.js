@@ -36,18 +36,74 @@ afStudio.theme.desktop.menu.view.ModelReflector = (function() {
             
             return line;
         },
-         
-        
-        executeAddMainItem : function(n, idx) {
+
+        /**
+         * Adds main menu item.
+         * @param {Node} parent The item's parent node
+         * @param {Node} n The item node being added
+         * @param {Number} idx The item's index inside parent menu
+         */
+        executeAddMainItem : function(parent, n, idx) {
+            var parentCmp = this.getCmpByModel(parent),
+                nDef = this.getNodeDef(n),
+                nCmp = this.createMainMenuItem(nDef);
             
+            //root menu item
+            if (parent.isRoot && parentCmp == null) {
+                this.insert(idx, nCmp);
+                this.doLayout();
+                
+            //submenu item
+            } else {
+                //has menu
+                if (parentCmp.menu) {
+	                parentCmp.menu.insert(idx, nCmp);
+	                parentCmp.menu.doLayout();
+                
+                //create menu
+                } else {
+                    var menu = {
+						ignoreParentClicks: true,
+						items: [nCmp],
+	                    ownerCt: parentCmp
+                    };
+		            parentCmp.menu = Ext.menu.MenuMgr.get(menu);
+                    if (parentCmp.el) {
+                        parentCmp.el.addClass('x-menu-item-arrow');
+                    }
+                }
+            }
+        },
+        //eo executeAddMainItem
+        
+        /**
+         * Removes main menu item.
+         * @param {Node} parent The item's parent node
+         * @param {Node} n The item node being deleted
+         * @param {Ext.menu.Item} nCmp The menu item associated with item's node
+         */
+        executeRemoveMainItem : function(parent, n, nCmp) {
+            var parentCmp = this.getCmpByModel(parent);
+            
+            Ext.destroy(nCmp);
+            
+            if (!parent.isRoot && parentCmp.menu.items.length == 0) {
+                Ext.destroy(parentCmp.menu);
+                parentCmp.menu = null;
+                if (parentCmp.el) {
+                    parentCmp.el.removeClass('x-menu-item-arrow');
+                }
+            }
         },
         
-        executeDeleteMainItem : function() {
-            
-        },
-        
-        executeInsertMainItem : function() {
-            
+        /**
+         * Inserts main menu item.
+         * @param {Node} parent The item's parent node
+         * @param {Node} n The item node being inserted
+         */
+        executeInsertMainItem : function(parent, n) {
+            var idx = parent.indexOf(n);
+            this.executeAddMainItem(parent, n, idx);
         }
     };
 })();
