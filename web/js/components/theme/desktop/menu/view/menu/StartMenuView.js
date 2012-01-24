@@ -227,7 +227,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
     onModelPropertyChanged : function(node, p, v, oldValue) {
         afStudio.Logger.info('@view [StartMenu] modelPropertyChanged');
         
-        this.currentCtrl = ctr;
+        this.currentCtrl = node.getOwnerTree();
         
         var cmp = this.getCmpByModel(node, p),
             executor = this.getExecutor(this.EXEC_UPDATE, node, p);

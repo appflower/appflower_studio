@@ -104,7 +104,35 @@ afStudio.theme.desktop.menu.view.ModelReflector = (function() {
         executeInsertMainItem : function(parent, n) {
             var idx = parent.indexOf(n);
             this.executeAddMainItem(parent, n, idx);
+        },
+        
+        /**
+         * label
+         */        
+        executeUpdateMainItemLabel : function(node, item, p, v, oldValue) {
+            item.setText(v ? v : node.getPropertyValue('name'));
+        },
+        /**
+         * name
+         */
+        executeUpdateMainItemName : function(node, item, p, v, oldValue) {
+            if (Ext.isEmpty(item.text) || item.text == oldValue) {
+                item.setText(v);
+            }
+        },
+        /**
+         * iconCls
+         */
+        executeUpdateMainItemIconCls : function(node, item, p, v, oldValue) {
+            item.setIconClass(v);
+        },
+        /**
+         * icon
+         */
+        executeUpdateMainItemIcon : function(node, item, p, v, oldValue) {
+            item.iconEl.dom.src = v ? v : Ext.BLANK_IMAGE_URL;
         }
+        
     };
 })();
 

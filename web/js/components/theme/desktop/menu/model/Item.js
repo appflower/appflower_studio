@@ -10,7 +10,7 @@ N.Item = Ext.extend(N.Node, {
         {name: 'label', type: 'string', required: true},
         {name: 'url', type: 'anyURI', required: true},
         {name: 'iconCls', type: 'token'},
-        {name: 'icon', type: "absoluteUriType"},
+        {name: 'icon', type: 'absoluteUriType'},
         {name: 'tooltip', type: 'string'}
     ],
     
