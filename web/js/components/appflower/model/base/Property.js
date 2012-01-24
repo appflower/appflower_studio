@@ -57,12 +57,13 @@ afStudio.model.Property = Ext.extend(Object, {
     },
     
     /**
-     * Validates passed in value against property's type.
+     * Validates value against property's type.
+     * Important: if property is not required and a value is "empty"(Ext.isEmpty) it's considered as valid.
      * @param {Mixed} v The value to be validated.
      * @return {Boolean}
      */
     validate : function(v) {
-    	return (!Ext.isEmpty(v) || this.type.validate(v) === true) ? true : false;
+    	return (!this.required && Ext.isEmpty(v)) ? true : (this.type.validate(v) === true);
     },
     
     /**
