@@ -219,18 +219,6 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
         return this.addToolItem(new Ext.menu.Separator({itemCls: 'ux-toolmenu-sep'}));
     },
 
-    addToolItem : function(item){
-        this.toolItems.add(item);
-        if(this.ul){
-            var li = document.createElement("li");
-            li.className = "x-menu-list-item";
-            this.ul.dom.appendChild(li);
-            item.render(li, this);
-            this.delayAutoWidth();
-        }
-        return item;
-    },
-
     addToolMenuItem : function(config){
         if(!(config instanceof Ext.menu.Item)){
             if(typeof config.checked == "boolean"){ // must be check menu item config?
@@ -240,6 +228,42 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
             }
         }
         return this.addToolItem(config);
+    },
+    
+    /**
+     * Adds tools menu item.
+     * @param {Ext.menu.Item} item The menu item being added
+     * @return {Ext.menu.Item} tool item
+     */
+    addToolItem : function(item) {
+        this.toolItems.add(item);
+        
+        if (this.toolsUl) {
+            var li = this.toolsUl.createChild({tag: 'li', cls: 'x-menu-list-item'});
+            item.render(li);
+            item.parentMenu = this;
+        }
+        
+        return item;
+    },
+
+    /**
+     * Inserts tools menu item at specified position.
+     * @param {Number} index The insertion position inside tools menu
+     * @param {Ext.menu.Item} item The menu item being inserted
+     * @return {Ext.menu.Item} tool item
+     */
+    insertToolItem : function(index, item) {
+        this.toolItems.insert(index, item);
+        
+        if (this.toolsUl) {
+            var beforeLi = this.toolsUl.down('li:nth-child(' + index + ')'),
+                li = this.toolsUl.createChild({tag: 'li', cls: 'x-menu-list-item'}, beforeLi ? beforeLi : null);
+            item.render(li);
+            item.parentMenu = this;
+        }
+        
+        return item;
     },
 
     setTitle : function(title, iconCls){
