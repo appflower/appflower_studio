@@ -37,6 +37,8 @@ afStudio.theme.desktop.menu.view.ModelReflector = (function() {
             return line;
         },
 
+        /* Main menu */
+        
         /**
          * Adds main menu item.
          * @param {Node} parent The item's parent node
@@ -131,8 +133,45 @@ afStudio.theme.desktop.menu.view.ModelReflector = (function() {
          */
         executeUpdateMainItemIcon : function(node, item, p, v, oldValue) {
             item.iconEl.dom.src = v ? v : Ext.BLANK_IMAGE_URL;
-        }
+        },
         
+        /* Tools menu */
+        
+        
+        /**
+         * Adds tools menu item.
+         * @param {Node} parent The item's parent node
+         * @param {Node} n The item node being added
+         * @param {Number} idx The item's index inside parent menu
+         */
+        executeAddTool : function(parent, n, idx) {
+            var nDef = this.getModelNodeProperties(n),
+                nCmp = this.createToolsMenuItem(nDef);
+                
+            idx++;
+            
+            this.insertToolItem(idx, nCmp);
+        },
+        
+        /**
+         * Removes tools menu item.
+         * @param {Node} parent The item's parent node
+         * @param {Node} n The item node being deleted
+         * @param {Ext.menu.Item} nCmp The menu item associated with item's node
+         */
+        executeRemoveTool : function(parent, n, nCmp) {
+            Ext.destroy(nCmp);
+        },
+        
+        /**
+         * Inserts tools menu item at specified position.
+         * @param {Node} parent The item's parent node
+         * @param {Node} n The item node being inserted
+         */
+        executeInsertTool : function(parent, n) {
+            var idx = parent.indexOf(n);
+            this.executeAddTool(parent, n, idx);
+        }
     };
 })();
 

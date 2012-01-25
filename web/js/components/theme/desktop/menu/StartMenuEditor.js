@@ -262,7 +262,7 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             
             if (!this.errorWin) {
                 this.errorWin = new afStudio.view.ModelErrorWindow({
-                    title: 'Desktop StartMenu'
+                    title: 'Desktop start menu'
                 });
             }
             this.errorWin.modelErrors = errors;
