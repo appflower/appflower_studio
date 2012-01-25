@@ -171,10 +171,36 @@ afStudio.theme.desktop.menu.view.ModelReflector = (function() {
         executeInsertTool : function(parent, n) {
             var idx = parent.indexOf(n);
             this.executeAddTool(parent, n, idx);
+        },
+        
+        /**
+         * text
+         */        
+        executeUpdateToolText : function(node, item, p, v, oldValue) {
+            item.setText(v ? v : node.getPropertyValue('name'));
+        },
+        /**
+         * name
+         */
+        executeUpdateToolName : function(node, item, p, v, oldValue) {
+            if (Ext.isEmpty(item.text) || item.text == oldValue) {
+                item.setText(v);
+            }
+        },
+        /**
+         * iconCls
+         */
+        executeUpdateToolIconCls : function(node, item, p, v, oldValue) {
+            item.setIconClass(v);
+        },
+        /**
+         * icon
+         */
+        executeUpdateToolIcon : function(node, item, p, v, oldValue) {
+            item.iconEl.dom.src = v ? v : Ext.BLANK_IMAGE_URL;
         }
     };
 })();
-
 
 /**
  * Extends base mixin {@link afStudio.view.ModelReflector}

@@ -232,8 +232,10 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
     
     /**
      * Adds tools menu item.
+     * 
      * @param {Ext.menu.Item} item The menu item being added
      * @return {Ext.menu.Item} tool item
+     * @author Nikolai Babinski
      */
     addToolItem : function(item) {
         this.toolItems.add(item);
@@ -249,9 +251,11 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
 
     /**
      * Inserts tools menu item at specified position.
+     * 
      * @param {Number} index The insertion position inside tools menu
      * @param {Ext.menu.Item} item The menu item being inserted
      * @return {Ext.menu.Item} tool item
+     * @author Nikolai Babinski
      */
     insertToolItem : function(index, item) {
         this.toolItems.insert(index, item);

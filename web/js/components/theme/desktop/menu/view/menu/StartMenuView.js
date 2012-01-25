@@ -249,7 +249,8 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
 
         var cfg = {
             text: item.label,
-            icon: item.icon
+            icon: item.icon,
+            iconCls: item.iconCls
         };
         //node mapping
         cfg[mpr] = itemId;
@@ -279,7 +280,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
         var mpr = this.NODE_ID_MAPPER,
             itemId = item[mpr];
 
-        var cfg = Ext.copyTo({}, item, 'text, iconCls');
+        var cfg = Ext.copyTo({}, item, 'text, icon, iconCls');
         //node mapping
         cfg[mpr] = itemId;
         
