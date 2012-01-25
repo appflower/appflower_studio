@@ -278,6 +278,7 @@
                                 <!-- model -->
                     <file>js/components/theme/desktop/menu/model/base/Node.js</file>
                     <file>js/components/theme/desktop/menu/model/Root.js</file>
+                    <file>js/components/theme/desktop/menu/model/MainRoot.js</file>
                     <file>js/components/theme/desktop/menu/model/Item.js</file>
                     <file>js/components/theme/desktop/menu/model/Button.js</file>
                     <file>js/components/theme/desktop/menu/model/Tool.js</file>

@@ -626,7 +626,7 @@ td.ux-taskButtons-edge {
 	font-size: 18px;
 }
 .active-user-image {
-    background: url(../../../../../images/desktop/User-icon.png);
+    background: url(/images/desktop/User-icon.png);
 }
 /*
  * End Start button

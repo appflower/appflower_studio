@@ -225,7 +225,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
      * @interface
      */
     onModelPropertyChanged : function(node, p, v, oldValue) {
-        afStudio.Logger.info('@view [StartMenu] modelPropertyChanged');
+        afStudio.Logger.info('@view [StartMenu] modelPropertyChanged', node);
         
         this.currentCtrl = node.getOwnerTree();
         

@@ -57,7 +57,7 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
 
         var header = el.createChild({
         	tag: "div",
-        	cls: "x-window-header x-unselectable x-panel-icon "+this.iconCls
+        	cls: "x-window-header x-unselectable x-panel-icon " + (this.iconCls ? this.iconCls : '')
         });
 
 		this.header = header;
@@ -101,7 +101,7 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
 			tag: "div",
 			cls: "ux-start-menu-bc"
 		});
-		var bl = bc.wrap({
+		this.bl = bc.wrap({
 			cls: "ux-start-menu-bl x-panel-nofooter"
 		});
 		var br = bc.wrap({
@@ -150,7 +150,7 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
 
         this.setTitle(this.title);
         
-        this.menuBWrap.setHeight(this.height - (this.header.getHeight() + br.getHeight()));
+        this.menuBWrap.setHeight(this.height - (this.header.getHeight() + this.bl.getHeight()));
     },
 
     // private
@@ -270,9 +270,50 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
         return item;
     },
 
-    setTitle : function(title, iconCls){
-        this.title = title;
+    /**
+     * Adjusts menu height.
+     * @protected
+     * @author Nikolai Babinski
+     */
+    adjustMenuHeight : function() {
+	    this.menuBWrap.setHeight(this.height - (this.header.getHeight() + this.bl.getHeight()));
+	    var box = this.menuBWrap.getBox();
+	    this.menuPanel.setHeight(box.height);
+	    this.toolsPanel.setHeight(box.height);
+    },
+    
+    /**
+     * Sets menu's title {@link #title}.
+     * @param {String} title The menu's title being set
+     * @param {String} (optional) iconCls The icon class to be set
+     * @return {Ext.ux.StartMenu} this menu
+     */
+    setTitle : function(title, iconCls) {
+        title = Ext.util.Format.trim(title);
+        
         this.header.child('span').update(title);
+		if (this.title == '' || title == '') {
+            this.adjustMenuHeight();
+		}
+        this.title = title;
+        
+        if (Ext.isDefined(iconCls)) {
+            this.setTitleIconCls(iconCls);
+        }
+        
+        return this;
+    },
+    
+    /**
+     * Sets title's {@link #header} icon class {@link #iconCls}.
+     * @param {String} iconCls The icon class being set
+     * @return {Ext.ux.StartMenu} this menu
+     * @author Nikolai Babinski
+     */
+    setTitleIconCls : function(iconCls) {
+        this.header.replaceClass(this.iconCls, iconCls);
+        this.iconCls = iconCls;
+        
         return this;
     }
 });

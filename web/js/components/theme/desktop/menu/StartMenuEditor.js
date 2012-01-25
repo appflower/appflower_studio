@@ -152,7 +152,8 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
      */
     initView : function() {
         var view = new afStudio.theme.desktop.menu.view.StartMenuView({
-            title: 'AppFlower',
+            title: this.menuAttr.title || '',
+            iconCls: this.menuAttr.iconCls, 
             items: []
         });
         
@@ -172,8 +173,10 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
     initMainMenu : function(definition) {
         var mm = {
             attributes: {
-                type: 'main'
-            }                        
+                type: 'main',
+                title: this.menuAttr.title,
+                iconCls: this.menuAttr.iconCls
+            }
         };
         mm.children = definition;
 
@@ -291,15 +294,15 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
         afStudio.Logger.info('@menu main definition', main, Ext.encode(main));            
         afStudio.Logger.info('@menu tools definition', tools, Ext.encode(tools));
         
-        if (this.menuAttr) {
-            data.attributes = this.menuAttr;
-        }
+        data.attributes = main.attributes;
+        
         if (main.children) {
             data.main = main.children; 
         }
         if (tools.children) {
             data.tools = tools.children; 
         }
+        
         afStudio.Logger.info('@menu', data, Ext.encode(data));
         
         afStudio.xhr.executeAction({

@@ -34,9 +34,28 @@ afStudio.theme.desktop.menu.view.ModelReflector = (function() {
                 line = 'MainItem'
             }
             
+            if (node.isRoot) {
+                line = 'Root' + line;
+            }
+            
             return line;
         },
 
+        /**
+         * Updates menu title.
+         */
+        executeUpdateRootMainItemTitle : function(node, item, p, v, oldValue) {
+            this.setTitle(v);
+        },
+        
+        /**
+         * Updates menu iconCls.
+         */
+        executeUpdateRootMainItemIconCls : function(node, item, p, v, oldValue) {
+            v = Ext.util.Format.trim(v);
+            this.setTitleIconCls(v);
+        },
+        
         /* Main menu */
         
         /**

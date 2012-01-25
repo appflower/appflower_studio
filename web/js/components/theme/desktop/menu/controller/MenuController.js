@@ -48,13 +48,16 @@ afStudio.theme.desktop.menu.controller.MenuController = Ext.extend(afStudio.cont
     },
 
     /**
+     * Resolves model's root node.
      * @override
      * @protected
      * @param {Object} viewDef The view definition
      * @return {Function|NULL} root-node constructor
      */
     resolveRootNode : function(viewDef) {
-        return afStudio.theme.desktop.menu.model.Root;
+        return viewDef.attributes.type == 'main'
+                ? afStudio.theme.desktop.menu.model.MainRoot
+                : afStudio.theme.desktop.menu.model.Root
     },
     
     /**
