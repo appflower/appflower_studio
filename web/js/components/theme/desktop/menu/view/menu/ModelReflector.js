@@ -56,6 +56,13 @@ afStudio.theme.desktop.menu.view.ModelReflector = (function() {
             this.setTitleIconCls(v);
         },
         
+        /**
+         * Updates menu icon image.
+         */
+        executeUpdateRootMainItemIcon : function(node, item, p, v, oldValue) {
+            this.setTitleIcon(v);
+        },
+        
         /* Main menu */
         
         /**

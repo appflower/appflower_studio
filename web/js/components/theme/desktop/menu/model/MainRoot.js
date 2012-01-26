@@ -7,6 +7,7 @@ afStudio.theme.desktop.menu.model.MainRoot = Ext.extend(afStudio.theme.desktop.m
     properties : [
         {name: "type", type: 'string', required: true, readOnly: true},
         {name: "title", type: 'string'},
-        {name: "iconCls", type: 'token'}
+        {name: "iconCls", type: 'token'},
+        {name: 'icon', type: 'absoluteUriType'}
     ]
 });

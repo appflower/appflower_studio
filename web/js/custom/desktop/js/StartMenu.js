@@ -40,12 +40,25 @@
 Ext.namespace("Ext.ux");
 
 Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
-    initComponent: function(config) {
+    
+    /**
+     * @cfg {String} iconCls The menu icon class
+     */
+    /**
+     * @cfg {String} icon The menu icon image, size should be 48x48
+     */
+    
+    /**
+     * Ext template method
+     * @override
+     * @private
+     */
+    initComponent : function(config) {
     	Ext.ux.StartMenu.superclass.initComponent.call(this, config);
 
         var tools = this.toolItems;
         this.toolItems = new Ext.util.MixedCollection();
-        if(tools){
+        if (tools) {
             this.addTool.apply(this, tools);
         }
     },
@@ -57,11 +70,17 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
 
         var header = el.createChild({
         	tag: "div",
-        	cls: "x-window-header x-unselectable x-panel-icon " + (this.iconCls ? this.iconCls : '')
+        	cls: "x-window-header x-unselectable x-panel-icon"
         });
 
 		this.header = header;
 
+		this.headerIcon = header.createChild({
+			tag: "image",
+            cls: 'x-window-header-icon',
+			src: this.icon ? this.icon : Ext.BLANK_IMAGE_URL
+		});
+        
 		var headerText = header.createChild({
 			tag: "span",
 			cls: "x-window-header-text"
@@ -148,7 +167,7 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
         	overflow: 'auto'
         });
 
-        this.setTitle(this.title);
+        this.setTitle(this.title, this.iconCls);
         
         this.menuBWrap.setHeight(this.height - (this.header.getHeight() + this.bl.getHeight()));
     },
@@ -292,9 +311,8 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
         title = Ext.util.Format.trim(title);
         
         this.header.child('span').update(title);
-		if (this.title == '' || title == '') {
-            this.adjustMenuHeight();
-		}
+        //uncomment this if this.headerIcon is not used
+		//if (this.title == '' || title == '') { this.adjustMenuHeight(); }
         this.title = title;
         
         if (Ext.isDefined(iconCls)) {
@@ -315,5 +333,15 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
         this.iconCls = iconCls;
         
         return this;
+    },
+    
+    /**
+     * Sets title's {@link #header} icon image {@link #icon}.
+     * @param {String} icon The title's icon image
+     * @author Nikolai Babinski
+     */
+    setTitleIcon : function(icon) {
+        this.icon = icon ? icon : Ext.BLANK_IMAGE_URL; 
+        this.headerIcon.set({src: this.icon});
     }
 });

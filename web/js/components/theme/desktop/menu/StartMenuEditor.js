@@ -148,12 +148,14 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
     //eo createRegions
     
     /**
+     * Instantiates live menu view.
      * @protected
      */
     initView : function() {
         var view = new afStudio.theme.desktop.menu.view.StartMenuView({
             title: this.menuAttr.title || '',
-            iconCls: this.menuAttr.iconCls, 
+            iconCls: this.menuAttr.iconCls,
+            icon: this.menuAttr.icon,
             items: []
         });
         
@@ -175,7 +177,8 @@ afStudio.theme.desktop.StartMenuEditor = Ext.extend(Ext.Window, {
             attributes: {
                 type: 'main',
                 title: this.menuAttr.title,
-                iconCls: this.menuAttr.iconCls
+                iconCls: this.menuAttr.iconCls,
+                icon: this.menuAttr.icon
             }
         };
         mm.children = definition;
