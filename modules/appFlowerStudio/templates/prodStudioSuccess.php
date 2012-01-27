@@ -15,3 +15,4 @@
 </script>
 
 <div id="toolbar-container-el"></div>
+<form id="history-form" class="x-hidden"><input type="hidden" id="x-history-field" /><iframe id="x-history-frame"></iframe></form> 

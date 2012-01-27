@@ -84,8 +84,20 @@ afStudio.WD = function() {
 			        'xmlns:i': 'http://www.appflower.com/schema/'
 			    }
 			};
-		}
+		},
 		//eo getViewCarcass
+		
+		/**
+		* open WD for a specific node found from app/module/action uri
+		*/
+		findShowWidgetDesigner : function(app,module,action) {
+		    var tree = Ext.getCmp('widgets');
+		    var appNode = tree.root.findChild('text',app,true);
+		    var moduleNode = appNode.findChild('text',module,true);
+		    var actionNode = moduleNode.findChild('text',action,true);
+		    
+		    tree.runNode(actionNode);
+		}
 		
 	};
 }();

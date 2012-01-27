@@ -15,6 +15,12 @@ var afStudio = function () {
 	 */
 	
 	return {
+	    
+	    /**
+	    * Stores current hash for Ext history
+	    */
+	    currentHash: false,
+	
 		/**
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
 		 */
@@ -152,6 +158,16 @@ var afStudio = function () {
 			if (Ext.util.Cookies.get('appFlowerStudioDontShowWelcomePopup') != 'true') {
 				new afStudio.Welcome().show();
 			}			
+			
+			/**
+			* initialize Ext history
+			*/
+			Ext.History.init();		
+			
+			/**
+			* load first hash if there is one
+			*/
+			this.loadFirst();
 		},
 		//eo init
 		                
@@ -169,6 +185,58 @@ var afStudio = function () {
 		    finishedslug = finishedslug.replace(/-+/g,'-');
 			finishedslug = finishedslug.replace(/(^-)|(-$)/g,'');
 		    return finishedslug;
+        },
+        
+        load : function(token) {
+            this.currentHash = token;
+            
+            var tokenS = token.split('#');
+            var types = ['layout','widget'];
+            var type = tokenS[0];
+            
+            if(types.inArray(type))
+            {
+               var path = tokenS[1].split('/');
+               
+               switch (type)
+               {
+                   case 'layout':
+                       afStudio.xhr.executeAction({
+                		   url: '/afsLayoutBuilder/get',
+                		   params: {
+                		       app: path[0],
+                		       page: path[1]
+                		   },
+                		   mask: String.format('Loading layout "{0}" metadata...', path[1]),
+                		   showNoteOnSuccess: false,
+                		   run: function(response) {
+                			   afStudio.vp.addToWorkspace(
+                			      new afStudio.layoutDesigner.DesignerPanel({
+                			       		layoutMeta: response.content,
+                			       		layoutApp: path[0],
+                			       		layoutPage: path[1]				   
+                			      }), 
+                			   	  true
+                			   );			   	
+                		   }
+                		});                   
+                   break;
+                   case 'widget':
+                        afStudio.WD.findShowWidgetDesigner(path[0],path[1],path[2]);
+                   break;
+               }
+            }            
+        },
+        
+        loadFirst : function ()
+        {
+            var uri=document.location.href.split('#');
+        	uri[1]=uri[1] || '/';
+        	uri[2]=uri[2]?'#'+uri[2]:'';
+        	
+        	var firstUri=uri[1]+uri[2];
+        	
+        	this.load(firstUri);
         }
 	};
 }();
@@ -209,7 +277,29 @@ Ext.applyIf(Array.prototype, {
 			this[j] = this[j+1];
 		}
 		this[to] = draggedEl;
-	}
+	},
+	
+	/**
+	* Find if needle is in array
+	*/
+	inArray : function(needle, argStrict) {
+	   
+        var key = '', strict = !!argStrict, haystack = this;    
+        if (strict) {
+            for (key in haystack) {
+                if (haystack[key] === needle) {
+                    return true;
+                }
+            }
+        } else {
+            for (key in haystack) {
+                if (haystack[key] == needle) {
+                    return true;
+                }
+            }
+        }    
+        return false;
+    }
 });
 
 /**
@@ -241,4 +331,17 @@ Ext.applyIf(String.prototype, {
 	bool : function() {
 		return (/^true$/i).test(this);
 	}	
+	
 });
+
+//Ext History
+Ext.History.on('change', function(token){
+	
+    if(token)
+	{
+		if(afStudio.currentHash!=token)
+		{
+			afStudio.load(token);
+		}
+	}
+});	
