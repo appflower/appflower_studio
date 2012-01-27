@@ -20,6 +20,7 @@ var afStudio = function () {
 	    * Stores current hash for Ext history
 	    */
 	    currentHash: false,
+	    vtload: false,
 	
 		/**
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
@@ -230,10 +231,16 @@ var afStudio = function () {
                         else
                         {    		                                            
                             tree.on('load', function(){
-                                afStudio.WD.findShowWidgetDesigner(path[0],path[1],path[2]);
+                                if(afStudio.wtload)
+                                {                          
+                                    afStudio.WD.findShowWidgetDesigner(path[0],path[1],path[2]);
+                                    afStudio.wtload = false;
+                                }
                             });
                             
                             afStudio.vp.viewRegions.west.layout.setActiveItem('widgets');
+                            
+                            this.wtload=true;
                         }
                    break;
                }
