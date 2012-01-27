@@ -92,11 +92,15 @@ afStudio.WD = function() {
 		*/
 		findShowWidgetDesigner : function(app,module,action) {
 		    var tree = Ext.getCmp('widgets');
-		    var appNode = tree.root.findChild('text',app,true);
-		    var moduleNode = appNode.findChild('text',module,true);
-		    var actionNode = moduleNode.findChild('text',action,true);
+		    tree.on('load', function(){
+		      var appNode = this.root.findChild('text',app,true);
+		      var moduleNode = appNode.findChild('text',module,true);
+		      var actionNode = moduleNode.findChild('text',action,true);		    
 		    
-		    tree.runNode(actionNode);
+		      this.runNode(actionNode);
+		    }, tree, {single: true});  		    
+		    
+		    afStudio.vp.viewRegions.west.layout.setActiveItem('widgets');		    
 		}
 		
 	};
