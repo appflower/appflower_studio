@@ -190,8 +190,6 @@ var afStudio = function () {
         load : function(token) {
             this.currentHash = token;
             
-            console.log(this.currentHash);
-            
             var tokenS = token.split('#');
             var types = ['layout','widget'];
             var type = tokenS[0];
