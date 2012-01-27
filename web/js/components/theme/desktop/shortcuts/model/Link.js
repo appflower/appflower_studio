@@ -8,12 +8,14 @@ N.Link = Ext.extend(N.Node, {
         {name: 'name', type: 'dbNameType', required: true},
         {name: 'title', type: 'string', required: true},
         {name: 'url', type: 'anyURI', required: true},
-        {name: 'iconCls', type: 'token'}
+        {name: 'iconCls', type: 'token'},
+        {name: 'icon', type: 'absoluteUriType'}
     ],
     
     defaultDefinition : {
         name: 'shortcut',
-        title: 'Shortcut'
+        title: 'Shortcut',
+        url: '#'
     },     
     
     /**

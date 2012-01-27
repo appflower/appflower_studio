@@ -61,21 +61,19 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
      * @protected
      */
     onShow : function() {
-        this.eastPanel.el.mask('loading...', 'x-mask-loading');
-        
         afStudio.xhr.executeAction({
             url: afStudioWSUrls.project,
             params: {
                 cmd: 'getHelper',
                 key: 'links'
             },
+            mask: {ctn: this},
             scope: this,
             run: function(response) {
+                
                 this.initShortCutsInspector(response.data);
-                this.eastPanel.el.unmask();
-            },
-            error: function() {
-                this.eastPanel.el.unmask();
+                
+                this.initView();
             }
         });
     },
@@ -96,9 +94,9 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
             items: []
         });
         
-        
         this.centerPanel = new Ext.Panel({
             region: 'center',
+            layout: 'fit',
             items: [],
             tbar: [
             {
@@ -113,24 +111,14 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
                 handler: this.tdshortcut
             }]
         });
-        
-        this.messageBox = new afStudio.layoutDesigner.view.ViewMessageBox({
-            width: 300,
-            viewContainer: this.centerPanel,
-            viewMessage: '<p>Shortcuts Designer</p> <span style="font-size:10px;">under development</span>'
-        });
-        this.centerPanel.add(this.messageBox);
-        
-        this.centerPanel.on('afterlayout', function(){
-            this.messageBox.onAfterRender();
-        }, this);
     },
     //eo createRegions
     
     /**
-     * Init main menu.
+     * Instantiates shortcuts controller {@link afStudio.theme.desktop.shortcut.controller.ShortcutController}
+     * and shows inspector palette {@link afStudio.view.InspectorPalette} associated with him.
      * @protected
-     * @param {Object} definition The main menu definition object
+     * @param {Object} definition The shortcuts definition object
      */
     initShortCutsInspector : function(definition) {
         var def = {
@@ -144,7 +132,6 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
             viewDefinition: def,
             listeners: {
                 scope: this,
-                
                 ready: function(ctr) {
                     var ip = new afStudio.view.InspectorPalette({
                         controller: ctr
@@ -158,6 +145,20 @@ afStudio.theme.desktop.ShortcutsEditor = Ext.extend(Ext.Window, {
         this.controller.run();
         
         afStudio.Logger.info('@shortcut controller', this.controller);
+    },
+    
+    /**
+     * Instantiates live shortcuts view.
+     * Controller must be already instantiated and be ready.
+     * @protected
+     */
+    initView : function() {
+        var sc = new afStudio.theme.desktop.shortcut.view.ShortcutsView({
+            controller: this.controller
+        });
+        
+        this.centerPanel.add(sc);
+        this.centerPanel.doLayout();
     },
     
     /**

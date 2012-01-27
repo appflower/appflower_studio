@@ -308,7 +308,7 @@ Ext.ux.StartMenu = Ext.extend(Ext.menu.Menu, {
      * @return {Ext.ux.StartMenu} this menu
      */
     setTitle : function(title, iconCls) {
-        title = Ext.util.Format.trim(title);
+        title = title ? Ext.util.Format.trim(title) : '';
         
         this.header.child('span').update(title);
         //uncomment this if this.headerIcon is not used

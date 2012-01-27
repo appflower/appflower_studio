@@ -305,9 +305,15 @@
 					<file>js/components/theme/desktop/shortcuts/model/Link.js</file>
 					<file>js/components/theme/desktop/shortcuts/controller/ShortcutController.js</file>
 					            <!-- view -->
+                                    <!-- inspector tree -->
 					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorTree.js</file>
 					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorLoader.js</file>
 					<file>js/components/theme/desktop/shortcuts/view/inspectorTree/node/LinkNode.js</file>
+                                    <!-- shortcuts -->
+					<file>js/components/theme/desktop/shortcuts/view/shortcuts/ModelReflector.js</file>
+					<file>js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsCollection.js</file>
+					<file>js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsStore.js</file>
+					<file>js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsView.js</file>
                             <!-- bg -->
                     <file>js/components/theme/desktop/bg/BackgroundEditor.js</file>        
 

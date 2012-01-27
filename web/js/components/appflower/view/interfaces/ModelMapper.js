@@ -82,11 +82,11 @@ afStudio.view.ModelMapper = (function() {
         
         /**
          * Creates association (mapping) between component and model node.
-         * @param {String} node The model node ID
+         * @param {Node|String} node The model node or its ID 
          * @param {Object|Function} cmp The component or function returning it
          */
         mapCmpToModel : function(node, cmp) {
-            var nodeId = Ext.isString(node) ? node : node.id;
+            var nodeId = Ext.isObject(node) ? node.id : node;
             
             this.modelMapper[nodeId] = cmp;
         },

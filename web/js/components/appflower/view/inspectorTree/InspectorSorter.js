@@ -82,7 +82,7 @@ afStudio.view.inspector.InspectorSorter = Ext.extend(Ext.tree.TreeSorter, {
 	        	var pmn = mn1.parentNode,
 	        		idx1 = pmn.indexOf(mn1),
 	        		idx2 = pmn.indexOf(mn2);
-	        	
+                    
 	        	return idx1 - idx2;	
 	        }
 	    };

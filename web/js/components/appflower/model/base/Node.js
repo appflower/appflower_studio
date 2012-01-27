@@ -1208,6 +1208,39 @@ afStudio.model.Node = Ext.extend(Ext.util.Observable, {
     	
     	return hash;
     },
+
+    /**
+     * Returns a constructor which is used to create new Records from node's properties. 
+     * The constructor has the same signature as {@link #Record}.
+     * Reserved "model-id" property contains the node's id.
+     * @return {Function} record constructor
+     */
+    getPropertiesRecordType : function() {
+        var fields = ['model-id'].concat(this.properties.keys);
+        
+        return Ext.data.Record.create(fields);        
+    },
+    
+    /**
+     * Returns a record from node's properties.
+     * Reserved "model-id" property contains the node's id.
+     * @return {Ext.data.Record} record
+     */
+    getPropertiesRecord : function() {
+        var recType = this.getPropertiesRecordType(),
+            data = this.getPropertiesHash(true);
+        
+        data['model-id'] = this.id;
+        
+        return new recType(data, this.id);
+    },
+    
+    getPropertiesRecordData : function() {
+        var data = this.getPropertiesHash(true);
+        data['model-id'] = this.id;
+        
+        return data;
+    },
     
     /**
      * Returns property.

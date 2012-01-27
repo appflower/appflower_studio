@@ -311,7 +311,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/Tool.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/controller/MenuController.js"></script>
 			<!-- view -->
-				<!-- inspector tree -->			
+				<!-- inspector tree -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/InspectorLoader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/inspectorTree/node/ItemNode.js"></script>
@@ -332,9 +332,15 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/Link.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/controller/ShortcutController.js"></script>
 			<!-- view -->
+				<!-- inspector tree -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorTree.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/InspectorLoader.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/inspectorTree/node/LinkNode.js"></script>
+				<!-- shortcuts -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/shortcuts/ModelReflector.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsCollection.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsStore.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsView.js"></script>
 		<!-- bg -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/bg/BackgroundEditor.js"></script>		
 <!-- end of theme designer -->

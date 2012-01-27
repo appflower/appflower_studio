@@ -32,7 +32,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
     initComponent : function() {
         afStudio.theme.desktop.menu.view.StartMenuView.superclass.initComponent.apply(this, arguments);
         
-        this.modelMapper = {};        
+        this.modelMapper = {};
         
         var me = this;
         
