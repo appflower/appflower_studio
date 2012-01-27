@@ -190,6 +190,8 @@ var afStudio = function () {
         load : function(token) {
             this.currentHash = token;
             
+            console.log(this.currentHash);
+            
             var tokenS = token.split('#');
             var types = ['layout','widget'];
             var type = tokenS[0];
@@ -222,7 +224,19 @@ var afStudio = function () {
                 		});                   
                    break;
                    case 'widget':
-                        afStudio.WD.findShowWidgetDesigner(path[0],path[1],path[2]);
+                        var tree = Ext.getCmp('widgets');
+                        if(tree.root.hasChildNodes())
+                        {
+                            afStudio.WD.findShowWidgetDesigner(path[0],path[1],path[2]);
+                        }
+                        else
+                        {    		                                            
+                            tree.on('load', function(){
+                                afStudio.WD.findShowWidgetDesigner(path[0],path[1],path[2]);
+                            });
+                            
+                            afStudio.vp.viewRegions.west.layout.setActiveItem('widgets');
+                        }
                    break;
                }
             }            
