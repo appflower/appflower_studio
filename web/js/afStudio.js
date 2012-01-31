@@ -211,6 +211,9 @@ var afStudio = function () {
                 		   mask: String.format('Loading layout "{0}" metadata...', path[1]),
                 		   showNoteOnSuccess: false,
                 		   run: function(response) {
+                		       
+                		       afStudio.vp.viewRegions.west.layout.setActiveItem('layoutdesigner');   
+                		    
                 			   afStudio.vp.addToWorkspace(
                 			      new afStudio.layoutDesigner.DesignerPanel({
                 			       		layoutMeta: response.content,
