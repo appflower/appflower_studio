@@ -172,6 +172,22 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	},
 	
 	/**
+	 * Returns {@link #exportWindow}.
+	 * @return {afStudio.models.ExportWindow}
+	 */
+	getExportWindow : function() {
+		var me = this;
+		
+		if (!me.exportWindow) {
+			me.exportWindow = new afStudio.models.ExportWindow({
+				model: me.modelName
+			});
+		}
+		
+		return me.exportWindow;
+	},
+	
+	/**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 

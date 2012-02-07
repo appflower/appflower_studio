@@ -59,7 +59,8 @@
 .icon-model-save{background:url('/appFlowerStudioPlugin/images/table_save.png') no-repeat center left !important;}
 .icon-model-row-insert{background:url('/appFlowerStudioPlugin/images/table_row_insert.png') no-repeat center left !important;}
 .icon-model-row-delete{background:url('/appFlowerStudioPlugin/images/table_row_delete.png') no-repeat center left !important;}
-.icon-model-import{background:url('/appFlowerStudioPlugin/images/table_go.png') no-repeat center left !important;}
+.icon-model-import{background:url('/appFlowerStudioPlugin/images/text_indent.png') no-repeat center left !important;}
+.icon-model-export{background:url('/appFlowerStudioPlugin/images/text_indent_remove.png') no-repeat center left !important;}
 
 .icon-layout-add{background:url('/appFlowerStudioPlugin/images/layout_add.png') no-repeat center left !important;}
 .icon-widgets-add{background:url('/appFlowerStudioPlugin/images/brick_add.png') no-repeat center left !important;}

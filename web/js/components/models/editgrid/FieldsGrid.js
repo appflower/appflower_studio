@@ -392,6 +392,14 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     var w = me.ownerCt.getImportWindow();
                     w.show();
                 }
+            },{
+                text: 'Export',
+                iconCls: 'icon-model-export',
+                scope: this,
+                handler: function(btn, ev) {
+                    var w = me.ownerCt.getExportWindow();
+                    w.show();
+                }
             }]
 		});		
 		
