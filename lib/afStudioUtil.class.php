@@ -291,4 +291,37 @@ class afStudioUtil
             $afClientOptions['password']
         );
     }
+    
+    /**
+     * returns Propel connection params
+     *
+     * @param string $connection
+     * @return array
+     * @author Radu Topala <radu@appflower.com>
+     */
+    public static function getDbParams($connection = 'propel')
+    {
+        $configuration = sfYaml::load(sfConfig::get('sf_config_dir') . "/databases.yml");
+        
+        if (!isset($configuration['all'][$connection])) {
+            throw new sfException("Connection '{$connection}' wasn't found in databases.yml");
+        }
+        
+        $db = $configuration['all'][$connection]['param'];
+        
+        $info = array();
+        list($info['driver'], $info['query']) = explode(':', $db['dsn']);
+        
+        if (isset($info['query'])) {
+            $opts = explode(';', $info['query']);
+            foreach ($opts as $opt) {
+                list($key, $value) = explode('=', $opt);
+                if (!isset($parsed[$key])) $parsed[$key] = urldecode($value);
+            }
+        }
+        
+        $db = array_merge($db,$parsed);
+        
+        return $db;
+    }
 }

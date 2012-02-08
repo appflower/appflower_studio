@@ -178,13 +178,14 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	getExportWindow : function() {
 		var me = this;
 		
-		if (!me.exportWindow) {
-			me.exportWindow = new afStudio.models.ExportWindow({
-				model: me.modelName
-			});
-		}
-		
-		return me.exportWindow;
+		afStudio.xhr.executeAction({
+            url: afStudioWSUrls.modelListUrl,
+            params: {
+                cmd: 'exportData',
+                model: me.modelName
+            },
+            scope: this
+        });
 	},
 	
 	/**

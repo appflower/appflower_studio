@@ -78,7 +78,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 						text: 'Code Browser',
 						iconCls: 'icon-code-editor',
 						handler: function (b, e) {
-							(new afStudio.CodeEditor()).show();
+    						afStudio.openCodeEditor();
 						}
 					}
 					/*

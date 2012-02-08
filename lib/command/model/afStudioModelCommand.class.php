@@ -311,4 +311,26 @@ class afStudioModelCommand extends afBaseStudioCommand
         return $this->getModificator()->validateSchema();
     }
     
+    /**
+     * Export data for a model
+     * 
+     * @return afResponse
+     * @author Radu Topala
+     */
+    protected function processExportData()
+    {
+        $model = new $this->modelName();
+        $peer = $model->getPeer();
+        $table= $peer::TABLE_NAME;
+        
+        $db = afStudioUtil::getDbParams();
+        $backupDir = sfConfig::get('sf_root_dir').'/data/sql/backup/';
+        $backupFile = $backupDir.$table.'_'.time().'.sql';
+        $webFile = 'data/sql/backup/'.$table.'_'.time().'.sql';
+        
+        $console_result = afStudioConsole::getInstance()->execute(array("mkdir {$backupDir}","mysqldump -u{$db['username']} -p{$db['password']} {$db['dbname']} {$table} --no-create-info --lock-tables --quick --complete-insert > {$backupFile}"));
+        
+        return afResponseHelper::create()->success(true)->message("A data backup of {$this->modelName} model was created at <a href=\"/studio#file#{$webFile}\">./{$webFile}</a>")->console($console_result);
+    }
+    
 }

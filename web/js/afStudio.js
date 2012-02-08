@@ -21,6 +21,10 @@ var afStudio = function () {
 	    */
 	    currentHash: false,
 	    vtload: false,
+	    /*
+	    * stores instance of CodeEditor
+	    */
+	    codeEditor: false,
 	
 		/**
 		 * Adds <u>exception</u> listener to {@link Ext.data.DataProxy} and handles it.
@@ -188,20 +192,29 @@ var afStudio = function () {
 		    return finishedslug;
         },
         
+        /**
+        * Used to open specific layout, widget or file
+        *
+        * Examples: 
+        *  /studio#layout#frontend/dashboard
+        *  /studio#widget#frontend/module/action
+        *  /studio#file#.gitmodules
+        *
+        * @author: Radu Topala <radu@appflower.com>
+        */
         load : function(token) {
             this.currentHash = token;
             
             var tokenS = token.split('#');
-            var types = ['layout','widget'];
+            var types = ['layout','widget','file'];
             var type = tokenS[0];
             
             if(types.inArray(type))
-            {
-               var path = tokenS[1].split('/');
-               
+            {              
                switch (type)
                {
                    case 'layout':
+                       var path = tokenS[1].split('/');
                        afStudio.xhr.executeAction({
                 		   url: '/afsLayoutBuilder/get',
                 		   params: {
@@ -226,6 +239,7 @@ var afStudio = function () {
                 		});                   
                    break;
                    case 'widget':
+                        var path = tokenS[1].split('/');
                         var tree = Ext.getCmp('widgets');
                         if(tree.root.hasChildNodes())
                         {
@@ -246,10 +260,19 @@ var afStudio = function () {
                             this.wtload=true;
                         }
                    break;
+                   case 'file':
+                        var path = tokenS[1];
+                        this.openCodeEditor(path);
+                   break;
                }
             }            
         },
         
+        /**
+        * Used to load a hash on first load of Studio
+        *
+        * @author: Radu Topala <radu@appflower.com>
+        */        
         loadFirst : function ()
         {
             var uri=document.location.href.split('#');
@@ -259,6 +282,34 @@ var afStudio = function () {
         	var firstUri=uri[1]+uri[2];
         	
         	this.load(firstUri);
+        },
+        
+        /**
+        * Used to open a file in Studio's Code Editor
+        *
+        * @author: Radu Topala <radu@appflower.com>
+        */
+        openCodeEditor: function (file)
+        {
+            if(!this.codeEditor)
+            {
+                this.codeEditor = new afStudio.CodeEditor();
+            }
+            
+            this.codeEditor.show();
+            
+            if(file)
+            {
+                var ce = this.codeEditor;
+            
+                ce.westPanel.expandPath('/Project/'+file, 'text', function(success, lastNode){
+                    
+                    if(success)
+                    {
+                        ce.openFile(ce.westPanel.getFileName(file),'root/'+file);                        
+                    }                    
+                });               
+            }
         }
 	};
 }();

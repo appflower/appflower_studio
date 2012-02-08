@@ -61,6 +61,8 @@ afStudio.CodeEditor = Ext.extend(Ext.Window, {
 	onDestroy : function() {
 		Ext.EventManager.un(window, 'resize', this.updateCodeBrowserHeight, this);
 		
+		afStudio.codeEditor = false;
+		
 		afStudio.CodeEditor.superclass.onDestroy.call(this);		
 	},
 	
