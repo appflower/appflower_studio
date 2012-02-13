@@ -28,7 +28,7 @@ abstract class BaseafsNotificationForm extends BaseFormPropel
       'user'         => new sfValidatorString(array('max_length' => 128)),
       'ip'           => new sfValidatorString(array('max_length' => 255)),
       'created_at'   => new sfValidatorDateTime(array('required' => false)),
-      'id'           => new sfValidatorPropelChoice(array('model' => 'afsNotification', 'column' => 'id', 'required' => false)),
+      'id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('afs_notification[%s]');

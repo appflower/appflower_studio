@@ -50,26 +50,41 @@ EOF;
      */
     protected function execute($arguments = array(), $options = array())
     {
+        /**
+         * include path to propel generator
+         */
+        sfToolkit::addIncludePath(array(sfConfig::get('sf_propel_path').'/generator/lib'));
+                
+        $this->logBlock('Creating specific AppFlower folders',"QUESTION");
         $this->createFolders();
         
+        $this->logBlock('Setting Symfony project permissions',"QUESTION");
         $this->createTask('project:permissions')->run();
         
         $type_method = 'execute' . sfInflector::camelize($options['type']);
         if (!method_exists($this, $type_method)) throw new sfCommandException("Type method '{$type_method}' not defined.");
         
+        $this->logBlock('Building sql from current schema',"QUESTION");
         $this->createTask('propel:build-sql')->run();
         
         call_user_func(array($this, $type_method), $arguments, $options);
         
-        $this->createTask('propel:diff')->run();
-        $this->createTask('propel:migrate')->run();
-        
+        //$this->createTask('propel:diff')->run();
+        //$this->createTask('propel:migrate')->run();
+                
+        $this->logBlock('Creating models from current schema',"QUESTION");
         $this->createTask('propel:build-model')->run();
+        
+        $this->logBlock('Creating forms from current schema',"QUESTION");
         $this->createTask('propel:build-forms')->run();
         
+        $this->logBlock('Setting AppFlower project permissions',"QUESTION");
         $this->createTask('afs:fix-perms')->run();
         
+        $this->logBlock('Creating AppFlower validator cache',"QUESTION");
         $this->createTask('appflower:validator-cache')->run(array('frontend', 'cache', 'yes'));
+        
+        $this->logBlock('Clearing Symfony cache',"QUESTION");
         $this->createTask('cc')->run();
     }
     
@@ -84,7 +99,8 @@ EOF;
     private function executeDirect(Array $arguments, Array $options)
     {
         if ($options['db-recreate'] === true || $options['db-recreate'] === 'true') {
-            $this->createTask('propel:insert-sql')->run();
+            $this->logBlock('Inserting sql from current schema',"QUESTION");
+            $this->createTask('propel:insert-sql')->run(array(),array('no-confirmation'));
         }
     }
     
@@ -98,6 +114,7 @@ EOF;
      */
     private function executeReverse(Array $arguments, Array $options)
     {
+        $this->logBlock('Update schema from current database',"QUESTION");
         $this->createTask('afs:update-schema')->run();
     }
     
@@ -116,5 +133,4 @@ EOF;
             if (!file_exists($path)) mkdir($path, 0777, true);
         }
     }
-    
 }
