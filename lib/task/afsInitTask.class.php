@@ -63,14 +63,8 @@ EOF;
         
         $type_method = 'execute' . sfInflector::camelize($options['type']);
         if (!method_exists($this, $type_method)) throw new sfCommandException("Type method '{$type_method}' not defined.");
-        
-        $this->logBlock('Building sql from current schema',"QUESTION");
-        $this->createTask('propel:build-sql')->run();
-        
+                             
         call_user_func(array($this, $type_method), $arguments, $options);
-        
-        //$this->createTask('propel:diff')->run();
-        //$this->createTask('propel:migrate')->run();
                 
         $this->logBlock('Creating models from current schema',"QUESTION");
         $this->createTask('propel:build-model')->run();
@@ -99,8 +93,15 @@ EOF;
     private function executeDirect(Array $arguments, Array $options)
     {
         if ($options['db-recreate'] === true || $options['db-recreate'] === 'true') {
+            $this->logBlock('Building sql from current schema',"QUESTION");
+            $this->createTask('propel:build-sql')->run();        
+            
             $this->logBlock('Inserting sql from current schema',"QUESTION");
             $this->createTask('propel:insert-sql')->run(array(),array('no-confirmation'));
+        }
+        else {
+            $this->logBlock('Creating and inserting sql diff between current schema and current db',"QUESTION");
+            $this->createTask('afs:sql-diff')->run(array(),array('insert=true'));
         }
     }
     

@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__FILE__).'/../afsDbInfo.php');
 require_once('generator/lib/model/AppData.php');
 require_once('generator/lib/builder/util/XmlToAppData.php');
 require_once('generator/lib/platform/DefaultPlatform.php');
@@ -7,13 +8,13 @@ require_once('generator/lib/util/PropelMigrationManager.php');
 
 
 /**
- * creates diff using Propel 1.6
+ * checks all tables from Studio's schema.yml if they exist in db, and if they don't exist create them into the db.
  *
  * @package    afStudio
  * @subpackage task
  * @author     Radu Topala
  */
-class afsBuildSqlDiffTask extends sfPropelBaseTask
+class afsSqlDiffTask extends sfPropelBaseTask
 {
   /**
    * @see sfTask
@@ -21,21 +22,21 @@ class afsBuildSqlDiffTask extends sfPropelBaseTask
   protected function configure()
   {
   	$this->addOptions(array(
-      new sfCommandOption('connection', null, sfCommandOption::PARAMETER_REQUIRED, 'The connection name', 'propel'),
-      new sfCommandOption('clean', null, sfCommandOption::PARAMETER_REQUIRED, 'Remove existing tables from appFlowerStudio schema.yml, if they exist in db', false),
+      new sfCommandOption('connection', null, sfCommandOption::PARAMETER_REQUIRED, 'The connection name', 'propel'),      new sfCommandOption('insert', null, sfCommandOption::PARAMETER_OPTIONAL, 'Insert sql diff into db', false),
+      new sfCommandOption('build', null, sfCommandOption::PARAMETER_OPTIONAL, 'Builds model, forms, validator cache, fixes perms & clears the cache', false),
     ));
     
     
     $this->namespace = 'afs';
-    $this->name = 'build-sql-diff';
+    $this->name = 'sql-diff';
     
-    $this->briefDescription = 'Computes diff between current model and database';
+    $this->briefDescription = 'Computes diff between current model and database, and if needed inserts sql diff, builds model, forms, validator cache, fixes perms & clears the cache';
 
     $this->detailedDescription = <<<EOF
-The [afs:build-sql-diff|INFO] compares the current database structure and the
-available schemas. If there is a difference, it creates a sql diff file :
+The [afs:sql-diff|INFO] compares the current database structure and the
+available schemas. If there is a difference, it creates a sql diff file:
 
-  [./symfony afs:build-sql-diff|INFO]
+  [./symfony afs:sql-diff|INFO]
 
 The task reads the database connection settings in [config/databases.yml|COMMENT].
 
@@ -53,7 +54,7 @@ EOF;
    * @see sfTask
    */
   protected function execute($arguments = array(), $options = array())
-  {
+  {     
 	$databaseManager = new sfDatabaseManager($this->configuration);
     $connections = $this->getConnections($databaseManager);
 	//$connection = $databaseManager->getDatabase($options['connection'] ? $options['connection'] : null)->getConnection();
@@ -122,7 +123,31 @@ EOF;
       if($databaseDiff)
       {
         $this->logSection('sql-diff', "Writing file $filenameDiff");  
-        afStudioUtil::writeFile($filenameDiff, $upDiff);
+        afStudioUtil::writeFile($filenameDiff, $upDiff);  
+        
+        if ($options['insert'] === true || $options['insert'] === 'true')
+        {
+            $this->logSection('sql-diff', "Inserting sql diff");  
+            $i->executeSql($upDiff, Propel::getConnection($name));
+        }
+        
+        if ($options['build'] === true || $options['build'] === 'true')
+        {
+            $this->logSection('sql-diff','Creating models from current schema');
+            $this->createTask('propel:build-model')->run();
+            
+            $this->logSection('sql-diff','Creating forms from current schema');
+            $this->createTask('propel:build-forms')->run();
+            
+            $this->logSection('sql-diff','Setting AppFlower project permissions');
+            $this->createTask('afs:fix-perms')->run();
+            
+            $this->logSection('sql-diff','Creating AppFlower validator cache');
+            $this->createTask('appflower:validator-cache')->run(array('frontend', 'cache', 'yes'));
+            
+            $this->logSection('sql-diff','Clearing Symfony cache');
+            $this->createTask('cc')->run();
+        }
       }
     }
   }
