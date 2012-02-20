@@ -239,8 +239,6 @@ EOF;
             '.gitignore',
             '.gitmodules',
             '.svn',
-            'data',
-            'cache/*',
             "{$project}.tar.gz",
         ));
         
@@ -262,7 +260,7 @@ EOF;
             $this->run_command(
                 "tar -czf {$destination}{$project}.tar.gz " .
                 "-C .. " .
-                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='data/' --exclude='cache/' --exclude='{$project}.tar.gz' " .
+                "--exclude='.git' --exclude='.gitignore' --exclude='.gitmodules' --exclude='.svn' --exclude='{$project}.tar.gz' " .
                 pathinfo($source, PATHINFO_BASENAME)
             );
         }
@@ -291,7 +289,7 @@ EOF;
      * @return array
      * @author Sergey Startsev
      */
-    public function parseDSN($dsn)
+    private function parseDSN($dsn)
     {
         $info = array();
         list($info['driver'], $info['query']) = explode(':', $dsn);
