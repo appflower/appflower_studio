@@ -54,7 +54,6 @@ afStudio.theme.desktop.shortcut.view.ShortcutsStore = Ext.extend(Ext.data.Store,
      * @protected
      */
     init : function() {
-        
         var me = this;
         
         this.on({
@@ -157,14 +156,13 @@ afStudio.theme.desktop.shortcut.view.ShortcutsStore = Ext.extend(Ext.data.Store,
      * @interface
      */
     onModelPropertyChanged : function(node, p, v, oldValue) {
-        afStudio.Logger.info('@view [Shortcuts->store] modelPropertyChanged', node);
+        afStudio.Logger.info('@view [Shortcuts->store] modelPropertyChanged', arguments);
+        var r = this.data.getCmpByModel(node, p),
+            executor = this.getExecutor(this.EXEC_UPDATE, node, p);
 
-//        var cmp = this.getCmpByModel(node, p),
-//            executor = this.getExecutor(this.EXEC_UPDATE, node, p);
-//
-//        if (executor) {
-//            executor(node, cmp, p, v, oldValue);
-//        }
+        if (executor) {
+            executor(node, r, p, v, oldValue);
+        }
     }    
 });
 

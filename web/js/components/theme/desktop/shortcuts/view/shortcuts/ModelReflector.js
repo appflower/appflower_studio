@@ -49,8 +49,32 @@ afStudio.theme.desktop.shortcut.view.ModelReflector = (function() {
          */
         executeRemoveLink : function(node, record) {
             this.remove(record);
-        }
+        },
         
+        /**
+         * title
+         */
+        executeUpdateLinkTitle : function(node, record, p, v, oldValue) {
+            record.set(p, Ext.isEmpty(v) ? record.get('name') : v);
+        },
+        /**
+         * url
+         */
+        executeUpdateLinkUrl : function(node, record, p, v, oldValue) {
+            record.set(p, v);
+        },
+        /**
+         * icon
+         */
+        executeUpdateLinkIcon : function(node, record, p, v, oldValue) {
+            record.set(p, v);
+        },
+        /**
+         * iconCls
+         */
+        executeUpdateLinkIconCls : function(node, record, p, v, oldValue) {
+            record.set(p, v);
+        }
     };
 })();
 
