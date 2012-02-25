@@ -24,16 +24,6 @@ afStudio.theme.desktop.shortcut.view.ShortcutsView = Ext.extend(Ext.DataView, {
         Ext.apply(this, 
             Ext.apply(this.initialConfig,
             {
-/*                
-<dl id="x-shortcuts">
-        <dt id="desktop-win-shortcut">
-            <a href="javascript:return false;" onclick="afApp.widgetPopup(&quot;#&quot;); return false;">
-                <img src="/images/desktop/User-icon.png">
-                <div>Shortcut</div>
-            </a>
-        </dt>
-</dl>                
-*/
                 itemSelector: 'dt.shortcut',
                 
                 tpl: new Ext.XTemplate(
@@ -41,13 +31,18 @@ afStudio.theme.desktop.shortcut.view.ShortcutsView = Ext.extend(Ext.DataView, {
                         '<tpl for=".">',
                         '<dt class="shortcut {iconCls}">',
                             '<a href="javascript: void 0;">',
-                                '<img src="{icon}" title="{name}" />',
-                                '<div style="color:#000;">{title}</div>',
+                                '<img src="{[this.getImg(values.icon)]}" title="{name}" />',
+                                '<div>{title}</div>',
                             '</a>',
                         '</dt>',
                         '</tpl>',
                         '<div class="x-clean" />',
-                    '</dl>'
+                    '</dl>',
+                    {
+                        getImg : function(icon) {
+                            return Ext.isEmpty(icon) ? Ext.BLANK_IMAGE_URL : icon;
+                        }
+                    }
 				),
                 
                 store: new afStudio.theme.desktop.shortcut.view.ShortcutsStore({

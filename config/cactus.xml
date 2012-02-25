@@ -350,6 +350,7 @@
 					<file>css/afStudio.console.css</file>
 					<file>css/afStudio.tplSelector.css</file>
                     <file>css/backgroundEditor.css</file>
+                    <file>css/shortcutsEditor.css</file>
 					<file>css/prettyPhoto.css</file>
 					<file>css/welcome.css</file>
 					

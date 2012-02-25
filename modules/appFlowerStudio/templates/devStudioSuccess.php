@@ -367,6 +367,7 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/css/my-extjs.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/afStudio.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/backgroundEditor.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/shortcutsEditor.css" />
 
 <?php 
 $appFlowerStudioPluginCssPath = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/web/css/';

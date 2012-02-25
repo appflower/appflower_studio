@@ -648,36 +648,6 @@ td.ux-taskButtons-edge {
     border: 1px solid #3b5a82;
 }
 
-/* Desktop Shortcuts */
-#x-shortcuts dt {
-    float:left;
-    margin:15px 0 0 15px;
-    clear:left;
-    width:64px;
-    font:normal 10px tahoma,arial,verdana,sans-serif;
-    text-align:center;
-    zoom:1;
-    display:block;
-}
-#x-shortcuts dt a {
-    width:64px;
-    display:block;
-    color:white;
-    text-decoration:none;
-}
-#x-shortcuts dt div {
-    width:100%;
-    color:white;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    cursor:pointer;
-}
-.ext-ie #x-shortcuts dt img {
-    background:transparent !important;
-}
-#x-shortcuts dt a:hover {
-    text-decoration:underline;
-}
 /* shortcuts */
 #grid-win-shortcut img {
     width:48px;
