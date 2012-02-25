@@ -10,6 +10,13 @@ Ext.ns('afStudio.theme.desktop.shortcut.view');
 afStudio.theme.desktop.shortcut.view.ShortcutsCollection = Ext.extend(Ext.util.MixedCollection, {
     
     /**
+     * @property NS The ShortcutsCollection namespace
+     * @static
+     * @type {Object} 
+     */
+    NS : afStudio.theme.desktop.shortcut.view,
+    
+    /**
      * @constructor
      */
     constructor : function() {
@@ -24,6 +31,7 @@ afStudio.theme.desktop.shortcut.view.ShortcutsCollection = Ext.extend(Ext.util.M
     
     /**
      * Adds an item to the collection. Fires the {@link #add} event when complete.
+     * For details look at parent method {@link Ext.util.MixedCollection#add}
      * @override
      * 
      * @param {String} key The key to associate with the item
@@ -39,10 +47,40 @@ afStudio.theme.desktop.shortcut.view.ShortcutsCollection = Ext.extend(Ext.util.M
         //mapping to model
         this.mapCmpToModel(key, o);
         
-        var NS = afStudio.theme.desktop.shortcut.view;
+        return this.NS.ShortcutsCollection.superclass.add.apply(this, [key, o]);
+    },
+
+    /**
+     * Adds mapping between a record being inserted and a model node.
+     * For details look at parent method {@link Ext.util.MixedCollection#add}
+     * @override
+     */
+    insert : function(index, key, o) {
+        o = this.NS.ShortcutsCollection.superclass.insert.apply(this, arguments);
         
-        return NS.ShortcutsCollection.superclass.add.apply(this, [key, o]);
+        if (index < this.length) {
+            key = this.getKey(o);
+	        this.mapCmpToModel(key, o);
+        }
+        
+        return o;
+    },    
+    
+    /**
+     * Unmapping record object from associated model node.
+     * For details look at parent method {@link Ext.util.MixedCollection#add}
+     * @override
+     */
+    removeAt : function(idx) {
+        var o = this.items[idx];
+        if (o) {
+	        //unmapping from model
+	        this.unmapCmpFromModel(o);
+        }
+        
+        return this.NS.ShortcutsCollection.superclass.removeAt.call(this, idx);
     }
+    
 });
 
 //@mixin ModelMapper

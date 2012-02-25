@@ -34,13 +34,15 @@ afStudio.theme.desktop.shortcut.view.ShortcutsView = Ext.extend(Ext.DataView, {
         </dt>
 </dl>                
 */
+                itemSelector: 'dt.shortcut',
+                
                 tpl: new Ext.XTemplate(
                     '<dl id="x-shortcuts">',
                         '<tpl for=".">',
-                        '<dt class="{iconCls}">',
-                            '<a href="javascript:return false;">',
+                        '<dt class="shortcut {iconCls}">',
+                            '<a href="javascript: void 0;">',
                                 '<img src="{icon}" title="{name}" />',
-                                '<div>{title}</div>',
+                                '<div style="color:#000;">{title}</div>',
                             '</a>',
                         '</dt>',
                         '</tpl>',

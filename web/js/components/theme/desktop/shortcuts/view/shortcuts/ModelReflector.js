@@ -19,7 +19,38 @@ afStudio.theme.desktop.shortcut.view.ModelReflector = (function() {
          */
         getExecutorToken : function(s) {
             return s.ucfirst();
+        },
+
+        /**
+         * Adds shortcut record.
+         * @param {Node} n
+         * @param {Number} idx
+         */
+        executeAddLink : function(n, idx) {
+	        var r = n.getPropertiesRecord();
+            this.insert(idx, [r]);
+        },
+        
+        /**
+         * Inserts a shortcut record before the specified one.
+         * @param {Node} node
+         * @param {Node} refNode 
+         * @param {Ext.data.Record} refRecord
+         */
+        executeInsertLink : function(node, refNode, refRecord) {
+            var idx = this.indexOf(refRecord);
+            this.executeAddLink(node, idx);
+        },
+        
+        /**
+         * Removes shortcut record.
+         * @param {Node} node The model node
+         * @param {Ext.data.Record} The record associated with model node
+         */
+        executeRemoveLink : function(node, record) {
+            this.remove(record);
         }
+        
     };
 })();
 

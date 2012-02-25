@@ -54,6 +54,29 @@ afStudio.theme.desktop.shortcut.view.ShortcutsStore = Ext.extend(Ext.data.Store,
      * @protected
      */
     init : function() {
+        
+        var me = this;
+        
+        this.on({
+            scope: me,
+            
+            /**
+             * @relayed controller
+             */
+            modelNodeAppend: me.onModelNodeAppend,
+            /**
+             * @relayed controller
+             */
+            modelNodeInsert: me.onModelNodeInsert,
+            /**
+             * @relayed controller
+             */
+            modelNodeRemove: me.onModelNodeRemove,
+            /**
+             * @relayed controller
+             */
+            modelPropertyChanged: me.onModelPropertyChanged
+        });             
     },
     
     /**
@@ -79,8 +102,70 @@ afStudio.theme.desktop.shortcut.view.ShortcutsStore = Ext.extend(Ext.data.Store,
         var r = this.getModelAsRecords();
         
         this.loadRecords({records : r}, {add: false}, true);
-    }
+    },
     
+    /**
+     * Relayed <u>modelNodeAppend</u> event listener.
+     * More details {@link afStudio.controller.BaseController#modelNodeAppend}.
+     * @protected
+     * @interface
+     */
+    onModelNodeAppend : function(ctr, parent, node, index) {
+        afStudio.Logger.info('@view [Shortcuts->store] modelNodeAppend', arguments);
+        var executor = this.getExecutor(this.EXEC_ADD, node);
+        if (executor) {
+            executor(node, index);
+        }
+    },
+    
+    /**
+     * Relayed <u>modelNodeInsert</u> event listener.
+     * More details {@link afStudio.controller.BaseController#modelNodeInsert}.
+     * @protected
+     * @interface
+     */
+    onModelNodeInsert : function(ctr, parent, node, refNode) {
+        afStudio.Logger.info('@view [Shortcuts->store] modelNodeInsert', arguments);
+        var refRecord = this.data.getCmpByModel(refNode),
+            executor = this.getExecutor(this.EXEC_INSERT, node);
+            
+        if (executor) {
+            executor(node, refNode, refRecord);
+        }
+    },
+    
+    /**
+     * Relayed <u>modelNodeRemove</u> event listener.
+     * More details {@link afStudio.controller.BaseController#modelNodeRemove}.
+     * @protected
+     * @interface
+     */
+    onModelNodeRemove : function(ctr, parent, node) {
+        afStudio.Logger.info('@view [Shortcuts->store] modelNodeRemove', arguments);
+        var r = this.data.getCmpByModel(node),
+            executor = this.getExecutor(this.EXEC_REMOVE, node);
+            
+        if (executor) {
+            executor(node, r);
+        }
+    },
+    
+    /**
+     * Relayed <u>modelPropertyChanged</u> event listener.
+     * More details {@link afStudio.controller.BaseController#modelPropertyChanged}.
+     * @protected
+     * @interface
+     */
+    onModelPropertyChanged : function(node, p, v, oldValue) {
+        afStudio.Logger.info('@view [Shortcuts->store] modelPropertyChanged', node);
+
+//        var cmp = this.getCmpByModel(node, p),
+//            executor = this.getExecutor(this.EXEC_UPDATE, node, p);
+//
+//        if (executor) {
+//            executor(node, cmp, p, v, oldValue);
+//        }
+    }    
 });
 
 //@mixin ModelReflector
