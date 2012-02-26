@@ -181,12 +181,9 @@ class afsModelGridDataActions extends afsActions
      */
     private function getModelObjectData($object)
     {
-        $arrayWithKeys = $object->toArray();
-        $col = 0;
         $tmp = array();
-        foreach ($arrayWithKeys as $value) {
-            $tmp["c{$col}"] = $value;
-            $col++;
+        foreach ($object->toArray(BasePeer::TYPE_NUM) as $key => $value) {
+            $tmp["c{$key}"] = $value;
         }
         $tmp['id'] = $object->getPrimaryKey();
         
