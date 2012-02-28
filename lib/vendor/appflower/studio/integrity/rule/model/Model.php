@@ -116,6 +116,19 @@ class Model extends Base
     }
     
     /**
+     * Checking is all migrations are executed 
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    protected function executeIsAllMigrationsExecuted()
+    {
+        if (Helper::getValidMigrations()) {
+            $this->addMessage("Some migration(s) not executed");
+        }
+    }
+    
+    /**
      * Schema checking action
      *
      * @return void
