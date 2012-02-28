@@ -25,15 +25,28 @@ class Helper
     {
         $rules = array();
         $args = func_get_args();
+        $prepared_args = array();
         
-        $finder = \sfFinder::type('file')->prune('base')->not_name('*Base*')->maxdepth(1)->ignore_version_control();
+        $finder = \sfFinder::type('file')->prune('base')->not_name('*Base*', '*Helper*')->maxdepth(1)->ignore_version_control();
         if (!empty($args)) {
-            array_walk($args, function(&$v, $k) { $v = $v . ".php";});
-            call_user_func_array(array($finder, 'name'), $args);
+            foreach ($args as $key => $value) {
+                if (!is_array($value)) {
+                    $prepared_args[$value] = array();
+                    continue;
+                }
+                $prepared_args[key($value)] = current($value);
+            }
+            $names = array_keys($prepared_args);
+            
+            array_walk($names, function(&$v, $k) { $v = $v . ".php";});
+            call_user_func_array(array($finder, 'name'), $names);
         }
         
         $dirs = $finder->in(__DIR__ . DIRECTORY_SEPARATOR . self::RULE_PATH);
-        foreach ($dirs as $dir) $rules[] = pathinfo($dir, PATHINFO_FILENAME);
+        foreach ($dirs as $dir) {
+            $rule_name = pathinfo($dir, PATHINFO_FILENAME);
+            $rules[$rule_name] = (array_key_exists($rule_name, $prepared_args)) ? $prepared_args[$rule_name] : array();
+        }
         
         return (array)$rules;
     }

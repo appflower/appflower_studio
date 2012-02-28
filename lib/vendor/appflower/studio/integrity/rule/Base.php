@@ -36,15 +36,13 @@ abstract class Base
     /**
      * Execute rules functionality
      *
+     * @param array $methods
      * @return Base
      * @author Sergey Startsev
      */
-    final public function execute()
+    final public function execute(array $methods = array())
     {
-        $reflection = new \ReflectionClass(get_class($this));
-        $methods = $reflection->getMethods(\ReflectionMethod::IS_PROTECTED);
-        
-        foreach ($methods as $method) {
+        foreach ($this->getMethods($methods) as $method) {
             if (substr($method->getName(), 0, strlen(self::PRE_EXECUTOR_NAME)) !== self::PRE_EXECUTOR_NAME) continue;
             
             $method->setAccessible(true);
@@ -84,6 +82,30 @@ abstract class Base
     protected function addMessage($message)
     {
         $this->messages[] = $message;
+    }
+    
+    /**
+     * Getting methods reflections
+     *
+     * @param array $methods 
+     * @return array
+     * @author Sergey Startsev
+     */
+    private function getMethods(array $methods = array())
+    {
+        $reflection = new \ReflectionClass(get_class($this));
+        
+        if (empty($methods)) return $reflection->getMethods(\ReflectionMethod::IS_PROTECTED);
+        
+        $methods_names = array();
+        if (!empty($methods)) {
+            foreach ($methods as $method) {
+                if (!method_exists(get_class($this), self::PRE_EXECUTOR_NAME . ucfirst($method))) continue;
+                $methods_names[] = $reflection->getMethod(self::PRE_EXECUTOR_NAME . ucfirst($method));
+            }
+        }
+        
+        return (array)$methods_names;
     }
     
 }

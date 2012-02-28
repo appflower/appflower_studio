@@ -47,6 +47,7 @@ class Integrity
      * 
      * @example Integrity::create()->check();
      *          Integrity::create()->check('Model', 'Widget');
+     *          Integrity::create()->check(array('Model' => array('schemaChecking')), 'Widget');
      *
      * @return Integrity
      * @author Sergey Startsev
@@ -56,10 +57,10 @@ class Integrity
         $message = array();
         $rules = call_user_func_array('AppFlower\Studio\Integrity\Helper::getRules', func_get_args());
         
-        foreach ($rules as $rule) {
+        foreach ($rules as $rule => $rule_methods) {
             $reflection = new \ReflectionClass("AppFlower\Studio\Integrity\Rule\\$rule\\$rule");
             $instance = $reflection->newInstance();
-            $messages = $instance->execute()->getMessages();
+            $messages = $instance->execute($rule_methods)->getMessages();
             
             if (!empty($messages)) $this->messages[$rule] = $messages;
         }
