@@ -92,4 +92,16 @@ class Integrity
         return (bool)$this->is_impaired;
     }
     
+    /**
+     * Render delegator
+     *
+     * @param string $type 
+     * @return string
+     * @author Sergey Startsev
+     */
+    public function render($type = Renderer\Helper::TYPE_HTML)
+    {
+        return Renderer\Renderer::create($this)->render($type);
+    }
+    
 }
