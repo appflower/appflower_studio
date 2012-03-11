@@ -34,3 +34,5 @@ all:
     # Otherwise it will be always 80 port with URL's like SLUG.DOMAIN_SUFFIX
     # server_auto_vhost_domain_suffix: demo.appflower.com
     
+    # if check integrity shouldn't be executed in case that slow down work process, just turn this flag to false
+    check_integrity: false

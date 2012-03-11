@@ -1,4 +1,7 @@
 <?php
+
+use AppFlower\Studio\Integrity\Integrity as Integrity;
+
 /**
  * Main studio actions class
  *
@@ -97,6 +100,13 @@ class appFlowerStudioActions extends afsActions
         if ($command == 'get') {
             if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
                 return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
+            }
+        }
+        
+        if (sfConfig::get('app_afs_check_integrity', true)) {
+            $integrity = Integrity::create()->check('Model');
+            if ($integrity->isImpaired()) {
+                $response->integrity($integrity->render());
             }
         }
         
