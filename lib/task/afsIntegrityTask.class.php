@@ -16,7 +16,7 @@ use AppFlower\Studio\Integrity as Integrity;
  * @subpackage  task
  * @author      Sergey Startsev <startsev.sergey@gmail.com>
  */
-class afsPermissionsTask extends sfBaseTask
+class afsIntegrityTask extends sfBaseTask
 {
     /**
      * @see sfTask
