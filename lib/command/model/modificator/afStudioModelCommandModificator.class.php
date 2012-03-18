@@ -708,6 +708,69 @@ class afStudioModelCommandModificator
     }
     
     /**
+     * Getting model definition 
+     *
+     * @param string $model 
+     * @param string $connection 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function getModelDefinition($model, $connection = 'propel')
+    {
+        $schema_file = $this->getSchemaByModel($model);
+        $table_name = $this->getTableNameByModel($model);
+        
+        if (!$schema_file) return afResponseHelper::create()->success(false)->message("Model not found");
+        if (!$table_name) return afResponseHelper::create()->success(false)->message("Table name not found by model");
+        
+        $definition = array(
+            $table_name => $this->originalSchemaArray[$schema_file][$connection][$table_name]
+        );
+        
+        return afResponseHelper::create()->success(true)->data(array(), sfYaml::dump($definition), 0);
+    }
+    
+    /**
+     * Setting model definition 
+     *
+     * @param array $definition 
+     * @param string $connection 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function setModelDefinition($definition, $connection = 'propel')
+    {
+        $response = afResponseHelper::create();
+        
+        if (!is_array($definition) || count($definition) > 1) return $response->success(false)->message('Definition contains wrong structure');
+        
+        $schema_file = $this->getSchemaFile();
+        $table_name = key($definition);
+        $table_definition = current($definition);
+        
+        $model_name = sfInflector::camelize($table_name);
+        if (array_key_exists('_attributes', $table_definition) && array_key_exists('phpName', $table_definition['_attributes'])) {
+            $model_name = $table_definition['_attributes']['phpName'];
+        }
+        
+        if (array_key_exists($model_name, $this->propelSchemaArray[$schema_file]['classes'])) {
+            return $response->success(false)->message("Model '{$model_name}' already exists");
+        }
+        if (array_key_exists($table_name, $this->originalSchemaArray[$schema_file][$connection])) {
+            return $response->success(false)->message("Table '{$table_name}' already exists");
+        }
+        
+        $this->originalSchemaArray[$schema_file][$connection][$table_name] = $table_definition;
+        
+        $this->saveSchema();
+        afStudioModelCommandHelper::deploy();
+        
+        afStudioConsole::getInstance()->execute('sf afs:fix-perms');
+        
+        return $response->success(true);
+    }
+    
+    /**
      * Validate current schema
      *
      * @return afResponse

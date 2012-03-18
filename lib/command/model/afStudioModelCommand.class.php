@@ -333,4 +333,53 @@ class afStudioModelCommand extends afBaseStudioCommand
         return afResponseHelper::create()->success(true)->message("A data backup of {$this->modelName} model was created at <a href=\"/studio#file#{$webFile}\">./{$webFile}</a>")->console($console_result);
     }
     
+    /**
+     * Export model definition 
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processExport()
+    {
+        $model_name = $this->getParameter('model_name');
+        $response = $this->getModificator()->getModelDefinition($model_name);
+        
+        if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            $definition = $response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA);
+            $temp_file = sys_get_temp_dir() . "{$model_name}Model.txt";
+            
+            if (file_put_contents($temp_file, $definition)) {
+                $response->data(array(), $temp_file, 0);
+            }
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * Import model definition
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processImport()
+    {
+        $response = afResponseHelper::create();
+        
+        $temp_file = tempnam(sys_get_temp_dir(), 'import_model');
+        
+        if (!empty($_FILES) && array_key_exists('definition', $_FILES) && ($params = $_FILES['definition']) && ($params['size'] > 0) ) {
+            if ($params['size'] > 512000) return $response->success(false)->message("Model definition shouldn't be so huge");
+            if (!in_array($params['type'], array("text/plain", "text/yaml", "text/x-yaml", "application/yaml", "application/x-yaml"))) {
+                return $response->success(false)->message("Definition has wrong mime type" . $params['type']);
+            }
+            
+            if (move_uploaded_file($params["tmp_name"], $temp_file )) {
+                return $this->getModificator()->setModelDefinition(sfYaml::load(file_get_contents($temp_file)));
+            }
+        }
+        
+        return $response->success(false)->message("You haven't defined model definition for upload");
+    }
+    
 }

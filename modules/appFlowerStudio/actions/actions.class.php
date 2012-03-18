@@ -89,7 +89,7 @@ class appFlowerStudioActions extends afsActions
         $params = $request->getParameterHolder()->getAll();
         $files = $request->getFiles();
         
-        if(!empty($files)) {
+        if(!empty($files) && array_key_exists('file', $files)) {
         	$params["name"] = $files["file"]["name"];
         	$params["tmp"] = $files["file"]["tmp_name"];
         	$params["code"] = $files["file"]["error"];
@@ -102,6 +102,29 @@ class appFlowerStudioActions extends afsActions
                 return $this->renderJson($response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA));
             }
         }
+        
+        if ($command == 'export') {
+            if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+                $data = $response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA);
+                
+                $file_path = $data;
+                $file_name = pathinfo($file_path, PATHINFO_BASENAME);
+                
+                $response = $this->getContext()->getResponse();
+                $response->clearHttpHeaders();
+                $response->addCacheControlHttpHeader('Cache-control', 'must-revalidate, post-check=0, pre-check=0');
+                $response->setContentType('application/octet-stream', true);
+                $response->setHttpHeader('Content-Transfer-Encoding', 'binary', true);
+                $response->setHttpHeader('Content-Disposition', "attachment; filename={$file_name}", true);
+                $response->sendHttpHeaders();
+                
+                readfile("{$file_path}");
+                
+                return sfView::NONE;
+            }
+        }
+        
+        if ($command == 'import') return $this->renderText($response->asJson());
         
         if (sfConfig::get('app_afs_check_integrity', true)) {
             $integrity = Integrity::create()->check('Model');
