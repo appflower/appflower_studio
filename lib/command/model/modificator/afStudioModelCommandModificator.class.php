@@ -244,11 +244,14 @@ class afStudioModelCommandModificator
         
         if ($this->saveSchema()) {
             afStudioConsole::getInstance()->execute('sf afs:fix-perms');
+            list($status, $message) = afStudioModelCommandHelper::renameModel($this->getModelName(), $name);
             afStudioModelCommandHelper::removeModelFiles($this->getModelName());
             
             return $response
                         ->success(true)
-                        ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!")
+                        ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!" .
+                            ((!empty($message)) ? "<br/>" . nl2br($message) : '')
+                        )
                         ->console(afStudioModelCommandHelper::deploy());
         }
         

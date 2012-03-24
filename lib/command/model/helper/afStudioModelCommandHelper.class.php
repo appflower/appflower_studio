@@ -121,6 +121,97 @@ class afStudioModelCommandHelper extends afBaseStudioCommandHelper
     }
     
     /**
+     * Rename model files
+     *
+     * @param string $native_name 
+     * @param string $new_name 
+     * @return array - status and message
+     * @author Sergey Startsev
+     */
+    static public function renameModel($native_name, $new_name)
+    {
+        $lib_path = sfConfig::get("sf_lib_dir");
+        
+        $messages = array();
+        
+        $files = array(
+            'model' => array(
+                'path'      => "{$lib_path}/model",
+                'file'      => ".php",
+                'postfix'   => "",
+                'pattern'   => "/class {$native_name} extends Base{$native_name}.*?\{\s*?(.*?)\s*?\}/sim",
+            ),
+            'peer' => array(
+                'path'      => "{$lib_path}/model",
+                'file'      => ".php",
+                'postfix'   => "Peer",
+                'pattern'   => "/class {$native_name}Peer extends Base{$native_name}Peer.*?\{\s*?(.*?)\s*?\}/sim",
+            ),
+            'query' => array(
+                'path'      => "{$lib_path}/model",
+                'file'      => ".php",
+                'postfix'   => "Query",
+                'pattern'   => "/class {$native_name}Query extends Base{$native_name}Query.*?\{\s*?(.*?)\s*?\}/sim",
+            ),
+            'form' => array(
+                'path'      => "{$lib_path}/form",
+                'file'      => ".class.php",
+                'postfix'   => "Form",
+                'pattern'   => "/public function configure\(\).*?\{\s*?(.*?)\s*?\}/sim",
+            ),
+        );
+        
+        $filesystem = afsFileSystem::create();
+        
+        foreach ($files as $file) {
+            if (file_exists("{$file['path']}/{$native_name}{$file['postfix']}{$file['file']}") &&
+                self::isModifiedContent("{$file['path']}/{$native_name}{$file['postfix']}{$file['file']}", $file['pattern']) &&
+                $filesystem->copy("{$file['path']}/{$native_name}{$file['postfix']}{$file['file']}", "{$file['path']}/{$new_name}{$file['postfix']}{$file['file']}")
+            ) {
+                self::renameModelContent(
+                    "{$file['path']}/{$new_name}{$file['postfix']}{$file['file']}", 
+                    "{$native_name}{$file['postfix']}", 
+                    "{$new_name}{$file['postfix']}"
+                );
+                
+                $messages[] = "In {$native_name}{$file['postfix']} has been found custom code, please check {$new_name}{$file['postfix']} for correct work";
+            }
+        }
+        
+        return array(true, implode("\n", $messages));
+    }
+    
+    /**
+     * Rename model content
+     *
+     * @param string $path 
+     * @param string $name 
+     * @param string $renamed 
+     * @return bool
+     * @author Sergey Startsev
+     */
+    static public function renameModelContent($path, $name, $renamed)
+    {
+        $content = file_get_contents($path);   
+        $content = str_ireplace($name, $renamed, $content);
+        
+        return afStudioUtil::writeFile($path, $content);
+    }
+    
+    /**
+     * Checking is modified content by pattern 
+     *
+     * @param string $path 
+     * @param string $pattern 
+     * @return bool
+     * @author Sergey Startsev
+     */
+    static public function isModifiedContent($path, $pattern)
+    {
+        return (preg_match($pattern, file_get_contents($path), $matched) && array_key_exists(1, $matched) && !empty($matched[1]));
+    }
+    
+    /**
      * Sort models array
      *
      * @param Array $models 
