@@ -726,9 +726,12 @@ class afStudioModelCommandModificator
         if (!$schema_file) return afResponseHelper::create()->success(false)->message("Model not found");
         if (!$table_name) return afResponseHelper::create()->success(false)->message("Table name not found by model");
         
-        $definition = array(
-            $table_name => $this->originalSchemaArray[$schema_file][$connection][$table_name]
-        );
+        
+        $definition = $this->originalSchemaArray[$schema_file][$connection][$table_name];
+        
+        // $definition = array(
+            // $table_name => $this->originalSchemaArray[$schema_file][$connection][$table_name]
+        // );
         
         return afResponseHelper::create()->success(true)->data(array(), sfYaml::dump($definition), 0);
     }
@@ -741,29 +744,30 @@ class afStudioModelCommandModificator
      * @return afResponse
      * @author Sergey Startsev
      */
-    public function setModelDefinition($definition, $connection = 'propel')
+    public function setModelDefinition($model_name, $definition, $connection = 'propel')
     {
         $response = afResponseHelper::create();
         
-        if (!is_array($definition) || count($definition) > 1) return $response->success(false)->message('Definition contains wrong structure');
+        if (!is_array($definition)) return $response->success(false)->message('Definition contains wrong structure');
         
         $schema_file = $this->getSchemaFile();
-        $table_name = key($definition);
-        $table_definition = current($definition);
+        $table_name = $this->getTableNameByModel($model_name);
         
-        $model_name = sfInflector::camelize($table_name);
-        if (array_key_exists('_attributes', $table_definition) && array_key_exists('phpName', $table_definition['_attributes'])) {
-            $model_name = $table_definition['_attributes']['phpName'];
+        $definition_model_name = (array_key_exists('_attributes', $definition) && array_key_exists('phpName', $definition['_attributes']))
+            ? $definition['_attributes']['phpName']
+            : $model_name;
+        
+        if (!array_key_exists($model_name, $this->propelSchemaArray[$schema_file]['classes'])) {
+            return $response->success(false)->message("Model '{$model_name}' doesn't exists");
+        }
+        if (!array_key_exists($table_name, $this->originalSchemaArray[$schema_file][$connection])) {
+            return $response->success(false)->message("Table '{$table_name}' doesn't exists");
+        }
+        if (($test_table_name = $this->getTableNameByModel($definition_model_name)) && $test_table_name != $table_name) {
+            return $response->success(false)->message("Model '{$definition_model_name}' from definition already exists in schema and not belongs current table");
         }
         
-        if (array_key_exists($model_name, $this->propelSchemaArray[$schema_file]['classes'])) {
-            return $response->success(false)->message("Model '{$model_name}' already exists");
-        }
-        if (array_key_exists($table_name, $this->originalSchemaArray[$schema_file][$connection])) {
-            return $response->success(false)->message("Table '{$table_name}' already exists");
-        }
-        
-        $this->originalSchemaArray[$schema_file][$connection][$table_name] = $table_definition;
+        $this->originalSchemaArray[$schema_file][$connection][$table_name] = $definition;
         
         $this->saveSchema();
         afStudioModelCommandHelper::deploy();

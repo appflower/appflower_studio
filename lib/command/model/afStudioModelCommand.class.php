@@ -365,6 +365,8 @@ class afStudioModelCommand extends afBaseStudioCommand
     protected function processImport()
     {
         $response = afResponseHelper::create();
+        $model_name = $this->getParameter('model_name');
+        if (empty($model_name)) return $response->success(false)->message("You haven't defined model name");
         
         $temp_file = tempnam(sys_get_temp_dir(), 'import_model');
         
@@ -375,7 +377,7 @@ class afStudioModelCommand extends afBaseStudioCommand
             }
             
             if (move_uploaded_file($params["tmp_name"], $temp_file )) {
-                return $this->getModificator()->setModelDefinition(sfYaml::load(file_get_contents($temp_file)));
+                return $this->getModificator()->setModelDefinition($model_name, sfYaml::load(file_get_contents($temp_file)));
             }
         }
         
