@@ -1,3 +1,8 @@
+.theme-selector-wrap {
+    margin: 0 auto;
+    width: 444px;
+}
+
 .thumb-wrap-large, .thumb-wrap {
 	float: left;
 	margin: 4px 0 4px 4px;

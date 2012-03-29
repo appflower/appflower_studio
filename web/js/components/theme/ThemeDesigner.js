@@ -87,6 +87,7 @@ afStudio.theme.ThemeDesigner = Ext.extend(Ext.Window, {
         var me = this;
         
         this.initDataviewThemeSelector();
+
         this.initDataviewEditors();
         
         this.tabPanel = new Ext.TabPanel({
