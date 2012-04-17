@@ -839,15 +839,14 @@ class afStudioModelCommandModificator
         
         $dirs = array_merge(array(sfConfig::get('sf_config_dir')), $this->configuration->getPluginSubPaths('/config'));
         
+        $deprecated_plugins = afStudioPluginCommandHelper::getDeprecatedList();
         foreach ($dirs as $k => $dir) {
-            if (substr_count($dir, 'appFlower') > 0 || substr_count($dir, 'sfPropelPlugin') > 0 || substr_count($dir, 'sfPropel15Plugin') > 0 || substr_count($dir, 'sfProtoculousPlugin') > 0) {
-                unset($dirs[$k]);
-            }
+            if (in_array(pathinfo(dirname($dir), PATHINFO_FILENAME), $deprecated_plugins)) unset($dirs[$k]);
         }
         
         $dirs = array_values($dirs);
         
-        $schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->in($dirs);
+        $schemas = sfFinder::type('file')->name('*schema.yml')->prune('doctrine')->maxdepth(1)->in($dirs);
         
         foreach ($schemas as $schema_path) {
             $schema = (DIRECTORY_SEPARATOR != '/') ? str_replace('/', DIRECTORY_SEPARATOR, $schema_path) : $schema_path;
