@@ -145,14 +145,14 @@ class Model extends Base
                 foreach ($class_definition['columns'] as $column_name => $column_definition) {
                     if (is_null($column_definition)) continue;
                     if (is_array($column_definition)) {
-                        $this->checkForeign($class_definition, $column_name, $column_definition);
+                        $this->checkForeign($class_definition, $column_name, $column_definition, __FUNCTION__);
                     }
                     
-                    $this->checkFieldName($column_name, "{$error_prefix} in table name '{$class_definition['tableName']}', ");
+                    $this->checkFieldName($column_name, "{$error_prefix} in table name '{$class_definition['tableName']}', ", __FUNCTION__);
                 }
                 
-                $this->checkIndexes($class_definition, $error_prefix);
-                $this->checkTablesNames($class_definition, $error_prefix);
+                $this->checkIndexes($class_definition, $error_prefix, __FUNCTION__);
+                $this->checkTablesNames($class_definition, $error_prefix, __FUNCTION__);
             }
         }
     }
@@ -165,13 +165,13 @@ class Model extends Base
      * @return void
      * @author Sergey Startsev
      */
-    private function checkIndexes(Array $fields, $error_prefix = '')
+    private function checkIndexes(Array $fields, $error_prefix = '', $function_name = '')
     {
         if (!array_key_exists('_indexes', $fields)) return;
         
         foreach ($fields['_indexes'] as $key_name => $keys) {
             if (in_array($key_name, $this->deprecated_indexes_names)) {
-                $this->addMessage($error_prefix . "in table name '{$table_name}', index name '{$key_name}' deprecated");
+                $this->addMessage($error_prefix . "in table name '{$table_name}', index name '{$key_name}' deprecated", $function_name);
             }
         }
     }
@@ -184,10 +184,10 @@ class Model extends Base
      * @return void
      * @author Sergey Startsev
      */
-    private function checkFieldName($field_name, $error_prefix = '')
+    private function checkFieldName($field_name, $error_prefix = '', $function_name = '')
     {
         if (in_array($field_name, $this->deprecated_field_names)) {
-            $this->addMessage($error_prefix . "field '{$field_name}' deprecated");
+            $this->addMessage($error_prefix . "field '{$field_name}' deprecated", $function_name);
         }
     }
     
@@ -199,15 +199,15 @@ class Model extends Base
      * @return void
      * @author Sergey Startsev
      */
-    private function checkTablesNames(Array $fields, $error_prefix = '')
+    private function checkTablesNames(Array $fields, $error_prefix = '', $function_name = '')
     {
         $table_name = $fields['tableName'];
         if (array_key_exists('_attributes', $fields) && array_key_exists('phpName', $fields['_attributes'])) {
             if (in_array(strtolower($fields['_attributes']['phpName']), $this->deprecated_table_names)) {
-                $this->addMessage($error_prefix . "model name '{$fields['_attributes']['phpName']}' deprecated");
+                $this->addMessage($error_prefix . "model name '{$fields['_attributes']['phpName']}' deprecated", $function_name);
             }
         } elseif (in_array(strtolower($table_name), $this->deprecated_table_names)) {
-            $this->addMessage($error_prefix . "table name '{$table_name}' deprecated");
+            $this->addMessage($error_prefix . "table name '{$table_name}' deprecated", $function_name);
         }
     }
     
@@ -220,26 +220,26 @@ class Model extends Base
      * @return void
      * @author Sergey Startsev
      */
-    private function checkForeign(Array $class_definition, $column_name, $column_definition)
+    private function checkForeign(Array $class_definition, $column_name, $column_definition, $function_name = '')
     {
         $tables_list = $this->getTablesList();
         
         if (!array_key_exists('foreignTable', $column_definition)) return;
         
         if (is_null($column_definition['foreignTable'])) {
-            $this->addMessage("Foreign table name shouldn't be null. {$class_definition['tableName']}.{$column_name}");
+            $this->addMessage("Foreign table name shouldn't be null. {$class_definition['tableName']}.{$column_name}", $function_name);
         } else {
             if (!in_array($column_definition['foreignTable'], $tables_list)) {
-                $this->addMessage("Foreign table doesn't exists in schema. {$class_definition['tableName']}.{$column_name}");
+                $this->addMessage("Foreign table doesn't exists in schema. {$class_definition['tableName']}.{$column_name}", $function_name);
             }
         }
         
         if (array_key_exists('foreignReference', $column_definition)) {
             if (is_null($column_definition['foreignReference'])) {
-                $this->addMessage("Foreign table reference shouldn't be null. {$class_definition['tableName']}.{$column_name}");
+                $this->addMessage("Foreign table reference shouldn't be null. {$class_definition['tableName']}.{$column_name}", $function_name);
             }
         } else {
-            $this->addMessage("For foreign table should be defined reference. {$class_definition['tableName']}.{$column_name}");
+            $this->addMessage("For foreign table should be defined reference. {$class_definition['tableName']}.{$column_name}", $function_name);
         }
     }
     

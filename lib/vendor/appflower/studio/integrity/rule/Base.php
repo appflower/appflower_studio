@@ -23,6 +23,13 @@ abstract class Base
     private $messages = array();
     
     /**
+     * Impaired actions
+     *
+     * @var array
+     */
+    private $impaired_actions = array();
+    
+    /**
      * Getting messages 
      *
      * @return array
@@ -31,6 +38,17 @@ abstract class Base
     public function getMessages()
     {
         return $this->messages;
+    }
+    
+    /**
+     * Getting impaired actions list
+     *
+     * @return array
+     * @author Sergey Startsev
+     */
+    public function getImpairedActions()
+    {
+        return $this->impaired_actions;
     }
     
     /**
@@ -76,12 +94,16 @@ abstract class Base
      * Adding message to list 
      *
      * @param string $message 
+     * @param string $assignee
      * @return void
      * @author Sergey Startsev
      */
-    protected function addMessage($message)
+    protected function addMessage($message, $assignee = null)
     {
         $this->messages[] = $message;
+        
+        $method_name = (is_null($assignee) && ($trace = debug_backtrace())) ? $trace[1]["function"] : $assignee;
+        $this->impaired_actions[] = (substr($method_name, 0, 7)) ? substr($method_name, 7) : $method_name;
     }
     
     /**

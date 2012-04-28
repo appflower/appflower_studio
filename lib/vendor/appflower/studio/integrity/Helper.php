@@ -27,7 +27,7 @@ class Helper
         $args = func_get_args();
         $prepared_args = array();
         
-        $finder = \sfFinder::type('file')->prune('base')->not_name('*Base*', '*Helper*')->maxdepth(1)->ignore_version_control();
+        $finder = \sfFinder::type('file')->prune('base')->not_name('*Base*', '*Helper*', '*Crumb*', '*Config*')->maxdepth(1)->ignore_version_control();
         if (!empty($args)) {
             foreach ($args as $key => $value) {
                 if (!is_array($value)) {

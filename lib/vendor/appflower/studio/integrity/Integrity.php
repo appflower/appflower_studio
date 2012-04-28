@@ -25,6 +25,13 @@ class Integrity
     private $messages = array();
     
     /**
+     * Impaired actions
+     *
+     * @var array
+     */
+    private $impaired_actions = array();
+    
+    /**
      * Fabric method creator
      *
      * @return Integrity
@@ -60,9 +67,13 @@ class Integrity
         foreach ($rules as $rule => $rule_methods) {
             $reflection = new \ReflectionClass("AppFlower\Studio\Integrity\Rule\\$rule\\$rule");
             $instance = $reflection->newInstance();
-            $messages = $instance->execute($rule_methods)->getMessages();
+            $rule_instance = $instance->execute($rule_methods);
+            $messages = $rule_instance->getMessages();
             
-            if (!empty($messages)) $this->messages[$rule] = $messages;
+            if (!empty($messages)) {
+                $this->messages[$rule] = $messages;
+                $this->impaired_actions[$rule] = $rule_instance->getImpairedActions();
+            }
         }
         
         if (!empty($this->messages)) $this->is_impaired = true;
