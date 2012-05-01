@@ -21,21 +21,22 @@ class Helper
      * @return array
      * @author Sergey Startsev
      */
-    static public function getRules()
+    static public function getRules(Rule\Config\Config $config = null)
     {
         $rules = array();
-        $args = func_get_args();
         $prepared_args = array();
         
-        $finder = \sfFinder::type('file')->prune('base')->not_name('*Base*', '*Helper*', '*Crumb*', '*Config*')->maxdepth(1)->ignore_version_control();
-        if (!empty($args)) {
-            foreach ($args as $key => $value) {
-                if (!is_array($value)) {
-                    $prepared_args[$value] = array();
-                    continue;
+        $finder = \sfFinder::type('file')->prune('base')->not_name('*Base*', '*Helper*', 'Crumb*', 'Config*', 'Executor*')->maxdepth(1)->ignore_version_control();
+        
+        if (!is_null($config)) {
+            foreach ($config->getCrumbs() as $crumb) {
+                $executors = array();
+                foreach ($crumb->getExecutors() as $executor) {
+                    $executors[] = $executor->getName();
                 }
-                $prepared_args[key($value)] = current($value);
+                $prepared_args[$crumb->getName()] = $executors;
             }
+            
             $names = array_keys($prepared_args);
             
             array_walk($names, function(&$v, $k) { $v = $v . ".php";});

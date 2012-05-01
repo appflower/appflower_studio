@@ -1,6 +1,7 @@
 <?php
 
 use AppFlower\Studio\Integrity\Integrity as Integrity;
+use AppFlower\Studio\Integrity\Rule\Config as IntegrityConfig;
 
 /**
  * Main studio actions class
@@ -127,7 +128,10 @@ class appFlowerStudioActions extends afsActions
         if ($command == 'import') return $this->renderText($response->asJson());
         
         if (sfConfig::get('app_afs_check_integrity', true)) {
-            $integrity = Integrity::create()->check('Model');
+            $integrity = Integrity::create()->check(
+                IntegrityConfig\Config::create()->add(IntegrityConfig\Crumb::create('Model'))
+            );
+            
             if ($integrity->isImpaired()) {
                 $response->integrity($integrity->render());
             }

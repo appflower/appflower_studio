@@ -53,16 +53,24 @@ class Integrity
      * Check integrity functionality
      * 
      * @example Integrity::create()->check();
-     *          Integrity::create()->check('Model', 'Widget');
-     *          Integrity::create()->check(array('Model' => array('schemaChecking')), 'Widget');
-     *
+     *          Integrity::create()->check(
+     *              Rule\Config\Config::create()
+     *                  ->add(Rule\Config\Crumb::create('Model'))
+     *                  ->add(Rule\Config\Crumb::create('Permissions'))
+     *          );
+     *          Integrity::create()->check(
+     *              IntegrityConfig\Config::create()
+     *                  ->add(Rule\Config\Crumb::create('Model')->addExecutor(Rule\Config\Executor\Executor::create('schemaChecking')))
+     *          );
+     * 
+     * @param  Rule\Config\Config config instance
      * @return Integrity
      * @author Sergey Startsev
      */
-    public function check()
+    public function check(Rule\Config\Config $config = null)
     {
         $message = array();
-        $rules = call_user_func_array('AppFlower\Studio\Integrity\Helper::getRules', func_get_args());
+        $rules = call_user_func('AppFlower\Studio\Integrity\Helper::getRules', $config);
         
         foreach ($rules as $rule => $rule_methods) {
             $reflection = new \ReflectionClass("AppFlower\Studio\Integrity\Rule\\$rule\\$rule");

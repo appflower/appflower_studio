@@ -8,6 +8,7 @@ $loader->registerNamespaces(array(
 $loader->register();
 
 use AppFlower\Studio\Integrity as Integrity;
+use AppFlower\Studio\Integrity\Rule\Config as IntegrityConfig;
 
 /**
  * Checks integrity of project
@@ -45,8 +46,12 @@ EOF;
     {
         $databaseManager = new sfDatabaseManager($this->configuration);
         
-        $integrity = Integrity\Integrity::create();
-        (empty($options['rules'])) ? $integrity->check() : call_user_func_array(array($integrity, 'check'), explode(',', $options['rules']));
+        $config = null;
+        if (!empty($options['rules'])) {
+            $config = IntegrityConfig\Config::create();
+            foreach (explode(',', $options['rules']) as $rule_name) $config->add(IntegrityConfig\Crumb::create($rule_name));
+        }
+        $integrity = Integrity\Integrity::create()->check($config);
         
         if ($integrity->isImpaired()) {
             throw new sfCommandException($integrity->render(Integrity\Renderer\Helper::TYPE_TEXT));
