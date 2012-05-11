@@ -16,6 +16,18 @@ abstract class Base
     const PRE_EXECUTOR_NAME = 'execute';
     
     /**
+     * Autofix execute method prefix
+     */
+    const PRE_AUTOFIX_NAME = 'autofix';
+    
+    /**
+     * Flag should be used autofix or not
+     *
+     * @var boolean
+     */
+    private $use_autofix = true;
+    
+    /**
      * Messages
      *
      * @var array
@@ -37,7 +49,12 @@ abstract class Base
      */
     public function getMessages()
     {
-        return $this->messages;
+        $messages = array();
+        foreach ($this->messages as $message) {
+            $messages = array_merge($messages, $message);
+        }
+        
+        return $messages;
     }
     
     /**
@@ -52,6 +69,20 @@ abstract class Base
     }
     
     /**
+     * Should be used autofix or not
+     *
+     * @param boolean $flag 
+     * @return Base
+     * @author Sergey Startsev
+     */
+    public function useAutofix($flag = true)
+    {
+        $this->use_autofix = (bool) $flag;
+        
+        return $this;
+    }
+    
+    /**
      * Execute rules functionality
      *
      * @param array $methods
@@ -63,8 +94,19 @@ abstract class Base
         foreach ($this->getMethods($methods) as $method) {
             if (substr($method->getName(), 0, strlen(self::PRE_EXECUTOR_NAME)) !== self::PRE_EXECUTOR_NAME) continue;
             
+            $raw_name = substr($method->getName(), strlen(self::PRE_EXECUTOR_NAME));
+            
             $method->setAccessible(true);
-            $response = $method->invoke($this);
+            $method->invoke($this);
+            
+            if ($this->use_autofix && in_array($raw_name, $this->getImpairedActions()) && $this->doAutofix($raw_name)) {
+                if (false !== ($action_position = array_search($raw_name, $this->impaired_actions))) {
+                    unset($this->impaired_actions[$action_position]);
+                }
+                if (array_key_exists($raw_name, $this->messages)) unset($this->messages[$raw_name]);
+                
+                $method->invoke($this);
+            }
         }
         
         return $this;
@@ -100,10 +142,33 @@ abstract class Base
      */
     protected function addMessage($message, $assignee = null)
     {
-        $this->messages[] = $message;
-        
         $method_name = (is_null($assignee) && ($trace = debug_backtrace())) ? $trace[1]["function"] : $assignee;
-        $this->impaired_actions[] = (substr($method_name, 0, 7)) ? substr($method_name, 7) : $method_name;
+        $method_name = (substr($method_name, 0, 7)) ? substr($method_name, 7) : $method_name;
+        $this->impaired_actions[] = $method_name;
+        
+        $this->messages[$method_name][] = $message;
+    }
+    
+    /**
+     * Do autofix functionality
+     *
+     * @param string $method_name 
+     * @return boolean  (true - autofix has been found and executed, false - autofix method wasn't found)
+     * @author Sergey Startsev
+     */
+    private function doAutofix($method_name)
+    {
+        $reflection = new \ReflectionClass(get_class($this));
+        
+        $autofix_name = self::PRE_AUTOFIX_NAME . ucfirst($method_name);
+        if (!$reflection->hasMethod($autofix_name)) return false;
+        
+        $autofix_method = $reflection->getMethod($autofix_name);
+        
+        $autofix_method->setAccessible(true);
+        $autofix_method->invoke($this);
+        
+        return true;
     }
     
     /**

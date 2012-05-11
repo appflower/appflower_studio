@@ -116,6 +116,21 @@ class Model extends Base
     }
     
     /**
+     * Fix if table doesn't exists in db
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    protected function autofixTableExisting()
+    {
+        
+        \afStudioConsole::getInstance()->execute(array(
+            'sf propel:diff',
+            'sf propel:migrate',
+        ));
+    }
+    
+    /**
      * Checking is all migrations are executed 
      *
      * @return void
@@ -126,6 +141,19 @@ class Model extends Base
         if (Helper::getValidMigrations()) {
             $this->addMessage("Some migration(s) not executed");
         }
+    }
+    
+    /**
+     * Autofix for checking is all migrations executed
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    protected function autofixIsAllMigrationsExecuted()
+    {
+        \afStudioConsole::getInstance()->execute(array(
+            'sf propel:migrate',
+        ));
     }
     
     /**

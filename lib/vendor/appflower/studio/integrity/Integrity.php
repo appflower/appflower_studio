@@ -76,11 +76,11 @@ class Integrity
             $reflection = new \ReflectionClass("AppFlower\Studio\Integrity\Rule\\$rule\\$rule");
             $instance = $reflection->newInstance();
             $rule_instance = $instance->execute($rule_methods);
-            $messages = $rule_instance->getMessages();
+            $impaired_actions = $rule_instance->getImpairedActions();
             
-            if (!empty($messages)) {
-                $this->messages[$rule] = $messages;
-                $this->impaired_actions[$rule] = $rule_instance->getImpairedActions();
+            if (!empty($impaired_actions)) {
+                $this->messages[$rule] = $rule_instance->getMessages();
+                $this->impaired_actions[$rule] = $impaired_actions;
             }
         }
         
