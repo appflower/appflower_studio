@@ -55,14 +55,13 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
 //                    xtype: ''
                     title: 'Theme Designer'
                 },{
-//                    xtype: ''
-                    title: 'CSS Designer'
+                    title: 'CSS Designer',
+                    xtype: 'afStudio.theme.cssEditor'
                 }]
             }]
         };
 
     },
-
 
     /**
      * @template
@@ -83,11 +82,8 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
      */
     onShow : function() {
         if (this.themeSelector) {
+            //select the current used theme
             this.themeSelector.selectTheme(afTemplateConfig.template.current);
-
-//            var recIdx = this.themeSelector.themeSelector.store.find('name', afTemplateConfig.template.current);
-//            this.themeSelector.themeSelector.select(recIdx);
         }
     }
-
 });

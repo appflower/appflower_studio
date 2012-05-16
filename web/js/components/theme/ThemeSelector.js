@@ -13,7 +13,6 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
      * @template
      */
     initComponent : function() {
-
         var store = new Ext.data.ArrayStore({
             fields: ['id', 'name', 'img'],
             sortInfo: {
@@ -42,13 +41,13 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
             ),
             listeners: {
                 scope: this,
+
                 selectionchange: function(dataview, selections) {
-                    console.log('theme selector selectionchange', selections);
-//                    var btn = Ext.getCmp(this.id + '-customize-btn-ts');
-//                    selections.length ? btn.enable() : btn.disable();
+                    afStudio.Logger.info('theme selector selectionchange', selections);
+                    //TODO add logic to enable / disable save, save & close, close buttons
                 },
+
                 dblclick: function(dataview, index, node, e) {
-//                    me.customizeThemeSelector(me.close);
                 }
             }
         });
@@ -56,7 +55,7 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
         Ext.apply(this,
             Ext.apply(this.initialConfig, {
 
-                layout:'vbox',
+                layout: 'vbox',
 
                 layoutConfig: {
                     align: 'stretch',
@@ -72,13 +71,14 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
 
         afStudio.theme.ThemeSelector.superclass.initComponent.apply(this, arguments);
     },
+    //eo initComponent
 
     /**
      * Selects the specified theme.
      * @param {String} themeName The theme being selected name
      */
     selectTheme : function(themeName) {
-        console.log('selectTheme', themeName);
+        afStudio.Logger.info('select theme', themeName);
 
         var recIdx = this.selector.store.find('name', themeName);
         this.selector.select(recIdx);

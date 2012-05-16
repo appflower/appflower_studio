@@ -294,6 +294,7 @@
 <!-- theme designer -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/Designer.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/ThemeSelector.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/CssEditor2.js"></script>
 
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/ThemeDesigner.js"></script>
