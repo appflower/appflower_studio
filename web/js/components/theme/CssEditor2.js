@@ -64,37 +64,12 @@ afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
         this.centerPanel = new Ext.Panel({
             region: 'center',
             layout: 'fit',
-            items: this.codeEditor,
-            bbar: {
-                items: [
-                '->',
-                {
-                    text: 'Save',
-                    iconCls: 'icon-save',
-                    scope: me,
-                    handler: me.save
-                },{
-                    xtype: 'tbspacer', width: 5
-                },{
-                    text: 'Save & Close',
-                    iconCls: 'icon-save',
-                    scope: this,
-                    handler: this.save
-                },{
-                    xtype: 'tbspacer', width: 5
-                },{
-                    text: 'Close',
-//                iconCls: 'icon-save',
-                    scope: this
-//                handler: this.save
-                }]
-            }
+            items: this.codeEditor
         })
     },
 
     /**
-     * Saves file.
-     * @author Nikolai Babinski
+     * Saves css file.
      */
     save : function() {
         var me = this,

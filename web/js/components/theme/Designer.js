@@ -16,10 +16,9 @@ Ext.ns('afStudio.theme');
 afStudio.theme.Designer = Ext.extend(Ext.Window, {
 
     //private overrides
-    title : 'Theme Designer',
-    width : 1007,
-    height : 600,
-    //TODO update width & height reflecting the browser size on showing window
+    title: 'Theme Designer',
+    width: 1000,
+    height: 600,
 
     /**
      * @cfg {String} iconCls The window's icon (defaults to "icon-theme")
@@ -45,6 +44,7 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
             items: [
             {
                 xtype: 'tabpanel',
+                ref: 'tabs',
                 activeTab: 0,
                 items: [
                 {
@@ -58,7 +58,25 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
                     title: 'CSS Designer',
                     xtype: 'afStudio.theme.cssEditor'
                 }]
-            }]
+            }],
+            bbar: {
+                items: [
+                '->',
+                {
+                    text: 'Save',
+                    ref: '../saveBtn'
+                },{
+                    xtype: 'tbspacer', width: 5
+                },{
+                    text: 'Save and Close',
+                    ref: '../saveCloseBtn'
+                },{
+                    xtype: 'tbspacer', width: 5
+                },{
+                    text: 'Cancel',
+                    ref: '../cancelBtn'
+                }]
+            }
         };
 
     },
@@ -75,6 +93,19 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
     },
 
     /**
+     * @template
+     */
+    initEvents : function() {
+        var me = this;
+
+        afStudio.theme.Designer.superclass.initEvents.call(this);
+
+        this.mon(this.saveBtn, 'click', me.onSave, me);
+        this.mon(this.saveCloseBtn, 'click', me.onSaveAndClose, me);
+        this.mon(this.cancelBtn, 'click', me.onCancel, me);
+    },
+
+    /**
      * Initialises appearance.
      * Method that is called immediately before the <code>show</code> event is fired.
      * @override
@@ -85,5 +116,30 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
             //select the current used theme
             this.themeSelector.selectTheme(afTemplateConfig.template.current);
         }
+    },
+
+    /**
+     * Save {@link #saveBtn} button *click* event listener.
+     */
+    onSave : function() {
+        var at = this.tabs.getActiveTab();
+
+        at.save();
+    },
+
+    /**
+     * Save and Close {@link #saveCloseBtn} button *click* event listener.
+     */
+    onSaveAndClose : function() {
+        this.onSave();
+        this.close();
+    },
+
+    /**
+     * Cancel {@link #cancelBtn} button *click* event listener.
+     */
+    onCancel : function() {
+        this.close();
     }
+
 });

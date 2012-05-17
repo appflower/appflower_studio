@@ -65,7 +65,6 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
                 items: [
                     this.selector
                 ]
-
             })
         );
 
@@ -85,6 +84,33 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
 
         //TODO add parameters and processors of the event
         this.fireEvent('themeSelection');
+    },
+
+    /**
+     * Saves selected theme.
+     */
+    save : function() {
+        var me = this;
+
+        if (this.selector.getSelectionCount()) {
+            var templateName = this.selector.getSelectedRecords()[0].get('name');
+
+            afStudio.Logger.info('save theme', templateName);
+
+            afStudio.xhr.executeAction({
+                url: afStudioWSUrls.templateSelectorUrl,
+                params: {
+                    cmd: 'update',
+                    template: templateName
+                },
+                run: function(response, options) {
+                    afTemplateConfig.template.current = templateName.toLowerCase();
+
+                    //Update theme designer tab
+//                    me.updateDataviewEditors();
+                }
+            });
+        }
     }
 
 });
