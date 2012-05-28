@@ -52,8 +52,10 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
                     xtype: 'afStudio.theme.themeSelector',
                     ref: '../themeSelector'
                 },{
-//                    xtype: ''
-                    title: 'Theme Designer'
+                    title: 'Theme Designer',
+                    xtype: 'afStudio.theme.editorsPanel',
+                    theme: afTemplateConfig.template.current,
+                    ref: '../themeDesigner'
                 },{
                     title: 'CSS Designer',
                     xtype: 'afStudio.theme.cssEditor'
@@ -73,7 +75,7 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
                 },{
                     xtype: 'tbspacer', width: 5
                 },{
-                    text: 'Cancel',
+                    text: 'Close',
                     ref: '../cancelBtn'
                 }]
             }
@@ -96,13 +98,27 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
      * @template
      */
     initEvents : function() {
+        afStudio.theme.Designer.superclass.initEvents.call(this);
+
         var me = this;
 
-        afStudio.theme.Designer.superclass.initEvents.call(this);
+        this.delegateEvents();
 
         this.mon(this.saveBtn, 'click', me.onSave, me);
         this.mon(this.saveCloseBtn, 'click', me.onSaveAndClose, me);
         this.mon(this.cancelBtn, 'click', me.onCancel, me);
+    },
+
+    /**
+     * Delegates/Relays events to/between components of this container.
+     * @protected
+     */
+    delegateEvents : function() {
+        var me = this,
+            ts = me.themeSelector,
+            td = me.themeDesigner;
+
+        td.relayEvents(ts, ['themeSelection']);
     },
 
     /**

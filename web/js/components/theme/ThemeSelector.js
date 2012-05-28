@@ -43,8 +43,12 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
                 scope: this,
 
                 selectionchange: function(dataview, selections) {
-                    afStudio.Logger.info('theme selector selectionchange', selections);
-                    //TODO add logic to enable / disable save, save & close, close buttons
+                    afStudio.Logger.info('@afStudio.theme.ThemeSelector.selector#selectionchange', selections);
+
+                    var rec = dataview.getRecord(selections[0]),
+                        theme = rec.get('name').toLowerCase();
+
+                    this.fireEvent('themeSelection', theme);
                 },
 
                 dblclick: function(dataview, index, node, e) {
@@ -73,17 +77,30 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
     //eo initComponent
 
     /**
+     * @template
+     */
+    initEvents : function() {
+        afStudio.theme.ThemeSelector.superclass.initEvents.call(this);
+
+        this.addEvents(
+            /**
+             * @event themeSelection
+             * Fires when a theme was selected
+             * @param {String} theme The selected theme
+             */
+            'themeSelection'
+        );
+    },
+
+    /**
      * Selects the specified theme.
      * @param {String} themeName The theme being selected name
      */
     selectTheme : function(themeName) {
-        afStudio.Logger.info('select theme', themeName);
+        afStudio.Logger.info('@afStudio.theme.ThemeSelector#selectTheme', themeName);
 
         var recIdx = this.selector.store.find('name', themeName);
         this.selector.select(recIdx);
-
-        //TODO add parameters and processors of the event
-        this.fireEvent('themeSelection');
     },
 
     /**
@@ -95,7 +112,7 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
         if (this.selector.getSelectionCount()) {
             var templateName = this.selector.getSelectedRecords()[0].get('name');
 
-            afStudio.Logger.info('save theme', templateName);
+            afStudio.Logger.info('@afStudio.theme.ThemeSelector#save', templateName);
 
             afStudio.xhr.executeAction({
                 url: afStudioWSUrls.templateSelectorUrl,
