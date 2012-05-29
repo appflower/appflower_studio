@@ -12,8 +12,8 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
     layout: 'border',
 
     /**
-     * @cfg {String} theme (required)
-     * The current selected theme.
+     * @property {String} theme The current selected theme.
+     * @readonly
      */
 
     /**
@@ -53,7 +53,18 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
 
         afStudio.theme.EditorsPanel.superclass.initComponent.apply(this, arguments);
 
+    },
+
+    /**
+     * @template
+     */
+    afterRender : function() {
+        //gets the current theme
+        this.theme = this.refOwner.getCurrentTheme();
+        //updates editors
         this.refreshEditors(this.theme);
+
+        afStudio.theme.EditorsPanel.superclass.afterRender.call(this);
     },
 
     /**
@@ -98,6 +109,7 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      */
     refreshEditors : function(theme) {
         var eds = afStudio.theme.EditorsPanel[theme],
+            em = this.editorsMenu,
             menuItems = [];
 
         if (!Ext.isDefined(eds)) {
@@ -111,9 +123,9 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
 
         afStudio.Logger.info('@afStudio.theme.EditorsPanel#refreshEditors', menuItems);
 
-        this.editorsMenu.removeAll();
-        this.editorsMenu.add(menuItems);
-        this.editorsMenu.doLayout();
+        em.removeAll();
+        em.add(menuItems);
+        em.doLayout();
     },
 
     /**
@@ -123,7 +135,7 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      */
     onThemeSelection : function(theme) {
         afStudio.Logger.info('@afStudio.theme.EditorsPanel:onThemeSelection', theme);
-
+        this.theme = theme;
         this.refreshEditors(theme);
     },
 
@@ -132,6 +144,7 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      */
     onTabActivate : function() {
         //refresh the editors menu (west area)
+        //to update editors list
         this.editorsMenu.doLayout();
     },
 

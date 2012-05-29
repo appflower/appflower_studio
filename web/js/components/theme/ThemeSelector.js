@@ -10,9 +10,18 @@ Ext.ns('afStudio.theme');
 afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
 
     /**
+     * @property {String} selectedTheme The current selected theme
+     * @readonly
+     */
+
+    /**
      * @template
      */
     initComponent : function() {
+
+        //theme is not defined yet
+        this.selectedTheme = null;
+
         var store = new Ext.data.ArrayStore({
             fields: ['id', 'name', 'img'],
             sortInfo: {
@@ -41,16 +50,6 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
             ),
             listeners: {
                 scope: this,
-
-                selectionchange: function(dataview, selections) {
-                    afStudio.Logger.info('@afStudio.theme.ThemeSelector.selector#selectionchange', selections);
-
-                    var rec = dataview.getRecord(selections[0]),
-                        theme = rec.get('name').toLowerCase();
-
-                    this.fireEvent('themeSelection', theme);
-                },
-
                 dblclick: function(dataview, index, node, e) {
                 }
             }
@@ -90,6 +89,8 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
              */
             'themeSelection'
         );
+
+        this.mon(this.selector, 'selectionchange', this.onSelectionChange, this);
     },
 
     /**
@@ -101,6 +102,24 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
 
         var recIdx = this.selector.store.find('name', themeName);
         this.selector.select(recIdx);
+    },
+
+    /**
+     * Theme {@link #selector} *selectionchange* event listener.
+     * @param dataview
+     * @param selections
+     */
+    onSelectionChange : function(dataview, selections) {
+        afStudio.Logger.info('@afStudio.theme.ThemeSelector.selector#selectionchange', selections);
+
+        if (selections[0]) {
+            var rec = dataview.getRecord(selections[0]),
+                theme = rec.get('name').toLowerCase();
+
+            this.selectedTheme = theme;
+
+            this.fireEvent('themeSelection', theme);
+        }
     },
 
     /**
@@ -122,9 +141,6 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
                 },
                 run: function(response, options) {
                     afTemplateConfig.template.current = templateName.toLowerCase();
-
-                    //Update theme designer tab
-//                    me.updateDataviewEditors();
                 }
             });
         }

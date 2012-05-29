@@ -54,7 +54,6 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
                 },{
                     title: 'Theme Designer',
                     xtype: 'afStudio.theme.editorsPanel',
-                    theme: afTemplateConfig.template.current,
                     ref: '../themeDesigner'
                 },{
                     title: 'CSS Designer',
@@ -119,6 +118,14 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
             td = me.themeDesigner;
 
         td.relayEvents(ts, ['themeSelection']);
+    },
+
+    /**
+     * Returns current selected theme {@link afStudio.theme.ThemeSelector#selectedTheme}.
+     * @return {String} theme
+     */
+    getCurrentTheme : function() {
+        return this.themeSelector.selectedTheme ? this.themeSelector.selectedTheme : null;
     },
 
     /**
