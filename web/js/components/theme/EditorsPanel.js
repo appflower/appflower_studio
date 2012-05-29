@@ -22,6 +22,11 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      */
 
     /**
+     * @property {Ext.Container} themeEditor
+     * The current theme editor container.
+     */
+
+    /**
      * @template
      */
     initComponent : function() {
@@ -29,6 +34,10 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
         this.editorsMenu = new Ext.menu.Menu({
             floating: false,
             plain: true
+        });
+
+        this.themeEditor = new Ext.Container({
+            border: false
         });
 
         Ext.apply(this,
@@ -46,7 +55,9 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
 
                 },{
                     xtype: 'container',
-                    region: 'center'
+                    region: 'center',
+                    layout: 'fit',
+                    items: [this.themeEditor]
                 }]
             })
         );
@@ -61,8 +72,8 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
     afterRender : function() {
         //gets the current theme
         this.theme = this.refOwner.getCurrentTheme();
-        //updates editors
-        this.refreshEditors(this.theme);
+        //updates theme
+        this.updateTheme(this.theme);
 
         afStudio.theme.EditorsPanel.superclass.afterRender.call(this);
     },
@@ -123,9 +134,28 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
 
         afStudio.Logger.info('@afStudio.theme.EditorsPanel#refreshEditors', menuItems);
 
-        em.removeAll();
+        em.removeAll(true);
         em.add(menuItems);
         em.doLayout();
+    },
+
+    /**
+     * Updates theme editors and place the message-box placeholder in the {@link #themeEditor}.
+     * @protected
+     */
+    updateTheme : function(theme) {
+        this.theme = theme;
+
+        this.refreshEditors(theme);
+
+        var messageBox = new afStudio.layoutDesigner.view.ViewMessageBox({
+            viewContainer: this.themeEditor,
+            viewMessage: '<p>Select theme editor</p> <span style="font-size:10px;"> Theme editors placed in the left(west) collapsible panel.</span>'
+        });
+        this.themeEditor.removeAll(true);
+        this.themeEditor.add(messageBox);
+        //layout the message-box only when the theme designer tab is active
+        this.on('activate', function(){this.themeEditor.doLayout();}, this, {single: true});
     },
 
     /**
@@ -135,8 +165,7 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      */
     onThemeSelection : function(theme) {
         afStudio.Logger.info('@afStudio.theme.EditorsPanel:onThemeSelection', theme);
-        this.theme = theme;
-        this.refreshEditors(theme);
+        this.updateTheme(theme);
     },
 
     /**
