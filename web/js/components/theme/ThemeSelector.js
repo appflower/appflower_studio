@@ -116,9 +116,10 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
             var rec = dataview.getRecord(selections[0]),
                 theme = rec.get('name').toLowerCase();
 
-            this.selectedTheme = theme;
-
-            this.fireEvent('themeSelection', theme);
+            if (this.selectedTheme != theme) {
+                this.selectedTheme = theme;
+                this.fireEvent('themeSelection', theme);
+            }
         }
     },
 
