@@ -28,10 +28,12 @@ afStudio.layoutDesigner.view.ViewMessageBox = Ext.extend(Ext.Panel, {
 	
 	/**
 	 * @cfg {Mixed} (required) viewContainer
+     * The container to which this message-box is mapped.
 	 */
 	
 	/**
-	 * @cfg {String} viewMessage The messge to show.
+	 * @cfg {String} viewMessage (required)
+     * The message to show.
 	 */
     
 	/**
@@ -67,31 +69,50 @@ afStudio.layoutDesigner.view.ViewMessageBox = Ext.extend(Ext.Panel, {
 		);
         
 		afStudio.layoutDesigner.view.ViewMessageBox.superclass.initComponent.apply(this, arguments);
-        
-		this._afterInitComponent();
 	},
 
+    /**
+     * @template
+     */
+    initEvents : function() {
+        afStudio.layoutDesigner.view.ViewMessageBox.superclass.initEvents.call(this);
+
+        var me = this;
+
+        me.on({
+            scope: me,
+
+            afterrender: me.onAfterRender
+        });
+
+        me.mon(me.viewContainer, 'afterlayout', me.onContainerAfterLayout, me);
+    },
+
+    /**
+     * Updates the position of the message-box,
+     * placing it in the center of the owner container {@link #viewContainer}
+     * @protected
+     */
+    updatePosition : function() {
+        var box = this.viewContainer.getBox(),
+            x = Ext.util.Format.round(box.width / 2, 0) - this.getWidth() / 2,
+            y = Ext.util.Format.round(box.height / 2, 0) - this.getHeight();
+
+        this.setPosition(x, y);
+    },
+
 	/**
-	 * Initializes events & does post configuration actions.
-	 * @private
-	 */	
-	_afterInitComponent : function() {
-		var me = this;
-		
-		me.on({
-			afterrender: me.onAfterRender,
-			scope: me
-		});
-	},
-	
-	/**
-	 * This panel <u>afterrender</u> event listener
+	 * *afterrender* event listener.
 	 */
 	onAfterRender : function() {
-		var box = this.viewContainer.getBox(),
-			x = Ext.util.Format.round(box.width / 2, 0) - this.getWidth() / 2,
-			y = Ext.util.Format.round(box.height / 2, 0) - this.getHeight();
+        this.updatePosition();
+	},
 
-		this.setPosition(x, y);
-	} 
+    /**
+     * Owner container's {@link #viewContainer} *afterlayout* event listener.
+     */
+    onContainerAfterLayout : function() {
+        this.updatePosition();
+    }
+
 });

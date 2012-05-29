@@ -10,10 +10,6 @@ afStudio.wd.show.ShowView = Ext.extend(Ext.FormPanel, {
 			viewMessage: '<p>"Show" widget GUI is under development</p> <span style="font-size:10px;">You can work with widget, to see the results use "Preview" button.</span>'
 		});			
 		this.add(this.messageBox);
-		
-		this.on('afterlayout', function(){
-			this.messageBox.onAfterRender();		
-		}, this);
 	}
 	
 });
