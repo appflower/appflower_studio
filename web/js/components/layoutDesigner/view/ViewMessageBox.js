@@ -85,10 +85,21 @@ afStudio.layoutDesigner.view.ViewMessageBox = Ext.extend(Ext.Panel, {
             afterrender: me.onAfterRender
         });
 
-        me.mon(me.viewContainer, 'afterlayout', me.onContainerAfterLayout, me);
+        me.viewContainer.on('afterlayout', me.onContainerAfterLayout, me);
     },
 
     /**
+     * @template
+     */
+    beforeDestroy : function(){
+        afStudio.layoutDesigner.view.ViewMessageBox.superclass.beforeDestroy.call(this);
+        var me = this;
+
+        me.viewContainer.un('afterlayout', me.onContainerAfterLayout, me);
+        me.viewContainer = me.viewMessage = null;
+    },
+
+        /**
      * Updates the position of the message-box,
      * placing it in the center of the owner container {@link #viewContainer}
      * @protected
