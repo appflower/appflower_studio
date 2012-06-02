@@ -304,7 +304,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/CssEditor.js"></script>
 	<!-- desktop -->
 		<!-- start menu -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/StartMenuEditor.js"></script>
+<!-- <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/StartMenuEditor.js"></script> -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/Editor.js"></script>
 			<!-- template -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Templates.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Nodes.js"></script>

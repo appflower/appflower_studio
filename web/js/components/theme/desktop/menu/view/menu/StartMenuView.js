@@ -262,6 +262,7 @@ afStudio.theme.desktop.menu.view.StartMenuView = Ext.extend(Ext.ux.StartMenu, {
             }, this);
             
             cfg.menu = {
+                border: false,
                 ignoreParentClicks: true,
                 items: submenu
             };

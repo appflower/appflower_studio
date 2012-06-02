@@ -20,10 +20,18 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      * @property {Ext.menu.Menu} editorsMenu
      * Theme editors menu.
      */
-
     /**
      * @property {Ext.Container} themeEditor
      * The current theme editor container.
+     */
+    /**
+     * @property {String} theme
+     * @readonly
+     * The current theme for which editors is shown and can be tuned.
+     */
+    /**
+     * @property {Ext.menu.Item} currentEditorMenuItem
+     * The currently selected editor's menu item
      */
 
     /**
@@ -37,7 +45,8 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
         });
 
         this.themeEditor = new Ext.Container({
-            border: false
+            border: false,
+            layout: 'anchor'
         });
 
         Ext.apply(this,
@@ -102,6 +111,15 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
+     * Returns theme's editors afStudio.theme.EditorsPanel.viewport/afStudio.theme.EditorsPanel.desktop
+     * @param theme
+     * @return {Object} theme editors
+     */
+    getThemeEditors : function(theme) {
+        return afStudio.theme.EditorsPanel[theme];
+    },
+
+    /**
      * Selects editor's menu item.
      * @private
      */
@@ -119,7 +137,7 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      * @param {String} theme The theme whose editors being refreshed
      */
     refreshEditors : function(theme) {
-        var eds = afStudio.theme.EditorsPanel[theme],
+        var eds = this.getThemeEditors(theme),
             em = this.editorsMenu,
             menuItems = [];
 
@@ -141,6 +159,7 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Updates theme editors and place the message-box placeholder in the {@link #themeEditor}.
+     * This method sets the theme property {@link #theme} and sets the container's initiate state.
      * @protected
      */
     updateTheme : function(theme) {
@@ -148,13 +167,15 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
 
         this.refreshEditors(theme);
 
+        //shows the no-theme-selected placeholder message-box
         var messageBox = new afStudio.layoutDesigner.view.ViewMessageBox({
             viewContainer: this.themeEditor,
             viewMessage: '<p>Select theme editor</p> <span style="font-size:10px;"> Theme editors placed in the left(west) collapsible panel.</span>'
         });
         this.themeEditor.removeAll(true);
         this.themeEditor.add(messageBox);
-        //layout the message-box only when the theme designer tab is active
+
+        //layouts the message-box only when the theme designer tab is active
         this.on('activate', function(){this.themeEditor.doLayout();}, this, {single: true});
     },
 
@@ -182,10 +203,80 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      * Details {@link Ext.menu.Menu#itemclick}
      */
     onEditorsMenuItemClick : function(itm, e) {
+        if (this.currentEditorMenuItem == itm) {
+            return;
+        }
+        this.currentEditorMenuItem = itm;
         this.selectEditor(itm);
+        this.runEditor(itm.method);
+    },
 
-        //console.log('item method', itm.method);
+    /**
+     * Shows theme editor.
+     * Showing here means:
+     *  1. remove all components from the {@link #themeEditor} container
+     *  2. add new editor
+     *  3. render it and refresh the container
+     * @protected
+     */
+    showEditor : function(edt) {
+        var te = this.themeEditor;
+
+        te.removeAll(true);
+        te.add(edt);
+        te.doLayout();
+    },
+
+    /**
+     * Runs an editor by its init method.
+     * @protected
+     * @param {String} mtd The method being run to show editor
+     */
+    runEditor : function(mtd) {
+        if (Ext.isEmpty(mtd)) {
+           throw new afStudio.error.ApsError("afStudio.theme.EditorsPanel#runEditor error, the editor method is empty");
+        }
+
+        var edMtd = 'run' + mtd.ucfirst();
+        if (!Ext.isFunction(this[edMtd])) {
+            throw new afStudio.error.ApsError(String.format("afStudio.theme.EditorsPanel#runEditor error, method {0} is undefined", edMtd));
+        }
+
+        this[edMtd]();
+    },
+
+    /**
+     * @protected
+     */
+    runStartMenu : function() {
+        var sm = new afStudio.theme.desktop.StartMenuEditor();
+        this.showEditor(sm);
+    },
+
+    /**
+     * @protected
+     */
+    runShortcuts : function() {
+
+    },
+
+    /**
+     * @protected
+     */
+    runBackground : function() {
+
+    },
+
+    /**
+     * Saves current theme editor.
+     */
+    save : function() {
+        var editor = this.themeEditor.items.first();
+
+        //all theme editors must implement *save* method
+        editor.save();
     }
+
 });
 
 /**

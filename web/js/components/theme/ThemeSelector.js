@@ -146,7 +146,6 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
             });
         }
     }
-
 });
 
 /**
