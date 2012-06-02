@@ -141,12 +141,21 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
         }
     },
 
+    enableSave : function() {
+        this.saveBtn.enable();
+        this.saveCloseBtn.enable();
+    },
+
+    disableSave : function() {
+        this.saveBtn.disable();
+        this.saveCloseBtn.disable();
+    },
+
     /**
      * Save {@link #saveBtn} button *click* event listener.
      */
     onSave : function() {
         var at = this.tabs.getActiveTab();
-
         at.save();
     },
 
@@ -164,5 +173,9 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
     onCancel : function() {
         this.close();
     }
-
 });
+
+/**
+ * @xtype afStudio.theme.designer
+ */
+Ext.reg('afStudio.theme.designer', afStudio.theme.Designer);

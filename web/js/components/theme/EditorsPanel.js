@@ -175,6 +175,10 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
         this.themeEditor.removeAll(true);
         this.themeEditor.add(messageBox);
 
+        //disable save buttons
+        var dsn = this.findParentByType('afStudio.theme.designer', true);
+        dsn.disableSave();
+
         //layouts the message-box only when the theme designer tab is active
         this.on('activate', function(){this.themeEditor.doLayout();}, this, {single: true});
     },
@@ -206,6 +210,11 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
         if (this.currentEditorMenuItem == itm) {
             return;
         }
+
+        //enable save buttons
+        var dsn = this.findParentByType('afStudio.theme.designer', true);
+        dsn.enableSave();
+
         this.currentEditorMenuItem = itm;
         this.selectEditor(itm);
         this.runEditor(itm.method);
@@ -278,7 +287,6 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
         //all theme editors must implement *save* method
         editor.save();
     }
-
 });
 
 /**
