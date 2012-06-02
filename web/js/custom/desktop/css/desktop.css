@@ -372,8 +372,8 @@ html, body {
 }
 
 .ux-start-menu-body {
-	background:transparent none;
-	border:0px none;
+	background: transparent none;
+	border: 0 none !important;
 }
 
 .ux-start-menu-apps-panel {

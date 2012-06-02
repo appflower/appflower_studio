@@ -249,15 +249,16 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      * @protected
      */
     runStartMenu : function() {
-        var sm = new afStudio.theme.desktop.StartMenuEditor();
-        this.showEditor(sm);
+        var ed = new afStudio.theme.desktop.StartMenuEditor();
+        this.showEditor(ed);
     },
 
     /**
      * @protected
      */
     runShortcuts : function() {
-
+        var ed = new afStudio.theme.desktop.ShortcutsEditor();
+        this.showEditor(ed);
     },
 
     /**
