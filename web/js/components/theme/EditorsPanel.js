@@ -265,7 +265,8 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
      * @protected
      */
     runBackground : function() {
-
+        var ed = new afStudio.theme.desktop.BackgroundEditor();
+        this.showEditor(ed);
     },
 
     /**

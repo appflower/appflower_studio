@@ -1,13 +1,13 @@
 Ext.ns('afStudio.theme.desktop');
 
 /**
- * Desktop background editor.
+ * Desktop layout's background editor.
  * 
  * @class afStudio.theme.desktop.BackgroundEditor
- * @extends Ext.Window
+ * @extends Ext.Panel
  * @author Nikolai Babinski
  */
-afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, { 
+afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Panel, {
     
     /**
      * @property wallpaper The background wallpapers container
@@ -17,73 +17,50 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
      * @property bgtools Background tools form panel
      * @type {Ext.FormPanel}
      */
-    
+
+    //private override
+    anchor: '100% 100%',
+
     /**
-     * Ext template method.
-     * @override
-     * @private
+     * @template
      */
     initComponent : function() {
         this.createContent();
-        
-        var config = {
-            title: 'Background Editor', 
+
+        Ext.apply(this, Ext.apply(this.initialConfig,
+        {
             layout: 'vbox',
             layoutConfig: {
                 align: 'stretch',
-                pack: 'start'                
+                pack: 'start'
             },
-            width: 813,
-            height: 550,
-            modal: true,
-            closable: true,
-            draggable: true, 
-            resizable: false,
             items: [
                 this.wallpaper,
                 this.bgtools
-            ],
-            tbar: [
-            {
-                text: 'Save', 
-                iconCls: 'icon-save',
-                scope: this,
-                handler: this.save
-            },'->',{
-                text: 'Theme', 
-                iconCls: 'icon-run-run',
-                scope: this,
-                handler: this.tdshortcut
-            }],
-            buttonAlign: 'center',
-            buttons: [
-            {
-                text: 'Cancel',
-                scope: this,
-                handler: this.cancel
-            }]
-        };
-                
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
-        
+            ]
+        }));
+
         afStudio.theme.desktop.BackgroundEditor.superclass.initComponent.apply(this, arguments);
     },
-    
+
     /**
-     * Method that is called immediately before the <code>show</code> event is fired.
-     * @override
-     * @protected
+     * @template
      */
-    onShow : function() {
-        this.fetchBackgroundData(function(res){
-            var d = res.data;
-            
-            this.wallpaper.store.loadData(d.list);
-            this.selectWallpaper(d.active_image);
-            this.bgtools.bgcolor.setValue(d.active_color);
-        });
+    afterRender : function() {
+        afStudio.theme.desktop.BackgroundEditor.superclass.afterRender.call(this);
+
+        (function(){
+            this.fetchBackgroundData(function(res){
+                var d = res.data;
+
+                this.wallpaper.store.loadData(d.list);
+                this.selectWallpaper(d.active_image);
+                this.bgtools.bgcolor.setValue(d.active_color);
+            });
+        //short delay to show loading mask
+        }).defer(50, this);
     },
-    
+
     /**
      * Init editor's layout.
      * @private
@@ -196,7 +173,7 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
         if (!Ext.isFunction(clb)) {
             return;
         }
-            
+
         this.wallpaper.el.mask('loading...', 'x-mask-loading');
         
         afStudio.xhr.executeAction({
@@ -328,21 +305,6 @@ afStudio.theme.desktop.BackgroundEditor = Ext.extend(Ext.Window, {
             params: params,
             mask: {ctn: this, msg: 'saving...'}
         });
-    },
-    
-    /**
-     * Closes active window.
-     */
-    cancel : function() {
-        this.close();
-    },
-    
-    /**
-     * Template Designer shortcut 
-     */
-    tdshortcut : function() {
-        this.close();
-        (new afStudio.theme.ThemeDesigner()).show();
     }
 });
 
