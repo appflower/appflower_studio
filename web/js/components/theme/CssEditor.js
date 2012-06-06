@@ -6,7 +6,7 @@ Ext.ns('afStudio.theme');
  * @extends Ext.Panel
  * @author Nikolai Babinski
  */
-afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
+afStudio.theme.CssEditor = Ext.extend(Ext.Panel, {
 
     //private override
     layout: 'border',
@@ -27,7 +27,7 @@ afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
             }
         ));
 
-        afStudio.theme.CssEditor2.superclass.initComponent.apply(this, arguments);
+        afStudio.theme.CssEditor.superclass.initComponent.apply(this, arguments);
 
         this.mon(this.westPanel.getSelectionModel(), 'selectionchange', function(sm, n) {
             var d = this.getContainerWindow();
@@ -148,9 +148,9 @@ afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
 /**
  * @mixin afStudio.theme.Designerable
  */
-Ext.applyIf(afStudio.theme.CssEditor2.prototype, afStudio.theme.Designerable);
+Ext.applyIf(afStudio.theme.CssEditor.prototype, afStudio.theme.Designerable);
 
 /**
  * @xtype afStudio.theme.cssEditor
  */
-Ext.reg('afStudio.theme.cssEditor', afStudio.theme.CssEditor2);
+Ext.reg('afStudio.theme.cssEditor', afStudio.theme.CssEditor);

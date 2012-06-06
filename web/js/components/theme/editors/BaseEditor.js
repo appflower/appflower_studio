@@ -3,17 +3,19 @@ Ext.ns('afStudio.theme');
 /**
  * BaseEditor for all other Editors
  * @author radu
+ * @author Nikolai Babinski
  */
-afStudio.theme.BaseEditor = Ext.extend(Ext.Window, { 
+afStudio.theme.BaseEditor = Ext.extend(Ext.Panel, {
     /**
-     * @cfg {String} helper
-     */
-    
-    /**
-     * @cfg {String} title
+     * @cfg {String} helper (required)
+     * The editor helper file's name.
      */
 
-	/**
+    //private override
+    anchor: '100% 100%',
+    layout: 'fit',
+
+    /**
 	 * ExtJS template method.
      * @override
 	 * @private
@@ -22,29 +24,16 @@ afStudio.theme.BaseEditor = Ext.extend(Ext.Window, {
 		this.checkHelperFileExist();
         
 		this.createRegions();
-        
-		var config = {
-			width: 813,
-			height: 550, closable: true,
-	        draggable: true, 
-	        modal: true, resizable: false,
-	        bodyBorder: false, border: false,
-	        layout: 'border',
-	        items: [
-	        	this.centerPanel
-	        ],
-			buttons: [
-            {
-                text: 'Cancel',
-                scope: this,
-                handler: this.cancel
-            }],
-			buttonAlign: 'center'
-		};
-				
-		Ext.apply(this, Ext.apply(this.initialConfig, config));
-        
-		afStudio.theme.BaseEditor.superclass.initComponent.apply(this, arguments);	
+
+        Ext.apply(this, Ext.apply(this.initialConfig,
+        {
+            border: false,
+            items: [
+                this.centerPanel
+            ]
+        }));
+
+		afStudio.theme.BaseEditor.superclass.initComponent.apply(this, arguments);
 	},
 	
 	/**
@@ -60,19 +49,7 @@ afStudio.theme.BaseEditor = Ext.extend(Ext.Window, {
 		this.centerPanel = new Ext.Panel({
 			layout: 'fit', 
 			region: 'center', 
-			items: this.codeEditor,
-			tbar: [
-			{    
-                text: 'Save', 
-                iconCls: 'icon-save',
-                scope: this,
-                handler: this.save
-            },'->',{
-                text: 'Theme', 
-                iconCls: 'icon-run-run', 
-                scope: this,
-                handler: this.tdshortcut
-            }]
+			items: this.codeEditor
 		});
 	},
 	
@@ -106,21 +83,5 @@ afStudio.theme.BaseEditor = Ext.extend(Ext.Window, {
             },
             showNoteOnSuccess: false
         });
-	},
-	
-	/**
-	 * Function cancel
-	 * Close active wimdow
-	 */
-	cancel : function() {
-		this.close();
-	},
-
-    /**
-     * Template Designer shortcut
-     */
-	tdshortcut : function() {
-		this.close();
-		(new afStudio.theme.ThemeDesigner()).show();
 	}
 });

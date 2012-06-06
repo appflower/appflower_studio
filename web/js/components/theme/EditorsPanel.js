@@ -303,6 +303,46 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
+     * @protected
+     */
+    runMenuToolbar : function() {
+        var ed = new afStudio.theme.BaseEditor({
+            helper: 'afExtjsToolbar'
+        });
+        this.showEditor(ed);
+    },
+
+    /**
+     * @protected
+     */
+    runWestPanel : function() {
+        var ed = new afStudio.theme.BaseEditor({
+            helper: 'afExtjsWest'
+        });
+        this.showEditor(ed);
+    },
+
+    /**
+     * @protected
+     */
+    runSouthPanel : function() {
+        var ed = new afStudio.theme.BaseEditor({
+            helper: 'afExtjsSouth'
+        });
+        this.showEditor(ed);
+    },
+
+    /**
+     * @protected
+     */
+    runEastPanel : function() {
+        var ed = new afStudio.theme.BaseEditor({
+            helper: 'afExtjsEast'
+        });
+        this.showEditor(ed);
+    },
+
+    /**
      * Saves current theme editor.
      */
     save : function() {

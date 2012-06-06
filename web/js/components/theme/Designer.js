@@ -1,12 +1,6 @@
 Ext.ns('afStudio.theme');
 
 /**
- * How to run prototype version
- * 1. run studio in debug mode
- * 2. execute the following code in the browser's console: var d = new afStudio.theme.Designer(); d.show();
- */
-
-/**
  * afStudio.theme.Designer the container window of the *Theme Designer*.
  *
  * @class afStudio.theme.Designer

@@ -18,7 +18,6 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
      * @template
      */
     initComponent : function() {
-
         //theme is not defined yet
         this.selectedTheme = null;
 
@@ -47,12 +46,7 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
                     '</tpl>',
                     '<div class="x-clear"/>',
                 '</div>'
-            ),
-            listeners: {
-                scope: this,
-                dblclick: function(dataview, index, node, e) {
-                }
-            }
+            )
         });
 
         Ext.apply(this,
@@ -91,6 +85,7 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
         );
 
         this.mon(this.selector, 'selectionchange', this.onSelectionChange, this);
+        this.mon(this.selector, 'dblclick', this.onSelectorDblclick, this);
     },
 
     /**
@@ -121,6 +116,16 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
                 this.fireEvent('themeSelection', theme);
             }
         }
+    },
+
+    /**
+     * Theme {@link #selector} *dblclick* event listener.
+     * Details {@link Ext.DataView#dblclick}.
+     */
+    onSelectorDblclick : function(dataview, index, node, e) {
+        afStudio.Logger.info('@afStudio.theme.ThemeSelector.selector#dblclick');
+        var d = this.getContainerWindow();
+        d.tabs.setActiveTab(d.themeDesigner);
     },
 
     /**
