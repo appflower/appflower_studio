@@ -106,6 +106,14 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
         this.mon(this.saveBtn, 'click', me.onSave, me);
         this.mon(this.saveCloseBtn, 'click', me.onSaveAndClose, me);
         this.mon(this.cancelBtn, 'click', me.onCancel, me);
+
+        /**
+         * Adds *activate* event listener to all tabs of the theme designer.
+         * Every tab uses mixin {@link afStudio.theme.Designerable}
+         */
+        this.tabs.items.each(function(t){
+            me.mon(t, 'activate', t.onTabActivate, t);
+        });
     },
 
     /**
@@ -141,11 +149,17 @@ afStudio.theme.Designer = Ext.extend(Ext.Window, {
         }
     },
 
+    /**
+     * Activates save control buttons.
+     */
     enableSave : function() {
         this.saveBtn.enable();
         this.saveCloseBtn.enable();
     },
 
+    /**
+     * Disables save control buttons
+     */
     disableSave : function() {
         this.saveBtn.disable();
         this.saveCloseBtn.disable();

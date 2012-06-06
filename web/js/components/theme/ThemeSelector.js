@@ -149,6 +149,12 @@ afStudio.theme.ThemeSelector = Ext.extend(Ext.Panel, {
 });
 
 /**
+ * @mixin afStudio.theme.Designerable
+ */
+Ext.applyIf(afStudio.theme.ThemeSelector.prototype, afStudio.theme.Designerable);
+
+
+/**
  * @xtype afStudio.theme.themeSelector
  */
 Ext.reg('afStudio.theme.themeSelector', afStudio.theme.ThemeSelector);

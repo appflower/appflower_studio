@@ -155,6 +155,8 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
         em.removeAll(true);
         em.add(menuItems);
         em.doLayout();
+
+        this.currentEditorMenuItem = null;
     },
 
     /**
@@ -175,12 +177,30 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
         this.themeEditor.removeAll(true);
         this.themeEditor.add(messageBox);
 
-        //disable save buttons
-        var dsn = this.findParentByType('afStudio.theme.designer', true);
-        dsn.disableSave();
+        this.disableSaveCtr();
 
         //layouts the message-box only when the theme designer tab is active
         this.on('activate', function(){this.themeEditor.doLayout();}, this, {single: true});
+    },
+
+    /**
+     * @private
+     */
+    disableSaveCtr : function() {
+        var d = this.getContainerWindow();
+        if (d.tabs.getActiveTab() == this) {
+            d.disableSave();
+        }
+    },
+
+    /**
+     * @private
+     */
+    enableSaveCtr : function() {
+        var d = this.getContainerWindow();
+        if (d.tabs.getActiveTab() == this) {
+            d.enableSave();
+        }
     },
 
     /**
@@ -195,11 +215,17 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
 
     /**
      * *activate* listener.
+     * @override
      */
     onTabActivate : function() {
         //refresh the editors menu (west area)
         //to update editors list
         this.editorsMenu.doLayout();
+
+        //no one editor is selected for editing then disable save control buttons
+        if (this.currentEditorMenuItem == null) {
+            this.disableSaveCtr();
+        }
     },
 
     /**
@@ -211,9 +237,7 @@ afStudio.theme.EditorsPanel = Ext.extend(Ext.Panel, {
             return;
         }
 
-        //enable save buttons
-        var dsn = this.findParentByType('afStudio.theme.designer', true);
-        dsn.enableSave();
+        this.enableSaveCtr();
 
         this.currentEditorMenuItem = itm;
         this.selectEditor(itm);
@@ -342,6 +366,11 @@ afStudio.theme.EditorsPanel.desktop = {
         method: 'background'
     }
 };
+
+/**
+ * @mixin afStudio.theme.Designerable
+ */
+Ext.applyIf(afStudio.theme.EditorsPanel.prototype, afStudio.theme.Designerable);
 
 /**
  * @xtype afStudio.theme.editorsPanel

@@ -8,13 +8,13 @@ Ext.ns('afStudio.theme');
  */
 afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
 
-    layout : 'border',
+    //private override
+    layout: 'border',
 
     /**
      * @template
      */
     initComponent: function() {
-
         this.createRegions();
 
         Ext.apply(this, Ext.apply(this.initialConfig,
@@ -28,6 +28,12 @@ afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
         ));
 
         afStudio.theme.CssEditor2.superclass.initComponent.apply(this, arguments);
+
+        this.mon(this.westPanel.getSelectionModel(), 'selectionchange', function(sm, n) {
+            var d = this.getContainerWindow();
+
+            n && n.isLeaf() ? d.enableSave() : d.disableSave();
+        }, this);
     },
 
     /**
@@ -69,21 +75,16 @@ afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
     },
 
     /**
-     * Saves css file.
+     * *activate* this designer container's event listener
+     * @override
      */
-    save : function() {
-        var me = this,
-            cp = this.codeEditor;
+    onTabActivate : function() {
+        var ft = this.westPanel,
+            ftSm = ft.getSelectionModel(),
+            n = ftSm.getSelectedNode(),
+            d = this.getContainerWindow();
 
-        afStudio.xhr.executeAction({
-            url: afStudioWSUrls.getFilecontentUrl,
-            params: {
-                file: cp.file,
-                code: cp.getCode()
-            },
-            scope: me,
-            logMessage: String.format('CssEditor file [{0}] was saved', cp.file)
-        });
+        n && n.isLeaf() ? d.enableSave() : d.disableSave();
     },
 
     /**
@@ -123,8 +124,31 @@ afStudio.theme.CssEditor2 = Ext.extend(Ext.Panel, {
      */
     deleteFile : function(path) {
         this.codeEditor.setCode('');
+    },
+
+    /**
+     * Saves css file.
+     */
+    save : function() {
+        var me = this,
+            cp = this.codeEditor;
+
+        afStudio.xhr.executeAction({
+            url: afStudioWSUrls.getFilecontentUrl,
+            params: {
+                file: cp.file,
+                code: cp.getCode()
+            },
+            scope: me,
+            logMessage: String.format('CssEditor file [{0}] was saved', cp.file)
+        });
     }
 });
+
+/**
+ * @mixin afStudio.theme.Designerable
+ */
+Ext.applyIf(afStudio.theme.CssEditor2.prototype, afStudio.theme.Designerable);
 
 /**
  * @xtype afStudio.theme.cssEditor
