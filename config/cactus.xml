@@ -265,10 +265,13 @@
                     <!-- theme designer -->
                     <!-- ************** -->
                     
-                    <file>js/components/theme/ThemeDesigner.js</file>
-                        <!-- common -->    
+                    <file>js/components/theme/Designer.js</file>
+                    <file>js/components/theme/Designerable.js</file>
+                    <file>js/components/theme/ThemeSelector.js</file>
+                    <file>js/components/theme/CssEditor.js</file>
+                    <file>js/components/theme/EditorsPanel.js</file>
+                        <!-- viewport editors -->
                     <file>js/components/theme/editors/BaseEditor.js</file>
-                    <file>js/components/theme/editors/CssEditor.js</file>
                         <!-- desktop -->
                             <!-- start menu -->
                     <file>js/components/theme/desktop/menu/StartMenuEditor.js</file>

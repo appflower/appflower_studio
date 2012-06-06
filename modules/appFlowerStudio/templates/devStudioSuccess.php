@@ -295,16 +295,12 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/Designer.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/Designerable.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/ThemeSelector.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/CssEditor2.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/CssEditor.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/EditorsPanel.js"></script>
-
-
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/ThemeDesigner.js"></script>
-	<!-- common -->
+	<!-- viewport editors -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/BaseEditor.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/editors/CssEditor.js"></script>
-	<!-- desktop -->
-		<!-- start menu -->
+	<!-- Desktop -->
+		<!-- Start menu -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/StartMenuEditor.js"></script>
 			<!-- template -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/model/template/Templates.js"></script>
@@ -328,7 +324,7 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/ModelInterface.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/ModelReflector.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/menu/view/menu/StartMenuView.js"></script>
-		<!-- shortcuts -->
+		<!-- Shortcuts -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/ShortcutsEditor.js"></script>
 			<!-- template -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/model/template/Templates.js"></script>
@@ -348,8 +344,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsCollection.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsStore.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/shortcuts/view/shortcuts/ShortcutsView.js"></script>
-		<!-- bg -->
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/bg/BackgroundEditor.js"></script>		
+		<!-- Bg -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/theme/desktop/bg/BackgroundEditor.js"></script>
 <!-- end of theme designer -->
 
 <?php 
