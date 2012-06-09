@@ -200,8 +200,14 @@ class afsWidgetModel extends afsBaseModel
         $path = $this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$this->getAction()}.xml";
         
         if (is_readable($path)) {
-            $this->setDefinition(afsXmlDefinition::create()->init(file_get_contents($path))->unpack()->get());
+            $definition = afsXmlDefinition::create()->init(file_get_contents($path))->unpack()->get();
+            $this->setDefinition($definition);
             $this->setNew(false);
+            $this->setType(
+                (array_key_exists('attributes', $definition) && (array_key_exists('type', $definition['attributes']))) 
+                    ? $definition['attributes']['type']
+                    : null
+            );
         }
         
         return $this;
