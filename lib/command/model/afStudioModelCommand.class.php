@@ -384,4 +384,26 @@ class afStudioModelCommand extends afBaseStudioCommand
         return $response->success(false)->message("You haven't defined model definition for upload");
     }
     
+    /**
+     * Getting schemas structure
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processGetStructure()
+    {
+        return afResponseHelper::create()->data(array(), $this->getModificator()->getOriginalSchema(), 0);
+    }
+    
+    /**
+     * Setting schemas structure
+     *
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    protected function processSaveStructure()
+    {
+        return $this->getModificator()->updateOriginalSchema(json_decode($this->getParameter('structure'), true));
+    }
+    
 }

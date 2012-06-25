@@ -216,13 +216,32 @@ class afStudioModelCommandModificator
      * @return array
      * @author Sergey Startsev
      */
-    protected function getOriginalSchema()
+    public function getOriginalSchema()
     {
         if (is_null($this->originalSchemaArray)) {
             $this->loadSchemas();
         }
         
         return $this->originalSchemaArray;
+    }
+    
+    /**
+     * Update current schema files
+     *
+     * @param array $schema 
+     * @return afResponse
+     * @author Sergey Startsev
+     */
+    public function updateOriginalSchema(array $schemas)
+    {
+        $this->originalSchemaArray = $schemas;
+        
+        foreach ($schemas as $path => $schema) {
+            $this->saveSchema($path);
+        }
+        afStudioModelCommandHelper::deploy();
+        
+        return  afResponseHelper::create()->success(true)->message('Schemas was successfully updated');
     }
     
     /**
@@ -880,12 +899,16 @@ class afStudioModelCommandModificator
     
     /**
      * Saving schema
-     *
+     * 
+     * @param string $schema 
      * @return boolean
      */
-    private function saveSchema()
+    private function saveSchema($schema = '')
     {
-        return afStudioUtil::writeFile($this->getSchemaFile(), sfYaml::dump($this->originalSchemaArray[$this->getSchemaFile()], 3));
+        if (empty($schema)) $schema = $this->getSchemaFile();
+        if (!array_key_exists($schema, $this->originalSchemaArray)) return false;
+        
+        return afStudioUtil::writeFile($schema, sfYaml::dump($this->originalSchemaArray[$schema], 3));
     }
     
     /**
