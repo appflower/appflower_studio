@@ -6,7 +6,7 @@
 all:
   afs:
     # use this to set the production:false/development:true environment of Studio
-    debug: false
+    debug: true
     # if you need you can disable all calls to chmod here - by default they are enabled
     #chmod_enabled: true
     
