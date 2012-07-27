@@ -13,7 +13,7 @@ afStudio.viewport.StudioToolbar = Ext.extend(Ext.Toolbar, {
 			items: [
 			{
 				id: 'mstudio',
-				text: "Studio BETA",
+				text: "Studio",
 				iconCls: 'icon-studio',
 				menu: {
 					ignoreParentClicks: true,

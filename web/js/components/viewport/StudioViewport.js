@@ -32,7 +32,7 @@ afStudio.viewport.StudioViewport = Ext.extend(Ext.Viewport, {
 			region: "center",			
 			layout: 'fit',
 			margins: {right: 5},
-			bodyStyle: 'padding: 8px; background-image: url(/appFlowerStudioPlugin/images/bg/background_3.6.2_beta.jpg); background-position: 50% 50%; background-repeat: no-repeat;'
+			bodyStyle: 'padding: 8px; background-image: url(/appFlowerStudioPlugin/images/bg/background_4.jpg); background-position: 50% 50%; background-repeat: no-repeat;'
 		});
 		
 		var westPanel = new afStudio.viewport.WestPanel();
