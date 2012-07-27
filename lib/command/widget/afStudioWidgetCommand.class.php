@@ -62,6 +62,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $place = $this->getParameter('place', 'frontend');
             $place_type = $this->getParameter('placeType', 'app');
             $type = $this->getParameter('widgetType');
+            $model = $this->getParameter('model');
             
             if (!is_array($data)) return $response->success(false)->message("Wrong data defined. Please check request.");
             
@@ -69,7 +70,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             if (!preg_match('/^[a-zA-Z_]+$/si', $this->action)) return $response->success(false)->message("Invalid widget name.");
             
             // retrieve widget object
-            $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
+            $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type, $model);
             
             $widget->setType($type);
             $widget->setIsNewMode($createNewWidget);
@@ -137,11 +138,12 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         // init params 
         $name   = pathinfo($this->getParameter('name'), PATHINFO_FILENAME);
         $module = $this->getParameter('module');
+        $model = $this->getParameter('model');
         $place  = $this->getParameter('place');
         $place_type   = $this->getParameter('type', 'app');
         
         // retrieve widget 
-        $widget = afsWidgetModelHelper::retrieve($name, $module, $place, $place_type);
+        $widget = afsWidgetModelHelper::retrieve($name, $module, $place, $place_type, $model);
         
         if (!$widget->isNew()) {
             $response = $widget->delete();

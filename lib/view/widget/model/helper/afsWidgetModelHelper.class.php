@@ -62,8 +62,9 @@ class afsWidgetModelHelper extends afsBaseModelHelper
      * @param string $place_type 
      * @return afsWidgetModel
      * @author Sergey Startsev
+     * @author Radu Topala
      */
-    static public function retrieve($action, $module, $place, $place_type)
+    static public function retrieve($action, $module, $place, $place_type, $model)
     {
         $widget = new afsWidgetModel;
         
@@ -71,6 +72,7 @@ class afsWidgetModelHelper extends afsBaseModelHelper
         $widget->setModule($module);
         $widget->setPlace($place);
         $widget->setPlaceType($place_type);
+        $widget->setModel($model);
         
         return $widget->load();
     }

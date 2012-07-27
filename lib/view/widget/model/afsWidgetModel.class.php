@@ -13,6 +13,11 @@ class afsWidgetModel extends afsBaseModel
     protected $model_name = 'widget';
     
     /**
+     * Propel Model
+     */
+    private $model;
+    
+    /**
      * Current module
      */
     private $module;
@@ -68,6 +73,17 @@ class afsWidgetModel extends afsBaseModel
     public function getModule()
     {
         return $this->module;
+    }
+    
+    /**
+     * Getting model
+     *
+     * @return string
+     * @author Radu Topala
+     */
+    public function getModel()
+    {
+        return $this->model;
     }
     
     /**
@@ -134,6 +150,17 @@ class afsWidgetModel extends afsBaseModel
     public function setModule($module)
     {
         $this->module = $module;
+    }
+    
+    /**
+     * Setting model
+     *
+     * @param string $model 
+     * @author Radu Topala
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
     }
     
     /**
@@ -407,19 +434,36 @@ class afsWidgetModel extends afsBaseModel
      * @return boolean
      * @author Lukasz Wojciechowski
      * @author Sergey Startsev
+     * @author Radu Topala
      */
     private function ensureActionExists()
     {
         if (!$this->ensureFolderExists($this->getPlaceActionsPath())) return false;
         
-        $action_file_name = "{$this->getAction()}Action.class.php";
+        $action_file_name = "{$this->getAction()}Action.class.php";              
         
         $action_file_path = $this->getPlaceActionsPath() . DIRECTORY_SEPARATOR . $action_file_name;
         if (!file_exists($action_file_path)) {
             afStudioUtil::writeFile(
                 $action_file_path, 
-                afsWidgetModelTemplate::create()->action($this->getAction(), $this->getType())
+                afsWidgetModelTemplate::create()->action($this->getAction(), $this->getType(), $this->getModel())
             );
+        }
+        
+        //if list action is generated, then also generate delete action
+        if($this->getType() == 'list')
+        {
+            $modelProcessed = lcfirst(sfInflector::camelize($this->getModel()));
+            
+            $delete_action_file_name = "{$modelProcessed}DeleteAction.class.php";
+            $delete_action_file_path = $this->getPlaceActionsPath() . DIRECTORY_SEPARATOR . $delete_action_file_name;
+            
+            if (!file_exists($delete_action_file_path)) {
+                afStudioUtil::writeFile(
+                    $delete_action_file_path, 
+                    afsWidgetModelTemplate::create()->action($modelProcessed.'Delete', 'delete', $this->getModel())
+                );
+            }
         }
         
         return file_exists($action_file_path);

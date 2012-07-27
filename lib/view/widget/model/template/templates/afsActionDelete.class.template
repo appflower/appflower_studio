@@ -1,0 +1,26 @@
+/**
+ * Generated action delete class
+ */
+class <?php echo $name ?>Action extends sfAction
+{
+    public function execute($request)
+    {
+        if ($request->isMethod('post')) {
+            
+            $object = <?php echo $model; ?>Query::create()->findPk($this->getRequestParameter('id'));
+            
+            if($object != null)
+            {
+                $object->delete();
+                        
+                $result = array(
+                        'success' => true,
+                        'message' => "Removed with success!",
+                    );
+                    
+                return $result;
+                
+            }           
+        }
+    }
+}

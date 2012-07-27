@@ -137,11 +137,15 @@ EOF;
                                                 'title' => ucfirst(strtolower($type)) . ' ' . sfInflector::humanize($model),
                                                 'fields' => $widget_fields,
                                                 'model' => $model,
+                                                'module' => $module,
+                                                'widget_name' => $widget_name,
+                                                'types' => $types
                                             )),
                     'widgetType'        =>  $type,
                     'createNewWidget'   =>  'true',
                     'placeType'         =>  $placeType,
                     'place'             =>  $place,
+                    'model'             =>  $model
                 )
             );
             
@@ -215,6 +219,28 @@ EOF;
                 );
             }
         }
+        
+        if(isset($params['types']['edit']))
+        {
+            $definition['i:rowactions']['i:action'][] = array(
+                'attributes' => array(
+                                'iconCls' => 'icon-edit', 
+                                'name' => 'edit',
+                                'tooltip' => 'Edit',
+                                'url' => $params['module'].'/'.lcfirst(sfInflector::camelize($params['model'])).'Edit'
+                                )
+            );
+        }
+        
+        $definition['i:rowactions']['i:action'][] = array(
+            'attributes' => array(
+                            'iconCls' => 'icon-minus', 
+                            'name' => 'delete',
+                            'tooltip' => 'Delete',
+                            'post' => 'true',
+                            'url' => $params['module'].'/'.lcfirst(sfInflector::camelize($params['model'])).'Delete'
+                            )
+        );
         
         return $definition;
     }
