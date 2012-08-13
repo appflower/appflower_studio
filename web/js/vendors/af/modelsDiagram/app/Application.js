@@ -13,14 +13,13 @@ Ext.define('Af.md.Application', {
         'Ext.container.Viewport'
     ],
 
-    /**
-     * @property {Insight.view.viewport.Viewport} viewPort
-     * Application's viewport
-     */
-
     name: 'Af.md',
+    appFolder: Ext.Loader.appPath.md,
 
-    appFolder: '/appFlowerStudioPlugin/js/vendors/af/modelsDiagram/app',
+    /**
+     * @property {Ext.container.Viewport} viewPort
+     * Application's viewport container.
+     */
 
     /**
      * //TODO extend
