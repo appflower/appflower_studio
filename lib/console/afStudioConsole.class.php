@@ -189,11 +189,25 @@ class afStudioConsole
                 $pwd = afsFileSystem::create()->execute('pwd');
                 $this->pwd = (strlen($pwd[1]) == 0) ? $pwd[0] : '';
             }
+            if (sfContext::getInstance()->getUser()->getAttribute('pwd')) {
+                $this->pwd = sfContext::getInstance()->getUser()->getAttribute('pwd');
+            }
         }
         
         return $this->pwd;
     }
-    
+
+    /**
+     * Setting pwd value
+     *
+     * @author Michal Piotrowski
+     */
+    public function setPwd($pwd)
+    {
+        $this->pwd = $pwd;
+        sfContext::getInstance()->getUser()->setAttribute('pwd', $pwd);
+    }
+
     /**
      * Getting uname
      *

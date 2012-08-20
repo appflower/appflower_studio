@@ -52,7 +52,9 @@ abstract class afsBaseConsoleCommand
         } else {
             // execute 
             ob_start();
-            passthru($command . ' 2>&1', $status);
+            $afConsole = afStudioConsole::getInstance();
+            $pwd = $afConsole->getPwd();
+            passthru('cd '.$pwd.' && '.$command . ' 2>&1', $status);
             $raw = ob_get_clean();
             
             // getting command execute code
