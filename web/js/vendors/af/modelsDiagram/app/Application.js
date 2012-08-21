@@ -10,7 +10,7 @@ Ext.define('Af.md.Application', {
 
     requires: [
         'Af.md.Url',
-        'Ext.container.Viewport'
+        'Af.md.Viewport'
     ],
 
     name: 'Af.md',
@@ -36,13 +36,6 @@ Ext.define('Af.md.Application', {
     launch: function() {
         var me = this;
 
-        me.viewPort = Ext.create('Ext.container.Viewport',{
-            layout: 'fit',
-            items: [
-            {
-                xtype: 'panel',
-                html: 'Activated! ExtJS 4 inside AF Studio'
-            }]
-        });
+        me.viewPort = Ext.create('Af.md.Viewport');
     }
 });

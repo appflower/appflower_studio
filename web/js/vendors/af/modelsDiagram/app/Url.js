@@ -8,8 +8,9 @@
  */
 Af.md.Url = (function(){
 
+    var models = '/appFlowerStudio/models';
 
     return {
-
+        structure: Ext.String.urlAppend(models, 'xaction=getStructure')
     };
 }());

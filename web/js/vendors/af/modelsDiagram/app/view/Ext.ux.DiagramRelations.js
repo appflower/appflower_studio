@@ -109,6 +109,7 @@ Ext.ux.DiagramRelations = Ext.extend(Ext.Panel, {
 		var fn = function(e){
 			this.redrawConnections(e.comp);
 		}
+
 		cmp.dd.addListener('drag', fn, this);
 	},
 	
