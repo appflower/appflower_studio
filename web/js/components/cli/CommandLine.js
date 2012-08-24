@@ -188,5 +188,81 @@ afStudio.cli.CommandLine = Ext.extend(Ext.Panel, {
 		   }
 		});
 	}//eo executeAction
-	
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandFixPermissions : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandDisplayVersion : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandAutoGenerateWidgets : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandClearCache : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandBuildSQL : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandInsertSQL : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandBuildClasses : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandSQLDiff : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandCheckModelIntegrity : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandCheckWidgetIntegrity : Ext.emptyFn
+
+	/**
+	 * Abstract method.
+	 * Responsible for loading CLI component.
+	 * @protected
+	 */
+	,commandSecurityScan : Ext.emptyFn
 });
