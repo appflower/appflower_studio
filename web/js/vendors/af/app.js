@@ -10,9 +10,17 @@ Ext.BLANK_IMAGE_URL = (Ext.isIE6 || Ext.isIE7) ? '/appFlowerPlugin/extjs-3/resou
  * The paths to the modules' application source files.
  */
 Ext.Loader.appPath = {
+
+    /**
+     * `main` property contains general URL for AF extjs 4.* modules
+     */
     main: '/appFlowerStudioPlugin/js/vendors/af'
 };
-//ModelsDiagram module
+
+/**
+ * @property {String} md
+ * ModelsDiagram module URL
+ */
 Ext.Loader.appPath.md = Ext.Loader.appPath.main + '/modelsDiagram/app';
 
 Ext.Loader.setConfig({

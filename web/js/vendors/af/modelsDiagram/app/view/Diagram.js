@@ -1,6 +1,8 @@
 /**
  * Diagram component, lists models diagram.
  *
+ * TODO @nick take out in a mixin or utility class models description meta-data
+ *
  * @author Pavel Konovalov
  * @author Nikolai Babinski
  */
@@ -10,8 +12,8 @@ Ext.define('Af.md.view.Diagram', {
 
     requires: [
         'Ext.draw.Component',
-        'Ext.window.Window',
-        'Ext.draw.Sprite'
+        'Ext.draw.Sprite',
+        'Ext.window.Window'
     ],
 
     //private overrides
@@ -42,7 +44,7 @@ Ext.define('Af.md.view.Diagram', {
         var me = this;
 
         //Create canvas element
-        this.canvas = Ext.create('Ext.draw.Component', {});
+        this.canvas = Ext.create('Ext.draw.Component');
 
         //Apply configuration
         Ext.apply(this, {
@@ -62,19 +64,27 @@ Ext.define('Af.md.view.Diagram', {
         this.loadData();
     },
 
-    //Load default dataset
+    /**
+     * Loads models diagram data.
+     */
     loadData: function() {
         var me = this;
 
         Ext.Ajax.request({
             url: Af.md.Url.structure,
             scope: me,
-            success: function(xhr){
-                // process server response
-                var response = Ext.decode(xhr.responseText);
+            success: function(xhr) {
+                var response;
+                try {
+                   response = Ext.decode(xhr.responseText);
+                } catch (e) {
+                    Ext.Error.raise('[Af.md.view.Diagram->loadData] data is incorrect');
+                }
 
-                //Create entities
                 this.createEntities(response.data);
+            },
+            failure: function(xhr, opts) {
+                Ext.Error.raise('[Af.md.view.Diagram->loadData] loading data failed');
             }
         });
     },
@@ -83,107 +93,133 @@ Ext.define('Af.md.view.Diagram', {
      * Create instance of the dragable element
      */
     createEntities: function(data) {
-        var item, cfg, html, coords;
+        var item, cfg, coords,
+            schema, schemaData;
 
-        for (var schema in data) {
+        for (schema in data) {
             if (data.hasOwnProperty(schema) && data[schema].propel) {
 
-                var schemaData = data[schema].propel;
+                schemaData = data[schema].propel;
 
-                console.log(schema, schemaData);
+                Ext.log({msg: 'Schema', dump:{schema: schema, data: schemaData}});
 
                 //Go through all tables
-                for(var key in schemaData){
+                for (var key in schemaData) {
 
                     if ('_attributes' != key) {
+                        var model = schemaData[key],
+                            modelName, modelId,
+                            field, p,
+                            fk = [],
+                            html = [];
 
-                        console.log('key', key);
+                        if (model['_attributes'] && model['_attributes'].phpName) {
+                            modelName = model['_attributes'].phpName;
+                        } else {
+                            modelName = key;
+                        }
 
-                        html = [];
+                        modelId = model['_attributes'] && model['_attributes']['id']
+                                    ? model['_attributes']['id']
+                                    : key;
 
-                        //Go throug all fields
-                        for (var k in schemaData[key]) {
-                            var p = schemaData[key][k];
+                        Ext.log('table: ', modelName, ' id: ', modelId, ' key: ', key);
 
-                            if (p && '_attributes' != k && '_indexes' != k && 'x' != k && 'y' != k) {
-                                html[html.length] = [p.phpName ? p.phpName : k, '(', p.type, ')'].join('');
+                        for (field in model) {
+                            p = model[field];
+
+                            if (p && '_attributes' != field && '_indexes' != field && 'x' != field && 'y' != field) {
+                                html[html.length] = [p.phpName ? p.phpName : field, '(', p.type, ')'].join('');
+
+                                if (p.foreignTable) {
+                                    fk.push({
+                                        field: field,
+                                        foreignTable: p.foreignTable,
+                                        foreignReference: p.foreignReference
+                                    });
+                                }
                             }
                         }
 
                         //Get coords
-                        coords = this.getXYCoords(schemaData[key]);
+                        coords = this.getXYCoords(model);
+
+                        //TODO create separate class for diagram entity
+                        //TODO indexes and fk properties - diagram meta-data should be normalised
+                        //TODO id for entity must be unique, with current structure it can be duplicated
 
                         //Create config object
                         cfg = {
-                            id: schemaData[key]['_attributes']['id'],
-                            //create indexes
-                            indexes: schemaData[key]['_indexes'],
-                            key: key, title: key,
+                            title: modelName,
+                            id: modelId,
+                            indexes: model['_indexes'],
+                            fk: fk,
                             bodyStyle: 'padding: 5px',
-                            y: coords.y, x: coords.x,
+                            y: coords.y,
+                            x: coords.x,
                             autoScroll: true,
-                            constrain: true, closable: false, draggable: true,
+                            draggable: true,
+                            constrain: true,
+                            closable: false,
                             listeners: {
                                 scope: this,
                                 boxready: this.addWindowDragHandler
                             },
-                            html: html.join('<br>')
+                            html: html.join('<br />')
                         };
 
-                        //Create dragable window
                         item = Ext.create('Ext.window.Window', cfg);
-
-                        //Add element to the main elements container
-                        this.entities[this.entities.length] = item;
+                        this.entities.push(item);
                     }
                 }
             }
         }
 
-        console.log('entities', this.entities);
-
+        Ext.log({msg: 'Diagram entities', dump: this.entities});
 
         //Show entities and create connections
         this.createConnectionSprites(this);
     },
 
     /**
-     * Handler for the "afterrender" event
+     * Handler for the "boxready" event
      * Add listener to the onMove event for each window
-     * @param {Ext.Panel} cmp
+     * @param {Ext.window.Window} w
      */
-    addWindowDragHandler: function(cmp){
-        var fn = function(e){
-            this.redrawConnections(e.comp);
-        }
+    addWindowDragHandler: function(w){
+        var me = this,
+            fn = Ext.bind(me.redrawConnections, me, [w]);
 
-        cmp.dd.addListener('drag', fn, this);
+        w.dd.on('drag', fn);
     },
 
     /**
      * Redraws all connections specified for selected component
-     * @param {Ext.Panel} cmp
+     * @param {Ext.window.Window} w
      */
-    redrawConnections: function(cmp){
-        if(this.connections && this.connections){
-            for(var i = 0, l = this.connections.length; i<l; i++){
+    redrawConnections: function(w) {
+        var me = this;
 
-                var o1 = o2 = p = null;
+        //TODO @nick draggable model window must now its connections, we do no need to go through all connections
+        if (me.connections) {
+            for (var i = 0, l = this.connections.length; i<l; i++) {
+                var conn = me.connections[i],
+                    o1 = o2 = p = null;
 
                 //Check if
-                if(cmp.getId() == this.connections[i].parentId){
-                    o1 = cmp.ghostPanel;
-                    o2 = Ext.getCmp(this.connections[i].childId);
+                if (w.getId() == conn.parentId) {
+                    o1 = w.ghostPanel;
+                    o2 = Ext.getCmp(conn.childId);
                 }
 
-                if(cmp.getId() == this.connections[i].childId){
-                    o1 = cmp.ghostPanel;
-                    o2 = Ext.getCmp(this.connections[i].parentId);
+                if (w.getId() == conn.childId) {
+                    o1 = w.ghostPanel;
+                    o2 = Ext.getCmp(conn.parentId);
                 }
 
-                if(o1 && o2){
-                    p = this.getPath(o1, o2);
-                    this.connections[i].setAttributes({path: p}, true);
+                if (o1 && o2) {
+                    p = me.getPath(o1, o2);
+                    conn.setAttributes({path: p}, true);
                 }
             }
         }
@@ -192,54 +228,77 @@ Ext.define('Af.md.view.Diagram', {
     /**
      * Creates connections between sprites
      */
-    createConnectionSprite: function(parentId, childId){
-        var s = Ext.create('Ext.draw.Sprite', {
-                parentId: parentId,
-                childId: childId,
-                type: "path", path: this.getPath(Ext.getCmp(parentId), Ext.getCmp(childId)), stroke:"#000", fill:"#fff"}
-        );
+    createConnectionSprite: function(parentId, childId) {
+        var me = this,
+            path, sprite;
 
-        console.log('create connection sprite');
+        //TODO it is not good practice find out components based on their ids, especially when id is based on model name
+        //inside a schema, id must be unique and components must be fetched from components manager or pool (not based on id)
+        path = me.getPath(Ext.getCmp(parentId), Ext.getCmp(childId));
 
-        console.log(this.getPath(Ext.getCmp(parentId), Ext.getCmp(childId)));
+        sprite = Ext.create('Ext.draw.Sprite', {
+            parentId: parentId,
+            childId: childId,
+            type: 'path',
+            path: path,
+            stroke: "#000",
+            fill: "#fff"
+        });
+
         //Keep sprite
-        this.connections[this.connections.length] = s;
+        this.connections.push(sprite);
 
         //Add sprite to surface
-        this.canvas.surface.add(s);
+        this.canvas.surface.add(sprite);
 
         //Show sprite
-        s.show(true);
+        sprite.show(true);
     },
 
     /**
      * Creates elements and adds connections between them
-     * @param {cmp}
-        */
-    createConnectionSprites: function(cmp){
-        var indexes, childId;
+     */
+    createConnectionSprites: function() {
+        var me = this,
+            indexes, childId,
+            i, l = me.entities.length,
+            ent;
 
         //Show entities
-        for(var i = 0, l = this.entities.length; i<l; i++){
-            cmp.add(this.entities[i]);
-            this.entities[i].show();
+        for (i = 0; i < l; i++) {
+            ent = me.entities[i];
+            me.add(ent);
+            ent.show();
         }
 
-        //Show CONNECTION lines
-        for(var i = 0, l = this.entities.length; i<l; i++){
-            //Create connections
-            indexes = this.entities[i]['indexes'];
-            if(Ext.isDefined(indexes)){
+        //initialise models connections if they exist
+        for (i = 0; i < l; i++) {
+            ent = me.entities[i];
+            indexes = ent['indexes'];
 
-                for(var key in indexes){
-                    for(var j = 0, k = indexes[key].length; j<k; j++){
+            //TODO meta-data must be separate from initialization and construction logic
+            //TODO look at the propel schema meta-data especially on _indexes and foreignTable
+
+            //based on `_indexes` attribute
+            if (Ext.isDefined(indexes)) {
+                for (var key in indexes) {
+                    for (var j = 0, k = indexes[key].length; j<k; j++) {
                         //get name of the which should be connected
                         childId = indexes[key][j].split('_');
                         childId = childId[0];
 
                         //Create lines
-                        this.createConnectionSprite(this.entities[i].id, childId);
+                        this.createConnectionSprite(ent.id, childId);
                     }
+                }
+            //based on fields `foreignTable` attribute
+            } else if (ent.fk.length > 0) {
+                var refLen = ent.fk.length,
+                    ref;
+
+                for (var j = 0; j < refLen; j++) {
+                    ref = ent.fk[j];
+                    me.createConnectionSprite(ent.id, ref.foreignTable);
                 }
             }
         }
@@ -253,20 +312,19 @@ Ext.define('Af.md.view.Diagram', {
      * @return {String} SVG path
      */
     getPath: function(obj1, obj2){
-        console.log(obj1);
-//		console.log(obj2);
         var d = {},
             dis = [],
             p = [
-                {x: obj1.x + obj1.width / 2, y: obj1.y - 1},
-                {x: obj1.x + obj1.width / 2, y: obj1.y + obj1.height + 1},
-                {x: obj1.x - 1, y: obj1.y + obj1.height / 2},
-                {x: obj1.x + obj1.width + 1, y: obj1.y + obj1.height / 2},
-                {x: obj2.x + obj2.width / 2, y: obj2.y - 1},
-                {x: obj2.x + obj2.width / 2, y: obj2.y + obj2.height + 1},
-                {x: obj2.x - 1, y: obj2.y + obj2.height / 2},
-                {x: obj2.x + obj2.width + 1, y: obj2.y + obj2.height / 2}
+                {x: obj1.x + obj1.getWidth() / 2, y: obj1.y - 1},
+                {x: obj1.x + obj1.getWidth() / 2, y: obj1.y + obj1.getHeight() + 1},
+                {x: obj1.x - 1, y: obj1.y + obj1.getHeight() / 2},
+                {x: obj1.x + obj1.getWidth() + 1, y: obj1.y + obj1.getHeight() / 2},
+                {x: obj2.x + obj2.getWidth() / 2, y: obj2.y - 1},
+                {x: obj2.x + obj2.getWidth() / 2, y: obj2.y + obj2.getHeight() + 1},
+                {x: obj2.x - 1, y: obj2.y + obj2.getHeight() / 2},
+                {x: obj2.x + obj2.getWidth() + 1, y: obj2.y + obj2.getHeight() / 2}
             ];
+
 
         console.log(p);
 

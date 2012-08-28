@@ -11,6 +11,11 @@ Af.md.Url = (function(){
     var models = '/appFlowerStudio/models';
 
     return {
+
+        /**
+         * Returns models structural data required for building
+         * models diagram.
+         */
         structure: Ext.String.urlAppend(models, 'xaction=getStructure')
     };
 }());
