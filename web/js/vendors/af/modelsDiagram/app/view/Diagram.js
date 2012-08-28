@@ -152,7 +152,6 @@ Ext.define('Af.md.view.Diagram', {
                         cfg = {
                             title: modelName,
                             id: modelId,
-                            indexes: model['_indexes'],
                             fk: fk,
                             bodyStyle: 'padding: 5px',
                             y: coords.y,
@@ -196,6 +195,7 @@ Ext.define('Af.md.view.Diagram', {
     /**
      * Redraws all connections specified for selected component
      * @param {Ext.window.Window} w
+     * @author Pavel Konovalov
      */
     redrawConnections: function(w) {
         var me = this;
@@ -261,8 +261,8 @@ Ext.define('Af.md.view.Diagram', {
     createConnectionSprites: function() {
         var me = this,
             indexes, childId,
-            i, l = me.entities.length,
-            ent;
+            i, j, l = me.entities.length,
+            ent, entFk;
 
         //Show entities
         for (i = 0; i < l; i++) {
@@ -274,31 +274,15 @@ Ext.define('Af.md.view.Diagram', {
         //initialise models connections if they exist
         for (i = 0; i < l; i++) {
             ent = me.entities[i];
-            indexes = ent['indexes'];
+            entFk = ent.fk;
 
-            //TODO meta-data must be separate from initialization and construction logic
-            //TODO look at the propel schema meta-data especially on _indexes and foreignTable
+            if (entFk.length > 0) {
+                var fkLen = entFk.length,
+                    fk;
 
-            //based on `_indexes` attribute
-            if (Ext.isDefined(indexes)) {
-                for (var key in indexes) {
-                    for (var j = 0, k = indexes[key].length; j<k; j++) {
-                        //get name of the which should be connected
-                        childId = indexes[key][j].split('_');
-                        childId = childId[0];
-
-                        //Create lines
-                        this.createConnectionSprite(ent.id, childId);
-                    }
-                }
-            //based on fields `foreignTable` attribute
-            } else if (ent.fk.length > 0) {
-                var refLen = ent.fk.length,
-                    ref;
-
-                for (var j = 0; j < refLen; j++) {
-                    ref = ent.fk[j];
-                    me.createConnectionSprite(ent.id, ref.foreignTable);
+                for (j = 0; j < fkLen; j++) {
+                    fk = entFk[j];
+                    me.createConnectionSprite(ent.id, fk.foreignTable);
                 }
             }
         }
@@ -308,8 +292,9 @@ Ext.define('Af.md.view.Diagram', {
      * Generates new path between two objects
      * @param {Ext.Panel} obj1
      * @param {Ext.Panel} obj2
-     *
      * @return {String} SVG path
+     *
+     * @author Pavel Konovalov
      */
     getPath: function(obj1, obj2){
         var d = {},
@@ -324,9 +309,6 @@ Ext.define('Af.md.view.Diagram', {
                 {x: obj2.x - 1, y: obj2.y + obj2.getHeight() / 2},
                 {x: obj2.x + obj2.getWidth() + 1, y: obj2.y + obj2.getHeight() / 2}
             ];
-
-
-        console.log(p);
 
         for (var i = 0; i < 4; i++) {
             for (var j = 4; j < 8; j++) {
@@ -363,6 +345,8 @@ Ext.define('Af.md.view.Diagram', {
      * Calculate (x, y) pair
      * @param {Object} cfg
      * @return {Object} (x, y) pair
+     *
+     * @author Pavel Konovalov
      */
     getXYCoords: function(cfg){
         var x, y;
@@ -378,6 +362,8 @@ Ext.define('Af.md.view.Diagram', {
      * @param {Int} min
      * @param {Int} max
      * @return {Int}
+     *
+     * @author Pavel Konovalov
      */
     getRandomInt: function(min, max){
         return Math.floor(Math.random() * (max - min + 1)) + min;
