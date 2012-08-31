@@ -131,6 +131,8 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/viewport/SouthPanel.js"></script>
 
 <!-- models -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/diagram/Diagram.js"></script>
+
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeComboBox.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/TypeBuilder.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/CreateWidgetWindow.js"></script>
