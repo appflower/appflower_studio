@@ -381,52 +381,54 @@ class afStudioModelCommandModificator
         $propelModel = $this->getPropelModel();
         
         $fields = array();
-        
-        $columns = (array) $propelModel['columns'];
-        $has_primary = $this->hasPrimary($columns);
-        
-        $k = 0;
-        
-        $peer_method = constant($this->getModelName() . '::PEER');
-        $field_names = call_user_func("{$peer_method}::getFieldNames", BasePeer::TYPE_FIELDNAME);
-        
-        foreach ($field_names as $field) {
-            if (array_key_exists($field, $columns)) {
-                $column = $columns[$field];
-                $fields[$k]['id'] = $k;
-                $fields[$k]['name'] = $field;
-                
-                if (is_array($column)) {
-                    foreach ($column as $property => $value) {
-                        switch ($property) {
-                            case 'type':
-                                $value = strtolower($value);
-                                break;
-                                
-                            case 'foreignTable':
-                                $fields[$k]['foreignModel'] = $this->getModelByTableName($value);
-                                break;
+
+        if ((is_array($propelModel)) and (array_key_exists('columns', $propelModel))) {
+            $columns = (array) $propelModel['columns'];
+            $has_primary = $this->hasPrimary($columns);
+
+            $k = 0;
+
+            $peer_method = constant($this->getModelName() . '::PEER');
+            $field_names = call_user_func("{$peer_method}::getFieldNames", BasePeer::TYPE_FIELDNAME);
+
+            foreach ($field_names as $field) {
+                if (array_key_exists($field, $columns)) {
+                    $column = $columns[$field];
+                    $fields[$k]['id'] = $k;
+                    $fields[$k]['name'] = $field;
+
+                    if (is_array($column)) {
+                        foreach ($column as $property => $value) {
+                            switch ($property) {
+                                case 'type':
+                                    $value = strtolower($value);
+                                    break;
+
+                                case 'foreignTable':
+                                    $fields[$k]['foreignModel'] = $this->getModelByTableName($value);
+                                    break;
+                            }
+                            $fields[$k][$property] = $value;
                         }
-                        $fields[$k][$property] = $value;
+                    } else if (isset($column)) {
+                        $fields[$k]['type'] = $column;
                     }
-                } else if (isset($column)) {
-                    $fields[$k]['type'] = $column;
+                } elseif ($field == 'id') {
+                    $fields[$k] = array(
+                        'id'        => $k,
+                        'name'      => 'id',
+                        'type'      => 'integer',
+                        'required'  => true,
+                        'key'       => 'primary',
+                        'size'      => 11,
+                        'autoIncrement' => true,
+                    );
                 }
-            } elseif ($field == 'id') {
-                $fields[$k] = array(
-                    'id'        => $k,
-                    'name'      => 'id',
-                    'type'      => 'integer',
-                    'required'  => true,
-                    'key'       => 'primary',
-                    'size'      => 11,
-                    'autoIncrement' => true,
-                );
+
+                $k++;
             }
-            
-            $k++;
         }
-        
+
         return $fields;
     }
     
