@@ -32,8 +32,9 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             
             $place_type = $this->getParameter('placeType', 'app');
             $place = $this->getParameter('place', 'frontend');
+            $model = $this->getParameter('model');
             
-            $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type);
+            $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $place_type, $model);
             
             if (!$widget->isNew()) return $response->success(true)->data(array(), $widget->getDefinition(), 0);
             
