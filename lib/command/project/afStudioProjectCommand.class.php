@@ -89,7 +89,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $response = afResponseHelper::create();
         
-        $by_os = $this->getParameter('by_os', 'false');
+        $by_os = $this->getParameter('by_os', 'true');
         $type = $this->getParameter('type', 'project');
         
         $path = $this->getParameter('path', sys_get_temp_dir());
