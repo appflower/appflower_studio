@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Session\Session;
+
 /**
  * Studio console class
  * 
@@ -189,8 +199,9 @@ class afStudioConsole
                 $pwd = afsFileSystem::create()->execute('pwd');
                 $this->pwd = (strlen($pwd[1]) == 0) ? $pwd[0] : '';
             }
-            if (sfContext::getInstance()->getUser()->getAttribute('pwd')) {
-                $this->pwd = sfContext::getInstance()->getUser()->getAttribute('pwd');
+            $session = new Session();
+            if ($session->get('pwd')) {
+                $this->pwd = $session->get('pwd');
             }
         }
         
@@ -205,7 +216,8 @@ class afStudioConsole
     public function setPwd($pwd)
     {
         $this->pwd = $pwd;
-        sfContext::getInstance()->getUser()->setAttribute('pwd', $pwd);
+        $session = new Session();
+        $session->set('pwd', $pwd);
     }
 
     /**
