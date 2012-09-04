@@ -35,6 +35,13 @@ class afsConsoleCommand
         
         $command_reflection = new ReflectionClass($command_class);
         $command_instance = $command_reflection->newInstance();
+
+        $afConsole = afStudioConsole::getInstance();
+        $pwd = $afConsole->getPwd();
+        if ($pwd) {
+            $command = "cd ".$pwd." \&& ".$command;
+        }
+
         $command_instance->setCommand($command);
         
         return $command_instance;
