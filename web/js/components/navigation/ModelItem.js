@@ -62,8 +62,30 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
             }
         }
 	})//eo modelContextMenu
-	
-	/**
+
+    /**
+     * Constructor
+     * @param {Object} config
+     */
+    ,constructor : function(config) {
+        var me = this;
+
+        config = config || {};
+
+        Ext.apply(config, {
+            root: new Ext.tree.TreeNode({
+                path: 'root',
+                text: 'Models',
+                draggable: false
+            }),
+
+            rootVisible: true
+        });
+
+        afStudio.navigation.ModelItem.superclass.constructor.call(this, config);
+    }
+
+    /**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
@@ -124,30 +146,36 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 	 * @param {Ext.tree.TreeNode} layoutNode
 	 */
 	,runNode : function(node) {
-		var _this  = this,
-			 model = this.getNodeAttribute(node, 'text'),
-			schema = this.getNodeAttribute(node, 'schema');
-			
-		this.executeAction({
-			url: _this.baseUrl,
-			params: {
-			   xaction: 'read',
-			   model: model,
-			   schema: schema
-		    },
-		    showNoteOnSuccess: false,
-		    loadingMessage: String.format('Loading model "{0}"...', model),
-		    run: function(response) {
-			    var modelTab = new afStudio.models.ModelTab({
-				    _node: node,
-			   		fieldsStructure: response,
-			   		modelName: model,
-			   		schemaName: schema
-			    });
-                afStudio.vp.addToWorkspace(modelTab, true);
-		    }
-		});
-	}//eo runNode 
+        if (this.getRootNode() == node) {
+            var md = new afStudio.models.diagram.Wrapper();
+            afStudio.vp.addToWorkspace(md, true);
+
+        } else {
+            var _this  = this,
+                model = this.getNodeAttribute(node, 'text'),
+                schema = this.getNodeAttribute(node, 'schema');
+
+            this.executeAction({
+                url: _this.baseUrl,
+                params: {
+                    xaction: 'read',
+                    model: model,
+                    schema: schema
+                },
+                showNoteOnSuccess: false,
+                loadingMessage: String.format('Loading model "{0}"...', model),
+                run: function(response) {
+                    var modelTab = new afStudio.models.ModelTab({
+                        _node: node,
+                        fieldsStructure: response,
+                        modelName: model,
+                        schemaName: schema
+                    });
+                    afStudio.vp.addToWorkspace(modelTab, true);
+                }
+            });
+        }
+	}//eo runNode
 	
 	/**
 	 * Fires when a node is double clicked.
@@ -158,16 +186,17 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 	 */
 	,onNodeDblClick : function(node, e) {
        	this.runNode(node);
-	}//eo onNodeDblClick
+	}
 	
 	/**
 	 * @override
 	 */
 	,onNodeContextMenu : function(node, e) {
         node.select();
+
         this.modelContextMenu.contextNode = node;
     	this.modelContextMenu.showAt(e.getXY());
-	}//eo onNodeContextMenu
+	}
 	
 	/**
 	 * @override

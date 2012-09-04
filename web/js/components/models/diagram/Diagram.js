@@ -1,4 +1,4 @@
-Ext.ns('afStudio.models');
+Ext.ns('afStudio.models.diagram');
 
 /**
  * Diagram wrapper.
@@ -13,12 +13,13 @@ Ext.ns('afStudio.models');
  *      afStudio.vp.addToWorkspace(d, true);
  *
  *
- * @class afStudio.models.Diagram
+ * @class afStudio.models.diagram.Diagram
  * @extends Ext.BoxComponent
  * @author Nikolai Babinski
  */
-afStudio.models.Diagram = Ext.extend(Ext.BoxComponent, {
+afStudio.models.diagram.Diagram = Ext.extend(Ext.BoxComponent, {
 
+    //todo move to urls object
     diagramUrl : '/appFlowerStudio/modelsDiagram',
 
     /**
@@ -30,12 +31,11 @@ afStudio.models.Diagram = Ext.extend(Ext.BoxComponent, {
 
         var el = {
             tag: 'iframe',
-            src: this.diagramUrl
+            src: this.diagramUrl,
+            style: 'border: 0;'
         };
 
         return {
-//            width: 800,
-//            height: 400,
             autoScroll: true,
             autoEl: el
         }
@@ -49,6 +49,11 @@ afStudio.models.Diagram = Ext.extend(Ext.BoxComponent, {
             Ext.apply(this.initialConfig, this._beforeInitComponent())
         );
 
-        afStudio.models.Diagram.superclass.initComponent.apply(this, arguments);
+        afStudio.models.diagram.Diagram.superclass.initComponent.apply(this, arguments);
     }
 });
+
+/**
+ * @xtype afStudio.models.diagram
+ */
+Ext.reg('afStudio.models.diagram', afStudio.models.diagram.Diagram);

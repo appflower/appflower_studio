@@ -16,9 +16,6 @@ Ext.define('Af.md.view.Diagram', {
         'Ext.window.Window'
     ],
 
-    //private overrides
-    title: 'Models Diagram',
-
     layout: 'fit',
 
     /**
