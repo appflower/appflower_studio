@@ -10,6 +10,32 @@ namespace AppFlower\Studio\Filesystem;
  */
 class Permissions
 {
+    public function areReadable($paths)
+    {
+        foreach ($paths as $path) {
+            $are_readable = $this->isReadable($path);
+
+            if ($are_readable !== true) {
+                return $are_readable;
+            }
+        }
+
+        return true;
+    }
+
+    public function areWritable($paths)
+    {
+        foreach ($paths as $path) {
+            $are_writable = $this->isWritable($path);
+
+            if ($are_writable !== true) {
+                return $are_writable;
+            }
+        }
+
+        return true;
+    }
+
     public function isDirOrIsFileOrIsLink($path)
     {
         if (is_dir($path)) {

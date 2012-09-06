@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/../../vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Filesystem\Permissions;
+
 /**
  * Studio model command modificator class
  *
@@ -254,7 +264,12 @@ class afStudioModelCommandModificator
     public function renameModel($name)
     {
         $response = afResponseHelper::create();
-        
+
+        $are_writable = $this->isModelWritable();
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         if (!afStudioModelCommandHelper::isValidName($name)) {
             return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
         }
@@ -276,7 +291,57 @@ class afStudioModelCommandModificator
         
         return $response->success(false)->message("Can't rename model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!");
     }
-    
+
+    /**
+     * Checking if model is readable
+     *
+     * @return true or afResponseHelper
+     * @author Michal Piotrowski
+     */
+    public function isModelReadable()
+    {
+        $permissions = new Permissions();
+
+        $are_readable = $permissions->areReadable(array(
+            sfConfig::get('sf_config_dir').'/schema.yml',
+            sfConfig::get('sf_lib_dir').'/filter',
+            sfConfig::get('sf_lib_dir').'/filter/base',
+            sfConfig::get('sf_lib_dir').'/form',
+            sfConfig::get('sf_lib_dir').'/form/base',
+            sfConfig::get('sf_lib_dir').'/model',
+            sfConfig::get('sf_lib_dir').'/model/map',
+            sfConfig::get('sf_lib_dir').'/model/migration',
+            sfConfig::get('sf_lib_dir').'/model/om',
+        ));
+
+        return $are_readable;
+    }
+
+    /**
+     * Checking if model is writable
+     *
+     * @return true or afResponseHelper
+     * @author Michal Piotrowski
+     */
+    public function isModelWritable()
+    {
+        $permissions = new Permissions();
+
+        $are_writable = $permissions->areWritable(array(
+            sfConfig::get('sf_config_dir').'/schema.yml',
+            sfConfig::get('sf_lib_dir').'/filter',
+            sfConfig::get('sf_lib_dir').'/filter/base',
+            sfConfig::get('sf_lib_dir').'/form',
+            sfConfig::get('sf_lib_dir').'/form/base',
+            sfConfig::get('sf_lib_dir').'/model',
+            sfConfig::get('sf_lib_dir').'/model/map',
+            sfConfig::get('sf_lib_dir').'/model/migration',
+            sfConfig::get('sf_lib_dir').'/model/om',
+        ));
+
+        return $are_writable;
+    }
+
     /**
      * Adding model
      *
@@ -286,7 +351,12 @@ class afStudioModelCommandModificator
     public function addModel($with_primary = false)
     {
         $response = afResponseHelper::create();
-        
+
+        $are_writable = $this->isModelWritable();
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         if (!afStudioModelCommandHelper::isValidName($this->getModelName())) {
             return $response->success(false)->message('Model name can only consist from alphabetical characters and begins from letter or "_"');
         }
@@ -328,7 +398,12 @@ class afStudioModelCommandModificator
     public function deleteModel()
     {
         $response = afResponseHelper::create();
-        
+
+        $are_writable = $this->isModelWritable();
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         if (!isset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()])) {
             return $response->success(false)->message("Model '{$this->getModelName()}' already deleted");
         }
@@ -378,6 +453,14 @@ class afStudioModelCommandModificator
      */
     public function readModelFields() 
     {
+        $response = afResponseHelper::create();
+
+        $are_readable = $this->isModelReadable();
+        if ($are_readable !== true) {
+            echo $are_readable;
+            die;
+        }
+
         $propelModel = $this->getPropelModel();
         
         $fields = array();
