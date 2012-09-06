@@ -60,6 +60,23 @@ class Permissions
         }
     }
 
+    public function isReadableAndWritable($path)
+    {
+        $is_readable = $this->isReadable($path);
+
+        if ($is_readable !== true) {
+            return $is_readable;
+        }
+
+        $is_writable = $this->isWritable($path);
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
+        return true;
+    }
+
     public function isWritable($path)
     {
         $response = \afResponseHelper::create();

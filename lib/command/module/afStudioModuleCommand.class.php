@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/../vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Filesystem\Permissions;
+
 /**
  * Studio Module Command Class
  *
@@ -47,7 +57,15 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $type   = $this->getParameter('type');
         $place  = $this->getParameter('place');
         $name   = $this->getParameter('name');
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_apps_dir').'/'.$place.'/modules/');
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         if (!afStudioModuleCommandHelper::isValidName($name)) {
              return afResponseHelper::create()->success(false)->message("Module name not valid, should contains only upper and lower case alphabet characters");
         }
@@ -73,7 +91,18 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $type   = $this->getParameter('type');
         $place  = $this->getParameter('place');
         $name   = $this->getParameter('name');
-        
+
+        $permissions = new Permissions();
+
+        $are_writable = $permissions->areWritable(array(
+            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/',
+            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$name,
+        ));
+
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         $response = afResponseHelper::create();
         $console = afStudioConsole::getInstance();
         
@@ -100,7 +129,15 @@ class afStudioModuleCommand extends afBaseStudioCommand
         $place   = $this->getParameter('place');
         $name    = $this->getParameter('name');
         $renamed = $this->getParameter('renamed');
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_apps_dir').'/'.$place.'/modules/');
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         $response = afResponseHelper::create();
         $root = afStudioUtil::getRootDir();
         
@@ -138,7 +175,15 @@ class afStudioModuleCommand extends afBaseStudioCommand
     protected function processSetAsHomepage()
     {
         $widgetUri  = $this->getParameter('widgetUri');
-        
+
+        $permissions = new Permissions();
+
+        $is_readable_and_writable = $permissions->isReadableAndWritable(sfConfig::get('sf_apps_dir').'/frontend/config/routing.yml');
+
+        if ($is_readable_and_writable !== true) {
+            return $is_readable_and_writable;
+        }
+
         $response   = afResponseHelper::create();
         $rm         = new RoutingConfigurationManager;
         
