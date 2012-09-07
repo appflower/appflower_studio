@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/../vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Filesystem\Permissions;
+
 /**
  * Studio Project Command Class
  * 
@@ -144,7 +154,15 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $place_type = $this->getParameter('place_type', 'app');
         $content = json_decode($this->getParameter('content'), true);
         $key = $this->getParameter('key', '');
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_apps_dir').'/'.$place.'/config/helper.yml');
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         $helper_path = afExtjsBuilderParser::getHelperPath($place, $place_type);
         if (file_exists($helper_path)) {
             if (!is_writable($helper_path)) return $response->success(false)->message("Please check permissions on helper file");
@@ -214,7 +232,15 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $place_type = $this->getParameter('place_type', 'app');
         $path = $this->getParameter('path');
         $color = $this->getParameter('color');
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_apps_dir').'/'.$place.'/config/app.yml');
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         if (empty($path) && empty($color)) return $response->success(false)->message("You should provide path for background wallpaper or background color");
         
         $app_path = sfConfig::get("sf_{$place_type}s_dir") . "/{$place}/config/app.yml";
