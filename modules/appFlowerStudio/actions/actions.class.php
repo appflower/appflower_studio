@@ -286,6 +286,18 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeConfigureProject(sfWebRequest $request)
     {
+        $permissions = new Permissions();
+
+        $are_writable = $permissions->areWritable(array(
+            sfConfig::get('sf_root_dir').'/config/databases.yml',
+            sfConfig::get('sf_root_dir').'/config/project.yml',
+        ));
+
+        if ($are_writable !== true) {
+            echo $are_writable;
+            die;
+        }
+
         $pcm = new ProjectConfigurationManager($request);
         
         return $this->renderText($pcm->build());
