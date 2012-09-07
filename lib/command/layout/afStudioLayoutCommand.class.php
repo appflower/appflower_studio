@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/../vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Filesystem\Permissions;
+
 /**
  * Layout command class
  *
@@ -34,7 +44,15 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $page_file = $this->getParameter('page');
         $page_name = pathinfo($page_file, PATHINFO_FILENAME);
         $application = $this->getParameter('app');
-        
+
+        $permissions = new Permissions();
+
+        $is_readable = $permissions->isReadable(sfConfig::get('sf_apps_dir').'/'.$application.'/config/pages/');
+
+        if ($is_readable !== true) {
+            return $is_readable;
+        }
+
         $page = afsPageModelHelper::retrieve($page_name, $application);
         
         if (!$page->isNew()) {
@@ -59,7 +77,15 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $definition = $this->getParameter('definition', array());
         
         $module = $this->getParameter('module', self::PAGES_MODULE);
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_apps_dir').'/'.$application.'/config/pages/');
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         //idXml is stored inside the portal_state table from appFlowerPlugin
         $idXml = "pages/{$page_name}";
         
@@ -107,7 +133,15 @@ class afStudioLayoutCommand extends afBaseStudioCommand
         $page_name      = $this->getParameter('page');
         $new_page_name  = $this->getParameter('name');
         $application    = $this->getParameter('app');
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_apps_dir').'/'.$application.'/config/pages/');
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         $page_name = pathinfo($page_name, PATHINFO_FILENAME);
         $new_page_name = pathinfo($new_page_name, PATHINFO_FILENAME);
         
@@ -137,7 +171,15 @@ class afStudioLayoutCommand extends afBaseStudioCommand
     {
         $application = $this->getParameter('app');
         $page_name = pathinfo($this->getParameter('page'), PATHINFO_FILENAME);
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_apps_dir').'/'.$application.'/config/pages/');
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         $page = afsPageModelHelper::retrieve($page_name, $application);
         
         if ($page->isNew()) return afResponseHelper::create()->success(false)->message("Page <b>{$page_name}</b> doesn't exists");
