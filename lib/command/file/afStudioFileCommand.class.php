@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/../vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Filesystem\Permissions;
+
 /**
  * File command class
  *
@@ -77,7 +87,15 @@ class afStudioFileCommand extends afBaseStudioCommand
     {
         $file_path = $this->getParameter('file');
         $file = afStudioFileCommandHelper::getPath($file_path);
-        
+
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(dirname($file));
+
+        if ($is_writable !== true) {
+            return $is_writable;
+        }
+
         if (!Util::removeResource($file)) {
             $message = afStudioFileCommandHelper::checkFolder($file_path);
             $message = (is_string($message)) ? $message : 'Cannot delete '. (is_file($file) ? 'file' : 'directory') . ' ' . $file_path;
