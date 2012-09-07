@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/../vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Filesystem\Permissions;
+
 /**
  * Studio Widget Command Class
  *
@@ -64,7 +74,20 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             $place_type = $this->getParameter('placeType', 'app');
             $type = $this->getParameter('widgetType');
             $model = $this->getParameter('model');
-            
+
+            $permissions = new Permissions();
+
+            $are_writable = $permissions->areWritable(array(
+                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/',
+                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$this->module,
+                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$this->module.'/actions/',
+                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$this->module.'/templates/',
+            ));
+
+            if ($are_writable !== true) {
+                return $are_writable;
+            }
+
             if (!is_array($data)) return $response->success(false)->message("Wrong data defined. Please check request.");
             
             if (!preg_match('/^[a-zA-Z_]+$/si', $this->module)) return $response->success(false)->message("Invalid module name.");
@@ -142,7 +165,20 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $model = $this->getParameter('model');
         $place  = $this->getParameter('place');
         $place_type   = $this->getParameter('type', 'app');
-        
+
+        $permissions = new Permissions();
+
+        $are_writable = $permissions->areWritable(array(
+            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/',
+            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$module,
+            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$module.'/actions/',
+            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$module.'/templates/',
+        ));
+
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         // retrieve widget 
         $widget = afsWidgetModelHelper::retrieve($name, $module, $place, $place_type, $model);
         
