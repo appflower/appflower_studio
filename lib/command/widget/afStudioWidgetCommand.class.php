@@ -77,11 +77,17 @@ class afStudioWidgetCommand extends afBaseStudioCommand
 
             $permissions = new Permissions();
 
+            if ($place_type == 'app') {
+                $dir = 'apps';
+            } elseif ($place_type == 'plugin') {
+                $dir = 'plugins';
+            }
+
             $are_writable = $permissions->areWritable(array(
-                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/',
-                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$this->module,
-                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$this->module.'/actions/',
-                sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$this->module.'/templates/',
+                sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/',
+                sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$this->module,
+                sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$this->module.'/actions/',
+                sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$this->module.'/templates/',
             ));
 
             if ($are_writable !== true) {
@@ -166,13 +172,19 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $place  = $this->getParameter('place');
         $place_type   = $this->getParameter('type', 'app');
 
+        if ($place_type == 'app') {
+            $dir = 'apps';
+        } elseif ($place_type == 'plugin') {
+            $dir = 'plugins';
+        }
+
         $permissions = new Permissions();
 
         $are_writable = $permissions->areWritable(array(
-            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/',
-            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$module,
-            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$module.'/actions/',
-            sfConfig::get('sf_apps_dir').'/'.$place.'/modules/'.$module.'/templates/',
+            sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/',
+            sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$module,
+            sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$module.'/actions/',
+            sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$module.'/templates/',
         ));
 
         if ($are_writable !== true) {

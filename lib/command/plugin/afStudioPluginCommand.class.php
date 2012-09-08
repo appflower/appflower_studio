@@ -1,4 +1,14 @@
 <?php
+
+require_once dirname(__DIR__) . '/../vendor/autoload/UniversalClassLoader.class.php';
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'AppFlower\Studio' => dirname(__DIR__) . '/vendor',
+));
+$loader->register();
+
+use AppFlower\Studio\Filesystem\Permissions;
+
 /**
  * Studio Plugin Command Class
  *
@@ -65,7 +75,17 @@ class afStudioPluginCommand extends afBaseStudioCommand
     {
         $response = afResponseHelper::create();
         $root_dir = afStudioUtil::getRootDir();
-        
+
+        $permissions = new Permissions();
+
+        $are_writable = $permissions->areWritable(array(
+            $root_dir."/plugins/",
+        ));
+
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         $oldValue = $this->getParameter('oldValue');
         $newValue = $this->getParameter('newValue');
         
@@ -99,7 +119,18 @@ class afStudioPluginCommand extends afBaseStudioCommand
         
         $pluginDir = afStudioUtil::getRootDir() . "/plugins/{$name}/";
         $response = afResponseHelper::create();
-        
+
+        $permissions = new Permissions();
+
+        $are_writable = $permissions->areWritable(array(
+            afStudioUtil::getRootDir()."/plugins/",
+            $pluginDir,
+        ));
+
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         afsFileSystem::create()->remove($pluginDir);
         if (!file_exists($pluginDir)) {
             $console_result = afStudioConsole::getInstance()->execute(array(
@@ -126,7 +157,17 @@ class afStudioPluginCommand extends afBaseStudioCommand
         $console    = afStudioConsole::getInstance();
         $response   = afResponseHelper::create();
         $filesystem = afsFileSystem::create();
-        
+
+        $permissions = new Permissions();
+
+        $are_writable = $permissions->areWritable(array(
+            $root."/plugins/",
+        ));
+
+        if ($are_writable !== true) {
+            return $are_writable;
+        }
+
         $dir = "{$root}/plugins/{$name}";
         
         if (empty($name)) return $response->success(false)->message('Please enter plugin name');
