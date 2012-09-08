@@ -1,5 +1,6 @@
 <?php
 
+use AppFlower\Studio\Filesystem\Permissions;
 use AppFlower\Studio\Integrity\Integrity as Integrity;
 use AppFlower\Studio\Integrity\Rule\Config as IntegrityConfig;
 
@@ -202,6 +203,18 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeDebug(sfWebRequest $request)
     {
+        $permissions = new Permissions();
+
+        $are_readable = $permissions->areReadable(array(
+            sfConfig::get('sf_root_dir').'/log/afsPermissions.log',
+            sfConfig::get('sf_root_dir').'/log/frontend_dev.log',
+        ));
+
+        if ($are_readable !== true) {
+            echo $are_readable;
+            die;
+        }
+
         $parameters = array(
             'file_name' => $request->getParameter('file_name'),
             'start'     => $request->getParameter('start', 0),
