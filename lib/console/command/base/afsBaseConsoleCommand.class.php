@@ -52,6 +52,14 @@ abstract class afsBaseConsoleCommand
         } else {
             // execute 
             ob_start();
+
+            $afConsole = afStudioConsole::getInstance();
+            $pwd = $afConsole->getPwd();
+            if (!(empty($pwd))) {
+                $pwd = trim($pwd);
+                $command = "cd ".escapeshellarg($pwd)." && $command";
+            }
+
             passthru($command . ' 2>&1', $status);
             $raw = ob_get_clean();
             
