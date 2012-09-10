@@ -325,6 +325,15 @@ class appFlowerStudioActions extends afsActions
      */
     public function executeProject(sfWebRequest $request)
     {
+        $permissions = new Permissions();
+
+        $is_writable = $permissions->isWritable(sfConfig::get('sf_root_dir').'/cache/');
+
+        if ($is_writable !== true) {
+            echo $is_writable;
+            die;
+        }
+
         $command = $request->getParameter('cmd');
         
         if (!sfConfig::get('app_afs_projects_management_enabled') && in_array($command, array('saveWizard', 'CheckConfig'))) {
