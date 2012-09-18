@@ -43,10 +43,11 @@ class Widget
      * @param string $app_name 
      * @param string $module_name 
      * @param string $widget_name 
+     * @param string $model_name
      * @return void
      * @author Sergey Startsev
      */
-    public function updatePaths($app_name = '', $module_name = '', $widget_name = '')
+    public function updatePaths($app_name = '', $module_name = '', $widget_name = '', $model_name = '')
     {
         $finder = \sfFinder::type('dir')->maxdepth(0);
         
@@ -56,7 +57,7 @@ class Widget
                 $module_name = pathinfo($module_dir, PATHINFO_FILENAME);
                 foreach ($finder->type('file')->name('*.xml')->in($module_dir . DIRECTORY_SEPARATOR . 'config') as $widget_dir) {
                     $widget_name = pathinfo($widget_dir, PATHINFO_FILENAME);
-                    $widget = \afsWidgetModelHelper::retrieve($widget_name, $module_name, $app_name, 'app');
+                    $widget = \afsWidgetModelHelper::retrieve($widget_name, $module_name, $app_name, 'app', $model_name);
                     
                     $method_name = 'process' . ucfirst(strtolower($widget->getType()));
                     if (method_exists($this, $method_name)) {
