@@ -137,13 +137,14 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $place      = $this->getParameter('place');
         $module     = $this->getParameter('module');
         $type       = $this->getParameter('type', 'app');
+        $model      = $this->getParameter('model');
         
         $action = pathinfo($oldValue, PATHINFO_FILENAME);
         $new_action = pathinfo($newValue, PATHINFO_FILENAME);
         
         if (!preg_match('/^[a-zA-Z_]+$/si', $new_action)) return afResponseHelper::create()->success(false)->message("Invalid widget name.");
         
-        $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $type);
+        $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $type, $model);
         
         if (!$widget->isNew()) {
             $response = $widget->rename($new_action);
@@ -218,8 +219,9 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         
         $place  = $this->getParameter('place', 'frontend');
         $type   = $this->getParameter('type', 'app');
+        $model  = $this->getParameter('model');
         
-        $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $type);
+        $widget = afsWidgetModelHelper::retrieve($this->action, $this->module, $place, $type, $model);
         
         if ($widget->isNew()) return afResponseHelper::create()->success(false)->message("This widget doesn't exists");
         return afResponseHelper::create()->success(true)->data(array(), afsWidgetModelHelper::getInfo($widget), 0);
@@ -246,7 +248,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         if ($refresh == 'false') {
             foreach (explode(',', $type) as $type_generate) {
                 $action = lcfirst(sfInflector::camelize($model)) . ucfirst(strtolower($type_generate));
-                $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $place_type);
+                $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $place_type, $model);
                 if (!$widget->isNew()) $not_refreshed[] = $action;
             }
         }
@@ -261,7 +263,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
         $not_created = array();
         foreach (explode(',', $type) as $type_generate) {
             $action = lcfirst(sfInflector::camelize($model)) . ucfirst(strtolower($type_generate));
-            $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $place_type);
+            $widget = afsWidgetModelHelper::retrieve($action, $module, $place, $place_type, $model);
             (!$widget->isNew() && !in_array($action, $not_refreshed)) ? ($created[] = $action) : ($not_created[] = $action);
         }
         
