@@ -6,13 +6,6 @@ Ext.ns('afStudio.models.diagram');
  * models diagram is integrated with studio via iframe. This approach was selected to
  * not ruin any css and custom Studio code using extjs 4 in sandbox mode and in compatibility mode.
  *
- * How to test now:
- * 1. Open Studio, open browser's dev console
- * 2. Run the following code:
- *      var d = new afStudio.models.Diagram();
- *      afStudio.vp.addToWorkspace(d, true);
- *
- *
  * @class afStudio.models.diagram.Diagram
  * @extends Ext.BoxComponent
  * @author Nikolai Babinski
@@ -23,11 +16,30 @@ afStudio.models.diagram.Diagram = Ext.extend(Ext.BoxComponent, {
     diagramUrl : '/appFlowerStudio/modelsDiagram',
 
     /**
+     * @property {Boolean} ready
+     * Defines diagram readiness state. It is ready only when the diagram is successfully loaded.
+     */
+
+    /**
+     * @property {Window} diagramGlobal
+     * Global window object loaded inside diagram component.
+     */
+
+    /**
+     * @property {Af.md.Application} diagramApp
+     * Diagram Application object (extjs-4th implementation).
+     * This property is only available when the diagram is successfully loaded
+     * and is {@link #ready ready}, ready = `true`.
+     */
+
+    /**
      * Initializes component
      * @private
      * @return {Object} The configuration object
      */
     _beforeInitComponent : function() {
+        //sets readiness state
+        this.ready = false;
 
         var el = {
             tag: 'iframe',
@@ -36,6 +48,7 @@ afStudio.models.diagram.Diagram = Ext.extend(Ext.BoxComponent, {
         };
 
         return {
+            itemId: 'diagram',
             autoScroll: true,
             autoEl: el
         }
@@ -50,6 +63,58 @@ afStudio.models.diagram.Diagram = Ext.extend(Ext.BoxComponent, {
         );
 
         afStudio.models.diagram.Diagram.superclass.initComponent.apply(this, arguments);
+    },
+
+    /**
+     * @template
+     */
+    afterRender: function() {
+        var me = this,
+            frameEl = me.el;
+
+        afStudio.models.diagram.Diagram.superclass.afterRender.apply(this, arguments);
+
+        me.diagramGlobal = frameEl.dom.contentWindow;
+        me.initEvents();
+    },
+
+    /**
+     * Instantiates component's events.
+     * @protected
+     */
+    initEvents: function() {
+        var me = this;
+
+        me.addEvents(
+            /**
+             * @event ready
+             * Fires when the diagram, linked to underlying iframe element, is loaded and ready.
+             * @param {afStudio.models.diagram.Diagram} diagram This diagram component
+             * @param {Af.md.Application} diagramApp The diagram application
+             */
+            'ready'
+        );
+
+        //diagram is loaded
+        me.el.on('load', me.onLoad, me);
+
+        //show all diagrams errors
+        me.diagramGlobal.onerror = function(msg) {
+            afStudio.Msg.error('Models Diagram', msg);
+            return true;
+        };
+    },
+
+    /**
+     * Component's iframe element load event handler.
+     * @protected
+     */
+    onLoad: function() {
+        var me = this;
+
+        me.ready = true;
+        me.diagramApp = me.diagramGlobal.Af.apps.md;
+        me.fireEvent('ready', me, me.diagramApp);
     }
 });
 

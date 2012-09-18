@@ -80,7 +80,6 @@ var Af = new function() {
 
                 //create module's application on all ready
                 Ext.onReady(function() {
-
                     //hold module's application reference
                     Af.apps[module] = Ext.create('Af.' + module + '.Application');
                 });

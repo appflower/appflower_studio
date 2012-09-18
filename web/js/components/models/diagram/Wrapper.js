@@ -16,8 +16,8 @@ afStudio.models.diagram.Wrapper = Ext.extend(Ext.TabPanel, {
      * @return {Object} The configuration object
      */
     _beforeInitComponent : function() {
-        return {
 
+        return {
             activeTab: 0,
             items: [
             {
