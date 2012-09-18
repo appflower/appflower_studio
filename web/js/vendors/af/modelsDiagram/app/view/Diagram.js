@@ -67,10 +67,13 @@ Ext.define('Af.md.view.Diagram', {
     loadData: function() {
         var me = this;
 
+        me.el.mask('Diagram loading...');
+
         Ext.Ajax.request({
             url: Af.md.Url.structure,
             scope: me,
             success: function(xhr) {
+                me.el.unmask();
                 var response;
                 try {
                    response = Ext.decode(xhr.responseText);
@@ -81,6 +84,7 @@ Ext.define('Af.md.view.Diagram', {
                 this.createEntities(response.data);
             },
             failure: function(xhr, opts) {
+                me.el.unmask();
                 Ext.Error.raise('[Af.md.view.Diagram->loadData] loading data failed');
             }
         });

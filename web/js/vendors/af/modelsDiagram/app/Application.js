@@ -16,6 +16,10 @@ Ext.define('Af.md.Application', {
     name: 'Af.md',
     appFolder: Ext.Loader.appPath.md,
 
+    controllers: [
+        'Communication'
+    ],
+
     /**
      * @property {Ext.container.Viewport} viewPort
      * Application's viewport container.
@@ -36,6 +40,19 @@ Ext.define('Af.md.Application', {
     launch: function() {
         var me = this;
 
+        me.initStudioRefs();
+
         me.viewPort = Ext.create('Af.md.Viewport');
+    },
+
+    /**
+     * @private
+     */
+    initStudioRefs: function() {
+        var me = this;
+
+        me.studioGlobal = Ext.global.parent;
+        me.studioRef = me.studioGlobal.afStudio;
+        me.studioDiagram = me.studioRef.vp.viewRegions.center.get(0);
     }
 });
