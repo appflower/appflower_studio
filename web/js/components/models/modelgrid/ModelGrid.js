@@ -834,9 +834,27 @@ afStudio.models.ModelGrid = Ext.extend(afStudio.models.ExcelGridPanel, {
             },{
                 text: 'Export',
                 iconCls: 'icon-model-export',
-                scope: this,
-                handler: function(btn, ev) {
-                    me.ownerCt.getExportWindow();
+                scope: me,
+                menu: {
+                  items: [
+                    {
+	            		text: 'Data',
+	            		scope: me,
+	            		iconCls: 'icon-model-export-data',
+			            handler: function(btn, ev)
+			            {
+			                me.ownerCt.getExportData();
+			            }
+	            	},
+	            	{
+	            		text: 'Structure',
+	            		scope: me,
+	            		iconCls: 'icon-model-export-structure',
+			            handler: function (btn, ev){
+			                me.ownerCt.getExportStructure();
+			            }
+	            	}
+                  ]  
                 }
             }],
 	        bbar: pagingBar

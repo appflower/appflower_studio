@@ -172,16 +172,33 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	},
 	
 	/**
-	 * Returns {@link #exportWindow}.
-	 * @return {afStudio.models.ExportWindow}
+	 * Returns {@link #exportData}.
+	 * @return {afStudio.models.ExportData}
 	 */
-	getExportWindow : function() {
+	getExportData : function() {
 		var me = this;
 		
 		afStudio.xhr.executeAction({
             url: afStudioWSUrls.modelListUrl,
             params: {
                 cmd: 'exportData',
+                model: me.modelName
+            },
+            scope: this
+        });
+	},
+	
+	/**
+	 * Returns {@link #exportStructure}.
+	 * @return {afStudio.models.ExportStructure}
+	 */
+	getExportStructure : function() {
+		var me = this;
+		
+		afStudio.xhr.executeAction({
+            url: afStudioWSUrls.modelListUrl,
+            params: {
+                cmd: 'export',
                 model: me.modelName
             },
             scope: this

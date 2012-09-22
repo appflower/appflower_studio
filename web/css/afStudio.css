@@ -61,6 +61,8 @@
 .icon-model-row-delete{background:url('/appFlowerStudioPlugin/images/table_row_delete.png') no-repeat center left !important;}
 .icon-model-import{background:url('/appFlowerStudioPlugin/images/text_indent.png') no-repeat center left !important;}
 .icon-model-export{background:url('/appFlowerStudioPlugin/images/text_indent_remove.png') no-repeat center left !important;}
+.icon-model-export-data{background:url('/appFlowerStudioPlugin/images/script_go.png') no-repeat center left !important;}
+.icon-model-export-structure{background:url('/appFlowerStudioPlugin/images/database_go.png') no-repeat center left !important;}
 
 .icon-layout-add{background:url('/appFlowerStudioPlugin/images/layout_add.png') no-repeat center left !important;}
 .icon-widgets-add{background:url('/appFlowerStudioPlugin/images/brick_add.png') no-repeat center left !important;}
