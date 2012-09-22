@@ -327,10 +327,11 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
      */
     importer : function() {
         var form = this.getForm();
+        var me = this;
         
-        switch(this.importedType)
+        switch(this.importerType)
         {
-            type 'data':
+            case 'data':
                 form.submit({
                     url: this.url,
                     params: {
@@ -365,11 +366,12 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
                     }
                 });
                 break;
-            type 'structure':
+            case 'structure':
                 form.submit({
                     url: afStudioWSUrls.modelListUrl,
                     params: {
-                        cmd: 'import'
+                        cmd: 'import',
+                        model_name: me.model
                     },
                     scope: this,
                     waitMsg: 'Importing...',
