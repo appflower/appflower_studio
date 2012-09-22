@@ -107,14 +107,24 @@ N.RelationCombo = Ext.extend(Ext.form.ComboBox, {
 			closable: true,
 			closeAction: 'hide',
 			listeners: {
-				relationpicked : function(relation) {					
-					if (me.fieldsGrid) {						
-						var cell = me.fieldsGrid.getSelectionModel().getSelectedCell();
+				relationpicked : function(relation, type, size, newFieldName) {					
+					if (me.fieldsGrid) {
+					    type = type ? type : 'integer';
+					    size = size ? size : '11';
+					    
+					    var cell = me.fieldsGrid.getSelectionModel().getSelectedCell();
 						me.fieldsGrid.startEditing(cell[0], cell[1]);
 						if (relation) {
 							me.setValue(relation);
 						}
 						me.fieldsGrid.stopEditing();
+						
+						var r = me.fieldsGrid.store.getAt(cell[0]);
+						
+						r.set('key', 'index');
+						r.set('name', newFieldName);
+                        r.set('type', type);
+                        r.set('size', size);
 					} else {
 						me.setValue(relation);
 					}

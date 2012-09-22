@@ -27,9 +27,14 @@ afStudio.models.RelationPicker = Ext.extend(Ext.Window, {
 			mn = this.modelsTree.getSelectionModel().getSelectedNode(),
 			fr = this.fieldsGrid.getSelectionModel().getSelected(),
 			m = this.modelsTree.getModel(mn), 
-			f = fr.get('name');
+			f = fr.get('name'),
+			t = fr.get('type'),
+			s = fr.get('size'),
+			rn = m + '.' + f,
+			fn = m.toLowerCase() + '_' + f;
+			
 		this.closePicker();
-		this.fireEvent('relationpicked', m + '.' + f);
+		this.fireEvent('relationpicked', rn, t, s, fn);
 	}
 	
 	/**
