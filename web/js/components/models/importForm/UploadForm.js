@@ -22,13 +22,20 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
      * @cfg {String} fileTypeInvalidText The invalid import file type text,
      * defaults to "Invalid file type. Must be one of *.csv *.xls *.ods *.yml types."
      */
-    fileTypeInvalidText : 'Invalid file type. Must be one of *.csv *.xls *.ods *.yml types.',
+    fileTypeInvalidText : 'Invalid file type. Must be one of *.csv *.xls *.ods *.yml *.sql types.',
 
     YML_TYPE : 'yml',
     
     CSV_TYPE : 'csv',
     
     XLS_TYPE : 'xls',
+    
+    SQL_TYPE : 'sql',
+    
+    /**
+     * Importer type: data or structure, to be changed on file selected
+     */
+    importerType : 'data',
     
     /**
      * Uploading import file. 
@@ -56,7 +63,8 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
 		        csv:  me.CSV_TYPE,
 		        xlsx: me.XLS_TYPE,
 		        xls:  me.XLS_TYPE,
-		        ods:  me.XLS_TYPE    
+		        ods:  me.XLS_TYPE,
+		        sql:  me.SQL_TYPE
 		    };
         }
         
@@ -76,7 +84,7 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
             },{
                 xtype: 'displayfield',
                 submitValue: false,
-                html: 'Supported files: CSV, XLS, ODS, YML'
+                html: 'Supported files: CSV, XLS, ODS, YML, SQL'
             },{
                 xtype: 'checkbox',
                 fieldLabel: 'Append',
@@ -173,7 +181,7 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
                 iconCls: 'icon-accept',
                 formBind: true,
                 scope: this,
-                handler: this.importData
+                handler: this.importer
             }]
         };
     },
@@ -240,6 +248,8 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
             fileCmp.reset();
             return;
         }
+        
+        this.importerType = ((ext == 'sql')?'structure':'data');
         
         this.showExtraFields(this.fileTypes[ext]);
     },
@@ -315,44 +325,84 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
      * Uploads and imports data file.
      * @protected
      */
-    importData : function() {
+    importer : function() {
         var form = this.getForm();
         
-        form.submit({
-            url: this.url,
-            params: {
-                cmd: 'importData'
-            },
-            scope: this,
-            waitMsg: 'Importing...',
-            success: function(form, action) {
-                var res = action.result;
-                if (res.success) {
-                     this.fireEvent('importfile');
-                }
-            },
-            failure: function(form, action) {
-                var msgTitle = 'Import File';
-                
-                if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {
-                    afStudio.Msg.error(msgTitle, 
-                        String.format('Status: {0}: {1}', action.response.status, action.response.statusText));
-                }
-                if (action.failureType === Ext.form.Action.SERVER_INVALID) {
-                    var res = Ext.util.Format.stripTags(action.response.responseText),
-                        msg;
-                    try {
-                        msg = Ext.decode(res).message;
-                        afStudio.Msg.warning(msgTitle, msg);
-                    } catch(e) {
-                        msg = action.response.responseText;
-                        afStudio.Msg.error(msgTitle, msg);
+        switch(this.importedType)
+        {
+            type 'data':
+                form.submit({
+                    url: this.url,
+                    params: {
+                        cmd: 'importData'
+                    },
+                    scope: this,
+                    waitMsg: 'Importing...',
+                    success: function(form, action) {
+                        var res = action.result;
+                        if (res.success) {
+                             this.fireEvent('importfile');
+                        }
+                    },
+                    failure: function(form, action) {
+                        var msgTitle = 'Import File';
+                        
+                        if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {
+                            afStudio.Msg.error(msgTitle, 
+                                String.format('Status: {0}: {1}', action.response.status, action.response.statusText));
+                        }
+                        if (action.failureType === Ext.form.Action.SERVER_INVALID) {
+                            var res = Ext.util.Format.stripTags(action.response.responseText),
+                                msg;
+                            try {
+                                msg = Ext.decode(res).message;
+                                afStudio.Msg.warning(msgTitle, msg);
+                            } catch(e) {
+                                msg = action.response.responseText;
+                                afStudio.Msg.error(msgTitle, msg);
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
+                break;
+            type 'structure':
+                form.submit({
+                    url: afStudioWSUrls.modelListUrl,
+                    params: {
+                        cmd: 'import'
+                    },
+                    scope: this,
+                    waitMsg: 'Importing...',
+                    success: function(form, action) {
+                        var res = action.result;
+                        if (res.success) {
+                             this.fireEvent('importfile');
+                        }
+                    },
+                    failure: function(form, action) {
+                        var msgTitle = 'Import File';
+                        
+                        if (action.failureType === Ext.form.Action.CONNECT_FAILURE) {
+                            afStudio.Msg.error(msgTitle, 
+                                String.format('Status: {0}: {1}', action.response.status, action.response.statusText));
+                        }
+                        if (action.failureType === Ext.form.Action.SERVER_INVALID) {
+                            var res = Ext.util.Format.stripTags(action.response.responseText),
+                                msg;
+                            try {
+                                msg = Ext.decode(res).message;
+                                afStudio.Msg.warning(msgTitle, msg);
+                            } catch(e) {
+                                msg = action.response.responseText;
+                                afStudio.Msg.error(msgTitle, msg);
+                            }
+                        }
+                    }
+                });
+                break;
+        }
     }
-    //eo importData
+    //eo importer
 });
 
 Ext.reg('import.uploadfile', afStudio.models.UploadForm);
