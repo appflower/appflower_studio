@@ -403,7 +403,27 @@ Ext.applyIf(String.prototype, {
 	 */
 	bool : function() {
 		return (/^true$/i).test(this);
-	}	
+	},
+
+	/**
+	 * Escapes html strings
+	 * @return {String} escaped string
+	 */
+	escapeHtml: function()
+    {
+        var entityMap = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': '&quot;',
+            "'": '&#39;',
+            "/": '&#x2F;'
+        };
+        
+        return String(this).replace(/[&<>"'\/]/g, function (s) {
+              return entityMap[s];
+        });
+    }
 	
 });
 

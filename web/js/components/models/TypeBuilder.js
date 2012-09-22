@@ -147,7 +147,7 @@ afStudio.models.TypeBuilder = (function() {
 				
 				default:
 					renderer = function(value) {
-						return value;
+						return (typeof value == 'string')?value.escapeHtml():value;
 					};
 				break;
 			}
