@@ -17,16 +17,19 @@ afStudio.models.diagram.Diagram = Ext.extend(Ext.BoxComponent, {
 
     /**
      * @property {Boolean} ready
+     * @readonly
      * Defines diagram readiness state. It is ready only when the diagram is successfully loaded.
      */
 
     /**
      * @property {Window} diagramGlobal
+     * @readonly
      * Global window object loaded inside diagram component.
      */
 
     /**
      * @property {Af.md.Application} diagramApp
+     * @readonly
      * Diagram Application object (extjs-4th implementation).
      * This property is only available when the diagram is successfully loaded
      * and is {@link #ready ready}, ready = `true`.
@@ -76,6 +79,9 @@ afStudio.models.diagram.Diagram = Ext.extend(Ext.BoxComponent, {
 
         me.diagramGlobal = frameEl.dom.contentWindow;
         me.initEvents();
+        //masking diagram component during loading the AF Diagram module
+        //with a short delay to correctly position a mask
+        me.maskDiagram.defer(50, me, ['Preparing Models Diagram']);
     },
 
     /**
@@ -99,22 +105,52 @@ afStudio.models.diagram.Diagram = Ext.extend(Ext.BoxComponent, {
         me.el.on('load', me.onLoad, me);
 
         //show all diagrams errors
-        me.diagramGlobal.onerror = function(msg) {
-            afStudio.Msg.error('Models Diagram', msg);
-            return true;
-        };
+        me.diagramGlobal.onerror = me.onError;
     },
 
     /**
-     * Component's iframe element load event handler.
+     * Component's is loaded processor.
+     * Underlying iframe element `load` event listener.
      * @protected
      */
     onLoad: function() {
         var me = this;
 
         me.ready = true;
+        me.unmaskDiagram();
         me.diagramApp = me.diagramGlobal.Af.apps.md;
         me.fireEvent('ready', me, me.diagramApp);
+    },
+
+    /**
+     * Diagram's global window {@link #diagramGlobal} `onerror` event listener.
+     * It's shows/handles JavaScript errors of loaded underlying diagram in AF Studio.
+     * @protected
+     */
+    onError: function(msg) {
+        afStudio.Msg.error('Models Diagram', msg);
+        return true;
+    },
+
+    /**
+     * Mask this component's container's {@link #ownerCt} element.
+     * @param {String} [msg] The masking message
+     */
+    maskDiagram: function(msg) {
+        var ownerEl = this.ownerCt.el;
+
+        if (msg) {
+            ownerEl.mask(msg, 'x-mask-loading');
+        } else {
+            ownerEl.mask();
+        }
+    },
+
+    /**
+     * Unmasking diagram component, its owner container's {@link #ownerCt} element.
+     */
+    unmaskDiagram: function() {
+        this.ownerCt.el.unmask();
     }
 });
 
