@@ -73,10 +73,12 @@ Ext.define('Af.md.view.Diagram', {
             url: Af.md.Url.structure,
             scope: me,
             success: function(xhr) {
-                me.el.unmask();
                 var response;
+
+                me.el.unmask();
+
                 try {
-                   response = Ext.decode(xhr.responseText);
+                    response = Ext.decode(xhr.responseText);
                 } catch (e) {
                     Ext.Error.raise('[Af.md.view.Diagram->loadData] data is incorrect');
                 }
@@ -91,7 +93,7 @@ Ext.define('Af.md.view.Diagram', {
     },
 
     /**
-     * Create instance of the dragable element
+     * Create instance of the draggable element
      */
     createEntities: function(data) {
         var item, cfg, coords,
@@ -107,7 +109,7 @@ Ext.define('Af.md.view.Diagram', {
                 //Go through all tables
                 for (var key in schemaData) {
 
-                    if ('_attributes' != key) {
+                    if (key != '_attributes') {
                         var model = schemaData[key],
                             modelName, modelId,
                             field, p,
@@ -126,10 +128,11 @@ Ext.define('Af.md.view.Diagram', {
 
                         Ext.log('table: ', modelName, ' id: ', modelId, ' key: ', key);
 
+                        //goes over all model's fields
                         for (field in model) {
                             p = model[field];
 
-                            if (p && '_attributes' != field && '_indexes' != field && 'x' != field && 'y' != field) {
+                            if (p && field != '_attributes' && field != '_indexes' && field != 'x' && field != 'y') {
                                 html[html.length] = [p.phpName ? p.phpName : field, '(', p.type, ')'].join('');
 
                                 if (p.foreignTable) {
@@ -145,9 +148,10 @@ Ext.define('Af.md.view.Diagram', {
                         //Get coords
                         coords = this.getXYCoords(model);
 
-                        //TODO create separate class for diagram entity
-                        //TODO indexes and fk properties - diagram meta-data should be normalised
-                        //TODO id for entity must be unique, with current structure it can be duplicated
+                        //TODO @nick create separate class for diagram entity
+                        //TODO @nick diagram properties processor adapter
+                        //TODO @nick id for entity must be unique, with current structure it can be duplicated
+                        //      having several schemas with same model names
 
                         //Create config object
                         cfg = {
@@ -199,26 +203,23 @@ Ext.define('Af.md.view.Diagram', {
      * @author Pavel Konovalov
      */
     redrawConnections: function(w) {
-        var me = this;
+        var me = this,
+            winId = w.getId();
 
-        //TODO @nick draggable model window must now its connections, we do no need to go through all connections
+        //TODO @nick draggable model window must know its connections, we do no need to go through all connections
         if (me.connections) {
-            for (var i = 0, l = this.connections.length; i<l; i++) {
-                var conn = me.connections[i],
-                    o1 = o2 = p = null;
+            var l = me.connections.length,
+                i = 0,
+                conn, o1, o2, p;
 
-                //Check if
-                if (w.getId() == conn.parentId) {
+            for (; i < l; i++) {
+                conn = me.connections[i];
+                o1 = o2 = p = null;
+
+                //model has connections
+                if (winId == conn.parentId || winId == conn.childId) {
                     o1 = w.ghostPanel;
-                    o2 = Ext.getCmp(conn.childId);
-                }
-
-                if (w.getId() == conn.childId) {
-                    o1 = w.ghostPanel;
-                    o2 = Ext.getCmp(conn.parentId);
-                }
-
-                if (o1 && o2) {
+                    o2 = Ext.getCmp((winId == conn.parentId) ? conn.childId : conn.parentId);
                     p = me.getPath(o1, o2);
                     conn.setAttributes({path: p}, true);
                 }
@@ -233,7 +234,7 @@ Ext.define('Af.md.view.Diagram', {
         var me = this,
             path, sprite;
 
-        //TODO it is not good practice find out components based on their ids, especially when id is based on model name
+        //TODO @nick it's not good practice find out components based on their ids, especially when id is based on model name
         //inside a schema, id must be unique and components must be fetched from components manager or pool (not based on id)
         path = me.getPath(Ext.getCmp(parentId), Ext.getCmp(childId));
 

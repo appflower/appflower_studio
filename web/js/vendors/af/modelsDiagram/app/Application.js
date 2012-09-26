@@ -10,7 +10,8 @@ Ext.define('Af.md.Application', {
 
     requires: [
         'Af.md.Url',
-        'Af.md.Viewport'
+        'Af.md.Viewport',
+        'Ext.window.MessageBox'
     ],
 
     name: 'Af.md',
@@ -23,6 +24,29 @@ Ext.define('Af.md.Application', {
     /**
      * @property {Ext.container.Viewport} viewPort
      * Application's viewport container.
+     * @readonly
+     */
+
+    /**
+     * @property {Window} studioGlobal
+     * This property is available only if Models Diagram application is loaded as part of AF Studio.
+     * The parent window object.
+     * This is the reference to the global browser's window object where AF Studio is rendered and processing by it.
+     * @readonly
+     */
+
+    /**
+     * @property {afStudio} studioRef
+     * This property is available only if Models Diagram application is loaded as part of AF Studio.
+     * AF Studio global object reference `afStudio`.
+     * @readonly
+     */
+
+    /**
+     * @property {afStudio.models.diagram.Wrapper} studioDiagram
+     * This property is available only if Models Diagram application is loaded as part of AF Studio.
+     * The Models Diagram wrapper inside AF Studio application. Look at AF Studio models->diagram
+     * @readonly
      */
 
     /**
@@ -53,6 +77,11 @@ Ext.define('Af.md.Application', {
 
         me.studioGlobal = Ext.global.parent;
         me.studioRef = me.studioGlobal.afStudio;
-        me.studioDiagram = me.studioRef.vp.viewRegions.center.get(0);
+
+        try {
+            me.studioDiagram = me.studioRef.vp.viewRegions.center.get(0);
+        } catch(e) {
+            Ext.MessageBox.alert('Diagram', 'Diagram is running without AF Studio. <br /><b>Not all functionality will be working</b>');
+        }
     }
 });

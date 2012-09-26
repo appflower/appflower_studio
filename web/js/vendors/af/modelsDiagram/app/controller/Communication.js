@@ -19,8 +19,8 @@ Ext.define('Af.md.controller.Communication', {
         var me = this;
 
         this.control({
-
-            'window header': {
+            //model blocks
+            'md-diagram window header': {
                 dblclick: me.openModel
             }
         });
@@ -36,7 +36,5 @@ Ext.define('Af.md.controller.Communication', {
         var me = this,
             w = hd.ownerCt,
             sd = me.application.studioDiagram;
-
-
     }
 });
