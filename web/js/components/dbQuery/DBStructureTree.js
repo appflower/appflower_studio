@@ -53,6 +53,7 @@ afStudio.dbQuery.DBStructureTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	,onLoad : function(loader, node, xhr) {
 		this.unmaskTree();
+		this.getRootNode().firstChild.select();
 	}
 	
 	/**
