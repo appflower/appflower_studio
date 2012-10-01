@@ -4,16 +4,17 @@ Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 Ext.ns('afStudio');
 
 var afStudio = function () {
+
 	/**
-	 * @property {afStudio.viewport.StudioToolbar} tb
-	 * Studio toolbar
+	 * @property {afStudio.viewport.StudioToolbar} tb Studio toolbar
+	 * @readonly
 	 */	
 	
 	/**
-	 * @property {afStudio.viewport.StudioViewport} vp
-	 * Studio view port
+	 * @property {afStudio.viewport.StudioViewport} vp Studio view port
+	 * @readonly
 	 */
-	
+
 	return {
 	    
 	    /**
@@ -153,7 +154,7 @@ var afStudio = function () {
 			afStudio.Cli.init();
 			
 			//set up logger mode
-			afStudio.Logger.mode = afStudio.Logger.OFF;
+			afStudio.Logger.mode = afStudio.Logger.DEBUG;
 			
 			/**
 			 * this will add current project's url to the recent projects cookie

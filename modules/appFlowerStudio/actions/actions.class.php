@@ -419,5 +419,12 @@ class appFlowerStudioActions extends afsActions
      * @author Sergey Startsev
      */
     public function executePreview(sfWebRequest $request) {}
-    
+
+    /**
+     * Models-Diagram action
+     *
+     * @param sfWebRequest $request
+     * @author Nikolai Babinski
+     */
+    public function executeModelsDiagram(sfWebRequest $request) {}
 }
