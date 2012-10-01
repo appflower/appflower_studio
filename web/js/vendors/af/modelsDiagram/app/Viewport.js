@@ -32,5 +32,4 @@ Ext.define('Af.md.Viewport', {
 
         me.callParent(arguments);
     }
-
 });

@@ -132,15 +132,20 @@ Ext.define('Af.md.view.Diagram', {
                         for (field in model) {
                             p = model[field];
 
-                            if (p && field != '_attributes' && field != '_indexes' && field != 'x' && field != 'y') {
-                                html[html.length] = [p.phpName ? p.phpName : field, '(', p.type, ')'].join('');
+                            if (field != '_attributes' && field != '_indexes' && field != 'x' && field != 'y') {
+                                if (p && Ext.isObject(p)) {
+                                    html[html.length] = [p.phpName ? p.phpName : field, '(', p.type, ')'].join('');
 
-                                if (p.foreignTable) {
-                                    fk.push({
-                                        field: field,
-                                        foreignTable: p.foreignTable,
-                                        foreignReference: p.foreignReference
-                                    });
+                                    if (p.foreignTable) {
+                                        fk.push({
+                                            field: field,
+                                            foreignTable: p.foreignTable,
+                                            foreignReference: p.foreignReference
+                                        });
+                                    }
+                                //propel auto fields (this meta-data should be clarified)
+                                } else if (p == null) {
+                                    html[html.length] = field;
                                 }
                             }
                         }
@@ -194,7 +199,11 @@ Ext.define('Af.md.view.Diagram', {
         var me = this,
             fn = Ext.bind(me.redrawConnections, me, [w]);
 
+        //updating connections on dragging model
         w.dd.on('drag', fn);
+
+        //redraw model connections when its container viewport is resized and model is moved to be visible
+        w.on('move', me.redrawConnections);
     },
 
     /**
