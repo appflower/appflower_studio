@@ -64,28 +64,6 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 	})//eo modelContextMenu
 
     /**
-     * Constructor
-     * @param {Object} config
-     */
-    ,constructor : function(config) {
-        var me = this;
-
-        config = config || {};
-
-        Ext.apply(config, {
-            root: new Ext.tree.TreeNode({
-                path: 'root',
-                text: 'Models',
-                draggable: false
-            }),
-
-            rootVisible: true
-        });
-
-        afStudio.navigation.ModelItem.superclass.constructor.call(this, config);
-    }
-
-    /**
 	 * Initializes component
 	 * @private
 	 * @return {Object} The configuration object 
@@ -106,6 +84,14 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 			iconCls: 'icon-databases',
 			bbar: {
 				items: [
+                {
+                    text: 'Models Diagram',
+                    handler: function() {
+                        var md = new afStudio.models.diagram.Wrapper();
+                        afStudio.vp.addToWorkspace(md, true);
+                    },
+                    scope: _this
+                },
 				'->',
 				{
 					text: 'Add Model',
@@ -146,35 +132,29 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 	 * @param {Ext.tree.TreeNode} layoutNode
 	 */
 	,runNode : function(node) {
-        if (this.getRootNode() == node) {
-            var md = new afStudio.models.diagram.Wrapper();
-            afStudio.vp.addToWorkspace(md, true);
+        var _this  = this,
+            model = this.getNodeAttribute(node, 'text'),
+            schema = this.getNodeAttribute(node, 'schema');
 
-        } else {
-            var _this  = this,
-                model = this.getNodeAttribute(node, 'text'),
-                schema = this.getNodeAttribute(node, 'schema');
-
-            this.executeAction({
-                url: _this.baseUrl,
-                params: {
-                    xaction: 'read',
-                    model: model,
-                    schema: schema
-                },
-                showNoteOnSuccess: false,
-                loadingMessage: String.format('Loading model "{0}"...', model),
-                run: function(response) {
-                    var modelTab = new afStudio.models.ModelTab({
-                        _node: node,
-                        fieldsStructure: response,
-                        modelName: model,
-                        schemaName: schema
-                    });
-                    afStudio.vp.addToWorkspace(modelTab, true);
-                }
-            });
-        }
+        this.executeAction({
+            url: _this.baseUrl,
+            params: {
+                xaction: 'read',
+                model: model,
+                schema: schema
+            },
+            showNoteOnSuccess: false,
+            loadingMessage: String.format('Loading model "{0}"...', model),
+            run: function(response) {
+                var modelTab = new afStudio.models.ModelTab({
+                    _node: node,
+                    fieldsStructure: response,
+                    modelName: model,
+                    schemaName: schema
+                });
+                afStudio.vp.addToWorkspace(modelTab, true);
+            }
+        });
 	}//eo runNode
 	
 	/**
