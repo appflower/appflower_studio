@@ -132,8 +132,12 @@
 					<file>js/components/viewport/WestPanel.js</file>
 					<file>js/components/viewport/SouthPanel.js</file>
 	
-					<!-- Models -->				
-					<file>js/components/models/TypeComboBox.js</file>
+					<!-- Models -->
+                        <!-- diagram -->
+                    <file>js/components/models/diagram/Diagram.js</file>
+                    <file>js/components/models/diagram/Wrapper.js</file>
+                        <!-- data and structure -->
+                    <file>js/components/models/TypeComboBox.js</file>
 					<file>js/components/models/TypeBuilder.js</file>
 					<file>js/components/models/CreateWidgetWindow.js</file>
 					<file>js/components/models/ImportWindow.js</file>
