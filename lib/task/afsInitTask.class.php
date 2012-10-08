@@ -54,7 +54,15 @@ EOF;
          * include path to propel generator
          */
         sfToolkit::addIncludePath(array(sfConfig::get('sf_propel_path').'/generator/lib'));
-                
+
+        /**
+         * first check the db connectivity for all connections
+         */
+        $this->logBlock('Checking Db Connectivity',"QUESTION");
+        if(!$this->createTask('afs:db-connectivity')->run()){ 
+            return;
+        }
+               
         $this->logBlock('Creating specific AppFlower folders',"QUESTION");
         $this->createFolders();
         
