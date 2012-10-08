@@ -117,7 +117,7 @@ class afStudioModelCommandModificator
             if (isset($propel[$this->getSchemaFile()]['classes'][$this->getModelName()])) {
                 $this->tableName = $propel[$this->getSchemaFile()]['classes'][$this->getModelName()]['tableName'];
             } else {
-                $this->tableName = strtolower($model);
+                $this->tableName = sfInflector::tableize($model);
             }
         }
         
