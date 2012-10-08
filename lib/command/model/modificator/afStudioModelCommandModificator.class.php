@@ -288,7 +288,7 @@ class afStudioModelCommandModificator
             
             return $response
                         ->success(true)
-                        ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b>!" .
+                        ->message("Renamed model's phpName from <b>{$this->getModelName()}</b> to <b>{$name}</b><br><b style=\"color:red;\">Please make sure you'll update all the widgets that are using the old model name with the renamed model name, else you'll be facing some errors when trying to load those widgets!</b>!" .
                             ((!empty($message)) ? "<br/>" . nl2br($message) : '')
                         )
                         ->console(afStudioModelCommandHelper::deploy());
