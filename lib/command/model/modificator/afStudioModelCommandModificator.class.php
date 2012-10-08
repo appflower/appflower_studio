@@ -312,7 +312,7 @@ class afStudioModelCommandModificator
             sfConfig::get('sf_lib_dir').'/model/map',
             sfConfig::get('sf_lib_dir').'/model/migration',
             sfConfig::get('sf_lib_dir').'/model/om',
-        ));
+        ), true);
 
         return $are_readable;
     }
@@ -337,7 +337,7 @@ class afStudioModelCommandModificator
             sfConfig::get('sf_lib_dir').'/model/map',
             sfConfig::get('sf_lib_dir').'/model/migration',
             sfConfig::get('sf_lib_dir').'/model/om',
-        ));
+        ), true);
 
         return $are_writable;
     }

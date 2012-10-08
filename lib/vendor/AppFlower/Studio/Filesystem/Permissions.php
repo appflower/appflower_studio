@@ -10,10 +10,10 @@ namespace AppFlower\Studio\Filesystem;
  */
 class Permissions
 {
-    public function areReadable($paths)
+    public function areReadable($paths, $mayNotExist = false)
     {
         foreach ($paths as $path) {
-            $are_readable = $this->isReadable($path);
+            $are_readable = $this->isReadable($path, $mayNotExist);
 
             if ($are_readable !== true) {
                 return $are_readable;
@@ -23,10 +23,10 @@ class Permissions
         return true;
     }
 
-    public function areWritable($paths)
+    public function areWritable($paths, $mayNotExist = false)
     {
         foreach ($paths as $path) {
-            $are_writable = $this->isWritable($path);
+            $are_writable = $this->isWritable($path, $mayNotExist);
 
             if ($are_writable !== true) {
                 return $are_writable;
@@ -47,7 +47,7 @@ class Permissions
         }
     }
 
-    public function isReadable($path)
+    public function isReadable($path, $mayNotExist = false)
     {
         $response = \afResponseHelper::create();
         $type = $this->isDirOrIsFileOrIsLink($path);
@@ -55,20 +55,22 @@ class Permissions
 
         if (is_readable($path)) {
             return true;
+        } elseif (($mayNotExist) and (!(file_exists($path)))) {
+            return true;
         } else {
             return $response->success(false)->message($message);
         }
     }
 
-    public function isReadableAndWritable($path)
+    public function isReadableAndWritable($path, $mayNotExist = false)
     {
-        $is_readable = $this->isReadable($path);
+        $is_readable = $this->isReadable($path, $mayNotExist);
 
         if ($is_readable !== true) {
             return $is_readable;
         }
 
-        $is_writable = $this->isWritable($path);
+        $is_writable = $this->isWritable($path, $mayNotExist);
 
         if ($is_writable !== true) {
             return $is_writable;
@@ -77,13 +79,15 @@ class Permissions
         return true;
     }
 
-    public function isWritable($path)
+    public function isWritable($path, $mayNotExist = false)
     {
         $response = \afResponseHelper::create();
         $type = $this->isDirOrIsFileOrIsLink($path);
         $message = ucfirst($type)." ".$path." is not writable. Please check ".$type." permissions.";
 
         if (is_writable($path)) {
+            return true;
+        } elseif (($mayNotExist) and (!(file_exists($path)))) {
             return true;
         } else {
             return $response->success(false)->message($message);
