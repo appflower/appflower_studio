@@ -840,10 +840,6 @@ class afStudioModelCommandModificator
         
         $definition = $this->originalSchemaArray[$schema_file][$connection][$table_name];
         
-        // $definition = array(
-            // $table_name => $this->originalSchemaArray[$schema_file][$connection][$table_name]
-        // );
-        
         return afResponseHelper::create()->success(true)->data(array(), sfYaml::dump($definition), 0);
     }
     

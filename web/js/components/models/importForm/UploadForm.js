@@ -22,15 +22,13 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
      * @cfg {String} fileTypeInvalidText The invalid import file type text,
      * defaults to "Invalid file type. Must be one of *.csv *.xls *.ods *.yml types."
      */
-    fileTypeInvalidText : 'Invalid file type. Must be one of *.csv *.xls *.ods *.yml *.sql types.',
+    fileTypeInvalidText : 'Invalid file type. Must be one of *.csv *.xls *.ods *.yml types.',
 
     YML_TYPE : 'yml',
     
     CSV_TYPE : 'csv',
     
     XLS_TYPE : 'xls',
-    
-    SQL_TYPE : 'sql',
     
     /**
      * Importer type: data or structure, to be changed on file selected
@@ -63,8 +61,7 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
 		        csv:  me.CSV_TYPE,
 		        xlsx: me.XLS_TYPE,
 		        xls:  me.XLS_TYPE,
-		        ods:  me.XLS_TYPE,
-		        sql:  me.SQL_TYPE
+		        ods:  me.XLS_TYPE
 		    };
         }
         
@@ -84,7 +81,15 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
             },{
                 xtype: 'displayfield',
                 submitValue: false,
-                html: 'Supported files: CSV, XLS, ODS, YML, SQL'
+                html: 'Supported files: CSV, XLS, ODS, YML'
+            },{
+                xtype: 'checkbox',
+                fieldLabel: 'Import Definition',
+                name: 'importStructure'
+            },{
+                xtype: 'displayfield',
+                submitValue: false,
+                html: 'Supported files: YML'
             },{
                 xtype: 'checkbox',
                 fieldLabel: 'Append',
@@ -249,8 +254,6 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
             return;
         }
         
-        this.importerType = ((ext == 'sql')?'structure':'data');
-        
         this.showExtraFields(this.fileTypes[ext]);
     },
     
@@ -329,6 +332,8 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
         var form = this.getForm();
         var me = this;
         
+        this.importerType = form.findField('importStructure').getValue()?'structure':'data';
+        
         switch(this.importerType)
         {
             case 'data':
@@ -371,14 +376,15 @@ afStudio.models.UploadForm = Ext.extend(Ext.FormPanel, {
                     url: afStudioWSUrls.modelListUrl,
                     params: {
                         cmd: 'import',
-                        model_name: me.model
+                        model: me.model
                     },
                     scope: this,
                     waitMsg: 'Importing...',
                     success: function(form, action) {
                         var res = action.result;
+                        
                         if (res.success) {
-                             this.fireEvent('importfile');
+                             afStudio.Msg.info(res.message);
                         }
                     },
                     failure: function(form, action) {

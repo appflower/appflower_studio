@@ -195,14 +195,7 @@ afStudio.models.ModelTab = Ext.extend(Ext.TabPanel, {
 	getExportStructure : function() {
 		var me = this;
 		
-		afStudio.xhr.executeAction({
-            url: afStudioWSUrls.modelListUrl,
-            params: {
-                cmd: 'export',
-                model: me.modelName
-            },
-            scope: this
-        });
+		window.location.href = afStudioWSUrls.modelListUrl+'?cmd=export&model='+me.modelName;
 	},
 	
 	/**
