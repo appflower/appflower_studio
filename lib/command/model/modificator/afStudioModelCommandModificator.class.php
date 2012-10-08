@@ -276,6 +276,11 @@ class afStudioModelCommandModificator
         
         $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]['_attributes']['phpName'] = $name;
         
+        $newTableName = sfInflector::tableize($name);
+        
+        $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$newTableName] = $this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()];
+        unset($this->originalSchemaArray[$this->getSchemaFile()]['propel'][$this->getTableName()]);
+        
         if ($this->saveSchema()) {
             afStudioConsole::getInstance()->execute('sf afs:fix-perms');
             list($status, $message) = afStudioModelCommandHelper::renameModel($this->getModelName(), $name);
