@@ -152,7 +152,8 @@ class afStudioProjectCommand extends afBaseStudioCommand
         
         $place = $this->getParameter('place', 'frontend');
         $place_type = $this->getParameter('place_type', 'app');
-        $content = json_decode($this->getParameter('content'), true);
+        $content = preg_replace(array('/\<\?php/','/\<\?/','/\?\>/'), array('','',''), $this->getParameter('content'));
+        $content = json_decode($content, true);
         $key = $this->getParameter('key', '');
 
         $permissions = new Permissions();
