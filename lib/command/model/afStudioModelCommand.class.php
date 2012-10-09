@@ -346,7 +346,7 @@ class afStudioModelCommand extends afBaseStudioCommand
         
         if ($response->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
             $definition = $response->getParameter(afResponseDataDecorator::IDENTIFICATOR_DATA);
-            $temp_file = sys_get_temp_dir() . "{$model}Model.txt";
+            $temp_file = sys_get_temp_dir() . "/{$model}Model.txt";
             
             if (file_put_contents($temp_file, $definition)) {
                 $response->data(array(), $temp_file, 0);
