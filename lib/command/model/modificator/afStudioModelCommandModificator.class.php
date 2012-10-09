@@ -134,13 +134,22 @@ class afStudioModelCommandModificator
     {
         if (is_null($this->propelModel)) {
             $model = $this->getModelName();
-            $schema = $this->getSchemaFile();
             
             $propel = $this->getPropelSchema();
-            if (isset($propel[$this->getSchemaFile()]['classes'][$this->getModelName()])) {
-                $this->propelModel = $propel[$this->getSchemaFile()]['classes'][$this->getModelName()];
-            } else {
-                $this->propelModel = $model;
+            
+            foreach ($propel as $schema => $array)
+            {
+                if(isset($array['classes']))
+                {
+                    foreach ($array['classes'] as $m => $parameters)
+                    {
+                        if($m == $model)
+                        {
+                            $this->propelModel = $parameters;
+                            continue;        
+                        }
+                    }
+                }
             }
         }
         
@@ -478,7 +487,7 @@ class afStudioModelCommandModificator
 
             $peer_method = constant($this->getModelName() . '::PEER');
             $field_names = call_user_func("{$peer_method}::getFieldNames", BasePeer::TYPE_FIELDNAME);
-
+            
             foreach ($field_names as $field) {
                 if (array_key_exists($field, $columns)) {
                     $column = $columns[$field];

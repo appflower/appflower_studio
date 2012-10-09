@@ -110,14 +110,16 @@ class afStudioWidgetCommand extends afBaseStudioCommand
             // apply modifiers
             $widget->modify();
             
-            if ($widget->save()->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
+            $widgetSaveResponse = $widget->save();
+            
+            if ($widgetSaveResponse->getParameter(afResponseSuccessDecorator::IDENTIFICATOR)) {
                 return $response
                             ->success(true)
                             ->message($createNewWidget ? 'Widget was succesfully created' : 'Widget was succesfully saved')
                             ->data(array(), afsWidgetModelHelper::getInfo($widget), 0);
             }
             
-            return $response->success(false)->message($widget->save()->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
+            return $response->success(false)->message($widgetSaveResponse->getParameter(afResponseMessageDecorator::IDENTIFICATOR));
         } catch( Exception $e ) {
             return $response->success(false)->message($e->getMessage());
         }

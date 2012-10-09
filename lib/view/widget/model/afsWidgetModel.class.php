@@ -271,6 +271,7 @@ class afsWidgetModel extends afsBaseModel
         if (!file_exists($this->getPlaceConfigPath())) afsFileSystem::create()->mkdirs($this->getPlaceConfigPath(), 0774);
         
         if ($definition->validate()) {
+            
             $model_validator = afsWidgetModelValidator::create($this)->execute();
             if (!$model_validator->isValid()) return afResponseHelper::create()->success(false)->message($model_validator->getMessages(true));
             
