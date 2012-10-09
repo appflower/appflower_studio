@@ -571,8 +571,10 @@ class afStudioModelCommandModificator
     public function getModelByTableName($table) 
     {
         foreach ($this->propelSchemaArray as $schema) {
-            foreach ($schema['classes'] as $modelName => $model) {
-                if ($model['tableName'] == $table) return $modelName;
+            if (isset($schema['classes'])) {
+                foreach ($schema['classes'] as $modelName => $model) {
+                    if ($model['tableName'] == $table) return $modelName;
+                }	
             }
         }
         
