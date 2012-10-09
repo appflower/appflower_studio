@@ -71,7 +71,7 @@ afStudio.models.CreateWidgetWindow = Ext.extend(Ext.Window, {
 				ref: 'widgetLocation',
 				autoLoad: false,
 				forceSelection: false,
-				allowBlank: true
+				allowBlank: false
 			},{
 				xtype: 'common.mfieldsgrid',
 				ref: 'fieldsGrid',
