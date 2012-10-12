@@ -88,7 +88,7 @@ class afStudioWidgetCommand extends afBaseStudioCommand
                 sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$this->module,
                 sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$this->module.'/actions/',
                 sfConfig::get('sf_root_dir').'/'.$dir.'/'.$place.'/modules/'.$this->module.'/templates/',
-            ));
+            ), true);
 
             if ($are_writable !== true) {
                 return $are_writable;
