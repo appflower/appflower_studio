@@ -166,7 +166,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony project:permissions; symfony afs:fix-perms'
+				command: './symfony project:permissions; ./symfony afs:fix-perms'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -183,7 +183,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony afs:version'
+				command: './symfony afs:version'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -200,7 +200,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony afs:generate-widget-all'
+				command: './symfony afs:generate-widget-all'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -217,7 +217,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony cc; symfony appflower:validator-cache frontend cache'
+				command: './symfony cc; ./symfony appflower:validator-cache frontend cache'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -234,7 +234,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony propel:build-sql'
+				command: './symfony propel:build-sql'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -251,7 +251,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony propel:insert-sql --no-confirmation'
+				command: './symfony propel:insert-sql --no-confirmation'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -268,7 +268,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony propel:build-model'
+				command: './symfony propel:build-model'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -285,7 +285,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony propel:diff'
+				command: './symfony propel:diff'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -302,7 +302,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony afs:integrity'
+				command: './symfony afs:integrity'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -319,7 +319,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony appflower:list-files ext verbose'
+				command: './symfony appflower:list-files ext verbose'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
@@ -336,7 +336,7 @@ afStudio.cli.Console = Ext.extend(afStudio.cli.CommandLine, {
 		this.executeAction({
 			url: _this.baseUrl,
 			params: {
-				command: 'symfony appflower:security-scan frontend'
+				command: './symfony appflower:security-scan frontend'
 			},
 			run: function(response) {
 				this.updateCli(response.console);
