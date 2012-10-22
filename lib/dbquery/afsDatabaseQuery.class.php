@@ -93,14 +93,13 @@ class afsDatabaseQuery
     {
         $tables = array();
         foreach ((array) self::getSchemas() as $schemaFile => $array) {
-            if ($array['connection'] == $connection_name) {
+            if ((array_key_exists('connection', $array)) and ($array['connection'] == $connection_name)) {
                 foreach ($array['classes'] as $phpName => $attributes) {
                     $attributes['modelName'] = $phpName;
                     $attributes['schemaFile'] = $schemaFile;
                     $tables[] = $attributes;
                 }
             }
-        
         }
         
         return $tables;
