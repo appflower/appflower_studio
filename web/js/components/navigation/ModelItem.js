@@ -84,21 +84,21 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
 			iconCls: 'icon-databases',
 			bbar: {
 				items: [
-                {
-                    text: 'Models Diagram',
-                    handler: function() {
-                        var md = new afStudio.models.diagram.Wrapper();
-                        afStudio.vp.addToWorkspace(md, true);
-                    },
-                    scope: _this
-                },
 				'->',
 				{
 					text: 'Add Model',
 					iconCls: 'icon-models-add',
 					handler: _this.onAddModelClick,
 					scope: _this
-				}]
+				},{
+                    text: 'Diagram',
+                    iconCls: 'icon-models-diagram',
+                    handler: function() {
+                        var md = new afStudio.models.diagram.Wrapper();
+                        afStudio.vp.addToWorkspace(md, true);
+                    },
+                    scope: _this
+                }]
 			}
 		};		
 	}//eo _beforeInitComponent
