@@ -146,7 +146,7 @@ afStudio.navigation.ModelItem = Ext.extend(afStudio.navigation.BaseItemTreePanel
             showNoteOnSuccess: false,
             loadingMessage: String.format('Loading model "{0}"...', model),
             run: function(response) {
-                var modelTab = new afStudio.models.ModelTab({
+                var modelTab = new afStudio.models.model.ModelTab({
                     _node: node,
                     fieldsStructure: response,
                     modelName: model,

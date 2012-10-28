@@ -148,7 +148,10 @@
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/ModelGrid.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/modelgrid/EditFieldWindow.js"></script>
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/editgrid/DependencyCellEditorBuilder.js"></script>
-<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/ModelTab.js"></script>
+    <!-- model containers -->
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/model/ModelContainer.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/model/ModelAccordionPanel.js"></script>
+<script type="text/javascript" src="/appFlowerStudioPlugin/js/components/models/model/ModelTab.js"></script>
 
 <!-- dbQuery -->
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/dbQuery/query/QueryResultsGrid.js"></script>

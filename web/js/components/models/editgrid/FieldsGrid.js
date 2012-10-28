@@ -21,8 +21,13 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 	/**
 	 * @cfg {Object} (required) _data The model's fields definition object
 	 */
-	
-	/**
+
+    //private overrides
+    title: 'Config',
+    iconCls: 'icon-table-gear',
+
+
+    /**
 	 * Saves Model structure
 	 */
 	saveModel : function() {
@@ -403,9 +408,7 @@ afStudio.models.FieldsGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		});		
 		
 		return {			
-			title: 'Model Config',
-			iconCls: 'icon-table-gear',			
-			clicksToEdit: 1,			
+			clicksToEdit: 1,
 	        store: fieldsStore,
 	        colModel: columnModel,
 	        columnLines: true,			

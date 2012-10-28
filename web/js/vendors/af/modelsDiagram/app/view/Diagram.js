@@ -163,6 +163,11 @@ Ext.define('Af.md.view.Diagram', {
                             title: modelName,
                             id: modelId,
                             fk: fk,
+                            modelData: {
+                                name: modelName,
+                                schema: schema,
+                                fk: fk
+                            },
                             bodyStyle: 'padding: 5px',
                             y: coords.y,
                             x: coords.x,
