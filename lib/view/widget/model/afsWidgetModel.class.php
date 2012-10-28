@@ -277,6 +277,8 @@ class afsWidgetModel extends afsBaseModel
             
             afStudioUtil::writeFile($this->getPlaceConfigPath() . DIRECTORY_SEPARATOR . "{$this->getAction()}.xml", $definition->get());
             
+            \AppFlower\Studio\Cache\Widget::create()->update($this)->push();
+            
             $this->ensureSecurityExists();
             
             // check exists action or not

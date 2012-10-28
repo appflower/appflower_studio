@@ -32,43 +32,99 @@ class Widget
      */
     static public function create()
     {
-        return new self;
+        $instance = new self;
+        $instance->pull();
+        
+        return $instance;
     }
     
     private function __construct() {}
     
     /**
+     * Update cache definition procedure for all found widgets 
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    public function updateAll()
+    {
+        $this->definition = array();
+        
+        $finder = \sfFinder::type('dir')->maxdepth(0);
+        
+        foreach ($finder->in(\sfConfig::get('sf_apps_dir')) as $app_dir) {
+            foreach ($finder->in($app_dir . DIRECTORY_SEPARATOR . 'modules') as $module_dir) {
+                foreach ($finder->type('file')->name('*.xml')->in($module_dir . DIRECTORY_SEPARATOR . 'config') as $widget_dir) {
+                    $this->retrieveAndUpdate(
+                        pathinfo($widget_dir, PATHINFO_FILENAME), 
+                        pathinfo($module_dir, PATHINFO_FILENAME), 
+                        pathinfo($app_dir, PATHINFO_FILENAME)
+                    );
+                }
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
      * Update cache definition procedure
+     *
+     * @param afsWidgetModel $widget
+     * @return Widget
+     * @author Sergey Startsev
+     */
+    public function update($widget)
+    {
+        if ($widget->isNew()) return $this;
+        
+        $method_name = 'process' . ucfirst(strtolower($widget->getType()));
+        if (method_exists($this, $method_name)) {
+            $this->definition[$widget->getPlace()][$widget->getModule()][$widget->getAction()] = call_user_func(array($this, $method_name), $widget->getDefinition());
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Retrieve widget and update definition
      *
      * @param string $app_name 
      * @param string $module_name 
      * @param string $widget_name 
      * @param string $model_name
+     * @return Widget
+     * @author Sergey Startsev
+     */
+    public function retrieveAndUpdate($widget_name, $module_name, $app_name, $place_type = 'app', $model_name = '')
+    {
+        return $this->update(\afsWidgetModelHelper::retrieve($widget_name, $module_name, $app_name, $place_type, $model_name));
+    }
+    
+    /**
+     * Store definition procedure
+     *
      * @return void
      * @author Sergey Startsev
      */
-    public function updatePaths($app_name = '', $module_name = '', $widget_name = '', $model_name = '')
+    public function push()
     {
-        $finder = \sfFinder::type('dir')->maxdepth(0);
+        file_put_contents(\sfConfig::get('sf_cache_dir') . DIRECTORY_SEPARATOR . $this->file_name, \sfYaml::dump($this->definition, 1));
+    }
+    
+    /**
+     * Restore cached definition procedure
+     *
+     * @return void
+     * @author Sergey Startsev
+     */
+    protected function pull()
+    {
+        $this->definition = array();
         
-        foreach ($finder->in(\sfConfig::get('sf_apps_dir')) as $app_dir) {
-            $app_name = pathinfo($app_dir, PATHINFO_FILENAME);
-            foreach ($finder->in($app_dir . DIRECTORY_SEPARATOR . 'modules') as $module_dir) {
-                $module_name = pathinfo($module_dir, PATHINFO_FILENAME);
-                foreach ($finder->type('file')->name('*.xml')->in($module_dir . DIRECTORY_SEPARATOR . 'config') as $widget_dir) {
-                    $widget_name = pathinfo($widget_dir, PATHINFO_FILENAME);
-                    
-                    // var_dump($widget_name);
-                    $widget = \afsWidgetModelHelper::retrieve($widget_name, $module_name, $app_name, 'app', $model_name);
-                    
-                    $method_name = 'process' . ucfirst(strtolower($widget->getType()));
-                    if (method_exists($this, $method_name)) {
-                        $this->definition[$app_name][$module_name][$widget_name] = call_user_func(array($this, $method_name), $widget->getDefinition());
-                    }
-                }
-            }
+        if (file_exists(\sfConfig::get('sf_cache_dir') . DIRECTORY_SEPARATOR . $this->file_name)) {
+            $this->definition = \sfYaml::load(\sfConfig::get('sf_cache_dir') . DIRECTORY_SEPARATOR . $this->file_name);
         }
-        
     }
     
     /**
@@ -97,6 +153,8 @@ class Widget
             foreach ($definition['i:fields']['i:column'] as $column) {
                 if (array_key_exists('attributes', $column) && array_key_exists('filter', $column['attributes'])) {
                     $response['fields'][$column['attributes']['name']]['filter'] = $column['attributes']['filter'];
+                } else {
+                    $response['fields'][$column['attributes']['name']]['filter'] = '';
                 }
             }
         }
