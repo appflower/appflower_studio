@@ -109,7 +109,7 @@ class afsXmlDefinition extends afsBaseDefinition
         $unserializer = new XML_Unserializer($this->unserialize_options);
         
         // check unserialize status
-        $status = $unserializer->unserialize($definition, false);
+        $status = $unserializer->unserialize(trim($definition), false);
         
         if (!$status) throw new afsXmlDefinitionException($status->getMessage());
         
