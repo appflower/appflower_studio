@@ -18,9 +18,9 @@ class afsVersionTask extends sfBaseTask
   	
     $this->namespace        = 'afs';
     $this->name             = 'version';
-    $this->briefDescription = 'Displays the version of appFlowerExtjsThemePlugin and appFlowerStudioPlugin';
+    $this->briefDescription = 'Displays the version of appFlowerPlugin and appFlowerStudioPlugin';
     $this->detailedDescription = <<<EOF
-The [afs:version|INFO] displays the version of appFlowerExtjsThemePlugin and appFlowerStudioPlugin :
+The [afs:version|INFO] displays the version of appFlowerPlugin and appFlowerStudioPlugin :
 
   [./symfony afs:version|INFO]
 EOF;
@@ -28,7 +28,7 @@ EOF;
 
   protected function execute($arguments = array(), $options = array())
   {
-    $composerJsonEngine = sfConfig::get('sf_root_dir').'/plugins/appFlowerExtjsThemePlugin/composer.json';
+    $composerJsonEngine = sfConfig::get('sf_root_dir').'/plugins/appFlowerPlugin/composer.json';    
     $composerJsonStudio = sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/composer.json';
     
     if(file_exists($composerJsonEngine))
@@ -40,7 +40,7 @@ EOF;
         $composerJsonStudio = json_decode(file_get_contents($composerJsonStudio));
     }
     
-    $this->logSection('appFlowerExtjsThemePlugin', 'version '.$composerJsonEngine->version);
+    $this->logSection('appFlowerPlugin', 'version '.$composerJsonEngine->version);
     $this->logSection('appFlowerStudioPlugin', 'version '.$composerJsonStudio->version);
   }  
 

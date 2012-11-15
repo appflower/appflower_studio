@@ -35,7 +35,7 @@ class afStudioProjectCommandHelper extends afBaseStudioCommandHelper
     /**
      * Default helper place
      */
-    const DEFAULT_HELPER_PLACE = 'appFlowerExtjsThemePlugin';
+    const DEFAULT_HELPER_PLACE = 'appFlowerPlugin';
     
     /**
      * Default helper place type

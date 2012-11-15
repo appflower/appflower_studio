@@ -10,26 +10,26 @@
 				<output>af.js</output>
 				<files>
 					<!-- engine ux -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js</file>
 					
 					<!-- datetime -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js</file>
                     
 					<!-- multiselect (multicombo) -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/multiselect/DDView.js</file>
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/multiselect/MultiSelect.js</file>
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/multiselect/ItemSelector.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/DDView.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/MultiSelect.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/ItemSelector.js</file>
                     
 					<!-- doublemulticombo -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/multiselect/Ext.ux.plugins.ItemSelectorAutoSuggest.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/Ext.ux.plugins.ItemSelectorAutoSuggest.js</file>
                     
 					<!-- doubletree -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js</file>
                     
 					<!-- color -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/form/colorfield/color-field.js</file>
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/form/adv-color-picker/code/Color.js</file>
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/form/adv-color-picker/code/ColorPickerPanel.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/colorfield/color-field.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/Color.js</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/ColorPickerPanel.js</file>
 				</files>
 			</needle>
 			
@@ -384,15 +384,15 @@
 			<needle>
 				<output>af.css</output>
 				<files>
-					<file>../../appFlowerExtjsThemePlugin/web/css/my-extjs.css</file>
+					<file>../../appFlowerPlugin/web/css/my-extjs.css</file>
 					
 					<!-- engine ux -->
 					<!-- multiselect (multicombo) -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/multiselect/multiselect.css</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/multiselect/multiselect.css</file>
 
 					<!-- color -->
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/form/colorfield/color-field.css</file>
-					<file>../../appFlowerExtjsThemePlugin/web/extjs-3/plugins/form/adv-color-picker/code/color-picker.css</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/colorfield/color-field.css</file>
+					<file>../../appFlowerPlugin/web/extjs-3/plugins/form/adv-color-picker/code/color-picker.css</file>
 				</files>
 			</needle>
 			

@@ -2,7 +2,7 @@
  * Sets right path for the blank image in case of old IE browsers.
  * More details {@link Ext#BLANK_IMAGE_URL}
  */
-Ext.BLANK_IMAGE_URL = (Ext.isIE6 || Ext.isIE7) ? '/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/s.gif' : Ext.BLANK_IMAGE_URL;
+Ext.BLANK_IMAGE_URL = (Ext.isIE6 || Ext.isIE7) ? '/appFlowerPlugin/extjs-3/resources/images/default/s.gif' : Ext.BLANK_IMAGE_URL;
 
 /**
  * @property {String} appPath

@@ -386,13 +386,13 @@ afStudio.wd.edit.EditView = Ext.extend(Ext.FormPanel, {
 				Ext.apply(cfg, {
 					toStore: new Ext.data.ArrayStore(),
 					toTBar: [{text: 'clear'}],
-					imagePath: '/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/images'
+					imagePath: '/appFlowerPlugin/extjs-3/plugins/multiselect/images'
 				});
 			break;
 			
 			case 'doubletree':
 				fn = Ext.ux.TreeItemSelector;
-				cfg.imagePath = '/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/images';
+				cfg.imagePath = '/appFlowerPlugin/extjs-3/plugins/multiselect/images';
 			break;
 			
 			case 'color':

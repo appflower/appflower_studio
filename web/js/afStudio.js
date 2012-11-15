@@ -1,4 +1,4 @@
-Ext.BLANK_IMAGE_URL = '/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = '/appFlowerPlugin/extjs-3/resources/images/default/s.gif';
 Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
 Ext.ns('afStudio');

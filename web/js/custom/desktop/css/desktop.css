@@ -242,16 +242,16 @@ html, body {
     background-image:url(/appFlowerStudioPlugin/js/custom/desktop/images/grid.png ) !important;
 }
 .add {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/add.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/add.gif) !important;
 }
 .option {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/plugin.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/plugin.gif) !important;
 }
 .remove {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/delete.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/delete.gif) !important;
 }
 .save {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/save.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/save.gif) !important;
 }
 .accordion {
     background-image:url(/appFlowerStudioPlugin/js/custom/desktop/images/accordian.gif) !important;
@@ -263,31 +263,31 @@ html, body {
 /* IM window icons */
 
 .user {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/user.gif ) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/user.gif ) !important;
 }
 
 .user-add {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/user_add.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/user_add.gif) !important;
 }
 
 .user-delete {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/user_delete.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/user_delete.gif) !important;
 }
 
 .connect {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/connect.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/connect.gif) !important;
 }
 
 .user-girl {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/user_female.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/user_female.gif) !important;
 }
 
 .user-kid {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/user_green.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/user_green.gif) !important;
 }
 
 .user-suit {
-    background-image:url(/appFlowerExtjsThemePlugin/extjs-3/plugins/shared/icons/fam/user_suit.gif) !important;
+    background-image:url(/appFlowerPlugin/extjs-3/plugins/shared/icons/fam/user_suit.gif) !important;
 }
 
 .ux-start-menu {

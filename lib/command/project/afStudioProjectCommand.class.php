@@ -134,7 +134,7 @@ class afStudioProjectCommand extends afBaseStudioCommand
         }
         
         $helper_path = afExtjsBuilderParser::getHelperPath($place, $place_type);
-        if (!file_exists($helper_path)) $helper_path = afExtjsBuilderParser::getHelperPath('appFlowerExtjsThemePlugin', 'plugin');
+        if (!file_exists($helper_path)) $helper_path = afExtjsBuilderParser::getHelperPath('appFlowerPlugin', 'plugin');
         
         return $response->success(true)->data(array(), afExtjsBuilderParser::create($helper_path)->parse()->get($key), 0);
     }
@@ -197,8 +197,8 @@ class afStudioProjectCommand extends afBaseStudioCommand
         $place = $this->getParameter('place', 'frontend');
         $place_type = $this->getParameter('place_type', 'app');
         
-        $default_prefix = "/appFlowerExtjsThemePlugin/extjs-3/plugins/desktop/wallpapers/";
-        $default_area = sfConfig::get('sf_plugins_dir') . "/appFlowerExtjsThemePlugin/web/extjs-3/plugins/desktop/wallpapers/";
+        $default_prefix = "/appFlowerPlugin/extjs-3/plugins/desktop/wallpapers/";
+        $default_area = sfConfig::get('sf_plugins_dir') . "/appFlowerPlugin/web/extjs-3/plugins/desktop/wallpapers/";
         
         $finder = sfFinder::type('file')->maxdepth(0)->name('*.jpg', '*.jpeg', '*.JPG', '*.JPEG');
         

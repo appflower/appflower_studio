@@ -1,14 +1,14 @@
-<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/adapter/ext/ext-base.js"></script>
-<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/ext-all.js"></script>
-<script type="text/javascript" src="/appFlowerExtjsThemePlugin/cache/appFlower.js"></script>
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/extjs-3/resources/css/ext-all.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/extjs-3/resources/css/xtheme-blue.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/cache/appFlower.css" />
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all.js"></script>
+<script type="text/javascript" src="/appFlowerPlugin/cache/appFlower.js"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/cache/appFlower.css" />
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/js/components/notification/MessageBox.js"></script>
 
 <script type="text/javascript">
-Ext.BLANK_IMAGE_URL = '/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = '/appFlowerPlugin/extjs-3/resources/images/default/s.gif';
 Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
 Ext.onReady(function(){

@@ -16,10 +16,10 @@
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/application_view_tile.png) ! important;
 }
 .icon-check, .icon-check-off {
-	background-image:url(/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/menu/unchecked.gif) ! important;
+	background-image:url(/appFlowerPlugin/extjs-3/resources/images/default/menu/unchecked.gif) ! important;
 }
 .icon-check-on {
-	background-image:url(/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/menu/checked.gif) ! important;
+	background-image:url(/appFlowerPlugin/extjs-3/resources/images/default/menu/checked.gif) ! important;
 }
 .icon-stat-data {
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/icons/kate_16.png) ! important;
@@ -114,7 +114,7 @@
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/arrow_undo.png) ! important;
 }
 .icon-loading {
-	background-image:url(/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/grid/grid-loading.gif) ! important;
+	background-image:url(/appFlowerPlugin/extjs-3/resources/images/default/grid/grid-loading.gif) ! important;
 }
 .icon-db-refresh {
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/database_refresh.png) ! important;
@@ -165,7 +165,7 @@
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/database_gear.png) ! important;
 }
 .icon-working {
-	background-image:url(/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/grid/wait.gif) ! important;
+	background-image:url(/appFlowerPlugin/extjs-3/resources/images/default/grid/wait.gif) ! important;
 }
 .icon-upload {
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/icons/up.png) ! important;
@@ -294,7 +294,7 @@
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/arrow_right.png) ! important;
 }
 .icon-blank-img {
-	background-image:url(/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/s.gif) ! important;
+	background-image:url(/appFlowerPlugin/extjs-3/resources/images/default/s.gif) ! important;
 }
 .icon-delete {
 	background-image:url(/appFlowerStudioPlugin/js/custom/tree/filetree/img/silk/icons/bin_empty.png) ! important;

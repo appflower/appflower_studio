@@ -48,7 +48,7 @@ $layout->addItem('center',
         "columnWidth" => ".12",
         "frame" => false,
         "height" => 167,
-        "html" => "<a href='http://www.appflower.com'><img src='/appFlowerExtjsThemePlugin/images/vertical_logo.png'></a>"
+        "html" => "<a href='http://www.appflower.com'><img src='/appFlowerPlugin/images/vertical_logo.png'></a>"
     )
 );
 $layout->addItem('center', $form);
