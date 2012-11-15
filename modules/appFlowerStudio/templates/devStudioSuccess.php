@@ -1,34 +1,34 @@
 <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise">
 
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base-debug.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all-debug-w-comments.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/adapter/ext/ext-base-debug.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/ext-all-debug-w-comments.js"></script>
 
 <?php include_partial('studioSettings', array('afStudioUser' => $afStudioUser)); ?>
 
 <!-- engine ux -->
 <!-- ========== -->
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/form/Ext.ux.plugins.HelpText.js"></script>
 
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/datetime/Ext.ux.form.DateTime.js"></script>
 
 <!-- multiselect (multicombo) -->
-<link rel="stylesheet" type="text/css" href="/appFlowerPlugin/extjs-3/plugins/multiselect/multiselect.css" />
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/DDView.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/MultiSelect.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/ItemSelector.js"></script>
+<link rel="stylesheet" type="text/css" href="/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/multiselect.css" />
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/DDView.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/MultiSelect.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/ItemSelector.js"></script>
 
 <!-- doublemulticombo -->
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/Ext.ux.plugins.ItemSelectorAutoSuggest.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/Ext.ux.plugins.ItemSelectorAutoSuggest.js"></script>
 
 <!-- doubletree -->
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/multiselect/Ext.ux.TreeItemSelector.js"></script>
 
 <!-- color -->
-<link rel="stylesheet" type="text/css" href="/appFlowerPlugin/extjs-3/plugins/form/colorfield/color-field.css" />
-<link rel="stylesheet" type="text/css" href="/appFlowerPlugin/extjs-3/plugins/form/adv-color-picker/code/color-picker.css" />
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/colorfield/color-field.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/adv-color-picker/code/Color.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/plugins/form/adv-color-picker/code/ColorPickerPanel.js"></script>
+<link rel="stylesheet" type="text/css" href="/appFlowerExtjsThemePlugin/extjs-3/plugins/form/colorfield/color-field.css" />
+<link rel="stylesheet" type="text/css" href="/appFlowerExtjsThemePlugin/extjs-3/plugins/form/adv-color-picker/code/color-picker.css" />
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/form/colorfield/color-field.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/form/adv-color-picker/code/Color.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/plugins/form/adv-color-picker/code/ColorPickerPanel.js"></script>
 <!-- ========== -->
 
 <!-- AF Studio -->
@@ -369,9 +369,9 @@ foreach ($afStudioJsExtensions as $afStudioJsExtension)
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/prettyPhoto.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/welcome.css" />
 
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/css/my-extjs.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/extjs-3/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/extjs-3/resources/css/xtheme-blue.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/css/my-extjs.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/afStudio.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/backgroundEditor.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/css/shortcutsEditor.css" />

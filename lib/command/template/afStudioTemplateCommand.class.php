@@ -25,13 +25,13 @@ class afStudioTemplateCommand extends afBaseStudioCommand
         $projectPath = sfConfig::get('sf_root_dir');
         $projectYmlName = '/config/project.yml';
         $projectYmlPath = $projectPath . $projectYmlName;
-        $appFlowerPluginPath = $projectPath . '/plugins/appFlowerPlugin/';
+        $appFlowerExtjsThemePluginPath = $projectPath . '/plugins/appFlowerExtjsThemePlugin/';
         $appFlowerStudioPluginPath = $projectPath . '/plugins/appFlowerStudioPlugin/';
         
         $projectYml = sfYaml::load($projectYmlPath);
         $pluginTemplateYml = sfYaml::load(sfConfig::get('sf_root_dir').'/plugins/appFlowerStudioPlugin/config/template.yml');
         
-        if (file_exists($appFlowerPluginPath) && file_exists($appFlowerStudioPluginPath)) {
+        if (file_exists($appFlowerExtjsThemePluginPath) && file_exists($appFlowerStudioPluginPath)) {
             $projectYml['project']['template'] = in_array($templateName, $pluginTemplateYml['template']['types']) ? $templateName : $pluginTemplateYml['template']['default'];
             
             if(afStudioUtil::writeFile($projectYmlPath,sfYaml::dump($projectYml,4)))

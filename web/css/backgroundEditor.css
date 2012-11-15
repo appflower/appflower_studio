@@ -26,12 +26,12 @@
 
 .desktop-bg .x-view-over{
     border: 1px solid #dddddd;
-    background: #efefef url(/appFlowerPlugin/extjs-3/resources/images/default/grid/row-over.gif) repeat-x left top;
+    background: #efefef url(/appFlowerExtjsThemePlugin/extjs-3/resources/images/default/grid/row-over.gif) repeat-x left top;
 	padding: 4px;
 }
 
 .desktop-bg .x-view-selected{
-	background: #eff5fb url(/appFlowerPlugin/extjs-3/plugins/view/images/selected.gif) no-repeat right bottom;
+	background: #eff5fb url(/appFlowerExtjsThemePlugin/extjs-3/plugins/view/images/selected.gif) no-repeat right bottom;
 	border: 1px solid #99bbe8;
 	padding: 4px;
 }

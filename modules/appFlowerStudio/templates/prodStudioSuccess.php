@@ -1,10 +1,10 @@
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/ext-all.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerPlugin/extjs-3/resources/css/xtheme-blue.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/extjs-3/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/appFlowerExtjsThemePlugin/extjs-3/resources/css/xtheme-blue.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/cache/af.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/appFlowerStudioPlugin/cache/afStudio.css" />
 
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/adapter/ext/ext-base.js"></script>
-<script type="text/javascript" src="/appFlowerPlugin/extjs-3/ext-all.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="/appFlowerExtjsThemePlugin/extjs-3/ext-all.js"></script>
 
 <script type="text/javascript" src="/appFlowerStudioPlugin/cache/af.js"></script>
 <?php include_partial('studioSettings', array('afStudioUser' => $afStudioUser)); ?>

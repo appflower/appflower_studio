@@ -18,8 +18,10 @@ class afStudioPluginCommandHelper extends afBaseStudioCommandHelper
      * @var array
      */
     static private $deprecated_plugins = array(
-        'appFlowerPlugin',
+        'appFlowerEnginePlugin',
         'appFlowerStudioPlugin',
+        'appFlowerExtjsThemePlugin',
+        'appFlowerBootstrapThemePlugin',
         'sfPropel15Plugin',
         'sfPropelORMPlugin',
         'sfPropelSqlDiffPlugin',

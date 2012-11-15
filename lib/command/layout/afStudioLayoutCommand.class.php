@@ -86,7 +86,7 @@ class afStudioLayoutCommand extends afBaseStudioCommand
             return $is_writable;
         }
 
-        //idXml is stored inside the portal_state table from appFlowerPlugin
+        //idXml is stored inside the portal_state table from appFlowerExtjsThemePlugin
         $idXml = "pages/{$page_name}";
         
         $page = afsPageModelHelper::retrieve($page_name, $application);
