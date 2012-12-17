@@ -39,9 +39,14 @@ afStudio.models.diagram.Wrapper = Ext.extend(Ext.TabPanel, {
      * @template
      */
     initComponent: function() {
+        var me = this;
+
         Ext.apply(this,
             Ext.apply(this.initialConfig, this._beforeInitComponent())
         );
+
+        me.tabs = [];
+
         afStudio.models.diagram.Wrapper.superclass.initComponent.apply(this, arguments);
     },
 
@@ -53,41 +58,53 @@ afStudio.models.diagram.Wrapper = Ext.extend(Ext.TabPanel, {
         var me = this,
             model = modelData.name,
             schema = modelData.schema,
-            modelId = this.getModelTabItemId(modelData);
+            modelId = me.getModelTabItemId(modelData);
 
         afStudio.Logger.info('Open model in diagram tab-panel, data:', modelData);
         afStudio.Logger.info('model item id:', modelId);
 
+        if (me.isModelTabOpened(modelId)) {
+            me.activate(modelId);
+        } else {
+            //pushes to be created tab it in the tabs register
+            me.tabs.push(modelId);
 
-        //register the model id
+            //open new model tab
+            afStudio.xhr.executeAction({
+                url: me.modelUrl,
+                params: {
+                    xaction: 'read',
+                    model: model,
+                    schema: schema
+                },
+                showNoteOnSuccess: false,
+                loadingMessage: String.format('Loading model "{0}"...', model),
+                run: function(response) {
+                    var id = Ext.id(null, 'diagram'),
+                        md;
 
+                    md = new afStudio.models.model.ModelAccordionPanel({
+                        title: model,
+                        itemId: modelId,
+                        fieldsStructure: response,
+                        modelName: model,
+                        schemaName: schema
+                    });
 
-        //open new model tab
-        afStudio.xhr.executeAction({
-            url: me.modelUrl,
-            params: {
-                xaction: 'read',
-                model: model,
-                schema: schema
-            },
-            showNoteOnSuccess: false,
-            loadingMessage: String.format('Loading model "{0}"...', model),
-            run: function(response) {
-                var id = Ext.id(null, 'diagram'),
-                    md;
+                    me.add(md);
+                    me.activate(modelId);
+                }
+            });
+        }
+    },
 
-                md = new afStudio.models.model.ModelAccordionPanel({
-                    title: model,
-                    itemId: modelId,
-                    fieldsStructure: response,
-                    modelName: model,
-                    schemaName: schema
-                });
-
-                me.add(md);
-                me.activate(modelId);
-            }
-        });
+    /**
+     * Checks is a model-tab is already exists and is opened.
+     * @param {String} id The tab id or itemId
+     * @return {Boolean}
+     */
+    isModelTabOpened: function(id) {
+        return this.tabs.indexOf(id) != -1;
     },
 
     /**
