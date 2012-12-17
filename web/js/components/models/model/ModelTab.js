@@ -8,7 +8,7 @@ Ext.ns('afStudio.models.model');
  * @author Nikolai Babinski
  */
 afStudio.models.model.ModelTab = Ext.extend(Ext.TabPanel, {
-	
+
 	/**
 	 * Initializes component
 	 * @private

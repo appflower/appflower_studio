@@ -1,13 +1,22 @@
 Ext.ns('afStudio.models.model');
 
 /**
+ * Accordion Model container panel.
  *
+ * This container holds Model's data and configuration panels.
+ * It is used as a tab inside {@link afStudio.models.diagram.Wrapper} model-tabs wrapper.
  *
  * @class afStudio.models.model.ModelAccordionPanel
  * @extends Ext.Panel
  * @author Nikolai Babinski
  */
 afStudio.models.model.ModelAccordionPanel = Ext.extend(Ext.Panel, {
+
+    /**
+     * @cfg {Boolean} [closable=true]
+     * The boolean flag states if this panel is closable.
+     */
+    closable : true,
 
     /**
      * Initializes component

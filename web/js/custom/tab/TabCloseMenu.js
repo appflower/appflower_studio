@@ -92,16 +92,16 @@ Ext.ux.TabCloseMenu = Ext.extend(Object, {
         
         m.getComponent('close').setDisabled(!item.closable);
         tabs.items.each(function(){
-            if(this.closable){
+            if (this.closable) {
                 disableAll = false;
-                if(this != item){
+                if (this != item) {
                     disableOthers = false;
                     return false;
                 }
             }
         });
         m.getComponent('closeothers').setDisabled(disableOthers);
-        if(closeAll){
+        if (closeAll) {
             closeAll.setDisabled(disableAll);
         }
         
@@ -141,7 +141,7 @@ Ext.ux.TabCloseMenu = Ext.extend(Object, {
         return this.menu;
     },
     
-    onClose : function(){
+    onClose : function() {
     	var item = this.active;
     	
      	if (item.fireEvent('beforeclose', item) !== false) {
@@ -161,8 +161,8 @@ Ext.ux.TabCloseMenu = Ext.extend(Object, {
     doClose : function(excludeActive){
         var items = [];
         this.tabs.items.each(function(item){
-            if(item.closable){
-                if(!excludeActive || item != this.active){
+            if (item.closable) {
+                if (!excludeActive || item != this.active) {
                     items.push(item);
                 }    
             }

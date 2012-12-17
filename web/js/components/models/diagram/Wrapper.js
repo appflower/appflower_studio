@@ -10,8 +10,6 @@ Ext.ns('afStudio.models.diagram');
  */
 afStudio.models.diagram.Wrapper = Ext.extend(Ext.TabPanel, {
 
-    //TODO add closable tabs plugin
-
     /**
      * @cfg {String} modelUrl
      * The model url, by default is {@link afStudioWSUrls#modelListUrl}
@@ -30,8 +28,10 @@ afStudio.models.diagram.Wrapper = Ext.extend(Ext.TabPanel, {
             {
                 title: 'Diagram',
                 xtype: 'afStudio.models.diagram'
-            }]
-
+            }],
+            //all tabs except the models-diagram itself are closable by default
+            //is used {@link Ext.ux.TabCloseMenu} plugin, initialising this functionality
+            plugins: ['tabclosemenu']
         }
     },
 
@@ -52,11 +52,17 @@ afStudio.models.diagram.Wrapper = Ext.extend(Ext.TabPanel, {
     openModel: function(modelData) {
         var me = this,
             model = modelData.name,
-            schema = modelData.schema;
+            schema = modelData.schema,
+            modelId = this.getModelTabItemId(modelData);
 
-        afStudio.Logger.info('open model in diagram tab-panel', modelData);
+        afStudio.Logger.info('Open model in diagram tab-panel, data:', modelData);
+        afStudio.Logger.info('model item id:', modelId);
 
-        //TODO create register of all created models to not create a model if it's already exist
+
+        //register the model id
+
+
+        //open new model tab
         afStudio.xhr.executeAction({
             url: me.modelUrl,
             params: {
@@ -72,17 +78,30 @@ afStudio.models.diagram.Wrapper = Ext.extend(Ext.TabPanel, {
 
                 md = new afStudio.models.model.ModelAccordionPanel({
                     title: model,
-                    itemId: id,
+                    itemId: modelId,
                     fieldsStructure: response,
                     modelName: model,
                     schemaName: schema
                 });
 
                 me.add(md);
-                me.activate(id);
+                me.activate(modelId);
             }
         });
+    },
 
+    /**
+     * Returns models item id, unique within all schemas.
+     *
+     * @protected
+     * @param {Object} md The model's diagram data, look at {@link #openModel} method
+     * @return {String} The unique within schemas id, composed from the model + '#' + schema names
+     */
+    getModelTabItemId: function(md) {
+        var m = md.name,
+            s = md.schema,
+            id = m + '#' + s;
 
+        return id;
     }
 });
