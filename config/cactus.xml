@@ -150,8 +150,11 @@
 					<file>js/components/models/modelgrid/ModelGrid.js</file>
 					<file>js/components/models/modelgrid/EditFieldWindow.js</file>
 					<file>js/components/models/editgrid/DependencyCellEditorBuilder.js</file>
-					<file>js/components/models/ModelTab.js</file>
-					
+                        <!-- model containers -->
+					<file>js/components/models/model/ModelContainer.js</file>
+					<file>js/components/models/model/ModelAccordionPanel.js</file>
+					<file>js/components/models/model/ModelTab.js</file>
+
 					<!-- dbQuery -->				
 					<file>js/components/dbQuery/query</file>
 					<file>js/components/dbQuery/table</file>

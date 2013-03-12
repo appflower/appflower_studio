@@ -37,9 +37,6 @@ Ext.define('Af.md.controller.Communication', {
             w = hd.ownerCt,
             sd = me.application.studioDiagram;
 
-        Ext.log({msg: 'Open model diagram: ', dump: w});
-        Ext.log({msg: 'Model data', dump: w.modelData});
-
         sd.openModel(w.modelData);
     }
 });

@@ -104,8 +104,6 @@ Ext.define('Af.md.view.Diagram', {
 
                 schemaData = data[schema].propel;
 
-                Ext.log({msg: 'Schema', dump:{schema: schema, data: schemaData}});
-
                 //Go through all tables
                 for (var key in schemaData) {
 
@@ -125,8 +123,6 @@ Ext.define('Af.md.view.Diagram', {
                         modelId = model['_attributes'] && model['_attributes']['id']
                                     ? model['_attributes']['id']
                                     : key;
-
-                        Ext.log('table: ', modelName, ' id: ', modelId, ' key: ', key);
 
                         //goes over all model's fields
                         for (field in model) {
@@ -188,8 +184,6 @@ Ext.define('Af.md.view.Diagram', {
                 }
             }
         }
-
-        Ext.log({msg: 'Diagram entities', dump: this.entities});
 
         //Show entities and create connections
         this.createConnectionSprites(this);
