@@ -541,7 +541,7 @@ class XML_Unserializer extends PEAR
             $this->_parser->setInput($data);
             $result = $this->_parser->parse();
         }
-
+        
         if ($this->options[XML_UNSERIALIZER_OPTION_RETURN_RESULT] === true) {
             $return = $this->_unserializedData;
         } else {
@@ -551,7 +551,7 @@ class XML_Unserializer extends PEAR
         if ($optionsBak !== null) {
             $this->options = $optionsBak;
         }
-
+        
         if (PEAR::isError($result)) {
             return $result;
         }

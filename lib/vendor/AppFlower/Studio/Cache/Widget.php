@@ -40,6 +40,11 @@ class Widget
     
     private function __construct() {}
     
+    public function getDefinition()
+    {
+        return $this->definition;
+    }
+    
     /**
      * Update cache definition procedure for all found widgets 
      *
@@ -201,8 +206,18 @@ class Widget
                     array_key_exists('i:class', $field['i:value'])
                 ) {
                     $peer = $field['i:value']['i:class'];
-                    $response['fields'][$field['attributes']['name']]['value']['model'] = (defined("{$peer}::OM_CLASS")) ? $peer::OM_CLASS : $peer;
-                    $response['fields'][$field['attributes']['name']]['value']['class'] = $peer;
+                    if ($peer == 'ModelCriteriaFetcher' && array_key_exists('i:method', $field['i:value']) && array_key_exists('i:param', $field['i:value']['i:method'])) {
+                        if (array_key_exists('_content', $field['i:value']['i:method']['i:param'])) {
+                            $response['fields'][$field['attributes']['name']]['value']['model'] = $field['i:value']['i:method']['i:param']['_content'];
+                        } else {
+                            $current  = current($field['i:value']['i:method']['i:param']);
+                            $response['fields'][$field['attributes']['name']]['value']['model'] = $current['_content'];
+                        }
+                        $response['fields'][$field['attributes']['name']]['value']['class'] = '';
+                    } else {
+                        $response['fields'][$field['attributes']['name']]['value']['model'] = (defined("{$peer}::OM_CLASS")) ? $peer::OM_CLASS : $peer;
+                        $response['fields'][$field['attributes']['name']]['value']['class'] = $peer;
+                    }
                 }
             }
         }
